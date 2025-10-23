@@ -34,6 +34,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
+// TODO (marco): This class is tricky since it's used from many places. Are symbols created here generally allowed to be unique? For
+//  example, what happens when we have two instances of the same source-based FIR declaration and we generate fake override symbols for both
+//  of them? Can there be any issues?
 object FirFakeOverrideGenerator {
     fun createSubstitutionOverrideFunction(
         session: FirSession,
@@ -59,6 +62,8 @@ object FirFakeOverrideGenerator {
         return symbolForSubstitutionOverride
     }
 
+    // TODO (marco): This is cached by `FirSubstitutionOverrideStorage`, but also used by `FirOverrideJavaNullabilityWarningChecker`, where
+    //  there is no caching.
     fun createSymbolForSubstitutionOverride(baseSymbol: FirNamedFunctionSymbol, derivedClassId: ClassId? = null): FirNamedFunctionSymbol {
         return if (derivedClassId == null) {
             FirNamedFunctionSymbol(baseSymbol.callableId)
@@ -393,6 +398,8 @@ object FirFakeOverrideGenerator {
         return symbolForSubstitutionOverride
     }
 
+    // TODO (marco): This is cached by `FirSubstitutionOverrideStorage`, but also used by `FirOverrideJavaNullabilityWarningChecker`, where
+    //  there is no caching.
     fun createSymbolForSubstitutionOverride(baseSymbol: FirPropertySymbol, derivedClassId: ClassId? = null): FirRegularPropertySymbol {
         return if (derivedClassId == null) {
             FirRegularPropertySymbol(baseSymbol.callableId!!)
@@ -550,6 +557,8 @@ object FirFakeOverrideGenerator {
             propertySymbol = propertySymbol,
             modality = newModality,
             effectiveVisibility = effectiveVisibility,
+            // TODO (marco): Is unique OK here? We definitely can't just blindly copy the symbol ID. :/
+            symbol = FirPropertyAccessorSymbol(),
             resolvePhase = origin.resolvePhaseForCopy,
             isOverride = true,
             attributes = attributes.copy(),
@@ -566,6 +575,7 @@ object FirFakeOverrideGenerator {
             modality = modality,
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
+            propertyAccessorSymbol = FirPropertyAccessorSymbol(),
             parameterSource = valueParameters.first().source,
             isOverride = true,
             attributes = attributes.copy(),

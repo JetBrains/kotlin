@@ -16,16 +16,30 @@ import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdEntry
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-abstract class FirBasedSymbol<out E : FirDeclaration> : DeclarationSymbolMarker {
+/**
+ * TODO (marco): Document.
+ *
+ * TODO (marco): Override `symbolId` in symbol implementations to specialize the type.
+ */
+abstract class FirBasedSymbol<out E : FirDeclaration>(symbolId: FirSymbolId<FirBasedSymbol<E>>) : DeclarationSymbolMarker {
     private var _fir: E? = null
+
+    // TODO (marco): The constructor parameter and the symbol ID are separate because the parameter is needed for `bind` in `init` and the
+    //  property needs to be overridden by concrete symbols to override the type.
+    //  It would be nice to use a type parameter instead, but then we have to update hundreds of usages of `FirBasedSymbol` and abstract
+    //  subclasses.
+    abstract val symbolId: FirSymbolId<FirBasedSymbol<E>>
 
     @SymbolInternals
     val fir: E
@@ -33,6 +47,12 @@ abstract class FirBasedSymbol<out E : FirDeclaration> : DeclarationSymbolMarker 
             ?: errorWithAttachment("Fir is not initialized for ${this::class}") {
                 withFirSymbolIdEntry("symbol", this@FirBasedSymbol)
             }
+
+    init {
+        // Once we create a symbol with a symbol ID, the symbol becomes the direct referent of the symbol ID.
+        @OptIn(FirImplementationDetail::class)
+        symbolId.bind(this)
+    }
 
     @FirImplementationDetail
     fun bind(e: @UnsafeVariance E) {
@@ -65,6 +85,27 @@ abstract class FirBasedSymbol<out E : FirDeclaration> : DeclarationSymbolMarker 
 
     val resolvedAnnotationClassIds: List<ClassId>
         get() = fir.resolvedAnnotationClassIds(this)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FirBasedSymbol<*>) return false
+        if (symbolId != other.symbolId) return false
+
+        requireWithAttachment(
+            javaClass == other.javaClass,
+            {
+                "Suspicious symbol equality: This `${this::class.simpleName}` and the other `${other::class.simpleName}` are not of the" +
+                        " same type but have an equal symbol ID."
+            }
+        ) {
+            withFirSymbolIdEntry("thisSymbolId", symbolId)
+            withFirSymbolIdEntry("otherSymbolId", other.symbolId)
+        }
+
+        return true
+    }
+
+    override fun hashCode(): Int = symbolId.hashCode()
 }
 
 @SymbolInternals

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
@@ -209,6 +210,7 @@ class FirScriptConfiguratorExtensionImpl(
                             visibility = Visibilities.Public,
                             propertySymbol = this.symbol,
                             modality = Modality.FINAL,
+                            symbol = FirPropertyAccessorSymbol(),
                         )
 
                         status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)

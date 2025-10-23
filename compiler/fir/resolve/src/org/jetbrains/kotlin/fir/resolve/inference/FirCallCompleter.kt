@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentEffect
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -379,14 +380,16 @@ class FirCallCompleter(
                 needItParam -> {
                     val name = StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME
                     val itType = parameters.single()
+                    val itSource = lambdaAtom.anonymousFunction.source?.fakeElement(ItLambdaParameter)
+
                     buildValueParameter {
                         resolvePhase = FirResolvePhase.BODY_RESOLVE
-                        source = lambdaAtom.anonymousFunction.source?.fakeElement(ItLambdaParameter)
+                        source = itSource
                         containingDeclarationSymbol = lambda.symbol
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Source
                         this.name = name
-                        symbol = FirValueParameterSymbol()
+                        symbol = FirValueParameterSymbol(session.symbolIdFactory.sourceBasedOrUnique(itSource))
                         returnTypeRef =
                             itType.approximateLambdaInputType(symbol, withPCLASession, candidate).toFirResolvedTypeRef(
                                 lambdaAtom.anonymousFunction.source?.fakeElement(ImplicitReturnTypeOfLambdaValueParameter)
@@ -539,17 +542,19 @@ class FirCallCompleter(
             if (isLambda) {
                 replaceContextParameters(
                     givenContextParameterTypes.map { contextParameterType ->
+                        val contextParameterSource = originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
+
                         buildValueParameter {
                             resolvePhase = FirResolvePhase.BODY_RESOLVE
-                            source = originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
+                            source = contextParameterSource
                             containingDeclarationSymbol = this@setContextParametersConfiguration.symbol
                             moduleData = session.moduleData
                             origin = FirDeclarationOrigin.Source
                             name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                            symbol = FirValueParameterSymbol()
+                            symbol = FirValueParameterSymbol(session.symbolIdFactory.sourceBasedOrUnique(contextParameterSource))
                             returnTypeRef = contextParameterType
                                 .approximateLambdaInputType(symbol, withPCLASession, candidate)
-                                .toFirResolvedTypeRef(originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
+                                .toFirResolvedTypeRef(contextParameterSource)
                             valueParameterKind = FirValueParameterKind.ContextParameter
                         }
                     }

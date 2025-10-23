@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolIdFactory
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -61,6 +63,8 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     }
 
     val baseModuleData: FirModuleData = baseSession.moduleData
+
+    protected val symbolIdFactory: FirSymbolIdFactory = baseSession.symbolIdFactory
 
     abstract fun T.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
 
@@ -1170,7 +1174,10 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                         isOperator = true
                     }
                     isLocal = firPrimaryConstructor.isLocal
-                    symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
+                    symbol = FirNamedFunctionSymbol(
+                        symbolIdFactory.sourceBased(componentSource),
+                        CallableId(packageFqName, classFqName, name),
+                    )
                     dispatchReceiverType = currentDispatchReceiverType()
                     // Refer to FIR backend ClassMemberGenerator for body generation.
                 }.also {
@@ -1192,6 +1199,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     { src, kind -> src.toFirSourceElement(kind) },
                     addValueParameterAnnotations,
                     { it.isVararg },
+                    symbolIdFactory,
                 )
             )
         }
@@ -1418,6 +1426,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
     toFirSource: (TBase, KtFakeSourceElementKind) -> KtSourceElement,
     addValueParameterAnnotations: FirValueParameterBuilder.(TParameter) -> Unit,
     isVararg: (TParameter) -> Boolean,
+    symbolIdFactory: FirSymbolIdFactory,
 ): FirNamedFunction {
     fun generateComponentAccess(
         parameterSource: KtSourceElement?,
@@ -1456,7 +1465,10 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         origin = declarationOrigin
         returnTypeRef = classTypeRef
         name = StandardNames.DATA_CLASS_COPY
-        symbol = FirNamedFunctionSymbol(CallableId(classId.packageFqName, classId.relativeClassName, StandardNames.DATA_CLASS_COPY))
+        symbol = FirNamedFunctionSymbol(
+            symbolIdFactory.sourceBased(copySourceElement),
+            CallableId(classId.packageFqName, classId.relativeClassName, StandardNames.DATA_CLASS_COPY),
+        )
         dispatchReceiverType = dispatchReceiver
         resolvePhase = this@createDataClassCopyFunction.resolvePhase
         // We need to resolve annotations on the data class. It's not possible to do it in the RAW_FIR phase.
@@ -1484,7 +1496,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
                 origin = declarationOrigin
                 returnTypeRef = propertyReturnTypeRef
                 name = propertyName
-                symbol = FirValueParameterSymbol()
+                symbol = FirValueParameterSymbol(symbolIdFactory.sourceBased(parameterSource))
                 defaultValue = generateComponentAccess(parameterSource, firProperty, classTypeRef, propertyReturnTypeRef)
                 isCrossinline = false
                 isNoinline = false

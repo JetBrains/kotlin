@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.deserialization.deserializationExtension
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -242,7 +243,7 @@ internal fun deserializeClassToSymbol(
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)
 
         if (classId == StandardClassIds.Enum) {
-            addCloneForEnumIfNeeded(classOrObject, sourceElement, context.dispatchReceiver)
+            addCloneForEnumIfNeeded(classOrObject, sourceElement, context.dispatchReceiver, session)
         }
 
         session.deserializationExtension?.run {
@@ -327,6 +328,7 @@ private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(
     classOrObject: KtClassOrObject,
     classSourceElement: KtSourceElement,
     dispatchReceiver: ConeClassLikeType?,
+    session: FirSession,
 ) {
     val hasCloneFunction = classOrObject.declarations
         .any { it is KtNamedFunction && it.name == "clone" && it.valueParameters.isEmpty() }
@@ -359,7 +361,7 @@ private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(
         isLocal = false
 
         name = cloneCallableId.callableName
-        symbol = FirNamedFunctionSymbol(cloneCallableId)
+        symbol = FirNamedFunctionSymbol(session.symbolIdFactory.sourceBased(sourceElement), cloneCallableId)
         dispatchReceiverType = dispatchReceiver!!
     }
 }

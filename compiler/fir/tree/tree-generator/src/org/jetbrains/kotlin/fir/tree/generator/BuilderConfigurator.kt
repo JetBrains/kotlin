@@ -38,7 +38,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         }
 
         builder(file) {
-            default("symbol", "FirFileSymbol()")
+//            default("symbol", "FirFileSymbol()")
         }
 
         builder(regularClass) {
@@ -409,7 +409,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(anonymousInitializer) {
             parents += declarationBuilder
-            default("symbol", "FirAnonymousInitializerSymbol()")
+//            default("symbol", "FirAnonymousInitializerSymbol()")
         }
 
         builder(spreadArgumentExpression) {

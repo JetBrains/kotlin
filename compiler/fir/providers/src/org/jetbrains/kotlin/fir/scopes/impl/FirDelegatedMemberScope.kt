@@ -95,6 +95,8 @@ class FirDelegatedMemberScope(
 
             val delegatedSymbol =
                 FirFakeOverrideGenerator.createCopyForFirFunction(
+                    // TODO (marco): Is it OK to have a unique symbol here? It looks like the symbol is not cached but rather passed to the
+                    //  processor directly.
                     FirNamedFunctionSymbol(CallableId(containingClass.classId, functionSymbol.name)),
                     original,
                     derivedClassLookupTag = dispatchReceiverType.lookupTag,
@@ -176,6 +178,8 @@ class FirDelegatedMemberScope(
 
             val delegatedSymbol =
                 FirFakeOverrideGenerator.createCopyForFirProperty(
+                    // TODO (marco): Is it OK to have a unique symbol here? It looks like the symbol is not cached but rather passed to the
+                    //  processor directly.
                     FirRegularPropertySymbol(CallableId(containingClass.classId, propertySymbol.name)),
                     original,
                     derivedClassLookupTag = dispatchReceiverType.lookupTag,

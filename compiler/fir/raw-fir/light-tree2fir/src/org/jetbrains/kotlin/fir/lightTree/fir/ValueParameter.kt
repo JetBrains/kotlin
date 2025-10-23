@@ -37,6 +37,9 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressio
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierList
 import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -127,6 +130,8 @@ class ValueParameter(
         }
 
         return buildProperty {
+            val symbolIdFactory = moduleData.session.symbolIdFactory
+
             val propertySource = firValueParameter.source?.fakeElement(KtFakeSourceElementKind.PropertyFromParameter)
             source = propertySource
             this.moduleData = moduleData
@@ -144,7 +149,7 @@ class ValueParameter(
             }
 
             isVar = this@ValueParameter.isVar
-            val propertySymbol = FirRegularPropertySymbol(callableId)
+            val propertySymbol = FirRegularPropertySymbol(symbolIdFactory.unique(), callableId)
             val remappedAnnotations = valueParameterAnnotations.map {
                 // We don't need error annotation calls here,
                 // it allows us to avoid double-reporting of INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
@@ -176,6 +181,7 @@ class ValueParameter(
                 }.toMutableList(),
                 returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultBackingField),
                 isVar = isVar,
+                symbol = FirBackingFieldSymbol(symbolIdFactory.unique()),
                 propertySymbol = symbol,
                 status = status.copy(isLateInit = false),
             )
@@ -189,6 +195,7 @@ class ValueParameter(
                 origin = FirDeclarationOrigin.Source,
                 propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultGetter),
                 visibility = status.visibility,
+                symbol = FirPropertyAccessorSymbol(symbolIdFactory.unique()),
                 propertySymbol = symbol,
                 modality = status.modality,
                 isInline = modifiers.hasInline(),
@@ -204,6 +211,7 @@ class ValueParameter(
                 origin = FirDeclarationOrigin.Source,
                 propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultSetter),
                 visibility = status.visibility,
+                propertyAccessorSymbol = FirPropertyAccessorSymbol(symbolIdFactory.unique()),
                 propertySymbol = symbol,
                 modality = status.modality,
                 parameterAnnotations = remappedAnnotations.filterUseSiteTarget(SETTER_PARAMETER),

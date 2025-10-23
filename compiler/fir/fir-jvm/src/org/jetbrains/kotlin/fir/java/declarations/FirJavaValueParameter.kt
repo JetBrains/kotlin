@@ -241,6 +241,7 @@ class FirJavaValueParameterBuilder {
             attributes,
             returnTypeRef,
             name,
+            // TODO (marco): Java symbol IDs.
             symbol = FirValueParameterSymbol(),
             annotationList,
             defaultValue,

@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.scopes.deferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.asCone
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -159,6 +160,7 @@ class FirSignatureEnhancement(
                 val newReturnTypeRef = enhanceReturnType(firElement, firElement.computeDefaultQualifiers(), predefinedInfo)
 
                 return buildEnumEntryCopy(firElement) {
+                    // TODO (marco): Java symbol IDs.
                     symbol = FirEnumEntrySymbol(firElement.symbol.callableId)
                     returnTypeRef = newReturnTypeRef
                     origin = FirDeclarationOrigin.Enhancement
@@ -179,6 +181,7 @@ class FirSignatureEnhancement(
                     }
                 }
 
+                // TODO (marco): Java symbol IDs.
                 val symbol = FirFieldSymbol(original.callableId!!)
                 buildJavaField {
                     this.containingClassSymbol = owner.symbol
@@ -213,12 +216,19 @@ class FirSignatureEnhancement(
                 if (enhancedGetterSymbol == null && enhancedSetterSymbol == null) {
                     return original
                 }
+
+                val delegateSetter = enhancedSetterSymbol?.fir as FirNamedFunction? ?: setterDelegate
                 return buildSyntheticProperty {
                     moduleData = this@FirSignatureEnhancement.moduleData
                     this.name = name
+                    // TODO (marco): Java symbol IDs.
                     symbol = FirJavaOverriddenSyntheticPropertySymbol(propertySymbol.callableId, propertySymbol.getterId)
+                    // TODO (marco): Java symbol IDs.
+                    getterSymbol = FirSyntheticPropertyAccessorSymbol()
                     delegateGetter = enhancedGetterSymbol?.fir as FirNamedFunction? ?: getterDelegate
-                    delegateSetter = enhancedSetterSymbol?.fir as FirNamedFunction? ?: setterDelegate
+                    // TODO (marco): Java symbol IDs.
+                    setterSymbol = delegateSetter?.let { FirSyntheticPropertyAccessorSymbol() }
+                    this.delegateSetter = delegateSetter
                     customStatus = enhanceStatus(firElement.status, predefinedEnhancementInfo = null, overriddenMembers = overridden)
                     deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
                     dispatchReceiverType = firElement.dispatchReceiverType
@@ -362,6 +372,7 @@ class FirSignatureEnhancement(
 
         val function = when (firMethod) {
             is FirConstructor -> {
+                // TODO (marco): Java symbol IDs.
                 val symbol = FirConstructorSymbol(methodId).also { functionSymbol = it }
                 val builder: FirAbstractConstructorBuilder = if (firMethod.isPrimary) {
                     FirPrimaryConstructorBuilder().apply {
@@ -413,11 +424,15 @@ class FirSignatureEnhancement(
                     status = enhanceStatus(firMethod.status, predefinedEnhancementInfo, overriddenMembers)
                     isLocal = false
                     symbol = if (isIntersectionOverride) {
+                        // TODO (marco): Java symbol IDs.
                         FirIntersectionOverrideFunctionSymbol(
-                            methodId, overriddenMembers.map { it.symbol },
+                            FirUniqueSymbolId(),
+                            methodId,
+                            overriddenMembers.map { it.symbol },
                             containsMultipleNonSubsumed = (firMethod.symbol as? FirIntersectionCallableSymbol)?.containsMultipleNonSubsumed == true,
                         )
                     } else {
+                        // TODO (marco): Java symbol IDs.
                         FirNamedFunctionSymbol(methodId)
                     }.also { functionSymbol = it }
 
@@ -445,6 +460,7 @@ class FirSignatureEnhancement(
                             typeRef = receiverType
                             annotations += firMethod.valueParameters.first().annotations
                             source = receiverType.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
+                            // TODO (marco): Java symbol IDs.
                             symbol = FirReceiverParameterSymbol()
                             moduleData = this@FirSignatureEnhancement.moduleData
                             origin = declarationOrigin
@@ -548,6 +564,7 @@ class FirSignatureEnhancement(
                 typeParameterSubstitutor?.substituteOrNull(enhancedReturnType.coneType)
             )
             this.name = valueParameter.name
+            // TODO (marco): Java symbol IDs.
             symbol = FirValueParameterSymbol()
             defaultValue = valueParameter.defaultValue
             isCrossinline = valueParameter.isCrossinline
@@ -568,6 +585,7 @@ class FirSignatureEnhancement(
         this += firMethod.typeParameters.map { typeParameter ->
             val newTypeParameter = if (typeParameter is FirTypeParameter) buildTypeParameterCopy(typeParameter) {
                 origin = declarationOrigin
+                // TODO (marco): Java symbol IDs.
                 this.symbol = FirTypeParameterSymbol()
                 containingDeclarationSymbol = functionSymbol
             } else typeParameter

@@ -581,6 +581,7 @@ class FirSyntheticCallGenerator(
     ): FirNamedReferenceWithCandidate {
         check(argumentList.arguments.size == 1)
         val callableId = SyntheticCallableId.ACCEPT_SPECIFIC_TYPE
+        // TODO (marco): Same here as with the other TODO: unsure about uniqueness.
         val functionSymbol = FirSyntheticFunctionSymbol(callableId)
         // fun accept(p: <parameterTypeRef>): Unit
         val function =
@@ -784,7 +785,9 @@ class FirSyntheticCallGenerator(
     }
 
     private fun ConeKotlinType.toValueParameter(
-        nameAsString: String, functionSymbol: FirFunctionSymbol<*>, isVararg: Boolean = false
+        nameAsString: String,
+        functionSymbol: FirFunctionSymbol<*>,
+        isVararg: Boolean = false,
     ): FirValueParameter {
         val name = Name.identifier(nameAsString)
         return buildValueParameter {
@@ -796,6 +799,9 @@ class FirSyntheticCallGenerator(
             isCrossinline = false
             isNoinline = false
             this.isVararg = isVararg
+            // TODO (marco): I'm not sure about symbol uniqueness here. It looks like the result might be used outside of the cached
+            //  synthetic calls (e.g. via `generateCalleeReferenceToFunctionWithSingleParameterOfSpecifiedType`). Constraint tests will
+            //  probably find an issue here, though, if there is one.
             symbol = FirValueParameterSymbol()
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }

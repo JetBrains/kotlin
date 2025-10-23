@@ -22,6 +22,15 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPsiUtil.unquoteIdentifier
 
+/**
+ * Builds raw FIR from [LighterASTNode] elements.
+ *
+ * Light tree builders are used in compiler mode, where the light tree AST is the default representation. In Analysis API mode, light tree
+ * builders are not used and raw FIR is instead built from PSI.
+ *
+ * In compiler mode, all symbol IDs are unique. Consequently, light tree builders only build unique
+ * [FirSymbolId][org.jetbrains.kotlin.fir.symbols.id.FirSymbolId]s via the [symbolIdFactory].
+ */
 abstract class AbstractLightTreeRawFirBuilder(
     baseSession: FirSession,
     val tree: FlyweightCapableTreeStructure<LighterASTNode>,

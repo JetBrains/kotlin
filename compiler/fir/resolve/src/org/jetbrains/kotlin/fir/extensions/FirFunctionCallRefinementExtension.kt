@@ -104,6 +104,7 @@ abstract class FirFunctionCallRefinementExtension(session: FirSession) : FirExte
 @OptIn(FirExtensionApiInternals::class)
 val FirExtensionService.callRefinementExtensions: List<FirFunctionCallRefinementExtension> by FirExtensionService.registeredExtensions()
 
+// TODO (marco): Replace with symbol ID??
 @OptIn(FirExtensionApiInternals::class)
 internal class OriginalCallData(val originalSymbol: FirNamedFunctionSymbol, val extension: FirFunctionCallRefinementExtension)
 

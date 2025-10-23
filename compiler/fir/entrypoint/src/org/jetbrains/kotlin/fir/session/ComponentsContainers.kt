@@ -56,6 +56,8 @@ import org.jetbrains.kotlin.fir.scopes.jvm.FirJvmDelegatedMembersFilter
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope.FirMappedSymbolStorage
 import org.jetbrains.kotlin.fir.serialization.FirProvidedDeclarationsForMetadataService
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolIdFactory
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolIdFactory
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
@@ -112,6 +114,7 @@ val firCachesFactoryForCliMode: FirCachesFactory
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerCliCompilerAndCommonComponents(languageVersionSettings: LanguageVersionSettings, isMetadataCompilation: Boolean) {
     register(FirCachesFactory::class, firCachesFactoryForCliMode)
+    register(FirSymbolIdFactory::class, FirUniqueSymbolIdFactory)
 
     registerCommonComponents(languageVersionSettings, isMetadataCompilation)
 

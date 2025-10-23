@@ -406,6 +406,7 @@ private fun JavaTypeParameter.toFirTypeParameter(
     this.moduleData = moduleData
     origin = javaOrigin(isFromSource)
     name = this@toFirTypeParameter.name
+    // TODO (marco): Java symbol IDs.
     symbol = FirTypeParameterSymbol()
     this.source = this@toFirTypeParameter.toSourceElement()
     this.containingDeclarationSymbol = containingDeclarationSymbol
@@ -433,6 +434,7 @@ private fun createDeclarationsForJavaRecord(
             this.containingClassSymbol = containingClassSymbol
             this.moduleData = moduleData
             source = recordComponent.toSourceElement(KtFakeSourceElementKind.JavaRecordComponentFunction)
+            // TODO (marco): Java symbol IDs.
             symbol = FirNamedFunctionSymbol(componentId)
             this.name = name
             isFromSource = recordComponent.isFromSource
@@ -462,6 +464,7 @@ private fun createDeclarationsForJavaRecord(
             isFromSource = javaClass.isFromSource
 
             val constructorId = CallableId(classId, classId.shortClassName)
+            // TODO (marco): Java symbol IDs.
             symbol = FirConstructorSymbol(constructorId)
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
@@ -508,6 +511,7 @@ private fun convertJavaFieldToFir(
         javaField.isEnumEntry -> buildEnumEntry {
             source = javaField.toSourceElement()
             this.moduleData = moduleData
+            // TODO (marco): Java symbol IDs.
             symbol = FirEnumEntrySymbol(fieldId)
             name = fieldName
             status = FirResolvedDeclarationStatusImpl(
@@ -531,6 +535,7 @@ private fun convertJavaFieldToFir(
             this.containingClassSymbol = containingClassSymbol
             source = javaField.toSourceElement()
             this.moduleData = moduleData
+            // TODO (marco): Java symbol IDs.
             symbol = FirFieldSymbol(fieldId)
             name = fieldName
             isFromSource = javaField.isFromSource
@@ -577,6 +582,7 @@ private fun convertJavaMethodToFir(
     val session = moduleData.session
     val methodName = javaMethod.name
     val methodId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
+    // TODO (marco): Java symbol IDs.
     val methodSymbol = FirNamedFunctionSymbol(methodId)
     val returnType = javaMethod.returnType
     val methodStatus = FirResolvedDeclarationStatusImpl(
@@ -653,6 +659,7 @@ private fun convertJavaConstructorToFir(
     javaPackage: JavaPackage?,
 ): FirJavaConstructor {
     val session = moduleData.session
+    // TODO (marco): Java symbol IDs.
     val constructorSymbol = FirConstructorSymbol(constructorId)
     val javaFirClass = classSymbol.fir as FirJavaClass
     val visibility = javaConstructor?.visibility ?: javaFirClass.originalStatus.visibility
@@ -723,6 +730,7 @@ private fun buildConstructorForAnnotationClass(
         source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
         this.moduleData = moduleData
         isFromSource = javaClass.isFromSource
+        // TODO (marco): Java symbol IDs.
         symbol = FirConstructorSymbol(constructorId)
         status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
         returnTypeRef = buildResolvedTypeRef {

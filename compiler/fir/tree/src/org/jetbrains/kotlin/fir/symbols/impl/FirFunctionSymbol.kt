@@ -17,7 +17,12 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -27,7 +32,12 @@ import org.jetbrains.kotlin.mpp.SimpleFunctionSymbolMarker
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
-sealed class FirFunctionSymbol<out D : FirFunction>(override val callableId: CallableId) : FirCallableSymbol<D>(), FunctionSymbolMarker {
+sealed class FirFunctionSymbol<out D : FirFunction>(
+    symbolId: FirSymbolId<FirFunctionSymbol<D>>,
+    override val callableId: CallableId,
+) : FirCallableSymbol<D>(symbolId), FunctionSymbolMarker {
+    abstract override val symbolId: FirSymbolId<FirFunctionSymbol<D>>
+
     override val name: Name
         get() = callableId.callableName
 
@@ -59,7 +69,16 @@ sealed class FirFunctionSymbol<out D : FirFunction>(override val callableId: Cal
 
 // ------------------------ named ------------------------
 
-open class FirNamedFunctionSymbol(callableId: CallableId) : FirFunctionSymbol<FirNamedFunction>(callableId), SimpleFunctionSymbolMarker {
+open class FirNamedFunctionSymbol(
+    override val symbolId: FirSymbolId<FirNamedFunctionSymbol>,
+    callableId: CallableId,
+) : FirFunctionSymbol<FirNamedFunction>(symbolId, callableId), SimpleFunctionSymbolMarker {
+    /**
+     * Creates a [FirNamedFunctionSymbol] with a *unique* symbol ID ([FirUniqueSymbolId]). This constructor should only be used for symbols
+     * which are stored for the lifetime of the session. In particular, named function symbols built from light tree/PSI should not use this
+     * constructor. See [FirSymbolId] for more information.
+     */
+    constructor(callableId: CallableId) : this(FirUniqueSymbolId(), callableId)
     val isSynthetic: Boolean get() = fir.isSynthetic
 }
 
@@ -75,13 +94,31 @@ interface FirIntersectionCallableSymbol {
 }
 
 class FirIntersectionOverrideFunctionSymbol(
+    override val symbolId: FirSymbolId<FirIntersectionOverrideFunctionSymbol>,
     callableId: CallableId,
     override val intersections: Collection<FirCallableSymbol<*>>,
     override val containsMultipleNonSubsumed: Boolean,
-) : FirNamedFunctionSymbol(callableId), FirIntersectionCallableSymbol
+) : FirNamedFunctionSymbol(symbolId, callableId), FirIntersectionCallableSymbol
 
-class FirConstructorSymbol(callableId: CallableId) : FirFunctionSymbol<FirConstructor>(callableId), ConstructorSymbolMarker {
-    constructor(classId: ClassId) : this(classId.callableIdForConstructor())
+class FirConstructorSymbol(
+    override val symbolId: FirSymbolId<FirConstructorSymbol>,
+    callableId: CallableId,
+) : FirFunctionSymbol<FirConstructor>(symbolId, callableId), ConstructorSymbolMarker {
+    constructor(symbolId: FirSymbolId<FirConstructorSymbol>, classId: ClassId) : this(symbolId, classId.callableIdForConstructor())
+
+    /**
+     * Creates a [FirConstructorSymbol] with a *unique* symbol ID ([FirUniqueSymbolId]). This constructor should only be used for symbols
+     * which are stored for the lifetime of the session. In particular, constructor symbols built from light tree/PSI should not use this
+     * constructor. See [FirSymbolId] for more information.
+     */
+    constructor(classId: ClassId) : this(FirUniqueSymbolId(), classId)
+
+    /**
+     * Creates a [FirConstructorSymbol] with a *unique* symbol ID ([FirUniqueSymbolId]). This constructor should only be used for symbols
+     * which are stored for the lifetime of the session. In particular, constructor symbols built from light tree/PSI should not use this
+     * constructor. See [FirSymbolId] for more information.
+     */
+    constructor(callableId: CallableId) : this(FirUniqueSymbolId(), callableId)
 
     val isPrimary: Boolean
         get() = fir.isPrimary
@@ -108,7 +145,19 @@ class FirConstructorSymbol(callableId: CallableId) : FirFunctionSymbol<FirConstr
  * a property (which never exists in sources) and
  * a getter which exists in sources and is either from Java or overrides another getter from Java.
  */
-abstract class FirSyntheticPropertySymbol(propertyId: CallableId, val getterId: CallableId) : FirRegularPropertySymbol(propertyId) {
+abstract class FirSyntheticPropertySymbol(
+    symbolId: FirSymbolId<FirSyntheticPropertySymbol>,
+    propertyId: CallableId,
+    val getterId: CallableId,
+) : FirRegularPropertySymbol(symbolId, propertyId) {
+    abstract override val symbolId: FirSymbolId<FirSyntheticPropertySymbol>
+
+    // TODO (marco): We likely need to copy unique symbol IDs as well. So `FirSymbolId.copy` which creates a new identity if the
+    //  symbol ID is unique, or just returns a new symbol ID if it's not. (Well, it's the same in both cases.) We need to return a new
+    //  symbol ID even for non-unique symbols so that the bound symbol can differ. But then, a symbol ID should always point to the same
+    //  symbol when it's equal, so does copy maybe only make sense for unique symbol IDs?
+    //  Also, does the copy need to be distinct from the original even with source-based symbol IDs? If so, we cannot just use the same
+    //  source-based symbol ID!
     abstract fun copy(): FirSyntheticPropertySymbol
 
     @SymbolInternals
@@ -124,9 +173,23 @@ abstract class FirSyntheticPropertySymbol(propertyId: CallableId, val getterId: 
 
 // ------------------------ unnamed ------------------------
 
-sealed class FirFunctionWithoutNameSymbol<out F : FirFunction>(stubName: Name) : FirFunctionSymbol<F>(CallableId(FqName("special"), stubName))
+sealed class FirFunctionWithoutNameSymbol<out F : FirFunction>(
+    symbolId: FirSymbolId<FirFunctionWithoutNameSymbol<F>>,
+    stubName: Name,
+) : FirFunctionSymbol<F>(symbolId, CallableId(FqName("special"), stubName)) {
+    abstract override val symbolId: FirSymbolId<FirFunctionWithoutNameSymbol<F>>
+}
 
-class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunction>(Name.identifier("anonymous")) {
+class FirAnonymousFunctionSymbol(
+    override val symbolId: FirSymbolId<FirAnonymousFunctionSymbol>,
+) : FirFunctionWithoutNameSymbol<FirAnonymousFunction>(symbolId, Name.identifier("anonymous")) {
+    /**
+     * Creates a [FirAnonymousFunctionSymbol] with a *unique* symbol ID ([FirUniqueSymbolId]). This constructor should only be used for
+     * symbols which are stored for the lifetime of the session. In particular, anonymous function symbols built from light tree/PSI should
+     * not use this constructor. See [FirSymbolId] for more information.
+     */
+    constructor() : this(FirUniqueSymbolId())
+
     val label: FirLabel? get() = fir.label
     val isLambda: Boolean get() = fir.isLambda
     val inlineStatus: InlineStatus get() = fir.inlineStatus
@@ -144,14 +207,27 @@ class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunc
         }
 }
 
-open class FirPropertyAccessorSymbol : FirFunctionWithoutNameSymbol<FirPropertyAccessor>(Name.identifier("accessor")) {
+open class FirPropertyAccessorSymbol(
+    override val symbolId: FirSymbolId<FirPropertyAccessorSymbol>,
+) : FirFunctionWithoutNameSymbol<FirPropertyAccessor>(symbolId, Name.identifier("accessor")) {
+    /**
+     * Creates a [FirPropertyAccessorSymbol] with a *unique* symbol ID ([FirUniqueSymbolId]). This constructor should only be used for
+     * symbols which are stored for the lifetime of the session. In particular, property accessor symbols built from light tree/PSI should
+     * not use this constructor. See [FirSymbolId] for more information.
+     */
+    constructor() : this(FirUniqueSymbolId())
+
     val isGetter: Boolean get() = fir.isGetter
     val isSetter: Boolean get() = fir.isSetter
     val isDefault: Boolean get() = fir is FirDefaultPropertyAccessor
     open val propertySymbol: FirPropertySymbol get() = fir.propertySymbol
 }
 
-class FirSyntheticPropertyAccessorSymbol : FirPropertyAccessorSymbol() {
+class FirSyntheticPropertyAccessorSymbol(
+    override val symbolId: FirSymbolId<FirSyntheticPropertyAccessorSymbol>,
+) : FirPropertyAccessorSymbol(symbolId) {
+    constructor() : this(FirUniqueSymbolId())
+
     override val propertySymbol: FirSyntheticPropertySymbol
         get() = super.propertySymbol as FirSyntheticPropertySymbol
 
@@ -161,5 +237,11 @@ class FirSyntheticPropertyAccessorSymbol : FirPropertyAccessorSymbol() {
 
 interface FirErrorCallableSymbol<F : FirCallableDeclaration>
 
-class FirErrorFunctionSymbol : FirFunctionWithoutNameSymbol<FirErrorFunction>(Name.identifier("error")),
-    FirErrorCallableSymbol<FirErrorFunction>
+class FirErrorFunctionSymbol(
+    override val symbolId: FirSymbolId<FirErrorFunctionSymbol>,
+) : FirFunctionWithoutNameSymbol<FirErrorFunction>(symbolId, Name.identifier("error")),
+    FirErrorCallableSymbol<FirErrorFunction> {
+    // TODO (marco): Unique symbol ID OK here as default? It should probably not be an issue since we cannot expect two errors to be equal
+    //  even if they occurred in the same position, right?
+    constructor() : this(FirUniqueSymbolId())
+}

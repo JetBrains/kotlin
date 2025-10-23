@@ -579,17 +579,20 @@ open class PsiRawFirBuilder(
                         annotations += accessorAnnotationsFromProperty
                         extractAnnotationsTo(this)
                         this@PsiRawFirBuilder.context.firFunctionTargets += accessorTarget
-                        symbol = FirPropertyAccessorSymbol()
+                        symbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBased(source))
                         extractValueParametersTo(
                             this, symbol, ValueParameterDeclaration.SETTER, propertyTypeRefToUse, parameterAnnotationsFromProperty
                         )
                         if (!isGetter && valueParameters.isEmpty()) {
+                            val valueParameterSource =
+                                source.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultSetterValueParameter)
+
                             valueParameters += buildDefaultSetterValueParameter {
-                                this.source = source.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultSetterValueParameter)
+                                this.source = valueParameterSource
                                 moduleData = baseModuleData
                                 origin = FirDeclarationOrigin.Source
                                 returnTypeRef = propertyTypeRefToUse
-                                symbol = FirValueParameterSymbol()
+                                symbol = FirValueParameterSymbol(symbolIdFactory.sourceBased(valueParameterSource))
                                 annotations += parameterAnnotationsFromProperty
                             }
                         }
@@ -682,10 +685,11 @@ open class PsiRawFirBuilder(
             val status = obtainPropertyComponentStatus(componentVisibility, this, property)
             val backingFieldInitializer = this?.toInitializerExpression()
             val returnType = this?.typeReference.toFirOrImplicitType()
-            val source = this?.toFirSourceElement()
             return if (this != null) {
+                val sourceElement = this.toFirSourceElement()
+
                 buildBackingField {
-                    this.source = source
+                    this.source = sourceElement
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = returnType
@@ -693,20 +697,23 @@ open class PsiRawFirBuilder(
                     extractAnnotationsTo(this)
                     this.annotations += annotationsFromProperty
                     name = BACKING_FIELD
-                    symbol = FirBackingFieldSymbol()
+                    symbol = FirBackingFieldSymbol(symbolIdFactory.sourceBased(sourceElement))
                     this.propertySymbol = propertySymbol
                     this.initializer = backingFieldInitializer
                     this.isVar = property.isVar
                     this.isVal = !property.isVar
                 }
             } else {
+                val sourceElement = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor.DefaultBackingField)
+
                 FirDefaultPropertyBackingField(
                     moduleData = baseModuleData,
                     origin = FirDeclarationOrigin.Source,
-                    source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor.DefaultBackingField),
+                    source = sourceElement,
                     annotations = annotationsFromProperty.toMutableList(),
                     returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultBackingField),
                     isVar = property.isVar,
+                    symbol = FirBackingFieldSymbol(symbolIdFactory.sourceBased(sourceElement)),
                     propertySymbol = propertySymbol,
                     status = status,
                 )
@@ -727,7 +734,7 @@ open class PsiRawFirBuilder(
                 origin = FirDeclarationOrigin.Source
                 isVararg = isVarArg
                 this.name = name
-                symbol = FirValueParameterSymbol()
+                symbol = FirValueParameterSymbol(symbolIdFactory.sourceBased(parameterSource))
                 withContainerSymbol(symbol, isLocal = !valueParameterDeclaration.isAnnotationOwner) {
                     returnTypeRef = when {
                         typeReference != null -> typeReference.toFirOrErrorType()
@@ -797,9 +804,10 @@ open class PsiRawFirBuilder(
             }
 
             val propertyName = nameAsSafeName
-            val propertySymbol = FirRegularPropertySymbol(callableIdForName(propertyName))
+            val propertySource = toFirSourceElement(KtFakeSourceElementKind.PropertyFromParameter)
+            val propertySymbol = FirRegularPropertySymbol(symbolIdFactory.sourceBased(propertySource), callableIdForName(propertyName))
+
             withContainerSymbol(propertySymbol) {
-                val propertySource = toFirSourceElement(KtFakeSourceElementKind.PropertyFromParameter)
                 val parameterAnnotations = mutableListOf<FirAnnotationCall>()
                 for (annotationEntry in annotationEntries) {
                     parameterAnnotations += annotationEntry.convert<FirAnnotationCall>().let {
@@ -837,6 +845,7 @@ open class PsiRawFirBuilder(
                         }.toMutableList(),
                         returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultBackingField),
                         isVar = isVar,
+                        symbol = FirBackingFieldSymbol(symbolIdFactory.sourceBased(defaultBackingFieldSource)),
                         propertySymbol = symbol,
                         status = status.copy(isLateInit = false),
                     )
@@ -851,6 +860,7 @@ open class PsiRawFirBuilder(
                         origin = FirDeclarationOrigin.Source,
                         propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultGetter),
                         visibility = status.visibility,
+                        symbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBased(defaultGetterSource)),
                         propertySymbol = symbol,
                         modality = status.modality,
                         isInline = hasModifier(INLINE_KEYWORD),
@@ -866,6 +876,7 @@ open class PsiRawFirBuilder(
                         origin = FirDeclarationOrigin.Source,
                         propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultSetter),
                         visibility = status.visibility,
+                        propertyAccessorSymbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBased(defaultSetterSource)),
                         propertySymbol = symbol,
                         modality = status.modality,
                         parameterAnnotations = parameterAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
@@ -926,12 +937,13 @@ open class PsiRawFirBuilder(
 
         private fun extractTypeParameter(parameter: KtTypeParameter, declarationSymbol: FirBasedSymbol<*>): FirTypeParameter {
             val parameterName = parameter.nameAsSafeName
+            val sourceElement = parameter.toFirSourceElement()
             return buildTypeParameter {
-                source = parameter.toFirSourceElement()
+                source = sourceElement
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 name = parameterName
-                symbol = FirTypeParameterSymbol()
+                symbol = FirTypeParameterSymbol(symbolIdFactory.sourceBased(sourceElement))
                 containingDeclarationSymbol = declarationSymbol
                 variance = parameter.variance
                 isReified = parameter.hasModifier(REIFIED_KEYWORD)
@@ -1044,7 +1056,10 @@ open class PsiRawFirBuilder(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Synthetic.DelegateField
                 name = NameUtils.delegateFieldName(fieldOrd)
-                symbol = FirFieldSymbol(CallableId(this@PsiRawFirBuilder.context.currentClassId, name))
+                symbol = FirFieldSymbol(
+                    symbolIdFactory.sourceBased(delegateSource),
+                    CallableId(this@PsiRawFirBuilder.context.currentClassId, name),
+                )
                 returnTypeRef = type
                 withContainerSymbol(symbol) {
                     initializer = buildOrLazyExpression(delegateSource) {
@@ -1184,11 +1199,10 @@ open class PsiRawFirBuilder(
             isImplicitlyActual: Boolean = false,
             isKotlinAny: Boolean = false,
         ): FirConstructor {
-            val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
+            val constructorSource = this?.toFirSourceElement()
+                ?: owner.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
+            val constructorSymbol = FirConstructorSymbol(symbolIdFactory.sourceBased(constructorSource), callableIdForClassConstructor())
             withContainerSymbol(constructorSymbol) {
-                val constructorSource = this?.toFirSourceElement()
-                    ?: owner.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
-
                 fun buildDelegatedCall(
                     superTypeCallEntry: KtSuperTypeCallEntry?,
                     delegatedTypeRef: FirTypeRef,
@@ -1284,8 +1298,10 @@ open class PsiRawFirBuilder(
                 BodyBuildingMode.NORMAL -> file.properPackageFqName
                 BodyBuildingMode.LAZY_BODIES -> file.stub?.getPackageFqName() ?: file.properPackageFqName
             }
+            val sourceElement = file.toFirSourceElement()
             return buildFile {
-                source = file.toFirSourceElement()
+                symbol = FirFileSymbol(symbolIdFactory.sourceBased(sourceElement))
+                source = sourceElement
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 name = file.name
@@ -1379,8 +1395,7 @@ open class PsiRawFirBuilder(
             setup: FirScriptBuilder.() -> Unit,
         ): FirScript {
             val scriptName = firScriptName(fileName)
-            val scriptSymbol = FirScriptSymbol(context.packageFqName.child(scriptName))
-
+            val scriptSymbol = FirScriptSymbol(symbolIdFactory.sourceBased(scriptSource), context.packageFqName.child(scriptName))
 
             return buildScript {
                 source = scriptSource
@@ -1453,7 +1468,11 @@ open class PsiRawFirBuilder(
             val snippetName = NameUtils.getSnippetTargetClassName(Name.special("<$fileName>"))
             val classSymbol = FirRegularClassSymbol(ClassId(FqName.ROOT, snippetName))
 
-            val snippetSymbol = FirReplSnippetSymbol(classSymbol)
+            // TODO (marco): This one is a little more tricky. We have a script source here, so a source-based symbol ID might be equal to
+            //  the script's symbol ID. Furthermore, we probably cannot restore a repl snippet, so this need to be a non-restorable symbol
+            //  ID at the very least.
+            //  For now, we use `unique`, but we need to investigate the proper approach separately.
+            val snippetSymbol = FirReplSnippetSymbol(symbolIdFactory.unique(), classSymbol)
 
             val evalName = Name.identifier("$\$eval")
 
@@ -1648,7 +1667,7 @@ open class PsiRawFirBuilder(
             source = file.toFirSourceElement()
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
-            symbol = FirCodeFragmentSymbol()
+            symbol = FirCodeFragmentSymbol(symbolIdFactory.unique()) // TODO (marco): Unique symbol ID in code fragments?
             withContainerSymbol(symbol) {
                 block = buildOrLazyBlock {
                     withForcedLocalContext {
@@ -1665,7 +1684,8 @@ open class PsiRawFirBuilder(
 
         private fun convertTypeCodeFragmentBlock(file: KtTypeCodeFragment): FirBlock {
             return buildBlock {
-                val functionSymbol = FirAnonymousFunctionSymbol()
+                // TODO (marco): Unique symbol ID in code fragments?
+                val functionSymbol = FirAnonymousFunctionSymbol(symbolIdFactory.unique())
 
                 statements += buildAnonymousFunctionExpression {
                     anonymousFunction = buildAnonymousFunction {
@@ -1685,7 +1705,8 @@ open class PsiRawFirBuilder(
                             source = file.toFirSourceElement(KtFakeSourceElementKind.CodeFragment)
                             name = StandardNames.DEFAULT_VALUE_PARAMETER
 
-                            symbol = FirValueParameterSymbol()
+                            // TODO (marco): Unique symbol ID in code fragments?
+                            symbol = FirValueParameterSymbol(symbolIdFactory.unique())
                             containingDeclarationSymbol = functionSymbol
 
                             returnTypeRef = file.getContentElement().toFirOrErrorType()
@@ -1724,10 +1745,13 @@ open class PsiRawFirBuilder(
         ): FirDeclaration {
             val ktEnumEntry = this@toFirEnumEntry
             val containingClassIsExpectClass = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
-            val enumSymbol = FirEnumEntrySymbol(callableIdForName(nameAsSafeName))
+
+            val sourceElement = toFirSourceElement()
+            val enumSymbol = FirEnumEntrySymbol(symbolIdFactory.sourceBased(sourceElement), callableIdForName(nameAsSafeName))
+
             return withContainerSymbol(enumSymbol) {
                 buildEnumEntry {
-                    source = toFirSourceElement()
+                    source = sourceElement
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = delegatedEnumSelfTypeRef
@@ -1755,7 +1779,9 @@ open class PsiRawFirBuilder(
                                     origin = FirDeclarationOrigin.Source
                                     classKind = ClassKind.ENUM_ENTRY
                                     scopeProvider = this@PsiRawFirBuilder.baseScopeProvider
-                                    symbol = FirAnonymousObjectSymbol(this@PsiRawFirBuilder.context.packageFqName)
+                                    // TODO (marco): Is unique fine here or do we need a non-restorable, source-based symbol? (Cannot
+                                    //  restore because it's local.) Can this local symbol be referenced from anywhere outside the body?
+                                    symbol = FirAnonymousObjectSymbol(symbolIdFactory.unique(), this@PsiRawFirBuilder.context.packageFqName)
                                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
 
                                     val delegatedEntrySelfType = buildResolvedTypeRef {
@@ -1828,8 +1854,10 @@ open class PsiRawFirBuilder(
                 }
 
                 contextList.contextReceivers().mapTo(this) { contextReceiverElement ->
+                    val contextReceiverSource = contextReceiverElement.toFirSourceElement()
+
                     buildValueParameter {
-                        this.source = contextReceiverElement.toFirSourceElement()
+                        this.source = contextReceiverSource
                         this.moduleData = baseModuleData
                         this.origin = FirDeclarationOrigin.Source
 
@@ -1839,7 +1867,7 @@ open class PsiRawFirBuilder(
                         // We're abusing the value parameter name for the label/type name of legacy context receivers.
                         // Luckily, legacy context receivers are getting removed soon.
                         this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                        this.symbol = FirValueParameterSymbol()
+                        this.symbol = FirValueParameterSymbol(symbolIdFactory.sourceBased(contextReceiverSource))
                         withContainerSymbol(this.symbol) {
                             this.returnTypeRef = contextReceiverElement.typeReference().toFirOrErrorType()
                         }
@@ -1859,7 +1887,7 @@ open class PsiRawFirBuilder(
                 isExpect = classIsExpect,
                 forceLocalContext = isLocalWithinParent,
             ) {
-                val classSymbol = FirRegularClassSymbol(context.currentClassId)
+                val classSymbol = FirRegularClassSymbol(symbolIdFactory.sourceBased(sourceElement), context.currentClassId)
                 withContainerSymbol(classSymbol) {
                     val isLocal = context.inLocalContext
                     val classKind = when (classOrObject) {
@@ -2020,7 +2048,9 @@ open class PsiRawFirBuilder(
                         origin = FirDeclarationOrigin.Source
                         classKind = ClassKind.CLASS
                         scopeProvider = baseScopeProvider
-                        symbol = FirAnonymousObjectSymbol(context.packageFqName)
+                        // TODO (marco): Is unique fine here or do we need a non-restorable, source-based symbol? (Cannot restore because
+                        //  it's local.)
+                        symbol = FirAnonymousObjectSymbol(symbolIdFactory.unique(), context.packageFqName)
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
                         val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
@@ -2062,10 +2092,12 @@ open class PsiRawFirBuilder(
             val typeAliasIsExpect = typeAlias.hasExpectModifier() || context.containerIsExpect
             return withChildClassName(typeAlias.nameAsSafeName, isExpect = typeAliasIsExpect) {
                 buildTypeAlias {
-                    symbol = FirTypeAliasSymbol(context.currentClassId)
+                    val sourceElement = typeAlias.toFirSourceElement()
+                    symbol = FirTypeAliasSymbol(symbolIdFactory.sourceBased(sourceElement), context.currentClassId)
+
                     val isInner = typeAlias.hasInnerModifier()
                     withContainerSymbol(symbol) {
-                        source = typeAlias.toFirSourceElement()
+                        source = sourceElement
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
                         scopeProvider = this@PsiRawFirBuilder.baseScopeProvider
@@ -2096,12 +2128,14 @@ open class PsiRawFirBuilder(
         }
 
         override fun visitNamedFunction(function: KtNamedFunction, data: FirElement?): FirElement {
+            val functionSource = function.toFirSourceElement()
             val isAnonymousFunction = function.isAnonymous
             val isLocalFunction = function.isLocal
+
             val functionSymbol: FirFunctionSymbol<*> = if (isAnonymousFunction) {
-                FirAnonymousFunctionSymbol()
+                FirAnonymousFunctionSymbol(symbolIdFactory.sourceBased(functionSource))
             } else {
-                FirNamedFunctionSymbol(callableIdForName(function.nameAsSafeName))
+                FirNamedFunctionSymbol(symbolIdFactory.sourceBased(functionSource), callableIdForName(function.nameAsSafeName))
             }
 
             withContainerSymbol(functionSymbol, isLocalFunction) {
@@ -2112,15 +2146,11 @@ open class PsiRawFirBuilder(
                     typeReference.toFirOrImplicitType()
                 }
 
-                val receiverTypeCalculator: (() -> FirTypeRef)? = function.receiverTypeReference?.let {
-                    { it.toFirType() }
-                }
-
                 val labelName: String?
 
                 val functionBuilder = if (isAnonymousFunction) {
                     FirAnonymousFunctionBuilder().apply {
-                        receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
+                        receiverParameter = function.receiverTypeReference?.createReceiverParameter(functionSymbol)
                         symbol = functionSymbol as FirAnonymousFunctionSymbol
                         isLambda = false
                         hasExplicitParameterList = true
@@ -2153,7 +2183,7 @@ open class PsiRawFirBuilder(
                     }
                 } else {
                     FirNamedFunctionBuilder().apply {
-                        receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
+                        receiverParameter = function.receiverTypeReference?.createReceiverParameter(functionSymbol)
                         name = function.nameAsSafeName
                         labelName = context.getLastLabel(function)?.name ?: runIf(!name.isSpecial) { name.identifier }
                         symbol = functionSymbol as FirNamedFunctionSymbol
@@ -2177,7 +2207,6 @@ open class PsiRawFirBuilder(
                 }
 
                 val target = FirFunctionTarget(labelName, isLambda = false)
-                val functionSource = function.toFirSourceElement()
                 val firFunction = functionBuilder.apply {
                     source = functionSource
                     moduleData = baseModuleData
@@ -2229,6 +2258,16 @@ open class PsiRawFirBuilder(
             }
         }
 
+        private fun KtTypeReference.createReceiverParameter(containingCallableSymbol: FirCallableSymbol<*>): FirReceiverParameter {
+            val sourceElement = toFirSourceElement()
+            return createReceiverParameter(
+                symbolIdFactory.sourceBased(sourceElement),
+                { this.toFirType(sourceElement) },
+                baseModuleData,
+                containingCallableSymbol,
+            )
+        }
+
         private fun KtDeclarationWithBody.obtainContractDescription(): FirContractDescription? {
             return when (val description = contractDescription) {
                 null -> null
@@ -2257,7 +2296,10 @@ open class PsiRawFirBuilder(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = FirImplicitTypeRefImplWithoutSource
-                symbol = FirAnonymousFunctionSymbol()
+                // TODO (marco): This looks potentially unrestorable. So we should probably use a permanent symbol ID here, right?
+                //  But I think in this case, we need to just test if `resolveToFirSymbol` can do it first. Probably with test-wide
+                //  restoration checks.
+                symbol = FirAnonymousFunctionSymbol(symbolIdFactory.sourceBased(literalSource))
                 receiverParameter = literalSource.asReceiverParameter(moduleData, symbol)
                 isLambda = true
                 hasExplicitParameterList = expression.functionLiteral.arrow != null
@@ -2266,15 +2308,17 @@ open class PsiRawFirBuilder(
                 for (valueParameter in literal.valueParameters) {
                     val multiDeclaration = valueParameter.destructuringDeclaration
                     valueParameters += if (multiDeclaration != null) {
+                        val valueParameterSource = valueParameter.toFirSourceElement()
                         val name = SpecialNames.DESTRUCT
+
                         val multiParameter = buildValueParameter {
-                            source = valueParameter.toFirSourceElement()
+                            source = valueParameterSource
                             containingDeclarationSymbol = this@buildAnonymousFunction.symbol
                             moduleData = baseModuleData
                             origin = FirDeclarationOrigin.Source
                             returnTypeRef = valueParameter.typeReference.toFirOrImplicitType()
                             this.name = name
-                            symbol = FirValueParameterSymbol()
+                            symbol = FirValueParameterSymbol(symbolIdFactory.sourceBased(valueParameterSource))
                             isCrossinline = false
                             isNoinline = false
                             isVararg = false
@@ -2356,9 +2400,10 @@ open class PsiRawFirBuilder(
         ): FirConstructor {
             val target = FirFunctionTarget(labelName = null, isLambda = false)
             return buildConstructor {
-                symbol = FirConstructorSymbol(callableIdForClassConstructor())
+                val sourceElement = this@toFirConstructor.toFirSourceElement()
+                symbol = FirConstructorSymbol(symbolIdFactory.sourceBased(sourceElement), callableIdForClassConstructor())
                 withContainerSymbol(symbol) {
-                    source = this@toFirConstructor.toFirSourceElement()
+                    source = sourceElement
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = selfTypeRef
@@ -2453,19 +2498,19 @@ open class PsiRawFirBuilder(
                 (isLocal || isInsideScript) && nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                 else -> nameAsSafeName
             }
+
+            val propertySource = toFirSourceElement()
             val propertySymbol = if (isLocal) {
                 // TODO: KT-75301: consider setting some special visibility for isFromReplSnippet == true case
-                FirLocalPropertySymbol()
+                FirLocalPropertySymbol(symbolIdFactory.sourceBased(propertySource))
             } else {
-                FirRegularPropertySymbol(callableIdForName(propertyName))
+                FirRegularPropertySymbol(symbolIdFactory.sourceBased(propertySource), callableIdForName(propertyName))
             }
 
             withContainerSymbol(propertySymbol, isLocal) {
                 val propertyType = typeReference.toFirOrImplicitType()
                 val isVar = isVar
                 val propertyInitializer = toInitializerExpression()
-
-                val propertySource = toFirSourceElement()
 
                 return buildProperty {
                     source = propertySource
@@ -2475,9 +2520,7 @@ open class PsiRawFirBuilder(
                     name = propertyName
                     this.isVar = isVar
 
-                    receiverParameter = receiverTypeReference?.let {
-                        createReceiverParameter({ it.toFirType() }, moduleData, propertySymbol)
-                    }
+                    receiverParameter = receiverTypeReference?.createReceiverParameter(propertySymbol)
 
                     initializer = propertyInitializer
                     isLocal = context.inLocalContext
@@ -2508,15 +2551,21 @@ open class PsiRawFirBuilder(
                                     sourceWhenInvalidExpression = this@toFirProperty
                                 )
 
-                            val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
-                                val delegateFirExpression = extractDelegateExpression()
-                                source = delegateFirExpression.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
+                            val delegateFirExpression = extractDelegateExpression()
+
+                            val delegateSource =
+                                delegateFirExpression.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
                                     ?: this@toFirProperty.delegate?.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)
+                                    ?: error("Expected a delegate source since the `${KtProperty::class.simpleName}` has a delegate.")
+
+                            val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
+                                source = delegateSource
                                 expression = delegateFirExpression
                             }
 
                             generateAccessorsByDelegate(
                                 delegateBuilder,
+                                delegateSource,
                                 baseModuleData,
                                 ownerRegularOrAnonymousObjectSymbol = null,
                                 context = context,
@@ -2572,6 +2621,8 @@ open class PsiRawFirBuilder(
                                     )
                                 }
 
+                                // TODO (marco): We have different sources depending on whether the body is lazy or not. Do we have to take
+                                //  this into account for the symbol ID?
                                 val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                                     val delegateExpression = extractDelegateExpression()
                                     source = buildOrLazy(
@@ -2594,6 +2645,7 @@ open class PsiRawFirBuilder(
 
                                 generateAccessorsByDelegate(
                                     delegateBuilder,
+                                    fakeDelegateSource,
                                     baseModuleData,
                                     ownerRegularOrAnonymousObjectSymbol,
                                     context,
@@ -2634,8 +2686,11 @@ open class PsiRawFirBuilder(
             allowLazyBody: Boolean = true,
             isLocal: Boolean = false,
         ): FirAnonymousInitializer = buildAnonymousInitializer {
-            withContainerSymbol(symbol, isLocal) {
-                source = initializer.toFirSourceElement()
+            val sourceElement = initializer.toFirSourceElement()
+            val initializerSymbol = FirAnonymousInitializerSymbol(symbolIdFactory.sourceBased(sourceElement))
+            withContainerSymbol(initializerSymbol, isLocal) {
+                symbol = initializerSymbol
+                source = sourceElement
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 body = if (allowLazyBody) {
@@ -2666,9 +2721,9 @@ open class PsiRawFirBuilder(
             return typeReference.toFirType()
         }
 
-        private fun KtTypeReference.toFirType(): FirTypeRef {
+        private fun KtTypeReference.toFirType(sourceElement: KtPsiSourceElement? = null): FirTypeRef {
             val typeElement = typeElement
-            val source = toFirSourceElement()
+            val source = sourceElement ?: toFirSourceElement()
             val isNullable = typeElement is KtNullableType
 
             // There can be KtDeclarationModifierLists in the KtTypeReference AND the descendant KtNullableTypes.
@@ -2966,7 +3021,7 @@ open class PsiRawFirBuilder(
                             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                             isLocal = true
                             this.name = name
-                            symbol = FirLocalPropertySymbol()
+                            symbol = FirLocalPropertySymbol(symbolIdFactory.sourceBased(parameterSource))
                             for (annotationEntry in ktParameter.annotationEntries) {
                                 this.annotations += annotationEntry.convert<FirAnnotation>()
                             }
@@ -3018,8 +3073,10 @@ open class PsiRawFirBuilder(
                         ktSubjectExpression.nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                         else -> ktSubjectExpression.nameAsSafeName
                     }
+                    val subjectExpressionSource = ktSubjectExpression.toFirSourceElement()
+
                     buildProperty {
-                        source = ktSubjectExpression.toFirSourceElement()
+                        source = subjectExpressionSource
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = ktSubjectExpression.typeReference.toFirOrImplicitType()
@@ -3027,12 +3084,10 @@ open class PsiRawFirBuilder(
                         initializer = subjectExpression
                         delegate = null
                         isVar = false
-                        symbol = FirLocalPropertySymbol()
+                        symbol = FirLocalPropertySymbol(symbolIdFactory.sourceBased(subjectExpressionSource))
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         isLocal = true
-                        receiverParameter = ktSubjectExpression.receiverTypeReference?.let {
-                            createReceiverParameter({ it.toFirType() }, moduleData, symbol)
-                        }
+                        receiverParameter = ktSubjectExpression.receiverTypeReference?.createReceiverParameter(symbol)
                         ktSubjectExpression.extractAnnotationsTo(this)
                     }
                 }
@@ -3042,8 +3097,14 @@ open class PsiRawFirBuilder(
 
             if (hasSubject && subjectVariable == null) {
                 val name = SpecialNames.WHEN_SUBJECT
+
+                // TODO (marco): Not very elegant. :(
+                val subjectExpressionSource = subjectExpression.source
+                    ?: error("Expected the non-null subject expression to have a source.")
+
+                val sourceElement = subjectExpressionSource.fakeElement(KtFakeSourceElementKind.WhenGeneratedSubject)
                 subjectVariable = buildProperty {
-                    source = subjectExpression.source?.fakeElement(KtFakeSourceElementKind.WhenGeneratedSubject)
+                    source = sourceElement
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Synthetic.ImplicitWhenSubject
                     returnTypeRef = FirImplicitTypeRefImplWithoutSource
@@ -3051,7 +3112,7 @@ open class PsiRawFirBuilder(
                     initializer = subjectExpression
                     delegate = null
                     isVar = false
-                    symbol = FirLocalPropertySymbol()
+                    symbol = FirLocalPropertySymbol(symbolIdFactory.sourceBased(sourceElement))
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isLocal = true
                 }
@@ -3756,18 +3817,21 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun buildErrorNonLocalDeclarationForDanglingModifierList(modifierList: KtModifierList) = buildDanglingModifierList {
-            this.source = modifierList.toFirSourceElement(KtFakeSourceElementKind.DanglingModifierList)
-            moduleData = baseModuleData
-            origin = FirDeclarationOrigin.Source
-            diagnostic = ConeDanglingModifierOnTopLevel
-            symbol = FirDanglingModifierSymbol()
-            withContainerSymbol(symbol) {
-                for (annotationEntry in modifierList.annotationEntries) {
-                    annotations += annotationEntry.convert<FirAnnotation>()
-                }
+        private fun buildErrorNonLocalDeclarationForDanglingModifierList(modifierList: KtModifierList): FirDanglingModifierList {
+            val sourceElement = modifierList.toFirSourceElement(KtFakeSourceElementKind.DanglingModifierList)
+            return buildDanglingModifierList {
+                this.source = sourceElement
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                diagnostic = ConeDanglingModifierOnTopLevel
+                symbol = FirDanglingModifierSymbol(symbolIdFactory.sourceBased(sourceElement))
+                withContainerSymbol(symbol) {
+                    for (annotationEntry in modifierList.annotationEntries) {
+                        annotations += annotationEntry.convert<FirAnnotation>()
+                    }
 
-                contextParameters.addContextParameters(modifierList.contextParameterLists, symbol)
+                    contextParameters.addContextParameters(modifierList.contextParameterLists, symbol)
+                }
             }
         }
     }

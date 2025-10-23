@@ -194,6 +194,8 @@ class CandidateFactory private constructor(
             result: FirFunctionCallRefinementExtension.CallReturnType,
             extension: FirFunctionCallRefinementExtension
         ): FirNamedFunctionSymbol {
+            // TODO (marco): I should probably double-check if a unique function symbol is fine here. It should be since it's from plugins
+            //  but who knows?
             val newSymbol = FirNamedFunctionSymbol(callableId)
             val function = buildNamedFunctionCopy(fir) {
                 body = null

@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
@@ -1328,16 +1329,18 @@ open class FirDeclarationsResolveTransformer(
         lambda.replaceContextParameters(
             lambda.contextParameters.takeIf { it.isNotEmpty() }
                 ?: resolvedLambdaAtom?.contextParameterTypes?.map { receiverType ->
+                    val contextParameterSource = lambda.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
+
                     buildValueParameter {
                         resolvePhase = FirResolvePhase.BODY_RESOLVE
-                        source = lambda.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
+                        source = contextParameterSource
                         containingDeclarationSymbol = lambda.symbol
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Source
                         name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                        symbol = FirValueParameterSymbol()
+                        symbol = FirValueParameterSymbol(session.symbolIdFactory.sourceBasedOrUnique(contextParameterSource))
                         returnTypeRef = receiverType
-                            .toFirResolvedTypeRef(lambda.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
+                            .toFirResolvedTypeRef(contextParameterSource)
                         valueParameterKind = FirValueParameterKind.ContextParameter
                     }
                 }.orEmpty()
@@ -1425,9 +1428,11 @@ open class FirDeclarationsResolveTransformer(
         return when {
             lambda.valueParameters.isEmpty() && singleParameterType != null -> {
                 val name = StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME
+                val itSource = lambda.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
+
                 val itParam = buildValueParameter {
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    source = lambda.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
+                    source = itSource
                     containingDeclarationSymbol = resolvedLambdaAtom.anonymousFunction.symbol
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Source
@@ -1435,11 +1440,12 @@ open class FirDeclarationsResolveTransformer(
                         source = lambda.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter)
                     )
                     this.name = name
-                    symbol = FirValueParameterSymbol()
+                    symbol = FirValueParameterSymbol(session.symbolIdFactory.sourceBasedOrUnique(itSource))
                     isCrossinline = false
                     isNoinline = false
                     isVararg = false
                 }
+
                 listOf(itParam)
             }
 

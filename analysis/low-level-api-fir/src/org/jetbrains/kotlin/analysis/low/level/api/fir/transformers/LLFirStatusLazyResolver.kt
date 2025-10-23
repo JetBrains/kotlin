@@ -162,12 +162,16 @@ private class LLStatusComputationSession(
 
     override fun superTypeToSymbols(typeRef: FirTypeRef): Collection<FirClassifierSymbol<*>> {
         val type = typeRef.coneType
-        return SmartSet.create<FirClassifierSymbol<*>>().apply {
+        val list = buildList {
             // Resolution order: from declaration site to use site
             for (useSiteSession in useSiteSessions.asReversed()) {
+                // TODO (marco): With symbol IDs, the smart set has size 1 because the symbol IDs are equal?
                 type.toSymbol(useSiteSession)?.let(::add)
             }
         }
+        val set = SmartSet.create(list)
+
+        return set
     }
 
     override fun resolveClassForSuperType(regularClass: FirRegularClass): Boolean {

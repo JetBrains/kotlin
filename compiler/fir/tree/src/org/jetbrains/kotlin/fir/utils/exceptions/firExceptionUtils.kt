@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
@@ -35,6 +36,7 @@ fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement?) {
     }
 }
 
+// TODO (marco): Name clash!
 fun ExceptionAttachmentBuilder.withFirSymbolIdEntry(name: String, symbol: FirBasedSymbol<*>?) {
     when (symbol) {
         is FirClassifierSymbol -> withFirLookupTagEntry(name, symbol.toLookupTag())
@@ -67,6 +69,10 @@ fun ExceptionAttachmentBuilder.withModuleDataEntry(name: String, moduleData: Fir
 
 fun ExceptionAttachmentBuilder.withFirSymbolEntry(name: String, symbol: FirBasedSymbol<*>) {
     withFirEntry("${name}Fir", symbol.fir)
+}
+
+fun ExceptionAttachmentBuilder.withFirSymbolIdEntry(name: String, symbolId: FirSymbolId<*>?) {
+    withEntry(name, symbolId.toString())
 }
 
 fun ExceptionAttachmentBuilder.withConeTypeEntry(name: String, coneType: ConeKotlinType?) {

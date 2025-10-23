@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirN
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirJavaAnnotationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id.LLSymbolIdFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLJumpingPhaseComputationSessionForLocalClassesProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvide
 import org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationSessionForLocalClassesProvider
 import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSettingHolder
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolIdFactory
 
 @SessionConfiguration
 internal fun LLFirSession.registerIdeComponents(
@@ -46,6 +48,7 @@ internal fun LLFirSession.registerIdeComponents(
     annotationSearchScope: GlobalSearchScope
 ) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory(project))
+    register(FirSymbolIdFactory::class, LLSymbolIdFactory(this))
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
     register(FirExceptionHandler::class, LLFirExceptionHandler)
     register(CodeFragmentScopeProvider::class, CodeFragmentScopeProvider(this))

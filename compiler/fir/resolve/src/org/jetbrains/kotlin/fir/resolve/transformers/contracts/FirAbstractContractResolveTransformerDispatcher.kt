@@ -244,9 +244,11 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 origin = FirDeclarationOrigin.Source
                 source = contractDescription.source?.fakeElement(KtFakeSourceElementKind.ContractBlock)
                 returnTypeRef = FirImplicitTypeRefImplWithoutSource
+                // TODO (marco): Unique symbol ID in contract descriptions?
                 symbol = FirAnonymousFunctionSymbol()
                 receiverParameter = buildReceiverParameter {
                     typeRef = FirImplicitTypeRefImplWithoutSource
+                    // TODO (marco): Unique symbol ID in contract descriptions?
                     symbol = FirReceiverParameterSymbol()
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Source

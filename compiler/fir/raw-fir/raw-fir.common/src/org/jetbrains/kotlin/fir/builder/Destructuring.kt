@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.fir.expressions.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -82,11 +84,14 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
     index: Int,
     configure: (FirVariable) -> Unit = {}
 ): FirVariable = with(c) {
+    val symbolIdFactory = moduleData.session.symbolIdFactory
+
     buildProperty {
         val localEntries = forceLocal || context.inLocalContext
+        val sourceElement = entry.source
         symbol = when {
-            localEntries -> FirLocalPropertySymbol()
-            else -> FirRegularPropertySymbol(callableIdForName(entry.name))
+            localEntries -> FirLocalPropertySymbol(symbolIdFactory.sourceBased(sourceElement))
+            else -> FirRegularPropertySymbol(symbolIdFactory.sourceBased(sourceElement), callableIdForName(entry.name))
         }
         withContainerSymbol(symbol, localEntries) {
             this.moduleData = moduleData
@@ -121,14 +126,17 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
                 }
             }
             this.isVar = entry.isVar
-            source = entry.source
+            source = sourceElement
             status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
             isLocal = localEntries
             context.containerSymbolIfAny?.let { entry.extractAnnotationsTo(this, it) }
             if (!localEntries) {
                 dispatchReceiverType = currentDispatchReceiverType()
+
+                val getterSource = sourceElement.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultGetter)
                 getter = FirDefaultPropertyGetter(
-                    source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultGetter),
+                    symbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBased(getterSource)),
+                    source = getterSource,
                     moduleData = moduleData,
                     origin = FirDeclarationOrigin.Source,
                     propertyTypeRef = returnTypeRef,
@@ -136,9 +144,12 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
                     propertySymbol = symbol,
                     modality = Modality.FINAL,
                 )
+
                 if (entry.isVar) {
+                    val setterSource = sourceElement.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultSetter)
                     setter = FirDefaultPropertySetter(
-                        source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultSetter),
+                        propertyAccessorSymbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBased(setterSource)),
+                        source = setterSource,
                         moduleData = moduleData,
                         origin = FirDeclarationOrigin.Source,
                         propertyTypeRef = returnTypeRef,
