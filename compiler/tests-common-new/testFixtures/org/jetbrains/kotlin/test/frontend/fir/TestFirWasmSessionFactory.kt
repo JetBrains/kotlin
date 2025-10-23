@@ -35,14 +35,15 @@ object TestFirWasmSessionFactory {
         extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirSession {
         val libraries = loadWasmLibraries(module, testServices, configuration)
+        val factory = FirWasmSessionFactory.of(configuration.wasmTarget)
 
-        val sharedLibrarySession = FirWasmSessionFactory.createSharedLibrarySession(
+        val sharedLibrarySession = factory.createSharedLibrarySession(
             mainModuleName,
             configuration,
             extensionRegistrars
         )
 
-        return FirWasmSessionFactory.createLibrarySession(
+        return factory.createLibrarySession(
             libraries,
             sharedLibrarySession,
             moduleDataProvider,
@@ -56,8 +57,9 @@ object TestFirWasmSessionFactory {
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
-    ): FirSession =
-        FirWasmSessionFactory.createSourceSession(
+    ): FirSession {
+        val factory = FirWasmSessionFactory.of(configuration.wasmTarget)
+        return factory.createSourceSession(
             mainModuleData,
             extensionRegistrars,
             configuration,
@@ -65,6 +67,7 @@ object TestFirWasmSessionFactory {
             icData = null,
             init = sessionConfigurator
         )
+    }
 }
 
 fun loadWasmLibraries(

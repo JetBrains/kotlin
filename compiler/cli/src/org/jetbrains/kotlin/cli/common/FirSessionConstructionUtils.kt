@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 val isCommonSourceForPsi: (KtFile) -> Boolean = { it.isCommonSource == true }
 val fileBelongsToModuleForPsi: (KtFile, String) -> Boolean = { file, moduleName -> file.hmppModuleName == moduleName }
@@ -169,7 +170,7 @@ fun <F> prepareWasmSessions(
         WasmTarget.WASI -> WasmPlatforms.wasmWasi
     }
     return prepareKlibSessions(
-        FirWasmSessionFactory, platform, files, configuration, rootModuleName, resolvedLibraries, libraryList, extensionRegistrars,
+        FirWasmSessionFactory.of(configuration.wasmTarget), platform, files, configuration, rootModuleName, resolvedLibraries, libraryList, extensionRegistrars,
         isCommonSource, fileBelongsToModule, metadataCompilationMode = false, icData,
     )
 }

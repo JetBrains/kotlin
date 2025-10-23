@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getWasmTarget
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory.registerWasmComponents
+import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
@@ -83,7 +83,9 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
 
     private fun LLFirSession.registerWasmComponents() {
         val target = ktModule.targetPlatform.getWasmTarget()
-        registerWasmComponents(target)
+        with(FirWasmSessionFactory.of(target)) {
+            registerWasmComponents()
+        }
     }
 
     override fun createProjectLibraryProvidersForScope(

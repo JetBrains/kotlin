@@ -8,54 +8,71 @@ package org.jetbrains.kotlin.fir.session
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.checkers.registerWasmCheckers
+import org.jetbrains.kotlin.fir.checkers.registerWasmJsCheckers
+import org.jetbrains.kotlin.fir.checkers.registerWasmWasiCheckers
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.wasm.resolve.WasmJsDefaultImportsProvider
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiDefaultImportsProvider
 
 @OptIn(SessionConfiguration::class)
-object FirWasmSessionFactory : AbstractFirKlibSessionFactory<FirWasmSessionFactory.Context, FirWasmSessionFactory.Context>() {
+sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?, Nothing?>() {
+    object WasmJs : FirWasmSessionFactory() {
+        override val defaultImportsProvider: DefaultImportsProvider
+            get() = WasmJsDefaultImportsProvider
+
+        override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {
+            registerWasmJsCheckers()
+        }
+    }
+
+    object WasmWasi : FirWasmSessionFactory() {
+        override val defaultImportsProvider: DefaultImportsProvider
+            get() = WasmWasiDefaultImportsProvider
+
+        override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {
+            registerWasmWasiCheckers()
+        }
+    }
+
+    companion object {
+        fun of(wasmTarget: WasmTarget): FirWasmSessionFactory {
+            return when (wasmTarget) {
+                WasmTarget.JS -> WasmJs
+                WasmTarget.WASI -> WasmWasi
+            }
+        }
+    }
+
+    protected abstract val defaultImportsProvider: DefaultImportsProvider
 
     // ==================================== Library session ====================================
 
-    override fun createLibraryContext(configuration: CompilerConfiguration): Context {
-        return Context(configuration.wasmTarget)
-    }
+    override fun createLibraryContext(configuration: CompilerConfiguration): Nothing? = null
 
-    override fun FirSession.registerLibrarySessionComponents(c: Context) {
-        registerWasmComponents(c.wasmTarget)
+    override fun FirSession.registerLibrarySessionComponents(c: Nothing?) {
+        registerWasmComponents()
     }
 
     // ==================================== Platform session ====================================
 
-    override fun createSourceContext(configuration: CompilerConfiguration): Context {
-        return Context(configuration.wasmTarget)
-    }
+    override fun createSourceContext(configuration: CompilerConfiguration): Nothing? = null
 
-    override fun FirSessionConfigurator.registerPlatformCheckers(c: Context) {
-        registerWasmCheckers(c.wasmTarget)
-    }
+    abstract override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?)
 
-    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Context) {}
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Nothing?) {}
 
-    override fun FirSession.registerSourceSessionComponents(c: Context) {
-        registerWasmComponents(c.wasmTarget)
+    override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
+        registerWasmComponents()
     }
 
     @OptIn(SessionConfiguration::class)
-    fun FirSession.registerWasmComponents(wasmTarget: WasmTarget) {
+    fun FirSession.registerWasmComponents() {
         register(FirEnumEntriesSupport(this))
-        val defaultImportsProvider = when (wasmTarget) {
-            WasmTarget.JS -> WasmJsDefaultImportsProvider
-            WasmTarget.WASI -> WasmWasiDefaultImportsProvider
-        }
         register(FirDefaultImportsProviderHolder.of(defaultImportsProvider))
     }
 
     // ==================================== Utilities ====================================
-
-    class Context(val wasmTarget: WasmTarget)
 }
