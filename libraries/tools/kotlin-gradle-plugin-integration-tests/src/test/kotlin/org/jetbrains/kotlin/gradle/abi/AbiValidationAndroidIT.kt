@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalAbiValidation::class)
 
-package org.jetbrains.kotlin.gradle.abi.legacy
+package org.jetbrains.kotlin.gradle.abi
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.abi.utils.*
