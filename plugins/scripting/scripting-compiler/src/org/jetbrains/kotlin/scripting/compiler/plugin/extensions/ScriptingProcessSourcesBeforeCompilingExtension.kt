@@ -120,25 +120,26 @@ class KotlinScriptExpressionExplainTransformer(
         explanationsProp: IrVariable,
         declaration: IrScript
     ): List<IrStatement> =
-        map { explainStatement(it, builder, explanationsProp, declaration) }
+        map { explainStatement(it, builder, explanationsProp, declaration, "") }
 
     private fun explainStatement(
         statement: IrStatement,
         builder: DeclarationIrBuilder,
         explanationsProp: IrVariable,
         declaration: IrScript,
+        statementName: String,
     ): IrStatement = when (statement) {
         is IrProperty -> {
             statement.backingField?.let { field ->
                 field.initializer?.let { initializer ->
                     field.initializer = context.irFactory.createExpressionBody(
-                        explainWithFallBack(
+                        explainStatement(
                             initializer.expression,
-                            field,
-                            statement.name.asString(),
                             builder,
                             explanationsProp,
-                        )
+                            declaration,
+                            statement.name.asString()
+                        ) as IrExpression
                     )
                 }
             }
@@ -146,13 +147,13 @@ class KotlinScriptExpressionExplainTransformer(
         }
         is IrVariable -> {
             statement.initializer?.let { initializer ->
-                statement.initializer = explainWithFallBack(
+                statement.initializer = explainStatement(
                     initializer,
-                    declaration,
-                    statement.name.asString(),
                     builder,
                     explanationsProp,
-                )
+                    declaration,
+                    statement.name.asString()
+                ) as IrExpression
             }
             statement
         }
@@ -160,20 +161,23 @@ class KotlinScriptExpressionExplainTransformer(
         is IrLoop -> statement
         is IrWhen -> {
             statement.branches.transformInPlace {
-                IrBranchImpl(it.condition, explainStatement(it.result, builder, explanationsProp, declaration) as IrExpression)
+                IrBranchImpl(
+                    it.condition,
+                    explainStatement(it.result, builder, explanationsProp, declaration, "") as IrExpression
+                )
             }
-            explainWithFallBack(statement, declaration, "", builder, explanationsProp)
+            explainWithFallBack(statement, declaration, statementName, builder, explanationsProp)
         }
         is IrBlock -> {
-            statement.statements.transformInPlace { explainStatement(it, builder, explanationsProp, declaration) }
+            statement.statements.transformInPlace { explainStatement(it, builder, explanationsProp, declaration, "") }
             statement
         }
         is IrExpression -> {
             if (statement is IrTypeOperatorCall && statement.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
-                statement.argument = explainWithFallBack(statement.argument, declaration, "", builder, explanationsProp)
+                statement.argument = explainWithFallBack(statement.argument, declaration, statementName, builder, explanationsProp)
                 statement
             } else {
-                explainWithFallBack(statement, declaration, "", builder, explanationsProp)
+                explainWithFallBack(statement, declaration, statementName, builder, explanationsProp)
             }
         }
         else -> statement
