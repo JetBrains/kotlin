@@ -14,7 +14,7 @@ import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FullParserTestsWithPsi : AbstractParserTests<PsiElement>() {
-    private val psiTestParser = PsiTestParser()
+    private val psiTestParser = PsiTestParser(disposable)
 
     override val parseMode: ParseMode = ParseMode.Full
 
@@ -27,6 +27,6 @@ class FullParserTestsWithPsi : AbstractParserTests<PsiElement>() {
 
     @AfterAll
     fun cleanup() {
-        psiTestParser.dispose()
+        dispose()
     }
 }

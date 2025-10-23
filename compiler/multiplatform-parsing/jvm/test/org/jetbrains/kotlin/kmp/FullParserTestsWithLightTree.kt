@@ -14,7 +14,7 @@ import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FullParserTestsWithLightTree : AbstractParserTests<LighterASTNode>() {
-    private val lightTreeTestParser = LightTreeTestParser()
+    private val lightTreeTestParser = LightTreeTestParser(disposable)
 
     override val parseMode: ParseMode = ParseMode.NoKDoc
 
@@ -25,6 +25,6 @@ class FullParserTestsWithLightTree : AbstractParserTests<LighterASTNode>() {
 
     @AfterAll
     fun cleanup() {
-        lightTreeTestParser.dispose()
+        dispose()
     }
 }

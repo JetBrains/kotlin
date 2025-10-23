@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.kmp.infra
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.K1Deprecation
@@ -17,9 +15,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class PsiTestParser : AbstractTestParser<PsiElement>(ParseMode.Full), Disposable {
-    private val disposable = Disposer.newDisposable("Disposable for the ${PsiTestParser::class.simpleName}")
-
+class PsiTestParser(disposable: Disposable) : AbstractTestParser<PsiElement>(ParseMode.Full) {
     @OptIn(K1Deprecation::class)
     private val environment: KotlinCoreEnvironment =
         KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.EMPTY, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -50,11 +46,5 @@ class PsiTestParser : AbstractTestParser<PsiElement>(ParseMode.Full), Disposable
                 children
             )
         )
-    }
-
-    override fun dispose() {
-        ApplicationManager.getApplication().invokeLater {
-            Disposer.dispose(disposable)
-        }
     }
 }

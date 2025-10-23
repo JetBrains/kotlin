@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.kmp
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.kmp.infra.NewParserTestNode
 import org.jetbrains.kotlin.kmp.infra.NewTestParser
 import org.jetbrains.kotlin.kmp.infra.ParseMode
@@ -15,7 +18,9 @@ abstract class AbstractParserTests<OldParseElement> : AbstractRecognizerTests<
         NewParserTestNode,
         TestParseNode<out OldParseElement>,
         TestParseNode<out NewParserTestNode>
->() {
+        >(), Disposable {
+    protected val disposable = Disposer.newDisposable("Disposable for `${javaClass.simpleName}`")
+
     abstract val parseMode: ParseMode
 
     override val recognizerName: String = "parser"
@@ -24,4 +29,8 @@ abstract class AbstractParserTests<OldParseElement> : AbstractRecognizerTests<
 
     override fun recognizeNewSyntaxElement(fileName: String, text: String): TestParseNode<out NewParserTestNode> =
         NewTestParser(parseMode).parse(fileName, text)
+
+    override fun dispose() {
+        disposeRootInWriteAction(disposable)
+    }
 }
