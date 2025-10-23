@@ -4,7 +4,7 @@ fun foo(f: suspend () -> Unit) {
 }
 
 fun bar() {
-    foo(<!ARGUMENT_TYPE_MISMATCH("() -> Unit; SuspendFunction0<Unit>")!>fun () {}<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH("() -> Unit; suspend () -> Unit")!>fun () {}<!>)
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, suspend */

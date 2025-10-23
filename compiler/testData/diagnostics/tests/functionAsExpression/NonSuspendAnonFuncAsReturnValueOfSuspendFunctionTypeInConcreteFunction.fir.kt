@@ -3,7 +3,7 @@ fun produceConcreteA(func: () -> (suspend () -> Unit)): suspend () -> Unit = fun
 fun (() -> (suspend () -> Unit)).produceConcreteB(): suspend () -> Unit = this()
 
 fun test() {
-    fun produce(): suspend () -> Unit = <!RETURN_TYPE_MISMATCH("SuspendFunction0<Unit>; () -> Unit")!>fun () {}<!>;
+    fun produce(): suspend () -> Unit = <!RETURN_TYPE_MISMATCH("suspend () -> Unit; () -> Unit")!>fun () {}<!>;
 
     produceConcreteA { <!RETURN_TYPE_MISMATCH!>fun () {}<!> };
     produceConcreteA(fun () = <!RETURN_TYPE_MISMATCH!>fun () {}<!>);

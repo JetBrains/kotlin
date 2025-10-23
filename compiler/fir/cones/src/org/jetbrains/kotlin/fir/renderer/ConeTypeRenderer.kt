@@ -121,6 +121,9 @@ open class ConeTypeRenderer(
                     if (nullabilityMarker != "") {
                         builder.append('(')
                     }
+                    if (type.classId.isSuspendFunctionType()) {
+                        builder.append("suspend ")
+                    }
                     val arguments = type.typeArguments.iterator().withSeenElementsCounting()
 
                     if (type.hasContextParameters) {
@@ -170,8 +173,13 @@ open class ConeTypeRenderer(
         builder.append(nullabilityMarker)
     }
 
-    private fun ClassId?.isFunctionType(): Boolean =
+    private fun ClassId?.isFunctionType(): Boolean = isNonSuspendFunctionType() || isSuspendFunctionType()
+
+    private fun ClassId?.isNonSuspendFunctionType(): Boolean =
         this?.asString()?.removePrefix(StandardClassIds.Function.asString())?.toIntOrNull() != null
+
+    private fun ClassId?.isSuspendFunctionType(): Boolean =
+        this?.asString()?.removePrefix(StandardClassIds.SuspendFunction.asString())?.toIntOrNull() != null
 
     open fun renderConstructor(constructor: TypeConstructorMarker, nullabilityMarker: String = "") {
         require(constructor is ConeTypeConstructorMarker)

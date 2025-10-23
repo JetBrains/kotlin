@@ -314,7 +314,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ContextFunctionTypeParams(2) @ExtensionFunctionType kotlin/coroutines/SuspendFunction4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
+        type: suspend context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
