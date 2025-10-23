@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature.MultiPlatformProjects
+import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.fir.session.AbstractFirMetadataSessionFactory.JarMet
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
@@ -181,13 +183,14 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         configuration = configuration,
                     ).all
 
-                    val sharedLibrarySession = FirMetadataSessionFactory.createSharedLibrarySession(
+                    val sessionFactory = FirMetadataSessionFactory(configuration.targetPlatform ?: CommonPlatforms.defaultCommonPlatform)
+                    val sharedLibrarySession = sessionFactory.createSharedLibrarySession(
                         mainModuleName = moduleName,
                         languageVersionSettings = languageVersionSettings,
                         extensionRegistrars = extensionRegistrars,
                     )
 
-                    FirMetadataSessionFactory.createLibrarySession(
+                    sessionFactory.createLibrarySession(
                         sharedLibrarySession,
                         moduleDataProvider = moduleDataProvider,
                         extensionRegistrars = extensionRegistrars,
@@ -334,9 +337,10 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         ktFiles: Collection<KtFile>,
     ): FirSession {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val sessionFactory = FirMetadataSessionFactory(configuration.targetPlatform ?: CommonPlatforms.defaultCommonPlatform)
         return when {
             targetPlatform.isCommon() -> {
-                FirMetadataSessionFactory.createSourceSession(
+                sessionFactory.createSourceSession(
                     moduleData = moduleData,
                     projectEnvironment = jvmSessionFactoryContext!!.projectEnvironment,
                     incrementalCompilationContext = null,

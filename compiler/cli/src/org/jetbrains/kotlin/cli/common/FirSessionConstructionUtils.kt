@@ -241,18 +241,19 @@ fun <F> prepareMetadataSessions(
 ): List<SessionWithSources<F>> {
     val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope) as PackageAndMetadataPartProvider
     val languageVersionSettings = configuration.languageVersionSettings
+    val sessionFactory = FirMetadataSessionFactory(configuration.targetPlatform ?: CommonPlatforms.defaultCommonPlatform)
     return SessionConstructionUtils.prepareSessions(
         files, configuration, rootModuleName, CommonPlatforms.defaultCommonPlatform,
         metadataCompilationMode = true, libraryList, extensionRegistrars, isCommonSource, isScript = { false }, fileBelongsToModule,
         createSharedLibrarySession = {
-            FirMetadataSessionFactory.createSharedLibrarySession(
+            sessionFactory.createSharedLibrarySession(
                 rootModuleName,
                 languageVersionSettings,
                 extensionRegistrars,
             )
         },
         createLibrarySession = { sharedLibrarySession ->
-            FirMetadataSessionFactory.createLibrarySession(
+            sessionFactory.createLibrarySession(
                 sharedLibrarySession,
                 libraryList.moduleDataProvider,
                 extensionRegistrars,
@@ -266,7 +267,7 @@ fun <F> prepareMetadataSessions(
             )
         },
         createSourceSession = { moduleFiles, moduleData, isForLeafHmppModule, sessionConfigurator ->
-            FirMetadataSessionFactory.createSourceSession(
+            sessionFactory.createSourceSession(
                 moduleData,
                 projectEnvironment,
                 incrementalCompilationContext = createProviderAndScopeForIncrementalCompilation(moduleFiles),
@@ -569,7 +570,9 @@ object SessionConstructionUtils {
                     dependencies(libPaths)
                     friendDependencies(friendLibPaths)
                 }.also { libraryList ->
-                    FirMetadataSessionFactoryForHmppCompilation.createLibrarySession(
+                    FirMetadataSessionFactoryForHmppCompilation(
+                        configuration.targetPlatform ?: CommonPlatforms.defaultCommonPlatform
+                    ).createLibrarySession(
                         sharedLibrarySession,
                         libraryList.moduleDataProvider,
                         extensionRegistrars,

@@ -28,12 +28,13 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 @OptIn(SessionConfiguration::class)
-abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?>() {
+abstract class AbstractFirMetadataSessionFactory(val targetPlatform: TargetPlatform) : FirAbstractSessionFactory<Nothing?>() {
     // ==================================== Shared library session ====================================
 
     /**
@@ -195,7 +196,7 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
 
 }
 
-object FirMetadataSessionFactory : AbstractFirMetadataSessionFactory() {
+class FirMetadataSessionFactory(targetPlatform: TargetPlatform) : AbstractFirMetadataSessionFactory(targetPlatform) {
     override fun createPlatformSpecificSharedProviders(
         session: FirSession,
         moduleData: FirModuleData,
@@ -214,7 +215,7 @@ object FirMetadataSessionFactory : AbstractFirMetadataSessionFactory() {
         get() = false
 }
 
-object FirMetadataSessionFactoryForHmppCompilation : AbstractFirMetadataSessionFactory() {
+class FirMetadataSessionFactoryForHmppCompilation(targetPlatform: TargetPlatform) : AbstractFirMetadataSessionFactory(targetPlatform) {
     override fun createPlatformSpecificSharedProviders(
         session: FirSession,
         moduleData: FirModuleData,
