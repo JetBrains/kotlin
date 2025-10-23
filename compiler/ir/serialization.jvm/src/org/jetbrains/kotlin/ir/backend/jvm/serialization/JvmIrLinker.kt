@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
@@ -66,8 +65,12 @@ class JvmIrLinker(
         return MetadataJVMModuleDeserializer(moduleDescriptor, emptyList())
     }
 
-    private inner class JvmModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, libraryAbiVersion: KotlinAbiVersion, strategyResolver: (String) -> DeserializationStrategy) :
-        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion)
+    private inner class JvmModuleDeserializer(
+        moduleDescriptor: ModuleDescriptor,
+        override val klib: KotlinLibrary,
+        libraryAbiVersion: KotlinAbiVersion,
+        strategyResolver: (String) -> DeserializationStrategy,
+    ) : BasicIrModuleDeserializer(this, moduleDescriptor, strategyResolver, libraryAbiVersion)
 
     private fun DeclarationDescriptor.isJavaDescriptor(): Boolean {
         if (this is PackageFragmentDescriptor) {
@@ -106,6 +109,7 @@ class JvmIrLinker(
 
     private inner class JvmCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>) :
         CurrentModuleDeserializer(moduleFragment, dependencies) {
+
         override fun declareIrSymbol(symbol: IrSymbol) {
             val descriptor = symbol.descriptor
 
@@ -130,6 +134,8 @@ class JvmIrLinker(
 
     private inner class MetadataJVMModuleDeserializer(moduleDescriptor: ModuleDescriptor, dependencies: List<IrModuleDeserializer>) :
         IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
+
+        override val klib get() = error("'klib' is not available for ${this::class.java}")
 
         // TODO: implement proper check whether `idSig` belongs to this module
         override fun contains(idSig: IdSignature): Boolean = true

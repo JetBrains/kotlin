@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.*
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class ICData(val icData: List<SerializedIrFile>)
 
-class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
+class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary.IrDirectory {
     private inline fun Array<DeclarationIdTableReader?>.itemBytes(fileIndex: Int, key: DeclarationId, factory: () -> DeclarationIdTableReader): ByteArray {
         val reader = this[fileIndex] ?: factory().also { this[fileIndex] = it }
 
@@ -53,79 +53,56 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     private val indexedBodies = arrayOfNulls<IrArrayReader>(icData.size)
     private val indexedFileEntries = arrayOfNulls<IrArrayReader>(icData.size)
 
-    override val hasMainIr get() = true
-    override val mainIr: IrLibrary.IrDirectory = object : IrLibrary.IrDirectory {
-        override fun irDeclaration(index: Int, fileIndex: Int): ByteArray =
-            indexedDeclarations.itemBytes(fileIndex, DeclarationId(index)) {
-                DeclarationIdTableReader(icData[fileIndex].declarations)
-            }
+    override fun irDeclaration(index: Int, fileIndex: Int): ByteArray =
+        indexedDeclarations.itemBytes(fileIndex, DeclarationId(index)) {
+            DeclarationIdTableReader(icData[fileIndex].declarations)
+        }
 
-        override fun type(index: Int, fileIndex: Int): ByteArray =
-            indexedTypes.itemBytes(fileIndex, index) {
-                IrArrayReader(icData[fileIndex].types)
-            }
+    override fun type(index: Int, fileIndex: Int): ByteArray =
+        indexedTypes.itemBytes(fileIndex, index) {
+            IrArrayReader(icData[fileIndex].types)
+        }
 
-        override fun signature(index: Int, fileIndex: Int): ByteArray =
-            indexedSignatures.itemBytes(fileIndex, index) {
-                IrArrayReader(icData[fileIndex].signatures)
-            }
+    override fun signature(index: Int, fileIndex: Int): ByteArray =
+        indexedSignatures.itemBytes(fileIndex, index) {
+            IrArrayReader(icData[fileIndex].signatures)
+        }
 
-        override fun string(index: Int, fileIndex: Int): ByteArray =
-            indexedStrings.itemBytes(fileIndex, index) {
-                IrArrayReader(icData[fileIndex].strings)
-            }
+    override fun string(index: Int, fileIndex: Int): ByteArray =
+        indexedStrings.itemBytes(fileIndex, index) {
+            IrArrayReader(icData[fileIndex].strings)
+        }
 
-        override fun body(index: Int, fileIndex: Int): ByteArray =
-            indexedBodies.itemBytes(fileIndex, index) {
-                IrArrayReader(icData[fileIndex].bodies)
-            }
+    override fun body(index: Int, fileIndex: Int): ByteArray =
+        indexedBodies.itemBytes(fileIndex, index) {
+            IrArrayReader(icData[fileIndex].bodies)
+        }
 
-        override fun debugInfo(index: Int, fileIndex: Int): ByteArray? =
-            indexedDebugInfos.itemNullableBytes(fileIndex, index) {
-                icData[fileIndex].debugInfo?.let { IrArrayReader(it) }
-            }
+    override fun debugInfo(index: Int, fileIndex: Int): ByteArray? =
+        indexedDebugInfos.itemNullableBytes(fileIndex, index) {
+            icData[fileIndex].debugInfo?.let { IrArrayReader(it) }
+        }
 
-        override fun fileEntry(index: Int, fileIndex: Int): ByteArray? =
-            indexedFileEntries.itemNullableBytes(fileIndex, index) {
-                icData[fileIndex].fileEntries?.let { IrArrayReader(it) }
-            }
+    override fun fileEntry(index: Int, fileIndex: Int): ByteArray? =
+        indexedFileEntries.itemNullableBytes(fileIndex, index) {
+            icData[fileIndex].fileEntries?.let { IrArrayReader(it) }
+        }
 
-        override fun file(index: Int): ByteArray = icData[index].fileData
+    override fun file(index: Int): ByteArray = icData[index].fileData
 
-        override fun fileCount(): Int = icData.size
+    override fun fileCount(): Int = icData.size
 
-        override fun types(fileIndex: Int): ByteArray = icData[fileIndex].types
+    override fun types(fileIndex: Int): ByteArray = icData[fileIndex].types
 
-        override fun signatures(fileIndex: Int): ByteArray = icData[fileIndex].signatures
+    override fun signatures(fileIndex: Int): ByteArray = icData[fileIndex].signatures
 
-        override fun strings(fileIndex: Int): ByteArray = icData[fileIndex].strings
+    override fun strings(fileIndex: Int): ByteArray = icData[fileIndex].strings
 
-        override fun declarations(fileIndex: Int): ByteArray = icData[fileIndex].declarations
+    override fun declarations(fileIndex: Int): ByteArray = icData[fileIndex].declarations
 
-        override fun bodies(fileIndex: Int): ByteArray = icData[fileIndex].bodies
+    override fun bodies(fileIndex: Int): ByteArray = icData[fileIndex].bodies
 
-        override fun fileEntries(fileIndex: Int): ByteArray? = icData[fileIndex].fileEntries
-    }
-
-    // This class is not used by the K2 compiler, so the first stage inlining feature is not supported.
-    override val hasInlinableFunsIr: Boolean get() = false
-    override val inlinableFunsIr = object : IrLibrary.IrDirectory {
-        override fun irDeclaration(index: Int, fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun type(index: Int, fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun signature(index: Int, fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun string(index: Int, fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun body(index: Int, fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun debugInfo(index: Int, fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun fileEntry(index: Int, fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun file(index: Int): ByteArray = shouldNotBeCalled()
-        override fun fileCount(): Int = shouldNotBeCalled()
-        override fun types(fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun signatures(fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun strings(fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun declarations(fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun bodies(fileIndex: Int): ByteArray = shouldNotBeCalled()
-        override fun fileEntries(fileIndex: Int): ByteArray? = shouldNotBeCalled()
-    }
+    override fun fileEntries(fileIndex: Int): ByteArray? = icData[fileIndex].fileEntries
 }
 
 class CurrentModuleWithICDeserializer(
@@ -133,7 +110,7 @@ class CurrentModuleWithICDeserializer(
     private val symbolTable: SymbolTable,
     private val irBuiltIns: IrBuiltIns,
     icData: List<SerializedIrFile>,
-    icReaderFactory: (IrLibrary) -> IrModuleDeserializer) :
+    icReaderFactory: (IrLibrary.IrDirectory) -> IrModuleDeserializer) :
     IrModuleDeserializer(delegate.moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
     private val dirtyDeclarations = hashMapOf<IdSignature, IrSymbol>()
@@ -191,7 +168,7 @@ class CurrentModuleWithICDeserializer(
 
     override fun toString(): String = "Incremental Cache Klib"
 
-    override val klib: IrLibrary
+    override val klib: KotlinLibrary
         get() = icDeserializer.klib
 
     override val moduleFragment: IrModuleFragment

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
@@ -79,7 +78,7 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
         deserializeIrSymbolOrFail(signature, symbol.kind())
     }
 
-    open val klib: IrLibrary get() = error("Unsupported operation")
+    abstract val klib: KotlinLibrary
 
     open fun init() = init(this)
 
@@ -226,7 +225,7 @@ class IrModuleDeserializerWithBuiltIns(
         delegate.init(this)
     }
 
-    override val klib: IrLibrary
+    override val klib: KotlinLibrary
         get() = delegate.klib
 
     override val strategyResolver: (String) -> DeserializationStrategy
@@ -257,6 +256,8 @@ open class CurrentModuleDeserializer(
     override val moduleFragment: IrModuleFragment,
     override val moduleDependencies: Collection<IrModuleDeserializer>
 ) : IrModuleDeserializer(moduleFragment.descriptor, KotlinAbiVersion.CURRENT) {
+    override val klib get() = error("'klib' is not available for ${this::class.java}")
+
     override fun contains(idSig: IdSignature): Boolean = false // TODO:
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): Nothing =

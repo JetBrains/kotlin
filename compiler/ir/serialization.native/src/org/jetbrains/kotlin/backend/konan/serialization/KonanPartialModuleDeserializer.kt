@@ -27,7 +27,6 @@ class KonanPartialModuleDeserializer(
 ) : BasicIrModuleDeserializer(
     linker = kotlinIrLinker,
     moduleDescriptor = moduleDescriptor,
-    klib = klib,
     strategyResolver = { fileName -> if (cacheDeserializationStrategy.contains(fileName)) strategyResolver(fileName) else DeserializationStrategy.ON_DEMAND },
     libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
 ) {

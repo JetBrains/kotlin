@@ -50,12 +50,11 @@ internal class KlibToolIrLinker(
 
     private inner class KlibToolModuleDeserializer(
         module: ModuleDescriptor,
-        klib: KotlinLibrary,
+        override val klib: KotlinLibrary,
         strategyResolver: (String) -> DeserializationStrategy,
     ) : BasicIrModuleDeserializer(
         linker = this,
         moduleDescriptor = module,
-        klib = klib,
         strategyResolver = strategyResolver,
         libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
         allowErrorNodes = true,

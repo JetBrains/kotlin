@@ -31,6 +31,9 @@ internal class KonanForwardDeclarationModuleDeserializer(
     private val linker: KotlinIrLinker,
     private val stubGenerator: DeclarationStubGenerator,
 ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.Companion.CURRENT) {
+
+    override val klib get() = error("'klib' is not available for ${this::class.java}")
+
     init {
         require(moduleDescriptor.isForwardDeclarationModule)
     }

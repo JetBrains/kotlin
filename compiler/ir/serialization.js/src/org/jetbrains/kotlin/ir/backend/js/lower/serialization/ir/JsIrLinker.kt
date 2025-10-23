@@ -64,15 +64,21 @@ class JsIrLinker(
         require(klib != null) { "Expecting kotlin library" }
         val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
         return when (val lazyIrGenerator = stubGenerator) {
-            null -> JsModuleDeserializer(moduleDescriptor, klib, strategyResolver, libraryAbiVersion)
+            null -> JsModuleDeserializer(moduleDescriptor, klib.mainIr, strategyResolver, libraryAbiVersion)
             else -> JsLazyIrModuleDeserializer(moduleDescriptor, libraryAbiVersion, builtIns, lazyIrGenerator)
         }
     }
 
     private val deserializedFilesInKlibOrder = mutableMapOf<IrModuleFragment, List<IrFile>>()
 
-    private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategyResolver: (String) -> DeserializationStrategy, libraryAbiVersion: KotlinAbiVersion) :
-        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion) {
+    private inner class JsModuleDeserializer(
+        moduleDescriptor: ModuleDescriptor,
+        override val ir: IrLibrary.IrDirectory,
+        strategyResolver: (String) -> DeserializationStrategy,
+        libraryAbiVersion: KotlinAbiVersion,
+    ) : BasicIrModuleDeserializer(this, moduleDescriptor, strategyResolver, libraryAbiVersion) {
+
+        override val klib get() = error("'klib' is not available for ${this::class.java}")
 
         override fun init(delegate: IrModuleDeserializer) {
             super.init(delegate)
@@ -84,8 +90,8 @@ class JsIrLinker(
         val currentModuleDeserializer = super.createCurrentModuleDeserializer(moduleFragment, dependencies)
 
         icData?.let {
-            return CurrentModuleWithICDeserializer(currentModuleDeserializer, symbolTable, builtIns, it.icData) { lib ->
-                JsModuleDeserializer(currentModuleDeserializer.moduleDescriptor, lib, currentModuleDeserializer.strategyResolver, KotlinAbiVersion.CURRENT)
+            return CurrentModuleWithICDeserializer(currentModuleDeserializer, symbolTable, builtIns, it.icData) { ir ->
+                JsModuleDeserializer(currentModuleDeserializer.moduleDescriptor, ir, currentModuleDeserializer.strategyResolver, KotlinAbiVersion.CURRENT)
             }
         }
         return currentModuleDeserializer

@@ -105,7 +105,7 @@ class KonanIrLinker(
             deserializersForModules
                 .filter { !it.key.isForwardDeclarationModuleName && it.value.moduleDescriptor !== currentModule }
                 .forEach {
-                    val klib = it.value.klib as? KotlinLibrary ?: error("Expected to be KotlinLibrary (${it.key})")
+                    val klib = it.value.klib
                     this[klib.libraryName] = it.value.moduleFragment
                 }
         }
