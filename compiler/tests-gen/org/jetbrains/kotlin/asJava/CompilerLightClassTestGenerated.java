@@ -676,6 +676,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/collections/readOnly/collectionAbstractClassOfString.kt");
       }
 
+      @TestMetadata("collectionAbstractClassWithDelegation.kt")
+      public void testCollectionAbstractClassWithDelegation() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/collections/readOnly/collectionAbstractClassWithDelegation.kt");
+      }
+
       @TestMetadata("collectionInterface.kt")
       public void testCollectionInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/collections/readOnly/collectionInterface.kt");

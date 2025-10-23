@@ -7,6 +7,4 @@ public abstract class AIterator /* test.AIterator*/ implements java.util.Iterato
   public boolean hasNext();//  hasNext()
 
   public  AIterator();//  .ctor()
-
-  public void remove();//  remove()
 }
