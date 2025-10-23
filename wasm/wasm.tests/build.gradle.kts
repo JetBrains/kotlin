@@ -419,6 +419,7 @@ projectTests {
             taskName = taskName,
             jUnitMode = JUnitMode.JUnit5,
             skipInLocalBuild = skipInLocalBuild,
+            maxHeapSizeMb = 6144
         ) {
             with(d8KotlinBuild) {
                 setupV8()
