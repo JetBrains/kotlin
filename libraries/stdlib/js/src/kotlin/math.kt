@@ -341,7 +341,7 @@ public actual inline fun floor(x: Double): Double = nativeMath.floor(x)
 public actual inline fun truncate(x: Double): Double = nativeTrunc(x)
 
 /**
- * Rounds the given value [x] towards the closest integer with ties rounded towards even integer.
+ * Rounds the given value [x] towards the closest integer with ties rounded away from zero.
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
@@ -351,11 +351,12 @@ public actual inline fun truncate(x: Double): Double = nativeTrunc(x)
  */
 @SinceKotlin("1.2")
 public actual fun round(x: Double): Double {
-    if (x % 0.5 != 0.0) {
-        return nativeMath.round(x)
-    }
-    val floor = floor(x)
-    return if (floor % 2 == 0.0) floor else ceil(x)
+    if (x.isNaN() || x.isInfinite()) return x
+    // preserve signed zero and already-integer doubles
+    if (x % 1.0 == 0.0) return x
+    val ax = nativeMath.abs(x)
+    val y = nativeMath.floor(ax + 0.5)
+    return if (x < 0.0) -y else y
 }
 
 /**

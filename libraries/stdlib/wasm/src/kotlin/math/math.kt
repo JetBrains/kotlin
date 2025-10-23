@@ -316,7 +316,7 @@ public actual fun floor(x: Double): Double = kotlin.wasm.internal.wasm_f64_floor
 public actual fun truncate(x: Double): Double = kotlin.wasm.internal.wasm_f64_truncate(x)
 
 /**
- * Rounds the given value [x] towards the closest integer with ties rounded towards even integer.
+ * Rounds the given value [x] towards the closest integer with ties rounded away from zero.
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
@@ -325,7 +325,16 @@ public actual fun truncate(x: Double): Double = kotlin.wasm.internal.wasm_f64_tr
  * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
-public actual fun round(x: Double): Double = kotlin.math.fdlibm.rint(x)
+public actual fun round(x: Double): Double = when {
+    x.isNaN() || x.isInfinite() -> x
+    // preserve signed zero and already-integer doubles
+    x % 1.0 == 0.0 -> x
+    else -> {
+        val ax = kotlin.wasm.internal.wasm_f64_abs(x)
+        val y = kotlin.wasm.internal.wasm_f64_floor(ax + 0.5)
+        if (x < 0.0) -y else y
+    }
+}
 
 /**
  * Returns the absolute value of the given value [x].
@@ -845,7 +854,7 @@ public actual fun floor(x: Float): Float = kotlin.wasm.internal.wasm_f32_floor(x
 public actual fun truncate(x: Float): Float = kotlin.wasm.internal.wasm_f32_truncate(x)
 
 /**
- * Rounds the given value [x] towards the closest integer with ties rounded towards even integer.
+ * Rounds the given value [x] towards the closest integer with ties rounded away from zero.
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.

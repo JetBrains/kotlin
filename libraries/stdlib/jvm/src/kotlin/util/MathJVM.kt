@@ -427,7 +427,7 @@ public actual fun truncate(x: Double): Double = when {
 }
 
 /**
- * Rounds the given value [x] towards the closest integer with ties rounded towards even integer.
+ * Rounds the given value [x] towards the closest integer with ties rounded away from zero.
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
@@ -436,8 +436,16 @@ public actual fun truncate(x: Double): Double = when {
  * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public actual inline fun round(x: Double): Double = nativeMath.rint(x)
+public actual inline fun round(x: Double): Double = when {
+    x.isNaN() || x.isInfinite() -> x
+    // preserve signed zero and already-integer doubles
+    x % 1.0 == 0.0 -> x
+    else -> {
+        val ax = nativeMath.abs(x)
+        val y = nativeMath.floor(ax + 0.5)
+        if (x < 0.0) -y else y
+    }
+}
 
 
 /**
@@ -997,7 +1005,7 @@ public actual fun truncate(x: Float): Float = when {
 }
 
 /**
- * Rounds the given value [x] towards the closest integer with ties rounded towards even integer.
+ * Rounds the given value [x] towards the closest integer with ties rounded away from zero.
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
@@ -1006,8 +1014,16 @@ public actual fun truncate(x: Float): Float = when {
  * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public actual inline fun round(x: Float): Float = nativeMath.rint(x.toDouble()).toFloat()
+public actual inline fun round(x: Float): Float = when {
+    x.isNaN() || x.isInfinite() -> x
+    // preserve signed zero and already-integer floats
+    x % 1.0f == 0.0f -> x
+    else -> {
+        val ax = nativeMath.abs(x.toDouble())
+        val y = nativeMath.floor(ax + 0.5)
+        (if (x < 0.0f) -y else y).toFloat()
+    }
+}
 
 
 /**

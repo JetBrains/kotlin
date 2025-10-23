@@ -52,10 +52,10 @@ class MathSamples {
         fun round() {
             assertPrints(round(3.49), "3.0")
             assertPrints(round(3.51), "4.0")
-            // 3.5 is between 3.0 and 4.0, so it is rounded towards an even number 4.0
+            // 3.5 is between 3.0 and 4.0, ties are rounded away from zero to 4.0
             assertPrints(round(3.5), "4.0")
-            // 2.5 is between 2.0 and 3.0, so it is rounded towards an even number 2.0
-            assertPrints(round(2.5), "2.0")
+            // 2.5 is between 2.0 and 3.0, ties are rounded away from zero to 3.0
+            assertPrints(round(2.5), "3.0")
             // -10.0 is already an "integer", so no rounding will take place
             assertPrints(truncate(-10.0), "-10.0")
             // Special cases
@@ -244,10 +244,10 @@ class MathSamples {
         fun round() {
             assertPrints(round(3.49f), "3.0")
             assertPrints(round(3.51f), "4.0")
-            // 3.5 is between 3.0 and 4.0, so it is rounded towards an even number 4.0
+            // 3.5 is between 3.0 and 4.0, ties are rounded away from zero to 4.0
             assertPrints(round(3.5f), "4.0")
-            // 2.5 is between 2.0 and 3.0, so it is rounded towards an even number 2.0
-            assertPrints(round(2.5f), "2.0")
+            // 2.5 is between 2.0 and 3.0, ties are rounded away from zero to 3.0
+            assertPrints(round(2.5f), "3.0")
             // -10.0 is already an "integer", so no rounding will take place
             assertPrints(truncate(-10.0f), "-10.0")
             // Special cases
