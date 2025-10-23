@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
@@ -32,15 +34,22 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
  * Frontend IR creates this kind of symbol each time when x.foo should be resolved to x.getFoo() or x.setFoo().
  */
 class FirSimpleSyntheticPropertySymbol(
+    override val symbolId: FirSymbolId<FirSimpleSyntheticPropertySymbol>,
     propertyId: CallableId,
     getterId: CallableId
-) : FirSyntheticPropertySymbol(propertyId, getterId), SyntheticSymbol {
-    override fun copy(): FirSyntheticPropertySymbol = FirSimpleSyntheticPropertySymbol(callableId, getterId)
+) : FirSyntheticPropertySymbol(symbolId, propertyId, getterId), SyntheticSymbol {
+    constructor(propertyId: CallableId, getterId: CallableId) : this(FirUniqueSymbolId(), propertyId, getterId)
+
+    // TODO (marco): We need to copy the symbol ID somehow. (See the TODO on the superfunction as well.)
+    override fun copy(): FirSyntheticPropertySymbol = FirSimpleSyntheticPropertySymbol(symbolId, callableId, getterId)
 }
 
 class FirSyntheticFunctionSymbol(
+    override val symbolId: FirSymbolId<FirSyntheticFunctionSymbol>,
     callableId: CallableId
-) : FirNamedFunctionSymbol(callableId), SyntheticSymbol
+) : FirNamedFunctionSymbol(symbolId, callableId), SyntheticSymbol {
+    constructor(callableId: CallableId) : this(FirUniqueSymbolId(), callableId)
+}
 
 class FirSyntheticPropertiesScope private constructor(
     val session: FirSession,
@@ -182,11 +191,14 @@ class FirSyntheticPropertiesScope private constructor(
         return buildSyntheticProperty {
             moduleData = session.moduleData
             name = propertyName
+            // TODO (marco): Are unique symbols OK here? Same question as with the other scopes.
             symbol = FirSimpleSyntheticPropertySymbol(
                 getterId = getter.symbol.callableId,
                 propertyId = CallableId(packageName, className, propertyName)
             )
+            getterSymbol = FirSyntheticPropertyAccessorSymbol()
             delegateGetter = getter
+            setterSymbol = setter?.let { FirSyntheticPropertyAccessorSymbol() }
             delegateSetter = setter
             deprecationsProvider = getDeprecationsProviderFromAccessors(session, getter, setter)
         }.apply {

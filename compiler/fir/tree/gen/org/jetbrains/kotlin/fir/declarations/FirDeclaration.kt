@@ -39,4 +39,8 @@ sealed class FirDeclaration : FirElementWithResolveState(), FirAnnotationContain
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDeclaration
+
+    override fun equals(other: Any?): Boolean = this === other || other is FirDeclaration && symbol == other.symbol
+
+    override fun hashCode(): Int = symbol.hashCode()
 }

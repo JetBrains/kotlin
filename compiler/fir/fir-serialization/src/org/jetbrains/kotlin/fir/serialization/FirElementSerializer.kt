@@ -537,6 +537,7 @@ class FirElementSerializer private constructor(
                     visibility = visibility,
                     propertySymbol = symbol,
                     modality = modality,
+                    symbol = FirPropertyAccessorSymbol(),
                 )
             } else null
         }
@@ -564,6 +565,7 @@ class FirElementSerializer private constructor(
                     visibility = visibility,
                     propertySymbol = symbol,
                     modality = modality,
+                    propertyAccessorSymbol = FirPropertyAccessorSymbol(),
                 )
             } else null
         }

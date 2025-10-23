@@ -89,6 +89,7 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
                 deprecationsProvider = EmptyDeprecationsProvider
                 name = variableName
                 isVar = false
+                // TODO (marco): Is a unique symbol OK here? It's more or less the same problem as the larger scopes problem.
                 symbol = FirLocalPropertySymbol()
             }
 

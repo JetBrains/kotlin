@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMappi
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -63,12 +64,13 @@ internal class StubBasedFirTypeDeserializer(
             val builders = mutableListOf<FirTypeParameterBuilder>()
             for (typeParameter in typeParameters) {
                 val name = typeParameter.nameAsSafeName
-                val symbol = FirTypeParameterSymbol().also {
+                val sourceElement = KtRealPsiSourceElement(typeParameter)
+                val symbol = FirTypeParameterSymbol(moduleData.session.symbolIdFactory.sourceBased(sourceElement)).also {
                     typeParametersByName[name.asString()] = it
                 }
 
                 builders += FirTypeParameterBuilder().apply {
-                    source = KtRealPsiSourceElement(typeParameter)
+                    source = sourceElement
                     moduleData = this@StubBasedFirTypeDeserializer.moduleData
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     origin = initialOrigin

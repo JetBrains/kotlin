@@ -86,6 +86,9 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("moduleData", firModuleDataType)
         +field("origin", declarationOriginType)
         +field("attributes", declarationAttributesType)
+
+        // TODO (marco): Generate custom equality and hashCode functions based on the `declaredSymbol` property.
+//        function
     }
 
     val callableDeclaration: Element by sealedElement(Declaration) {

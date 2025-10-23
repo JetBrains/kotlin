@@ -261,7 +261,10 @@ private fun copyArgument(argument: FirExpression): FirExpression = when (argumen
     }
     is FirAnonymousFunctionExpression -> {
         buildAnonymousFunctionExpressionCopy(argument) {
-            anonymousFunction = buildAnonymousFunctionCopy(argument.anonymousFunction) { symbol = FirAnonymousFunctionSymbol() }
+            anonymousFunction = buildAnonymousFunctionCopy(argument.anonymousFunction) {
+                // TODO (marco): Use the `SymbolId.copy` endpoint here as well.
+                symbol = FirAnonymousFunctionSymbol(argument.anonymousFunction.symbol.symbolId)
+            }
         }
     }
     else -> argument

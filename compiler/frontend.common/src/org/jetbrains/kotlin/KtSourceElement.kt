@@ -143,6 +143,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
         object DelegateExpression : DelegatedPropertyAccessor()
 
         /**
+         * The delegate field of a delegated property. Its source refers to the call that creates the delegate.
+         */
+        object DelegatedPropertyDelegateField : DelegatedPropertyAccessor()
+
+        /**
          * A delegated property getter. Its real source is the explicit getter declaration if present, or otherwise the call that creates
          * the delegate.
          */

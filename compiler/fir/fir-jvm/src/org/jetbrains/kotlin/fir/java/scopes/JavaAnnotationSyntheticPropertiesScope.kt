@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -46,12 +47,16 @@ class JavaAnnotationSyntheticPropertiesScope(
             val function = functionSymbol.fir
             val symbol = syntheticPropertiesCache.getOrPut(functionSymbol) {
                 val callableId = CallableId(classId, name)
+                // TODO (marco): Is it OK if the symbols here are unique? This is basically the same question as for other scopes from the
+                //  scope session.
+                //  Compare `JavaClassUseSiteMemberScope`, where the synthetic property cache is stored in the session.
                 FirJavaOverriddenSyntheticPropertySymbol(callableId, callableId).also {
                     buildSyntheticProperty {
                         moduleData = session.nullableModuleData ?: function.moduleData
                         this.name = name
                         symbol = it
                         customStatus = function.status.copy(modality = Modality.FINAL)
+                        getterSymbol = FirSyntheticPropertyAccessorSymbol()
                         delegateGetter = function
                         deprecationsProvider = UnresolvedDeprecationProvider
                     }

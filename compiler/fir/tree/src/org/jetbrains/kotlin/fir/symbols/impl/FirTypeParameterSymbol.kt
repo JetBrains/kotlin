@@ -9,17 +9,28 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.mpp.TypeParameterSymbolMarker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>(), TypeParameterSymbolMarker {
+class FirTypeParameterSymbol(
+    override val symbolId: FirSymbolId<FirTypeParameterSymbol>,
+) : FirClassifierSymbol<FirTypeParameter>(symbolId), TypeParameterSymbolMarker {
     val name: Name
         get() = fir.name
 
     private val lookupTag = ConeTypeParameterLookupTag(this)
+
+    /**
+     * Creates a [FirTypeParameterSymbol] with a *unique* symbol ID ([FirUniqueSymbolId]). This constructor should only be used for symbols
+     * which are stored for the lifetime of the session. In particular, type parameter symbols built from light tree/PSI should not use this
+     * constructor. See [FirSymbolId] for more information.
+     */
+    constructor() : this(FirUniqueSymbolId())
 
     override fun toLookupTag(): ConeTypeParameterLookupTag = lookupTag
 
@@ -44,4 +55,3 @@ class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>(), TypePara
     val containingDeclarationSymbol: FirBasedSymbol<*>
         get() = fir.containingDeclarationSymbol
 }
-

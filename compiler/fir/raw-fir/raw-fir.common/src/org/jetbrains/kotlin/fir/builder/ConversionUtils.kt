@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -334,7 +336,14 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     bindFunction: (target: FirFunctionTarget, function: FirFunction) -> Unit = FirFunctionTarget::bind,
 ) {
     if (delegateBuilder == null) return
-    val delegateFieldSymbol = FirDelegateFieldSymbol(symbol).also {
+
+    val symbolIdFactory = moduleData.session.symbolIdFactory
+
+    // Similar to the getter and setter, we base the delegate field's source on the declaration source itself.
+    val delegateFieldSource = explicitDeclarationSource
+        .fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor.DelegatedPropertyDelegateField)
+
+    val delegateFieldSymbol = FirDelegateFieldSymbol(symbolIdFactory.sourceBased(delegateFieldSource), symbol).also {
         this.delegateFieldSymbol = it
     }
 
@@ -470,7 +479,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 isInline = getterStatus?.isInline ?: isInline
                 isStatic = getterStatus?.isStatic == true
             }
-            symbol = FirPropertyAccessorSymbol()
+            symbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBased(getterElement))
             body = lazyBodyForGeneratedAccessors ?: FirSingleExpressionBlock(
                 buildReturnExpression {
                     result = buildFunctionCall {
@@ -521,7 +530,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 isInline = setterStatus?.isInline ?: isInline
                 isStatic = setterStatus?.isStatic == true
             }
-            symbol = FirPropertyAccessorSymbol()
+            symbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBased(setterElement))
 
             val parameterSource =
                 setterElement.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor.Setter.ValueParameter)
@@ -533,7 +542,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = FirImplicitTypeRefImplWithoutSource
                 name = SpecialNames.IMPLICIT_SET_PARAMETER
-                symbol = FirValueParameterSymbol()
+                symbol = FirValueParameterSymbol(symbolIdFactory.sourceBased(parameterSource))
                 isCrossinline = false
                 isNoinline = false
                 isVararg = false
@@ -701,12 +710,18 @@ fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget)
     }
 
 fun AbstractRawFirBuilder<*>.createReceiverParameter(
+    symbolId: FirSymbolId<FirReceiverParameterSymbol>,
     typeRefCalculator: () -> FirTypeRef,
     moduleData: FirModuleData,
     containingCallableSymbol: FirCallableSymbol<*>,
 ): FirReceiverParameter = buildReceiverParameter {
-    symbol = FirReceiverParameterSymbol()
+    // We cannot create the symbol ID from the source of the calculated `FirTypeRef` because we need the symbol ID to build the symbol,
+    // which in turn is needed as a container symbol for the type ref calculation. Hence, the best approach is to explicitly require passing
+    // in a symbol ID.
+    symbol = FirReceiverParameterSymbol(symbolId)
     withContainerSymbol(symbol) {
+        // `typeRefCalculator` is nested in `withContainerSymbol` on purpose to provide the correct container symbol context during type ref
+        // calculation.
         val typeRef = typeRefCalculator()
         source = typeRef.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
 
@@ -727,13 +742,16 @@ fun AbstractRawFirBuilder<*>.createReceiverParameter(
 fun KtSourceElement.asReceiverParameter(
     moduleData: FirModuleData,
     containingCallableSymbol: FirCallableSymbol<*>,
-): FirReceiverParameter = buildReceiverParameter {
-    source = this@asReceiverParameter.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
-    typeRef = FirImplicitTypeRefImplWithoutSource
-    symbol = FirReceiverParameterSymbol()
-    this.moduleData = moduleData
-    origin = FirDeclarationOrigin.Source
-    this.containingDeclarationSymbol = containingCallableSymbol
+): FirReceiverParameter {
+    val fakeElement = this@asReceiverParameter.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
+    return buildReceiverParameter {
+        source = fakeElement
+        typeRef = FirImplicitTypeRefImplWithoutSource
+        symbol = FirReceiverParameterSymbol(moduleData.session.symbolIdFactory.sourceBased(fakeElement))
+        this.moduleData = moduleData
+        origin = FirDeclarationOrigin.Source
+        this.containingDeclarationSymbol = containingCallableSymbol
+    }
 }
 
 fun <T> FirCallableDeclaration.initContainingClassAttr(context: Context<T>) {

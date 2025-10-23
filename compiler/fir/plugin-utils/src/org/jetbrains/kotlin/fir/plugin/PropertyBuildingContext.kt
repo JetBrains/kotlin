@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGener
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
@@ -118,6 +120,7 @@ public class PropertyBuildingContext(
                 origin = key.origin,
                 propertyTypeRef = returnTypeRef,
                 visibility = status.visibility,
+                symbol = FirPropertyAccessorSymbol(),
                 propertySymbol = symbol,
                 modality = resolvedStatus.modality,
                 effectiveVisibility = resolvedStatus.effectiveVisibility,
@@ -130,6 +133,7 @@ public class PropertyBuildingContext(
                     origin = key.origin,
                     propertyTypeRef = returnTypeRef,
                     visibility = setterVisibility ?: status.visibility,
+                    propertyAccessorSymbol = FirPropertyAccessorSymbol(),
                     propertySymbol = symbol,
                     modality = resolvedStatus.modality,
                     effectiveVisibility = resolvedStatus.effectiveVisibility,
@@ -147,7 +151,8 @@ public class PropertyBuildingContext(
                     mutableListOf(),
                     returnTypeRef,
                     isVar,
-                    symbol,
+                    symbol = FirBackingFieldSymbol(),
+                    propertySymbol = symbol,
                     status,
                     resolvePhase = FirResolvePhase.BODY_RESOLVE,
                 )

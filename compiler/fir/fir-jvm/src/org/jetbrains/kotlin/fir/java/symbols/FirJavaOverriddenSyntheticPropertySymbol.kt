@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.java.symbols
 
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.name.CallableId
 
@@ -42,8 +44,12 @@ import org.jetbrains.kotlin.name.CallableId
  * And Java "overrides" Kotlin's "base Annotation" class (yes, technically there is no base class for annotations).
  */
 class FirJavaOverriddenSyntheticPropertySymbol(
+    override val symbolId: FirSymbolId<FirJavaOverriddenSyntheticPropertySymbol>,
     propertyId: CallableId,
     getterId: CallableId
-) : FirSyntheticPropertySymbol(propertyId, getterId) {
-    override fun copy(): FirSyntheticPropertySymbol = FirJavaOverriddenSyntheticPropertySymbol(callableId, getterId)
+) : FirSyntheticPropertySymbol(symbolId, propertyId, getterId) {
+    constructor(propertyId: CallableId, getterId: CallableId) : this(FirUniqueSymbolId(), propertyId, getterId)
+
+    // TODO (marco): We need to copy the symbol ID somehow. (See the TODO on the superfunction as well.)
+    override fun copy(): FirSyntheticPropertySymbol = FirJavaOverriddenSyntheticPropertySymbol(symbolId, callableId, getterId)
 }

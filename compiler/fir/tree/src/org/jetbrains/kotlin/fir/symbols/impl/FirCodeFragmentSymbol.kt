@@ -7,5 +7,6 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 
-class FirCodeFragmentSymbol : FirBasedSymbol<FirCodeFragment>()
+class FirCodeFragmentSymbol(override val symbolId: FirSymbolId<FirCodeFragmentSymbol>) : FirBasedSymbol<FirCodeFragment>(symbolId)
