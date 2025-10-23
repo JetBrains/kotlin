@@ -100,10 +100,20 @@ internal class DescriptorKFunction private constructor(
             is KotlinFunction -> run {
                 getFunctionWithDefaultParametersForValueClassOverride(descriptor)?.let { defaultImplsFunction ->
                     val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultImplsFunction) as KotlinFunction
-                    return@run container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)
+                    return@run container.findDefaultMethod(
+                        replacingJvmSignature.methodName,
+                        replacingJvmSignature.methodDesc,
+                        true,
+                        defaultImplsFunction.valueParameters.size
+                    )
                 }
 
-                container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc, !Modifier.isStatic(caller.member!!.modifiers)) as Member?
+                container.findDefaultMethod(
+                    jvmSignature.methodName,
+                    jvmSignature.methodDesc,
+                    !Modifier.isStatic(caller.member!!.modifiers),
+                    descriptor.valueParameters.size
+                ) as Member?
             }
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)

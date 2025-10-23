@@ -206,7 +206,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         return null
     }
 
-    fun findDefaultMethod(name: String, desc: String, isMember: Boolean): Method? {
+    fun findDefaultMethod(name: String, desc: String, isMember: Boolean, kotlinValueParameterCount: Int): Method? {
         if (name == "<init>") return null
 
         val parameterTypes = arrayListOf<Class<*>>()
@@ -215,7 +215,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             parameterTypes.add(jClass)
         }
         val jvmDescriptor = parseJvmDescriptor(desc, parseReturnType = true)
-        addParametersAndMasks(parameterTypes, jvmDescriptor.parameters, isConstructor = false)
+        addParametersAndMasks(parameterTypes, jvmDescriptor.parameters, isConstructor = false, maskValueParameterCount = kotlinValueParameterCount)
 
         return methodOwner.lookupMethod(
             name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes.toTypedArray(), jvmDescriptor.returnType!!, isStaticDefault = isMember
@@ -231,7 +231,12 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             addParametersAndMasks(parameterTypes, parsedParameters, isConstructor = true)
         })
 
-    private fun addParametersAndMasks(result: MutableList<Class<*>>, valueParameters: List<Class<*>>, isConstructor: Boolean) {
+    private fun addParametersAndMasks(
+        result: MutableList<Class<*>>,
+        valueParameters: List<Class<*>>,
+        isConstructor: Boolean,
+        maskValueParameterCount: Int? = null
+    ) {
         // Constructors that include parameters of inline class types contain an extra trailing DEFAULT_CONSTRUCTOR_MARKER parameter,
         // which should be excluded when calculating mask size.
         val withoutMarker =
@@ -239,7 +244,11 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             else valueParameters
 
         result.addAll(withoutMarker)
-        repeat((withoutMarker.size + Integer.SIZE - 1) / Integer.SIZE) {
+
+        // For functions, the mask should be computed from the number of Kotlin value parameters (excluding receivers).
+        // For constructors, all JVM parameters are value parameters, so we use the actual size when not overridden.
+        val maskCountSource = maskValueParameterCount ?: withoutMarker.size
+        repeat((maskCountSource + Integer.SIZE - 1) / Integer.SIZE) {
             result.add(Integer.TYPE)
         }
 
