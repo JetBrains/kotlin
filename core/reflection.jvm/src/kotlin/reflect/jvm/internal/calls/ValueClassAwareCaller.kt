@@ -10,11 +10,13 @@ import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
-import kotlin.reflect.*
+import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty
+import kotlin.reflect.KType
 import kotlin.reflect.full.createDefaultType
 import kotlin.reflect.full.withNullability
 import kotlin.reflect.jvm.internal.*
-import kotlin.reflect.jvm.internal.types.AbstractKType
 
 /**
  * A caller that is used whenever the declaration has value classes in its parameter types or inline class in return type.
@@ -206,18 +208,6 @@ internal fun KType?.toInlineClass(): Class<*>? {
     if (!expandedUnderlyingType.isNullableType() && !expandedUnderlyingType.isPrimitiveType()) return klass.java
 
     return null
-}
-
-private fun KType.isNullableType(): Boolean {
-    if (isMarkedNullable) return true
-
-    val upperBound = (this as AbstractKType).upperBoundIfFlexible()
-    if (upperBound != null && upperBound.isNullableType()) return true
-
-    if (isDefinitelyNotNullType) return false
-
-    val classifier = classifier
-    return classifier is KTypeParameter && classifier.upperBounds.any { it.isNullableType() }
 }
 
 private fun ReflectKCallable<*>.isGetterOfUnderlyingPropertyOfValueClass(): Boolean =

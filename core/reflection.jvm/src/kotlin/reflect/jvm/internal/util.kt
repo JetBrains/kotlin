@@ -54,9 +54,11 @@ import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.jvm.internal.RepeatableContainer
 import kotlin.reflect.KType
+import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
+import kotlin.reflect.jvm.internal.types.AbstractKType
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
@@ -352,3 +354,18 @@ internal fun Class<*>.getDeclaredFieldOrNull(name: String): Field? =
     } catch (e: NoSuchFieldException) {
         null
     }
+
+/**
+ * Returns `true` if this type allows `null` values. Based on `TypeUtils.isNullableType` (K1), `ConeKotlinType.canBeNull` (K2).
+ */
+internal fun KType.isNullableType(): Boolean {
+    if (isMarkedNullable) return true
+
+    val upperBound = (this as AbstractKType).upperBoundIfFlexible()
+    if (upperBound != null && upperBound.isNullableType()) return true
+
+    if (isDefinitelyNotNullType) return false
+
+    val classifier = classifier
+    return classifier is KTypeParameter && classifier.upperBounds.any { it.isNullableType() }
+}
