@@ -364,6 +364,16 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
     private val layout = project.layout
 
+    private val cinteropNamespace = listOf(
+        "swiftPMImport",
+        project.group.toString(),
+        if (project.path == ":") project.name else project.path
+    ).filter {
+        !it.isEmpty()
+    }.joinToString(".") {
+        it.replace(Regex("[^a-zA-Z0-9_.]"), ".")
+    }
+
     @TaskAction
     fun generateDefFiles() {
         val dumpIntermediates = xcodebuildSdk.flatMap { sdk ->
@@ -446,7 +456,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                     language = Objective-C
                     modules = $modules
                     compilerOpts = $workaroundKT81695 -fmodules $defFileSearchPaths
-                    package = swiftPMImport
+                    package = $cinteropNamespace
                 """.trimIndent()
             )
         }
