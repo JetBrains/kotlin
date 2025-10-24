@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.js.resolve.JsDefaultImportsProvider
 import org.jetbrains.kotlin.js.resolve.JsTypeSpecificityComparatorWithoutDelegate
 
 @OptIn(SessionConfiguration::class)
-object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.Context, FirJsSessionFactory.Context>() {
+object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.Context>() {
 
     // ==================================== Library session ====================================
 

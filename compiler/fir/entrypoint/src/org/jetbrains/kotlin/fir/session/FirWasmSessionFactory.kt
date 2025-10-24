@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.wasm.resolve.WasmJsDefaultImportsProvider
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiDefaultImportsProvider
 
 @OptIn(SessionConfiguration::class)
-sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?, Nothing?>() {
+sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?>() {
     object WasmJs : FirWasmSessionFactory() {
         override val defaultImportsProvider: DefaultImportsProvider
             get() = WasmJsDefaultImportsProvider

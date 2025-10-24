@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 @OptIn(SessionConfiguration::class)
-object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Context, FirJvmSessionFactory.Context>() {
+object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Context>() {
 
     // ==================================== Shared library session ====================================
 

@@ -176,7 +176,7 @@ fun <F> prepareWasmSessions(
 }
 
 private fun <F> prepareKlibSessions(
-    sessionFactory: AbstractFirKlibSessionFactory<*, *>,
+    sessionFactory: AbstractFirKlibSessionFactory<*>,
     platform: TargetPlatform,
     files: List<F>,
     configuration: CompilerConfiguration,
@@ -192,7 +192,7 @@ private fun <F> prepareKlibSessions(
     return SessionConstructionUtils.prepareSessions(
         files, configuration, rootModuleName, platform,
         metadataCompilationMode, libraryList, extensionRegistrars, isCommonSource, isScript = { false }, fileBelongsToModule,
-        createSharedLibrarySession = { ->
+        createSharedLibrarySession = {
             sessionFactory.createSharedLibrarySession(
                 rootModuleName,
                 configuration,
@@ -244,7 +244,7 @@ fun <F> prepareMetadataSessions(
     return SessionConstructionUtils.prepareSessions(
         files, configuration, rootModuleName, CommonPlatforms.defaultCommonPlatform,
         metadataCompilationMode = true, libraryList, extensionRegistrars, isCommonSource, isScript = { false }, fileBelongsToModule,
-        createSharedLibrarySession = { ->
+        createSharedLibrarySession = {
             FirMetadataSessionFactory.createSharedLibrarySession(
                 rootModuleName,
                 languageVersionSettings,
