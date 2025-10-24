@@ -88,13 +88,13 @@ class KonanLibraryImpl(
         .withOptional(KlibIrComponent.Kind.InlinableFunctions, KlibIrComponentImpl::createForInlinableFunctionsIr)
         .build()
 
-    override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC>): KC {
+    override fun <KC : KlibMandatoryComponent> getComponent(kind: KlibMandatoryComponent.Kind<KC>): KC {
         @Suppress("UNCHECKED_CAST")
         val component = components[kind] as KC?
-        return component ?: error("Unregistered component ${kind::class.qualifiedName ?: kind}")
+        return component ?: error("Unregistered component $kind")
     }
 
-    override fun <KC : KlibOptionalComponent> getComponent(kind: KlibComponent.Kind<KC>): KC? {
+    override fun <KC : KlibOptionalComponent> getComponent(kind: KlibOptionalComponent.Kind<KC>): KC? {
         @Suppress("UNCHECKED_CAST")
         return components[kind] as KC?
     }

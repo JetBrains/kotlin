@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.library.components
 
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 import org.jetbrains.kotlin.library.Klib
-import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
+import org.jetbrains.kotlin.library.KlibMandatoryComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_MODULE_METADATA_FILE_NAME
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 /**
  * This component provides read access to Klib metadata.
  */
-interface KlibMetadataComponent : KlibComponent {
+interface KlibMetadataComponent : KlibMandatoryComponent {
     /** The metadata header in the raw form (bytes, yet to be deserialized to [KlibMetadataProtoBuf.Header]). */
     val moduleHeaderData: ByteArray
 
@@ -31,7 +31,7 @@ interface KlibMetadataComponent : KlibComponent {
     /** The concrete package fragment in the raw form (bytes, yet to be deserialized to [ProtoBuf.PackageFragment]). */
     fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray
 
-    companion object Kind : KlibComponent.Kind<KlibMetadataComponent>
+    companion object Kind : KlibMandatoryComponent.Kind<KlibMetadataComponent>
 }
 
 /**

@@ -32,31 +32,40 @@ interface Klib {
     val location: KlibFile
 
     /**
-     * Get a specific [KlibComponent] by its [kind]. Throw an error if the component is not found.
+     * Get a specific [KlibMandatoryComponent] by its [kind]. Throw an error if the component is not found.
      */
-    fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC>): KC
+    fun <KC : KlibMandatoryComponent> getComponent(kind: KlibMandatoryComponent.Kind<KC>): KC
 
     /**
      * Get a specific [KlibOptionalComponent] by its [kind]. Return `null` if the component is not found.
      */
-    fun <KC : KlibOptionalComponent> getComponent(kind: KlibComponent.Kind<KC>): KC?
+    fun <KC : KlibOptionalComponent> getComponent(kind: KlibOptionalComponent.Kind<KC>): KC?
 }
 
 /**
  * A representation of a certain slice of the Klib library that can be read.
  */
-interface KlibComponent {
+sealed interface KlibComponent {
     /**
      * Kind (ID) of a [KlibComponent]. Used to access the component using [Klib.getComponent].
      */
-    interface Kind<KC : KlibComponent>
+    sealed interface Kind<KC : KlibComponent>
+}
+
+/**
+ * A [KlibComponent] that is mandatory: This component is always present in the library.
+ */
+interface KlibMandatoryComponent : KlibComponent {
+    interface Kind<KMC : KlibMandatoryComponent> : KlibComponent.Kind<KMC>
 }
 
 /**
  * A [KlibComponent] that is optional: This component is not available in the library if there is
- * no data that it can read (see [isDataAvailable]).
+ * no data that it can read according to [isDataAvailable].
  */
 interface KlibOptionalComponent : KlibComponent {
+    interface Kind<KOC : KlibOptionalComponent> : KlibComponent.Kind<KOC>
+
     /** Whether there is any data to be read by the component. */
     val isDataAvailable: Boolean
 }

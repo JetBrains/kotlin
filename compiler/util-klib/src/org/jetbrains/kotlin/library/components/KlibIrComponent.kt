@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.library.components
 
 import org.jetbrains.kotlin.library.Klib
-import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibOptionalComponent
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FOLDER_NAME
@@ -46,7 +45,7 @@ interface KlibIrComponent : KlibOptionalComponent {
     fun signatures(fileIndex: Int): ByteArray
     fun stringLiterals(fileIndex: Int): ByteArray
 
-    enum class Kind : KlibComponent.Kind<KlibIrComponent> { Main, InlinableFunctions }
+    enum class Kind : KlibOptionalComponent.Kind<KlibIrComponent> { Main, InlinableFunctions }
 }
 
 /**
