@@ -329,6 +329,10 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     )
 }
 
+/**
+ * @returns next parameter type and next VarargMappingState
+ * `null` for the first component means that vararg adaptation is not possible
+ */
 context(_: SessionHolder)
 private fun varargParameterTypeByExpectedParameter(
     candidate: Candidate,
@@ -356,10 +360,21 @@ private fun varargParameterTypeByExpectedParameter(
             }
         }
         VarargMappingState.MAPPED_WITH_PLAIN_ARGS -> {
-            if (expectedParameterType.isArrayOrPrimitiveArray() || expectedParameterType is ConeTypeVariableType)
-                null to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
-            else
-                elementType to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
+            when {
+                LanguageFeature.RefinedVarargConversionRulesForCallableReferences.isDisabled() -> when {
+                    expectedParameterType.isArrayOrPrimitiveArray() || expectedParameterType is ConeTypeVariableType ->
+                        null to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
+                    else -> elementType to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
+                }
+                else -> when {
+                    // It's hard to say why for function type `(Any, Array<String>) -> Unit` once we mapped its first
+                    // parameter as a vararg element, we should prevent the adaptation (by returning null) once the next parameter is Array.
+                    // But that's how it worked in K1 (see CallableReferencesCandidateFactory.varargParameterTypeByExpectedParameter)
+                    // TODO: Reconsider this behavior (KT-81913)
+                    expectedParameterType.isArrayOrPrimitiveArray() -> null to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
+                    else -> elementType to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
+                }
+            }
         }
         VarargMappingState.MAPPED_WITH_ARRAY ->
             null to VarargMappingState.MAPPED_WITH_ARRAY
