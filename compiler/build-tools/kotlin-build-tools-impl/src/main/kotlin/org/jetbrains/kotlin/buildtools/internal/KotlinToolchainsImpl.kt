@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
+import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
@@ -34,6 +36,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         return toolchains.computeIfAbsent(type) { type ->
             when (type) {
                 JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(buildIdToSessionFlagFile)
+                JsPlatformToolchain::class.java -> JsPlatformToolchainImpl(buildIdToSessionFlagFile)
                 CriToolchain::class.java -> CriToolchainImpl()
                 else -> error("Unsupported platform toolchain type: $type. Only JVM compilation is supported for now.")
             }
