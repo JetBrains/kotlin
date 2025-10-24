@@ -101,7 +101,7 @@ private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrMod
 )
 
 private fun inlineAllFunctionsPhase(irMangler: IrMangler, inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
-    { context: LoweringContext ->
+    { context: PreSerializationLoweringContext ->
         FunctionInlining(
             context,
             PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions),
@@ -129,7 +129,7 @@ private fun inlineFunctionSerializationPreProcessing(irMangler: IrMangler, inlin
 )
 
 private fun validateIrAfterInliningAllFunctionsPhase(irMangler: IrMangler, inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
-    { context: LoweringContext ->
+    { context: PreSerializationLoweringContext ->
         val resolver = PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions)
         IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase(
             context,

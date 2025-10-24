@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 
 class WasmPreSerializationLoweringContext(
     irBuiltIns: IrBuiltIns,
@@ -23,4 +25,6 @@ class WasmPreSerializationLoweringContext(
     }
 
     override val sharedVariablesManager: SharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }
+
+    override val irMangler: KotlinMangler.IrMangler = JsManglerIr
 }
