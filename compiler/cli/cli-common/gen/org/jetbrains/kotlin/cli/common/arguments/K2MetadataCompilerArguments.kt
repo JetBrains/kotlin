@@ -44,6 +44,16 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xtarget-platform",
+        description = "Target platform for metadata generation. Possible values: JVM, JS, WASM_JS, WASM_WASI, Native",
+    )
+    var targetPlatform: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-classpath",
         shortName = "-cp",
         valueDescription = "<path>",
