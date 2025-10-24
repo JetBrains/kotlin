@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
-import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -127,41 +124,38 @@ class K2ReplCompiler(
             ) { compilerContext.environment.createPackagePartProvider(it) }
             val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
             val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
-            val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
-            val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
 
             val moduleDataProvider = ReplModuleDataProvider(classpath.map(File::toPath))
 
+            val sessionFactoryContext = FirJvmSessionFactory.Context(
+                configuration = compilerContext.environment.configuration,
+                projectEnvironment = projectEnvironment,
+                librariesScope = projectFileSearchScope,
+            )
             val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                 mainModuleName = moduleName,
-                projectEnvironment = projectEnvironment,
                 extensionRegistrars = extensionRegistrars,
-                packagePartProvider = packagePartProvider,
                 languageVersionSettings = languageVersionSettings,
-                predefinedJavaComponents = predefinedJavaComponents,
+                context = sessionFactoryContext,
             )
 
             FirJvmSessionFactory.createLibrarySession(
                 sharedLibrarySession,
                 moduleDataProvider = moduleDataProvider,
-                projectEnvironment = projectEnvironment,
                 extensionRegistrars = extensionRegistrars,
-                scope = projectFileSearchScope,
-                packagePartProvider = packagePartProvider,
                 languageVersionSettings = languageVersionSettings,
-                predefinedJavaComponents = predefinedJavaComponents,
+                context = sessionFactoryContext,
             )
 
             return K2ReplCompilationState(
                 scriptCompilationConfiguration,
                 hostConfiguration,
-                predefinedJavaComponents,
                 projectEnvironment,
                 moduleDataProvider,
                 messageCollector,
                 compilerContext,
-                packagePartProvider,
-                sharedLibrarySession
+                sharedLibrarySession,
+                sessionFactoryContext,
             )
         }
     }
@@ -170,13 +164,12 @@ class K2ReplCompiler(
 class K2ReplCompilationState(
     internal val scriptCompilationConfiguration: ScriptCompilationConfiguration,
     internal val hostConfiguration: ScriptingHostConfiguration,
-    internal val predefinedJavaComponents: FirSharableJavaComponents,
     internal val projectEnvironment: VfsBasedProjectEnvironment,
     internal val moduleDataProvider: ReplModuleDataProvider,
     internal val messageCollector: ScriptDiagnosticsMessageCollector,
     internal val compilerContext: SharedScriptCompilationContext,
-    internal val packagePartProvider: PackagePartProvider,
     internal val sharedLibrarySession: FirSession,
+    internal val sessionFactoryContext: FirJvmSessionFactory.Context,
 ) {
     var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
 }
@@ -307,12 +300,9 @@ private fun compileImpl(
         FirJvmSessionFactory.createLibrarySession(
             sharedLibrarySession = state.sharedLibrarySession,
             moduleDataProvider = SingleModuleDataProvider(libModuleData),
-            projectEnvironment = state.projectEnvironment,
             extensionRegistrars = extensionRegistrars,
-            scope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project)),
-            packagePartProvider = state.packagePartProvider,
             languageVersionSettings = compilerConfiguration.languageVersionSettings,
-            predefinedJavaComponents = state.predefinedJavaComponents,
+            context = state.sessionFactoryContext,
         )
         KotlinJavaPsiFacade.getInstance(project).clearPackageCaches()
     }
@@ -320,12 +310,11 @@ private fun compileImpl(
     val session = FirJvmSessionFactory.createSourceSession(
         moduleData,
         AbstractProjectFileSearchScope.EMPTY,
-        state.projectEnvironment,
         createIncrementalCompilationSymbolProviders = { null },
         extensionRegistrars,
         compilerConfiguration,
         // TODO: from script config
-        state.predefinedJavaComponents,
+        context = state.sessionFactoryContext,
         needRegisterJavaElementFinder = true,
         isForLeafHmppModule = false,
         init = {},

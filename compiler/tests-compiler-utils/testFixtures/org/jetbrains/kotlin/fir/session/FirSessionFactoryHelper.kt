@@ -34,26 +34,27 @@ object FirSessionFactoryHelper {
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
     ): FirSession {
         val dependencyList = DependencyListForCliModule.build(moduleName, init = dependenciesConfigurator)
-        val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)
         val languageVersionSettings = configuration.languageVersionSettings
+
+        val context = FirJvmSessionFactory.Context(
+            configuration,
+            projectEnvironment,
+            librariesScope,
+        )
+
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             moduleName,
-            projectEnvironment,
             extensionRegistrars,
-            packagePartProvider,
             languageVersionSettings,
-            predefinedJavaComponents = null,
+            context,
         )
 
         val librarySession = FirJvmSessionFactory.createLibrarySession(
             sharedLibrarySession,
             dependencyList.moduleDataProvider,
-            projectEnvironment,
             extensionRegistrars,
-            librariesScope,
-            packagePartProvider,
             languageVersionSettings,
-            predefinedJavaComponents = null,
+            context,
         )
 
         val mainModuleData = FirSourceModuleData(
@@ -66,11 +67,10 @@ object FirSessionFactoryHelper {
         return FirJvmSessionFactory.createSourceSession(
             mainModuleData,
             javaSourcesScope,
-            projectEnvironment,
             { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, projectEnvironment) },
             extensionRegistrars,
             configuration,
-            predefinedJavaComponents = null,
+            context,
             needRegisterJavaElementFinder,
             isForLeafHmppModule = false,
         ) {

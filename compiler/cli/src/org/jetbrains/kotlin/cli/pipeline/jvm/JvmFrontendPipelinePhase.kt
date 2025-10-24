@@ -321,42 +321,39 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     ): List<SessionWithSources<F>> {
         val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
         val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
-        val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
 
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
+        val context = FirJvmSessionFactory.Context(
+            configuration,
+            projectEnvironment,
+            librariesScope,
+        )
 
-        val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesScope)
         return SessionConstructionUtils.prepareSessions(
             files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
             metadataCompilationMode = false, libraryList, extensionRegistrars, isCommonSource, isScript, fileBelongsToModule,
-            createSharedLibrarySession = { ->
+            createSharedLibrarySession = {
                 FirJvmSessionFactory.createSharedLibrarySession(
                     rootModuleName,
-                    projectEnvironment,
                     extensionRegistrars,
-                    packagePartProviderForLibraries,
                     configuration.languageVersionSettings,
-                    predefinedJavaComponents = predefinedJavaComponents,
+                    context,
                 )
             },
             createLibrarySession = { sharedLibrarySession ->
                 FirJvmSessionFactory.createLibrarySession(
                     sharedLibrarySession,
                     libraryList.moduleDataProvider,
-                    projectEnvironment,
                     extensionRegistrars,
-                    librariesScope,
-                    packagePartProviderForLibraries,
                     configuration.languageVersionSettings,
-                    predefinedJavaComponents = predefinedJavaComponents,
+                    context,
                 )
             },
             createSourceSession = { moduleFiles, moduleData, isForLeafHmppModule, sessionConfigurator ->
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
                     javaSourcesScope,
-                    projectEnvironment,
                     createIncrementalCompilationSymbolProviders = { session ->
                         // Temporary solution for KT-61942 - we need to share the provider built on top of previously compiled files,
                         // because we do not distinguish classes generated from common and platform sources, so may end up with the
@@ -375,7 +372,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     },
                     extensionRegistrars,
                     configuration,
-                    predefinedJavaComponents = predefinedJavaComponents,
+                    context,
                     needRegisterJavaElementFinder = true,
                     isForLeafHmppModule = isForLeafHmppModule,
                     sessionConfigurator,

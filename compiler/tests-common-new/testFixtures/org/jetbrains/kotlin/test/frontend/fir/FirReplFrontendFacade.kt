@@ -16,9 +16,6 @@ import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
-import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
-import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -50,9 +47,8 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
     private class ReplCompilationEnvironment(
         val targetPlatform: TargetPlatform,
         val extensionRegistrars: List<FirExtensionRegistrar>,
-        val predefinedJavaComponents: FirSharableJavaComponents?,
-        val projectEnvironment: AbstractProjectEnvironment,
-        val libraryList: DependencyListForCliModule
+        val libraryList: DependencyListForCliModule,
+        val jvmSessionFactoryContext: FirJvmSessionFactory.Context,
     )
 
     @OptIn(SessionConfiguration::class)
@@ -68,7 +64,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
         val libraryList = createLibraryListForJvm("repl", configuration, emptyList())
         val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
-        val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
         val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(testModule)
         val librariesSearchScope = PsiBasedProjectFileSearchScope(getLibrariesScope(project))
 
@@ -77,32 +72,32 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
                 packagePartProviderFactory.invoke(it)
             }
 
+        val context = FirJvmSessionFactory.Context(
+            configuration,
+            projectEnvironment,
+            librariesSearchScope,
+        )
+
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             Name.special("<${testModule.name}>"),
-            projectEnvironment,
             extensionRegistrars,
-            projectEnvironment.getPackagePartProvider(librariesSearchScope),
             testModule.languageVersionSettings,
-            predefinedJavaComponents,
+            context
         )
 
         FirJvmSessionFactory.createLibrarySession(
             sharedLibrarySession,
             libraryList.moduleDataProvider,
-            projectEnvironment,
             extensionRegistrars,
-            librariesSearchScope,
-            projectEnvironment.getPackagePartProvider(librariesSearchScope),
             testModule.languageVersionSettings,
-            predefinedJavaComponents,
+            context,
         ).also(::registerExtraComponents)
 
         ReplCompilationEnvironment(
             targetPlatform,
             extensionRegistrars,
-            predefinedJavaComponents,
-            projectEnvironment,
-            libraryList
+            libraryList,
+            context,
         )
     }
 
@@ -151,11 +146,10 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val moduleBasedSession = FirJvmSessionFactory.createSourceSession(
             moduleData = moduleData,
             javaSourcesScope = PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles.values)),
-            projectEnvironment = replCompilationEnvironment.projectEnvironment,
             createIncrementalCompilationSymbolProviders = { null },
             extensionRegistrars = replCompilationEnvironment.extensionRegistrars,
             configuration = compilerConfiguration,
-            predefinedJavaComponents = replCompilationEnvironment.predefinedJavaComponents,
+            context = replCompilationEnvironment.jvmSessionFactoryContext,
             needRegisterJavaElementFinder = true,
             isForLeafHmppModule = false,
         ) {
