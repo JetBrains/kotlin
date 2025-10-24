@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -78,7 +79,7 @@ internal class PreSerializationPrivateInlineFunctionResolver(
 }
 
 internal class PreSerializationNonPrivateInlineFunctionResolver(
-    context: LoweringContext,
+    context: PreSerializationLoweringContext,
     irMangler: KotlinMangler.IrMangler,
     inlineCrossModuleFunctions: Boolean,
 ) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(
@@ -88,7 +89,7 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
 
     private val deserializer = NonLinkingIrInlineFunctionDeserializer(
         irBuiltIns = context.irBuiltIns,
-        signatureComputer = PublicIdSignatureComputer(irMangler)
+        signatureComputer = PublicIdSignatureComputer(context.irMangler)
     )
 
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
