@@ -24,6 +24,24 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
+ * Represents a property accessor declaration — either a getter or a setter — in FIR.
+ * Exactly one of [isGetter] or [isSetter] is true for a given accessor.
+ *
+ * Notable properties:
+ * - [symbol] — the symbol which serves as a pointer to this accessor.
+ * - [propertySymbol] — the symbol of the property this accessor belongs to.
+ * - [isGetter] — whether this accessor is a getter.
+ * - [isSetter] — whether this accessor is a setter.
+ * - [typeParameters] — type parameters declared for the accessor (normally empty, but so-called synthetic property accessors can have them).
+ * - [valueParameters] — value parameters of the accessor (for a setter, normally contains a single parameter representing the value being set; empty for a getter).
+ * - [dispatchReceiverType] — always null for property accessors. 
+ * - [receiverParameter] — the extension receiver parameter if the containing property is an extension, otherwise null.
+ * - [returnTypeRef] — the return type of the accessor (normally it's the property type for a getter, and [kotlin.Unit] for a setter).
+ * - [contextParameters] — context parameters of the accessor, if any.
+ * - [body] — the body of the accessor, if present, otherwise null.
+ * - [contractDescription] — contract description for the accessor, if present (see [FirContractDescription] and its inheritors).
+ * - [annotations] — annotations present on the accessor, if any.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.propertyAccessor]
  */
 abstract class FirPropertyAccessor : FirFunction(), FirContractDescriptionOwner, FirTypeParametersOwner {

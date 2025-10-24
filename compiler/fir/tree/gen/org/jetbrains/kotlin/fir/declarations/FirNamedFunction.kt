@@ -24,6 +24,25 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
+ * Represents a named Kotlin function declaration.
+ * This covers top-level functions, member functions, and local named functions,
+ * but excludes lambdas, anonymous functions, and secondary constructors.
+ *
+ * Notable properties:
+ * - [name] — the simple name of the function.
+ * - [symbol] — the symbol which serves as a pointer to this function.
+ * - [typeParameters] — type parameters declared for the function, if any.
+ * - [valueParameters] — the list of the function's value parameters.
+ * - [dispatchReceiverType] — dispatch receiver type for member functions, or null for top-level or static functions.
+ * Dispatch receiver type is a type of `this` based on the member function's owner class and used to determine accessible scopes.
+ * - [contextParameters] — context parameters of the function, if any.
+ * - [receiverParameter] — the extension receiver parameter if the function is an extension, otherwise null.
+ * - [returnTypeRef] — the declared return type of the function.
+ * (if type is assumed to be inferred, [FirImplicitTypeRef] is used here).
+ * - [body] — the function body, if present, otherwise null.
+ * - [contractDescription] — contract description for the function, if present (see [FirContractDescription] and its inheritors).
+ * - [annotations] — annotations present on the function, if any.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.namedFunction]
  */
 abstract class FirNamedFunction : FirFunction(), FirContractDescriptionOwner, FirTypeParametersOwner {

@@ -24,6 +24,21 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
+ * Represents a common base for Kotlin function-like declarations in FIR (all kinds of functions, property accessors, and constructors).
+ *
+ * This element is inherited by [FirNamedFunction], [FirAnonymousFunction], [FirPropertyAccessor], and [FirConstructor].
+ *
+ * Notable properties common to functions:
+ * - [symbol] — the symbol which serves as a pointer to this function-like declaration.
+ * - [valueParameters] — the list of value parameters.
+ * - [dispatchReceiverType] — dispatch receiver type for member functions, or null for top-level or static functions.
+ * Dispatch receiver type is a type of `this` based on the member function's owner class and used to determine accessible scopes.
+ * - [contextParameters] — context parameters of the function, if any.
+ * - [receiverParameter] — the extension receiver parameter if present, otherwise null.
+ * - [returnTypeRef] — the declared return type of the function-like declaration.
+ * - [body] — the function body, if present, otherwise null.
+ * - [annotations] — annotations present on the declaration, if any.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.function]
  */
 sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirControlFlowGraphOwner, FirStatement {

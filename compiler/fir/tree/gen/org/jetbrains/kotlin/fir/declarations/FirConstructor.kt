@@ -24,6 +24,25 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
+ * Represents a Kotlin class constructor declaration in FIR.
+ * This covers both primary and secondary constructors.
+ *
+ * Notable properties:
+ * - [symbol] — the symbol which serves as a pointer to this constructor.
+ * - [isPrimary] — whether this constructor is the primary constructor of the class.
+ * - [typeParameters] — the type parameters of the constructor itself (Java only) and references to type parameters of the owner class and its outer classes, if any.
+ * - [valueParameters] — the list of value parameters of the constructor.
+ * - [dispatchReceiverType] — dispatch receiver type for inner class constructors, or null for nested class constructors.
+ * For inner class constructors the dispatch receiver type is bound to the outer class `this`, not to the owner class `this`.
+ * - [contextParameters] — context parameters of the constructor, if any.
+ * - [receiverParameter] — the extension receiver parameter (normally should be null as constructors cannot be extensions).
+ * - [returnTypeRef] — the constructed type of the enclosing class.
+ * - [delegatedConstructor] — the delegated constructor call (`this(...)` or `super(...)`) for secondary constructors, if present.
+ * For primary constructors the equivalent of `super(...)` call is built based on a given superclass.
+ * - [body] — the body of a secondary constructor, if present; always null for primary constructors.
+ * - [contractDescription] — contract description for the constructor, if present (see [FirContractDescription] and its inheritors).
+ * - [annotations] — annotations present on the constructor, if any.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.constructor]
  */
 abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner, FirContractDescriptionOwner {
