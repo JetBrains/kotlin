@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.file.isBitcode
+import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
@@ -103,7 +104,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
             .partition { it.isNativeStdlib && generationState.producedLlvmModuleContainsStdlib }
             .toList()
             .map { libraries ->
-                libraries.flatMap { it.bitcodePaths }.filter { it.isBitcode }
+                libraries.flatMap { it.bitcode(config.target)?.bitcodeFilePaths.orEmpty() }.filter { it.isBitcode }
             }
 
     fun MutableList<String>.add(module: RuntimeModule) = add(runtimeModulesConfig.absolutePathFor(module))
