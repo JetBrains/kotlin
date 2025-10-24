@@ -1,4 +1,40 @@
+public final class A /* test.A*/ {
+  public  A();//  .ctor()
+}
+
 public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  AList();//  .ctor()
+
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public @org.jetbrains.annotations.NotNull() test.A remove(int);//  remove(int)
+
+  public @org.jetbrains.annotations.NotNull() test.A set(int, @org.jetbrains.annotations.NotNull() test.A);//  set(int, @org.jetbrains.annotations.NotNull() test.A)
+
+  public abstract int getSize();//  getSize()
+
+  public boolean add(@org.jetbrains.annotations.NotNull() test.A);//  add(@org.jetbrains.annotations.NotNull() test.A)
+
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() test.A>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() test.A>)
+
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() test.A>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() test.A>)
+
+  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  public final int size();//  size()
+
+  public java.lang.Object[] toArray();//  toArray()
+
+  public void add(int, @org.jetbrains.annotations.NotNull() test.A);//  add(int, @org.jetbrains.annotations.NotNull() test.A)
+
+  public void clear();//  clear()
+}
+
+public abstract class AList2 /* test.AList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() test.A> iterator();//  iterator()
@@ -34,7 +70,7 @@ public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbr
   @java.lang.Override()
   public int lastIndexOf(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  lastIndexOf(@org.jetbrains.annotations.NotNull() test.A)
 
-  public  AList();//  .ctor()
+  public  AList2();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
@@ -57,6 +93,10 @@ public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbr
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
 
   public final int size();//  size()
 
