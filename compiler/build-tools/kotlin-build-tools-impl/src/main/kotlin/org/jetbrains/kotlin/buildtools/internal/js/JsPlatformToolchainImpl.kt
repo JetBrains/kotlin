@@ -5,23 +5,15 @@
 
 package org.jetbrains.kotlin.buildtools.internal.js
 
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsCompilationOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmClasspathSnapshottingOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
-import java.io.File
 import java.nio.file.Path
 
-internal class JsPlatformToolchainImpl(private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>) : JsPlatformToolchain {
+internal class JsPlatformToolchainImpl() : JsPlatformToolchain {
     override fun createJsCompilationOperation(
         sources: List<Path>,
         destinationDirectory: Path,
     ): JsCompilationOperation =
-        JsCompilationOperationImpl(sources, destinationDirectory, buildIdToSessionFlagFile = buildIdToSessionFlagFile)
-
+        JsCompilationOperationImpl(sources)
 }

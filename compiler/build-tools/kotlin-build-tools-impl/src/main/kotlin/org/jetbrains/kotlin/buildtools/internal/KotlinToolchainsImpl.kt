@@ -36,7 +36,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         return toolchains.computeIfAbsent(type) { type ->
             when (type) {
                 JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(buildIdToSessionFlagFile)
-                JsPlatformToolchain::class.java -> JsPlatformToolchainImpl(buildIdToSessionFlagFile)
+                JsPlatformToolchain::class.java -> JsPlatformToolchainImpl()
                 CriToolchain::class.java -> CriToolchainImpl()
                 else -> error("Unsupported platform toolchain type: $type. Only JVM compilation is supported for now.")
             }
