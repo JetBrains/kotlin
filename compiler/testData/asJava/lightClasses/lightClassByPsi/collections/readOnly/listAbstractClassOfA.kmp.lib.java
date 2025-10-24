@@ -1,4 +1,12 @@
+public final class A /* test.A*/ {
+  public  A();//  .ctor()
+}
+
 public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  AList();//  .ctor()
+}
+
+public abstract class AList2 /* test.AList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
   @kotlin.SinceKotlin()
@@ -22,7 +30,7 @@ public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbr
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() test.A get(int);//  get(int)
 
-  public  AList();//  .ctor()
+  public  AList2();//  .ctor()
 
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  contains(@org.jetbrains.annotations.NotNull() test.A)
 

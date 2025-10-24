@@ -1,4 +1,62 @@
+public final class A /* test.A*/ {
+  public  A();//  .ctor()
+}
+
 public abstract class AList /* test.AList*/ implements java.util.List<test.A>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  AList();//  .ctor()
+
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public abstract boolean contains(test.A);//  contains(test.A)
+
+  public abstract int getSize();//  getSize()
+
+  public abstract int indexOf(test.A);//  indexOf(test.A)
+
+  public abstract int lastIndexOf(test.A);//  lastIndexOf(test.A)
+
+  public boolean add(test.A);//  add(test.A)
+
+  public boolean addAll(int, java.util.Collection<? extends test.A>);//  addAll(int, java.util.Collection<? extends test.A>)
+
+  public boolean addAll(java.util.Collection<? extends test.A>);//  addAll(java.util.Collection<? extends test.A>)
+
+  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  public final int size();//  size()
+
+  public java.lang.Object[] toArray();//  toArray()
+
+  public java.util.List<test.A> subList(int, int);//  subList(int, int)
+
+  public java.util.ListIterator<test.A> listIterator();//  listIterator()
+
+  public java.util.ListIterator<test.A> listIterator(int);//  listIterator(int)
+
+  public test.A remove(int);//  remove(int)
+
+  public test.A set(int, test.A);//  set(int, test.A)
+
+  public void add(int, test.A);//  add(int, test.A)
+
+  public void clear();//  clear()
+
+  public void replaceAll(java.util.function.UnaryOperator<test.A>);//  replaceAll(java.util.function.UnaryOperator<test.A>)
+
+  public void sort(java.util.Comparator<? super test.A>);//  sort(java.util.Comparator<? super test.A>)
+}
+
+public abstract class AList2 /* test.AList2*/ implements java.util.List<test.A>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public java.util.Iterator<test.A> iterator();//  iterator()
 
@@ -14,7 +72,7 @@ public abstract class AList /* test.AList*/ implements java.util.List<test.A>, k
   @org.jetbrains.annotations.NotNull()
   public test.A get(int);//  get(int)
 
-  public  AList();//  .ctor()
+  public  AList2();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
