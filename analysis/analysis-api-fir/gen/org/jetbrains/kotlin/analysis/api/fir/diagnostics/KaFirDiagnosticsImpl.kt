@@ -246,6 +246,11 @@ internal class DivisionByZeroImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DivisionByZero
 
+internal class TrimMarginBlankPrefixImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.TrimMarginBlankPrefix
+
 internal class ValOrVarOnLoopParameterImpl(
     override val valOrVar: KtKeywordToken,
     firDiagnostic: KtPsiDiagnostic,

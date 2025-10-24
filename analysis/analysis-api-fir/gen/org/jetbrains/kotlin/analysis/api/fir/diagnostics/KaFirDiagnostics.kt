@@ -218,6 +218,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DivisionByZero::class
     }
 
+    interface TrimMarginBlankPrefix : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = TrimMarginBlankPrefix::class
+    }
+
     interface ValOrVarOnLoopParameter : KaFirDiagnostic<KtParameter> {
         override val diagnosticClass get() = ValOrVarOnLoopParameter::class
         val valOrVar: KtKeywordToken

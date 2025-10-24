@@ -25,6 +25,12 @@ const val trimMargin3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"""
     #bar
 """.trimMargin("#")<!>
 
+const val trimMargin4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, TRIM_MARGIN_BLANK_PREFIX!>"""
+    #XYZ
+    #foo
+    #bar
+""".trimMargin(" ")<!>
+
 
 const val trimIndent1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"123".trimIndent()<!>
 const val trimIndent2 =

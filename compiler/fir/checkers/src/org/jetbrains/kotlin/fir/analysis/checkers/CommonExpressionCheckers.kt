@@ -69,6 +69,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker.FunctionCall,
         FirConventionFunctionCallChecker,
         FirDivisionByZeroChecker,
+        FirTrimMarginBlankPrefixChecker,
         FirConstructorCallChecker,
         FirSpreadOfNullableChecker,
         FirAssignmentOperatorCallChecker,

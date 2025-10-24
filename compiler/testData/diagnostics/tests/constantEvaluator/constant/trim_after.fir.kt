@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +IntrinsicConstEvaluation
 // WITH_STDLIB
 
@@ -24,6 +24,11 @@ const val trimMargin3 = """
     #bar
 """.trimMargin("#")
 
+const val trimMargin4 = <!TRIM_MARGIN_BLANK_PREFIX!>"""
+    #XYZ
+    #foo
+    #bar
+""".trimMargin(" ")<!>
 
 const val trimIndent1 = "123".trimIndent()
 const val trimIndent2 =

@@ -248,6 +248,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.TRIM_MARGIN_BLANK_PREFIX) { firDiagnostic ->
+        TrimMarginBlankPrefixImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.VAL_OR_VAR_ON_LOOP_PARAMETER) { firDiagnostic ->
         ValOrVarOnLoopParameterImpl(
             firDiagnostic.a,

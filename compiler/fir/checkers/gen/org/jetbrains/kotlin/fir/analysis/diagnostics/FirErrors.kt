@@ -184,6 +184,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val WRONG_LONG_SUFFIX: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_LONG_SUFFIX", ERROR, SourceElementPositioningStrategies.LONG_LITERAL_SUFFIX, KtElement::class, getRendererFactory())
     val UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val DIVISION_BY_ZERO: KtDiagnosticFactory0 = KtDiagnosticFactory0("DIVISION_BY_ZERO", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
+    val TRIM_MARGIN_BLANK_PREFIX: KtDiagnosticFactory0 = KtDiagnosticFactory0("TRIM_MARGIN_BLANK_PREFIX", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
     val VAL_OR_VAR_ON_LOOP_PARAMETER: KtDiagnosticFactory1<KtKeywordToken> = KtDiagnosticFactory1("VAL_OR_VAR_ON_LOOP_PARAMETER", ERROR, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtParameter::class, getRendererFactory())
     val VAL_OR_VAR_ON_FUN_PARAMETER: KtDiagnosticFactory1<KtKeywordToken> = KtDiagnosticFactory1("VAL_OR_VAR_ON_FUN_PARAMETER", ERROR, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtParameter::class, getRendererFactory())
     val VAL_OR_VAR_ON_CATCH_PARAMETER: KtDiagnosticFactory1<KtKeywordToken> = KtDiagnosticFactory1("VAL_OR_VAR_ON_CATCH_PARAMETER", ERROR, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtParameter::class, getRendererFactory())
