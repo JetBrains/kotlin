@@ -58314,6 +58314,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           }
 
           @Test
+          @TestMetadata("javaType.kt")
+          public void testJavaType() {
+            runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/javaType.kt");
+          }
+
+          @Test
           @TestMetadata("localAndNonLocal.kt")
           public void testLocalAndNonLocal() {
             runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/localAndNonLocal.kt");
