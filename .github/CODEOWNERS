@@ -38,6 +38,7 @@
 /compiler/build-tools/kotlin-build-tools-api/api/kotlin-build-tools-api.api @JetBrains/kotlin
 /compiler/cli/ @JetBrains/kotlin-frontend
 /compiler/cli/cli-js/ @JetBrains/kotlin-js @JetBrains/kotlin-wasm
+/compiler/cli/cli-native-klib/ @JetBrains/kotlin-frontend @JetBrains/kotlin-common-backend
 /compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt @JetBrains/kotlin-native
 /compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArgumentsCopyGenerated.kt @JetBrains/kotlin-native
 /compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2WasmCompilerArguments.kt @JetBrains/kotlin-wasm
@@ -262,7 +263,6 @@
 /kotlin-native/tools/benchmarks @JetBrains/kotlin-native @JetBrains/kotlin-performance-qa
 /kotlin-native/tools/benchmarksAnalyzer @JetBrains/kotlin-native @JetBrains/kotlin-performance-qa
 /kotlin-native/performance @JetBrains/kotlin-native @JetBrains/kotlin-performance-qa
-/kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/NativeFir2IrExtensions.kt @JetBrains/kotlin-native @JetBrains/kotlin-frontend
 
 /libraries/examples/annotation-processor-example/ @JetBrains/kotlin-frontend
 /libraries/examples/kotlin-gradle-subplugin-example/ @JetBrains/kotlin-frontend

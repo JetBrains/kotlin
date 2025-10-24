@@ -69,6 +69,7 @@
 /compiler/build-tools/kotlin-build-tools-api/api/kotlin-build-tools-api.api "Kotlin"
 /compiler/cli/ "Kotlin Frontend"
 /compiler/cli/cli-js/ "Kotlin JS" "Kotlin Wasm"
+/compiler/cli/cli-native-klib/ "Kotlin Frontend" "Kotlin Common Backend"
 /compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt "Kotlin Native"
 /compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArgumentsCopyGenerated.kt "Kotlin Native"
 /compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2WasmCompilerArguments.kt "Kotlin Wasm"
@@ -300,7 +301,6 @@
 /kotlin-native/tools/benchmarks "Kotlin Native" "Kotlin Performance QA"
 /kotlin-native/tools/benchmarksAnalyzer "Kotlin Native" "Kotlin Performance QA"
 /kotlin-native/performance "Kotlin Native" "Kotlin Performance QA"
-/kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/NativeFir2IrExtensions.kt "Kotlin Native" "Kotlin Frontend"
 
 /libraries/examples/annotation-processor-example/ "Kotlin Frontend"
 /libraries/examples/kotlin-gradle-subplugin-example/ "Kotlin Frontend"
