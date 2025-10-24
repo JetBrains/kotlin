@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: ANY
+// LANGUAGE: +RefinedVarargConversionRulesForCallableReferences
 // ISSUE: KT-81913
 
 fun foo(b: (Any, Array<String>) -> String): String {

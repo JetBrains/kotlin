@@ -9,7 +9,7 @@ fun of(vararg args: Any) {}
 
 fun main() {
     foo1(::of)
-    foo2(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo2(::of)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, outProjection, vararg */

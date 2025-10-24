@@ -366,14 +366,7 @@ private fun varargParameterTypeByExpectedParameter(
                         null to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
                     else -> elementType to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
                 }
-                else -> when {
-                    // It's hard to say why for function type `(Any, Array<String>) -> Unit` once we mapped its first
-                    // parameter as a vararg element, we should prevent the adaptation (by returning null) once the next parameter is Array.
-                    // But that's how it worked in K1 (see CallableReferencesCandidateFactory.varargParameterTypeByExpectedParameter)
-                    // TODO: Reconsider this behavior (KT-81913)
-                    expectedParameterType.isArrayOrPrimitiveArray() -> null to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
-                    else -> elementType to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
-                }
+                else -> elementType to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
             }
         }
         VarargMappingState.MAPPED_WITH_ARRAY ->
