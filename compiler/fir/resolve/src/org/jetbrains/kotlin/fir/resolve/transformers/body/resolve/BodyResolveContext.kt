@@ -1067,7 +1067,14 @@ class BodyResolveContext(
         holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
-        return forConstructorParametersOrDelegatedConstructorCallChildren(constructor, owningClass, holder, f)
+        // For delegated constructor call arguments, do not expose the containing class' implicit receiver at all
+        // to make behavior consistent with primary constructor delegation (KT-81923).
+        require(towerDataMode == FirTowerDataMode.CONSTRUCTOR_HEADER)
+        return withTowerDataCleanup {
+            // Do not add inaccessible implicit receiver here for secondary constructors
+            addLocalScope(buildConstructorParametersScope(constructor, holder.session))
+            f()
+        }
     }
 
     @OptIn(PrivateForInline::class)
