@@ -16,6 +16,7 @@ fun copyK2MetadataCompilerArguments(from: K2MetadataCompilerArguments, to: K2Met
     to.legacyMetadataJar = from.legacyMetadataJar
     to.moduleName = from.moduleName
     to.refinesPaths = from.refinesPaths?.copyOf()
+    to.targetPlatform = from.targetPlatform?.copyOf()
 
     return to
 }

@@ -11459,6 +11459,37 @@
                                 }
                             },
                             {
+                                "name": "Xtarget-platform",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Target platform for metadata generation. Possible values: JVM, JS, WasmJs, WasmWasi, Native",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": []
+                                    },
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.3.20",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                }
+                            },
+                            {
                                 "name": "classpath",
                                 "shortName": "cp",
                                 "deprecatedName": null,
