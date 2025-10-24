@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.library.KlibLayoutReader
-import org.jetbrains.kotlin.library.KlibLayoutReaderFactory
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
 
@@ -15,7 +14,9 @@ import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
  *
  * TODO (KT-81411): This class is an implementation detail. It should be made internal after dropping `KonanLibraryImpl`.
  */
-class KlibIrComponentImpl private constructor(layoutReader: KlibLayoutReader<KlibIrComponentLayout>) : KlibIrComponent {
+class KlibIrComponentImpl(
+    private val layoutReader: KlibLayoutReader<KlibIrComponentLayout>
+) : KlibIrComponent {
 
     private val irFiles: IrArrayReader by lazy {
         IrArrayReader(layoutReader, KlibIrComponentLayout::irFilesFile)
@@ -74,12 +75,4 @@ class KlibIrComponentImpl private constructor(layoutReader: KlibLayoutReader<Kli
     override fun types(fileIndex: Int) = types.tableItemBytes(fileIndex)
     override fun signatures(fileIndex: Int) = signatures.tableItemBytes(fileIndex)
     override fun stringLiterals(fileIndex: Int) = stringLiterals.tableItemBytes(fileIndex)
-
-    companion object {
-        fun createForMainIr(layoutReaderFactory: KlibLayoutReaderFactory): KlibIrComponentImpl =
-            KlibIrComponentImpl(layoutReaderFactory.createLayoutReader(KlibIrComponentLayout::createForMainIr))
-
-        fun createForInlinableFunctionsIr(layoutReaderFactory: KlibLayoutReaderFactory): KlibIrComponentImpl =
-            KlibIrComponentImpl(layoutReaderFactory.createLayoutReader(KlibIrComponentLayout::createForInlinableFunctionsIr))
-    }
 }

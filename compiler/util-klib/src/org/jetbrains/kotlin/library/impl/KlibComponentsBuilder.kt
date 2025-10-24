@@ -6,29 +6,35 @@
 package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.library.KlibComponent
+import org.jetbrains.kotlin.library.KlibComponentLayout
+import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.KlibLayoutReaderFactory
 import org.jetbrains.kotlin.library.KlibMandatoryComponent
 import org.jetbrains.kotlin.library.KlibOptionalComponent
+import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 // TODO (KT-81411): This class is an implementation detail. It should be made internal after dropping `KonanLibraryImpl`.
 class KlibComponentsBuilder(private val layoutReaderFactory: KlibLayoutReaderFactory) {
     private val components: MutableMap<KlibComponent.Kind<*>, KlibComponent> = mutableMapOf()
 
-    fun <KMC : KlibMandatoryComponent> withMandatory(
+    fun <KMC, KCL> withMandatory(
         kind: KlibMandatoryComponent.Kind<KMC>,
-        createComponent: (KlibLayoutReaderFactory) -> KMC,
-    ): KlibComponentsBuilder {
-        this.components[kind] = createComponent(layoutReaderFactory)
+        createLayout: (KlibFile) -> KCL,
+        createComponent: (KlibLayoutReader<KCL>) -> KMC,
+    ): KlibComponentsBuilder where KMC : KlibMandatoryComponent, KCL : KlibComponentLayout {
+        this.components[kind] = createComponent(layoutReaderFactory.createLayoutReader(createLayout))
         return this
     }
 
-    fun <KOC : KlibOptionalComponent> withOptional(
+    fun <KOC, KCL> withOptional(
         kind: KlibOptionalComponent.Kind<KOC>,
-        createComponent: (KlibLayoutReaderFactory) -> KOC,
-    ): KlibComponentsBuilder {
-        val component = createComponent(layoutReaderFactory)
+        createLayout: (KlibFile) -> KCL,
+        createComponent: (KlibLayoutReader<KCL>) -> KOC,
+    ): KlibComponentsBuilder where KOC : KlibOptionalComponent, KCL : KlibComponentLayout {
+        val layoutReader = layoutReaderFactory.createLayoutReader(createLayout)
+        val component = createComponent(layoutReader)
         if (component.isDataAvailable) {
-            this.components[kind] = createComponent(layoutReaderFactory)
+            this.components[kind] = component
         }
         return this
     }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library.impl
 
-import org.jetbrains.kotlin.library.KlibLayoutReaderFactory
+import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION_WITH_DOT
@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADA
  * TODO (KT-81411): This class is an implementation detail. It should be made internal after dropping `KonanLibraryImpl`.
  */
 class KlibMetadataComponentImpl(
-    layoutReaderFactory: KlibLayoutReaderFactory,
+    private val layoutReader: KlibLayoutReader<KlibMetadataComponentLayout>,
 ) : KlibMetadataComponent {
-    private val layoutReader = layoutReaderFactory.createLayoutReader(::KlibMetadataComponentLayout)
 
     override val moduleHeaderData get() = layoutReader.readInPlace { it.moduleHeaderFile.readBytes() }
 

@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.components.KlibIrComponent
+import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
+import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
@@ -169,9 +171,9 @@ class KotlinLibraryImpl(
             zipFileSystemAccessor = ir.access.klibZipAccessor
         )
     )
-        .withMandatory(KlibMetadataComponent.Kind, ::KlibMetadataComponentImpl)
-        .withOptional(KlibIrComponent.Kind.Main, KlibIrComponentImpl::createForMainIr)
-        .withOptional(KlibIrComponent.Kind.InlinableFunctions, KlibIrComponentImpl::createForInlinableFunctionsIr)
+        .withMandatory(KlibMetadataComponent.Kind, ::KlibMetadataComponentLayout, ::KlibMetadataComponentImpl)
+        .withOptional(KlibIrComponent.Kind.Main, KlibIrComponentLayout::createForMainIr, ::KlibIrComponentImpl)
+        .withOptional(KlibIrComponent.Kind.InlinableFunctions, KlibIrComponentLayout::createForInlinableFunctionsIr, ::KlibIrComponentImpl)
         .build()
 
     override fun <KC : KlibMandatoryComponent> getComponent(kind: KlibMandatoryComponent.Kind<KC>): KC {
