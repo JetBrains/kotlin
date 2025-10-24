@@ -28,7 +28,6 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.native"))
     api(project(":compiler:fir:checkers:checkers.wasm"))
     api(project(":compiler:fir:fir-serialization"))
-    api(project(":compiler:ir.inline"))
     api(project(":kotlin-util-io"))
     implementation(project(":kotlin-build-common"))
 
