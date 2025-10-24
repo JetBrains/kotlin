@@ -67,7 +67,7 @@ object NativePlatforms {
     }
 }
 
-fun TargetPlatform?.isNative(): Boolean = this?.isNotEmpty() == true && all { it is NativePlatform }
+fun TargetPlatform?.isNative(): Boolean = this != null && this.size > 0 && all { it is NativePlatform }
 
 private val legacyNativePlatformUnspecifiedTargetSerializedRepresentation = "${NativePlatformUnspecifiedTarget.platformName} []"
 fun NativePlatformUnspecifiedTarget.legacySerializeToString(): String = legacyNativePlatformUnspecifiedTargetSerializedRepresentation
