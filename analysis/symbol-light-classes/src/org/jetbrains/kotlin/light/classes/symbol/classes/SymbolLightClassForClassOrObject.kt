@@ -10,6 +10,7 @@ import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightIdentifier
 import com.intellij.psi.impl.light.LightParameter
 import com.intellij.psi.impl.light.LightParameterListBuilder
+import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -47,11 +48,7 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -61,8 +58,6 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
     private val isValueClass: Boolean
@@ -477,6 +472,20 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             when (callableSymbol) {
                 is KaNamedFunctionSymbol -> {
                     val javaMethod = getJavaMethodForCollectionMethodWithSpecialSignature(callableSymbol, allSupertypes)
+                    val javaReturnType = (javaMethod?.returnType as? PsiClassReferenceType)?.resolve()
+
+                    // TODO this is for Map#get:
+                    //  public V get(java.lang.Object);// return type is not substituted
+                    //  should probably support other methods (and parameter types)?
+                    val typeParameterMapping = mutableMapOf<PsiTypeParameter, PsiType>()
+                    if (javaReturnType is PsiTypeParameter) {
+                        val kotlinReturnType = callableSymbol.returnType.asPsiType(useSitePosition = this@SymbolLightClassForClassOrObject, allowErrorTypes = true)
+                        if (kotlinReturnType != null) {
+                            typeParameterMapping[javaReturnType] = kotlinReturnType
+                        }
+                    }
+
+                    val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
 
                     when {
                         javaMethod == null -> {
@@ -485,18 +494,19 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
                         javaMethod.name !in SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES -> {
                             if (callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }) {
-                                result.add(javaMethod.wrap(hasImplementation = true, makeFinal = false))
+                                result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = false))
                             } else {
                                 createDelegateMethod(functionSymbol = callableSymbol)
-                                result.add(javaMethod.wrap(hasImplementation = true, makeFinal = true))
+                                result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = true))
                             }
                         }
 
                         else -> {
-                            result.add(javaMethod.wrap(hasImplementation = true, makeFinal = false))
+                            result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = false))
                         }
                     }
                 }
+
                 is KaKotlinPropertySymbol -> {
                     createPropertyAccessors(
                         lightClass = this@SymbolLightClassForClassOrObject,
@@ -505,6 +515,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                         isTopLevel = false
                     )
                 }
+
                 else -> {}
             }
         }
@@ -523,19 +534,27 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 getJavaListClass(allSupertypes)?.methods?.find { it.name == "indexOf" }
             matchesLastIndexOfMethod(symbol) ->
                 getJavaListClass(allSupertypes)?.methods?.find { it.name == "lastIndexOf" }
+            matchesContainsKeyMethod(symbol) ->
+                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "containsKey" }
+            matchesContainsValueMethod(symbol) ->
+                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "containsValue" }
+            matchesGetMethod(symbol) ->
+                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "get" }
             else -> null
         }
     }
 
-    private fun KaSession.getJavaCollectionClass(allSupertypes: List<KaClassType>): PsiClass? {
-        val kotlinCollection = allSupertypes.find { it.classId == StandardClassIds.Collection } ?: return null
-        val javaClassId = mapKotlinClassToJava(kotlinCollection.classId) ?: return null
-        val javaCollectionSymbol = findClass(javaClassId) ?: return null
-        return javaCollectionSymbol.psi as? PsiClass
-    }
+    private fun KaSession.getJavaCollectionClass(allSupertypes: List<KaClassType>): PsiClass? =
+        getJavaClass(allSupertypes, kotlinClassId = StandardClassIds.Collection)
 
-    private fun KaSession.getJavaListClass(allSupertypes: List<KaClassType>): PsiClass? {
-        val kotlinCollection = allSupertypes.find { it.classId == StandardClassIds.List } ?: return null
+    private fun KaSession.getJavaListClass(allSupertypes: List<KaClassType>): PsiClass? =
+        getJavaClass(allSupertypes, kotlinClassId = StandardClassIds.List)
+
+    private fun KaSession.getJavaMapClass(allSupertypes: List<KaClassType>): PsiClass? =
+        getJavaClass(allSupertypes, kotlinClassId = StandardClassIds.Map)
+
+    private fun KaSession.getJavaClass(allSupertypes: List<KaClassType>, kotlinClassId: ClassId): PsiClass? {
+        val kotlinCollection = allSupertypes.find { it.classId == kotlinClassId } ?: return null
         val javaClassId = mapKotlinClassToJava(kotlinCollection.classId) ?: return null
         val javaCollectionSymbol = findClass(javaClassId) ?: return null
         return javaCollectionSymbol.psi as? PsiClass
@@ -564,6 +583,24 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         if (symbol.name?.asString() != "lastIndexOf") return false
         val parameter = symbol.valueParameters.singleOrNull() ?: return false
         return parameter.name.asString() == "element"
+    }
+
+    private fun matchesContainsKeyMethod(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "containsKey") return false
+        val parameter = symbol.valueParameters.singleOrNull() ?: return false
+        return parameter.name.asString() == "key"
+    }
+
+    private fun matchesContainsValueMethod(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "containsValue") return false
+        val parameter = symbol.valueParameters.singleOrNull() ?: return false
+        return parameter.name.asString() == "value"
+    }
+
+    private fun matchesGetMethod(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "get") return false
+        val parameter = symbol.valueParameters.singleOrNull() ?: return false
+        return parameter.name.asString() == "key"
     }
 
 
