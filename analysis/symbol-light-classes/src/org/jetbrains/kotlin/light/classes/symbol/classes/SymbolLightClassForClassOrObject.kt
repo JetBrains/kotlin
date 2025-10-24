@@ -179,7 +179,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             // TODO?
             return
         }
-
         //val allSupertypes = classSymbol.defaultType.allSupertypes.filterIsInstance<KaClassType>()
         for (supertype in classSymbol.superTypes.filterIsInstance<KaClassType>()) {
             val classId = supertype.classId
@@ -229,6 +228,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             .filterNot { it.hasModifierProperty(PsiModifier.DEFAULT) }
 
         val candidateMethods = javaMethods.flatMap { method -> methodWrappers(method, javaBaseClass, kotlinNames, substitutor) }
+
+        // TODO why PsiSubstitutor.EMPTY?
         val existingSignatures = result.map { it.getSignature(PsiSubstitutor.EMPTY) }.toSet()
         result += candidateMethods.filter { candidateMethod ->
             candidateMethod.getSignature(PsiSubstitutor.EMPTY) !in existingSignatures
@@ -246,7 +247,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             FqName(fqNameString).shortName().asString()
         }
 
-    // TODO check "go to base method" in IDE
+    // TODO check "go to base method", "go to declaration" in IDE
     private fun methodWrappers(
         method: PsiMethod,
         javaBaseClass: PsiClass,
@@ -293,11 +294,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
         if (methodName !in membersWithSpecializedSignature) return emptyList()
 
-//        if (javaBaseClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP) {
-//            val abstractKotlinVariantWithGeneric = javaUtilMapMethodWithSpecialSignature(method, substitutor) ?: return emptyList()
-//            val finalBridgeWithObject = method.finalBridge(substitutor)
-//            return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
-//        }
+        if (javaBaseClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP) {
+            val abstractKotlinVariantWithGeneric = javaUtilMapMethodWithSpecialSignature(method, substitutor) ?: return emptyList()
+            val finalBridgeWithObject = method.finalBridge(substitutor)
+            return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
+        }
 
         if (methodName in SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES) {
             return emptyList()
@@ -319,28 +320,77 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 //        return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
     }
 
+    private fun PsiType.isTypeParameter(): Boolean =
+        this is PsiClassType && this.resolve() is PsiTypeParameter
+
+//    private fun collectTypeParameters(type: PsiType, mapping: MutableMap<PsiTypeParameter, PsiType>) {
+//        when (type) {
+//            is PsiClassType -> {
+//                val resolved = type.resolve()
+//                if (resolved is PsiTypeParameter) {
+//                    mapping[resolved] = PsiType.getJavaLangObject(manager, resolveScope)
+//                } else {
+//                    // Recursively collect from type arguments
+//                    type.parameters.forEach { collectTypeParameters(it, mapping) }
+//                }
+//            }
+//            is PsiArrayType -> {
+//                collectTypeParameters(type.componentType, mapping)
+//            }
+//        }
+//    }
+
     private fun javaUtilMapMethodWithSpecialSignature(method: PsiMethod, substitutor: PsiSubstitutor): KtLightMethodWrapper? {
-        val k = typeParameters[0].asType()
-        val v = typeParameters[1].asType()
+        val typeParameters = substitutor.substitutionMap.keys
+        val kOriginal = substitutor.substitutionMap[typeParameters.find { it.name == "K" }] ?: return null
+        val vOriginal = substitutor.substitutionMap[typeParameters.find { it.name == "V" }] ?: return null
+
+        // Perform erasure: map all type parameters of k and v to java.lang.Object
+//        val erasureMapping = mutableMapOf<PsiTypeParameter, PsiType>()
+//        collectTypeParameters(kOriginal, erasureMapping)
+//        collectTypeParameters(vOriginal, erasureMapping)
+
+//        val erasureSubstitutor = PsiSubstitutor.createSubstitutor(erasureMapping)
+        val k = substitutor.substitute(kOriginal) ?: kOriginal
+        val v = substitutor.substitute(vOriginal) ?: vOriginal
 
         val signature = when (method.name) {
-            "get" -> MethodSignature(
-                parameterTypes = listOf(k),
-                returnType = v
-            )
-            "getOrDefault" -> MethodSignature(
+            "get" -> {
+                if (k.isTypeParameter()) return null
+
+                MethodSignature(
+                    parameterTypes = listOf(k),
+                    returnType = v
+                )
+            }
+
+            // TODO is it needed?
+/*            "getOrDefault" -> MethodSignature(
                 parameterTypes = listOf(k, v),
                 returnType = v
-            )
-            "containsKey" -> MethodSignature(
-                parameterTypes = listOf(k),
-                returnType = PsiTypes.booleanType()
-            )
-            "containsValue" -> MethodSignature(
-                parameterTypes = listOf(v),
-                returnType = PsiTypes.booleanType()
-            )
-            "remove" ->
+            )*/
+
+            "containsKey" -> {
+                if (k.isTypeParameter()) return null
+
+                MethodSignature(
+                    parameterTypes = listOf(k),
+                    returnType = PsiTypes.booleanType()
+                )
+            }
+
+            "containsValue" -> {
+                if (v.isTypeParameter()) return null
+
+                MethodSignature(
+                    parameterTypes = listOf(v),
+                    returnType = PsiTypes.booleanType()
+                )
+            }
+
+            "remove" -> {
+                if (k.isTypeParameter()) return null
+
                 // only `remove(Object)` pair (i.e. `remove(K)`) is needed
                 if (method.parameterList.parametersCount == 1) {
                     MethodSignature(
@@ -353,11 +403,27 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                     // it is mapped to SpecialMethodWithDefaultInfo with no `needsGenericSignature`
                     null
                 }
+            }
             else -> null
         } ?: return null
 
+//        if (signature.containsTypeParameter()) return null
+
         return method.wrap(signature = signature, substitutor = substitutor)
     }
+
+//    private fun MethodSignature.containsTypeParameter(): Boolean {
+//        return parameterTypes.any { it.containsTypeParameter() } || returnType.containsTypeParameter()
+//    }
+//
+//    private fun PsiType.containsTypeParameter(): Boolean {
+//        return when (this) {
+//            is PsiClassType -> resolve() is PsiTypeParameter || parameters.any { it.containsTypeParameter() }
+//            is PsiArrayType -> componentType.containsTypeParameter()
+//            is PsiWildcardType -> bound?.containsTypeParameter() == true
+//            else -> false
+//        }
+//    }
 
     private fun singleTypeParameterAsType(): PsiType = typeParameters.single().asType()
 
