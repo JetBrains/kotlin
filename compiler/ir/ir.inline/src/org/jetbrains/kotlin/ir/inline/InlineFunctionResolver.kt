@@ -80,7 +80,6 @@ internal class PreSerializationPrivateInlineFunctionResolver(
 
 internal class PreSerializationNonPrivateInlineFunctionResolver(
     context: PreSerializationLoweringContext,
-    irMangler: KotlinMangler.IrMangler,
     inlineCrossModuleFunctions: Boolean,
 ) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(
     context,
