@@ -676,7 +676,7 @@ fun getWasmLowerings(
         enumUsageLoweringPhase,
         enumEntryRemovalLoweringPhase,
 
-        suspendFunctionsLoweringPhase,
+//        suspendFunctionsLoweringPhase,
         initializersLoweringPhase,
         initializersCleanupLoweringPhase,
 
