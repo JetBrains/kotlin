@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
@@ -40,9 +39,6 @@ import org.jetbrains.kotlin.fir.types.functionTypeKind
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtLambdaExpression
 
 object ComposablePropertyAccessExpressionChecker : FirPropertyAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -129,10 +125,7 @@ private fun checkComposableCall(
         visitAnonymousFunction = { function ->
             if (function.typeRef.coneType.functionTypeKind(context.session) === ComposableFunction)
                 return
-            val functionPsi = function.psi
-            if (functionPsi is KtFunctionLiteral || functionPsi is KtLambdaExpression ||
-                functionPsi !is KtFunction
-            ) {
+            if (function.isLambda) {
                 return@visitCurrentScope
             }
             val nonReadOnlyCalleeReference =
