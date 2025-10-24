@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
+import org.jetbrains.kotlin.konan.file.createTempDir
+import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.file.file
 import java.io.IOException
+import java.util.zip.ZipException
 
 /**
  * A class that allows reading from a specific [KlibComponent] using the corresponding [KlibComponentLayout].
@@ -23,6 +26,8 @@ sealed class KlibLayoutReader<KCL : KlibComponentLayout> {
             fallbackValueInCaseOfException
         }
 
+    abstract fun readExtractingToTemp(readAction: (KCL) -> KlibFile): KlibFile
+
     /**
      * Read from a directory on the file system.
      * Use the [klibDir] parameter as the [KlibComponentLayout.root].
@@ -33,6 +38,7 @@ sealed class KlibLayoutReader<KCL : KlibComponentLayout> {
     class FromDirectory<KCL : KlibComponentLayout>(klibDir: KlibFile, layoutBuilder: (KlibFile) -> KCL) : KlibLayoutReader<KCL>() {
         private val layout = layoutBuilder(klibDir)
         override fun <T> readInPlace(readAction: (KCL) -> T): T = readAction(layout)
+        override fun readExtractingToTemp(readAction: (KCL) -> KlibFile): KlibFile = readAction(layout)
     }
 
     /**
@@ -58,6 +64,29 @@ sealed class KlibLayoutReader<KCL : KlibComponentLayout> {
             zipFileSystemAccessor.withZipFileSystem(klibArchive) { zipFileSystem ->
                 readAction(layoutBuilder(zipFileSystem.file("/")))
             }
+
+        override fun readExtractingToTemp(readAction: (KCL) -> KlibFile): KlibFile = readInPlace { layout ->
+            val fileOrDirectory = readAction(layout)
+            when {
+                fileOrDirectory.isDirectory -> {
+                    val tempDir = createTempDir(fileOrDirectory.name)
+                    tempDir.deleteOnExitRecursively()
+                    fileOrDirectory.listFiles.forEach { file -> file.copyTo(tempDir.child(file.name)) }
+                    tempDir
+                }
+
+                fileOrDirectory.isFile -> {
+                    val tempFile = createTempFile(fileOrDirectory.name)
+                    tempFile.deleteOnExitRecursively()
+                    fileOrDirectory.copyTo(tempFile)
+                    tempFile
+                }
+
+                fileOrDirectory.exists -> throw ZipException("Non-existing file or directory in KLIB archive: $fileOrDirectory")
+
+                else -> throw ZipException("Unsupported type of the file system object in KLIB archive: $fileOrDirectory")
+            }
+        }
     }
 }
 
