@@ -1,4 +1,8 @@
-public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  SList();//  .ctor()
+}
+
+public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
@@ -44,5 +48,5 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   @java.lang.Override()
   public int lastIndexOf(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
-  public  SList();//  .ctor()
+  public  SList2();//  .ctor()
 }
