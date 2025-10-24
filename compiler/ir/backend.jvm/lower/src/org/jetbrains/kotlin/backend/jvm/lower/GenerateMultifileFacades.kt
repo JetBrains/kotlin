@@ -344,6 +344,8 @@ private class UpdateConstantFacadePropertyReferences(
         val declaration = when (val callableReference = irClass.attributeOwnerId) {
             is IrPropertyReference -> callableReference.getter?.owner?.correspondingPropertySymbol?.owner
             is IrFunctionReference -> callableReference.symbol.owner
+            is IrRichPropertyReference -> callableReference.reflectionTargetSymbol?.owner as? IrProperty
+            is IrRichFunctionReference -> callableReference.reflectionTargetSymbol?.owner
             else -> null
         } ?: return null
         val parent = declaration.parent as? IrClass ?: return null
