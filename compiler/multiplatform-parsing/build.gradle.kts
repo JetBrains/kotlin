@@ -102,7 +102,7 @@ tasks.register(downloadSkeletonTaskName) {
     }
 }
 
-for (lexerName in listOf("Kotlin", "KDoc")) {
+for (lexerName in listOf("KDoc", "Kotlin")) {
     val taskName = "generate${lexerName}Lexer"
     generatedSourcesTask(
         taskName = taskName,
