@@ -86,6 +86,7 @@ tasks.register(downloadSkeletonTaskName) {
 
     val skeletonVersionString = skeletonVersion
     doFirst {
+        skeletonFile.parentFile.mkdirs()
         val skeletonUrl =
             "https://raw.githubusercontent.com/JetBrains/intellij-community/$skeletonVersionString/tools/lexer/idea-flex-kotlin.skeleton"
         println("Downloading skeleton file $skeletonUrl")
