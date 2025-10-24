@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_COLLECTION_PARAMETER_NAMES
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -484,7 +483,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                             createDelegateMethod(functionSymbol = callableSymbol)
                         }
 
-                        javaMethod.name !in ERASED_COLLECTION_PARAMETER_NAMES -> {
+                        javaMethod.name !in SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES -> {
                             if (callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }) {
                                 result.add(javaMethod.wrap(hasImplementation = true, makeFinal = false))
                             } else {
@@ -515,31 +514,56 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         symbol: KaFunctionSymbol,
         allSupertypes: List<KaClassType>,
     ): PsiMethod? {
+        return when {
+            matchesContainsMethod(symbol) ->
+                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "contains" }
+            matchesContainsAllMethod(symbol) ->
+                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "containsAll" }
+            matchesIndexOfMethod(symbol) ->
+                getJavaListClass(allSupertypes)?.methods?.find { it.name == "indexOf" }
+            matchesLastIndexOfMethod(symbol) ->
+                getJavaListClass(allSupertypes)?.methods?.find { it.name == "lastIndexOf" }
+            else -> null
+        }
+    }
+
+    private fun KaSession.getJavaCollectionClass(allSupertypes: List<KaClassType>): PsiClass? {
         val kotlinCollection = allSupertypes.find { it.classId == StandardClassIds.Collection } ?: return null
         val javaClassId = mapKotlinClassToJava(kotlinCollection.classId) ?: return null
         val javaCollectionSymbol = findClass(javaClassId) ?: return null
-        val javaBaseClass = javaCollectionSymbol.psi as? PsiClass ?: return null
+        return javaCollectionSymbol.psi as? PsiClass
+    }
 
-        if (matchesContainsMethod(symbol)) {
-            return javaBaseClass.methods.find { it.name == "contains" }
-        } else if (matchesContainsAllMethod(symbol)) {
-            return javaBaseClass.methods.find { it.name == "containsAll" }
-        }
-
-        return null
+    private fun KaSession.getJavaListClass(allSupertypes: List<KaClassType>): PsiClass? {
+        val kotlinCollection = allSupertypes.find { it.classId == StandardClassIds.List } ?: return null
+        val javaClassId = mapKotlinClassToJava(kotlinCollection.classId) ?: return null
+        val javaCollectionSymbol = findClass(javaClassId) ?: return null
+        return javaCollectionSymbol.psi as? PsiClass
     }
 
     // TODO better check?
-    private fun KaSession.matchesContainsMethod(symbol: KaFunctionSymbol): Boolean {
+    private fun matchesContainsMethod(symbol: KaFunctionSymbol): Boolean {
         if (symbol.name?.asString() != "contains") return false
         val parameter = symbol.valueParameters.singleOrNull() ?: return false
         return parameter.name.asString() == "element"
     }
 
-    private fun KaSession.matchesContainsAllMethod(symbol: KaFunctionSymbol): Boolean {
+    private fun matchesContainsAllMethod(symbol: KaFunctionSymbol): Boolean {
         if (symbol.name?.asString() != "containsAll") return false
         val parameter = symbol.valueParameters.singleOrNull() ?: return false
         return parameter.name.asString() == "elements"
+    }
+
+    private fun matchesIndexOfMethod(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "indexOf") return false
+        val parameter = symbol.valueParameters.singleOrNull() ?: return false
+        return parameter.name.asString() == "element"
+    }
+
+    private fun matchesLastIndexOfMethod(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "lastIndexOf") return false
+        val parameter = symbol.valueParameters.singleOrNull() ?: return false
+        return parameter.name.asString() == "element"
     }
 
 
