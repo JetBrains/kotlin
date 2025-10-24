@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_COLLECTION_PARAMETER_NAMES
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -476,11 +478,24 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             when (callableSymbol) {
                 is KaNamedFunctionSymbol -> {
                     val javaMethod = getJavaMethodForCollectionMethodWithSpecialSignature(callableSymbol, allSupertypes)
-                    if (javaMethod != null) {
-                        result.add(javaMethod.wrap(hasImplementation = true))
-                        return@forEach
-                    } else {
-                        createDelegateMethod(functionSymbol = callableSymbol)
+
+                    when {
+                        javaMethod == null -> {
+                            createDelegateMethod(functionSymbol = callableSymbol)
+                        }
+
+                        javaMethod.name !in ERASED_COLLECTION_PARAMETER_NAMES -> {
+                            if (callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }) {
+                                result.add(javaMethod.wrap(hasImplementation = true, makeFinal = false))
+                            } else {
+                                createDelegateMethod(functionSymbol = callableSymbol)
+                                result.add(javaMethod.wrap(hasImplementation = true, makeFinal = true))
+                            }
+                        }
+
+                        else -> {
+                            result.add(javaMethod.wrap(hasImplementation = true, makeFinal = false))
+                        }
                     }
                 }
                 is KaKotlinPropertySymbol -> {
