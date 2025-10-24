@@ -88,7 +88,7 @@ mm::ExternalRCRefImpl::~ExternalRCRefImpl() {
 
 // static
 mm::ExternalRCRefImpl& mm::ExternalRCRefImpl::create(KRef obj, Rc rc) noexcept {
-    return mm::ThreadRegistry::Instance().CurrentThreadData()->externalRCRefRegistry().createExternalRCRefImpl(obj, rc);
+    return mm::ThreadRegistry::Instance().CurrentThreadData().externalRCRefRegistry().createExternalRCRefImpl(obj, rc);
 }
 
 void mm::ExternalRCRefImpl::dispose() noexcept {

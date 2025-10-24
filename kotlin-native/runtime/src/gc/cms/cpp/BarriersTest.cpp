@@ -38,7 +38,7 @@ test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuil
 
 test_support::Object<Payload>& AllocateObject(mm::ThreadData& threadData) {
     ObjHolder holder;
-    mm::AllocateObject(&threadData, typeHolder.typeInfo(), holder.slot());
+    mm::AllocateObject(threadData, typeHolder.typeInfo(), holder.slot());
     return test_support::Object<Payload>::FromObjHeader(holder.obj());
 }
 
@@ -129,7 +129,7 @@ TEST_F(BarriersTest, ConcurrentDeletion) {
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         threads.emplace_back([&]() noexcept {
             ScopedMemoryInit memory;
-            mm::ThreadData& threadData = *memory.memoryState()->GetThreadData();
+            mm::ThreadData& threadData = memory.threadData();
             auto queueScope = withMutatorQueue(threadData);
 
             while (!canStart.load()) std::this_thread::yield();

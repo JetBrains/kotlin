@@ -57,8 +57,8 @@ extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
     alloc::test_support::assertClear(mm::GlobalData::Instance().allocator());
 }
 
-void kotlin::DeinitMemoryForTests(MemoryState* memoryState) {
-    DeinitMemory(memoryState);
+void kotlin::DeinitMemoryForTests(mm::ThreadData& threadData) {
+    DeinitMemory(threadData);
     mm::ThreadRegistry::ClearCurrentThreadData();
 }
 
@@ -69,7 +69,7 @@ std::ostream& kotlin::operator<<(std::ostream& stream, ThreadState state) {
 test_support::RegularWeakReferenceImpl& test_support::InstallWeakReference(
         mm::ThreadData& threadData, ObjHeader* objHeader, ObjHeader** location)
 {
-    mm::AllocateObject(&threadData, theRegularWeakReferenceImplTypeInfo, location);
+    mm::AllocateObject(threadData, theRegularWeakReferenceImplTypeInfo, location);
     auto& weakReference = test_support::RegularWeakReferenceImpl::FromObjHeader(*location);
     auto& extraObjectData = mm::ExtraObjectData::GetOrInstall(objHeader);
     weakReference->weakRef = mm::createUnretainedExternalRCRef(objHeader);

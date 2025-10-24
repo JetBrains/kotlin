@@ -68,7 +68,7 @@ public:
         all();
     }
 
-    void publish() noexcept { mm::ThreadRegistry::Instance().CurrentThreadData()->externalRCRefRegistry().publish(); }
+    void publish() noexcept { mm::ThreadRegistry::Instance().CurrentThreadData().externalRCRefRegistry().publish(); }
 
     template <typename... Invalidated>
     std::vector<ObjHeader*> all(Invalidated&&... invalidated) noexcept {

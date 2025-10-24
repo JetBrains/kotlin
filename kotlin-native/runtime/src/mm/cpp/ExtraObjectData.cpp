@@ -27,7 +27,7 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
 
     RuntimeCheck(!hasPointerBits(typeInfo, OBJECT_TAG_MASK), "Object must not be tagged");
 
-    auto& allocator = mm::ThreadRegistry::Instance().CurrentThreadData()->allocator();
+    auto& allocator = mm::ThreadRegistry::Instance().CurrentThreadData().allocator();
     auto& data = allocator.allocateExtraObjectData(object, typeInfo);
     std_support::atomic_ref objectAtomicTypeInfo{object->typeInfoOrMeta_};
     if (!objectAtomicTypeInfo.compare_exchange_strong(typeInfo, reinterpret_cast<TypeInfo*>(&data))) {

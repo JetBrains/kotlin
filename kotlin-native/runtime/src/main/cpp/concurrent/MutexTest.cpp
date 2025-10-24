@@ -280,9 +280,9 @@ TYPED_TEST(MutexTestWithThreadState, SmokeAttachedThread) {
             std::unique_lock guard1(lock);
             secondThread = ScopedThread([&lock, &started, &protectedCounter, &secondThreadData, &initialThreadState]() {
                 ScopedMemoryInit init;
-                SwitchThreadState(init.memoryState(), initialThreadState, /* reentrant = */ true);
+                SwitchThreadState(init.threadData(), initialThreadState, /* reentrant = */ true);
 
-                secondThreadData = init.memoryState()->GetThreadData();
+                secondThreadData = &init.threadData();
                 ASSERT_EQ(secondThreadData->state(), initialThreadState);
 
                 started = true;

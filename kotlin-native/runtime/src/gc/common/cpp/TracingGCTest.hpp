@@ -11,6 +11,7 @@
 #include <thread>
 #include <vector>
 
+#include "Memory.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -47,12 +48,12 @@ test_support::TypeInfoHolder typeHolderWithFinalizer{test_support::TypeInfoHolde
 class GlobalObjectHolder : private Pinned {
 public:
     explicit GlobalObjectHolder(mm::ThreadData& threadData) {
-        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(&threadData, &location_);
-        mm::AllocateObject(&threadData, typeHolder.typeInfo(), &location_);
+        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, &location_);
+        mm::AllocateObject(threadData, typeHolder.typeInfo(), &location_);
     }
 
     GlobalObjectHolder(mm::ThreadData& threadData, ObjHeader* object) : location_(object) {
-        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(&threadData, &location_);
+        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, &location_);
     }
 
     ObjHeader* header() { return location_; }
@@ -68,7 +69,7 @@ private:
 class GlobalPermanentObjectHolder : private Pinned {
 public:
     explicit GlobalPermanentObjectHolder(mm::ThreadData& threadData) {
-        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(&threadData, &global_);
+        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, &global_);
         global_->typeInfoOrMeta_ = setPointerBits(global_->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         RuntimeAssert(global_->permanent(), "Must be permanent");
     }
@@ -87,8 +88,8 @@ private:
 class GlobalObjectArrayHolder : private Pinned {
 public:
     explicit GlobalObjectArrayHolder(mm::ThreadData& threadData) {
-        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(&threadData, &location_);
-        mm::AllocateArray(&threadData, theArrayTypeInfo, 3, &location_);
+        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, &location_);
+        mm::AllocateArray(threadData, theArrayTypeInfo, 3, &location_);
     }
 
     ObjHeader* header() { return location_; }
@@ -106,8 +107,8 @@ private:
 class GlobalCharArrayHolder : private Pinned {
 public:
     explicit GlobalCharArrayHolder(mm::ThreadData& threadData) {
-        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(&threadData, &location_);
-        mm::AllocateArray(&threadData, theCharArrayTypeInfo, 3, &location_);
+        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, &location_);
+        mm::AllocateArray(threadData, theCharArrayTypeInfo, 3, &location_);
     }
 
     ObjHeader* header() { return location_; }
@@ -121,7 +122,7 @@ private:
 
 class StackObjectHolder : private Pinned {
 public:
-    explicit StackObjectHolder(mm::ThreadData& threadData) { mm::AllocateObject(&threadData, typeHolder.typeInfo(), holder_.slot()); }
+    explicit StackObjectHolder(mm::ThreadData& threadData) { mm::AllocateObject(threadData, typeHolder.typeInfo(), holder_.slot()); }
     explicit StackObjectHolder(test_support::Object<Payload>& object) : holder_(object.header()) {}
     explicit StackObjectHolder(ObjHeader* object) : holder_(object) {}
 
@@ -136,7 +137,7 @@ private:
 
 class StackObjectArrayHolder : private Pinned {
 public:
-    explicit StackObjectArrayHolder(mm::ThreadData& threadData) { mm::AllocateArray(&threadData, theArrayTypeInfo, 3, holder_.slot()); }
+    explicit StackObjectArrayHolder(mm::ThreadData& threadData) { mm::AllocateArray(threadData, theArrayTypeInfo, 3, holder_.slot()); }
 
     ObjHeader* header() { return holder_.obj(); }
 
@@ -151,7 +152,7 @@ private:
 
 class StackCharArrayHolder : private Pinned {
 public:
-    explicit StackCharArrayHolder(mm::ThreadData& threadData) { mm::AllocateArray(&threadData, theCharArrayTypeInfo, 3, holder_.slot()); }
+    explicit StackCharArrayHolder(mm::ThreadData& threadData) { mm::AllocateArray(threadData, theCharArrayTypeInfo, 3, holder_.slot()); }
 
     ObjHeader* header() { return holder_.obj(); }
 
@@ -164,13 +165,13 @@ private:
 
 test_support::Object<Payload>& AllocateObject(mm::ThreadData& threadData) {
     ObjHolder holder;
-    mm::AllocateObject(&threadData, typeHolder.typeInfo(), holder.slot());
+    mm::AllocateObject(threadData, typeHolder.typeInfo(), holder.slot());
     return test_support::Object<Payload>::FromObjHeader(holder.obj());
 }
 
 test_support::Object<Payload>& AllocateObjectWithFinalizer(mm::ThreadData& threadData) {
     ObjHolder holder;
-    mm::AllocateObject(&threadData, typeHolderWithFinalizer.typeInfo(), holder.slot());
+    mm::AllocateObject(threadData, typeHolderWithFinalizer.typeInfo(), holder.slot());
     return test_support::Object<Payload>::FromObjHeader(holder.obj());
 }
 
@@ -663,9 +664,9 @@ private:
         std::vector<std::unique_ptr<GlobalObjectHolder>> globalRoots_;
 
         Context() {
-            threadData_ = mm::ThreadRegistry::Instance().CurrentThreadData();
+            threadData_ = &mm::ThreadRegistry::Instance().CurrentThreadData();
             // SingleThreadExecutor must work in the runnable state, so that GC does not collect between tasks.
-            AssertThreadState(threadData_, ThreadState::kRunnable);
+            AssertThreadState(*threadData_, ThreadState::kRunnable);
         }
     };
 
@@ -761,7 +762,7 @@ TYPED_TEST_P(TracingGCTest, MultipleMutatorsAllCollect) {
             mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
             // If GC starts before all thread executed line above, two gc will be run
             // So we temporarily switch threads to native state and then return them back after all GC runs are done
-            SwitchThreadState(mm::GetMemoryState(), kotlin::ThreadState::kNative);
+            SwitchThreadState(threadData, kotlin::ThreadState::kNative);
         }));
     }
 
@@ -772,7 +773,7 @@ TYPED_TEST_P(TracingGCTest, MultipleMutatorsAllCollect) {
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         mutators[i]
                 .Execute([](mm::ThreadData& threadData, Mutator& mutator) {
-                    SwitchThreadState(mm::GetMemoryState(), kotlin::ThreadState::kRunnable);
+                    SwitchThreadState(threadData, kotlin::ThreadState::kRunnable);
                 })
                 .wait();
     }

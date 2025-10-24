@@ -31,7 +31,7 @@ public:
                 ScopedMemoryInit memory;
                 {
                     std::unique_lock guard(initializedMutex_);
-                    threadData_ = memory.memoryState()->GetThreadData();
+                    threadData_ = &memory.threadData();
                     assists_.emplace(owner_.assists_, *threadData_);
                 }
                 owner_.registerMutator(*this);
@@ -73,8 +73,8 @@ public:
 
     void safePoint() noexcept {
         if (!mm::test_support::safePointsAreActive()) return;
-        auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-        getMutator(*threadData).assists().safePoint();
+        auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+        getMutator(threadData).assists().safePoint();
     }
 
 private:

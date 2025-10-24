@@ -31,6 +31,7 @@
 #include "KAssert.h"
 #include "Memory.h"
 #include "Natives.h"
+#include "Porting.h"
 #include "Runtime.h"
 #include "Types.h"
 #include "Worker.h"
@@ -235,7 +236,7 @@ public:
         }
     }
     Locker(pthread_mutex_t* lock, MemoryState* memoryState) : lock_(lock), memoryState_(memoryState) {
-        kotlin::ThreadStateGuard guard(memoryState, kotlin::ThreadState::kNative, true);
+        kotlin::ThreadStateGuard guard(*memoryState, kotlin::ThreadState::kNative, true);
         pthread_mutex_lock(lock_);
     }
 
@@ -243,7 +244,7 @@ public:
         kotlin::ThreadStateGuard guard;
         if (switchThreadState_) {
             if (memoryState_ != nullptr) {
-                guard = kotlin::ThreadStateGuard(memoryState_, ThreadState::kNative, true);
+                guard = kotlin::ThreadStateGuard(*memoryState_, ThreadState::kNative, true);
             } else {
                 guard = kotlin::ThreadStateGuard(ThreadState::kNative, true);
             }
@@ -501,7 +502,7 @@ class State {
   }
 
   void signalAnyFuture(MemoryState* memoryState) {
-    kotlin::AssertThreadState(memoryState, ThreadState::kNative);
+    kotlin::AssertThreadState(*memoryState, ThreadState::kNative);
     {
       Locker locker(&lock_, memoryState);
       currentVersion_++;
@@ -620,7 +621,7 @@ void Future::storeResultUnlocked(mm::OwningExternalRCRef result, bool ok) {
 }
 
 void Future::cancelUnlocked(MemoryState* memoryState) {
-  kotlin::AssertThreadState(memoryState, ThreadState::kNative);
+  kotlin::AssertThreadState(*memoryState, ThreadState::kNative);
   {
     Locker locker(&lock_, memoryState);
     state_ = CANCELLED;
@@ -768,7 +769,7 @@ Worker::~Worker() {
 
   name_.reset();
 
-  kotlin::AssertThreadState(memoryState_, ThreadState::kNative);
+  kotlin::AssertThreadState(*memoryState_, ThreadState::kNative);
   pthread_mutex_destroy(&lock_);
   pthread_cond_destroy(&cond_);
 }
@@ -786,7 +787,7 @@ void* workerRoutine(void* argument) {
   // Only run this routine in the runnable state. The moment between this routine exiting and thread
   // destructors running will be spent in the native state. `Kotlin_deinitRuntimeCallback` ensures
   // that runtime deinitialization switches back to the runnable state.
-  kotlin::ThreadStateGuard guard(worker->memoryState(), ThreadState::kRunnable);
+  kotlin::ThreadStateGuard guard(*worker->memoryState(), ThreadState::kRunnable);
 
   do {
     if (worker->processQueueElement(true) == JOB_TERMINATE) break;

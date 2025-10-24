@@ -17,12 +17,12 @@ mm::GlobalsRegistry& mm::GlobalsRegistry::Instance() noexcept {
     return GlobalData::Instance().globalsRegistry();
 }
 
-void mm::GlobalsRegistry::RegisterStorageForGlobal(mm::ThreadData* threadData, ObjHeader** location) noexcept {
-    threadData->globalsThreadQueue().Insert(location);
+void mm::GlobalsRegistry::RegisterStorageForGlobal(mm::ThreadData& threadData, ObjHeader** location) noexcept {
+    threadData.globalsThreadQueue().Insert(location);
 }
 
-void mm::GlobalsRegistry::ProcessThread(mm::ThreadData* threadData) noexcept {
-    threadData->globalsThreadQueue().Publish();
+void mm::GlobalsRegistry::ProcessThread(mm::ThreadData& threadData) noexcept {
+    threadData.globalsThreadQueue().Publish();
 }
 
 mm::GlobalsRegistry::GlobalsRegistry() = default;

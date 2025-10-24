@@ -35,7 +35,7 @@ std::unique_ptr<Object> allocateObject() noexcept {
 class Global : private Pinned {
 public:
     explicit Global(mm::ThreadData& threadData) noexcept {
-        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(&threadData, &location_);
+        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, &location_);
         location_ = allocateObject().release()->header();
     }
 

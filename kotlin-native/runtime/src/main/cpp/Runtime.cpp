@@ -40,7 +40,7 @@ enum class RuntimeStatus {
 };
 
 struct RuntimeState {
-    MemoryState* memoryState;
+    mm::ThreadData* threadData;
     Worker* worker;
     RuntimeStatus status = RuntimeStatus::kUninitialized;
 };
@@ -53,10 +53,10 @@ enum {
   DEINIT_GLOBALS = 3
 };
 
-void InitOrDeinitGlobalVariables(int initialize, MemoryState* memory) {
+void InitOrDeinitGlobalVariables(int initialize, mm::ThreadData* threadData) {
   InitNode* currentNode = initHeadNode;
   while (currentNode != nullptr) {
-    currentNode->init(initialize, memory);
+    currentNode->init(initialize, threadData);
     currentNode = currentNode->next;
   }
 }
@@ -94,19 +94,19 @@ NO_INLINE RuntimeState* initRuntime() {
   ++aliveRuntimesCount;
 
   bool firstRuntime = initializeGlobalRuntimeIfNeeded();
-  result->memoryState = InitMemory();
+  result->threadData= &InitMemory();
   // Switch thread state because worker and globals inits require the runnable state.
   // This call may block if GC requested suspending threads.
-  ThreadStateGuard stateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
-  result->worker = WorkerInit(result->memoryState);
+  ThreadStateGuard stateGuard(*result->threadData, kotlin::ThreadState::kRunnable);
+  result->worker = WorkerInit(result->threadData);
 
-  InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, result->memoryState);
-  CommitTLSStorage(result->memoryState);
+  InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, result->threadData);
+  CommitTLSStorage(result->threadData);
   // Keep global variables in state as well.
   if (firstRuntime) {
-    InitOrDeinitGlobalVariables(INIT_GLOBALS, result->memoryState);
+    InitOrDeinitGlobalVariables(INIT_GLOBALS, result->threadData);
   }
-  InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, result->memoryState);
+  InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, result->threadData);
   RuntimeAssert(result->status == RuntimeStatus::kUninitialized, "Runtime must still be in the uninitialized state");
   result->status = RuntimeStatus::kRunning;
 
@@ -117,22 +117,22 @@ NO_INLINE RuntimeState* initRuntime() {
 }
 
 void deinitRuntime(RuntimeState* state) {
-  AssertThreadState(state->memoryState, kotlin::ThreadState::kRunnable);
+  AssertThreadState(*state->threadData, kotlin::ThreadState::kRunnable);
   RuntimeAssert(state->status == RuntimeStatus::kRunning, "Runtime must be in the running state");
   state->status = RuntimeStatus::kDestroying;
-  // This may be called after TLS is zeroed out, so ::runtimeState and ::memoryState in Memory cannot be trusted.
+  // This may be called after TLS is zeroed out, so ::runtimeState and mm::ThreadRegistry::currentThreadDataNode_ cannot be trusted.
   // TODO: This may in fact reallocate TLS without guarantees that it'll be deallocated again.
   ::runtimeState = state;
   --aliveRuntimesCount;
-  ClearTLS(state->memoryState);
+  ClearTLS(state->threadData);
 
-  // Do not use ThreadStateGuard because memoryState will be destroyed during DeinitMemory.
-  kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kNative);
+  // Do not use ThreadStateGuard because `threadData` will be destroyed during DeinitMemory.
+  kotlin::SwitchThreadState(*state->threadData, kotlin::ThreadState::kNative);
 
   auto workerId = GetWorkerId(state->worker);
   WorkerDeinit(state->worker);
 
-  DeinitMemory(state->memoryState);
+  DeinitMemory(*state->threadData);
   delete state;
   WorkerDestroyThreadDataIfNeeded(workerId);
   ::runtimeState = kInvalidRuntime;
@@ -141,7 +141,7 @@ void deinitRuntime(RuntimeState* state) {
 void Kotlin_deinitRuntimeCallback(void* argument) {
   auto* state = reinterpret_cast<RuntimeState*>(argument);
   // This callback may be called from any state, make sure it runs in the runnable state.
-  kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kRunnable, /* reentrant = */ true);
+  kotlin::SwitchThreadState(*state->threadData, kotlin::ThreadState::kRunnable, /* reentrant = */ true);
   deinitRuntime(state);
 }
 
@@ -197,7 +197,7 @@ void Kotlin_shutdownRuntime() {
     RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
     // The main thread is not doing anything Kotlin anymore, but will stick around to cleanup C++ globals and the like.
     // Mark the thread native, and don't make the GC thread wait on it.
-    kotlin::SwitchThreadState(runtime->memoryState, kotlin::ThreadState::kNative);
+    kotlin::SwitchThreadState(*runtime->threadData, kotlin::ThreadState::kNative);
     return;
 }
 

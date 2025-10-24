@@ -142,7 +142,7 @@ NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader*
         //      Yet at the moment there is now efficient way to distinguish black and gray objects.
 
         // TODO perhaps it would be better to pass the thread data from outside
-        auto& threadData = *mm::ThreadRegistry::Instance().CurrentThreadData();
+        auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
         auto& markQueue = *threadData.gc().impl().mark_.markQueue();
         gc::mark::ConcurrentMark::MarkTraits::tryEnqueue(markQueue, prev);
         // No need to add the marked object in statistics here.
@@ -185,7 +185,7 @@ namespace {
  */
 NO_INLINE void weakRefReadInMarkSlowPath(ObjHeader* weakReferee) noexcept {
     assertPhase(BarriersPhase::kMarkClosure);
-    auto& threadData = *mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     auto& markQueue = *threadData.gc().impl().mark_.markQueue();
     gc::mark::ConcurrentMark::MarkTraits::tryEnqueue(markQueue, weakReferee);
 }

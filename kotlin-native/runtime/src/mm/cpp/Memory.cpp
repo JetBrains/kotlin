@@ -4,7 +4,6 @@
  */
 
 #include "Memory.h"
-#include "MemoryPrivate.hpp"
 
 #include "Allocator.hpp"
 #include "CallsChecker.hpp"
@@ -76,34 +75,34 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
     alloc::destroyExtraObjectData(extraObject);
 }
 
-extern "C" MemoryState* InitMemory() {
+mm::ThreadData& InitMemory() {
     mm::waitGlobalDataInitialized();
-    return mm::ToMemoryState(mm::ThreadRegistry::Instance().RegisterCurrentThread());
+    return *mm::ThreadRegistry::Instance().RegisterCurrentThread()->Get();
 }
 
 void kotlin::initGlobalMemory() noexcept {
     mm::GlobalData::init();
 }
 
-extern "C" void DeinitMemory(MemoryState* state) {
+void DeinitMemory(mm::ThreadData& threadData) {
     // We need the native state to avoid a deadlock on unregistering the thread.
     // The deadlock is possible if we are in the runnable state and the GC already locked
     // the thread registery and waits for threads to suspend or go to the native state.
-    AssertThreadState(state, ThreadState::kNative);
-    auto* node = mm::FromMemoryState(state);
+    AssertThreadState(threadData, ThreadState::kNative);
+    auto& node = mm::ThreadRegistry::Node::from(threadData);
     if (!konan::isOnThreadExitNotSetOrAlreadyStarted()) {
         // we can clear reference in advance, as Unregister function can't use it anyway
         mm::ThreadRegistry::ClearCurrentThreadData();
     }
-    mm::ThreadRegistry::Instance().Unregister(node);
+    mm::ThreadRegistry::Instance().Unregister(&node);
 }
 
-extern "C" void ClearMemoryForTests(MemoryState* state) {
-    state->GetThreadData()->ClearForTests();
+void ClearMemoryForTests(mm::ThreadData& threadData) {
+    threadData.ClearForTests();
 }
 
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     RETURN_RESULT_OF(mm::AllocateObject, threadData, typeInfo);
 }
 
@@ -111,12 +110,12 @@ extern "C" OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elem
     if (elements < 0) {
         ThrowIllegalArgumentException();
     }
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     RETURN_RESULT_OF(mm::AllocateArray, threadData, typeInfo, static_cast<uint32_t>(elements));
 }
 
 extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, location);
     // Null `initialValue` means that the appropriate value was already set by static initialization.
@@ -171,57 +170,54 @@ extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** r
 }
 
 extern "C" RUNTIME_NOTHROW void EnterFrame(ObjHeader** start, int parameters, int count) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->shadowStack().EnterFrame(start, parameters, count);
+    threadData.shadowStack().EnterFrame(start, parameters, count);
 }
 
 extern "C" RUNTIME_NOTHROW void LeaveFrame(ObjHeader** start, int parameters, int count) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->shadowStack().LeaveFrame(start, parameters, count);
+    threadData.shadowStack().LeaveFrame(start, parameters, count);
 }
 
 extern "C" RUNTIME_NOTHROW void SetCurrentFrame(ObjHeader** start) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->shadowStack().SetCurrentFrame(start);
+    threadData.shadowStack().SetCurrentFrame(start);
 }
 
 extern "C" RUNTIME_NOTHROW FrameOverlay* getCurrentFrame() {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
-    return threadData->shadowStack().getCurrentFrame();
+    return threadData.shadowStack().getCurrentFrame();
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void CheckCurrentFrame(ObjHeader** frame) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
-    return threadData->shadowStack().checkCurrentFrame(reinterpret_cast<FrameOverlay*>(frame));
+    return threadData.shadowStack().checkCurrentFrame(reinterpret_cast<FrameOverlay*>(frame));
 }
 
-extern "C" RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
-    auto* threadData = memory->GetThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
+extern "C" RUNTIME_NOTHROW void AddTLSRecord(mm::ThreadData* threadData, void** key, int size) {
+    AssertThreadState(*threadData, ThreadState::kRunnable);
     threadData->tls().AddRecord(key, size);
 }
 
-extern "C" RUNTIME_NOTHROW void CommitTLSStorage(MemoryState* memory) {
-    auto* threadData = memory->GetThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
+extern "C" RUNTIME_NOTHROW void CommitTLSStorage(mm::ThreadData* threadData) {
+    AssertThreadState(*threadData, ThreadState::kRunnable);
     threadData->tls().Commit();
 }
 
-extern "C" RUNTIME_NOTHROW void ClearTLS(MemoryState* memory) {
-    auto* threadData = memory->GetThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
+extern "C" RUNTIME_NOTHROW void ClearTLS(mm::ThreadData* threadData) {
+    AssertThreadState(*threadData, ThreadState::kRunnable);
     threadData->tls().Clear();
 }
 
 extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
-    return threadData->tls().Lookup(key, index);
+    return threadData.tls().Lookup(key, index);
 }
 
 extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
@@ -235,8 +231,8 @@ extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
 extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd) {
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    threadData->suspensionData().requestThreadsSuspension("Memory dump");
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData.suspensionData().requestThreadsSuspension("Memory dump");
     CallsCheckerIgnoreGuard guard;
     // We're in the runnable state, but everything else (including the GC thread) will be suspended.
     // It's fine to wait for that suspension and execute long-running operations (I/O) here.
@@ -358,7 +354,7 @@ extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setBatchSi
             [=](auto& config) noexcept -> void { config.batchSize = value; });
 }
 
-extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
+extern "C" RUNTIME_NOTHROW void PerformFullGC(mm::ThreadData* threadData) {
     mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 }
 
@@ -406,8 +402,8 @@ extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_de
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
 }
 
-MemoryState* kotlin::mm::GetMemoryState() noexcept {
-    return ToMemoryState(ThreadRegistry::Instance().CurrentThreadDataNode());
+mm::ThreadData& mm::currentThreadData() noexcept {
+    return ThreadRegistry::Instance().CurrentThreadData();
 }
 
 bool kotlin::mm::IsCurrentThreadRegistered() noexcept {
@@ -416,8 +412,8 @@ bool kotlin::mm::IsCurrentThreadRegistered() noexcept {
 
 PERFORMANCE_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool reentrant) noexcept : reentrant_(reentrant) {
     Kotlin_initRuntimeIfNeeded();
-    thread_ = mm::GetMemoryState();
-    oldState_ = SwitchThreadState(thread_, ThreadState::kRunnable, reentrant_);
+    threadData_ = &mm::currentThreadData();
+    oldState_ = SwitchThreadState(*threadData_, ThreadState::kRunnable, reentrant_);
 }
 
 RUNTIME_NOTHROW extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object) {

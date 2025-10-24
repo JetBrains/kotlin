@@ -479,9 +479,9 @@ TEST(TerminationThreadStateDeathTest, UnhandledForeignExceptionInNativeState) {
     auto testBlock = []() {
         setupMocks();
 
-        RunInNewThread([](MemoryState* thread) {
-            SwitchThreadState(thread, ThreadState::kNative);
-            loggingAssert(GetThreadState(thread) == ThreadState::kNative, "Expected kNative thread state before throwing");
+        RunInNewThread([](mm::ThreadData& threadData) {
+            SwitchThreadState(threadData, ThreadState::kNative);
+            loggingAssert(GetThreadState(threadData) == ThreadState::kNative, "Expected kNative thread state before throwing");
 
             throw std::runtime_error("Foreign exception");
         });
@@ -509,7 +509,7 @@ TEST(TerminationThreadStateDeathTest, TerminationInForeignExceptionCatch) {
         setupMocks();
 
         ScopedMemoryInit init;
-        loggingAssert(GetThreadState(init.memoryState()) == ThreadState::kRunnable, "Expected kRunnable state before catching");
+        loggingAssert(GetThreadState(init.threadData()) == ThreadState::kRunnable, "Expected kRunnable state before catching");
 
         try {
             throw std::runtime_error("Foreign exception");

@@ -5,6 +5,8 @@
 
 class Worker;
 
+using MemoryState = kotlin::mm::ThreadData;
+
 KInt GetWorkerId(Worker* worker);
 
 Worker* WorkerInit(MemoryState* memoryState);

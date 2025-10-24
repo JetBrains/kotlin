@@ -3,13 +3,10 @@
  * that can be found in the LICENSE file.
  */
 
-#include <thread>
-
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
 #include "Memory.h"
-#include "MemoryPrivate.hpp"
 #include "Runtime.h"
 #include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
@@ -54,21 +51,9 @@ TEST_F(ThreadStateTest, StateSwitchWithThreadData) {
         auto initialState = threadData.state();
         EXPECT_EQ(ThreadState::kRunnable, initialState);
 
-        ThreadState oldState = SwitchThreadState(&threadData, ThreadState::kNative);
+        ThreadState oldState = SwitchThreadState(threadData, ThreadState::kNative);
         EXPECT_EQ(initialState, oldState);
         EXPECT_EQ(ThreadState::kNative, threadData.state());
-    });
-}
-
-TEST_F(ThreadStateTest, StateSwitchWithMemoryState) {
-    RunInNewThread([](MemoryState* memoryState) {
-        auto threadData = memoryState->GetThreadData();
-        auto initialState = threadData->state();
-        EXPECT_EQ(ThreadState::kRunnable, initialState);
-
-        ThreadState oldState = SwitchThreadState(memoryState, ThreadState::kNative);
-        EXPECT_EQ(initialState, oldState);
-        EXPECT_EQ(ThreadState::kNative, threadData->state());
     });
 }
 
@@ -86,12 +71,11 @@ TEST_F(ThreadStateTest, StateSwitchExported) {
 }
 
 TEST_F(ThreadStateTest, StateGuard) {
-    RunInNewThread([](MemoryState* memoryState) {
-        mm::ThreadData& threadData = *memoryState->GetThreadData();
+    RunInNewThread([](mm::ThreadData& threadData) {
         auto initialState = threadData.state();
         EXPECT_EQ(ThreadState::kRunnable, initialState);
         {
-            ThreadStateGuard guard(memoryState, ThreadState::kNative);
+            ThreadStateGuard guard(threadData, ThreadState::kNative);
             EXPECT_EQ(ThreadState::kNative, threadData.state());
         }
         EXPECT_EQ(initialState, threadData.state());
@@ -100,14 +84,14 @@ TEST_F(ThreadStateTest, StateGuard) {
 
 TEST_F(ThreadStateTest, StateGuardForCurrentThread) {
     RunInNewThread([]() {
-        auto* memoryState = mm::GetMemoryState();
-        auto initialState = memoryState->GetThreadData()->state();
+        auto& threadData = mm::currentThreadData();
+        auto initialState = threadData.state();
         EXPECT_EQ(ThreadState::kRunnable, initialState);
         {
-            ThreadStateGuard guard(memoryState, ThreadState::kNative);
-            EXPECT_EQ(ThreadState::kNative, memoryState->GetThreadData()->state());
+            ThreadStateGuard guard(threadData, ThreadState::kNative);
+            EXPECT_EQ(ThreadState::kNative, threadData.state());
         }
-        EXPECT_EQ(initialState, memoryState->GetThreadData()->state());
+        EXPECT_EQ(initialState, threadData.state());
     });
 }
 
@@ -117,10 +101,10 @@ TEST_F(ThreadStateTest, CalledFromNativeGuard_DetachedThread) {
         {
             CalledFromNativeGuard guard;
             EXPECT_TRUE(mm::IsCurrentThreadRegistered());
-            EXPECT_EQ(mm::GetMemoryState()->GetThreadData()->state(), ThreadState::kRunnable);
+            EXPECT_EQ(mm::currentThreadData().state(), ThreadState::kRunnable);
         }
         EXPECT_TRUE(mm::IsCurrentThreadRegistered());
-        EXPECT_EQ(mm::GetMemoryState()->GetThreadData()->state(), ThreadState::kNative);
+        EXPECT_EQ(mm::currentThreadData().state(), ThreadState::kNative);
     });
 }
 
@@ -129,13 +113,13 @@ TEST_F(ThreadStateTest, CalledFromNativeGuard_AttachedThread) {
         // CalledFromNativeGuard checks that runtime is fully initialized under the hood.
         Kotlin_initRuntimeIfNeeded();
 
-        auto threadData = mm::GetMemoryState()->GetThreadData();
-        ASSERT_EQ(threadData->state(), ThreadState::kNative);
+        auto& threadData = mm::currentThreadData();
+        ASSERT_EQ(threadData.state(), ThreadState::kNative);
         {
             CalledFromNativeGuard guard;
-            EXPECT_EQ(threadData->state(), ThreadState::kRunnable);
+            EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
         }
-        EXPECT_EQ(threadData->state(), ThreadState::kNative);
+        EXPECT_EQ(threadData.state(), ThreadState::kNative);
     });
 }
 
@@ -178,7 +162,7 @@ TEST_F(ThreadStateTest, CallWithNativeState) {
 
 TEST_F(ThreadStateTest, CallWithRunnableState) {
     RunInNewThread([this](mm::ThreadData& threadData) {
-       SwitchThreadState(&threadData, ThreadState::kNative);
+       SwitchThreadState(threadData, ThreadState::kNative);
        ASSERT_THAT(threadData.state(), ThreadState::kNative);
 
        EXPECT_CALL(someFunctionMock(), Call(42))
@@ -193,14 +177,13 @@ TEST_F(ThreadStateTest, CallWithRunnableState) {
 }
 
 TEST_F(ThreadStateTest, MovingGuard) {
-    RunInNewThread([](MemoryState* memoryState) {
-        auto& threadData = *memoryState->GetThreadData();
+    RunInNewThread([](mm::ThreadData& threadData) {
         ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
         {
             ThreadStateGuard outerGuard;
             EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
             {
-                ThreadStateGuard innerGuard(memoryState, ThreadState::kNative);
+                ThreadStateGuard innerGuard(threadData, ThreadState::kNative);
                 EXPECT_EQ(threadData.state(), ThreadState::kNative);
                 outerGuard = std::move(innerGuard);
             }
@@ -211,10 +194,7 @@ TEST_F(ThreadStateTest, MovingGuard) {
 }
 
 TEST(ThreadStateDeathTest, StateAsserts) {
-    RunInNewThread([](MemoryState* memoryState) {
-        mm::ThreadData* threadData = memoryState->GetThreadData();
-        EXPECT_DEATH(AssertThreadState(memoryState, ThreadState::kNative),
-                     "runtime assert: Unexpected thread state. Expected: NATIVE. Actual: RUNNABLE");
+    RunInNewThread([](mm::ThreadData& threadData) {
         EXPECT_DEATH(AssertThreadState(threadData, ThreadState::kNative),
                      "runtime assert: Unexpected thread state. Expected: NATIVE. Actual: RUNNABLE");
         EXPECT_DEATH(AssertThreadState(ThreadState::kNative),
@@ -223,26 +203,16 @@ TEST(ThreadStateDeathTest, StateAsserts) {
 }
 
 TEST(ThreadStateDeathTest, StateAssertsForDetachedThread) {
-    EXPECT_DEATH(AssertThreadState(static_cast<MemoryState*>(nullptr), ThreadState::kNative),
-                 "runtime assert: thread must not be nullptr");
-    EXPECT_DEATH(AssertThreadState(static_cast<mm::ThreadData*>(nullptr), ThreadState::kNative),
-                 "runtime assert: threadData must not be nullptr");
     EXPECT_DEATH(AssertThreadState(ThreadState::kNative),
                  "runtime assert: Thread is not attached to the runtime");
-
-    EXPECT_DEATH(AssertThreadState(static_cast<MemoryState*>(nullptr), {ThreadState::kNative}),
-                 "runtime assert: thread must not be nullptr");
-    EXPECT_DEATH(AssertThreadState(static_cast<mm::ThreadData*>(nullptr), {ThreadState::kNative}),
-                 "runtime assert: threadData must not be nullptr");
     EXPECT_DEATH(AssertThreadState({ThreadState::kNative}),
                  "runtime assert: Thread is not attached to the runtime");
 
 }
 
 TEST(ThreadStateDeathTest, IncorrectStateSwitchWithDifferentFunctions) {
-    RunInNewThread([](MemoryState* memoryState) {
-        auto* threadData = memoryState->GetThreadData();
-        EXPECT_DEATH(SwitchThreadState(memoryState, ThreadState::kRunnable),
+    RunInNewThread([](mm::ThreadData& threadData) {
+        EXPECT_DEATH(SwitchThreadState(threadData, ThreadState::kRunnable),
                      "runtime assert: Illegal thread state switch. Old state: RUNNABLE. New state: RUNNABLE");
 
         EXPECT_DEATH(Kotlin_mm_switchThreadStateRunnable(),
@@ -260,82 +230,76 @@ TEST(ThreadStateDeathTest, StateSwitchCorrectness) {
     // Allowed state switches: runnable <-> native
     threadData.setState(ThreadState::kRunnable);
     ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
-    EXPECT_DEATH(SwitchThreadState(&threadData, ThreadState::kRunnable),
+    EXPECT_DEATH(SwitchThreadState(threadData, ThreadState::kRunnable),
                  "runtime assert: Illegal thread state switch. Old state: RUNNABLE. New state: RUNNABLE");
     // Each EXPECT_NO_DEATH is executed in a fork process, so the global state of the test is not affected.
-    EXPECT_NO_DEATH(SwitchThreadState(&threadData, ThreadState::kNative));
+    EXPECT_NO_DEATH(SwitchThreadState(threadData, ThreadState::kNative));
 
     threadData.setState(ThreadState::kNative);
     ASSERT_EQ(threadData.state(), ThreadState::kNative);
-    EXPECT_NO_DEATH(SwitchThreadState(&threadData, ThreadState::kRunnable));
-    EXPECT_DEATH(SwitchThreadState(&threadData, ThreadState::kNative),
+    EXPECT_NO_DEATH(SwitchThreadState(threadData, ThreadState::kRunnable));
+    EXPECT_DEATH(SwitchThreadState(threadData, ThreadState::kNative),
                  "runtime assert: Illegal thread state switch. Old state: NATIVE. New state: NATIVE");
 }
 
 TEST(ThreadStateDeathTest, StateSwitchForDetachedThread) {
-    EXPECT_DEATH(SwitchThreadState(static_cast<MemoryState*>(nullptr), ThreadState::kNative), "thread must not be nullptr");
-    EXPECT_DEATH(SwitchThreadState(static_cast<mm::ThreadData*>(nullptr), ThreadState::kNative), "threadData must not be nullptr");
-
     EXPECT_DEATH(Kotlin_mm_switchThreadStateNative(), "Thread is not attached to the runtime");
     EXPECT_DEATH(Kotlin_mm_switchThreadStateRunnable(), "Thread is not attached to the runtime" );
 }
 
 TEST(ThreadStateDeathTest, ReentrantStateSwitch_Function) {
-    RunInNewThread([](MemoryState* memoryState) {
-        auto* threadData = memoryState->GetThreadData();
-        ASSERT_EQ(threadData->state(), ThreadState::kRunnable);
-        EXPECT_EXIT({ SwitchThreadState(memoryState, ThreadState::kRunnable, true); exit(0); },
+    RunInNewThread([](mm::ThreadData& threadData) {
+        ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
+        EXPECT_EXIT({ SwitchThreadState(threadData, ThreadState::kRunnable, true); exit(0); },
                     testing::ExitedWithCode(0),
                     testing::Not(testing::ContainsRegex("runtime assert: Illegal thread state switch.")));
     });
 }
 
 TEST(ThreadStateDeathTest, ReentrantStateSwitch_Guard) {
-    RunInNewThread([](MemoryState* memoryState) {
-        auto* threadData = memoryState->GetThreadData();
-        ASSERT_EQ(threadData->state(), ThreadState::kRunnable);
+    RunInNewThread([](mm::ThreadData& threadData) {
+        ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
         ASSERT_EXIT({ ThreadStateGuard guard(ThreadState::kRunnable, true); exit(0); },
                     testing::ExitedWithCode(0),
                     testing::Not(testing::ContainsRegex("runtime assert: Illegal thread state switch.")));
 
         // Check that guards can be nested.
-        ASSERT_EQ(threadData->state(), ThreadState::kRunnable);
+        ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
         {
             ThreadStateGuard guard(ThreadState::kNative, true);
-            EXPECT_EQ(threadData->state(), ThreadState::kNative);
+            EXPECT_EQ(threadData.state(), ThreadState::kNative);
             {
                 ThreadStateGuard nestedGuard(ThreadState::kNative, true);
-                EXPECT_EQ(threadData->state(), ThreadState::kNative);
+                EXPECT_EQ(threadData.state(), ThreadState::kNative);
             }
-            EXPECT_EQ(threadData->state(), ThreadState::kNative);
+            EXPECT_EQ(threadData.state(), ThreadState::kNative);
         }
-        EXPECT_EQ(threadData->state(), ThreadState::kRunnable);
+        EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
     });
 }
 
 TEST(ThreadStateDeathTest, ReentrantStateSwitch_NativeOrUnregisteredThreadGuard) {
-    RunInNewThread([](MemoryState* memoryState) {
-        auto* threadData = memoryState->GetThreadData();
-        ASSERT_EQ(threadData->state(), ThreadState::kRunnable);
+    RunInNewThread([](mm::ThreadData& threadData) {
+        ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
         SwitchThreadState(threadData, ThreadState::kNative);
-        ASSERT_EQ(threadData->state(), ThreadState::kNative);
+        ASSERT_EQ(threadData.state(), ThreadState::kNative);
         ASSERT_EXIT({ NativeOrUnregisteredThreadGuard guard(true); exit(0); },
                     testing::ExitedWithCode(0),
                     testing::Not(testing::ContainsRegex("runtime assert: Illegal thread state switch.")));
 
         // Check that guards can be nested.
         SwitchThreadState(threadData, ThreadState::kRunnable);
-        ASSERT_EQ(threadData->state(), ThreadState::kRunnable);
+        ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
         {
             NativeOrUnregisteredThreadGuard guard(true);
-            EXPECT_EQ(threadData->state(), ThreadState::kNative);
+            EXPECT_EQ(threadData.state(), ThreadState::kNative);
             {
                 NativeOrUnregisteredThreadGuard nestedGuard(true);
-                EXPECT_EQ(threadData->state(), ThreadState::kNative);
+                EXPECT_EQ(threadData.state(), ThreadState::kNative);
             }
-            EXPECT_EQ(threadData->state(), ThreadState::kNative);
+            EXPECT_EQ(threadData.state(), ThreadState::kNative);
         }
-        EXPECT_EQ(threadData->state(), ThreadState::kRunnable);
+        EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
     });
 }
 
@@ -343,10 +307,10 @@ TEST(ThreadStateDeathTest, ReentrantStateSwitch_CalledFromNativeGuard) {
     ScopedThread([]() {
         // CalledFromNativeGuard checks that runtime is fully initialized under the hood.
         Kotlin_initRuntimeIfNeeded();
-        auto* threadData = mm::GetMemoryState()->GetThreadData();
-        ASSERT_EQ(threadData->state(), ThreadState::kNative);
+        auto& threadData = mm::currentThreadData();
+        ASSERT_EQ(threadData.state(), ThreadState::kNative);
         SwitchThreadState(threadData, ThreadState::kRunnable);
-        ASSERT_EQ(threadData->state(), ThreadState::kRunnable);
+        ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
 
         ASSERT_EXIT({ CalledFromNativeGuard guard(true); exit(0); },
                     testing::ExitedWithCode(0),
@@ -354,31 +318,30 @@ TEST(ThreadStateDeathTest, ReentrantStateSwitch_CalledFromNativeGuard) {
 
         // Check that guards can be nested.
         SwitchThreadState(threadData, ThreadState::kNative);
-        ASSERT_EQ(threadData->state(), ThreadState::kNative);
+        ASSERT_EQ(threadData.state(), ThreadState::kNative);
         {
             CalledFromNativeGuard guard(true);
-            EXPECT_EQ(threadData->state(), ThreadState::kRunnable);
+            EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
             {
                 CalledFromNativeGuard nestedGuard(true);
-                EXPECT_EQ(threadData->state(), ThreadState::kRunnable);
+                EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
             }
-            EXPECT_EQ(threadData->state(), ThreadState::kRunnable);
+            EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
         }
-        EXPECT_EQ(threadData->state(), ThreadState::kNative);
+        EXPECT_EQ(threadData.state(), ThreadState::kNative);
     });
 }
 
 
 TEST(ThreadStateDeathTest, MovingReentrantGuard) {
-    RunInNewThread([](MemoryState* memoryState) {
+    RunInNewThread([](mm::ThreadData& threadData) {
 
-        auto blockUnderTest = [&memoryState]() {
-            auto& threadData = *memoryState->GetThreadData();
+        auto blockUnderTest = [&threadData]() {
             ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
             {
                 ThreadStateGuard outerGuard;
                 {
-                    ThreadStateGuard innerGuard(memoryState, ThreadState::kRunnable, /* reentrant = */ true);
+                    ThreadStateGuard innerGuard(threadData, ThreadState::kRunnable, /* reentrant = */ true);
                     outerGuard = std::move(innerGuard);
                 }
             }
@@ -393,13 +356,7 @@ TEST(ThreadStateDeathTest, MovingReentrantGuard) {
 }
 
 TEST(ThreadStateDeathTest, GuardForDetachedThread) {
-    auto expectedError = "thread must not be nullptr";
-    EXPECT_DEATH({ ThreadStateGuard guard(nullptr, ThreadState::kRunnable, false); }, expectedError);
-    EXPECT_DEATH({ ThreadStateGuard guard(nullptr, ThreadState::kNative, false); }, expectedError);
-    EXPECT_DEATH({ ThreadStateGuard guard(nullptr, ThreadState::kRunnable, true); }, expectedError);
-    EXPECT_DEATH({ ThreadStateGuard guard(nullptr, ThreadState::kNative, true); }, expectedError);
-
-    expectedError = "Thread is not attached to the runtime";
+    auto expectedError = "Thread is not attached to the runtime";
     EXPECT_DEATH({ ThreadStateGuard guard(ThreadState::kRunnable, false); }, expectedError);
     EXPECT_DEATH({ ThreadStateGuard guard(ThreadState::kNative, false); }, expectedError);
     EXPECT_DEATH({ ThreadStateGuard guard(ThreadState::kRunnable, true); }, expectedError);

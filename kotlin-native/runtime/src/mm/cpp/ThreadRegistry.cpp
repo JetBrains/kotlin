@@ -20,7 +20,7 @@ mm::ThreadRegistry& mm::ThreadRegistry::Instance() noexcept {
 mm::ThreadRegistry::Node* mm::ThreadRegistry::RegisterCurrentThread() noexcept {
     auto lock = list_.LockForIter();
     auto* threadDataNode = list_.Emplace(konan::currentThreadId());
-    AssertThreadState(threadDataNode->Get(), ThreadState::kNative);
+    AssertThreadState(*threadDataNode->Get(), ThreadState::kNative);
     Node*& currentDataNode = currentThreadDataNode_;
     RuntimeAssert(!IsCurrentThreadRegistered(), "This thread already had some data assigned to it.");
     currentDataNode = threadDataNode;
@@ -29,7 +29,7 @@ mm::ThreadRegistry::Node* mm::ThreadRegistry::RegisterCurrentThread() noexcept {
 }
 
 void mm::ThreadRegistry::Unregister(Node* threadDataNode) noexcept {
-    AssertThreadState(threadDataNode->Get(), ThreadState::kNative);
+    AssertThreadState(*threadDataNode->Get(), ThreadState::kNative);
     list_.Erase(threadDataNode);
     // Do not touch `currentThreadData_` as TLS may already have been deallocated.
 }
@@ -42,8 +42,8 @@ std::unique_lock<mm::ThreadRegistry::Mutex> mm::ThreadRegistry::Lock() noexcept 
     return list_.Lock();
 }
 
-PERFORMANCE_INLINE mm::ThreadData* mm::ThreadRegistry::CurrentThreadData() const noexcept {
-    return CurrentThreadDataNode()->Get();
+PERFORMANCE_INLINE mm::ThreadData& mm::ThreadRegistry::CurrentThreadData() const noexcept {
+    return *CurrentThreadDataNode()->Get();
 }
 
 void mm::ThreadRegistry::PublishAll() noexcept {

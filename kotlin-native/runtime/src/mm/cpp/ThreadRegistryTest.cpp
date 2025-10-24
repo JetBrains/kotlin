@@ -22,8 +22,8 @@ TEST(ThreadRegistryTest, RegisterCurrentThread) {
             mm::ThreadRegistry::Node* node;
         } registration;
 
-        auto* threadData = registration.node->Get();
-        EXPECT_EQ(konan::currentThreadId(), threadData->threadId());
-        EXPECT_EQ(threadData, mm::ThreadRegistry::Instance().CurrentThreadData());
+        auto& threadData = *registration.node->Get();
+        EXPECT_EQ(konan::currentThreadId(), threadData.threadId());
+        EXPECT_EQ(&threadData, &mm::ThreadRegistry::Instance().CurrentThreadData());
     });
 }

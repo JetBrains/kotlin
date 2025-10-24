@@ -7,7 +7,7 @@
 
 #include "ExternalRCRef.hpp"
 #include "ExtraObjectData.hpp"
-#include "ThreadState.hpp"
+#include "ThreadRegistry.hpp"
 #include "Types.h"
 
 using namespace kotlin;
@@ -31,7 +31,7 @@ RegularWeakReferenceImpl* asRegularWeakReferenceImpl(ObjHeader* weakRef) noexcep
 } // namespace
 
 OBJ_GETTER(mm::createRegularWeakReferenceImpl, ObjHeader* object) noexcept {
-    auto* thread = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& thread = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(thread, ThreadState::kRunnable);
 
     auto& extraObject = mm::ExtraObjectData::GetOrInstall(object);

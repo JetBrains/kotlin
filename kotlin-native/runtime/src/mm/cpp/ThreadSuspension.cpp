@@ -117,7 +117,7 @@ bool kotlin::mm::TryRequestThreadsSuspension(internal::SuspensionReason reason) 
 
 void kotlin::mm::WaitForThreadsSuspension() noexcept {
     auto& threadRegistry = kotlin::mm::ThreadRegistry::Instance();
-    auto* currentThread = (threadRegistry.IsCurrentThreadRegistered()) ? threadRegistry.CurrentThreadData() : nullptr;
+    auto* currentThread = (threadRegistry.IsCurrentThreadRegistered()) ? &threadRegistry.CurrentThreadData() : nullptr;
     // Spin waiting for threads to suspend. Ignore Native threads.
     threadRegistry.waitAllThreads([currentThread](mm::ThreadData& thread) noexcept {
         return &thread == currentThread || thread.suspensionData().suspendedOrNative();

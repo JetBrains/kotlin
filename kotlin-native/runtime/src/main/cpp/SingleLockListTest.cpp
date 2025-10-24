@@ -41,6 +41,9 @@ TEST(SingleLockListTest, Emplace) {
     EXPECT_THAT(*first, kFirst);
     EXPECT_THAT(*second, kSecond);
     EXPECT_THAT(*third, kThird);
+    EXPECT_THAT(&IntList::Node::from(*first), firstNode);
+    EXPECT_THAT(&IntList::Node::from(*second), secondNode);
+    EXPECT_THAT(&IntList::Node::from(*third), thirdNode);
 }
 
 TEST(SingleLockListTest, EmplaceAndIter) {

@@ -104,7 +104,7 @@ void Kotlin_interop_free(void* ptr) {
 }
 
 void Kotlin_system_exitProcess(KInt status) {
-  SwitchThreadState(mm::GetMemoryState(), ThreadState::kNative);
+  SwitchThreadState(mm::currentThreadData(), ThreadState::kNative);
   std::exit(status);
 }
 

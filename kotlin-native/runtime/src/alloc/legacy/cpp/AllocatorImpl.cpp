@@ -146,8 +146,8 @@ size_t alloc::allocatedHeapSize(ObjHeader* object) noexcept {
 
 void alloc::destroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
     extraObject.Uninstall();
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    threadData->allocator().impl().extraObjectDataFactoryThreadQueue().DestroyExtraObjectData(extraObject);
+    auto& threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData.allocator().impl().extraObjectDataFactoryThreadQueue().DestroyExtraObjectData(extraObject);
 }
 
 alloc::SweepState::SweepState(alloc::ObjectFactoryImpl& objectFactory, alloc::ExtraObjectDataFactory& extraObjectDataFactory) noexcept :

@@ -16,8 +16,8 @@ class ThreadData;
 // TODO: `OBJ_GETTER` is used because the returned objects needs to be accessible via the rootset before the function
 //       returns. If we had a different way to efficiently keep the object in the roots, `OBJ_GETTER` can be removed.
 
-OBJ_GETTER(AllocateObject, ThreadData* threadData, const TypeInfo* typeInfo) noexcept;
-OBJ_GETTER(AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, uint32_t elements) noexcept;
+OBJ_GETTER(AllocateObject, ThreadData& threadData, const TypeInfo* typeInfo) noexcept;
+OBJ_GETTER(AllocateArray, ThreadData& threadData, const TypeInfo* typeInfo, uint32_t elements) noexcept;
 
 } // namespace mm
 } // namespace kotlin

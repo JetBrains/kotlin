@@ -84,7 +84,7 @@ ALWAYS_INLINE void slowPathImpl(mm::ThreadData& threadData) noexcept {
 }
 
 NO_INLINE void slowPath() noexcept {
-    slowPathImpl(*mm::ThreadRegistry::Instance().CurrentThreadData());
+    slowPathImpl(mm::ThreadRegistry::Instance().CurrentThreadData());
 }
 
 NO_INLINE void slowPath(mm::ThreadData& threadData) noexcept {
@@ -134,7 +134,7 @@ PERFORMANCE_INLINE void mm::safePoint(std::memory_order fastPathOrder) noexcept 
 }
 
 PERFORMANCE_INLINE void mm::safePoint(mm::ThreadData& threadData, std::memory_order fastPathOrder) noexcept {
-    AssertThreadState(&threadData, ThreadState::kRunnable);
+    AssertThreadState(threadData, ThreadState::kRunnable);
     auto action = safePointAction.load(fastPathOrder);
     if (__builtin_expect(action != nullptr, false)) {
         slowPath(threadData);

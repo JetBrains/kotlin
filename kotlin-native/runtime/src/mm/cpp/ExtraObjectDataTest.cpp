@@ -79,7 +79,7 @@ TEST_F(ExtraObjectDataTest, ConcurrentInstall) {
             auto& extraData = mm::ExtraObjectData::Install(object.header());
             actual[i] = &extraData;
             // Really only needed for legacy allocators.
-            mm::GlobalData::Instance().threadRegistry().CurrentThreadData()->allocator().prepareForGC();
+            mm::GlobalData::Instance().threadRegistry().CurrentThreadData().allocator().prepareForGC();
         });
     }
 

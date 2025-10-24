@@ -7,14 +7,13 @@
 #define RUNTIME_RUNTIME_H
 
 #include <cstdint>
-#include "Porting.h"
 #include "Memory.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef void (*Initializer)(int initialize, MemoryState* memory);
+typedef void (*Initializer)(int initialize, kotlin::mm::ThreadData* threadData);
 struct InitNode {
   Initializer init;
   InitNode* next;

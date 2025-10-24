@@ -33,11 +33,11 @@ public:
 
     static GlobalsRegistry& Instance() noexcept;
 
-    void RegisterStorageForGlobal(mm::ThreadData* threadData, ObjHeader** location) noexcept;
+    void RegisterStorageForGlobal(mm::ThreadData& threadData, ObjHeader** location) noexcept;
 
     // Collect globals from thread corresponding to `threadData`. Must be called by the thread
     // when it's asked by GC to stop.
-    void ProcessThread(mm::ThreadData* threadData) noexcept;
+    void ProcessThread(mm::ThreadData& threadData) noexcept;
 
     // Lock registry for safe iteration.
     // TODO: Iteration over `globals_` will be slow, because it's `std::list` collected at different times from

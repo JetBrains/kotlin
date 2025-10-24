@@ -13,7 +13,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "MemoryPrivate.hpp"
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
 #include "SafePoint.hpp"
@@ -111,7 +110,7 @@ TEST_F(ThreadSuspensionTest, SimpleStartStop) {
     for (size_t i = 0; i < kThreadCount; i++) {
         threads.emplace_back([this, i]() {
             ScopedMemoryInit init;
-            auto& suspensionData = init.memoryState()->GetThreadData()->suspensionData();
+            auto& suspensionData = init.threadData().suspensionData();
             EXPECT_EQ(mm::IsThreadSuspensionRequested(), false);
 
             while(!shouldStop) {
@@ -153,17 +152,17 @@ TEST_F(ThreadSuspensionTest, SwitchStateToNative) {
     for (size_t i = 0; i < kThreadCount; i++) {
         threads.emplace_back([this, i]() {
             ScopedMemoryInit init;
-            auto* threadData = init.memoryState()->GetThreadData();
+            auto& threadData = init.threadData();
             EXPECT_EQ(mm::IsThreadSuspensionRequested(), false);
 
             while(!shouldStop) {
                 waitUntilCanStart(i);
 
-                EXPECT_EQ(threadData->state(), ThreadState::kRunnable);
+                EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
                 SwitchThreadState(threadData, ThreadState::kNative);
-                EXPECT_EQ(threadData->state(), ThreadState::kNative);
+                EXPECT_EQ(threadData.state(), ThreadState::kNative);
                 SwitchThreadState(threadData, ThreadState::kRunnable);
-                EXPECT_EQ(threadData->state(), ThreadState::kRunnable);
+                EXPECT_EQ(threadData.state(), ThreadState::kRunnable);
             }
         });
     }
@@ -192,7 +191,7 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspendExclusive) {
     for (size_t i = 0; i < kThreadCount; i++) {
         threads.emplace_back([this, i, &successCount]() {
             ScopedMemoryInit init;
-            auto* currentThreadData = init.memoryState()->GetThreadData();
+            auto& currentThreadData = init.threadData();
             EXPECT_EQ(mm::IsThreadSuspensionRequested(), false);
 
             // Sync with other threads.
@@ -204,15 +203,15 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspendExclusive) {
                 mm::WaitForThreadsSuspension();
                 successCount++;
                 auto allThreadData = collectThreadData();
-                auto isCurrentOrSuspended = [currentThreadData](mm::ThreadData* data) {
-                    return data == currentThreadData || data->suspensionData().suspendedOrNative();
+                auto isCurrentOrSuspended = [&currentThreadData](mm::ThreadData* data) {
+                    return data == &currentThreadData || data->suspensionData().suspendedOrNative();
                 };
                 EXPECT_THAT(allThreadData, testing::Each(testing::Truly(isCurrentOrSuspended)));
-                EXPECT_FALSE(currentThreadData->suspensionData().suspendedOrNative());
+                EXPECT_FALSE(currentThreadData.suspensionData().suspendedOrNative());
                 mm::ResumeThreads();
             } else {
                 EXPECT_TRUE(mm::IsThreadSuspensionRequested());
-                currentThreadData->suspensionData().suspendIfRequested();
+                currentThreadData.suspensionData().suspendIfRequested();
             }
         });
     }
@@ -232,7 +231,7 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspendSeries) {
 
             auto memoryInit = registeredThread ? std::optional<ScopedMemoryInit>{std::in_place} : std::nullopt;
 
-            auto* currentThreadData = registeredThread ? memoryInit->memoryState()->GetThreadData() : nullptr;
+            auto* currentThreadData = registeredThread ? &memoryInit->threadData() : nullptr;
             EXPECT_EQ(mm::IsThreadSuspensionRequested(), false);
 
             // Sync with other threads.
@@ -282,8 +281,8 @@ TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
     for (size_t i = 0; i < kThreadCount; i++) {
         threads.emplace_back([this, i, &lock] {
             ScopedMemoryInit init;
-            auto* threadData = init.memoryState()->GetThreadData();
-            ASSERT_EQ(threadData->state(), ThreadState::kRunnable);
+            auto& threadData = init.threadData();
+            ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
 
             waitUntilCanStart(i);
 
