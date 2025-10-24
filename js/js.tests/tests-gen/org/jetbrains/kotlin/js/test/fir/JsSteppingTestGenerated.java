@@ -583,6 +583,12 @@ public class JsSteppingTestGenerated extends AbstractJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("partiallyInlinedFun.kt")
+  public void testPartiallyInlinedFun() {
+    runTest("compiler/testData/debug/stepping/partiallyInlinedFun.kt");
+  }
+
+  @Test
   @TestMetadata("primitiveNullChecks.kt")
   public void testPrimitiveNullChecks() {
     runTest("compiler/testData/debug/stepping/primitiveNullChecks.kt");

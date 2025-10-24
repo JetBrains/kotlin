@@ -583,6 +583,12 @@ public class JsSteppingWithInlinedFunInKlibTestGenerated extends AbstractJsStepp
   }
 
   @Test
+  @TestMetadata("partiallyInlinedFun.kt")
+  public void testPartiallyInlinedFun() {
+    runTest("compiler/testData/debug/stepping/partiallyInlinedFun.kt");
+  }
+
+  @Test
   @TestMetadata("primitiveNullChecks.kt")
   public void testPrimitiveNullChecks() {
     runTest("compiler/testData/debug/stepping/primitiveNullChecks.kt");
