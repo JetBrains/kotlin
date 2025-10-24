@@ -3,7 +3,4 @@
   <component name="KotlinCompilerSettings">
     <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />
   </component>
-  <component name="KotlinJpsPluginSettings">
-    <option name="version" value="2.3.20-dev-1363" />
-  </component>
 </project>
