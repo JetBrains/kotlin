@@ -280,6 +280,8 @@ open class StubsBuildingContextImpl(
         override fun getKotlinNameForValue(enumDef: EnumDef): String = enumDef.kotlinName
 
         override fun getPackageFor(declaration: TypeDeclaration): String {
+
+            // FIXME: Is "imports" coming from "depend" cinterops? But this is only for types, what about functions?
             return imports.getPackage(declaration.location) ?: pkgName
         }
 
