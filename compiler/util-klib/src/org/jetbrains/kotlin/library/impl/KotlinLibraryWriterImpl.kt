@@ -18,7 +18,7 @@ open class KotlinLibraryLayoutForWriter(
     override val libFile: File,
     val unzippedDir: File,
     override val component: String = KLIB_DEFAULT_COMPONENT_NAME
-) : KotlinLibraryLayout, MetadataKotlinLibraryLayout, IrKotlinLibraryLayout {
+) : KotlinLibraryLayout, IrKotlinLibraryLayout {
     override val componentDir: File
         get() = File(unzippedDir, component)
     override val pre_1_4_manifest: File
