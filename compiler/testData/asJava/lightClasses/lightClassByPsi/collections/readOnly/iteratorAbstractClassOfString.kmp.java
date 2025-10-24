@@ -3,10 +3,12 @@ public abstract class SIterator /* test.SIterator*/ implements java.util.Iterato
 }
 
 public abstract class SIterator2 /* test.SIterator2*/ implements java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String next();//  next()
 
-  public  SIterator2();//  .ctor()
-
+  @java.lang.Override()
   public boolean hasNext();//  hasNext()
+
+  public  SIterator2();//  .ctor()
 }
