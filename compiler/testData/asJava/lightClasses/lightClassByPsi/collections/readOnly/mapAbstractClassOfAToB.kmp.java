@@ -1,4 +1,12 @@
-public abstract class ABMap /* test.ABMap*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.collections.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
+public final class A /* test.A*/ {
+  public  A();//  .ctor()
+}
+
+public abstract class ABMap /* test.ABMap*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  ABMap();//  .ctor()
+}
+
+public abstract class ABMap2 /* test.ABMap2*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
@@ -34,5 +42,9 @@ public abstract class ABMap /* test.ABMap*/ implements java.util.Map<@org.jetbra
   @java.lang.Override()
   public int getSize();//  getSize()
 
-  public  ABMap();//  .ctor()
+  public  ABMap2();//  .ctor()
+}
+
+public final class B /* test.B*/ {
+  public  B();//  .ctor()
 }

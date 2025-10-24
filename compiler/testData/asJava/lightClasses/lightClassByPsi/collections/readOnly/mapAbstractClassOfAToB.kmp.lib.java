@@ -1,4 +1,12 @@
-public abstract class ABMap /* test.ABMap*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.collections.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
+public final class A /* test.A*/ {
+  public  A();//  .ctor()
+}
+
+public abstract class ABMap /* test.ABMap*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  ABMap();//  .ctor()
+}
+
+public abstract class ABMap2 /* test.ABMap2*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() test.B> values;
 
@@ -28,7 +36,7 @@ public abstract class ABMap /* test.ABMap*/ implements java.util.Map<@org.jetbra
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() test.B get(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  get(@org.jetbrains.annotations.NotNull() test.A)
 
-  public  ABMap();//  .ctor()
+  public  ABMap2();//  .ctor()
 
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  containsKey(@org.jetbrains.annotations.NotNull() test.A)
 
@@ -37,4 +45,8 @@ public abstract class ABMap /* test.ABMap*/ implements java.util.Map<@org.jetbra
   public boolean isEmpty();//  isEmpty()
 
   public int getSize();//  getSize()
+}
+
+public final class B /* test.B*/ {
+  public  B();//  .ctor()
 }
