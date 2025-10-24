@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibCheckers
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -68,7 +68,9 @@ class WasmPreSerializationLoweringFacade(
             }
             is IrBackendInput.WasmAfterFrontendBackendInput -> {
                 // TODO: When KT-74671 would be implemented, the following code would be never used and is subject to be deleted
-                runKlibCheckers(diagnosticReporter, configuration, inputArtifact.irModuleFragment)
+                val irDiagnosticReporter =
+                    KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
+                runKlibCheckers(irDiagnosticReporter, configuration, inputArtifact.irModuleFragment)
                 val phaseConfig = createJsTestPhaseConfig(testServices, module)
                 if (diagnosticReporter.hasErrors) {
                     // Should errors be found by checkers, there's a chance that some lowering will throw an exception on unparseable code.
@@ -82,7 +84,7 @@ class WasmPreSerializationLoweringFacade(
                     WasmPreSerializationLoweringContext(
                         inputArtifact.irBuiltIns,
                         configuration,
-                        diagnosticReporter,
+                        irDiagnosticReporter,
                     ),
                 ).runPreSerializationLoweringPhases(
                     wasmLoweringsOfTheFirstPhase(module.languageVersionSettings),
@@ -100,12 +102,10 @@ class WasmPreSerializationLoweringFacade(
     }
 
     private fun runKlibCheckers(
-        diagnosticReporter: BaseDiagnosticsCollector,
+        irDiagnosticReporter: IrDiagnosticReporter,
         configuration: CompilerConfiguration,
         irModuleFragment: IrModuleFragment,
     ) {
-        val irDiagnosticReporter =
-            KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
         irModuleFragment.acceptVoid(
             WasmKlibCheckers.makeChecker(
                 irDiagnosticReporter,
