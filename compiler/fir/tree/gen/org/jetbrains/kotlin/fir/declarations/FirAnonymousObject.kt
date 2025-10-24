@@ -21,6 +21,17 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
+ * Represents an anonymous object declaration created by an `object` expression.
+ * Unlike [FirRegularClass], it has no name and is always declared as a part of an expression at the usage site.
+ *
+ * Notable properties:
+ * - [classKind] — always [ClassKind.OBJECT]. 
+ * - [symbol] — the symbol which serves as a pointer to this anonymous object.
+ * - [superTypeRefs] — explicitly declared supertypes of the object literal, or [kotlin.Any] by default.
+ * - [isLocal] — always true for anonymous object. 
+ * - [declarations] — member declarations inside the anonymous object.
+ * - [annotations] — annotations present on the object literal, if any.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.anonymousObject]
  */
 abstract class FirAnonymousObject : FirClass() {

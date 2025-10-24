@@ -22,6 +22,19 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
+ * Represents a Kotlin class declaration in FIR, serving as a common supertype for concrete class kinds
+ * such as [FirRegularClass] and [FirAnonymousObject]. It abstracts over whether the class is named or anonymous.
+ * This includes similar declarations as an interface, an object (companion, named, or anonymous), 
+ * an enum or annotation class, but excludes a type alias.
+ *
+ * Notable properties:
+ * - [classKind] — what kind of class it is (interface, object, enum class, enum entry, annotation class, or a plain class).
+ * - [symbol] — the symbol which serves as a pointer to this class-like declaration.
+ * - [typeParameters] — the type parameters of the class and references to type parameters of its outer classes, if any 
+ * - [superTypeRefs] — explicitly declared supertypes, or [kotlin.Any] by default.
+ * - [declarations] — member declarations inside the class.
+ * - [annotations] — annotations present on the class, if any.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.klass]
  */
 sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirControlFlowGraphOwner {

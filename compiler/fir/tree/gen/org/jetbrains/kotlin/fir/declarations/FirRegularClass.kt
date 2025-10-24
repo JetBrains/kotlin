@@ -22,6 +22,22 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 /**
+ * Represents a regular (in sense of being named) Kotlin class declaration.
+ * This includes similar declarations as an interface, an object, an enum or annotation class,
+ * but excludes an anonymous object or a type alias.
+ *
+ * Notable properties:
+ * - [name] — the simple name of the class.
+ * - [classKind] — what kind of class it is (interface, object, enum class, enum entry, annotation class, or a plain class). 
+ * - [symbol] — the symbol which serves as a pointer to the class. 
+ * - [typeParameters] — the type parameters of the class and references to type parameters of its outer classes, if any 
+ * - [superTypeRefs] — explicitly declared supertypes, or [kotlin.Any] by default.
+ * - [companionObjectSymbol] — Symbol of the companion object if present, otherwise null.
+ * - [declarations] — member declarations inside the class.
+ * - [annotations] — annotations present on the class, if any.
+ * - [hasLazyNestedClassifiers] — Whether nested classifiers are computed lazily
+ * (targeted for implementations that are lazy by nature, currently used for Java class implementations). 
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.regularClass]
  */
 abstract class FirRegularClass : FirClass() {
