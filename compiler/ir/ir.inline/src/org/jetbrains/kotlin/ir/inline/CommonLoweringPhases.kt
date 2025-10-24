@@ -58,12 +58,7 @@ private val checkInlineCallCyclesPhase = makeIrModulePhase(
  * The first phase of inlining (inline only private functions).
  */
 private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
-    { context: LoweringContext ->
-        FunctionInlining(
-            context,
-            PreSerializationPrivateInlineFunctionResolver(context),
-        )
-    },
+    ::PreSerializationPrivateFunctionInlining,
     name = "InlineOnlyPrivateFunctions",
     prerequisite = setOf(arrayConstructorPhase, checkInlineCallCyclesPhase),
 )
@@ -101,10 +96,7 @@ private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrMod
 
 private fun inlineAllFunctionsPhase(inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
     { context: PreSerializationLoweringContext ->
-        FunctionInlining(
-            context,
-            PreSerializationNonPrivateInlineFunctionResolver(context, inlineCrossModuleFunctions),
-        )
+        if (inlineCrossModuleFunctions) PreSerializationIntraModuleFunctionInlining(context) else PreSerializationAllFunctionInlining(context)
     },
     name = "InlineAllFunctions",
     prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
@@ -115,10 +107,7 @@ private fun inlineFunctionSerializationPreProcessing(inlineCrossModuleFunctions:
         // Run the cross-module inliner against pre-processed functions (and only pre-processed functions) if cross-module
         // inlining is not enabled in the main IR tree.
         val inliner: FunctionInlining? = runUnless(inlineCrossModuleFunctions) {
-            FunctionInlining(
-                context,
-                PreSerializationNonPrivateInlineFunctionResolver(context, inlineCrossModuleFunctions = true),
-            )
+            PreSerializationIntraModuleFunctionInlining(context)
         }
 
         InlineFunctionSerializationPreProcessing(crossModuleFunctionInliner = inliner)

@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsInlineFunctionResolver
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsAllFunctionInlining
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsPrivateFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -180,12 +181,7 @@ private val replaceSuspendIntrinsicLowering = makeIrModulePhase(
  * The first phase of inlining (inline only private functions).
  */
 private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
-    { context: JsIrBackendContext ->
-        FunctionInlining(
-            context,
-            JsInlineFunctionResolver(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS),
-        )
-    },
+    ::JsPrivateFunctionInlining,
     name = "InlineOnlyPrivateFunctions",
     prerequisite = setOf(arrayConstructorPhase)
 )
@@ -206,12 +202,7 @@ private val syntheticAccessorGenerationPhase = makeIrModulePhase(
  * The second phase of inlining (inline all functions).
  */
 private val inlineAllFunctionsPhase = makeIrModulePhase(
-    { context: JsIrBackendContext ->
-        FunctionInlining(
-            context,
-            JsInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
-        )
-    },
+    ::JsAllFunctionInlining,
     name = "InlineAllFunctions",
     prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )

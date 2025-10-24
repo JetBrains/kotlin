@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.Name.identifier
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
-class FunctionInlining(
+abstract class FunctionInlining(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {

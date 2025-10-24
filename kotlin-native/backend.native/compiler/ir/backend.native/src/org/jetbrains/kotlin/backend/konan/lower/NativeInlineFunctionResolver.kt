@@ -66,7 +66,7 @@ internal class NativeInlineFunctionResolver(
 
         ArrayConstructorLowering(context).lower(function)
 
-        NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(function)
+        NativePrivateFunctionInlining(generationState).lower(function)
 
         OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
         SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)

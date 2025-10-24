@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineMode
 
-internal fun WasmFunctionInlining(
-    context: WasmBackendContext,
-    inlineMode: InlineMode,
-) = FunctionInlining(
-    context = context,
-    inlineFunctionResolver = WasmInlineFunctionResolver(context, inlineMode),
+internal class WasmPrivateFunctionInlining(context: WasmBackendContext) : FunctionInlining(
+    context,
+    WasmInlineFunctionResolver(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS),
+)
+
+internal class WasmAllFunctionInlining(context: WasmBackendContext) : FunctionInlining(
+    context,
+    WasmInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
 )

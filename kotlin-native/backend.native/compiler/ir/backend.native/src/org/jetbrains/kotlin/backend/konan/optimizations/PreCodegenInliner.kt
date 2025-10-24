@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIA
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.backend.konan.lower.NativePreCodegenFunctionInlining
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.lower.liveVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
@@ -146,18 +147,7 @@ internal class PreCodegenInliner(
                     }
 
                     if (functionsToInline.isNotEmpty()) {
-                        val inliner = FunctionInlining(
-                                context,
-                                inlineFunctionResolver = object : InlineFunctionResolver() {
-                                    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-                                        return symbol.owner.takeIf { it in functionsToInline }
-                                    }
-
-                                    override fun shouldSkipBecauseOfCallSite(expression: IrMemberAccessExpression<IrFunctionSymbol>): Boolean {
-                                        return expression is IrCall && expression.isVirtualCall
-                                    }
-                                },
-                        )
+                        val inliner = NativePreCodegenFunctionInlining(context, functionsToInline)
                         inliner.lower(irBody, irFunction)
 
                         // KT-72336: This is not entirely correct since coroutinesLivenessAnalysisPhase could be turned off.
