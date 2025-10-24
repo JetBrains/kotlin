@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.buildtools.api.js.operations
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
@@ -57,7 +57,8 @@ public interface JsCompilationOperation : BuildOperation<CompilationResult> {
     /**
      * Kotlin compiler configurable options for JVM platform.
      */
-    public val compilerArguments: JvmCompilerArguments
+    @OptIn(ExperimentalCompilerArgument::class)
+    public val compilerArguments: JsArguments
 
     public companion object {
         /**
@@ -65,12 +66,6 @@ public interface JsCompilationOperation : BuildOperation<CompilationResult> {
          */
         @JvmField
         public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER")
-
-        /**
-         * An array of additional Kotlin script extensions (on top of the default `.kt` and `.kts`).
-         */
-        @JvmField
-        public val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS")
 
         /**
          * Controls at which logging level to display the command line arguments passed to the compiler.
