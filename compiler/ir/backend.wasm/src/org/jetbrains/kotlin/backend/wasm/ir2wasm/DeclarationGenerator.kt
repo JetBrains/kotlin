@@ -93,7 +93,6 @@ class DeclarationGenerator(
         // TODO: there might be duplicates... fix
         val suspendFunctionNames = buildSet { repeat(3) { add(FqName("kotlin.coroutines.SuspendFunction$size.invoke")) } }
         if (suspendFunctionNames.any { declaration.hasEqualFqName(it) }) {
-            println("Function type for cont: ${wasmFunctionType.objectId}")
             wasmFileCodegenContext.defineContType(declaration.symbol, WasmContType(wasmFunctionType))
         }
 

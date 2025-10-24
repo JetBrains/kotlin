@@ -273,11 +273,6 @@ class WasmCompiledModuleFragment(
         tags.forEach { additionalTypes.add(it.type) }
 
         val recursiveTypeGroups = getTypes(syntheticTypes, canonicalFunctionTypes, additionalTypes)
-        recursiveTypeGroups.forEach {
-            it.filter { contTypes.map { it.funType }.contains(it) }.forEach {
-                println("Target object id: ${it.objectId}")
-            }
-        }
 
         return WasmModule(
             recGroups = recursiveTypeGroups,
