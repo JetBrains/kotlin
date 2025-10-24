@@ -17,6 +17,15 @@ public value class UShortArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: ShortArray) : Collection<UShort> {
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `UShort` elements. */
+        @ExperimentalStdlibApi
+        @kotlin.internal.InlineOnly
+        public inline operator fun of(vararg elements: UShort): UShortArray = elements
+    }
+
     /** Creates a new array of the specified [size], with all elements initialized to zero. */
     public constructor(size: Int) : this(ShortArray(size))
 

@@ -17,6 +17,15 @@ public value class UByteArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: ByteArray) : Collection<UByte> {
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `UByte` elements. */
+        @ExperimentalStdlibApi
+        @kotlin.internal.InlineOnly
+        public inline operator fun of(vararg elements: UByte): UByteArray = elements
+    }
+
     /** Creates a new array of the specified [size], with all elements initialized to zero. */
     public constructor(size: Int) : this(ByteArray(size))
 
