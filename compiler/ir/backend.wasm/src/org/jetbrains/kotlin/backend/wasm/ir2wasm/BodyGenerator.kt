@@ -1151,13 +1151,33 @@ class BodyGenerator(
             }
 
             wasmSymbols.suspendIntrinsic -> {
-                TODO("wasmSymbols.suspendCoroutineUninterceptedOrReturn")
+                body.buildSuspend(contTagId, location)
             }
 
             in wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub -> {
                 when (function.symbol) {
                     wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0] -> {
                         body.buildNop(location)
+                        val suspendFunctionClassType = function.parameters[0].type
+                        val suspendFunctionInvoke = suspendFunctionClassType.classOrFail.functions.singleOrNull {
+                            it.owner.name.asString() == "invoke"
+                        } ?: error("No `invoke` function for suspend function type\n${suspendFunctionClassType.dumpKotlinLike()}")
+                        val funType = wasmFileCodegenContext.referenceFunctionType(suspendFunctionInvoke)
+                        val contType = wasmFileCodegenContext.referenceContType(suspendFunctionInvoke)
+                        val contVarType = WasmRefNullType(WasmHeapType.Type(contType))
+                        val contLocalVarIdx = functionContext.defineTmpVariable(contVarType)
+                        val contLocalVar = functionContext.referenceLocal(contLocalVarIdx)
+                        val kotlinAny = WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass))
+
+                        body.buildContNew(funType, location)
+                        body.buildSetLocal(contLocalVar, location)
+                        body.buildBlock("on_suspend", WasmRefNullType(kotlinAny)) { idx ->
+                            body.buildRefNull(kotlinAny, location)
+                            val contHandle = body.createNewContHandle(contTagId, idx)
+                            body.buildResume(WasmHeapType.Type(contType), contHandle, location)
+                            body.buildGetLocal(contLocalVar, location)
+                            body.buildInstr(WasmOp.RETURN, location)
+                        }
 //                        TODO("wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0]")
                     }
                     else -> TODO("startCoroutineUninterceptedOrReturnIntrinsicsStub 1-2")

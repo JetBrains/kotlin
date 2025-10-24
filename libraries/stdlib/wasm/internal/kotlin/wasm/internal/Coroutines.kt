@@ -53,9 +53,9 @@ internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Conti
 //@UsedFromCompilerGeneratedCode
 //@PublishedApi
 @Suppress("UNUSED_PARAMETER")
-// Can't link symbol ic#57:ic#53:kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturnImpl when added
-//@ExcludedFromCodegen
-internal suspend fun suspendIntrinsic(cont: Continuation<*>): Any? {
+// Can't link symbol ic#57:ic#53:kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturnImpl when both @ExcludedFromCodegen and suspend modifier are added
+@ExcludedFromCodegen
+internal fun suspendIntrinsic(cont: Continuation<*>): Any? {
     implementedAsIntrinsic
 }
 
@@ -67,6 +67,14 @@ internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0(
     completion: Continuation<T>
 ): Any? {
     implementedAsIntrinsic
+}
+
+@PublishedApi
+internal fun <T> startCoroutineUninterceptedOrReturn0Impl(
+    f: (suspend () -> T),
+    completion: Continuation<T>
+): Any? {
+    return startCoroutineUninterceptedOrReturnIntrinsic0Stub(f, completion)
 }
 
 @Suppress("UNUSED_PARAMETER")

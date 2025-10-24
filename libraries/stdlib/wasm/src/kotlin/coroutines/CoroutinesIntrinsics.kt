@@ -23,16 +23,7 @@ import kotlin.wasm.internal.*
 @kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnImpl(completion)
-
-@PublishedApi
-internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnImpl(
-    completion: Continuation<T>
-): Any? {
-    return startCoroutineUninterceptedOrReturnIntrinsic0Stub(
-        this, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
-    )
-}
+): Any? = startCoroutineUninterceptedOrReturn0Impl(this, completion)
 
 /**
  * Starts an unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
