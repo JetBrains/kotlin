@@ -6,9 +6,12 @@
 #pragma once
 
 #include <functional>
+#include <ostream>
 
 #include "Memory.h"
-#include "Runtime.h"
+#include "MemoryPrivate.hpp"
+#include "ObjectTestSupport.hpp"
+#include "ThreadData.hpp"
 #include "concurrent/ScopedThread.hpp"
 
 namespace kotlin {
@@ -61,5 +64,22 @@ inline void RunInNewThread(std::function<void()> f) {
         f();
     });
 }
+
+inline void RunInNewThread(std::function<void(mm::ThreadData&)> f) {
+    kotlin::RunInNewThread([&f](MemoryState* state) {
+        f(*state->GetThreadData());
+    });
+}
+
+// Overload the << operator for ThreadState to allow the GTest runner
+// to pretty print ThreadState constants.
+std::ostream& operator<<(std::ostream& stream, ThreadState state);
+
+namespace test_support {
+
+RegularWeakReferenceImpl& InstallWeakReference(mm::ThreadData& threadData, ObjHeader* objHeader, ObjHeader** location);
+
+} // namespace test_support
+
 
 } // namespace kotlin

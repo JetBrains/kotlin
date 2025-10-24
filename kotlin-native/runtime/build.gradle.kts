@@ -384,7 +384,6 @@ bitcode {
             headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
-                testFixtures {}
                 test {}
             }
         }
