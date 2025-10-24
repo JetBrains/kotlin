@@ -44,15 +44,15 @@ fun main(
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<kotlin.Int>")!>myMap0<Array<Int>>(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.IntArray")!>myMap0<IntArray>(::ofInt)<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("java.io.Serializable")!>myMap0<Serializable>(::<!INAPPLICABLE_CANDIDATE!>ofAny<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("java.io.Serializable")!>myMap0<Serializable>(::ofAny)<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>myMap0<String>(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>myMap0<Any>(::<!INAPPLICABLE_CANDIDATE!>ofAny<!>)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>myMap0<Int>(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>myMap0<String>(::ofString)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>myMap0<Any>(::ofAny)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>myMap0<Int>(::ofInt)<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>myMap1(myString, ::<!INAPPLICABLE_CANDIDATE!>ofString<!>)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>myMap1(myAny, ::<!INAPPLICABLE_CANDIDATE!>ofAny<!>)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>myMap1(myInt, ::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>myMap1(myString, ::ofString)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>myMap1(myAny, ::ofAny)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>myMap1(myInt, ::ofInt)<!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<kotlin.String>")!>myMap1(myArrayString, ::ofString)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<kotlin.Any>")!>myMap1(myArrayAny, ::ofAny)<!>
@@ -60,7 +60,7 @@ fun main(
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<kotlin.Int>")!>myMap1(myArrayInt, ::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.IntArray")!>myMap1(myIntArray, ::ofInt)<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("java.io.Serializable")!>myMap1(mySerializable, ::<!INAPPLICABLE_CANDIDATE!>ofAny<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("java.io.Serializable")!>myMap1(mySerializable, ::ofAny)<!>
 
     // TODO: The behavior should change for the cases with INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING after KT-81918
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>myMap2(myInString, ::<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>ofString<!>)<!>

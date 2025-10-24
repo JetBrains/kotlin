@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: ANY
+// LANGUAGE: +RefinedVarargConversionRulesForCallableReferences
 // ISSUE: KT-39697
 
 // FILE: Arguments.java
