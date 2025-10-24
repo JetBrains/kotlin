@@ -7,24 +7,17 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.saveToFile
-import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_BODIES_FILE_NAME
-import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DEBUG_INFO_FILE_NAME
-import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DECLARATIONS_FILE_NAME
-import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILES_FILE_NAME
-import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILE_ENTRIES_FILE_NAME
+import org.jetbrains.kotlin.library.KlibMockDSL.Companion.mockKlib
+import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME
-import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_SIGNATURES_FILE_NAME
-import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_STRINGS_FILE_NAME
-import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_TYPES_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.IrArrayWriter
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
+import org.jetbrains.kotlin.library.impl.KlibIrWriterImpl
 import org.jetbrains.kotlin.library.impl.KlibMetadataWriterImpl
 import java.io.File
-import kotlin.collections.map
 import kotlin.random.Random
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
@@ -173,39 +166,15 @@ fun KlibMockDSL.metadata(metadata: SerializedMetadata) {
 fun KlibMockDSL.ir(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_FOLDER_NAME, init)
 
 fun KlibMockDSL.ir(irFiles: Collection<SerializedIrFile>) = ir {
-    serializeIr(irFiles)
+    val layout = KlibIrComponentLayout.createForMainIr(KlibFile(rootDir.path))
+    val writer = KlibIrWriterImpl.ForMainIr(layout)
+    writer.writeMainIr(irFiles)
 }
 
 fun KlibMockDSL.irInlinableFunctions(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME, init)
 
 fun KlibMockDSL.irInlinableFunctions(inlinableFunctionsFile: SerializedIrFile) = irInlinableFunctions {
-    serializeIr(listOf(inlinableFunctionsFile))
-}
-
-// TODO (KT-81411): rewrite it on the new ir component layout
-private fun KlibMockDSL.serializeIr(irFiles: Collection<SerializedIrFile>) {
-    fun pathOf(name: String): String = currentDir.resolve(name).absolutePath
-
-    with(irFiles.sortedBy { it.path }) {
-        IrArrayWriter(map(SerializedIrFile::fileData)).writeIntoFile(pathOf(KLIB_IR_FILES_FILE_NAME))
-        IrArrayWriter(map(SerializedIrFile::declarations)).writeIntoFile(pathOf(KLIB_IR_DECLARATIONS_FILE_NAME))
-        IrArrayWriter(map(SerializedIrFile::types)).writeIntoFile(pathOf(KLIB_IR_TYPES_FILE_NAME))
-        IrArrayWriter(map(SerializedIrFile::signatures)).writeIntoFile(pathOf(KLIB_IR_SIGNATURES_FILE_NAME))
-        IrArrayWriter(map(SerializedIrFile::strings)).writeIntoFile(pathOf(KLIB_IR_STRINGS_FILE_NAME))
-        IrArrayWriter(map(SerializedIrFile::bodies)).writeIntoFile(pathOf(KLIB_IR_BODIES_FILE_NAME))
-
-        mapNotNull(SerializedIrFile::debugInfo).let { debugInfos ->
-            if (debugInfos.isNotEmpty()) {
-                check(debugInfos.size == size) { "debugInfo.size != irFiles.size" }
-                IrArrayWriter(debugInfos).writeIntoFile(pathOf(KLIB_IR_DEBUG_INFO_FILE_NAME))
-            }
-        }
-
-        mapNotNull(SerializedIrFile::fileEntries).let { fileEntries ->
-            if (fileEntries.isNotEmpty()) {
-                check(fileEntries.size == size) { "fileEntries.size != irFiles.size" }
-                IrArrayWriter(fileEntries).writeIntoFile(pathOf(KLIB_IR_FILE_ENTRIES_FILE_NAME))
-            }
-        }
-    }
+    val layout = KlibIrComponentLayout.createForInlinableFunctionsIr(KlibFile(rootDir.path))
+    val writer = KlibIrWriterImpl.ForInlinableFunctionsIr(layout)
+    writer.writeInlinableFunctionsIr(inlinableFunctionsFile)
 }
