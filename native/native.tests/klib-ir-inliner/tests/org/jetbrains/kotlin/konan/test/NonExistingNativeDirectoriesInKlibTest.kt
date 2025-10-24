@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.konan.library.KLIB_TARGETS_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -52,14 +53,14 @@ class NonExistingNativeDirectoriesInKlibTest {
         val klibDir = writeLibrary(bitcodeFileNames = bitcodeFileNames)
         val klibFile = klibDir.compressKlib()
 
-        assertTrue(klibDir.readLibrary().bitcodePaths.mapToSet { KFile(it).name } == bitcodeFileNames)
-        assertTrue(klibFile.readLibrary().bitcodePaths.mapToSet { KFile(it).name } == bitcodeFileNames)
+        assertTrue(klibDir.readLibrary().bitcode(TEST_TARGET)?.bitcodeFilePaths?.mapToSet { KFile(it).name } == bitcodeFileNames)
+        assertTrue(klibFile.readLibrary().bitcode(TEST_TARGET)?.bitcodeFilePaths?.mapToSet { KFile(it).name } == bitcodeFileNames)
 
         klibDir.deleteNativeTargetSubdirectory("native")
         klibDir.compressKlib()
 
-        assertTrue(klibDir.readLibrary().bitcodePaths.isEmpty())
-        assertTrue(klibFile.readLibrary().bitcodePaths.isEmpty())
+        assertTrue(klibDir.readLibrary().bitcode(TEST_TARGET)?.bitcodeFilePaths.isNullOrEmpty())
+        assertTrue(klibFile.readLibrary().bitcode(TEST_TARGET)?.bitcodeFilePaths.isNullOrEmpty())
     }
 
     companion object {

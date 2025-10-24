@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.konan.library.BitcodeLibrary
-import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
+import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -134,23 +133,10 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         }
 
         private val KotlinLibrary.hasBitcode: Boolean
-            get() {
-                if (this is BitcodeLibrary) {
-                    val componentName = componentList.firstOrNull() ?: return false
-
-                    for (nativeTargetName in nativeTargets) {
-                        val nativeTarget = KonanTarget.predefinedTargets[nativeTargetName] ?: continue
-                        val targetedLibrary = createKonanLibrary(
-                            libraryFilePossiblyDenormalized = libraryFile,
-                            component = componentName,
-                            target = nativeTarget,
-                        )
-
-                        return targetedLibrary.bitcodePaths.isNotEmpty()
-                    }
-                }
-
-                return false
+            get() = nativeTargets.any { nativeTargetName ->
+                val nativeTarget = KonanTarget.predefinedTargets[nativeTargetName] ?: return@any false
+                val bitcode = bitcode(nativeTarget)
+                bitcode != null && bitcode.bitcodeFilePaths.isNotEmpty()
             }
 
         private fun KlibElementWithSize.renderTo(appendable: Appendable, indent: Int = 0) {
