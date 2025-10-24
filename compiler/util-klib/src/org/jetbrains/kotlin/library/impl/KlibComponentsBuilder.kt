@@ -11,26 +11,26 @@ import org.jetbrains.kotlin.library.KlibOptionalComponent
 
 // TODO (KT-81411): This class is an implementation detail. It should be made internal after dropping `KonanLibraryImpl`.
 class KlibComponentsBuilder(private val layoutReaderFactory: KlibLayoutReaderFactory) {
-    private val components: MutableMap<KlibComponent.ID<*>, KlibComponent> = mutableMapOf()
+    private val components: MutableMap<KlibComponent.Kind<*>, KlibComponent> = mutableMapOf()
 
     fun <KC : KlibComponent> withMandatory(
-        id: KlibComponent.ID<KC>,
+        kind: KlibComponent.Kind<KC>,
         createComponent: (KlibLayoutReaderFactory) -> KC,
     ): KlibComponentsBuilder {
-        this.components[id] = createComponent(layoutReaderFactory)
+        this.components[kind] = createComponent(layoutReaderFactory)
         return this
     }
 
     fun <KC : KlibOptionalComponent> withOptional(
-        id: KlibComponent.ID<KC>,
+        kind: KlibComponent.Kind<KC>,
         createComponent: (KlibLayoutReaderFactory) -> KC,
     ): KlibComponentsBuilder {
         val component = createComponent(layoutReaderFactory)
         if (component.isDataAvailable) {
-            this.components[id] = createComponent(layoutReaderFactory)
+            this.components[kind] = createComponent(layoutReaderFactory)
         }
         return this
     }
 
-    fun build(): Map<KlibComponent.ID<*>, KlibComponent> = components.toMap()
+    fun build(): Map<KlibComponent.Kind<*>, KlibComponent> = components.toMap()
 }

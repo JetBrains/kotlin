@@ -32,14 +32,14 @@ interface Klib {
     val location: KlibFile
 
     /**
-     * Get a specific [KlibComponent] by its [id]. Throw an error if the component is not found.
+     * Get a specific [KlibComponent] by its [kind]. Throw an error if the component is not found.
      */
-    fun <KC : KlibComponent> getComponent(id: KlibComponent.ID<KC>): KC
+    fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC>): KC
 
     /**
-     * Get a specific [KlibOptionalComponent] by its [id]. Return `null` if the component is not found.
+     * Get a specific [KlibOptionalComponent] by its [kind]. Return `null` if the component is not found.
      */
-    fun <KC : KlibOptionalComponent> getComponent(id: KlibComponent.ID<KC>): KC?
+    fun <KC : KlibOptionalComponent> getComponent(kind: KlibComponent.Kind<KC>): KC?
 }
 
 /**
@@ -47,9 +47,9 @@ interface Klib {
  */
 interface KlibComponent {
     /**
-     * ID of a [KlibComponent]. Used to access the component using [Klib.getComponent].
+     * Kind (ID) of a [KlibComponent]. Used to access the component using [Klib.getComponent].
      */
-    interface ID<KC : KlibComponent>
+    interface Kind<KC : KlibComponent>
 
     /**
      * The layout of a [KlibComponent]: Implementations of this abstract class provide access to the component's files by

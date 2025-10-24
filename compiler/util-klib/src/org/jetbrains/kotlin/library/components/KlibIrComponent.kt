@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 /**
  * This component that provides read access to Klib IR. It can be used for two purposes:
- * - Reading the (main) Klib IR. Corresponding component ID: [IDMain].
- * - Reading the IR of inlinable functions. Corresponding component ID: [IDInlinableFunctions].
+ * - Reading the (main) Klib IR. Corresponding component Kind: [KindMain].
+ * - Reading the IR of inlinable functions. Corresponding component Kind: [KindInlinableFunctions].
  */
 interface KlibIrComponent : KlibOptionalComponent {
     val irFileCount: Int
@@ -45,8 +45,8 @@ interface KlibIrComponent : KlibOptionalComponent {
     fun signatures(fileIndex: Int): ByteArray
     fun stringLiterals(fileIndex: Int): ByteArray
 
-    object IDMain : KlibComponent.ID<KlibIrComponent>
-    object IDInlinableFunctions : KlibComponent.ID<KlibIrComponent>
+    object KindMain : KlibComponent.Kind<KlibIrComponent>
+    object KindInlinableFunctions : KlibComponent.Kind<KlibIrComponent>
 }
 
 /**
@@ -57,7 +57,7 @@ interface KlibIrComponent : KlibOptionalComponent {
  * Note: If you don't want to check the nullability of the returned value, use [irOrFail].
  */
 inline val Klib.ir: KlibIrComponent?
-    get() = getComponent(KlibIrComponent.IDMain)
+    get() = getComponent(KlibIrComponent.KindMain)
 
 /**
  * A shortcut for accessing the [KlibIrComponent] responsible for the main IR in the [Klib] instance.
@@ -73,7 +73,7 @@ inline val Klib.irOrFail: KlibIrComponent
  * This component is optional: The [inlinableFunctionsIr] getter returns `null` if there is no IR of inlinable functions in the library.
  */
 inline val Klib.inlinableFunctionsIr: KlibIrComponent?
-    get() = getComponent(KlibIrComponent.IDInlinableFunctions)
+    get() = getComponent(KlibIrComponent.KindInlinableFunctions)
 
 class KlibIrComponentLayout private constructor(root: KlibFile, private val irFolderName: String) : KlibComponent.Layout(root) {
     /** The IR "home" directory. */

@@ -30,7 +30,7 @@ interface KlibMetadataComponent : KlibComponent {
     /** The concrete package fragment in the raw form (bytes, yet to be deserialized to [ProtoBuf.PackageFragment]). */
     fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray
 
-    companion object ID : KlibComponent.ID<KlibMetadataComponent>
+    companion object Kind : KlibComponent.Kind<KlibMetadataComponent>
 }
 
 /**
@@ -40,7 +40,7 @@ interface KlibMetadataComponent : KlibComponent {
  * a non-null component instance that can be used to read the Klib's metadata.
  */
 inline val Klib.metadata: KlibMetadataComponent
-    get() = getComponent(KlibMetadataComponent.ID)
+    get() = getComponent(KlibMetadataComponent.Kind)
 
 class KlibMetadataComponentLayout(root: KlibFile) : KlibComponent.Layout(root) {
     constructor(root: String) : this(KlibFile(root))

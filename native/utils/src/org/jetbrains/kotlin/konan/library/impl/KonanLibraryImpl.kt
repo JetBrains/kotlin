@@ -77,26 +77,26 @@ class KonanLibraryImpl(
     IrLibrary by ir,
     BitcodeLibrary by bitcode {
 
-    private val components: Map<KlibComponent.ID<*>, KlibComponent> = KlibComponentsBuilder(
+    private val components: Map<KlibComponent.Kind<*>, KlibComponent> = KlibComponentsBuilder(
         layoutReaderFactory = KlibLayoutReaderFactory(
             klibFile = location,
             zipFileSystemAccessor = ir.access.klibZipAccessor
         )
     )
-        .withMandatory(KlibMetadataComponent.ID, ::KlibMetadataComponentImpl)
-        .withOptional(KlibIrComponent.IDMain, KlibIrComponentImpl::createForMainIr)
-        .withOptional(KlibIrComponent.IDInlinableFunctions, KlibIrComponentImpl::createForInlinableFunctionsIr)
+        .withMandatory(KlibMetadataComponent.Kind, ::KlibMetadataComponentImpl)
+        .withOptional(KlibIrComponent.KindMain, KlibIrComponentImpl::createForMainIr)
+        .withOptional(KlibIrComponent.KindInlinableFunctions, KlibIrComponentImpl::createForInlinableFunctionsIr)
         .build()
 
-    override fun <KC : KlibComponent> getComponent(id: KlibComponent.ID<KC>): KC {
+    override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC>): KC {
         @Suppress("UNCHECKED_CAST")
-        val component = components[id] as KC?
-        return component ?: error("Unregistered component ${id::class.qualifiedName ?: id}")
+        val component = components[kind] as KC?
+        return component ?: error("Unregistered component ${kind::class.qualifiedName ?: kind}")
     }
 
-    override fun <KC : KlibOptionalComponent> getComponent(id: KlibComponent.ID<KC>): KC? {
+    override fun <KC : KlibOptionalComponent> getComponent(kind: KlibComponent.Kind<KC>): KC? {
         @Suppress("UNCHECKED_CAST")
-        return components[id] as KC?
+        return components[kind] as KC?
     }
 
     override val linkerOpts: List<String>
