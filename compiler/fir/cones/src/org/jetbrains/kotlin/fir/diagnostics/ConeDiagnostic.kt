@@ -11,6 +11,7 @@ interface ConeDiagnostic {
     val readableDescriptionAsTypeConstructor: String get() = reason
 }
 
+
 /**
  * A [ConeDiagnostic] that is never reported.
  * It is used when multiple FIR nodes, like a type ref and a reference, would otherwise contain the same diagnostic,
