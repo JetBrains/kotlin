@@ -170,8 +170,8 @@ class KotlinLibraryImpl(
         )
     )
         .withMandatory(KlibMetadataComponent.Kind, ::KlibMetadataComponentImpl)
-        .withOptional(KlibIrComponent.KindMain, KlibIrComponentImpl::createForMainIr)
-        .withOptional(KlibIrComponent.KindInlinableFunctions, KlibIrComponentImpl::createForInlinableFunctionsIr)
+        .withOptional(KlibIrComponent.Kind.Main, KlibIrComponentImpl::createForMainIr)
+        .withOptional(KlibIrComponent.Kind.InlinableFunctions, KlibIrComponentImpl::createForInlinableFunctionsIr)
         .build()
 
     override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC>): KC {
