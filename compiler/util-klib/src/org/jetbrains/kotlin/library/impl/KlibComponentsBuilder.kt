@@ -27,14 +27,13 @@ class KlibComponentsBuilder(private val layoutReaderFactory: KlibLayoutReaderFac
     }
 
     fun <KOC, KCL> withOptional(
-        kind: KlibOptionalComponent.Kind<KOC>,
+        kind: KlibOptionalComponent.Kind<KOC, KCL>,
         createLayout: (KlibFile) -> KCL,
         createComponent: (KlibLayoutReader<KCL>) -> KOC,
     ): KlibComponentsBuilder where KOC : KlibOptionalComponent, KCL : KlibComponentLayout {
         val layoutReader = layoutReaderFactory.createLayoutReader(createLayout)
-        val component = createComponent(layoutReader)
-        if (component.isDataAvailable) {
-            this.components[kind] = component
+        if (kind.shouldComponentBeRegistered(layoutReader)) {
+            this.components[kind] = createComponent(layoutReader)
         }
         return this
     }

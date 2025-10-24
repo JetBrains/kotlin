@@ -56,8 +56,6 @@ class KlibIrComponentImpl(
         IrMultiArrayReader(layoutReader, KlibIrComponentLayout::stringLiteralsFile)
     }
 
-    override val isDataAvailable = layoutReader.readInPlaceOrFallback(false) { it.irDir.exists }
-
     override val irFileCount get() = irFiles.entryCount()
 
     override fun irFile(index: Int) = irFiles.tableItemBytes(index)

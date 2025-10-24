@@ -39,7 +39,7 @@ interface Klib {
     /**
      * Get a specific [KlibOptionalComponent] by its [kind]. Return `null` if the component is not found.
      */
-    fun <KC : KlibOptionalComponent> getComponent(kind: KlibOptionalComponent.Kind<KC>): KC?
+    fun <KC : KlibOptionalComponent> getComponent(kind: KlibOptionalComponent.Kind<KC, *>): KC?
 }
 
 /**
@@ -61,13 +61,16 @@ interface KlibMandatoryComponent : KlibComponent {
 
 /**
  * A [KlibComponent] that is optional: This component is not available in the library if there is
- * no data that it can read according to [isDataAvailable].
+ * no data that it can read according to [KlibOptionalComponent.Kind.shouldComponentBeRegistered].
  */
 interface KlibOptionalComponent : KlibComponent {
-    interface Kind<KOC : KlibOptionalComponent> : KlibComponent.Kind<KOC>
-
-    /** Whether there is any data to be read by the component. */
-    val isDataAvailable: Boolean
+    interface Kind<KOC : KlibOptionalComponent, KCL : KlibComponentLayout> : KlibComponent.Kind<KOC> {
+        /**
+         * Whether there is any data to be read by the component.
+         * And whether the optional component should be registered in the library.
+         */
+        fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<KCL>): Boolean
+    }
 }
 
 /**

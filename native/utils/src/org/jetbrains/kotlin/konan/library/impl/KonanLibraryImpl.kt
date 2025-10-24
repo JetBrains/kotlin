@@ -96,7 +96,7 @@ class KonanLibraryImpl(
         return component ?: error("Unregistered component $kind")
     }
 
-    override fun <KC : KlibOptionalComponent> getComponent(kind: KlibOptionalComponent.Kind<KC>): KC? {
+    override fun <KC : KlibOptionalComponent> getComponent(kind: KlibOptionalComponent.Kind<KC, *>): KC? {
         @Suppress("UNCHECKED_CAST")
         return components[kind] as KC?
     }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.library.components
 
 import org.jetbrains.kotlin.library.Klib
 import org.jetbrains.kotlin.library.KlibComponentLayout
+import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.KlibOptionalComponent
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME
@@ -45,7 +46,12 @@ interface KlibIrComponent : KlibOptionalComponent {
     fun signatures(fileIndex: Int): ByteArray
     fun stringLiterals(fileIndex: Int): ByteArray
 
-    enum class Kind : KlibOptionalComponent.Kind<KlibIrComponent> { Main, InlinableFunctions }
+    enum class Kind : KlibOptionalComponent.Kind<KlibIrComponent, KlibIrComponentLayout> {
+        Main, InlinableFunctions;
+
+        override fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<KlibIrComponentLayout>) =
+            layoutReader.readInPlaceOrFallback(false) { it.irDir.exists }
+    }
 }
 
 /**
