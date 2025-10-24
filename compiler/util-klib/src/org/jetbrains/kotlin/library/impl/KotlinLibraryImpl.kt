@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
+import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.*
@@ -159,6 +160,7 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
 
 class KotlinLibraryImpl(
     override val location: File,
+    zipFileSystemAccessor: ZipFileSystemAccessor,
     val base: BaseKotlinLibraryImpl,
     val ir: IrLibraryImpl
 ) : KotlinLibrary,
@@ -168,7 +170,7 @@ class KotlinLibraryImpl(
     private val components: Map<KlibComponent.Kind<*>, KlibComponent> = KlibComponentsBuilder(
         layoutReaderFactory = KlibLayoutReaderFactory(
             klibFile = location,
-            zipFileSystemAccessor = ir.access.klibZipAccessor
+            zipFileSystemAccessor = zipFileSystemAccessor
         )
     )
         .withMandatory(KlibMetadataComponent.Kind, ::KlibMetadataComponentLayout, ::KlibMetadataComponentImpl)
@@ -209,13 +211,15 @@ fun createKotlinLibrary(
     isDefault: Boolean = false,
     zipAccessor: ZipFileSystemAccessor? = null,
 ): KotlinLibrary {
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, zipAccessor)
-    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component, zipAccessor)
+    val nonNullZipFileSystemAccessor = zipAccessor ?: ZipFileSystemInPlaceAccessor
+
+    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, nonNullZipFileSystemAccessor)
+    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component, nonNullZipFileSystemAccessor)
 
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     val ir = IrLibraryImpl(irAccess)
 
-    return KotlinLibraryImpl(libraryFile, base, ir)
+    return KotlinLibraryImpl(libraryFile, nonNullZipFileSystemAccessor, base, ir)
 }
 
 fun createKotlinLibraryComponents(
