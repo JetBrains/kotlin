@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.library.BaseWriter
-import org.jetbrains.kotlin.library.IrWriter
 
 interface TargetedWriter {
     fun addIncludedBinary(library: String)
@@ -16,4 +15,4 @@ interface BitcodeWriter : TargetedWriter {
     fun addNativeBitcode(library: String)
 }
 
-interface KonanLibraryWriter : BaseWriter, IrWriter, BitcodeWriter
+interface KonanLibraryWriter : BaseWriter, BitcodeWriter

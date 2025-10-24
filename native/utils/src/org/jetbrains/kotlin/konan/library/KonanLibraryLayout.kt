@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.IrKotlinLibraryLayout
 import org.jetbrains.kotlin.library.KotlinLibraryLayout
 
 const val KLIB_TARGETS_FOLDER_NAME = "targets"
@@ -40,4 +39,4 @@ interface BitcodeKotlinLibraryLayout : TargetedKotlinLibraryLayout, KotlinLibrar
         get() = File(targetDir, "native")
 }
 
-interface KonanLibraryLayout : BitcodeKotlinLibraryLayout, IrKotlinLibraryLayout
+interface KonanLibraryLayout : BitcodeKotlinLibraryLayout
