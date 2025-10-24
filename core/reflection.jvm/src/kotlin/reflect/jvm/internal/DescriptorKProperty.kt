@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Field
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
+import java.lang.reflect.Type
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KFunction
@@ -24,6 +26,7 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
 import kotlin.reflect.jvm.internal.calls.*
+import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal abstract class DescriptorKProperty<out V> private constructor(
     override val container: KDeclarationContainerImpl,
@@ -97,6 +100,11 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
     override val defaultCaller: Caller<*>? get() = getter.defaultCaller
 
+    override fun computeReturnType(): DescriptorKType =
+        DescriptorKType(descriptor.returnType!!, if (isLocalDelegated) null else fun(): Type {
+            return caller.returnType
+        })
+
     override val isLateinit: Boolean get() = descriptor.isLateInit
 
     override val isConst: Boolean get() = descriptor.isConst
@@ -146,6 +154,9 @@ internal abstract class DescriptorKProperty<out V> private constructor(
             computeCallerForAccessor(isGetter = true)
         }
 
+        override fun computeReturnType(): DescriptorKType =
+            property.returnType as DescriptorKType
+
         override fun toString(): String = "getter of $property"
 
         override fun equals(other: Any?): Boolean =
@@ -165,6 +176,9 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override val caller: Caller<*> by lazy(PUBLICATION) {
             computeCallerForAccessor(isGetter = false)
         }
+
+        override fun computeReturnType(): DescriptorKType =
+            DescriptorKType(descriptor.builtIns.unitType) { Void.TYPE }
 
         override fun toString(): String = "setter of $property"
 

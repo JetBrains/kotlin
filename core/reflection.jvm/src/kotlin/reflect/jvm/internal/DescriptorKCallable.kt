@@ -18,16 +18,14 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
-import java.lang.reflect.WildcardType
-import kotlin.coroutines.Continuation
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.getInlineClassUnboxMethod
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
     abstract val descriptor: CallableMemberDescriptor
+
+    protected abstract fun computeReturnType(): DescriptorKType
 
     private val _annotations = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
@@ -103,11 +101,7 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
         }
     }
 
-    private val _returnType = ReflectProperties.lazySoft {
-        DescriptorKType(descriptor.returnType!!) {
-            extractContinuationArgument() ?: caller.returnType
-        }
-    }
+    private val _returnType = ReflectProperties.lazySoft { computeReturnType() }
 
     override val returnType: KType
         get() = _returnType()
@@ -134,21 +128,6 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
     private val _absentArguments = ReflectProperties.lazySoft(::computeAbsentArguments)
 
     override fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
-
-    private fun extractContinuationArgument(): Type? {
-        if (isSuspend) {
-            // kotlin.coroutines.Continuation<? super java.lang.String>
-            val continuationType = caller.parameterTypes.lastOrNull() as? ParameterizedType
-            if (continuationType?.rawType == Continuation::class.java) {
-                // ? super java.lang.String
-                val wildcard = continuationType.actualTypeArguments.single() as? WildcardType
-                // java.lang.String
-                return wildcard?.lowerBounds?.first()
-            }
-        }
-
-        return null
-    }
 }
 
 private fun KotlinType.toInlineClass(): Class<*>? {
