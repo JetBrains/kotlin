@@ -159,22 +159,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             parameters = listOf(thisReceiver!!.copyTo(this)) + method.nonDispatchParameters.map { it.copyTo(this) }
         }
 
-    private class PropertyReferenceKind(
-        val implSymbol: IrClassSymbol,
-        val wrapper: IrFunction
-    )
-
-    private fun propertyReferenceKind(expression: IrCallableReference<*>, mutable: Boolean, i: Int): PropertyReferenceKind {
-        check(i in 0..2) { "Incorrect number of receivers ($i) for property reference: ${expression.render()}" }
-        val symbols = context.symbols
-        return PropertyReferenceKind(
-            symbols.getPropertyReferenceClass(mutable, i, true),
-            symbols.reflection.owner.functions.single {
-                it.name.asString() == (if (mutable) "mutableProperty$i" else "property$i")
-            }
-        )
-    }
-
     private fun IrFunction.findExtensionReceiverParameter(): IrValueParameter? = parameters.find { it.kind == IrParameterKind.ExtensionReceiver }
 
     private fun IrCallableReference<*>.findExtensionReceiver(): IrExpression? {
@@ -182,7 +166,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         return arguments[extensionParameter.indexInParameters]
     }
 
-    private fun propertyReferenceKindFor(expression: IrCallableReference<*>): PropertyReferenceKind =
+    private fun propertyReferenceClassFor(expression: IrCallableReference<*>): IrClassSymbol =
         expression.getter?.owner?.let {
             val boundReceivers = listOfNotNull(expression.dispatchReceiver, expression.findExtensionReceiver()).size
             val needReceivers = listOfNotNull(it.dispatchReceiverParameter, it.findExtensionReceiverParameter()).size
@@ -191,9 +175,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             check(boundReceivers < 2 && (expression.findExtensionReceiver() == null || needReceivers < 2)) {
                 "Property reference with two receivers is not supported: ${expression.render()}"
             }
-            propertyReferenceKind(expression, expression.setter != null, needReceivers - boundReceivers)
+            context.symbols.getPropertyReferenceClass(expression.setter != null, needReceivers - boundReceivers, true)
         } ?: expression.field?.owner?.let {
-            propertyReferenceKind(expression, !it.isFinal, if (it.isStatic || expression.dispatchReceiver != null) 0 else 1)
+            context.symbols.getPropertyReferenceClass(!it.isFinal, if (it.isStatic || expression.dispatchReceiver != null) 0 else 1, true)
         } ?: throw AssertionError("property has no getter and no field: ${expression.dump()}")
 
     private data class PropertyInstance(val initializer: IrExpression, val index: Int)
@@ -333,16 +317,15 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     // Example: `C::property` -> `Reflection.property1(PropertyReference1Impl(C::class, "property", "getProperty()LType;"))`.
     private fun createReflectedKProperty(expression: IrCallableReference<*>): IrExpression {
         val boundReceiver = expression.getBoundReceiver()
-        val referenceKind = propertyReferenceKindFor(expression)
+        val referenceClass = propertyReferenceClassFor(expression)
         return context.createJvmIrBuilder(currentScope!!, expression).run {
             val arity = when {
                 boundReceiver != null -> 5 // (receiver, jClass, name, desc, flags)
                 else -> 4 // (jClass, name, desc, flags)
             }
-            val instance = irCall(referenceKind.implSymbol.constructors.single { it.owner.parameters.size == arity }).apply {
+            irCall(referenceClass.constructors.single { it.owner.parameters.size == arity }).apply {
                 fillReflectedPropertyArguments(this, expression, boundReceiver)
             }
-            irCall(referenceKind.wrapper).apply { arguments[0] = instance }
         }
     }
 
@@ -396,7 +379,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     }
 
     private fun createKPropertySubclass(expression: IrCallableReference<*>): IrClass {
-        val superClass = propertyReferenceKindFor(expression).implSymbol.owner
+        val superClass = propertyReferenceClassFor(expression).owner
         val referenceClass = context.irFactory.buildClass {
             setSourceRange(expression)
             name = SpecialNames.NO_NAME_PROVIDED
