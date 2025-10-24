@@ -1,4 +1,12 @@
+public final class A /* test.A*/ {
+  public  A();//  .ctor()
+}
+
 public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  AList();//  .ctor()
+}
+
+public abstract class AList2 /* test.AList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
@@ -44,5 +52,5 @@ public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbr
   @java.lang.Override()
   public int lastIndexOf(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  lastIndexOf(@org.jetbrains.annotations.NotNull() test.A)
 
-  public  AList();//  .ctor()
+  public  AList2();//  .ctor()
 }
