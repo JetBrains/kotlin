@@ -113,7 +113,7 @@ class WasmLoweringFacade(
         )
 
         val dceDumpNameCache = DceDumpNameCache()
-        eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
+//        eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
 
         dumpDeclarationIrSizesIfNeed(System.getProperty("kotlin.wasm.dump.declaration.ir.size.to.file"), allModules, dceDumpNameCache)
 
