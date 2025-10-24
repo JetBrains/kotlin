@@ -30,3 +30,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     api(libs.jetbrains.ideaExt.gradlePlugin)
 }
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "com.google.guava" && requested.name == "guava") {
+            useVersion("32.0.1-jre")
+            because("CVE-2023-2976, CVE-2020-8908")
+        }
+    }
+}
