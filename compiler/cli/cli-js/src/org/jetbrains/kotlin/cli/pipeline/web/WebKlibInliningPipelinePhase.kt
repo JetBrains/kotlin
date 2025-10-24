@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, JsFir2IrPipelineArtifact>(
     name = "WebKlibInliningPipelinePhase",
     preActions = setOf(PerformanceNotifications.IrPreLoweringStarted),
-    postActions = setOf(PerformanceNotifications.IrPreLoweringFinished),
+    postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector),
 ) {
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsFir2IrPipelineArtifact {
         val (fir2IrResult, firOutput, configuration, diagnosticCollector, moduleStructure) = input
