@@ -561,33 +561,6 @@ class JvmSymbols(
         }
     }
 
-    val reflection: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Reflection")) { klass ->
-        val javaLangClassType = javaLangClass.starProjectedType
-        val kClassType = irBuiltIns.kClassClass.starProjectedType
-
-        klass.addFunction("getOrCreateKotlinPackage", kDeclarationContainer.defaultType, isStatic = true).apply {
-            addValueParameter("javaClass", javaLangClassType)
-            addValueParameter("moduleName", irBuiltIns.stringType)
-        }
-
-        klass.addFunction("getOrCreateKotlinClass", kClassType, isStatic = true).apply {
-            addValueParameter("javaClass", javaLangClassType)
-        }
-
-        klass.addFunction("getOrCreateKotlinClasses", irBuiltIns.arrayClass.typeWith(kClassType), isStatic = true).apply {
-            addValueParameter("javaClasses", irBuiltIns.arrayClass.typeWith(javaLangClassType))
-        }
-
-        for (mutable in listOf(false, true)) {
-            for (n in 0..2) {
-                val functionName = (if (mutable) "mutableProperty" else "property") + n
-                klass.addFunction(functionName, irBuiltIns.getKPropertyClass(mutable, n).starProjectedType, isStatic = true).apply {
-                    addValueParameter("p", getPropertyReferenceClass(mutable, n, impl = false).defaultType)
-                }
-            }
-        }
-    }
-
     val javaLangReflectSymbols: JvmReflectSymbols by lazy {
         JvmReflectSymbols(context)
     }
@@ -595,9 +568,6 @@ class JvmSymbols(
     override val functionAdapter: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.FunctionAdapter"), ClassKind.INTERFACE) { klass ->
         klass.addFunction("getFunctionDelegate", irBuiltIns.functionClass.starProjectedType, Modality.ABSTRACT)
     }
-
-    val getOrCreateKotlinPackage: IrSimpleFunctionSymbol =
-        reflection.functionByName("getOrCreateKotlinPackage")
 
     val desiredAssertionStatus: IrSimpleFunctionSymbol by lazy {
         javaLangClass.functionByName("desiredAssertionStatus")
