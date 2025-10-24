@@ -7,14 +7,16 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.saveToFile
-import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_BODIES_FILE_NAME
-import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_DEBUG_INFO_FILE_NAME
-import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_DECLARATIONS_FILE_NAME
-import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_FILES_FILE_NAME
-import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_FILE_ENTRIES_FILE_NAME
-import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_SIGNATURES_FILE_NAME
-import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_STRINGS_FILE_NAME
-import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_TYPES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_BODIES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DEBUG_INFO_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DECLARATIONS_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILE_ENTRIES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_SIGNATURES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_STRINGS_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_TYPES_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -174,7 +176,7 @@ fun KlibMockDSL.ir(irFiles: Collection<SerializedIrFile>) = ir {
     serializeIr(irFiles)
 }
 
-fun KlibMockDSL.irInlinableFunctions(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME, init)
+fun KlibMockDSL.irInlinableFunctions(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME, init)
 
 fun KlibMockDSL.irInlinableFunctions(inlinableFunctionsFile: SerializedIrFile) = irInlinableFunctions {
     serializeIr(listOf(inlinableFunctionsFile))
@@ -185,24 +187,24 @@ private fun KlibMockDSL.serializeIr(irFiles: Collection<SerializedIrFile>) {
     fun pathOf(name: String): String = currentDir.resolve(name).absolutePath
 
     with(irFiles.sortedBy { it.path }) {
-        IrArrayWriter(map(SerializedIrFile::fileData)).writeIntoFile(pathOf(IR_FILES_FILE_NAME))
-        IrArrayWriter(map(SerializedIrFile::declarations)).writeIntoFile(pathOf(IR_DECLARATIONS_FILE_NAME))
-        IrArrayWriter(map(SerializedIrFile::types)).writeIntoFile(pathOf(IR_TYPES_FILE_NAME))
-        IrArrayWriter(map(SerializedIrFile::signatures)).writeIntoFile(pathOf(IR_SIGNATURES_FILE_NAME))
-        IrArrayWriter(map(SerializedIrFile::strings)).writeIntoFile(pathOf(IR_STRINGS_FILE_NAME))
-        IrArrayWriter(map(SerializedIrFile::bodies)).writeIntoFile(pathOf(IR_BODIES_FILE_NAME))
+        IrArrayWriter(map(SerializedIrFile::fileData)).writeIntoFile(pathOf(KLIB_IR_FILES_FILE_NAME))
+        IrArrayWriter(map(SerializedIrFile::declarations)).writeIntoFile(pathOf(KLIB_IR_DECLARATIONS_FILE_NAME))
+        IrArrayWriter(map(SerializedIrFile::types)).writeIntoFile(pathOf(KLIB_IR_TYPES_FILE_NAME))
+        IrArrayWriter(map(SerializedIrFile::signatures)).writeIntoFile(pathOf(KLIB_IR_SIGNATURES_FILE_NAME))
+        IrArrayWriter(map(SerializedIrFile::strings)).writeIntoFile(pathOf(KLIB_IR_STRINGS_FILE_NAME))
+        IrArrayWriter(map(SerializedIrFile::bodies)).writeIntoFile(pathOf(KLIB_IR_BODIES_FILE_NAME))
 
         mapNotNull(SerializedIrFile::debugInfo).let { debugInfos ->
             if (debugInfos.isNotEmpty()) {
                 check(debugInfos.size == size) { "debugInfo.size != irFiles.size" }
-                IrArrayWriter(debugInfos).writeIntoFile(pathOf(IR_DEBUG_INFO_FILE_NAME))
+                IrArrayWriter(debugInfos).writeIntoFile(pathOf(KLIB_IR_DEBUG_INFO_FILE_NAME))
             }
         }
 
         mapNotNull(SerializedIrFile::fileEntries).let { fileEntries ->
             if (fileEntries.isNotEmpty()) {
                 check(fileEntries.size == size) { "fileEntries.size != irFiles.size" }
-                IrArrayWriter(fileEntries).writeIntoFile(pathOf(IR_FILE_ENTRIES_FILE_NAME))
+                IrArrayWriter(fileEntries).writeIntoFile(pathOf(KLIB_IR_FILE_ENTRIES_FILE_NAME))
             }
         }
     }

@@ -8,11 +8,18 @@ package org.jetbrains.kotlin.cli.klib
 import org.jetbrains.kotlin.konan.file.file
 import org.jetbrains.kotlin.konan.file.withZipFileSystem
 import org.jetbrains.kotlin.konan.library.KLIB_TARGETS_FOLDER_NAME
-import org.jetbrains.kotlin.library.IrKotlinLibraryLayout
-import org.jetbrains.kotlin.library.KLIB_IR_FOLDER_NAME
-import org.jetbrains.kotlin.library.KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME
 import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_BODIES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DEBUG_INFO_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DECLARATIONS_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILE_ENTRIES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_SIGNATURES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_STRINGS_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_TYPES_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.konan.file.File as KFile
 
@@ -64,7 +71,7 @@ private fun KFile.collectTopLevelElements(): List<KlibElementWithSize> {
     return topLevelEntries.map { topLevelEntry ->
         when (val topLevelEntryName = topLevelEntry.name) {
             KLIB_IR_FOLDER_NAME -> buildIrElement(name = "IR (main)", topLevelEntry)
-            KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME -> buildIrElement(name = "IR (inlinable functions)", topLevelEntry)
+            KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME -> buildIrElement(name = "IR (inlinable functions)", topLevelEntry)
             KLIB_METADATA_FOLDER_NAME -> buildElement(name = "Metadata", topLevelEntry)
             KLIB_TARGETS_FOLDER_NAME -> buildElement(name = "Native-specific binary data", topLevelEntry)
             KLIB_MANIFEST_FILE_NAME -> buildElement(name = "Manifest file", topLevelEntry)
@@ -93,14 +100,14 @@ private fun buildIrElement(name: String, entry: KFile): KlibElementWithSize {
 
     entry.entries.mapTo(nestedElements) { childEntry ->
         val prettyName = when (val childName = childEntry.name) {
-            IrKotlinLibraryLayout.IR_FILES_FILE_NAME -> "IR files"
-            IrKotlinLibraryLayout.IR_FILE_ENTRIES_FILE_NAME -> "IR file entries"
-            IrKotlinLibraryLayout.IR_DECLARATIONS_FILE_NAME -> "IR declarations"
-            IrKotlinLibraryLayout.IR_BODIES_FILE_NAME -> "IR bodies"
-            IrKotlinLibraryLayout.IR_TYPES_FILE_NAME -> "IR types"
-            IrKotlinLibraryLayout.IR_SIGNATURES_FILE_NAME -> "IR signatures"
-            IrKotlinLibraryLayout.IR_DEBUG_INFO_FILE_NAME -> "IR signatures (debug info)"
-            IrKotlinLibraryLayout.IR_STRINGS_FILE_NAME -> "IR strings"
+            KLIB_IR_FILES_FILE_NAME -> "IR files"
+            KLIB_IR_FILE_ENTRIES_FILE_NAME -> "IR file entries"
+            KLIB_IR_DECLARATIONS_FILE_NAME -> "IR declarations"
+            KLIB_IR_BODIES_FILE_NAME -> "IR bodies"
+            KLIB_IR_TYPES_FILE_NAME -> "IR types"
+            KLIB_IR_SIGNATURES_FILE_NAME -> "IR signatures"
+            KLIB_IR_DEBUG_INFO_FILE_NAME -> "IR signatures (debug info)"
+            KLIB_IR_STRINGS_FILE_NAME -> "IR strings"
             // TODO: add file entries here!
             else -> childName
         }

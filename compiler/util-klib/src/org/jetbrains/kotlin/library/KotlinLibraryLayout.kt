@@ -17,10 +17,18 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_BODIES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DEBUG_INFO_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DECLARATIONS_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILE_ENTRIES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_SIGNATURES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_STRINGS_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_TYPES_FILE_NAME
 
 const val KLIB_MANIFEST_FILE_NAME = "manifest"
-const val KLIB_IR_FOLDER_NAME = "ir"
-const val KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME = "ir_inlinable_functions"
 const val KLIB_RESOURCES_FOLDER_NAME = "resources"
 
 /**
@@ -50,36 +58,25 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     // Those may be read and inlined on the first stage of compilation, without the need to read the main, much bigger,
     // "ir" directory (see KT-75794).
     val inlineableFunsIr: IrDirectory
-        get() = IrDirectory(File(componentDir, KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME))
+        get() = IrDirectory(File(componentDir, KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME))
 
     class IrDirectory(val dir: File) {
         val irDeclarations
-            get() = File(dir, IR_DECLARATIONS_FILE_NAME)
+            get() = File(dir, KLIB_IR_DECLARATIONS_FILE_NAME)
         val irTypes
-            get() = File(dir, IR_TYPES_FILE_NAME)
+            get() = File(dir, KLIB_IR_TYPES_FILE_NAME)
         val irSignatures
-            get() = File(dir, IR_SIGNATURES_FILE_NAME)
+            get() = File(dir, KLIB_IR_SIGNATURES_FILE_NAME)
         val irStrings
-            get() = File(dir, IR_STRINGS_FILE_NAME)
+            get() = File(dir, KLIB_IR_STRINGS_FILE_NAME)
         val irBodies
-            get() = File(dir, IR_BODIES_FILE_NAME)
+            get() = File(dir, KLIB_IR_BODIES_FILE_NAME)
         val irFiles
-            get() = File(dir, IR_FILES_FILE_NAME)
+            get() = File(dir, KLIB_IR_FILES_FILE_NAME)
         val irDebugInfo
-            get() = File(dir, IR_DEBUG_INFO_FILE_NAME)
+            get() = File(dir, KLIB_IR_DEBUG_INFO_FILE_NAME)
         // Please check `hasFileEntriesTable` before getter invocation, otherwise it may crash in override getter
         val irFileEntries
-            get() = File(dir, IR_FILE_ENTRIES_FILE_NAME)
-    }
-
-    companion object {
-        const val IR_DECLARATIONS_FILE_NAME = "irDeclarations.knd"
-        const val IR_TYPES_FILE_NAME = "types.knt"
-        const val IR_SIGNATURES_FILE_NAME = "signatures.knt"
-        const val IR_STRINGS_FILE_NAME = "strings.knt"
-        const val IR_BODIES_FILE_NAME = "bodies.knb"
-        const val IR_FILES_FILE_NAME = "files.knf"
-        const val IR_DEBUG_INFO_FILE_NAME = "debugInfo.knd"
-        const val IR_FILE_ENTRIES_FILE_NAME = "fileEntries.knf"
+            get() = File(dir, KLIB_IR_FILE_ENTRIES_FILE_NAME)
     }
 }
