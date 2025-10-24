@@ -1,3 +1,5 @@
+import okio.Path.Companion.toOkioPath
+import okio.Path.Companion.toPath
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import java.net.URI
 
@@ -75,6 +77,8 @@ dependencies {
 val skeletonVersion = "9fca651b6dc684ac340b45f5abf71cac6856aa45"
 val skeletonFilePath: String = layout.buildDirectory.file("idea-flex-kotlin-$skeletonVersion.skeleton").get().asFile.absolutePath
 val downloadSkeletonTaskName = "downloadSkeleton"
+val lexerGrammarsDirRelativeToRoot: okio.Path =
+    layout.projectDirectory.dir("common/src/org/jetbrains/kotlin/kmp/lexer").asFile.absolutePath.toPath().relativeTo(rootDir.toOkioPath())
 
 // TODO: KT-77206 (Get rid of the skeleton downloading or use JFlex version instead of the commit hash).
 // The usage of permalink is confusing and might be not reliable.
@@ -103,11 +107,11 @@ for (lexerName in listOf("Kotlin", "KDoc")) {
     generatedSourcesTask(
         taskName = taskName,
         generatorClasspath = flexGeneratorClasspath,
-        generatorRoot = "compiler/multiplatform-parsing/common/src",
+        generatorRoot = lexerGrammarsDirRelativeToRoot.toString(),
         generatorMainClass = "jflex.Main",
         argsProvider = { generationRoot ->
             listOf(
-                projectDir.resolve("common/src/org/jetbrains/kotlin/kmp/lexer/$lexerName.flex").absolutePath,
+                lexerGrammarsDirRelativeToRoot.resolve("$lexerName.flex").toString(),
                 "-skel",
                 skeletonFilePath,
                 "-d",
