@@ -1,6 +1,6 @@
+import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
-import com.github.gradle.node.npm.task.NpmTask
 import java.nio.file.Files
 import java.util.*
 
@@ -297,72 +297,41 @@ val unzipJsShell by task<Copy> {
 
 val wasmEdgeDirectory = toolsDirectory.map { it.dir("WasmEdge").asFile }
 val wasmEdgeDirectoryName = wasmEdgeVersion.map { version -> "WasmEdge-$version-$wasmEdgeInnerSuffix" }
-val wasmEdgeUnpackedDirectory = wasmEdgeDirectory.map { it.resolve(wasmEdgeDirectoryName.get()) }
-val unzipWasmEdge by task<Copy> {
+
+val unzipWasmEdge by task<UnzipWasmEdge> {
     dependsOn(wasmEdge)
+
+    from.setFrom(
+        {
+            if (wasmEdge.singleFile.extension == "zip") {
+                zipTree(wasmEdge.singleFile)
+            } else {
+                tarTree(wasmEdge.singleFile)
+            }
+        }
+    )
 
     val wasmEdgeDirectory = wasmEdgeDirectory
     val currentOsTypeForConfigurationCache = currentOsType.name
-    val wasmEdgeUnpackedDirectory = wasmEdgeUnpackedDirectory
 
-    from {
-        if (wasmEdge.singleFile.extension == "zip") {
-            zipTree(wasmEdge.singleFile)
-        } else {
-            tarTree(wasmEdge.singleFile)
-        }
-    }
-    into(wasmEdgeDirectory)
-    inputs.property("currentOsTypeForConfigurationCache", currentOsTypeForConfigurationCache)
+    into.fileProvider(wasmEdgeDirectory)
 
-    doLast {
-        if (currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX)) return@doLast
+    directoryName.set(wasmEdgeDirectoryName)
 
-        val unpackedWasmEdgeDirectory = wasmEdgeUnpackedDirectory.get().toPath()
-
-        val libDirectory = unpackedWasmEdgeDirectory
-            .resolve(if (currentOsTypeForConfigurationCache == OsName.MAC) "lib" else "lib64")
-
-        val targets = if (currentOsTypeForConfigurationCache == OsName.MAC)
-            listOf("libwasmedge.0.1.0.dylib", "libwasmedge.0.1.0.tbd")
-        else listOf("libwasmedge.so.0.1.0")
-
-        targets.forEach {
-            val target = libDirectory.resolve(it)
-            val firstLink = libDirectory.resolve(it.replace("0.1.0", "0")).also(Files::deleteIfExists)
-            val secondLink = libDirectory.resolve(it.replace(".0.1.0", "")).also(Files::deleteIfExists)
-
-            Files.createSymbolicLink(firstLink, target)
-            Files.createSymbolicLink(secondLink, target)
-        }
-    }
+    getIsWindows.set(currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX))
+    getIsMac.set(currentOsTypeForConfigurationCache == OsName.MAC)
 }
 
 
 val jscDirectory = toolsDirectory.map { it.dir("JavaScriptCore").asFile }
-val jscUnpackedDirectory = jscDirectory.map { it.resolve("jsc-$jscOsDependentClassifier-$jscOsDependentRevision") }
-val unzipJsc by task<Copy> {
+val unzipJsc by task<UnzipJsc> {
     dependsOn(jsc)
-    from { zipTree(jsc.singleFile) }
+    from.setFrom({ zipTree(jsc.singleFile) })
 
-    val jscUnpackedDirectory = jscUnpackedDirectory
-    into(jscUnpackedDirectory)
+    into.fileProvider(jscDirectory.map { it.resolve("jsc-$jscOsDependentClassifier-$jscOsDependentRevision") })
 
     val isLinux = currentOsType.name == OsName.LINUX
-    inputs.property("isLinux", isLinux)
-
-    doLast {
-        if (isLinux) {
-            val libDirectory = File(jscUnpackedDirectory.get(), "lib")
-            for (file in libDirectory.listFiles()) {
-                if (file.isFile && file.length() < 100) { // seems unpacked file link
-                    val linkTo = file.readText()
-                    file.delete()
-                    Files.createSymbolicLink(file.toPath(), File(linkTo).toPath())
-                }
-            }
-        }
-    }
+    getIsLinux.set(isLinux)
 }
 
 val createJscRunner by task<CreateJscRunner> {
