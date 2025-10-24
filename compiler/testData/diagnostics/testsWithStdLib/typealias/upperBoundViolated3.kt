@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ProperlyCheckUpperBoundsViolationsWhenCreatingFreshVariables
 // FILE: A.kt
 package a
 
