@@ -295,9 +295,6 @@ val unzipJsShell by task<Copy> {
     into(jsShellUnpackedDirectory)
 }
 
-val wasmEdgeDirectory = toolsDirectory.map { it.dir("WasmEdge").asFile }
-val wasmEdgeDirectoryName = wasmEdgeVersion.map { version -> "WasmEdge-$version-$wasmEdgeInnerSuffix" }
-
 val unzipWasmEdge by task<UnzipWasmEdge> {
     dependsOn(wasmEdge)
 
@@ -311,12 +308,11 @@ val unzipWasmEdge by task<UnzipWasmEdge> {
         }
     )
 
-    val wasmEdgeDirectory = wasmEdgeDirectory
     val currentOsTypeForConfigurationCache = currentOsType.name
 
-    into.fileProvider(wasmEdgeDirectory)
+    into.fileProvider(toolsDirectory.map { it.dir("WasmEdge").asFile })
 
-    directoryName.set(wasmEdgeDirectoryName)
+    directoryName.set(wasmEdgeVersion.map { version -> "WasmEdge-$version-$wasmEdgeInnerSuffix" })
 
     getIsWindows.set(currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX))
     getIsMac.set(currentOsTypeForConfigurationCache == OsName.MAC)
@@ -341,13 +337,13 @@ val createJscRunner by task<CreateJscRunner> {
     val runnerFilePath = jscDirectory.map { it.resolve(runnerFileName) }
     outputFile.fileProvider(runnerFilePath)
 
-    inputDirectory.fileProvider(unzipJsc.map { it.outputs.files.singleFile })
+    inputDirectory.set(unzipJsc.flatMap { it.into })
 }
 
 fun Test.setupSpiderMonkey() {
     val jsShellExecutablePath = unzipJsShell
-        .map { it.outputs.files.singleFile }
-        .map { it.resolve("js").absolutePath }
+        .map { it.destinationDir }
+        .map { it.resolve("js") }
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
         classpath.from(jsShellExecutablePath)
@@ -357,9 +353,12 @@ fun Test.setupSpiderMonkey() {
 
 fun Test.setupWasmEdge() {
     val wasmEdgeExecutablePath = unzipWasmEdge
-        .map { it.outputs.files.singleFile }
-        .map { it.resolve(wasmEdgeDirectoryName.get()) }
-        .map { it.resolve("bin/wasmedge").absolutePath }
+        .flatMap { task ->
+            task.into.zip(task.directoryName) { into, dirName ->
+                into.dir(dirName)
+            }
+        }
+        .map { it.file("bin/wasmedge") }
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
         classpath.from(wasmEdgeExecutablePath)
@@ -369,8 +368,7 @@ fun Test.setupWasmEdge() {
 
 fun Test.setupJsc() {
     val jscRunnerExecutablePath = createJscRunner
-        .map { it.outputFile.asFile.get() }
-        .map { it.absolutePath }
+        .flatMap { it.outputFile }
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
         classpath.from(jscRunnerExecutablePath)
