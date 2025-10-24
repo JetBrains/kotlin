@@ -66,7 +66,6 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
 
     val DONT_SORT_SOURCE_FILES by key<Boolean>(
         description = "don't sort source files in FS order",
-        comment = "Should be used only in tests, impossible to set via compiler arguments",
     )
 
     val SCRIPTING_HOST_CONFIGURATION by key<Any>(

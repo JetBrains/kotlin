@@ -341,6 +341,16 @@ For WASM and JS, the performance report includes execution time and lines per se
         }
 
     @Argument(
+        value = "-Xdont-sort-source-files",
+        description = "Disable automatic sorting of source files.",
+    )
+    var dontSortSourceFiles: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xdont-warn-on-error-suppression",
         description = "Don't report warnings when errors are suppressed. This only affects K2.",
     )

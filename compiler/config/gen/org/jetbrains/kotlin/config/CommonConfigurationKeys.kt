@@ -116,7 +116,6 @@ object CommonConfigurationKeys {
     @JvmField
     val DONT_CREATE_SEPARATE_SESSION_FOR_SCRIPTS = CompilerConfigurationKey.create<Boolean>("don't create separate session for scripts")
 
-    // Should be used only in tests, impossible to set via compiler arguments
     @JvmField
     val DONT_SORT_SOURCE_FILES = CompilerConfigurationKey.create<Boolean>("don't sort source files in FS order")
 

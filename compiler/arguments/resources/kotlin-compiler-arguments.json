@@ -1875,6 +1875,37 @@
                         }
                     },
                     {
+                        "name": "Xdont-sort-source-files",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Disable automatic sorting of source files.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.3.20",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
                         "name": "Xdont-warn-on-error-suppression",
                         "shortName": null,
                         "deprecatedName": null,

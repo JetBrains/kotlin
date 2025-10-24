@@ -85,6 +85,8 @@ fun CompilerConfiguration.setupCommonArguments(
         FlexibleTypeImpl.RUN_SLOW_ASSERTIONS = true
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
     }
+
+    put(CommonConfigurationKeys.DONT_SORT_SOURCE_FILES, arguments.dontSortSourceFiles)
 }
 
 fun CompilerConfiguration.setupMetadataVersion(

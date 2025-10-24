@@ -231,6 +231,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_DISABLE_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**
+     * Disable automatic sorting of source files.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_DONT_SORT_SOURCE_FILES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_DONT_SORT_SOURCE_FILES", KotlinReleaseVersion(2, 3, 20))
+
+    /**
      * Don't report warnings when errors are suppressed. This only affects K2.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

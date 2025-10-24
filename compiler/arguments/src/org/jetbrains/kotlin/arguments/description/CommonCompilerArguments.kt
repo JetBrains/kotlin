@@ -1197,4 +1197,16 @@ Warning: this flag is not intended for production use. If you want to configure 
             introducedVersion = KotlinReleaseVersion.v2_3_20
         )
     }
+
+    compilerArgument {
+        name = "Xdont-sort-source-files"
+        description = """
+            Disable automatic sorting of source files.
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_20
+        )
+    }
 }
