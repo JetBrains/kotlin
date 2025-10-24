@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.impl.*
 
@@ -34,8 +35,7 @@ private class KonanLibraryWriterImpl(
     val layout: KonanLibraryLayoutForWriter,
     base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
     bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
-    ir: IrWriter = IrWriterImpl(layout),
-) : BaseWriter by base, BitcodeWriter by bitcode, IrWriter by ir, KonanLibraryWriter
+) : BaseWriter by base, BitcodeWriter by bitcode, KonanLibraryWriter
 
 fun buildLibrary(
     natives: List<String>,
@@ -74,10 +74,6 @@ fun buildLibrary(
         File(layout.targetDir, "kotlin").mkdirs()
     }
 
-    if (ir != null) {
-        library.addIr(ir)
-    }
-
     natives.forEach {
         library.addNativeBitcode(it)
     }
@@ -90,6 +86,19 @@ fun buildLibrary(
     val metadataWriter = KlibMetadataWriterImpl(KlibMetadataComponentLayout(unzippedDir))
     metadataWriter.writeMetadata(metadata)
 
+    if (ir != null) {
+        val mainIrWriter = KlibIrWriterImpl.ForMainIr(KlibIrComponentLayout.createForMainIr(unzippedDir))
+        mainIrWriter.writeMainIr(ir.files)
+    }
+
+    ir?.fileWithPreparedInlinableFunctions?.let { inlinableFunctionsFile ->
+        val inlinableFunctionsWriter = KlibIrWriterImpl.ForInlinableFunctionsIr(
+            layout = KlibIrComponentLayout.createForInlinableFunctionsIr(unzippedDir)
+        )
+        inlinableFunctionsWriter.writeInlinableFunctionsIr(inlinableFunctionsFile)
+    }
+
     library.commit()
+
     return library.layout
 }
