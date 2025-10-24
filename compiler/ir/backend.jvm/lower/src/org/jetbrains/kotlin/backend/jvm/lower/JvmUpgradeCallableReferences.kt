@@ -9,10 +9,16 @@ import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
+import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : UpgradeCallableReferences(
@@ -22,6 +28,8 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
     upgradeLocalDelegatedPropertyReferences = true,
     upgradeSamConversions = true,
     upgradeExtractedAdaptedBlocks = true,
+    castDispatchReceiver = false,
+    generateFakeAccessorsForReflectionProperty = true,
 ) {
     private val jvmSymbols = context.symbols
 
@@ -46,4 +54,14 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
     override fun copyNecessaryAttributes(oldReference: IrFunctionReference, newReference: IrRichFunctionReference) {
         newReference.localClassType = oldReference.localClassType
     }
+
+    override fun copyNecessaryAttributes(oldReference: IrLocalDelegatedPropertyReference, newReference: IrRichPropertyReference) {
+        newReference.localClassType = oldReference.localClassType
+    }
+
+    override fun copyNecessaryAttributes(oldReference: IrPropertyReference, newReference: IrRichPropertyReference) {
+        newReference.localClassType = oldReference.localClassType
+    }
+
+    override fun IrDeclaration.hasMissingObjectDispatchReceiver(): Boolean = isJvmStaticInObject()
 }

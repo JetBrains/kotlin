@@ -159,7 +159,9 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                 irExprBody(
                     delegate.deepCopyWithSymbols().apply {
                         origin = PropertyReferenceLowering.REFLECTED_PROPERTY_REFERENCE
-                        arguments.add(0, boundReceiver)
+                        if (boundReceiver != null) {
+                            arguments[0] = boundReceiver
+                        }
                     }
                 )
             }
