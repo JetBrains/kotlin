@@ -484,6 +484,15 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         out.println("internal constructor(@PublishedApi internal val storage: $storageArrayType) : Collection<$elementType> {")
         out.println(
             """
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `$elementType` elements. */
+        @ExperimentalStdlibApi
+        @kotlin.internal.InlineOnly
+        public inline operator fun of(vararg elements: $elementType): $arrayType = elements
+    }
+
     /** Creates a new array of the specified [size], with all elements initialized to zero. */
     public constructor(size: Int) : this($storageArrayType(size))
 
