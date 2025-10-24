@@ -259,7 +259,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
  * ├── org.apache.commons
  * │   ├── commons-compress:* → 1.27.1
  * │   └── commons-io:* → 2.16.1
- * └── org.bouncycastle:bcpkix-jdk18on:* → 1.79
+ * ├── org.bouncycastle:bcpkix-jdk18on:* → 1.79
+ * └── org.jdom:jdom2:* -> 2.0.6.1
  *
  * Mitigated Vulnerabilities:
  * 1. Google Protobuf
@@ -279,6 +280,9 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
  *    - CVE-2024-30172: Potential encryption vulnerability
  *    - CVE-2024-30171: Security protocol weakness
  *    - CVE-2024-29857: Cryptographic implementation flaw
+ *
+ * 4. JDOM
+ *    - CVE-2021-33813: Denial of Service Vulnerability
  */
 configurations.all {
     resolutionStrategy.eachDependency {
@@ -309,6 +313,12 @@ configurations.all {
         if (requested.group == "org.bouncycastle" && requested.name == "bcpkix-jdk18on") {
             useVersion("1.80")
             because("CVE-2024-34447, CVE-2024-30172, CVE-2024-30171, CVE-2024-29857")
+        }
+
+        // JDOM
+        if (requested.group == "org.jdom" && requested.name == "jdom2") {
+            useVersion("2.0.6.1")
+            because("CVE-2021-33813")
         }
     }
 }
