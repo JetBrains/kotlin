@@ -1,4 +1,4 @@
-public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
   @kotlin.SinceKotlin()

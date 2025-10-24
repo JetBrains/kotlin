@@ -1,4 +1,4 @@
-public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() test.A> iterator();//  iterator()
@@ -23,9 +23,6 @@ public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbr
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  contains(@org.jetbrains.annotations.NotNull() test.A)
 
   @java.lang.Override()
-  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() test.A>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() test.A>)
-
-  @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
@@ -38,4 +35,34 @@ public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbr
   public int lastIndexOf(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  lastIndexOf(@org.jetbrains.annotations.NotNull() test.A)
 
   public  AList();//  .ctor()
+
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public @org.jetbrains.annotations.NotNull() test.A remove(int);//  remove(int)
+
+  public @org.jetbrains.annotations.NotNull() test.A set(int, @org.jetbrains.annotations.NotNull() test.A);//  set(int, @org.jetbrains.annotations.NotNull() test.A)
+
+  public boolean add(@org.jetbrains.annotations.NotNull() test.A);//  add(@org.jetbrains.annotations.NotNull() test.A)
+
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() test.A>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() test.A>)
+
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() test.A>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() test.A>)
+
+  public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
+
+  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  public final int size();//  size()
+
+  public java.lang.Object[] toArray();//  toArray()
+
+  public void add(int, @org.jetbrains.annotations.NotNull() test.A);//  add(int, @org.jetbrains.annotations.NotNull() test.A)
+
+  public void clear();//  clear()
 }
