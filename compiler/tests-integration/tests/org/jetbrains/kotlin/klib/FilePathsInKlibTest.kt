@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.klib
 
-import com.intellij.openapi.util.registry.EarlyAccessRegistryManager.fileName
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
 import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.incremental.md5
+import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -45,16 +45,16 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         }.load().apply { assertFalse(hasProblems) }.librariesStdlibFirst
 
         val lib = libs.last()
-        val mainIr = lib.mainIr
-        val fileSize = mainIr.fileCount()
+        val ir = lib.irOrFail
+        val fileSize = ir.irFileCount
         val extReg = ExtensionRegistryLite.newInstance()
 
         val result = ArrayList<String>(fileSize)
 
         for (i in 0 until fileSize) {
-            val fileStream = mainIr.file(i).codedInputStream
+            val fileStream = ir.irFile(i).codedInputStream
             val fileProto = IrFile.parseFrom(fileStream, extReg)
-            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(mainIr, i))
+            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, i))
             val fileEntry = fileReader.fileEntry(fileProto)
             val fileName = fileReader.deserializeFileEntryName(fileEntry)
 

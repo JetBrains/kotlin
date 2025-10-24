@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -82,10 +83,10 @@ class KonanDriver(
                             true,
                             configuration.zipFileSystemAccessor
                     )
-                    val mainIr = lib.mainIr
-                    (0 until mainIr.fileCount()).map { fileIndex ->
-                        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(mainIr, fileIndex))
-                        val proto = IrFile.parseFrom(mainIr.file(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
+                    val ir = lib.irOrFail
+                    (0 until ir.irFileCount).map { fileIndex ->
+                        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, fileIndex))
+                        val proto = IrFile.parseFrom(ir.irFile(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
                         val fileEntry = fileReader.fileEntry(proto)
                         fileReader.deserializeFileEntryName(fileEntry)
                     }

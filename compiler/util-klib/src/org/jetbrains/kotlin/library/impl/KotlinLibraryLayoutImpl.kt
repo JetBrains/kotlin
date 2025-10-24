@@ -22,12 +22,6 @@ open class KotlinLibraryLayoutImpl(val klib: File, override val component: Strin
 
 }
 
-class IrLibraryLayoutImpl(klib: File, component: String) : KotlinLibraryLayoutImpl(klib, component), IrKotlinLibraryLayout {
-
-    override fun directlyFromZip(zipFileSystem: FileSystem): IrKotlinLibraryLayout =
-        FromZipIrLibraryImpl(this, zipFileSystem)
-}
-
 @Suppress("UNCHECKED_CAST")
 open class BaseLibraryAccess<L : KotlinLibraryLayout>(val klib: File, component: String?, zipAccessor: ZipFileSystemAccessor? = null) {
     open val layout = KotlinLibraryLayoutImpl(klib, component)
@@ -43,11 +37,6 @@ open class BaseLibraryAccess<L : KotlinLibraryLayout>(val klib: File, component:
             action(layout as L)
 }
 
-class IrLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String, zipAccessor: ZipFileSystemAccessor? = null) :
-    BaseLibraryAccess<L>(klib, component, zipAccessor) {
-    override val layout = IrLibraryLayoutImpl(klib, component)
-}
-
 open class FromZipBaseLibraryImpl(zipped: KotlinLibraryLayoutImpl, zipFileSystem: FileSystem) :
     KotlinLibraryLayout {
 
@@ -55,9 +44,6 @@ open class FromZipBaseLibraryImpl(zipped: KotlinLibraryLayoutImpl, zipFileSystem
     override val libFile = zipFileSystem.file(zipped.libFile)
     override val component = zipped.component
 }
-
-class FromZipIrLibraryImpl(zipped: IrLibraryLayoutImpl, zipFileSystem: FileSystem) :
-    FromZipBaseLibraryImpl(zipped, zipFileSystem), IrKotlinLibraryLayout
 
 internal fun zippedKotlinLibraryChecks(klibFile: File) {
     check(klibFile.exists) { "Could not find $klibFile." }

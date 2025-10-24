@@ -57,115 +57,12 @@ class BaseKotlinLibraryImpl(
     }
 }
 
-class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibrary {
-    override val hasMainIr by lazy {
-        access.inPlace { it: IrKotlinLibraryLayout ->
-            it.mainIr.dir.exists
-        }
-    }
-    override val mainIr = IrDirectory { mainIr }
-
-    override val hasInlinableFunsIr by lazy {
-        access.inPlace { it: IrKotlinLibraryLayout ->
-            it.inlineableFunsIr.dir.exists
-        }
-    }
-    override val inlinableFunsIr = IrDirectory { inlineableFunsIr }
-
-    inner class IrDirectory(private val selectIrDir: IrKotlinLibraryLayout.() -> IrKotlinLibraryLayout.IrDirectory) : IrLibrary.IrDirectory {
-        override fun fileCount(): Int = files.entryCount()
-
-        override fun irDeclaration(index: Int, fileIndex: Int) = loadIrDeclaration(index, fileIndex)
-
-        override fun type(index: Int, fileIndex: Int) = types.tableItemBytes(fileIndex, index)
-
-        override fun signature(index: Int, fileIndex: Int) = signatures.tableItemBytes(fileIndex, index)
-
-        override fun string(index: Int, fileIndex: Int) = strings.tableItemBytes(fileIndex, index)
-
-        override fun body(index: Int, fileIndex: Int) = bodies.tableItemBytes(fileIndex, index)
-
-        override fun debugInfo(index: Int, fileIndex: Int) = debugInfos?.tableItemBytes(fileIndex, index)
-
-        override fun fileEntry(index: Int, fileIndex: Int) = fileEntries?.tableItemBytes(fileIndex, index)
-
-        override fun file(index: Int) = files.tableItemBytes(index)
-
-        private fun loadIrDeclaration(index: Int, fileIndex: Int) =
-            combinedDeclarations.tableItemBytes(fileIndex, DeclarationId(index))
-
-        private val combinedDeclarations: DeclarationIdMultiTableReader by lazy {
-            DeclarationIdMultiTableReader(access) { selectIrDir().irDeclarations}
-        }
-
-        private val types: IrMultiArrayReader by lazy {
-            IrMultiArrayReader(access) { selectIrDir().irTypes }
-        }
-
-        private val signatures: IrMultiArrayReader by lazy {
-            IrMultiArrayReader(access) { selectIrDir().irSignatures }
-        }
-
-        private val strings: IrMultiArrayReader by lazy {
-            IrMultiArrayReader(access) { selectIrDir().irStrings }
-        }
-
-        private val bodies: IrMultiArrayReader by lazy {
-            IrMultiArrayReader(access) { selectIrDir().irBodies }
-        }
-
-        private val debugInfos: IrMultiArrayReader? by lazy {
-            if (access.inPlace { it.selectIrDir().irDebugInfo.exists })
-                IrMultiArrayReader(access) { selectIrDir().irDebugInfo }
-            else
-                null
-        }
-
-        private val fileEntries: IrMultiArrayReader? by lazy {
-            if (access.inPlace { it.selectIrDir().irFileEntries.exists })
-                IrMultiArrayReader(access) { selectIrDir().irFileEntries }
-            else
-                null
-        }
-
-        private val files: IrArrayReader by lazy {
-            IrArrayReader(access) { selectIrDir().irFiles }
-        }
-
-        override fun types(fileIndex: Int): ByteArray {
-            return types.tableItemBytes(fileIndex)
-        }
-
-        override fun signatures(fileIndex: Int): ByteArray {
-            return signatures.tableItemBytes(fileIndex)
-        }
-
-        override fun strings(fileIndex: Int): ByteArray {
-            return strings.tableItemBytes(fileIndex)
-        }
-
-        override fun declarations(fileIndex: Int): ByteArray {
-            return combinedDeclarations.tableItemBytes(fileIndex)
-        }
-
-        override fun bodies(fileIndex: Int): ByteArray {
-            return bodies.tableItemBytes(fileIndex)
-        }
-
-        override fun fileEntries(fileIndex: Int): ByteArray? {
-            return fileEntries?.tableItemBytes(fileIndex)
-        }
-    }
-}
-
 class KotlinLibraryImpl(
     override val location: File,
     zipFileSystemAccessor: ZipFileSystemAccessor,
     val base: BaseKotlinLibraryImpl,
-    val ir: IrLibraryImpl
 ) : KotlinLibrary,
-    BaseKotlinLibrary by base,
-    IrLibrary by ir {
+    BaseKotlinLibrary by base {
 
     private val components: Map<KlibComponent.Kind<*>, KlibComponent> = KlibComponentsBuilder(
         layoutReaderFactory = KlibLayoutReaderFactory(
@@ -214,12 +111,9 @@ fun createKotlinLibrary(
     val nonNullZipFileSystemAccessor = zipAccessor ?: ZipFileSystemInPlaceAccessor
 
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, nonNullZipFileSystemAccessor)
-    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component, nonNullZipFileSystemAccessor)
-
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
-    val ir = IrLibraryImpl(irAccess)
 
-    return KotlinLibraryImpl(libraryFile, nonNullZipFileSystemAccessor, base, ir)
+    return KotlinLibraryImpl(libraryFile, nonNullZipFileSystemAccessor, base)
 }
 
 fun createKotlinLibraryComponents(

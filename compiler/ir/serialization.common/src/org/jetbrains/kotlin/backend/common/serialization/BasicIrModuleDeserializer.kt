@@ -15,8 +15,9 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.components.KlibIrComponent
+import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 
@@ -43,7 +44,7 @@ abstract class BasicIrModuleDeserializer(
 
     protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
 
-    protected open val ir: IrLibrary.IrDirectory get() = klib.mainIr
+    protected open val ir: KlibIrComponent get() = klib.irOrFail
 
     override val moduleDependencies by lazy {
         moduleDescriptor.allDependencyModules
@@ -56,10 +57,10 @@ abstract class BasicIrModuleDeserializer(
     }
 
     override fun init(delegate: IrModuleDeserializer) {
-        val fileCount = ir.fileCount()
+        val fileCount = ir.irFileCount
         fileDeserializationStates = buildList {
             for (i in 0 until fileCount) {
-                val fileStream = ir.file(i).codedInputStream
+                val fileStream = ir.irFile(i).codedInputStream
                 val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
                 val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, i))
                 val file = fileReader.createFile(moduleFragment, fileProto, linker.irInterner)

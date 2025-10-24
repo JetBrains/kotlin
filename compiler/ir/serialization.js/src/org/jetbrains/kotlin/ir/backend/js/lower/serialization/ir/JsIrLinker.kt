@@ -17,9 +17,10 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.KlibIrComponent
+import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
@@ -64,7 +65,7 @@ class JsIrLinker(
         require(klib != null) { "Expecting kotlin library" }
         val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
         return when (val lazyIrGenerator = stubGenerator) {
-            null -> JsModuleDeserializer(moduleDescriptor, klib.mainIr, strategyResolver, libraryAbiVersion)
+            null -> JsModuleDeserializer(moduleDescriptor, klib.irOrFail, strategyResolver, libraryAbiVersion)
             else -> JsLazyIrModuleDeserializer(moduleDescriptor, libraryAbiVersion, builtIns, lazyIrGenerator)
         }
     }
@@ -73,7 +74,7 @@ class JsIrLinker(
 
     private inner class JsModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
-        override val ir: IrLibrary.IrDirectory,
+        override val ir: KlibIrComponent,
         strategyResolver: (String) -> DeserializationStrategy,
         libraryAbiVersion: KotlinAbiVersion,
     ) : BasicIrModuleDeserializer(this, moduleDescriptor, strategyResolver, libraryAbiVersion) {

@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.abi.*
+import org.jetbrains.kotlin.library.components.inlinableFunctionsIr
+import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.hasAbi
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
@@ -45,11 +47,10 @@ internal sealed class KlibToolCommand(
     abstract fun execute()
 
     protected fun checkLibraryHasIr(library: KotlinLibrary): Boolean {
-        if (!library.hasMainIr) {
+        return if (library.ir == null) {
             output.logError("Library ${library.libraryFile} is an IR-less library")
-            return false
-        }
-        return true
+            false
+        } else true
     }
 
     protected fun KotlinIrSignatureVersion?.checkSupportedInLibrary(library: KotlinLibrary): Boolean {
@@ -113,7 +114,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         nonEmptyPackageFQNs.forEach { packageFQN ->
             output.appendLine("  $packageFQN")
         }
-        output.appendLine("Has IR: ${library.hasMainIr}")
+        output.appendLine("Has IR: ${library.ir != null}")
         val irInfo = KlibIrInfoLoader(library).loadIrInfo()
         irInfo?.preparedInlineFunctionCopyNumber?.let { output.appendLine("  Inlinable function copies: $it") }
         output.appendLine("Has LLVM bitcode: ${library.hasBitcode}")
@@ -209,7 +210,8 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: KlibToolAr
 
         if (!checkLibraryHasIr(library)) return
 
-        if (!library.hasInlinableFunsIr) {
+        val inlinableFunctionsIr = library.inlinableFunctionsIr
+        if (inlinableFunctionsIr == null) {
             output.appendLine("// No inlinable functions in ${library.libraryFile}")
             return
         }
@@ -227,7 +229,7 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: KlibToolAr
         val irBuiltIns = IrBuiltInsOverDescriptors(module.builtIns, typeTranslator, symbolTable)
 
         val moduleDeserializer = NonLinkingIrInlineFunctionDeserializer.ModuleDeserializer(
-                library = library,
+                inlinableFunctionsIr = inlinableFunctionsIr,
                 detachedSymbolTable = symbolTable,
                 irInterner = IrInterningService(),
                 irBuiltIns = irBuiltIns,

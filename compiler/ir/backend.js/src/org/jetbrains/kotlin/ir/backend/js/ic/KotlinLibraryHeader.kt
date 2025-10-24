@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.io.File
 
@@ -46,17 +47,17 @@ internal class KotlinLoadedLibraryHeader(
     }
 
     override val sourceFileDeserializers: Map<KotlinSourceFile, IdSignatureDeserializer> by lazy(LazyThreadSafetyMode.NONE) {
-        val ir = library.mainIr
+        val ir = library.irOrFail
         buildMapUntil(sourceFiles.size) {
             val deserializer = IdSignatureDeserializer(IrLibraryFileFromBytes(object : IrLibraryBytesSource() {
                 private fun err(): Nothing = icError("Not supported")
                 override fun irDeclaration(index: Int): ByteArray = err()
                 override fun type(index: Int): ByteArray = err()
                 override fun signature(index: Int): ByteArray = ir.signature(index, it)
-                override fun string(index: Int): ByteArray = ir.string(index, it)
+                override fun string(index: Int): ByteArray = ir.stringLiteral(index, it)
                 override fun body(index: Int): ByteArray = err()
                 override fun debugInfo(index: Int): ByteArray? = null
-                override fun fileEntry(index: Int): ByteArray? = ir.fileEntry(index, it)
+                override fun fileEntry(index: Int): ByteArray? = ir.irFileEntry(index, it)
             }), null, irInterner)
 
             put(sourceFiles[it], deserializer)
@@ -74,10 +75,10 @@ internal class KotlinLoadedLibraryHeader(
 
     private val sourceFiles by lazy(LazyThreadSafetyMode.NONE) {
         val extReg = ExtensionRegistryLite.newInstance()
-        val mainIr = library.mainIr
-        val sources = (0 until mainIr.fileCount()).map {
-            val fileProto = IrFile.parseFrom(mainIr.file(it).codedInputStream, extReg)
-            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(mainIr, it))
+        val ir = library.irOrFail
+        val sources = (0 until ir.irFileCount).map {
+            val fileProto = IrFile.parseFrom(ir.irFile(it).codedInputStream, extReg)
+            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, it))
             val fileEntry = fileReader.fileEntry(fileProto)
             fileReader.deserializeFileEntryName(fileEntry)
         }

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -236,14 +236,14 @@ class IrLibraryFileFromBytes(private val bytesSource: IrLibraryBytesSource) : Ir
     }
 }
 
-class IrKlibBytesSource(private val ir: IrLibrary.IrDirectory, private val fileIndex: Int) : IrLibraryBytesSource() {
-    override fun irDeclaration(index: Int): ByteArray = ir.irDeclaration(index, fileIndex)
+class IrKlibBytesSource(private val ir: KlibIrComponent, private val fileIndex: Int) : IrLibraryBytesSource() {
+    override fun irDeclaration(index: Int): ByteArray = ir.declaration(index, fileIndex)
     override fun type(index: Int): ByteArray = ir.type(index, fileIndex)
     override fun signature(index: Int): ByteArray = ir.signature(index, fileIndex)
-    override fun string(index: Int): ByteArray = ir.string(index, fileIndex)
+    override fun string(index: Int): ByteArray = ir.stringLiteral(index, fileIndex)
     override fun body(index: Int): ByteArray = ir.body(index, fileIndex)
-    override fun debugInfo(index: Int): ByteArray? = ir.debugInfo(index, fileIndex)
-    override fun fileEntry(index: Int): ByteArray? = ir.fileEntry(index, fileIndex)
+    override fun debugInfo(index: Int): ByteArray? = ir.signatureDebugInfo(index, fileIndex)
+    override fun fileEntry(index: Int): ByteArray? = ir.irFileEntry(index, fileIndex)
 }
 
 fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
@@ -292,9 +292,9 @@ fun IrLibraryFile.fileEntry(protoFile: ProtoFile): FileEntry =
         protoFile.fileEntry
     }
 
-fun IrLibrary.IrDirectory.fileEntry(protoFile: ProtoFile, fileIndex: Int): FileEntry =
+fun KlibIrComponent.fileEntry(protoFile: ProtoFile, fileIndex: Int): FileEntry =
     if (protoFile.hasFileEntryId()) {
-        val fileEntry = fileEntry(protoFile.fileEntryId, fileIndex) ?: error("Invalid KLib: cannot read file entry by its index")
+        val fileEntry = irFileEntry(protoFile.fileEntryId, fileIndex) ?: error("Invalid KLib: cannot read file entry by its index")
         ProtoFileEntry.parseFrom(fileEntry)
     } else {
         require(protoFile.hasFileEntry()) {

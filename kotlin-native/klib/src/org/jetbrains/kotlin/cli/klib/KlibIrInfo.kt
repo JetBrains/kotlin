@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.inlinableFunctionsIr
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
@@ -22,9 +23,9 @@ internal class KlibIrInfo(
 
 internal class KlibIrInfoLoader(private val library: KotlinLibrary) {
     fun loadIrInfo(): KlibIrInfo? {
-        if (!library.hasInlinableFunsIr) return null
+        val inlinableFunctionsIr = library.inlinableFunctionsIr ?: return null
 
-        val fileStream = library.inlinableFunsIr.file(0).codedInputStream
+        val fileStream = inlinableFunctionsIr.irFile(0).codedInputStream
         val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
 
         return KlibIrInfo(

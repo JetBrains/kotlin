@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.impl.IrArrayReader
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
@@ -24,7 +25,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias as Pr
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
 
-internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
+internal class IrSignaturesExtractor(library: KotlinLibrary) {
+    private val ir = library.irOrFail
+
     data class Signatures(
         val declaredSignatures: Set<IdSignature>,
         val importedSignatures: Set<IdSignature>,
@@ -37,12 +40,12 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
         private val allKnownSignatures: MutableSet<IdSignature>,
         private val ownDeclarationSignatures: OwnDeclarationSignatures,
     ) {
-        private val fileProto = ProtoFile.parseFrom(library.mainIr.file(fileIndex).codedInputStream, extensionRegistryLite)
-        private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(library.mainIr, fileIndex))
+        private val fileProto = ProtoFile.parseFrom(ir.irFile(fileIndex).codedInputStream, extensionRegistryLite)
+        private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, fileIndex))
 
         private val signatureDeserializer: IdSignatureDeserializer = run {
             val packageFQN = fileReader.deserializeFqName(fileProto.fqNameList)
-            val fileEntry = library.mainIr.fileEntry(fileProto, fileIndex)
+            val fileEntry = ir.fileEntry(fileProto, fileIndex)
             val fileName = fileReader.deserializeFileEntryName(fileEntry)
 
             val fileSignature = IdSignature.FileSignature(
@@ -60,7 +63,7 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
 
         private fun collectAllKnownSignatures() {
             val maxSignatureIndex =
-                IrArrayReader(library.mainIr.signatures(fileIndex)).entryCount() - 1 // Index of the latest signature in the current file.
+                IrArrayReader(ir.signatures(fileIndex)).entryCount() - 1 // Index of the latest signature in the current file.
             (0..maxSignatureIndex).mapTo(allKnownSignatures, signatureDeserializer::deserializeIdSignature)
         }
 
@@ -140,7 +143,7 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
         val allKnownSignatures: MutableSet<IdSignature> = hashSetOf()
         val ownDeclarationSignatures: OwnDeclarationSignatures = hashMapOf()
 
-        for (fileIndex in 0 until library.mainIr.fileCount()) {
+        for (fileIndex in 0 until ir.irFileCount) {
             IrSignatureExtractorFromFile(fileIndex, allKnownSignatures, ownDeclarationSignatures).extract()
         }
 

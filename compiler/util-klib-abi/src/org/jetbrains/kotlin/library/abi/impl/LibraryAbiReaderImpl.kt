@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.library.abi.AbiClassifierReference.ClassReference
 import org.jetbrains.kotlin.library.abi.AbiTypeNullability.*
 import org.jetbrains.kotlin.library.abi.impl.LibraryDeserializer.ContainingEntity.Class.Companion.excludeFakeOverrides
 import org.jetbrains.kotlin.library.abi.impl.LibraryDeserializer.TypeDeserializer.Companion.underlyingTypeId
+import org.jetbrains.kotlin.library.components.KlibIrComponent
+import org.jetbrains.kotlin.library.components.ir
+import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
@@ -58,7 +61,7 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
     private val library: KotlinLibrary = try {
         ToolingSingleFileKlibResolveStrategy.tryResolve(KFile(libraryFile.absolutePath), DummyLogger)?.apply {
             check(uniqueName.isNotEmpty()) { "Can't read unique name from manifest" }
-            check(hasMainIr) { "Library does not have IR" }
+            check(ir != null) { "Library does not have IR" }
         }
     } catch (e: Exception) {
         throw malformedLibrary(libraryFile, e)
@@ -73,7 +76,12 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
             manifest = readManifest(),
             uniqueName = library.uniqueName,
             signatureVersions = supportedSignatureVersions,
-            topLevelDeclarations = LibraryDeserializer(library, supportedSignatureVersions, compositeFilter).deserialize()
+            topLevelDeclarations = LibraryDeserializer(
+                ir = library.irOrFail,
+                platform = library.builtInsPlatform,
+                supportedSignatureVersions = supportedSignatureVersions,
+                compositeFilter = compositeFilter
+            ).deserialize()
         )
     }
 
@@ -101,12 +109,11 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
 
 @ExperimentalLibraryAbiReader
 private class LibraryDeserializer(
-    private val library: KotlinLibrary,
+    private val ir: KlibIrComponent,
+    private val platform: BuiltInsPlatform?,
     supportedSignatureVersions: Set<AbiSignatureVersion>,
     private val compositeFilter: AbiReadingFilter.Composite?
 ) {
-    private val platform: BuiltInsPlatform? = library.builtInsPlatform
-
     private val interner = IrInterningService()
 
     private val annotationInterner = object {
@@ -121,7 +128,7 @@ private class LibraryDeserializer(
         if (this != null && compositeFilter?.isDeclarationExcluded(this) == true) null else this
 
     private inner class FileDeserializer(fileIndex: Int) {
-        private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(library.mainIr, fileIndex))
+        private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, fileIndex))
 
         private val packageName: AbiCompoundName
         private val topLevelDeclarationIds: List<Int>
@@ -129,14 +136,13 @@ private class LibraryDeserializer(
         private val typeDeserializer: TypeDeserializer
 
         init {
-            val mainIr = library.mainIr
-            val proto = ProtoFile.parseFrom(mainIr.file(fileIndex).codedInputStream, IrLibraryFileFromBytes.extensionRegistryLite)
+            val proto = ProtoFile.parseFrom(ir.irFile(fileIndex).codedInputStream, IrLibraryFileFromBytes.extensionRegistryLite)
             topLevelDeclarationIds = proto.declarationIdList
 
             val packageFQN = fileReader.deserializeFqName(proto.fqNameList)
             packageName = AbiCompoundName(packageFQN)
 
-            val fileEntry = mainIr.fileEntry(proto, fileIndex)
+            val fileEntry = ir.fileEntry(proto, fileIndex)
             val fileName = fileReader.deserializeFileEntryName(fileEntry)
 
             val fileSignature = FileSignature(
@@ -787,7 +793,7 @@ private class LibraryDeserializer(
     fun deserialize(): AbiTopLevelDeclarations {
         val topLevels = ArrayList<AbiDeclaration>()
 
-        for (fileIndex in 0 until library.mainIr.fileCount()) {
+        for (fileIndex in 0 until ir.irFileCount) {
             FileDeserializer(fileIndex).deserializeTo(topLevels)
         }
 
