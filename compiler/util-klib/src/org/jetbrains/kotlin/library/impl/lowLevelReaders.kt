@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.KlibComponent
+import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.KotlinLibraryLayout
 import java.nio.ByteBuffer
-
 
 /******************************************************************************/
 /** [ByteArray] readers                                                       */
@@ -29,7 +28,7 @@ fun <L : KotlinLibraryLayout> IrArrayReader(
 ): IrArrayReader = IrArrayReader { access.inPlace { it.getFile().readBytes() } }
 
 /** On-demand read from a file (potentially inside a KLIB archive file). */
-inline fun <KCL : KlibComponent.Layout> IrArrayReader(
+inline fun <KCL : KlibComponentLayout> IrArrayReader(
     layoutReader: KlibLayoutReader<KCL>,
     crossinline getFile: KCL.() -> File
 ): IrArrayReader = IrArrayReader { layoutReader.readInPlace { it.getFile().readBytes() } }
@@ -54,7 +53,7 @@ fun <L : KotlinLibraryLayout> IrMultiArrayReader(
 ): IrMultiArrayReader = IrMultiArrayReader { access.inPlace { it.getFile().readBytes() } }
 
 /** On-demand read from a file (potentially inside a KLIB archive file). */
-inline fun <KCL : KlibComponent.Layout> IrMultiArrayReader(
+inline fun <KCL : KlibComponentLayout> IrMultiArrayReader(
     layoutReader: KlibLayoutReader<KCL>,
     crossinline getFile: KCL.() -> File
 ): IrMultiArrayReader = IrMultiArrayReader { layoutReader.readInPlace { it.getFile().readBytes() } }
@@ -111,7 +110,7 @@ fun <L : KotlinLibraryLayout> DeclarationIdMultiTableReader(
 ): DeclarationIdMultiTableReader = DeclarationIdMultiTableReader { access.inPlace { it.getFile().readBytes() } }
 
 /** On-demand read from a file (potentially inside a KLIB archive file). */
-inline fun <KCL : KlibComponent.Layout> DeclarationIdMultiTableReader(
+inline fun <KCL : KlibComponentLayout> DeclarationIdMultiTableReader(
     layoutReader: KlibLayoutReader<KCL>,
     crossinline getFile: KCL.() -> File
 ): DeclarationIdMultiTableReader = DeclarationIdMultiTableReader { layoutReader.readInPlace { it.getFile().readBytes() } }

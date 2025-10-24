@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.library.components
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 import org.jetbrains.kotlin.library.Klib
 import org.jetbrains.kotlin.library.KlibComponent
+import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_MODULE_METADATA_FILE_NAME
@@ -42,7 +43,7 @@ interface KlibMetadataComponent : KlibComponent {
 inline val Klib.metadata: KlibMetadataComponent
     get() = getComponent(KlibMetadataComponent.Kind)
 
-class KlibMetadataComponentLayout(root: KlibFile) : KlibComponent.Layout(root) {
+class KlibMetadataComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
     constructor(root: String) : this(KlibFile(root))
 
     /** The metadata directory. */

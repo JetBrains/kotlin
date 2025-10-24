@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.library.components
 
 import org.jetbrains.kotlin.library.Klib
 import org.jetbrains.kotlin.library.KlibComponent
+import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibOptionalComponent
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME
@@ -74,7 +75,7 @@ inline val Klib.irOrFail: KlibIrComponent
 inline val Klib.inlinableFunctionsIr: KlibIrComponent?
     get() = getComponent(KlibIrComponent.Kind.InlinableFunctions)
 
-class KlibIrComponentLayout private constructor(root: KlibFile, private val irFolderName: String) : KlibComponent.Layout(root) {
+class KlibIrComponentLayout private constructor(root: KlibFile, private val irFolderName: String) : KlibComponentLayout(root) {
     /** The IR "home" directory. */
     val irDir: KlibFile
         get() = root.child(KLIB_DEFAULT_COMPONENT_NAME).child(irFolderName)

@@ -50,16 +50,6 @@ interface KlibComponent {
      * Kind (ID) of a [KlibComponent]. Used to access the component using [Klib.getComponent].
      */
     interface Kind<KC : KlibComponent>
-
-    /**
-     * The layout of a [KlibComponent]: Implementations of this abstract class provide access to the component's files by
-     * the paths computed from the given [root].
-     *
-     * Important: The [root] is not necessarily the same as [Klib.location]. For example, a Klib could be a ZIP archive file.
-     * In this case [root] points to the root of the virtual file system inside the archive, whereas [Klib.location] points
-     * to the archive file itself. So, it is highly important to compute paths exactly based on [root].
-     */
-    abstract class Layout(val root: KlibFile)
 }
 
 /**
@@ -70,3 +60,13 @@ interface KlibOptionalComponent : KlibComponent {
     /** Whether there is any data to be read by the component. */
     val isDataAvailable: Boolean
 }
+
+/**
+ * The layout of a [KlibComponent]: Implementations of this abstract class provide access to the component's files by
+ * the paths computed from the given [root].
+ *
+ * Important: The [root] is not necessarily the same as [Klib.location]. For example, a Klib could be a ZIP archive file.
+ * In this case [root] points to the root of the virtual file system inside the archive, whereas [Klib.location] points
+ * to the archive file itself. So, it is highly important to compute paths exactly based on [root].
+ */
+abstract class KlibComponentLayout(val root: KlibFile)
