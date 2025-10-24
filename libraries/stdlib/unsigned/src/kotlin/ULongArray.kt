@@ -17,6 +17,15 @@ public value class ULongArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: LongArray) : Collection<ULong> {
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `ULong` elements. */
+        @ExperimentalStdlibApi
+        @kotlin.internal.InlineOnly
+        public inline operator fun of(vararg elements: ULong): ULongArray = elements
+    }
+
     /** Creates a new array of the specified [size], with all elements initialized to zero. */
     public constructor(size: Int) : this(LongArray(size))
 

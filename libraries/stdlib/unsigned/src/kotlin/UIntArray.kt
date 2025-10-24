@@ -17,6 +17,15 @@ public value class UIntArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: IntArray) : Collection<UInt> {
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `UInt` elements. */
+        @ExperimentalStdlibApi
+        @kotlin.internal.InlineOnly
+        public inline operator fun of(vararg elements: UInt): UIntArray = elements
+    }
+
     /** Creates a new array of the specified [size], with all elements initialized to zero. */
     public constructor(size: Int) : this(IntArray(size))
 
