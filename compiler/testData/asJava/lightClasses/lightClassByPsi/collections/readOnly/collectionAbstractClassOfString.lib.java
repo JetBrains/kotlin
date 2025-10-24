@@ -1,8 +1,40 @@
 public abstract class SCollection /* test.SCollection*/ implements java.util.Collection<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  SCollection();//  .ctor()
+
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public abstract boolean contains(java.lang.String);//  contains(java.lang.String)
+
+  public abstract int getSize();//  getSize()
+
+  public boolean add(java.lang.String);//  add(java.lang.String)
+
+  public boolean addAll(java.util.Collection<? extends java.lang.String>);//  addAll(java.util.Collection<? extends java.lang.String>)
+
+  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  public boolean removeIf(java.util.function.Predicate<? super java.lang.String>);//  removeIf(java.util.function.Predicate<? super java.lang.String>)
+
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  public final int size();//  size()
+
+  public java.lang.Object[] toArray();//  toArray()
+
+  public java.util.Iterator<java.lang.String> iterator();//  iterator()
+
+  public void clear();//  clear()
+}
+
+public abstract class SCollection2 /* test.SCollection2*/ implements java.util.Collection<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public java.util.Iterator<java.lang.String> iterator();//  iterator()
 
-  public  SCollection();//  .ctor()
+  public  SCollection2();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
