@@ -807,11 +807,19 @@ internal object KotlinToolingDiagnostics {
             jvmTarget: String,
             severity: ToolingDiagnostic.Severity,
         ) = build(severity = severity) {
+            val gradleErrorMessage = if (severity == WARNING &&
+                GradleVersion.current() < GradleVersion.version("8.0")
+            ) {
+                "This will become an error in Gradle 8.0."
+            } else {
+                ""
+            }
+
             title("Inconsistent JVM Target Compatibility Between Java and Kotlin Tasks")
                 .description {
                     """
                     Inconsistent JVM-target compatibility detected for tasks '$javaTaskName' ($targetCompatibility) and '$kotlinTaskName' ($jvmTarget).
-                    ${if (severity == WARNING) "This will become an error in Gradle 8.0." else ""}
+                    $gradleErrorMessage
                     """.trimIndent()
                 }
                 .solution {

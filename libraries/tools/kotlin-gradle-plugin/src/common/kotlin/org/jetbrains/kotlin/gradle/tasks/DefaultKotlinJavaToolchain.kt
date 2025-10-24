@@ -229,7 +229,8 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                 else -> javaVersion.toString()
             }
 
-            // Update to the latest JDK LTS once it is released and Kotlin has JVM target with this version
+            // Update to the latest JDK LTS once it is released, and Kotlin has a JVM target with this version,
+            // plus the minimal supported Gradle version itself supports it
             return if (javaVersion > JavaVersion.VERSION_17) {
                 try {
                     JvmTarget.fromTarget(normalizedVersion)
