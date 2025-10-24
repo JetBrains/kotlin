@@ -56,102 +56,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     name = "JvmFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    fun dumpModel(
-        dir: String,
-        chunk: List<Module>,
-        configuration: CompilerConfiguration,
-        arguments: CommonCompilerArguments,
-    ) {
-        val dirFile = File(dir)
-        if (!dirFile.exists()) {
-            dirFile.mkdirs()
-        }
-        val fileName = "model-${chunk.first().getModuleName()}"
-        var counter = 0
-        fun file(): File {
-            val postfix = if (counter != 0) ".$counter" else ""
-            return File(dirFile, "$fileName$postfix.xml")
-        }
-
-        var outputFile: File
-        do {
-            outputFile = file()
-            counter++
-        } while (outputFile.exists())
-
-        // Write XML using StAX
-        outputFile.bufferedWriter().use { writer ->
-            val xmlFactory = XMLOutputFactory.newInstance()
-            with(xmlFactory.createXMLStreamWriter(writer)) {
-                writeStartDocument("UTF-8", "1.0")
-                val depth = PrettyPrintDepth(0)
-
-                // <modules>
-                start("modules", depth)
-
-                // compilerArguments
-                start("compilerArguments", depth)
-                for (arg in ArgumentUtils.convertArgumentsToStringList(arguments)) {
-                    empty("arg", depth)
-                    writeAttribute("value", arg)
-                }
-                end(depth) // compilerArguments
-
-                // modules
-                for (module in chunk) {
-                    start("module", depth)
-                    writeAttribute("timestamp", System.currentTimeMillis().toString())
-                    writeAttribute("name", module.getModuleName())
-                    writeAttribute("type", module.getModuleType())
-                    writeAttribute("outputDir", module.getOutputDirectory())
-
-                    for (friendDir in module.getFriendPaths()) {
-                        empty("friendDir", depth)
-                        writeAttribute("path", friendDir)
-                    }
-                    for (source in module.getSourceFiles()) {
-                        empty("sources", depth)
-                        writeAttribute("path", source)
-                    }
-                    for (javaSourceRoots in module.getJavaSourceRoots()) {
-                        start("javaSourceRoots", depth)
-                        writeAttribute("path", javaSourceRoots.path)
-                        javaSourceRoots.packagePrefix?.let { writeAttribute("packagePrefix", it) }
-                        end(depth)
-                    }
-                    for (classpath in configuration.get(CONTENT_ROOTS).orEmpty()) {
-                        when (classpath) {
-                            is JvmClasspathRoot -> {
-                                empty("classpath", depth)
-                                writeAttribute("path", classpath.file.absolutePath)
-                            }
-                            is JvmModulePathRoot -> {
-                                empty("modulepath", depth)
-                                writeAttribute("path", classpath.file.absolutePath)
-                            }
-                        }
-                    }
-                    for (commonSources in module.getCommonSourceFiles()) {
-                        empty("commonSources", depth)
-                        writeAttribute("path", commonSources)
-                    }
-                    module.modularJdkRoot?.let {
-                        empty("modularJdkRoot", depth)
-                        writeAttribute("path", it)
-                    }
-
-                    end(depth) // module
-                }
-
-                end(depth) // modules
-                writeCharacters("\n")
-                writeEndDocument()
-                flush()
-                close()
-            }
-        }
-    }
-
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmFrontendPipelineArtifact? {
         val (configuration, diagnosticsCollector, rootDisposable) = input
         val messageCollector = configuration.messageCollector
@@ -478,6 +382,102 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 )
             }
         )
+    }
+
+    fun dumpModel(
+        dir: String,
+        chunk: List<Module>,
+        configuration: CompilerConfiguration,
+        arguments: CommonCompilerArguments,
+    ) {
+        val dirFile = File(dir)
+        if (!dirFile.exists()) {
+            dirFile.mkdirs()
+        }
+        val fileName = "model-${chunk.first().getModuleName()}"
+        var counter = 0
+        fun file(): File {
+            val postfix = if (counter != 0) ".$counter" else ""
+            return File(dirFile, "$fileName$postfix.xml")
+        }
+
+        var outputFile: File
+        do {
+            outputFile = file()
+            counter++
+        } while (outputFile.exists())
+
+        // Write XML using StAX
+        outputFile.bufferedWriter().use { writer ->
+            val xmlFactory = XMLOutputFactory.newInstance()
+            with(xmlFactory.createXMLStreamWriter(writer)) {
+                writeStartDocument("UTF-8", "1.0")
+                val depth = PrettyPrintDepth(0)
+
+                // <modules>
+                start("modules", depth)
+
+                // compilerArguments
+                start("compilerArguments", depth)
+                for (arg in ArgumentUtils.convertArgumentsToStringList(arguments)) {
+                    empty("arg", depth)
+                    writeAttribute("value", arg)
+                }
+                end(depth) // compilerArguments
+
+                // modules
+                for (module in chunk) {
+                    start("module", depth)
+                    writeAttribute("timestamp", System.currentTimeMillis().toString())
+                    writeAttribute("name", module.getModuleName())
+                    writeAttribute("type", module.getModuleType())
+                    writeAttribute("outputDir", module.getOutputDirectory())
+
+                    for (friendDir in module.getFriendPaths()) {
+                        empty("friendDir", depth)
+                        writeAttribute("path", friendDir)
+                    }
+                    for (source in module.getSourceFiles()) {
+                        empty("sources", depth)
+                        writeAttribute("path", source)
+                    }
+                    for (javaSourceRoots in module.getJavaSourceRoots()) {
+                        start("javaSourceRoots", depth)
+                        writeAttribute("path", javaSourceRoots.path)
+                        javaSourceRoots.packagePrefix?.let { writeAttribute("packagePrefix", it) }
+                        end(depth)
+                    }
+                    for (classpath in configuration.get(CONTENT_ROOTS).orEmpty()) {
+                        when (classpath) {
+                            is JvmClasspathRoot -> {
+                                empty("classpath", depth)
+                                writeAttribute("path", classpath.file.absolutePath)
+                            }
+                            is JvmModulePathRoot -> {
+                                empty("modulepath", depth)
+                                writeAttribute("path", classpath.file.absolutePath)
+                            }
+                        }
+                    }
+                    for (commonSources in module.getCommonSourceFiles()) {
+                        empty("commonSources", depth)
+                        writeAttribute("path", commonSources)
+                    }
+                    module.modularJdkRoot?.let {
+                        empty("modularJdkRoot", depth)
+                        writeAttribute("path", it)
+                    }
+
+                    end(depth) // module
+                }
+
+                end(depth) // modules
+                writeCharacters("\n")
+                writeEndDocument()
+                flush()
+                close()
+            }
+        }
     }
 }
 
