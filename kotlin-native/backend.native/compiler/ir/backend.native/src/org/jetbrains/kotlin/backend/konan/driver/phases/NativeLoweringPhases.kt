@@ -335,9 +335,7 @@ private val builtinOperatorPhase = createFileLoweringPhase(
  * The first phase of inlining (inline only private functions).
  */
 private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
-        lowering = { generationState: NativeGenerationState ->
-            NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS)
-        },
+        lowering = ::NativePrivateFunctionInlining,
         name = "InlineOnlyPrivateFunctions",
 )
 
@@ -357,9 +355,7 @@ private val syntheticAccessorGenerationPhase = createFileLoweringPhase(
  * The second phase of inlining (inline all functions).
  */
 internal val inlineAllFunctionsPhase = createFileLoweringPhase(
-        lowering = { generationState: NativeGenerationState ->
-            NativeIrInliner(generationState, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS)
-        },
+        lowering = ::NativeAllFunctionInlining,
         name = "InlineAllFunctions",
 )
 

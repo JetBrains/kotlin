@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.util.ArrayDeque
 
-class FunctionInlining(
+abstract class FunctionInlining(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
