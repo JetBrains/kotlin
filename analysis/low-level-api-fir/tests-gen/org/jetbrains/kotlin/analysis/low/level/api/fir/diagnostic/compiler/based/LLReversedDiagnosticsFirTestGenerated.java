@@ -6473,6 +6473,40 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         public void testCallableReferencesAndDefaultParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences/callableReferencesAndDefaultParameters.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences/adaptation")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Adaptation {
+          @Test
+          public void testAllFilesPresentInAdaptation() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences/adaptation"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("kt39697.kt")
+          public void testKt39697() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences/adaptation/kt39697.kt");
+          }
+
+          @Test
+          @TestMetadata("kt81841.kt")
+          public void testKt81841() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences/adaptation/kt81841.kt");
+          }
+
+          @Test
+          @TestMetadata("kt81913.kt")
+          public void testKt81913() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences/adaptation/kt81913.kt");
+          }
+
+          @Test
+          @TestMetadata("varargAdaptationWithTypeVariables.kt")
+          public void testVarargAdaptationWithTypeVariables() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences/adaptation/varargAdaptationWithTypeVariables.kt");
+          }
+        }
       }
 
       @Nested

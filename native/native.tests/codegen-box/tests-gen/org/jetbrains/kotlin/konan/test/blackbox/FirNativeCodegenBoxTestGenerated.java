@@ -5018,6 +5018,24 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("adaptedSecondArgArray.kt")
+        public void testAdaptedSecondArgArray() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedSecondArgArray.kt");
+        }
+
+        @Test
+        @TestMetadata("adaptedSecondArgTypeVariable.kt")
+        public void testAdaptedSecondArgTypeVariable() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedSecondArgTypeVariable.kt");
+        }
+
+        @Test
+        @TestMetadata("adaptedVarargArrayAgainstTypeVariable.kt")
+        public void testAdaptedVarargArrayAgainstTypeVariable() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedVarargArrayAgainstTypeVariable.kt");
+        }
+
+        @Test
         @TestMetadata("adaptedVarargFunImportedFromObject.kt")
         public void testAdaptedVarargFunImportedFromObject() {
           runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedVarargFunImportedFromObject.kt");
