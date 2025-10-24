@@ -95,14 +95,10 @@ task konanJsonReport {
             def frameworkPath = macTarget.binaries.
                     getFramework(frameworkName, macTarget.binaries.DEBUG).outputFile.absolutePath
             def nativeExecutable = new File("$frameworkPath/$frameworkName").canonicalPath
-            def nativeCompileTime = MPPTools.getNativeCompileTime(project, applicationName, ["compileKotlinMacos${archSuffix}".toString(),
-                                                                                    "linkBenchmarksAnalyzerDebugFrameworkMacos${archSuffix}".toString(),
-                                                                                    "cinteropLibcurlMacos${archSuffix}".toString()])
             def properties = getCommonProperties() + ['type'           : 'native',
                                                       'compilerVersion': "${kotlinVersion}".toString(),
                                                       'flags'          : compilerFlags(buildType).sort(),
                                                       'benchmarks'     : '[]',
-                                                      'compileTime'    : [nativeCompileTime],
                                                       'codeSize'       : MPPTools.getCodeSizeBenchmark(applicationName, nativeExecutable)]
             def output = MPPTools.createJsonReport(properties)
             layout.buildDirectory.file(nativeJson).get().asFile.write(output)
