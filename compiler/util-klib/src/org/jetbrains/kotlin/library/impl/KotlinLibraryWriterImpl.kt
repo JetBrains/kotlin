@@ -150,32 +150,6 @@ fun buildKotlinLibrary(
     return library.layout
 }
 
-class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: KotlinLibraryVersioning, platform: BuiltInsPlatform, nativeTargets: List<String>) {
-    private val outputDir = File(output)
-    private val library = createLibrary(moduleName, versions, platform, nativeTargets, outputDir)
-
-    private fun createLibrary(
-        moduleName: String,
-        versions: KotlinLibraryVersioning,
-        platform: BuiltInsPlatform,
-        nativeTargets: List<String>,
-        directory: File
-    ): KotlinLibraryWriterImpl {
-        val layout = KotlinLibraryLayoutForWriter(directory, directory)
-        val irWriter = IrWriterImpl(layout)
-        return KotlinLibraryWriterImpl(moduleName, versions, platform, nativeTargets, nopack = true, layout = layout, ir = irWriter)
-    }
-
-    fun invalidate() {
-        outputDir.deleteRecursively()
-        library.layout.mainIr.dir.mkdirs()
-    }
-
-    fun writeIr(serializedIrModule: SerializedIrModule) {
-        library.addIr(serializedIrModule)
-    }
-}
-
 enum class BuiltInsPlatform {
     JVM, JS, NATIVE, WASM, COMMON;
 
