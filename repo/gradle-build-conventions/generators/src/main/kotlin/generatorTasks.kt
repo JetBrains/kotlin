@@ -6,12 +6,14 @@
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.JavaExec
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 fun Project.generatedDiagnosticContainersAndCheckerComponents(): TaskProvider<JavaExec> {
     return generatedSourcesTask(
@@ -112,22 +114,27 @@ fun Project.generatedSourcesTask(
         outputs.dir(generationRoot)
     }
 
+    val dependency: Any = when (dependOnTaskOutput) {
+        true -> task
+        false -> generationRoot
+    }
+
     if (!commonSourceSet) {
-        sourceSets.named("main") {
-            val dependency: Any = when (dependOnTaskOutput) {
-                true -> task
-                false -> generationRoot
-            }
+        val javaSourceSets = extensions.getByType<JavaPluginExtension>().sourceSets
+        javaSourceSets.named("main") {
             java.srcDirs(dependency)
+        }
+    } else {
+        val kmpSourceSets = extensions.getByType<KotlinMultiplatformExtension>().sourceSets
+        kmpSourceSets.named("commonMain") {
+            kotlin.srcDirs(dependency)
         }
     }
 
     apply(plugin = "idea")
-    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure<IdeaModel>("idea") {
+    (this as ExtensionAware).extensions.configure<IdeaModel>("idea") {
         this.module.generatedSourceDirs.add(generationRoot.asFile)
     }
     return task
 }
 
-private val Project.sourceSets: SourceSetContainer
-    get() = extensions.getByType<JavaPluginExtension>().sourceSets
