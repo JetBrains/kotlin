@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind.KSuspendFunction.SAFEST_MAX_ARITY as SAFEST_K_SUSPEND_MAX_ARITY
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -22,11 +25,21 @@ object FirTooLargeFunctionImportChecker : FirFileChecker(MppCheckerKind.Common) 
         for (import in declaration.imports) {
             val name = (import as? FirResolvedImport)?.importedName ?: continue
             val classId = ClassId(import.packageFqName, name)
-            val functionKind = classId.functionTypeKind(context.session) ?: continue
-            val declaredArity = classId.getArityIfAllowedOrNull(functionKind)
+            checkAndReportArityOf(classId, import.source)
+        }
+    }
 
-            if (declaredArity == null) {
-                reporter.reportOn(import.source, FirErrors.FUNCTION_TYPE_OF_TOO_LARGE_ARITY, classId, functionKind.maxArity)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    fun checkAndReportArityOf(classId: ClassId, source: KtSourceElement?) {
+        val functionKind = classId.functionTypeKind(context.session) ?: return
+        val declaredArity = classId.getArityIfAllowedOrNull(functionKind)
+
+        when {
+            declaredArity == null -> {
+                reporter.reportOn(source, FirErrors.FUNCTION_TYPE_OF_TOO_LARGE_ARITY, classId, functionKind.maxArity)
+            }
+            functionKind == FunctionTypeKind.KSuspendFunction && declaredArity > SAFEST_K_SUSPEND_MAX_ARITY -> {
+                reporter.reportOn(source, FirErrors.K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY, classId, SAFEST_K_SUSPEND_MAX_ARITY)
             }
         }
     }

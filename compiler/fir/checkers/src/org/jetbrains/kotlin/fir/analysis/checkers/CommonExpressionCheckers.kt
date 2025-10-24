@@ -51,6 +51,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirReifiedChecker,
         FirSuspendCallChecker,
         FirLateinitIntrinsicApplicabilityChecker,
+        FirLargeArityFunctionCallableReferenceChecker,
         FirAbstractClassInstantiationChecker,
         FirIncompatibleClassExpressionChecker,
         FirMissingDependencyClassChecker,

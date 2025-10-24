@@ -5213,6 +5213,13 @@ internal class FunctionTypeOfTooLargeArityImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.FunctionTypeOfTooLargeArity
 
+internal class KSuspendFunctionTypeOfDangerouslyLargeArityImpl(
+    override val classId: ClassId,
+    override val maxArity: Int,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.KSuspendFunctionTypeOfDangerouslyLargeArity
+
 internal class OperatorRenamedOnImportImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

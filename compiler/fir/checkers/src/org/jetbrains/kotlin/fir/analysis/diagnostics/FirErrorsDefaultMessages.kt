@@ -770,6 +770,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_TYPE_PARAMETER_OF_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENDING_AN_ANNOTATION_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION
@@ -3287,7 +3288,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             FUNCTION_TYPE_OF_TOO_LARGE_ARITY,
-            "The arity of ''{0}'' is way too large. It can only be at most {1}.",
+            "The arity of ''{0}'' is too large. It can be at most {1}.",
+            CLASS_ID,
+            TO_STRING,
+        )
+        map.put(
+            K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY,
+            "The arity of ''{0}'' is too large, which can lead to runtime crashes. The safest maximum value is {1}. See KT-81936 for more details.",
             CLASS_ID,
             TO_STRING,
         )

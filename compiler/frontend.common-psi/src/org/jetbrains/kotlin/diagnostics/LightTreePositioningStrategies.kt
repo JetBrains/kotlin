@@ -1164,7 +1164,10 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
-            val nodeToMark = tree.collectDescendantsOfType(node, KtNodeTypes.REFERENCE_EXPRESSION).lastOrNull() ?: node
+            val nodeToMark = when {
+                node.tokenType != KtNodeTypes.IMPORT_DIRECTIVE -> node
+                else -> tree.collectDescendantsOfType(node, KtNodeTypes.REFERENCE_EXPRESSION).lastOrNull() ?: node
+            }
             return markElement(nodeToMark, startOffset, endOffset, tree, node)
         }
     }

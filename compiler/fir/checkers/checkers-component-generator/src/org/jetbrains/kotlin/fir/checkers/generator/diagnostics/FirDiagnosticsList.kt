@@ -2187,6 +2187,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ClassId>("classId")
             parameter<Int>("maxArity")
         }
+        val K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY by warning<KtElement>(PositioningStrategy.IMPORT_LAST_NAME) {
+            parameter<ClassId>("classId")
+            parameter<Int>("maxArity")
+        }
 
         val OPERATOR_RENAMED_ON_IMPORT by error<KtImportDirective>(PositioningStrategy.IMPORT_LAST_NAME)
 

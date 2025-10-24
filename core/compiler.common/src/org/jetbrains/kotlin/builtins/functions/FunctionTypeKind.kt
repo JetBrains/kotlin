@@ -174,14 +174,21 @@ abstract class FunctionTypeKind internal constructor(
         isReflectType = true,
         annotationOnInvokeClassId = null,
         isInlineable = false,
-        // When supplying a `KSuspendFunctionN` for a `SuspendFunctionN`,
-        // values larger than 21 throw at runtime:
-        // > Receiver class ... does not define or inherit an implementation of the resolved method 'abstract java.lang.Object invoke(java.lang.Object[])' of interface kotlin.jvm.functions.FunctionN
-        // However, instantiating such interfaces has been allowed for a while
-        // now and they may not necessarily trigger the exception in all scenarios.
+        // See `SAFEST_MAX_ARITY`.
         maxArity = SuspendFunction.maxArity,
     ) {
         override fun nonReflectKind(): FunctionTypeKind = SuspendFunction
+
+        /**
+         * When supplying a `KSuspendFunctionN` for a `SuspendFunctionN`,
+         * values larger than 21 throw at runtime:
+         * > Receiver class ... does not define or inherit an implementation of the resolved method 'abstract java.lang.Object invoke(java.lang.Object[])' of interface kotlin.jvm.functions.FunctionN
+         * However, instantiating such interfaces has been allowed for a while
+         * now and they may not necessarily trigger the exception in all scenarios.
+         * For that reason, the `maxArity` is actually capped at 253, not 21.
+         * See: KT-81936.
+         */
+        const val SAFEST_MAX_ARITY: Int = 21
     }
 
     companion object {

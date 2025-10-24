@@ -723,6 +723,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("tooLargeFunctionNThroughACallableReference.kt")
+    public void testTooLargeFunctionNThroughACallableReference() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/tooLargeFunctionNThroughACallableReference.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelDestructuring.kt")
     public void testTopLevelDestructuring() {
       runTest("compiler/fir/analysis-tests/testData/resolve/topLevelDestructuring.kt");
