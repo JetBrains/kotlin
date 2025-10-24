@@ -122,6 +122,7 @@ for (lexerName in listOf("Kotlin", "KDoc")) {
             )
         },
         commonSourceSet = true,
+        inputFilesPattern = "**/${lexerName}.flex",
     ).configure {
         dependsOn(downloadSkeletonTaskName)
     }

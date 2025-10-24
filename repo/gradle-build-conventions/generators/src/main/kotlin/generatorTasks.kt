@@ -90,6 +90,7 @@ fun Project.generatedSourcesTask(
     argsProvider: JavaExec.(generationRoot: Directory) -> List<String> = { listOf(it.toString()) },
     dependOnTaskOutput: Boolean = true,
     commonSourceSet: Boolean = false,
+    inputFilesPattern: String = "**/*.kt",
 ): TaskProvider<JavaExec> {
     val genPath = if (commonSourceSet) {
         "common/src/gen"
@@ -107,7 +108,7 @@ fun Project.generatedSourcesTask(
         @Suppress("NAME_SHADOWING")
         val generatorRoot = "$rootDir/$generatorRoot"
         val generatorConfigurationFiles = fileTree(generatorRoot) {
-            include("**/*.kt")
+            include(inputFilesPattern)
         }
 
         inputs.files(generatorConfigurationFiles)
