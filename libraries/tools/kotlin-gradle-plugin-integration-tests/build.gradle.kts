@@ -117,7 +117,7 @@ dependencies {
     testImplementation(gradleKotlinDsl())
     testImplementation(gradleTestKit())
     testImplementation(commonDependency("com.google.code.gson:gson"))
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)

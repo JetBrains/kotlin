@@ -17,10 +17,14 @@ dependencies {
     api(project(":native:base"))
 
     testImplementation(project(":native:external-projects-test-utils"))
-    testApi(libs.junit.jupiter.api)
-    testApi(libs.junit.jupiter.engine)
-    testApi(libs.junit.jupiter.params)
-    testApi(testFixtures(project(":compiler:tests-common")))
+    testRuntimeOnly(project(":native:analysis-api-based-test-utils"))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(testFixtures(project(":compiler:tests-common")))
+    api(project(":kotlin-stdlib"))
+    testImplementation(project(":kotlin-stdlib"))
+    testImplementation(project(":kotlin-test"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
 }
 
 kotlin {

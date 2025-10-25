@@ -9,7 +9,7 @@ description = "A set of integration tests for Swift Export Standalone based on e
 dependencies {
     compileOnly(kotlinStdlib())
 
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
 

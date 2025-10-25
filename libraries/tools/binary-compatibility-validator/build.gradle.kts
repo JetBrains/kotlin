@@ -14,7 +14,7 @@ dependencies {
         runtimeOnly(kotlin("compiler-embeddable", bootstrapKotlinVersion))
     }
 
-    testApi(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit"))
 
     testArtifacts(project(":kotlin-stdlib"))
     testArtifacts(project(":kotlin-stdlib-jdk7"))

@@ -19,9 +19,10 @@ dependencies {
     implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
     implementation(project(":native:analysis-api-based-export-common"))
 
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(projectTests(":native:objcexport-header-generator"))
-    testApi(project(":native:analysis-api-based-test-utils"))
-    testApi(project(":analysis:analysis-api-standalone"))
+    testImplementation(project(":native:analysis-api-based-test-utils"))
+    testImplementation(project(":analysis:analysis-api-standalone"))
 }
 
 sourceSets {

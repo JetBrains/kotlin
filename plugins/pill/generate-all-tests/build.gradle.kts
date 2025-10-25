@@ -20,12 +20,12 @@ val dependencyFixturesProjects = arrayOf(
 
 dependencies {
     dependency.forEach {
-        testApi(projectTests(it))
+        testImplementation(projectTests(it))
         jpsTest(project(it, configuration = "jpsTest"))
     }
 
     dependencyFixturesProjects.forEach {
-        testApi(testFixtures(project(it)))
+        testImplementation(testFixtures(project(it)))
         jpsTest(project(it, configuration = "jpsTest"))
     }
 

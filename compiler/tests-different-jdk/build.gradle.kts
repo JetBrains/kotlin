@@ -14,7 +14,7 @@ dependencies {
     testImplementation(kotlinStdlib())
     testImplementation(project(":libraries:tools:abi-comparator"))
 
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.platform.suite)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)

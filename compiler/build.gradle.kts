@@ -12,11 +12,11 @@ val otherCompilerModules = compilerModules.filter { it != path }
 dependencies {
     testImplementation(intellijCore()) // Should come before compiler, because of "progarded" stuff needed for tests
 
-    testApi(project(":kotlin-script-runtime"))
+    testImplementation(project(":kotlin-script-runtime"))
 
-    testApi(kotlinStdlib())
+    testImplementation(kotlinStdlib())
 
-    testApi(kotlinTest())
+    testImplementation(kotlinTest())
     testCompileOnly(kotlinTest("junit"))
     testImplementation(libs.junit4)
     testFixturesApi(testFixtures(project(":compiler:tests-common")))

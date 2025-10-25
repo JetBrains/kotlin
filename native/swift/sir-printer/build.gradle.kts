@@ -17,7 +17,7 @@ dependencies {
 
     implementation(project(":core:util.runtime"))
 
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
 

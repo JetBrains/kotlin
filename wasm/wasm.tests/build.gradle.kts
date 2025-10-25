@@ -1,7 +1,6 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
-import java.nio.file.Files
 import java.util.*
 
 plugins {
@@ -192,7 +191,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesImplementation(testFixtures(project(":compiler:fir:analysis-tests")))
-    testFixturesApi(intellijCore())
+    testFixturesImplementation(intellijCore())
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

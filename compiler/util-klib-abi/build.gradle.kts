@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:ir.serialization.common"))
     compileOnly(libs.intellij.fastutil)
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(libs.junit.jupiter.params)

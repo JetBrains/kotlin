@@ -11,7 +11,7 @@ dependencies {
     testImplementation(libs.jackson.dataformat.xml)
     testImplementation(libs.jackson.module.kotlin)
     testImplementation(libs.woodstox.core)
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit4)
 
     testImplementation(libs.jgit)

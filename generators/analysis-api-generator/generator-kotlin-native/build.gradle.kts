@@ -20,7 +20,7 @@ dependencies {
     testImplementation(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-native")))
 
     testImplementation(intellijCore())
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(testFixtures(project(":analysis:analysis-test-framework")))

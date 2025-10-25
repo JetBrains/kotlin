@@ -44,7 +44,7 @@ dependencies {
         isTransitive = false
     }
 
-    testApi(kotlinTest("junit5"))
+    testImplementation(kotlinTest("junit5"))
     testImplementation(project(":compiler:config.jvm"))
 
     testCompileOnly(libs.junit.jupiter.api)

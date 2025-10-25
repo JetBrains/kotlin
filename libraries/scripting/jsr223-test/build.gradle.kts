@@ -19,10 +19,11 @@ val testJsr223Runtime by configurations.creating {
 val testCompilationClasspath by configurations.creating
 
 dependencies {
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testApi(libs.junit.platform.launcher)
+    testImplementation(libs.junit.platform.launcher)
+    testImplementation(intellijCore())
     testCompileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":core:util.runtime"))
@@ -39,6 +40,7 @@ dependencies {
     embeddableTestRuntime(testSourceSet.output)
 
     testCompilationClasspath(kotlinStdlib())
+    testImplementation(kotlinTest("junit5"))
 }
 
 sourceSets {

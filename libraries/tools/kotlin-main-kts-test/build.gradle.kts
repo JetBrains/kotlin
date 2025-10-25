@@ -14,8 +14,11 @@ dependencies {
     testCompileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     testImplementation(kotlinStdlib("jdk8"))
     testImplementation(libs.junit4)
+    testImplementation(kotlinTest("junit"))
     testImplementation(projectTests(":kotlin-scripting-compiler"))
     testImplementation(project(":kotlin-compiler-embeddable"))
+    testImplementation(project(":kotlin-scripting-common"))
+    testImplementation(project(":kotlin-scripting-jvm"))
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = false }
 }
 

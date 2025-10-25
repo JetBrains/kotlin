@@ -56,7 +56,7 @@ dependencies {
     testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":generators:analysis-api-generator")))
-    testApi(project(":compiler:plugin-api"))
+    testImplementation(project(":compiler:plugin-api"))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(testFixtures(project(":js:js.tests")))
 
@@ -87,7 +87,7 @@ dependencies {
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }

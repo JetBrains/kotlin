@@ -46,7 +46,7 @@ dependencies {
     testImplementation(project(":kotlin-metadata")) { isTransitive = false }
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
     testImplementation(project(":kotlin-tooling-core"))
-    testApi(intellijCore())
+    testImplementation(intellijCore())
 }
 
 optInToK1Deprecation()

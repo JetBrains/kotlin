@@ -19,7 +19,7 @@ dependencies {
 
     implementation(project(":analysis:analysis-api"))
 
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
 

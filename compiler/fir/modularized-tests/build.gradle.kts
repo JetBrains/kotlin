@@ -16,21 +16,21 @@ repositories {
 val composeCompilerPlugin by configurations.creating
 
 dependencies {
-    testApi(intellijCore())
+    testImplementation(intellijCore())
 
     testRuntimeOnly(libs.xerces)
     testRuntimeOnly(commonDependency("org.apache.commons:commons-lang3"))
 
     testImplementation(libs.junit4)
     testCompileOnly(kotlinTest("junit"))
-    testApi(testFixtures(project(":compiler:tests-common")))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
-    testApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
-    testApi(project(":compiler:fir:resolve"))
-    testApi(project(":compiler:fir:providers"))
-    testApi(project(":compiler:fir:semantics"))
-    testApi(project(":compiler:fir:dump"))
+    testImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testImplementation(project(":compiler:fir:resolve"))
+    testImplementation(project(":compiler:fir:providers"))
+    testImplementation(project(":compiler:fir:semantics"))
+    testImplementation(project(":compiler:fir:dump"))
 
     testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 

@@ -35,25 +35,25 @@ dependencies {
 
     implementation(project(":kotlin-power-assert-compiler-plugin")) // TODO: KT-74787
 
-    testApi(project(":compiler:frontend"))
-    testApi(project(":compiler:plugin-api"))
-    testApi(project(":compiler:util"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":compiler:cli-common"))
-    testApi(project(":compiler:frontend.java"))
+    testImplementation(project(":compiler:frontend"))
+    testImplementation(project(":compiler:plugin-api"))
+    testImplementation(project(":compiler:util"))
+    testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:cli-common"))
+    testImplementation(project(":compiler:frontend.java"))
     testImplementation(project(":compiler:fir:plugin-utils"))
-    testApi(testFixtures(project(":compiler:tests-common"))) { // TODO: drop this, it's based on JUnit4
+    testImplementation(testFixtures(project(":compiler:tests-common"))) { // TODO: drop this, it's based on JUnit4
         if (this is ProjectDependency) {
             exclude(group = "com.nordstrom.tools", module = "junit-foundation")
         }
     }
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testApi(libs.junit.platform.launcher)
-    testApi(kotlinTest("junit5"))
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(kotlinTest("junit5"))
 
-    testApi(project(":kotlin-scripting-dependencies-maven"))
+    testImplementation(project(":kotlin-scripting-dependencies-maven"))
 
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.coroutines.core)

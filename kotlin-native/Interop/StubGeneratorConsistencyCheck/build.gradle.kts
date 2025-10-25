@@ -3,9 +3,9 @@ plugins {
 }
 
 dependencies {
-    testApi(testFixtures(project(":compiler:tests-common-new")))
-    testApi(libs.junit.jupiter.api)
-    testApi(libs.junit.jupiter.engine)
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.engine)
 }
 
 sourceSets {

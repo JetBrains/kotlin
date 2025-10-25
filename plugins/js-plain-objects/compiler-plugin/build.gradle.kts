@@ -25,19 +25,19 @@ dependencies {
     embedded(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.backend")) { isTransitive = false }
     embedded(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli")) { isTransitive = false }
 
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
+    testImplementation(project(":compiler:backend"))
+    testImplementation(project(":compiler:cli"))
+    testImplementation(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
 
-    testApi(testFixtures(project(":compiler:test-infrastructure")))
-    testApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testApi(testFixtures(project(":compiler:tests-compiler-utils")))
-    testApi(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure")))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
 
-    testApi(testFixtures(project(":js:js.tests")))
+    testImplementation(testFixtures(project(":js:js.tests")))
     testFixtures(testFixtures(project(":generators:test-generator")))
 
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testFixtures(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 

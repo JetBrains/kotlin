@@ -6,16 +6,16 @@ plugins {
 }
 
 dependencies {
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testApi(libs.junit.platform.launcher)
-    testApi(kotlinTest("junit5"))
-    testApi(intellijCore())
-    testApi(project(":kotlin-scripting-jvm-host-unshaded"))
-    testApi(testFixtures(project(":compiler:tests-compiler-utils")))
-    testApi(project(":kotlin-scripting-compiler"))
-    testApi(project(":daemon-common")) // TODO: fix import (workaround for jps build)
+    testImplementation(libs.junit.platform.launcher)
+    testImplementation(kotlinTest("junit5"))
+    testImplementation(intellijCore())
+    testImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
+    testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
+    testImplementation(project(":kotlin-scripting-compiler"))
+    testImplementation(project(":daemon-common")) // TODO: fix import (workaround for jps build)
 
     testImplementation(libs.kotlinx.coroutines.core)
 

@@ -11,6 +11,8 @@ dependencies {
     implementation(kotlinStdlib()) // `kotlinStdlib()` is not available in kotlin-native/build-tools project
     cppImplementation(project(":kotlin-native:libclangext"))
     cppLink(project(":kotlin-native:libclangext"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 nativeInteropPlugin {

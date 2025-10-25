@@ -34,7 +34,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
 
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 

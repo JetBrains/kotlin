@@ -21,7 +21,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(intellijCore())
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit4)
 }
 

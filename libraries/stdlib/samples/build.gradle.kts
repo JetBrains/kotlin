@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api(project(":kotlin-stdlib-jdk8"))
-    testApi(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit"))
 }
 
 sourceSets {

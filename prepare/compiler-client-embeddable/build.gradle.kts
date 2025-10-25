@@ -19,11 +19,11 @@ dependencies {
     embedded(project(":daemon-common")) { isTransitive = false }
     embedded(project(":kotlin-daemon-client")) { isTransitive = false }
     
-    testApi(project(":compiler:cli-common"))
-    testApi(project(":daemon-common"))
-    testApi(project(":kotlin-daemon-client"))
+    testImplementation(project(":compiler:cli-common"))
+    testImplementation(project(":daemon-common"))
+    testImplementation(project(":kotlin-daemon-client"))
     testImplementation(libs.junit4)
-    testApi(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit"))
     testCompilerClasspath(project(":kotlin-compiler"))
     testCompilerClasspath(project(":kotlin-scripting-compiler"))
     testCompilerClasspath(project(":kotlin-daemon"))
