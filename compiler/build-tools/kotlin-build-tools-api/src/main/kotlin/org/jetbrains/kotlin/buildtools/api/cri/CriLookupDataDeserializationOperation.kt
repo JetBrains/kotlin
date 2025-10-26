@@ -26,4 +26,4 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
  * @since 2.3.20
  */
 @ExperimentalBuildToolsApi
-public interface CriLookupDataDeserializationOperation : BuildOperation<Collection<LookupEntry>>
+public interface CriLookupDataDeserializationOperation : BuildOperation<Iterable<LookupEntry>>

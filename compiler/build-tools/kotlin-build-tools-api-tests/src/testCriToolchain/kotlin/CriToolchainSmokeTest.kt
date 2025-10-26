@@ -18,7 +18,7 @@ class CriToolchainSmokeTest {
         val toolchain = KotlinToolchains.loadImplementation(CriToolchainSmokeTest::class.java.classLoader)
         val operation = toolchain.cri.createCriLookupDataDeserializationOperation(lookupData)
         val lookups = toolchain.createBuildSession().use { it.executeOperation(operation) }
-        assertTrue(lookups.isEmpty())
+        assertTrue(lookups.toList().isEmpty())
     }
 
     @Test
@@ -28,7 +28,7 @@ class CriToolchainSmokeTest {
         val toolchain = KotlinToolchains.loadImplementation(CriToolchainSmokeTest::class.java.classLoader)
         val operation = toolchain.cri.createCriFileIdToPathDataDeserializationOperation(fileIdToPathData)
         val fileIdsToPaths = toolchain.createBuildSession().use { it.executeOperation(operation) }
-        assertTrue(fileIdsToPaths.isEmpty())
+        assertTrue(fileIdsToPaths.toList().isEmpty())
     }
 
     @Test
@@ -38,6 +38,6 @@ class CriToolchainSmokeTest {
         val toolchain = KotlinToolchains.loadImplementation(CriToolchainSmokeTest::class.java.classLoader)
         val operation = toolchain.cri.createCriSubtypeDataDeserializationOperation(subtypeData)
         val subtypes = toolchain.createBuildSession().use { it.executeOperation(operation) }
-        assertTrue(subtypes.isEmpty())
+        assertTrue(subtypes.toList().isEmpty())
     }
 }

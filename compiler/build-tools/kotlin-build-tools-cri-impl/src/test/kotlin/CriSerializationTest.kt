@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.io.ByteArrayOutputStream
 
 @OptIn(ExperimentalSerializationApi::class)
 class CriSerializationTest {
@@ -37,17 +38,58 @@ class CriSerializationTest {
         val decodedFileIdsToPaths = deserializer.deserializeFileIdToPathData(serializedFileIdsToPaths)
 
         val expectedLookups = listOf(
-            LookupEntryImpl(fqName1.hashCode(), listOf(1, 2)),
-            LookupEntryImpl(fqName2.hashCode(), listOf(2, 3)),
+            LookupEntryImpl(fqName1.hashCode(), listOf(file1.hashCode(), file2.hashCode())),
+            LookupEntryImpl(fqName2.hashCode(), listOf(file2.hashCode(), file3.hashCode())),
         )
         assertEquals(expectedLookups, decodedLookups.toList())
 
         val expectedFileIdsToPaths = listOf(
-            FileIdToPathEntryImpl(1, file1),
-            FileIdToPathEntryImpl(2, file2),
-            FileIdToPathEntryImpl(3, file3),
+            FileIdToPathEntryImpl(file1.hashCode(), file1),
+            FileIdToPathEntryImpl(file2.hashCode(), file2),
+            FileIdToPathEntryImpl(file3.hashCode(), file3),
         )
         assertEquals(expectedFileIdsToPaths, decodedFileIdsToPaths.toList())
+    }
+
+    @Test
+    fun testLookupSerializationWithStreaming() {
+        val fqName1 = FqName("scope1.Name1")
+        val fqName2 = FqName("scope2.Name2")
+        val fqName3 = FqName("scope3.Name3")
+        val file1 = "A.kt"
+        val file2 = "B.kt"
+        val file3 = "C.kt"
+        val lookups1 = mapOf(
+            LookupSymbol(name = fqName1.shortName().asString(), scope = fqName1.parent().asString())
+                    to listOf(file1, file2),
+            LookupSymbol(name = fqName2.shortName().asString(), scope = fqName2.parent().asString())
+                    to listOf(file2, file3),
+        )
+        val lookups2 = mapOf(
+            LookupSymbol(name = fqName1.shortName().asString(), scope = fqName1.parent().asString())
+                    to listOf(file3),
+            LookupSymbol(name = fqName3.shortName().asString(), scope = fqName3.parent().asString())
+                    to listOf(file1, file2),
+        )
+
+        val (serializedLookups1, _) = CriDataSerializerImpl().serializeLookups(lookups1)
+        val (serializedLookups2, _) = CriDataSerializerImpl().serializeLookups(lookups2)
+        val serializedLookups = ByteArrayOutputStream().use { stream ->
+            stream.write(serializedLookups1)
+            stream.write(serializedLookups2)
+            stream.toByteArray()
+        }
+
+        val deserializer = CriDataDeserializerImpl()
+        val decodedLookups = deserializer.deserializeLookupData(serializedLookups)
+
+        val expectedLookups = listOf(
+            LookupEntryImpl(fqName1.hashCode(), listOf(file1.hashCode(), file2.hashCode())),
+            LookupEntryImpl(fqName2.hashCode(), listOf(file2.hashCode(), file3.hashCode())),
+            LookupEntryImpl(fqName1.hashCode(), listOf(file3.hashCode())),
+            LookupEntryImpl(fqName3.hashCode(), listOf(file1.hashCode(), file2.hashCode())),
+        )
+        assertEquals(expectedLookups, decodedLookups.toList())
     }
 
     @Test

@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 internal class CriSubtypeDataDeserializationOperationImpl(
     private val deserializer: CriDataDeserializerImpl,
     private val data: ByteArray,
-) : BuildOperationImpl<Collection<SubtypeEntry>>(), CriSubtypeDataDeserializationOperation {
+) : BuildOperationImpl<Iterable<SubtypeEntry>>(), CriSubtypeDataDeserializationOperation {
 
     override fun execute(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-    ): Collection<SubtypeEntry> {
+    ): Iterable<SubtypeEntry> {
         return deserializer.deserializeSubtypeData(data)
     }
 }

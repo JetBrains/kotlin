@@ -10,6 +10,8 @@ import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.name.FqName
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -25,26 +27,43 @@ public class CriDataSerializerImpl {
     public fun serializeLookups(lookups: Map<LookupSymbol, Collection<String>>): SerializedLookupData {
         val filePathToId = mutableMapOf<String, Int>()
 
-        fun addFilePathIfNeeded(filePath: String): Int = filePathToId.getOrPut(filePath) {
-            (filePathToId.size + 1)
-        }
+        fun addFilePathIfNeeded(filePath: String): Int = filePathToId.getOrPut(filePath) { filePath.hashCode() }
 
         fun Map.Entry<LookupSymbol, Collection<String>>.toLookupEntry(): LookupEntryImpl = LookupEntryImpl(
             key,
             value.map { addFilePathIfNeeded(it) },
         )
 
-        val lookups = lookups.entries.map { it.toLookupEntry() }
-        val fileIdsToPaths = filePathToId.map { (filePath, fileId) -> FileIdToPathEntryImpl(fileId, filePath) }
+        val lookups = lookups.asSequence().map { it.toLookupEntry() }
+        val serializedLookups = lookups.encodeToByteArrayWithLengthPrefix()
+
+        val fileIdsToPaths = filePathToId.asSequence().map { (filePath, fileId) ->
+            FileIdToPathEntryImpl(fileId, filePath)
+        }
+        val serializedFileIdsToPaths = fileIdsToPaths.encodeToByteArrayWithLengthPrefix()
 
         return SerializedLookupData(
-            lookups = ProtoBuf.encodeToByteArray(lookups),
-            fileIdsToPaths = ProtoBuf.encodeToByteArray(fileIdsToPaths),
+            lookups = serializedLookups,
+            fileIdsToPaths = serializedFileIdsToPaths,
         )
     }
 
     public fun serializeSubtypes(subtypes: Map<FqName, Collection<FqName>>): ByteArray {
-        val subtypes = subtypes.map { (className, subtypes) -> SubtypeEntryImpl(className, subtypes) }
-        return ProtoBuf.encodeToByteArray(subtypes)
+        val subtypes = subtypes.asSequence().map { (className, subtypes) ->
+            SubtypeEntryImpl(className, subtypes)
+        }
+        return subtypes.encodeToByteArrayWithLengthPrefix()
+    }
+
+    private inline fun <reified T> Sequence<T>.encodeToByteArrayWithLengthPrefix(): ByteArray {
+        val stream = ByteArrayOutputStream()
+        DataOutputStream(stream).use { dataStream ->
+            forEach {
+                val serializedEntry = ProtoBuf.encodeToByteArray(it)
+                dataStream.writeInt(serializedEntry.size)
+                dataStream.write(serializedEntry)
+            }
+        }
+        return stream.toByteArray()
     }
 }
