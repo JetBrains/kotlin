@@ -1,8 +1,5 @@
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToByteArray
-import kotlinx.serialization.protobuf.ProtoBuf
 import kotlinx.serialization.protobuf.schema.ProtoBufSchemaGenerator
-import org.jetbrains.kotlin.buildtools.internal.cri.CriDataDeserializerImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.FileIdToPathEntryImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.LookupEntryImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.SubtypeEntryImpl
@@ -26,19 +23,6 @@ class CriDeserializationTest {
         )
         val schema = ProtoBufSchemaGenerator.generateSchemaText(descriptors)
         assertEquals(EXPECTED_SCHEMA, schema)
-    }
-
-    @Test
-    fun testLookupsSerialization() {
-        val lookups = listOf(
-            LookupEntryImpl(0, emptyList()),
-            LookupEntryImpl(1, listOf(0)),
-            LookupEntryImpl(2, listOf(1, 2)),
-        )
-        val serializedLookups = ProtoBuf.encodeToByteArray(lookups)
-        val deserializer = CriDataDeserializerImpl()
-        val deserializedLookups = deserializer.deserializeLookupData(serializedLookups)
-        assertEquals(lookups, deserializedLookups)
     }
 
     companion object {

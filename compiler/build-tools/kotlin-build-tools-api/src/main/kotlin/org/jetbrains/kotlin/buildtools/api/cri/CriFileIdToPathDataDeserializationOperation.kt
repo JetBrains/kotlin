@@ -26,4 +26,4 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
  * @since 2.3.20
  */
 @ExperimentalBuildToolsApi
-public interface CriFileIdToPathDataDeserializationOperation : BuildOperation<Collection<FileIdToPathEntry>>
+public interface CriFileIdToPathDataDeserializationOperation : BuildOperation<Iterable<FileIdToPathEntry>>
