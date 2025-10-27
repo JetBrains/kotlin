@@ -44,8 +44,9 @@ MODULE_FRAGMENT name:<stdlibReferences>
               CONST Int type=kotlin.Int value=3
         CALL 'kotlin/require|require(kotlin.Boolean;kotlin.Function0<kotlin.Any>){}[0]' type=kotlin.Unit origin=null
           ARG 1: CALL 'test/boolean.<get-boolean>|<get-boolean>(){}[0]' type=kotlin.Boolean origin=GET_PROPERTY
-          ARG 2: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any
+          ARG 2: RICH_FUNCTION_REFERENCE type=kotlin.Function0<kotlin.Any> origin=LAMBDA reflectionTarget='null'
+            overriddenFunctionSymbol: kotlin/Function0.invoke|invoke(){}[0]
+            invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in test.main'
                   CONST String type=kotlin.String value="Some message"
@@ -53,8 +54,9 @@ MODULE_FRAGMENT name:<stdlibReferences>
           CLASS_REFERENCE 'test/Foo|null[0]' type=kotlin.reflect.KClass<test.Foo>
         VAR name:d type:kotlin.time.Duration [val]
           CALL 'kotlin.time/measureTime|measureTime(kotlin.Function0<kotlin.Unit>){}[0]' type=kotlin.time.Duration origin=null
-            ARG 1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+            ARG 1: RICH_FUNCTION_REFERENCE type=kotlin.Function0<kotlin.Unit> origin=LAMBDA reflectionTarget='null'
+              overriddenFunctionSymbol: kotlin/Function0.invoke|invoke(){}[0]
+              invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in test.main'
                     GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.test.converters
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.runPreSerializationLoweringPhases
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.perfManager
@@ -31,7 +30,7 @@ class NativePreSerializationLoweringFacade(
     testServices: TestServices,
 ) : IrPreSerializationLoweringFacade<IrBackendInput>(testServices, BackendKinds.IrBackend, BackendKinds.IrBackend) {
     override fun shouldTransform(module: TestModule): Boolean {
-        return module.languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)
+        return module.languageVersionSettings.languageVersion.usesK2
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): IrBackendInput {
