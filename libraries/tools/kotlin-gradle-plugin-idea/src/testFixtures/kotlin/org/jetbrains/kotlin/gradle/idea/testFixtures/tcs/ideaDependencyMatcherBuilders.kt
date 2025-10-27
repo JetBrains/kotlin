@@ -86,6 +86,23 @@ fun anyDependsOnDependency(): IdeaKotlinDependencyMatcher = object : IdeaKotlinD
     }
 }
 
+/**
+ * For example main source sets appears as source friend dependencies for test source sets
+ */
+fun anySourceFriendDependency(): IdeaKotlinDependencyMatcher = object : IdeaKotlinDependencyMatcher {
+    override val description: String get() = "any friend dependency"
+    override fun matches(dependency: IdeaKotlinDependency): Boolean {
+        if (dependency !is IdeaKotlinSourceDependency) return false
+        return dependency.type == IdeaKotlinSourceDependency.Type.Friend
+    }
+}
+
+val IdeaKotlinDependencyMatcher.notExpected: IdeaKotlinDependencyMatcher
+    get() = object : IdeaKotlinDependencyMatcher {
+        override val description: String get() = "not ${this@notExpected.description}"
+        override fun matches(dependency: IdeaKotlinDependency): Boolean = !this@notExpected.matches(dependency)
+    }
+
 /* Duplicated: Aks Gradle for public API? */
 private fun Project.currentBuildId(): BuildIdentifier =
     (project as ProjectInternal).services.get(BuildState::class.java).buildIdentifier
