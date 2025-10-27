@@ -3,6 +3,8 @@ public abstract class SCollection /* test.SCollection*/ implements java.util.Col
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   public abstract int getSize();//  getSize()
 
   public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -14,6 +16,8 @@ public abstract class SCollection /* test.SCollection*/ implements java.util.Col
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   public final int size();//  size()
 
