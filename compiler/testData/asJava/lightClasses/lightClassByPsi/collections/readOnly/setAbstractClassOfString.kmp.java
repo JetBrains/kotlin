@@ -1,4 +1,8 @@
-public abstract class SSet /* test.SSet*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SSet /* test.SSet*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  SSet();//  .ctor()
+}
+
+public abstract class SSet2 /* test.SSet2*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
@@ -22,5 +26,5 @@ public abstract class SSet /* test.SSet*/ implements java.util.Set<@org.jetbrain
   @java.lang.Override()
   public int getSize();//  getSize()
 
-  public  SSet();//  .ctor()
+  public  SSet2();//  .ctor()
 }
