@@ -33,6 +33,7 @@ open class UpgradeCallableReferences(
     val upgradeSamConversions: Boolean = true,
     val upgradeExtractedAdaptedBlocks: Boolean = false,
     val castDispatchReceiver: Boolean = true,
+    val generateFakeAccessorsForReflectionProperty: Boolean = false,
 ) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -265,12 +266,21 @@ open class UpgradeCallableReferences(
             val setterFun: IrSimpleFunction?
 
             if (getter != null) {
-                val getterMissingObjectDispatchReceiver = getter.isMissingObjectDispatchReceiver()
-                getterFun = expression.wrapFunction(arguments.drop(if (getterMissingObjectDispatchReceiver) 1 else 0), data, getter, isPropertySetter = false)
-                setterFun = runIf(expression.type.isKMutableProperty()) {
-                    expression.setter?.owner?.let { setter ->
-                        val setterMissingObjectDispatchReceiver = setter.isMissingObjectDispatchReceiver()
-                        expression.wrapFunction(arguments.drop(if (setterMissingObjectDispatchReceiver) 1 else 0), data, setter, isPropertySetter = true)
+                if (generateFakeAccessorsForReflectionProperty && expression.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
+                    getterFun = getter.let {
+                        expression.buildUnsupportedForReflectionProperty(emptyList(), data, it.name, it.isSuspend, isPropertySetter = false)
+                    }
+                    setterFun = expression.setter?.owner?.let {
+                        expression.buildUnsupportedForReflectionProperty(emptyList(), data, it.name, it.isSuspend, isPropertySetter = true)
+                    }
+                } else {
+                    val getterMissingObjectDispatchReceiver = getter.isMissingObjectDispatchReceiver()
+                    getterFun = expression.wrapFunction(arguments.drop(if (getterMissingObjectDispatchReceiver) 1 else 0), data, getter, isPropertySetter = false)
+                    setterFun = runIf(expression.type.isKMutableProperty()) {
+                        expression.setter?.owner?.let { setter ->
+                            val setterMissingObjectDispatchReceiver = setter.isMissingObjectDispatchReceiver()
+                            expression.wrapFunction(arguments.drop(if (setterMissingObjectDispatchReceiver) 1 else 0), data, setter, isPropertySetter = true)
+                        }
                     }
                 }
             } else {
@@ -342,8 +352,12 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = expression.type,
                 reflectionTargetSymbol = expression.symbol,
-                getterFunction = expression.getter.owner.let { expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = false) },
-                setterFunction = expression.setter?.owner?.let { expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = true) },
+                getterFunction = expression.getter.owner.let {
+                    expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = false)
+                },
+                setterFunction = expression.setter?.owner?.let {
+                    expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = true)
+                },
                 origin = expression.origin
             ).apply {
                 copyNecessaryAttributes(expression, this)
@@ -356,9 +370,26 @@ open class UpgradeCallableReferences(
             name: Name,
             isSuspend: Boolean,
             isPropertySetter: Boolean,
+        ) = buildUnsupportedFor(captured, parent, name, isSuspend, isPropertySetter, unsupportedTarget = "local property reference")
+
+        private fun IrCallableReference<*>.buildUnsupportedForReflectionProperty(
+            captured: List<Pair<IrValueParameter, IrExpression>>,
+            parent: IrDeclarationParent,
+            name: Name,
+            isSuspend: Boolean,
+            isPropertySetter: Boolean,
+        ) = buildUnsupportedFor(captured, parent, name, isSuspend, isPropertySetter, unsupportedTarget = "reflection property reference")
+
+        private fun IrCallableReference<*>.buildUnsupportedFor(
+            captured: List<Pair<IrValueParameter, IrExpression>>,
+            parent: IrDeclarationParent,
+            name: Name,
+            isSuspend: Boolean,
+            isPropertySetter: Boolean,
+            unsupportedTarget: String,
         ) = buildWrapperFunction(captured, parent, name, isSuspend, isPropertySetter) { _, _ ->
             +irCall(this@UpgradeCallableReferences.context.symbols.throwUnsupportedOperationException).apply {
-                arguments[0] = irString("Not supported for local property reference.")
+                arguments[0] = irString("Not supported for $unsupportedTarget.")
             }
         }.apply {
             returnType = context.irBuiltIns.nothingType

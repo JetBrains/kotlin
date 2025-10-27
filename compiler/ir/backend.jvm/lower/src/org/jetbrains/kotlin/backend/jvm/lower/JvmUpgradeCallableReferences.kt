@@ -27,6 +27,7 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
     upgradeSamConversions = true,
     upgradeExtractedAdaptedBlocks = true,
     castDispatchReceiver = false,
+    generateFakeAccessorsForReflectionProperty = true,
 ) {
     private val jvmSymbols = context.symbols
 
