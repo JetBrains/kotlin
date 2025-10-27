@@ -190,6 +190,7 @@ class FirSamResolver(
             name = syntheticFunctionSymbol.name
             origin = FirDeclarationOrigin.SamConstructor
             status = firRegularClass.status.copy(modality = Modality.FINAL)
+            isLocal = firRegularClass.isLocal
             this.symbol = syntheticFunctionSymbol
             typeParameters += newTypeParameters.map { it.build() }
 

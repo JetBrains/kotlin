@@ -31,6 +31,7 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
+    abstract override val isLocal: Boolean
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverParameter: FirReceiverParameter?
     abstract override val deprecationsProvider: DeprecationsProvider

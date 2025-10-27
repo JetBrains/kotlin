@@ -356,6 +356,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             )
             default("returnTypeRef", "FirErrorTypeRefImpl(source, MutableOrEmptyList.empty(), null, null, diagnostic)")
+            default("isLocal") {
+                value = "true"
+                withGetter = true
+            }
             additionalImports(errorTypeRefImplType)
         }
 
@@ -472,6 +476,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(anonymousFunction) {
             defaultNull("containerSource", withGetter = true)
+            default("isLocal") {
+                value = "true"
+                withGetter = true
+            }
         }
 
         noImpl(anonymousFunctionExpression)
@@ -481,6 +489,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultEmptyList("contextParameters", "typeParameters", withGetter = true)
             default("isSetter") {
                 value = "!isGetter"
+                withGetter = true
+            }
+            default("isLocal") {
+                value = "propertySymbol.fir.isLocal"
                 withGetter = true
             }
             additionalImports(modalityType)
@@ -493,9 +505,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 "receiverParameter", "delegate", "getter", "setter", "backingField", "containerSource",
                 withGetter = true
             )
-
             default("dispatchReceiverType", "propertySymbol.dispatchReceiverType", withGetter = true)
-
+            default("isLocal") {
+                value = "propertySymbol.fir.isLocal"
+                withGetter = true
+            }
             defaultEmptyList(
                 "contextParameters", "typeParameters",
                 withGetter = true
@@ -614,6 +628,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(errorFunction) {
             defaultNull("receiverParameter", "body", withGetter = true)
             default("returnTypeRef", "FirErrorTypeRefImpl(null, MutableOrEmptyList.empty(), null, null, diagnostic)")
+            default("isLocal") {
+                value = "true"
+                withGetter = true
+            }
             additionalImports(errorTypeRefImplType)
         }
 
@@ -656,6 +674,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             )
             defaultEmptyList("contextParameters", withGetter = true)
+            default("isLocal") {
+                value = "true"
+                withGetter = true
+            }
         }
 
         impl(valueParameter) {

@@ -827,6 +827,7 @@ class LightTreeRawFirDeclarationBuilder(
                     isStatic = true
                     isExpect = containingClassIsExpectClass
                 }
+                isLocal = context.inLocalContext
                 if (classWrapper.hasDefaultConstructor && enumEntry.getChildNodeByType(INITIALIZER_LIST) == null &&
                     modifiers.let { it == null || it.annotations.isEmpty() } && classBodyNode == null
                 ) {
@@ -1099,6 +1100,7 @@ class LightTreeRawFirDeclarationBuilder(
                 returnTypeRef = classWrapper.delegatedSelfTypeRef
                 dispatchReceiverType = classWrapper.obtainDispatchReceiverForConstructor()
                 this.status = status
+                isLocal = context.inLocalContext
                 symbol = constructorSymbol
                 modifiersIfPresent?.convertAnnotationsTo(annotations)
                 typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
@@ -1226,6 +1228,7 @@ class LightTreeRawFirDeclarationBuilder(
                 returnTypeRef = delegatedSelfTypeRef
                 dispatchReceiverType = classWrapper.obtainDispatchReceiverForConstructor()
                 this.status = status
+                isLocal = context.inLocalContext
                 symbol = constructorSymbol
                 delegatedConstructor = constructorDelegationCall
 
@@ -1444,6 +1447,7 @@ class LightTreeRawFirDeclarationBuilder(
                 }
 
                 symbol = propertySymbol
+                this.isLocal = context.inLocalContext
 
                 typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, symbol) }
 
@@ -2014,6 +2018,7 @@ class LightTreeRawFirDeclarationBuilder(
                     source = functionSource
                     receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
                     name = functionName
+                    this.isLocal = context.inLocalContext
                     status = FirDeclarationStatusImpl(
                         if (isLocal) Visibilities.Local else calculatedModifiers.getVisibility(),
                         calculatedModifiers.getModality(isClassOrObject = false)
@@ -2242,6 +2247,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                 isVar = false
                 status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
+                isLocal = context.inLocalContext
                 dispatchReceiverType = currentDispatchReceiverType()
             }.symbol
         )

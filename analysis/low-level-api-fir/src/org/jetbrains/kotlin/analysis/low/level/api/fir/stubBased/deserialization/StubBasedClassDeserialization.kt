@@ -345,6 +345,7 @@ private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(classOrObject: KtClas
             Modality.FINAL,
             EffectiveVisibility.Protected(anyLookupId)
         )
+        isLocal = false
 
         name = cloneCallableId.callableName
         symbol = FirNamedFunctionSymbol(cloneCallableId)

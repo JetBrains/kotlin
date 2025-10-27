@@ -88,6 +88,13 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBu
     }
 
 
+    @Deprecated("Modification of 'isLocal' has no impact for FirAnonymousFunctionBuilder", level = DeprecationLevel.HIDDEN)
+    override var isLocal: Boolean
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
     @Deprecated("Modification of 'containerSource' has no impact for FirAnonymousFunctionBuilder", level = DeprecationLevel.HIDDEN)
     override var containerSource: DeserializedContainerSource?
         get() = throw IllegalStateException()

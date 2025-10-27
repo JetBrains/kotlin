@@ -380,6 +380,7 @@ internal class StubBasedFirMemberDeserializer(
             }
 
             status = resolvedStatus
+            isLocal = false
 
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
@@ -559,6 +560,7 @@ internal class StubBasedFirMemberDeserializer(
                 isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
                 setSpecialFlags(function.modifierList)
             }
+            isLocal = false
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -635,6 +637,7 @@ internal class StubBasedFirMemberDeserializer(
                 this.isInner = isInner
                 setSpecialFlags(constructor.modifierList)
             }
+            isLocal = false
             this.symbol = symbol
             dispatchReceiverType =
                 if (!isInner) null
@@ -754,6 +757,7 @@ internal class StubBasedFirMemberDeserializer(
             ).apply {
                 isStatic = true
             }
+            isLocal = false
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         }.apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag

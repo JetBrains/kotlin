@@ -68,6 +68,13 @@ class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder
     }
 
 
+    @Deprecated("Modification of 'isLocal' has no impact for FirBackingFieldBuilder", level = DeprecationLevel.HIDDEN)
+    override var isLocal: Boolean
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
     @Deprecated("Modification of 'receiverParameter' has no impact for FirBackingFieldBuilder", level = DeprecationLevel.HIDDEN)
     override var receiverParameter: FirReceiverParameter?
         get() = throw IllegalStateException()

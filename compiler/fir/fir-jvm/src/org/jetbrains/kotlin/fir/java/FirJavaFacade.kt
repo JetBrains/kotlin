@@ -516,6 +516,7 @@ private fun convertJavaFieldToFir(
             ).apply {
                 isStatic = javaField.isStatic
             }
+            isLocal = false
             returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
                 .resolveIfJavaType(session, javaTypeParameterStack, fakeSource, mode = FirJavaTypeConversionMode.ANNOTATION_MEMBER)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES

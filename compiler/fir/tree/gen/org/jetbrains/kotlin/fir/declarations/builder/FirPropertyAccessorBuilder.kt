@@ -70,6 +70,13 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     }
 
 
+    @Deprecated("Modification of 'isLocal' has no impact for FirPropertyAccessorBuilder", level = DeprecationLevel.HIDDEN)
+    override var isLocal: Boolean
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
     @Deprecated("Modification of 'containerSource' has no impact for FirPropertyAccessorBuilder", level = DeprecationLevel.HIDDEN)
     override var containerSource: DeserializedContainerSource?
         get() = throw IllegalStateException()

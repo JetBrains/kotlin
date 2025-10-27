@@ -51,6 +51,7 @@ abstract class FirNamedFunction : FirFunction(), FirContractDescriptionOwner, Fi
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val status: FirDeclarationStatus
+    abstract override val isLocal: Boolean
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverParameter: FirReceiverParameter?
     abstract override val deprecationsProvider: DeprecationsProvider

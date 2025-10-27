@@ -28,6 +28,7 @@ sealed class FirMemberDeclaration : FirDeclaration(), FirTypeParameterRefsOwner 
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract val status: FirDeclarationStatus
+    abstract val isLocal: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitMemberDeclaration(this, data)

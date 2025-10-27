@@ -58,6 +58,7 @@ fun generateTemporaryVariable(
         symbol = FirLocalPropertySymbol()
         isVar = false
         status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+        isLocal = true
         if (extractedAnnotations != null) {
             // LT extracts annotations ahead.
             // PSI extracts annotations on demand. Use a similar util in [PsiConversionUtils]

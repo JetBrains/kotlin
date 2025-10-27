@@ -883,6 +883,7 @@ class LightTreeRawFirExpressionBuilder(
                         isVar = false
                         symbol = FirLocalPropertySymbol()
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                        isLocal = true
                         receiverParameter = variable.receiverParameter?.let { receiverParameter ->
                             buildReceiverParameterCopy(receiverParameter) {
                                 symbol = FirReceiverParameterSymbol()
@@ -914,6 +915,7 @@ class LightTreeRawFirExpressionBuilder(
                 isVar = false
                 symbol = FirLocalPropertySymbol()
                 status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                isLocal = true
             }
         }
 
@@ -1418,6 +1420,7 @@ class LightTreeRawFirExpressionBuilder(
                         returnTypeRef = parameter.returnTypeRef
                         isVar = false
                         status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                        isLocal = true
                         this.name = parameter.name
                         symbol = FirLocalPropertySymbol()
                         annotations += parameter.annotations

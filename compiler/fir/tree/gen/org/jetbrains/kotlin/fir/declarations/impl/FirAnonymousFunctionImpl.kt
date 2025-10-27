@@ -57,6 +57,8 @@ internal class FirAnonymousFunctionImpl(
     override val typeParameters: MutableList<FirTypeParameter>,
     override var typeRef: FirTypeRef,
 ) : FirAnonymousFunction() {
+    override val isLocal: Boolean
+        get() = true
     override val containerSource: DeserializedContainerSource?
         get() = null
 

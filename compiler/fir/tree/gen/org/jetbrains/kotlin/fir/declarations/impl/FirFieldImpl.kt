@@ -36,6 +36,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var status: FirDeclarationStatus,
+    override val isLocal: Boolean,
     override var returnTypeRef: FirTypeRef,
     override var deprecationsProvider: DeprecationsProvider,
     override val dispatchReceiverType: ConeSimpleKotlinType?,

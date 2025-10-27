@@ -78,6 +78,13 @@ class FirErrorPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilde
             throw IllegalStateException()
         }
 
+    @Deprecated("Modification of 'isLocal' has no impact for FirErrorPropertyBuilder", level = DeprecationLevel.HIDDEN)
+    override var isLocal: Boolean
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
     @Deprecated("Modification of 'returnTypeRef' has no impact for FirErrorPropertyBuilder", level = DeprecationLevel.HIDDEN)
     override var returnTypeRef: FirTypeRef
         get() = throw IllegalStateException()

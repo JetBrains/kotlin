@@ -52,6 +52,8 @@ internal class FirErrorPropertyImpl(
     override val symbol: FirErrorPropertySymbol,
 ) : FirErrorProperty() {
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+    override val isLocal: Boolean
+        get() = true
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(source, MutableOrEmptyList.empty(), null, null, diagnostic)
     override val receiverParameter: FirReceiverParameter?
         get() = null

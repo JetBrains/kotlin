@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionWithoutNameSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -296,7 +297,8 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
                 }
             }
 
-            private fun FirDeclaration.shouldAddParentContext(): Boolean = symbol is FirFunctionWithoutNameSymbol || !isNonLocal
+            private fun FirDeclaration.shouldAddParentContext(): Boolean =
+                symbol is FirFunctionWithoutNameSymbol || symbol is FirBackingFieldSymbol || !isNonLocal
         }
     }
 }

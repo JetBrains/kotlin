@@ -67,6 +67,7 @@ class FirCloneableSymbolProvider(
                 Modality.OPEN,
                 Visibilities.Protected.toEffectiveVisibility(classSymbol)
             )
+            isLocal = false
 
             name = StandardClassIds.Callables.clone.callableName
             symbol = FirNamedFunctionSymbol(StandardClassIds.Callables.clone)

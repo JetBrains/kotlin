@@ -44,9 +44,9 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirControlFlowG
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
+    abstract override val isLocal: Boolean
     abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val scopeProvider: FirScopeProvider
-    abstract override val isLocal: Boolean
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirClassSymbol<FirClass>
     abstract val classKind: ClassKind

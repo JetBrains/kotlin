@@ -49,6 +49,8 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override val isGetter: Boolean,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirPropertyAccessor() {
+    override val isLocal: Boolean
+        get() = propertySymbol.fir.isLocal
     override val receiverParameter: FirReceiverParameter?
         get() = null
     override val containerSource: DeserializedContainerSource?

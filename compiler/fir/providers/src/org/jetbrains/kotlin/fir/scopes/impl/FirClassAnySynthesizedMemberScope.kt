@@ -186,6 +186,7 @@ class FirClassAnySynthesizedMemberScope(
             this.isOperator = isOperator
             this.returnValueStatus = ReturnValueStatus.MustUse // kotlin.Any is compiled in FULL mode, so overrides of Any functions have to be must-use
         }
+        isLocal = klass.isLocal
         symbol = FirNamedFunctionSymbol(CallableId(lookupTag.classId, name))
         dispatchReceiverType = this@FirClassAnySynthesizedMemberScope.dispatchReceiverType
     }

@@ -836,6 +836,7 @@ open class PsiRawFirBuilder(
                     )
 
                     this.status = status
+                    isLocal = this@PsiRawFirBuilder.context.inLocalContext
                     getter = FirDefaultPropertyGetter(
                         source = defaultAccessorSource,
                         moduleData = baseModuleData,
@@ -1042,6 +1043,7 @@ open class PsiRawFirBuilder(
 
                 isVar = false
                 status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
+                isLocal = context.inLocalContext
                 dispatchReceiverType = currentDispatchReceiverType()
             }
         }
@@ -1243,6 +1245,7 @@ open class PsiRawFirBuilder(
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = delegatedSelfTypeRef
                     this.status = status
+                    isLocal = context.inLocalContext
                     dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
                     symbol = constructorSymbol
                     delegatedConstructor = firDelegatedCall
@@ -1608,6 +1611,7 @@ open class PsiRawFirBuilder(
                         isExpect = containingClassIsExpectClass
                     }
                     symbol = enumSymbol
+                    isLocal = this@PsiRawFirBuilder.context.inLocalContext
                     if (ownerClassHasDefaultConstructor && ktEnumEntry.initializerList == null &&
                         ktEnumEntry.annotationEntries.isEmpty() && ktEnumEntry.body == null
                     ) {
@@ -2028,6 +2032,7 @@ open class PsiRawFirBuilder(
                         labelName = context.getLastLabel(function)?.name ?: runIf(!name.isSpecial) { name.identifier }
                         symbol = functionSymbol as FirNamedFunctionSymbol
                         dispatchReceiverType = runIf(!isLocalFunction) { currentDispatchReceiverType() }
+                        isLocal = context.inLocalContext
                         status = FirDeclarationStatusImpl(
                             if (isLocalFunction) Visibilities.Local else function.getVisibility(),
                             function.modality,
@@ -2239,6 +2244,7 @@ open class PsiRawFirBuilder(
                         isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.Private
                         isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
                     }
+                    isLocal = this@PsiRawFirBuilder.context.inLocalContext
                     dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
                     contextParameters.addContextParameters(owner.contextReceiverLists, symbol)
                     contextParameters.addContextParameters(this@toFirConstructor.modifierList?.contextReceiverLists.orEmpty(), symbol)
@@ -2350,6 +2356,7 @@ open class PsiRawFirBuilder(
                     }
 
                     initializer = propertyInitializer
+                    isLocal = context.inLocalContext
 
                     val propertyAnnotations = mutableListOf<FirAnnotationCall>()
                     for (annotationEntry in annotationEntries) {
@@ -2476,7 +2483,7 @@ open class PsiRawFirBuilder(
                         }
                     }
                     annotations += when {
-                        isLocal -> propertyAnnotations
+                        this@toFirProperty.isLocal -> propertyAnnotations
                         else -> propertyAnnotations.filterStandalonePropertyRelevantAnnotations(isVar)
                     }
 
@@ -2833,6 +2840,7 @@ open class PsiRawFirBuilder(
                             }
                             isVar = false
                             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                            isLocal = true
                             this.name = name
                             symbol = FirLocalPropertySymbol()
                             for (annotationEntry in ktParameter.annotationEntries) {
@@ -2897,6 +2905,7 @@ open class PsiRawFirBuilder(
                         isVar = false
                         symbol = FirLocalPropertySymbol()
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                        isLocal = true
                         receiverParameter = ktSubjectExpression.receiverTypeReference?.let {
                             createReceiverParameter({ it.toFirType() }, moduleData, symbol)
                         }
@@ -2920,6 +2929,7 @@ open class PsiRawFirBuilder(
                     isVar = false
                     symbol = FirLocalPropertySymbol()
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                    isLocal = true
                 }
             }
 

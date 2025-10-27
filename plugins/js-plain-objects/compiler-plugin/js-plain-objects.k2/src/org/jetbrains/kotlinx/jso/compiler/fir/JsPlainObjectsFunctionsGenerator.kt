@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
@@ -246,6 +247,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                 isOverride = false
                 this.isOperator = isOperator
             }
+            isLocal = parent.isLocal
 
             annotateWith(JsStandardClassIds.Annotations.JsExportIgnore)
 

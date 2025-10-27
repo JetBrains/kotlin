@@ -83,6 +83,9 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
 
     override val containerSource: DeserializedContainerSource? get() = null
 
+    override val isLocal: Boolean
+        get() = false
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         delegate.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)

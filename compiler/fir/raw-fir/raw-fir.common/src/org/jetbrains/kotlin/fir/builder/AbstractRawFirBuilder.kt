@@ -1140,6 +1140,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     status = FirDeclarationStatusImpl(firProperty.visibility, Modality.FINAL).apply {
                         isOperator = true
                     }
+                    isLocal = firPrimaryConstructor.isLocal
                     symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
                     dispatchReceiverType = currentDispatchReceiverType()
                     // Refer to FIR backend ClassMemberGenerator for body generation.
@@ -1422,6 +1423,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         } else {
             FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
         }
+        isLocal = firConstructor.isLocal
 
         for ((ktParameter, firProperty) in zippedParameters) {
             val propertyName = firProperty.name
