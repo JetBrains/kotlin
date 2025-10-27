@@ -29,16 +29,21 @@ internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinu
 
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
-internal suspend fun <T> returnIfSuspended(argument: Any?): T {
-    return argument as T
+internal suspend fun <T> returnIfSuspended(value: Any?): T {
+    return value as T
+}
+
+@PublishedApi
+@UsedFromCompilerGeneratedCode
+@Suppress("UNCHECKED_CAST")
+internal suspend inline fun <T> returnIfSuspendedNonGeneratorVersion(block: () -> Any?): T {
+    return block().unsafeCast<T>()
 }
 
 // TODO: remove `JS` suffix oncec `NameGenerator` is implemented
-@OptIn(JsIntrinsic::class)
 @UsedFromCompilerGeneratedCode
 @PublishedApi
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnJS(crossinline block: (Continuation<T>) -> Any?): T {
+internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnJS(block: (Continuation<T>) -> Any?): T {
     val continuation = getContinuation<T>()
-    return jsYield<dynamic> { block(continuation) }
+    return returnIfSuspendedNonGeneratorVersion { block(continuation) }
 }
