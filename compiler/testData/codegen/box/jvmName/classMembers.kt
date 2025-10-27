@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // See:
-// http://kotlinlang.org/docs/reference/java-interop.html#handling-signature-clashes-with-platformname
+// https://kotlinlang.org/docs/java-to-kotlin-interop.html#handling-signature-clashes-with-jvmname
 // https://youtrack.jetbrains.com/issue/KT-5524
 
 val strs = listOf("abc", "def")
@@ -64,7 +64,7 @@ class C {
 fun box(): String {
     val c = C()
 
-    // Instance methods: 
+    // Instance methods:
     // method signatures with erased types SHOULD NOT clash
 
     val test1 = c.instMethod(strs)
@@ -73,8 +73,8 @@ fun box(): String {
     val test2 = c.instMethod(ints)
     if (test2 != "instMethodInt") return "Fail: c.instMethod(ints)==$test2"
 
-    // Properties: 
-    // property accessors SHOULD NOT clash with class methods  
+    // Properties:
+    // property accessors SHOULD NOT clash with class methods
 
     val test3 = c.rwProperty
     if (test3 != 123) return "Fail: c.rwProperty==$test3"

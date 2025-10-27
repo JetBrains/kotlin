@@ -36,7 +36,7 @@ private constructor(
 
         val psmFile = findPsmFileOrNull(resolvedPsmConfiguration, moduleId)
         if (psmFile == null) {
-            logger.warn("Could not find Kotlin project structure metadata for module $moduleId; Please report this: http://kotl.in/issue")
+            logger.warn("Could not find Kotlin project structure metadata for module $moduleId; Please report this: https://kotl.in/issue")
             return null
         }
 

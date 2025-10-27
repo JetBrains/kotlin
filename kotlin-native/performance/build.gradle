@@ -96,7 +96,7 @@ task konanRun {
         dependsOn "${it.path}:konanRun"
     }
 }
-    
+
 task jvmRun {
     doFirst {
         if (findProperty("kotlin_dist") == null) {
@@ -306,7 +306,7 @@ task teamCityStat(type:Exec) {
     }
     commandLine analyzer, "-r", "teamcity",
         "--artifactory-url", "https://repo.labs.intellij.net/kotlin-native-benchmarks",
-        "--teamcity-url", "http://buildserver.labs.intellij.net",
+        "--teamcity-url", "https://buildserver.labs.intellij.net",
         "--server-url", findProperty("kotlin.native.performance.server.url")?.toString() ?: "http://localhost:3000",
         "${layout.buildDirectory.file(nativeJson).get().asFile}"
 }

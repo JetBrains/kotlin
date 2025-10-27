@@ -1,6 +1,6 @@
 # Annotation Arguments
 
-**NOTE**: This document contains old language design notes and does not correspond to the current state of Kotlin. Please see http://kotlinlang.org/docs/reference/annotations.html for up-to-date documentation on this topic. 
+**NOTE**: This document contains old language design notes and does not correspond to the current state of Kotlin. Please see https://kotlinlang.org/docs/reference/annotations.html for up-to-date documentation on this topic. 
 
 ***
 

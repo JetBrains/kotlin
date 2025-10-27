@@ -31,7 +31,7 @@ import kotlin.reflect.jvm.internal.types.AbstractKType
 
 /**
  * Returns the primary constructor of this class, or `null` if this class has no primary constructor.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/classes.html#constructors)
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/classes.html#constructors)
  * for more information.
  */
 @SinceKotlin("1.1")

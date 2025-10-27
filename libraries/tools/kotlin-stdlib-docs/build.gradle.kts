@@ -366,8 +366,8 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_root/libraries/kotlin.test/junit/src/main/kotlin")
 
                 externalDocumentationLink {
-                    url.set(URL("http://junit.org/junit4/javadoc/latest/"))
-                    packageListUrl.set(URL("http://junit.org/junit4/javadoc/latest/package-list"))
+                    url.set(URL("https://junit.org/junit4/javadoc/latest/"))
+                    packageListUrl.set(URL("https://junit.org/junit4/javadoc/latest/package-list"))
                 }
             }
 

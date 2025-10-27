@@ -24,7 +24,7 @@ Platforms `2021.1` and earlier get plugin built from [JetBrains/intellij-kotlin]
 
 We love contributions! There is [a lot to do on Kotlin](https://youtrack.jetbrains.com/issues/KT) and on the
 [standard library](https://youtrack.jetbrains.com/issues/KT?q=%23Kotlin%20%23Unresolved%20and%20(links:%20KT-2554,%20KT-4089%20or%20%23Libraries)) so why not chat with us
-about what you're interested in doing? Please join the #kontributors channel in [our Slack chat](http://slack.kotlinlang.org/)
+about what you're interested in doing? Please join the #kontributors channel in [our Slack chat](https://slack.kotlinlang.org/)
 and let us know about your plans.
 
 If you want to find some issues to start off with, try [this query](https://youtrack.jetbrains.com/issues/KT?q=tag:%20%7BUp%20For%20Grabs%7D%20and%20State:%20Open) which should find all open Kotlin issues that are marked as "up-for-grabs".

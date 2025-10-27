@@ -490,13 +490,13 @@ We can also support the following annotations out-of-the-box:
 * [`android.support.annotation`](https://developer.android.com/reference/android/support/annotation/package-summary.html)
  * [`android.support.annotation.Nullable`](https://developer.android.com/reference/android/support/annotation/Nullable.html)
  * [`android.support.annotation.NonNull`](https://developer.android.com/reference/android/support/annotation/NonNull.html)
-* From [FindBugs](http://findbugs.sourceforge.net/manual/annotations.html) and [`javax.annotation`](https://code.google.com/p/jsr-305/source/browse/trunk/ri/src/main/java/javax/annotation/)
+* From [FindBugs](https://findbugs.sourceforge.net/manual/annotations.html) and [`javax.annotation`](https://code.google.com/p/jsr-305/source/browse/trunk/ri/src/main/java/javax/annotation/)
  * `*.annotations.CheckForNull`
  * `*.NonNull`
  * `*.Nullable`
-* [`javax.validation.constraints`](http://docs.oracle.com/javaee/6/api/javax/validation/constraints/package-summary.html)
+* [`javax.validation.constraints`](https://docs.oracle.com/javaee/6/api/javax/validation/constraints/package-summary.html)
  * `NotNull` and `NotNull.List`
-* [Project Lombok](http://projectlombok.org/features/NonNull.html)
+* [Project Lombok](https://projectlombok.org/features/NonNull.html)
 * [`org.eclipse.jdt.annotation`](https://wiki.eclipse.org/JDT_Core/Null_Analysis)
 * [`org.checkerframework.checker.nullness`](https://checkerframework.org/manual/#nullness-checker)
  * [`*.qual.Nullable`](https://checkerframework.org/api/org/checkerframework/checker/nullness/qual/Nullable.html)
