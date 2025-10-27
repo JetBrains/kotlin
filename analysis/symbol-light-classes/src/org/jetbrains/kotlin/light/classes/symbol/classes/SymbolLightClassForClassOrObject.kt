@@ -313,11 +313,14 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 //            return emptyList()
 //        }
 
-        return emptyList()
+//        return emptyList()
 
-//        val finalBridgeWithObject = method.finalBridge(substitutor)
-//        val abstractKotlinVariantWithGeneric = method.wrap(substitutor, substituteObjectWith = singleTypeParameterAsType())
-//        return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
+        val type = substitutor.substitutionMap.values.single()
+        if (type.isTypeParameter()) return emptyList()
+
+        val finalBridgeWithObject = method.finalBridge(substitutor)
+        val abstractKotlinVariantWithGeneric = method.wrap(substitutor, substituteObjectWith = type)
+        return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
     }
 
     private fun PsiType.isTypeParameter(): Boolean =
