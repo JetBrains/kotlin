@@ -51,6 +51,7 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
 
     return configurations.createResolvable(compilation.cInteropDependencyConfigurationName).apply {
         extendsFrom(compileOnlyConfiguration, implementationConfiguration)
+        @Suppress("DEPRECATION")
         isVisible = false
 
         /* Deferring attributes to wait for compilation.attributes to be configured by user */

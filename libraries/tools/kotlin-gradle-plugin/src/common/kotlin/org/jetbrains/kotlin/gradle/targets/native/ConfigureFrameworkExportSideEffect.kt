@@ -23,6 +23,7 @@ internal val ConfigureFrameworkExportSideEffect = KotlinTargetSideEffect<KotlinN
 
     target.binaries.withType(AbstractNativeLibrary::class.java).all { framework ->
         project.configurations.maybeCreateResolvable(framework.exportConfigurationName).apply {
+            @Suppress("DEPRECATION")
             isVisible = false
             isTransitive = false
             usesPlatformOf(target)

@@ -49,6 +49,7 @@ internal fun KotlinTargetSoftwareComponent(
             val project: Project = target.project
             val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
             val configuration = project.configurations.maybeCreateDependencyScope(publishedConfigurationName) {
+                @Suppress("DEPRECATION")
                 isVisible = false
                 if (project.kotlinPropertiesProvider.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs) {
                     filterOutNonResolvableDependenciesForStandardKmpResolution(project, kotlinUsageContext)

@@ -1021,6 +1021,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/HasBinari
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/HierarchyAttributeContainer : org/gradle/api/attributes/AttributeContainer {
 	public fun <init> (Lorg/gradle/api/attributes/AttributeContainer;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Lorg/gradle/api/attributes/AttributeContainer;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun addAllLater (Lorg/gradle/api/attributes/AttributeContainer;)Lorg/gradle/api/attributes/AttributeContainer;
 	public fun attribute (Lorg/gradle/api/attributes/Attribute;Ljava/lang/Object;)Lorg/gradle/api/attributes/AttributeContainer;
 	public fun attributeProvider (Lorg/gradle/api/attributes/Attribute;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/attributes/AttributeContainer;
 	public fun contains (Lorg/gradle/api/attributes/Attribute;)Z

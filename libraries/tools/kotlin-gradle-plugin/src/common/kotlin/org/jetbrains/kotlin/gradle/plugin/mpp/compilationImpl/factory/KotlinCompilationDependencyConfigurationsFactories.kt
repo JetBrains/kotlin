@@ -108,6 +108,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         ConfigurationNaming.Default(target, compilationName).name(COMPILE)
     )?.apply {
         setupAsLocalTargetSpecificConfigurationIfSupported(target)
+        @Suppress("DEPRECATION")
         isVisible = false
         description = "Dependencies for $compilation (deprecated, use '${implementationConfigurationName} ' instead)."
     }
@@ -117,6 +118,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     )?.apply {
         setupAsLocalTargetSpecificConfigurationIfSupported(target)
         deprecatedCompileConfiguration?.let { extendsFrom(it) }
+        @Suppress("DEPRECATION")
         isVisible = false
         description =
             "Runtime dependencies for $compilation (deprecated, use '${runtimeOnlyConfigurationName} ' instead)."
@@ -127,6 +129,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     val apiConfiguration = target.project.configurations.maybeCreateDependencyScope(apiConfigurationName).apply {
         deprecatedCompileConfiguration?.let { extendsFrom(it) }
 
+        @Suppress("DEPRECATION")
         isVisible = false
         description = "API dependencies for '$compilationCoordinates'."
     }
@@ -135,6 +138,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         .maybeCreateDependencyScope(implementationConfigurationName).apply {
             extendsFrom(apiConfiguration)
             deprecatedCompileConfiguration?.let { extendsFrom(it) }
+            @Suppress("DEPRECATION")
             isVisible = false
             description = "Implementation only dependencies for '$compilationCoordinates'."
         }
@@ -143,11 +147,13 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         .maybeCreateDependencyScope(compileOnlyConfigurationName).apply {
             setupAsLocalTargetSpecificConfigurationIfSupported(target)
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+            @Suppress("DEPRECATION")
             isVisible = false
             description = "Compile only dependencies for '$compilationCoordinates'."
         }
 
     val runtimeOnlyConfiguration = target.project.configurations.maybeCreateDependencyScope(runtimeOnlyConfigurationName).apply {
+        @Suppress("DEPRECATION")
         isVisible = false
         description = "Runtime only dependencies for '$compilationCoordinates'."
     }
@@ -156,6 +162,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         .maybeCreateResolvable(compileClasspathConfigurationName).apply {
             extendsFrom(compileOnlyConfiguration, implementationConfiguration)
             usesPlatformOf(target)
+            @Suppress("DEPRECATION")
             isVisible = false
             attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
             if (target.platformType != KotlinPlatformType.androidJvm) {
@@ -169,6 +176,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             extendsFrom(runtimeOnlyConfiguration, implementationConfiguration)
             deprecatedRuntimeConfiguration?.let { extendsFrom(it) }
             usesPlatformOf(target)
+            @Suppress("DEPRECATION")
             isVisible = false
             attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
             if (target.platformType != KotlinPlatformType.androidJvm) {
@@ -179,6 +187,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
 
     val hostSpecificMetadataConfiguration =
         if (withHostSpecificMetadata) target.project.configurations.maybeCreateResolvable(hostSpecificMetadataConfigurationName).apply {
+            @Suppress("DEPRECATION")
             isVisible = false
             description = "Host-specific Metadata dependencies for '$compilationCoordinates'."
             extendsFrom(compileDependencyConfiguration)
@@ -198,6 +207,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         } else {
             extendsFrom(target.project.commonKotlinPluginClasspath)
         }
+        @Suppress("DEPRECATION")
         isVisible = false
         description = "Kotlin compiler plugins for $compilation"
     }

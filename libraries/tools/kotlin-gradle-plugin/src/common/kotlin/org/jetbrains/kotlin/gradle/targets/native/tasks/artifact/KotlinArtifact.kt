@@ -87,6 +87,7 @@ abstract class KotlinNativeArtifactConfigImpl(artifactName: String) : KotlinArti
 internal fun Project.registerLibsDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
     val librariesConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkLibrary")
     configurations.maybeCreateResolvable(librariesConfigurationName).apply {
+        @Suppress("DEPRECATION")
         isVisible = false
         isTransitive = true
         configureAttributesFor(project, target)
@@ -98,6 +99,7 @@ internal fun Project.registerLibsDependencies(target: KonanTarget, artifactName:
 internal fun Project.registerExportDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
     val exportConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkExport")
     configurations.maybeCreateResolvable(exportConfigurationName).apply {
+        @Suppress("DEPRECATION")
         isVisible = false
         isTransitive = false
         configureAttributesFor(project, target)

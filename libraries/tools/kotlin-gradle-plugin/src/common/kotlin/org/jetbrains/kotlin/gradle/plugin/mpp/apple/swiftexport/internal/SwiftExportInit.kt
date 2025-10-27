@@ -71,6 +71,7 @@ internal fun KotlinNativeTarget.exportedSwiftExportApiConfiguration(
 ): Configuration =
     project.configurations.maybeCreateResolvable(exportedSwiftExportApiConfigurationName(buildType)) {
         description = "Swift Export dependencies configuration for $name"
+        @Suppress("DEPRECATION")
         isVisible = false
         extendsFrom(extendConfiguration)
         shouldResolveConsistentlyWith(extendConfiguration)

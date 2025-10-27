@@ -45,7 +45,10 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
     val sourcesElementsConfiguration = project.configurations
         .maybeCreateConsumable(lowerCamelCaseName(descriptor.targetName, "sourcesElements"))
 
-    fun Configuration.notVisible() = apply { isVisible = false }
+    fun Configuration.notVisible() = apply {
+        @Suppress("DEPRECATION")
+        isVisible = false
+    }
     val apiElementsPublishedConfiguration = project.configurations
         .maybeCreateDependencyScope(lowerCamelCaseName(descriptor.targetName, "apiElements-published"))
         .notVisible()

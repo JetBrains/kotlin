@@ -84,6 +84,7 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
             attribute(isUklib, isUklibTrue)
         }
         inheritCompilationDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
+        @Suppress("DEPRECATION")
         isVisible = false
     }
 
@@ -123,6 +124,7 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
             attribute(isUklib, isUklibTrue)
         }
         inheritRuntimeDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
+        @Suppress("DEPRECATION")
         isVisible = false
     }
 
