@@ -56,7 +56,7 @@ private class FunctionTypeKindSubstitutor(private val session: FirSession) : Abs
      */
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeClassLikeType) return null
-        val classId = type.classId ?: return null
+        val classId = type.classId
         return session.functionTypeService.extractSingleExtensionKindForDeserializedConeType(classId, type.customAnnotations)
             ?.let { functionTypeKind ->
                 type.createFunctionTypeWithNewKind(session, functionTypeKind) {

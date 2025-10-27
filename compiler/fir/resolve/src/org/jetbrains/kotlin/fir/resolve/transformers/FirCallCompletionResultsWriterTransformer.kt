@@ -1164,7 +1164,7 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun ConeKotlinType.functionTypeKindForDeserializedConeType(): FunctionTypeKind? {
         val coneClassLikeType = this.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
-        val classId = coneClassLikeType.classId ?: return null
+        val classId = coneClassLikeType.classId
         return session.functionTypeService.extractSingleExtensionKindForDeserializedConeType(classId, coneClassLikeType.customAnnotations)
     }
 

@@ -117,7 +117,7 @@ open class ConeTypeRenderer(
             }
 
             is ConeSimpleKotlinType -> when {
-                type is ConeClassLikeType && type.classId?.isFunctionType() == true -> {
+                type is ConeClassLikeType && type.classId.isFunctionType() -> {
                     renderFunctionType(type, nullabilityMarker)
                     return
                 }
@@ -140,7 +140,7 @@ open class ConeTypeRenderer(
         if (nullabilityMarker != "") {
             builder.append('(')
         }
-        if (type.classId?.isSuspendFunctionType() == true) {
+        if (type.classId.isSuspendFunctionType()) {
             builder.append("suspend ")
         }
         val arguments = type.typeArguments.iterator().withSeenElementsCounting()

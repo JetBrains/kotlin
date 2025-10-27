@@ -147,7 +147,7 @@ class FirJvmTypeMapper(override val session: FirSession) : FirSessionComponent, 
         }
 
         private fun ConeClassLikeType.parentClassOrNull(): FirRegularClassSymbol? {
-            val parentClassId = classId?.outerClassId ?: return null
+            val parentClassId = classId.outerClassId ?: return null
             return session.symbolProvider.getClassLikeSymbolByClassId(parentClassId) as? FirRegularClassSymbol?
         }
 
