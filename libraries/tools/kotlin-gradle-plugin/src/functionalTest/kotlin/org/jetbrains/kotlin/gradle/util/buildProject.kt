@@ -13,6 +13,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testing.base.TestingExtension
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -48,6 +49,21 @@ fun buildProjectWithMPP(
 ) = buildProject(projectBuilder) {
     preApplyCode()
     project.applyMultiplatformPlugin()
+    code()
+}
+
+/**
+ * JVM + JS + Kotlin/Native(linuxX64) + Wasm js + Wasm wasi
+ */
+fun buildKMPWithAllBackends(
+    projectBuilder: ProjectBuilder.() -> Unit = { },
+    preApplyCode: Project.() -> Unit = {},
+    code: Project.() -> Unit = {},
+) = buildProject(projectBuilder) {
+    preApplyCode()
+    project.applyMultiplatformPlugin()
+    @OptIn(ExperimentalWasmDsl::class)
+    kotlin { jvm(); js(); linuxX64(); wasmJs(); wasmWasi(); }
     code()
 }
 
