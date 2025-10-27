@@ -761,9 +761,15 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
       }
 
       @Test
-      @TestMetadata("mapAbstractClassOfString.kt")
-      public void testMapAbstractClassOfString() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapAbstractClassOfString.kt");
+      @TestMetadata("mapAbstractClassOfAToT.kt")
+      public void testMapAbstractClassOfAToT() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapAbstractClassOfAToT.kt");
+      }
+
+      @Test
+      @TestMetadata("mapAbstractClassOfTToA.kt")
+      public void testMapAbstractClassOfTToA() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapAbstractClassOfTToA.kt");
       }
 
       @Test
