@@ -7,7 +7,15 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
 
   public @org.jetbrains.annotations.NotNull() java.lang.String set(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  set(int, @org.jetbrains.annotations.NotNull() java.lang.String)
 
+  public abstract @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
+
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   public abstract int getSize();//  getSize()
+
+  public abstract int indexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  indexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  public abstract int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
 
@@ -20,6 +28,14 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  public final @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
+
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
 
   public final int size();//  size()
 
