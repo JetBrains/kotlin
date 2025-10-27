@@ -82,7 +82,7 @@ class TowerLevelProcessor(
     fun consumeCandidate(
         symbol: FirBasedSymbol<*>,
         dispatchReceiver: FirExpression?,
-        givenExtensionReceiverOptions: List<FirExpression>,
+        givenExtensionReceiver: FirExpression?,
         scope: FirScope,
         objectsByName: Boolean = false,
         isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
@@ -94,7 +94,7 @@ class TowerLevelProcessor(
                 explicitReceiverKind,
                 scope,
                 dispatchReceiver,
-                givenExtensionReceiverOptions,
+                givenExtensionReceiver,
                 objectsByName,
                 isFromOriginalTypeInPresenceOfSmartCast
             ), candidateFactory.context

@@ -77,35 +77,20 @@ object CheckExtensionReceiver : ResolutionStage() {
         val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType)
 
         // Probably, we should add an assertion here since we check consistency on the level of scope tower levels
-        if (candidate.givenExtensionReceiverOptions.isEmpty()) return
+        if (candidate.givenExtensionReceiver == null) return
 
-        val preparedReceivers = candidate.givenExtensionReceiverOptions.map {
-            prepareImplicitArgument(it, expectedType, context.session)
-        }
+        val preparedReceiver = prepareImplicitArgument(candidate.givenExtensionReceiver, expectedType, context.session)
 
-        if (preparedReceivers.size == 1) {
-            resolveExtensionReceiver(preparedReceivers, candidate, expectedType)
-            return
-        }
-
-        val successfulReceivers = preparedReceivers.filter {
-            candidate.system.isSubtypeConstraintCompatible(it.type, expectedType)
-        }
-
-        when (successfulReceivers.size) {
-            0 -> sink.yieldDiagnostic(InapplicableWrongReceiver())
-            1 -> resolveExtensionReceiver(successfulReceivers, candidate, expectedType)
-            else -> sink.yieldDiagnostic(MultipleContextReceiversApplicableForExtensionReceivers())
-        }
+        resolveExtensionReceiver(preparedReceiver, candidate, expectedType)
     }
 
     context(sink: CheckerSink, context: ResolutionContext)
     private suspend fun resolveExtensionReceiver(
-        receivers: List<ImplicitArgumentDescription>,
+        receiver: ImplicitArgumentDescription,
         candidate: Candidate,
         expectedType: ConeKotlinType
     ) {
-        val (atom, type) = receivers.single()
+        val (atom, type) = receiver
         ArgumentCheckingProcessor.resolvePlainArgumentType(
             candidate,
             atom,

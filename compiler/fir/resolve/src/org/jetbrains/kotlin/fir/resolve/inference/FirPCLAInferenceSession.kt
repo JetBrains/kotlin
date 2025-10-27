@@ -284,7 +284,7 @@ class FirPCLAInferenceSession(
         // We can't analyze independently the calls which have postponed receivers
         // Even if the calls themselves are trivial
         if (dispatchReceiver?.expression?.isReceiverPostponed() == true) return false
-        if (givenExtensionReceiverOptions.any { it.expression.isReceiverPostponed() }) return false
+        if (givenExtensionReceiver?.expression?.isReceiverPostponed() == true) return false
         // At the step of candidate's system creation, there are no chosen context receiver values, yet
         // (see org.jetbrains.kotlin.fir.resolve.calls.CheckContextArguments)
         // Thus, we just postpone everything with symbols requiring some context receivers

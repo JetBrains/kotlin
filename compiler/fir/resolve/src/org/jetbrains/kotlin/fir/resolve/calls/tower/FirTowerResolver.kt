@@ -126,7 +126,7 @@ class FirTowerResolver(
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
                     scope,
                     dispatchReceiver?.receiverExpression,
-                    givenExtensionReceiverOptions = emptyList()
+                    givenExtensionReceiver = null,
                 ).apply {
                     if (outerType != null && dispatchReceiver == null) {
                         val diagnostic = constructedType
