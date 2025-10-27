@@ -1,4 +1,6 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(a.b.c.A::class, "22ExportedKotlinPackages1aO1bO1cO4mainE1AC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(a.b.c.B::class, "22ExportedKotlinPackages1aO1bO1cO4mainE1BC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo.Inner::class, "4main3FooC5InnerC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo.Nested::class, "4main3FooC6NestedC")
@@ -50,6 +52,46 @@ public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
 public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, Foo())
+}
+
+@ExportedBridge("a_b_c_A_init_allocate")
+public fun a_b_c_A_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<a.b.c.A>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("a_b_c_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun a_b_c_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, a.b.c.A())
+}
+
+@ExportedBridge("a_b_c_A_make__TypesOfArguments__Swift_Int32__")
+public fun a_b_c_A_make__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, value: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as a.b.c.A
+    val __value = value
+    val _result = __self.make(__value)
+    return _result.objcPtr()
+}
+
+@ExportedBridge("a_b_c_B_init_allocate")
+public fun a_b_c_B_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<a.b.c.B>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("a_b_c_B_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun a_b_c_B_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, a.b.c.B())
+}
+
+@ExportedBridge("a_b_c_B_make__TypesOfArguments__Swift_Int32__")
+public fun a_b_c_B_make__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, value: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as a.b.c.B
+    val __value = value
+    val _result = __self.make(__value)
+    return _result.objcPtr()
 }
 
 @ExportedBridge("a_b_c_E_A")

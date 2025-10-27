@@ -40,8 +40,12 @@ fun return_any_should_append_runtime_import(): Any = TODO()
 
 package namespace3
 
+// KT-79227 Swift Export: Fix First Release Issues
+// Void function parameters aren't passed down correctly
 fun foo(faux: Unit): Unit = Unit
 
+// KT-79227 Swift Export: Fix First Release Issues
+// Void has to be the first and the only argument
 fun foo(arg1: Int, faux: Unit): Unit = Unit
 
 val bar: Unit get() = Unit

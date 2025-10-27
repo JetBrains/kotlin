@@ -7,6 +7,8 @@ void * _Nullable A_foo_get(void * self);
 
 void AnyConsumer_consume__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * item);
 
+void * ArrayBox_ints_get(void * self);
+
 void * _Nullable B_foo_get(void * self);
 
 void * _Nullable Box_t_get(void * self);
@@ -18,6 +20,10 @@ void Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSuppo
 int32_t Demo_foo_get(void * self);
 
 void * GenericWithComparableUpperBound_t_get(void * self);
+
+void * _Nullable Holder_headOrNull(void * self);
+
+void * Holder_xs_get(void * self);
 
 void * _Nullable IdentityProcessor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable input);
 
@@ -35,6 +41,10 @@ void * __root___AnyConsumer_init_allocate();
 
 void __root___AnyConsumer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+void * __root___ArrayBox_init_allocate();
+
+void __root___ArrayBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___CPImpl_init_allocate();
 
 void __root___CPImpl_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -50,6 +60,10 @@ void __root___Demo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoin
 void * __root___GenericWithComparableUpperBound_init_allocate();
 
 void __root___GenericWithComparableUpperBound_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_Comparable__(void * __kt, void * t);
+
+void * __root___Holder_init_allocate();
+
+void __root___Holder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Array__(void * __kt, void * xs);
 
 void * __root___IdentityProcessor_init_allocate();
 

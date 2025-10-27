@@ -65,6 +65,25 @@ public final class AnyConsumer: KotlinRuntime.KotlinBase {
         return AnyConsumer_consume__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), item.__externalRCRef())
     }
 }
+public final class ArrayBox: KotlinRuntime.KotlinBase {
+    public var ints: ExportedKotlinPackages.kotlin.Array {
+        get {
+            return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: ArrayBox_ints_get(self.__externalRCRef()))
+        }
+    }
+    public init() {
+        if Self.self != main.ArrayBox.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ArrayBox ") }
+        let __kt = __root___ArrayBox_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___ArrayBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+}
 open class Box: KotlinRuntime.KotlinBase {
     public final var t: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
@@ -156,6 +175,30 @@ public final class GenericWithComparableUpperBound: KotlinRuntime.KotlinBase {
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+}
+public final class Holder: KotlinRuntime.KotlinBase {
+    public var xs: ExportedKotlinPackages.kotlin.Array {
+        get {
+            return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: Holder_xs_get(self.__externalRCRef()))
+        }
+    }
+    public init(
+        xs: ExportedKotlinPackages.kotlin.Array
+    ) {
+        if Self.self != main.Holder.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Holder ") }
+        let __kt = __root___Holder_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___Holder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Array__(__kt, xs.__externalRCRef())
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public func headOrNull() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return { switch Holder_headOrNull(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
     }
 }
 public final class IdentityProcessor: KotlinRuntime.KotlinBase {
