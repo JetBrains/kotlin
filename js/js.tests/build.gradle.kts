@@ -277,6 +277,8 @@ projectTests {
     }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
+
+    withJsRuntime()
 }
 
 testsJar {}

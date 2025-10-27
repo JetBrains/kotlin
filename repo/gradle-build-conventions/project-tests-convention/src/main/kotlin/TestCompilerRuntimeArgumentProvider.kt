@@ -76,6 +76,9 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
     @get:Classpath
     abstract val testJsRuntimeForTests: ConfigurableFileCollection
 
+    @get:InputFiles
+    @get:Classpath
+    abstract val stdlibJsMinimalRuntimeForTests: ConfigurableFileCollection
 
     @get:InputFiles
     @get:Classpath
@@ -148,6 +151,7 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
 
     override fun asArguments(): Iterable<String> {
         return listOfNotNull(
+            // JVM libs
             argument(KOTLIN_FULL_STDLIB_PATH, stdlibRuntimeForTests),
             argument(KOTLIN_MINIMAL_STDLIB_PATH, stdlibMinimalRuntimeForTests),
             argument(KOTLIN_REFLECT_JAR_PATH, kotlinReflectJarForTests),
@@ -156,15 +160,19 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
             ifNotEmpty(KOTLIN_TEST_JAR_PATH, kotlinTestJarForTests),
             ifNotEmpty(KOTLIN_ANNOTATIONS_PATH, kotlinAnnotationsForTests),
             ifNotEmpty(KOTLIN_SCRIPTING_PLUGIN_CLASSPATH, scriptingPluginForTests),
+
+            // JS libs
             ifNotEmpty(KOTLIN_JS_STDLIB_KLIB_PATH, stdlibJsRuntimeForTests),
-            ifNotEmpty(KOTLIN_JS_REDUCED_STDLIB_PATH, stdlibJsRuntimeForTests),
+            ifNotEmpty(KOTLIN_JS_REDUCED_STDLIB_PATH, stdlibJsMinimalRuntimeForTests),
             ifNotEmpty(KOTLIN_JS_KOTLIN_TEST_KLIB_PATH, testJsRuntimeForTests),
 
+            // Wasm libs
             ifNotEmpty(KOTLIN_WASM_JS_STDLIB_KLIB_PATH, stdlibWasmJsRuntimeForTests),
             ifNotEmpty(KOTLIN_WASM_WASI_STDLIB_KLIB_PATH, stdlibWasmWasiRuntimeForTests),
             ifNotEmpty(KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH, testWasmJsRuntimeForTests),
             ifNotEmpty(KOTLIN_WASM_WASI_KOTLIN_TEST_KLIB_PATH, testWasmWasiRuntimeForTests),
 
+            // JVM additional libs
             mockJdkRuntimeJar.orNull?.let { "-D$KOTLIN_MOCKJDK_RUNTIME_PATH=${it.asFile.absolutePath}" },
             mockJDKModifiedRuntime.orNull?.let { "-D$KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH=${it.asFile.absolutePath}" },
             mockJdkAnnotationsJar.orNull?.let { "-D$KOTLIN_MOCKJDK_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
@@ -172,6 +180,8 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
             thirdPartyJava8Annotations.orNull?.let { "-D$KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
             thirdPartyJava9Annotations.orNull?.let { "-D$KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
             thirdPartyJsr305.orNull?.let { "-D$KOTLIN_THIRDPARTY_JSR305_PATH=${it.asFile.absolutePath}" },
+
+            // test data
             testDataMap.get().takeIf { it.isNotEmpty() }
                 ?.map { it.key + "=" + it.value }
                 ?.joinToString(prefix = "-D$KOTLIN_TESTDATA_ROOTS=", separator = ";"),

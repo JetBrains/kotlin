@@ -138,7 +138,7 @@ projectTests {
     testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)
 
     withJvmStdlibAndReflect()
-    withStdlibJsRuntime()
+    withJsRuntime()
 }
 
 testsJar()
