@@ -4,17 +4,23 @@
  */
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import java.nio.file.Files
 import javax.inject.Inject
 
+@DisableCachingByDefault
 abstract class UnzipWasmEdge : DefaultTask() {
     @get:Inject
     abstract val fs: FileSystemOperations
+
+    @get:Inject
+    abstract val archiveOperations: ArchiveOperations
 
     @get:InputFiles
     @get:Classpath
@@ -38,12 +44,20 @@ abstract class UnzipWasmEdge : DefaultTask() {
             delete(into)
         }
 
+        val isWindows = getIsWindows.get()
+
         fs.copy {
-            from(from)
+            from(
+                if (isWindows) {
+                    archiveOperations.zipTree(from.singleFile)
+                } else {
+                    archiveOperations.tarTree(from.singleFile)
+                }
+            )
             into(into)
         }
 
-        if (getIsWindows.get()) return
+        if (isWindows) return
 
         val wasmEdgeUnpackedDirectory = into.get().asFile.resolve(directoryName.get())
 

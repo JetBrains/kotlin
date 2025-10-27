@@ -296,17 +296,7 @@ val unzipJsShell by task<Copy> {
 }
 
 val unzipWasmEdge by task<UnzipWasmEdge> {
-    dependsOn(wasmEdge)
-
-    from.setFrom(
-        {
-            if (wasmEdge.singleFile.extension == "zip") {
-                zipTree(wasmEdge.singleFile)
-            } else {
-                tarTree(wasmEdge.singleFile)
-            }
-        }
-    )
+    from.setFrom(wasmEdge)
 
     val currentOsTypeForConfigurationCache = currentOsType.name
 
@@ -321,8 +311,7 @@ val unzipWasmEdge by task<UnzipWasmEdge> {
 
 val jscDirectory = toolsDirectory.map { it.dir("JavaScriptCore").asFile }
 val unzipJsc by task<UnzipJsc> {
-    dependsOn(jsc)
-    from.setFrom({ zipTree(jsc.singleFile) })
+    from.setFrom(jsc)
 
     into.fileProvider(jscDirectory.map { it.resolve("jsc-$jscOsDependentClassifier-$jscOsDependentRevision") })
 
