@@ -300,10 +300,10 @@
 /libraries/tools/kotlin-gradle-build-metrics/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-compiler-types/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin/ @JetBrains/kotlin-build-tools
-/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/ @JetBrains/kotlin-wasm @JetBrains/kotlin-js
+/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/ @JetBrains/kotlin-wasm @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/binaryen/ @JetBrains/kotlin-wasm
-/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/d8/ @JetBrains/kotlin-wasm @JetBrains/kotlin-js
-/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/web/ @JetBrains/kotlin-wasm @JetBrains/kotlin-js
+/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/d8/ @JetBrains/kotlin-wasm @JetBrains/kotlin-build-tools
+/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/web/ @JetBrains/kotlin-wasm @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-annotations/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-api/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-dsl-codegen/ @JetBrains/kotlin-build-tools
@@ -314,9 +314,9 @@
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/KotlinWasmGradlePluginIT.kt @JetBrains/kotlin-build-tools @JetBrains/kotlin-wasm
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-wasm-*/ @JetBrains/kotlin-build-tools @JetBrains/kotlin-wasm
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/wasm-*/ @JetBrains/kotlin-build-tools @JetBrains/kotlin-wasm
-/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/js-*/ @JetBrains/kotlin-build-tools @JetBrains/kotlin-js
-/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kotlin-js-*/ @JetBrains/kotlin-build-tools @JetBrains/kotlin-js
-/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-js-*/ @JetBrains/kotlin-build-tools @JetBrains/kotlin-js
+/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/js-*/ @JetBrains/kotlin-build-tools
+/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kotlin-js-*/ @JetBrains/kotlin-build-tools
+/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-js-*/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-npm-versions-codegen/ ilya.goncharov@jetbrains.com
 /libraries/tools/kotlin-gradle-plugin-test-utils-embeddable/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-tcs-android/ @JetBrains/kotlin-build-tools
