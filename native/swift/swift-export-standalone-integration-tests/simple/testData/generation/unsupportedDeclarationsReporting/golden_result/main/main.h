@@ -17,6 +17,18 @@ void * __root___Foo_init_allocate();
 
 void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+void * a_b_c_A_init_allocate();
+
+void a_b_c_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+NSString * a_b_c_A_make__TypesOfArguments__Swift_Int32__(void * self, int32_t value);
+
+void * a_b_c_B_init_allocate();
+
+void a_b_c_B_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+NSString * a_b_c_B_make__TypesOfArguments__Swift_Int32__(void * self, int32_t value);
+
 void * a_b_c_E_A();
 
 void * a_b_c_E_B();

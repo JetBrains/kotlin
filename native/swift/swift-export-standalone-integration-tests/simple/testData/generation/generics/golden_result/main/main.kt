@@ -1,10 +1,12 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(AnyConsumer::class, "4main11AnyConsumerC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ArrayBox::class, "4main8ArrayBoxC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Box::class, "4main3BoxC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(CPImpl::class, "4main6CPImplC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(DefaultBox::class, "4main10DefaultBoxC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Demo::class, "4main4DemoC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(GenericWithComparableUpperBound::class, "4main31GenericWithComparableUpperBoundC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Holder::class, "4main6HolderC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(IdentityProcessor::class, "4main17IdentityProcessorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Pair::class, "4main4PairC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(StringProducer::class, "4main14StringProducerC")
@@ -32,6 +34,13 @@ public fun AnyConsumer_consume__TypesOfArguments__anyU20KotlinRuntimeSupport__Ko
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as AnyConsumer
     val __item = kotlin.native.internal.ref.dereferenceExternalRCRef(item) as kotlin.Any
     __self.consume(__item)
+}
+
+@ExportedBridge("ArrayBox_ints_get")
+public fun ArrayBox_ints_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ArrayBox
+    val _result = __self.ints
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("B_foo_get")
@@ -73,6 +82,20 @@ public fun Demo_foo_get(self: kotlin.native.internal.NativePtr): Int {
 public fun GenericWithComparableUpperBound_t_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as GenericWithComparableUpperBound<kotlin.Comparable<kotlin.Any?>>
     val _result = __self.t
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Holder_headOrNull")
+public fun Holder_headOrNull(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Holder<kotlin.Any?>
+    val _result = __self.headOrNull()
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Holder_xs_get")
+public fun Holder_xs_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Holder<kotlin.Any?>
+    val _result = __self.xs
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -132,6 +155,18 @@ public fun __root___AnyConsumer_init_initialize__TypesOfArguments__Swift_UnsafeM
     kotlin.native.internal.initInstance(____kt, AnyConsumer())
 }
 
+@ExportedBridge("__root___ArrayBox_init_allocate")
+public fun __root___ArrayBox_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<ArrayBox>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___ArrayBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___ArrayBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, ArrayBox())
+}
+
 @ExportedBridge("__root___CPImpl_init_allocate")
 public fun __root___CPImpl_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<CPImpl>()
@@ -180,6 +215,19 @@ public fun __root___GenericWithComparableUpperBound_init_initialize__TypesOfArgu
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __t = kotlin.native.internal.ref.dereferenceExternalRCRef(t) as kotlin.Comparable<kotlin.Any?>
     kotlin.native.internal.initInstance(____kt, GenericWithComparableUpperBound<kotlin.Comparable<kotlin.Any?>>(__t))
+}
+
+@ExportedBridge("__root___Holder_init_allocate")
+public fun __root___Holder_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<Holder<kotlin.Any?>>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___Holder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Array__")
+public fun __root___Holder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Array__(__kt: kotlin.native.internal.NativePtr, xs: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __xs = kotlin.native.internal.ref.dereferenceExternalRCRef(xs) as kotlin.Array<kotlin.Any?>
+    kotlin.native.internal.initInstance(____kt, Holder<kotlin.Any?>(__xs))
 }
 
 @ExportedBridge("__root___IdentityProcessor_init_allocate")

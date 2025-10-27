@@ -56,3 +56,17 @@ open class OPEN_CLASS: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
+open class OPEN_CLASS_WITH_PROTECTED_FUNCTION: KotlinRuntime.KotlinBase {
+    public init() {
+        if Self.self != inheritance.OPEN_CLASS_WITH_PROTECTED_FUNCTION.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from inheritance.OPEN_CLASS_WITH_PROTECTED_FUNCTION ") }
+        let __kt = __root___OPEN_CLASS_WITH_PROTECTED_FUNCTION_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___OPEN_CLASS_WITH_PROTECTED_FUNCTION_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+}

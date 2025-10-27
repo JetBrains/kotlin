@@ -2,6 +2,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_SINGLE_CLASS::class, "11inheritance24INHERITANCE_SINGLE_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OBJECT_WITH_CLASS_INHERITANCE::class, "11inheritance29OBJECT_WITH_CLASS_INHERITANCEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OPEN_CLASS::class, "11inheritance10OPEN_CLASSC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(OPEN_CLASS_WITH_PROTECTED_FUNCTION::class, "11inheritance34OPEN_CLASS_WITH_PROTECTED_FUNCTIONC")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
@@ -38,6 +39,18 @@ public fun __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__
 public fun __root___OBJECT_WITH_CLASS_INHERITANCE_get(): kotlin.native.internal.NativePtr {
     val _result = OBJECT_WITH_CLASS_INHERITANCE
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___OPEN_CLASS_WITH_PROTECTED_FUNCTION_init_allocate")
+public fun __root___OPEN_CLASS_WITH_PROTECTED_FUNCTION_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<OPEN_CLASS_WITH_PROTECTED_FUNCTION>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___OPEN_CLASS_WITH_PROTECTED_FUNCTION_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___OPEN_CLASS_WITH_PROTECTED_FUNCTION_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, OPEN_CLASS_WITH_PROTECTED_FUNCTION())
 }
 
 @ExportedBridge("__root___OPEN_CLASS_init_allocate")

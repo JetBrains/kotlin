@@ -269,6 +269,12 @@ class INHERITANCE_UNSUPPORTED_BASE : INHERITANCE_GENERIC()
 
 open class OPEN_CLASS()
 
+// KT-79227 Swift Export: Fix First Release Issues
+// Protected declarations can not be called from bridges
+open class OPEN_CLASS_WITH_PROTECTED_FUNCTION {
+    protected fun protectedFunction(a: Unit): Unit = a
+}
+
 class INHERITANCE_SINGLE_CLASS(var value: Int = 42) : OPEN_CLASS()
 
 object OBJECT_WITH_CLASS_INHERITANCE: OPEN_CLASS()

@@ -13,6 +13,10 @@ void __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_
 
 void * __root___OBJECT_WITH_CLASS_INHERITANCE_get();
 
+void * __root___OPEN_CLASS_WITH_PROTECTED_FUNCTION_init_allocate();
+
+void __root___OPEN_CLASS_WITH_PROTECTED_FUNCTION_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___OPEN_CLASS_init_allocate();
 
 void __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
