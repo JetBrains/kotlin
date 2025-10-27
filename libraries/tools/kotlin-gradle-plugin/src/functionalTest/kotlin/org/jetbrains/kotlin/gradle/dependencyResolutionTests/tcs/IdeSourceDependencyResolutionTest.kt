@@ -54,18 +54,18 @@ class IdeSourceDependencyResolutionTest {
 
         producer.mockGenerateProjectStructureMetadataTaskOutputs()
 
-        consumer.resolveDependencies("commonMain").assertMatches(
+        consumer.resolveProjectDependencies("commonMain").assertMatches(
             regularSourceDependency(":producer/commonMain")
         )
 
-        consumer.resolveDependencies("nativeMain").assertMatches(
+        consumer.resolveProjectDependencies("nativeMain").assertMatches(
             regularSourceDependency(":producer/commonMain"),
             regularSourceDependency(":producer/nativeMain"),
             regularSourceDependency(":producer/linuxMain"),
             dependsOnDependency(":consumer/commonMain"),
         )
 
-        consumer.resolveDependencies("nativeTest").assertMatches(
+        consumer.resolveProjectDependencies("nativeTest").assertMatches(
             regularSourceDependency(":producer/commonMain"),
             regularSourceDependency(":producer/nativeMain"),
             regularSourceDependency(":producer/linuxMain"),
@@ -75,7 +75,7 @@ class IdeSourceDependencyResolutionTest {
             dependsOnDependency(":consumer/commonTest"),
         )
 
-        consumer.resolveDependencies("linuxMain").assertMatches(
+        consumer.resolveProjectDependencies("linuxMain").assertMatches(
             regularSourceDependency(":producer/commonMain"),
             regularSourceDependency(":producer/nativeMain"),
             regularSourceDependency(":producer/linuxMain"),
@@ -83,7 +83,7 @@ class IdeSourceDependencyResolutionTest {
             dependsOnDependency(":consumer/nativeMain"),
         )
 
-        consumer.resolveDependencies("linuxTest").assertMatches(
+        consumer.resolveProjectDependencies("linuxTest").assertMatches(
             regularSourceDependency(":producer/commonMain"),
             regularSourceDependency(":producer/nativeMain"),
             regularSourceDependency(":producer/linuxMain"),
@@ -94,14 +94,14 @@ class IdeSourceDependencyResolutionTest {
             dependsOnDependency(":consumer/nativeTest"),
         )
 
-        consumer.resolveDependencies("linuxX64Main").assertMatches(
+        consumer.resolveProjectDependencies("linuxX64Main").assertMatches(
             dependsOnDependency(":consumer/commonMain"),
             dependsOnDependency(":consumer/nativeMain"),
             dependsOnDependency(":consumer/linuxMain"),
             projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxX64/main/klib/producer"))
         )
 
-        consumer.resolveDependencies("linuxX64Test").assertMatches(
+        consumer.resolveProjectDependencies("linuxX64Test").assertMatches(
             friendSourceDependency(":consumer/commonMain"),
             friendSourceDependency(":consumer/nativeMain"),
             friendSourceDependency(":consumer/linuxMain"),
@@ -112,14 +112,14 @@ class IdeSourceDependencyResolutionTest {
             projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxX64/main/klib/producer"))
         )
 
-        consumer.resolveDependencies("linuxArm64Main").assertMatches(
+        consumer.resolveProjectDependencies("linuxArm64Main").assertMatches(
             dependsOnDependency(":consumer/commonMain"),
             dependsOnDependency(":consumer/nativeMain"),
             dependsOnDependency(":consumer/linuxMain"),
             projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxArm64/main/klib/producer"))
         )
 
-        consumer.resolveDependencies("linuxArm64Test").assertMatches(
+        consumer.resolveProjectDependencies("linuxArm64Test").assertMatches(
             friendSourceDependency(":consumer/commonMain"),
             friendSourceDependency(":consumer/nativeMain"),
             friendSourceDependency(":consumer/linuxMain"),
@@ -171,7 +171,7 @@ class IdeSourceDependencyResolutionTest {
 
         producer.mockGenerateProjectStructureMetadataTaskOutputs()
 
-        consumer.resolveDependencies("jvmAndAndroidMain").assertMatches(
+        consumer.resolveProjectDependencies("jvmAndAndroidMain").assertMatches(
             regularSourceDependency(":producer/commonMain"),
             regularSourceDependency(":producer/jvmAndAndroidMain"),
             dependsOnDependency(":consumer/commonMain"),
@@ -200,16 +200,16 @@ class IdeSourceDependencyResolutionTest {
         producer.evaluate()
         consumer.evaluate()
 
-        consumer.resolveDependencies("commonMain").assertMatches(
+        consumer.resolveProjectDependencies("commonMain").assertMatches(
             projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/build/libs/producer.jar"))
         )
 
-        consumer.resolveDependencies("jvmMain").assertMatches(
+        consumer.resolveProjectDependencies("jvmMain").assertMatches(
             dependsOnDependency(":consumer/commonMain"),
             projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/build/libs/producer.jar"))
         )
 
-        consumer.resolveDependencies("jvmTest").assertMatches(
+        consumer.resolveProjectDependencies("jvmTest").assertMatches(
             friendSourceDependency(":consumer/commonMain"),
             friendSourceDependency(":consumer/jvmMain"),
             dependsOnDependency(":consumer/commonTest"),
