@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
+import org.jetbrains.kotlin.arguments.dsl.types.KlibIrInlinerMode
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import kotlin.math.max
 import kotlin.reflect.KClass
@@ -75,7 +76,8 @@ internal val enumNameAccessors = mutableMapOf(
     JvmTarget::class to JvmTarget::targetName,
     ExplicitApiMode::class to ExplicitApiMode::modeName,
     KotlinVersion::class to KotlinVersion::versionName,
-    ReturnValueCheckerMode::class to ReturnValueCheckerMode::modeState
+    ReturnValueCheckerMode::class to ReturnValueCheckerMode::modeState,
+    KlibIrInlinerMode::class to KlibIrInlinerMode::modeState
 )
 
 @Suppress("UNCHECKED_CAST")

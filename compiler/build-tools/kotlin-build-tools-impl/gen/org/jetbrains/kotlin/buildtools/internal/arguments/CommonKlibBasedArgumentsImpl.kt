@@ -21,14 +21,17 @@ import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ABI_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_IR_INLINER
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_NORMALIZE_ABSOLUTE_PATH
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_RELATIVE_PATH_BASE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_PARTIAL_LINKAGE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_PARTIAL_LINKAGE_LOGLEVEL
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.KlibIrInlinerMode
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
@@ -70,6 +73,7 @@ internal abstract class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsIm
     if (X_KLIB_ABI_VERSION in this) { arguments.customKlibAbiVersion = get(X_KLIB_ABI_VERSION)}
     if (X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY in this) { arguments.duplicatedUniqueNameStrategy = get(X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY)}
     if (X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS in this) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)}
+    if (X_KLIB_IR_INLINER in this) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER).stringValue}
     if (X_KLIB_NORMALIZE_ABSOLUTE_PATH in this) { arguments.normalizeAbsolutePath = get(X_KLIB_NORMALIZE_ABSOLUTE_PATH)}
     if (X_KLIB_RELATIVE_PATH_BASE in this) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE)}
     if (X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT in this) { arguments.klibZipFileAccessorCacheLimit = get(X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT).toString()}
@@ -84,6 +88,7 @@ internal abstract class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsIm
     try { this[X_KLIB_ABI_VERSION] = arguments.customKlibAbiVersion } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = arguments.duplicatedUniqueNameStrategy } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = arguments.enableSignatureClashChecks } catch (_: NoSuchMethodError) {  }
+    try { this[X_KLIB_IR_INLINER] = arguments.irInlinerBeforeKlibSerialization.let { KlibIrInlinerMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xklib-ir-inliner value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_NORMALIZE_ABSOLUTE_PATH] = arguments.normalizeAbsolutePath } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_RELATIVE_PATH_BASE] = arguments.relativePathBases } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
@@ -110,6 +115,9 @@ internal abstract class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsIm
 
     public val X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS: CommonKlibBasedArgument<Boolean> =
         CommonKlibBasedArgument("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS")
+
+    public val X_KLIB_IR_INLINER: CommonKlibBasedArgument<KlibIrInlinerMode> =
+        CommonKlibBasedArgument("X_KLIB_IR_INLINER")
 
     public val X_KLIB_NORMALIZE_ABSOLUTE_PATH: CommonKlibBasedArgument<Boolean> =
         CommonKlibBasedArgument("X_KLIB_NORMALIZE_ABSOLUTE_PATH")
