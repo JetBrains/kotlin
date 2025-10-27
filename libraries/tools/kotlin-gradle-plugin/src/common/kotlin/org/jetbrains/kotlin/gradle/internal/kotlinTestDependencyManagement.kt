@@ -13,6 +13,7 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
@@ -48,6 +49,19 @@ internal fun Project.configureKotlinTestDependency(
     kotlinExtension: KotlinProjectExtension,
     coreLibrariesVersion: Provider<String>,
 ) {
+    if (kotlinExtension is KotlinMultiplatformExtension) launch {
+        await(KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript) // so coreLibrariesVersion is final
+        val coreLibrariesVersionFinal = coreLibrariesVersion.get()
+        val kotlinTestDependency = dependencies.create("${KOTLIN_MODULE_GROUP}:kotlin-test:${coreLibrariesVersionFinal}")
+        kotlinExtension.sourceSets.configureEach { sourceSet ->
+            addMissingKotlinTestDependency(
+                sourceSet,
+                configurations,
+                kotlinTestDependency
+            )
+        }
+    }
+
     kotlinExtension.forAllTargets { target ->
         target.configureKotlinTestDependency(
             configurations,
@@ -208,4 +222,27 @@ private fun KotlinTargetWithTests<*, *>.findTestRunsByCompilation(
         else -> false
     }
     return testRuns.matching { it.executionSource.isProducedFromTheCompilation() }
+}
+
+private fun addMissingKotlinTestDependency(
+    sourceSet: KotlinSourceSet,
+    configurationContainer: ConfigurationContainer,
+    kotlinTestDependency: Dependency,
+) {
+    val configurations = KotlinDependencyScope.values().map {
+        configurationContainer.sourceSetDependencyConfigurationByScope(sourceSet, it)
+    }
+    configurations.forEach {
+        it.withDependencies { dependencies ->
+            val hasLegacyDependency = dependencies.any { dependency ->
+                dependency is ModuleDependency &&
+                        dependency.group == KOTLIN_MODULE_GROUP &&
+                        (dependency.name == "kotlin-test-common" || dependency.name == "kotlin-test-annotations-common")
+            }
+
+            if (hasLegacyDependency) {
+                dependencies.add(kotlinTestDependency)
+            }
+        }
+    }
 }
