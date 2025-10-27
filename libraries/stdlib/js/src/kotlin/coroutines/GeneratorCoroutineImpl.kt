@@ -28,23 +28,24 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
 
     fun runGenerator(result: Result<Any?>? = null): Any? {
         val suspended = COROUTINE_SUSPENDED
-        var stepResult = when (val e = result?.exceptionOrNull()) {
+        val stepResult = when (val e = result?.exceptionOrNull()) {
             null -> generator.next(result?.value)
             else -> generator.throws(e)
         }
 
-        while (true) {
-            var value = stepResult.value
-            if (stepResult.done || value === suspended) {
-                return value
-            }
+        var done = stepResult.done
+        var value = stepResult.value
 
+        while (!done) {
             val suspendOrReturn = value.unsafeCast<() -> Any?>()
             value = suspendOrReturn.invoke()
-
-            if (value === suspended) return value
-            stepResult = generator.next(value)
+            if (value === suspended) break
+            val nextStep = generator.next(value)
+            value = nextStep.value
+            done = nextStep.done
         }
+
+        return value
     }
 
     override fun resumeWith(result: Result<Any?>) {

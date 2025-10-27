@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterForExportedSuspendFunction
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
@@ -217,7 +218,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
         .apply {
             if (declaration.isEs6ConstructorReplacement) modifiers.add(JsFunction.Modifier.STATIC)
-            if (declaration.shouldBeCompiledAsGenerator()) {
+            if (declaration.shouldBeCompiledAsGenerator) {
                 name?.isGeneratorFunction = true
                 modifiers.add(JsFunction.Modifier.GENERATOR)
             }
@@ -235,9 +236,6 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     return function
 }
-
-private fun IrFunction.shouldBeCompiledAsGenerator(): Boolean =
-    hasAnnotation(JsAnnotations.jsGeneratorFqn)
 
 private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean {
     if (receiver == null || receiver is JsThisRef) return false

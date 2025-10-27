@@ -23,4 +23,7 @@ class AddContinuationToFunctionCallsLowering(
     override fun IrSimpleFunction.isContinuationItself(): Boolean = overriddenSymbols.any { overriddenSymbol ->
         overriddenSymbol.owner.name.asString() == "doResume" && overriddenSymbol.owner.parent == context.symbols.coroutineImpl.owner
     }
+
+    override val IrSimpleFunction.continuationOwner: IrSimpleFunction
+        get() = if (origin == YIELDED_WRAPPER_FUNCTION) parent as IrSimpleFunction else this
 }

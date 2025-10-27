@@ -9,17 +9,18 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.util.previousOffset
-import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+
+var IrFunction.shouldBeCompiledAsGenerator by irFlag(copyByDefault = true)
 
 /**
  * Transforms suspend function into a GeneratorCoroutineImpl instance and ES2015 generator.
@@ -47,10 +48,10 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
             )
         ) {
             is SuspendFunctionKind.NO_SUSPEND_CALLS -> {
-                function.addJsGeneratorAnnotation()
+                function.shouldBeCompiledAsGenerator = true
             }
             is SuspendFunctionKind.DELEGATING -> {
-                removeReturnIfSuspendedCallAndSimplifyDelegatingCall(function, functionKind.delegatingCall)
+                simplifyDelegatingCall(function, functionKind.delegatingCall)
             }
             is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
                 convertSuspendFunctionToGenerator(function, body)
@@ -58,35 +59,48 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
         }
     }
 
-    private fun IrSimpleFunction.addJsGeneratorAnnotation() {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(
-            context.symbols.jsGeneratorAnnotationSymbol.owner.primaryConstructor!!.symbol
-        )
-    }
-
+    /**
+     * The lowering transforms the suspend function in the way it could be generated as a generator:
+     * - Add [shouldBeCompiledAsGenerator] flag to mark a function as a generator for the codegen
+     * - At each suspension point we put an intrinsic for `yield*` statement, so that the generator could be resumed from the suspension point
+     *
+     * Before:
+     *  ```
+     *  suspend fun foo() {
+     *      println("Hello")
+     *      suspendHere()
+     *      println("World")
+     *      return 1
+     *  }
+     *  ```
+     *
+     * After:
+     *  ```
+     *  [shouldBeCompiledAsGenerator = true]
+     *  suspend fun foo() {
+     *      println("Hello")
+     *      jsYieldStar(suspendHere())
+     *      println("World")
+     *      return 1
+     *  }
+     *  ```
+     */
     private fun convertSuspendFunctionToGenerator(function: IrSimpleFunction, functionBody: IrBody) {
-        function.addJsGeneratorAnnotation()
+        function.shouldBeCompiledAsGenerator = true
         functionBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 val call = super.visitCall(expression)
                 return if (call !is IrCall || !call.symbol.owner.isSuspend) {
                     call
                 } else {
-                    JsIrBuilder.buildCall(
-                        jsYieldStarFunctionSymbol,
-                        call.type,
-                        listOf(call.type)
-                    ).apply { arguments[0] = call }
+                    JsIrBuilder.buildCall(jsYieldStarFunctionSymbol, call.type, listOf(call.type))
+                        .apply { arguments[0] = call }
                 }
             }
         })
     }
 
-    private fun removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {
-        val returnValue = runIf(delegatingCall.isReturnIfSuspendedCall(context)) {
-            delegatingCall.arguments[0]
-        } ?: delegatingCall
-
+    private fun simplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {
         val body = irFunction.body as IrBlockBody
 
         context.createIrBuilder(
@@ -98,7 +112,7 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
             val lastStatement = statements.last()
             assert(lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }
 
-            val tempVar = scope.createTemporaryVariable(returnValue, irType = context.irBuiltIns.anyType)
+            val tempVar = scope.createTemporaryVariable(delegatingCall, irType = context.irBuiltIns.anyType)
             statements[statements.lastIndex] = tempVar
             statements.add(irReturn(irGet(tempVar)))
         }

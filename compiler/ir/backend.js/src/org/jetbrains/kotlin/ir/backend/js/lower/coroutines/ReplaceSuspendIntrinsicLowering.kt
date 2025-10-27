@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.move
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -28,14 +30,18 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.SpecialNames
 
+val YIELDED_WRAPPER_FUNCTION by IrDeclarationOriginImpl.Synthetic
+
 /**
  * Replaces suspend intrinsic for generator-based coroutines.
  */
 class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     private val jsYield =
         context.symbols.jsYieldFunctionSymbol
-    private val returnIfSuspendedNonGeneratorVersion =
-        context.symbols.returnIfSuspendedNonGeneratorVersion
+    private val returnIfSuspended =
+        context.symbols.returnIfSuspended
+    private val suspendCoroutineUninterceptedOrReturnJS =
+        context.symbols.suspendCoroutineUninterceptedOrReturnJS
     private val valueParamSizeToItsCreateCoroutineUnintercepted =
         context.symbols.createCoroutineUninterceptedGeneratorVersion.groupPerValueParamSize()
     private val valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion =
@@ -54,19 +60,23 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
             override fun visitReturnableBlock(expression: IrReturnableBlock): IrExpression {
                 val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
 
-                if (inlinedBlock?.inlinedFunctionSymbol != returnIfSuspendedNonGeneratorVersion) {
+                if (inlinedBlock?.inlinedFunctionSymbol != suspendCoroutineUninterceptedOrReturnJS) {
                     return super.visitReturnableBlock(expression)
                 }
 
-                return JsIrBuilder.buildCall(
-                    jsYield,
-                    expression.type,
-                    listOf(expression.type),
-                ).apply { arguments[0] = super.visitFunctionExpression(expression.wrapInAnonymousFunction(inlinedBlock, container)) }
+                return JsIrBuilder.buildCall(jsYield, expression.type, listOf(expression.type))
+                    .apply {
+                        arguments[0] = super.visitFunctionExpression(expression.wrapInAnonymousFunction(inlinedBlock, container))
+                    }
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
                 when (val symbol = expression.symbol) {
+                    returnIfSuspended -> {
+                        val returnedValue = expression.arguments.single()
+                            ?: compilationException("Unexpected empty argument list for returnIfSuspended function", expression)
+                        return super.visitExpression(returnedValue)
+                    }
                     in context.symbols.createCoroutineUnintercepted -> {
                         expression.symbol = valueParamSizeToItsCreateCoroutineUnintercepted.getValue(symbol.regularParamCount)
                     }
@@ -90,6 +100,7 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
             visibility = DescriptorVisibilities.LOCAL
             isSuspend = false
             returnType = inlinedBlock.type
+            origin = YIELDED_WRAPPER_FUNCTION
         }.also {
             it.parent = container as IrDeclarationParent
             it.body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)

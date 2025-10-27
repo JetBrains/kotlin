@@ -96,23 +96,11 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(symbols.jsIsEs6) { _, _ -> JsBooleanLiteral(backendContext.es6mode) }
 
             add(symbols.jsYieldFunctionSymbol) { call, context ->
-                val argument = translateCallArguments(call, context).single()
-
-                if (backendContext.configuration.compileSuspendAsJsGenerator) {
-                    JsYield(argument)
-                } else {
-                    argument
-                }
+                JsYield(translateCallArguments(call, context).single())
             }
 
             add(symbols.jsYieldStarFunctionSymbol) { call, context ->
-                val argument = translateCallArguments(call, context).single()
-
-                if (backendContext.configuration.compileSuspendAsJsGenerator) {
-                    JsYieldStar(argument)
-                } else {
-                    argument
-                }
+                JsYieldStar(translateCallArguments(call, context).single())
             }
 
             add(symbols.jsObjectCreateSymbol) { call, context ->

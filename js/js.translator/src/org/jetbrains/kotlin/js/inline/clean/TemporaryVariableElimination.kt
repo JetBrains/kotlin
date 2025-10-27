@@ -641,7 +641,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                     expr.name !in temporary
                 else -> {
                     val name = expr.name
-                    name in localVariables && when (definitions[name]) {
+                    qualifier == null && when (definitions[name]) {
                         // Local variables with zero definitions are function parameters. We can relocate and copy them.
                         null, 0 -> true
                         1 -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false

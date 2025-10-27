@@ -35,15 +35,5 @@ internal suspend fun <T> returnIfSuspended(value: Any?): T {
 
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-@Suppress("UNCHECKED_CAST")
-internal suspend inline fun <T> returnIfSuspendedNonGeneratorVersion(block: () -> Any?): T {
-    return block().unsafeCast<T>()
-}
-
-// TODO: remove `JS` suffix oncec `NameGenerator` is implemented
-@UsedFromCompilerGeneratedCode
-@PublishedApi
-internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnJS(block: (Continuation<T>) -> Any?): T {
-    val continuation = getContinuation<T>()
-    return returnIfSuspendedNonGeneratorVersion { block(continuation) }
-}
+internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnJS(block: (Continuation<T>) -> Any?): T =
+    returnIfSuspended<T>(block(getContinuation<T>()))

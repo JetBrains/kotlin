@@ -50,6 +50,7 @@ internal annotation class JsOutlinedFunction(val jsFunctionExpression: String, v
  */
 @Target(AnnotationTarget.FUNCTION)
 @UsedFromCompilerGeneratedCode
+// TODO: remove after bootstrap update
 internal annotation class JsGenerator
 
 /**
