@@ -1,4 +1,11 @@
-compiler/testData/cli/metadata/getOrDefault.kt:2:38: error: unresolved reference 'getOrDefault'.
+compiler/testData/cli/metadata/getOrDefault.kt:2:38: error: cannot infer type for type parameter 'R'. Specify it explicitly.
+fun foo(map: Map<String, Int>) = map.getOrDefault("", 0)
+                                     ^^^^^^^^^^^^
+compiler/testData/cli/metadata/getOrDefault.kt:2:38: error: cannot infer type for type parameter 'T'. Specify it explicitly.
+fun foo(map: Map<String, Int>) = map.getOrDefault("", 0)
+                                     ^^^^^^^^^^^^
+compiler/testData/cli/metadata/getOrDefault.kt:2:38: error: unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R
 fun foo(map: Map<String, Int>) = map.getOrDefault("", 0)
                                      ^^^^^^^^^^^^
 COMPILATION_ERROR
