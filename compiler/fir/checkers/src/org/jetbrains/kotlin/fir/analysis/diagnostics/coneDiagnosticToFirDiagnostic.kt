@@ -712,8 +712,11 @@ private fun inapplicableNullableReceiver(
 
 private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, session: FirSession): KtSimpleDiagnostic? {
     fun KtLightSourceElement.isTrailingLambdaOnNewLine(): Boolean {
-        val parent = treeStructure.getParent(this.lighterASTNode)
-        if (parent?.tokenType == KtStubElementTypes.LAMBDA_ARGUMENT) {
+        var parent = treeStructure.getParent(this.lighterASTNode) ?: return false
+        if (parent.tokenType == KtNodeTypes.LABELED_EXPRESSION) {
+            parent = treeStructure.getParent(parent) ?: return false
+        }
+        if (parent.tokenType == KtStubElementTypes.LAMBDA_ARGUMENT) {
             var prevSibling = parent.getPreviousSibling(treeStructure)
             while (prevSibling != null && prevSibling.tokenType !is KtStubElementType<*, *>) {
                 if (prevSibling.tokenType == TokenType.WHITE_SPACE && prevSibling is LighterASTTokenNode && prevSibling.text.contains("\n")) {

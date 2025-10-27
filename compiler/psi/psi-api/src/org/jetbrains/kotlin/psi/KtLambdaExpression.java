@@ -114,6 +114,10 @@ public class KtLambdaExpression extends LazyParseablePsiElement implements KtExp
     public final boolean isTrailingLambdaOnNewLine() {
         PsiElement parent = getParent();
 
+        if (parent instanceof KtLabeledExpression) {
+            parent = parent.getParent();
+        }
+
         if (parent instanceof KtLambdaArgument) {
             PsiElement prevSibling = parent.getPrevSibling();
             while (prevSibling != null && !(prevSibling instanceof KtElement)) {

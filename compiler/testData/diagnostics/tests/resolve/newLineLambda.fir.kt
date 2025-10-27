@@ -125,7 +125,7 @@ fun testOverloads() {
     <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
 
     <!NONE_APPLICABLE!>hasOverload<!>(true)
-    foo@ {}
+    foo@ <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localFunction,
