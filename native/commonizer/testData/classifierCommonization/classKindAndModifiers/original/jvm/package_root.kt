@@ -114,7 +114,7 @@ class FF1(val property1: String) {
     fun function2() = function1()
 }
 
-external class FF2()
+class FF2()
 
 sealed class GG1
 sealed class GG2 {
@@ -146,4 +146,4 @@ class KK2(wrapped: JJ) : JJ by wrapped
 data class LL1(val value: String)
 class LL2(val value: String)
 
-external class ExternalClass
+class ExternalClass
