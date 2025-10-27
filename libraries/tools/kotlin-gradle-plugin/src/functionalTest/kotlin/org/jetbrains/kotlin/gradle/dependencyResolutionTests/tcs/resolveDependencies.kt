@@ -9,5 +9,10 @@ import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 fun Project.resolveDependencies(sourceSetName: String): Iterable<IdeaKotlinDependency> {
     return kotlinIdeMultiplatformImport
         .resolveDependencies(multiplatformExtension.sourceSets.getByName(sourceSetName))
-        .filter { it !is IdeaKotlinBinaryDependency }
 }
+
+/**
+ * Only dependsOn and project-2-project dependencies
+ */
+fun Project.resolveProjectDependencies(sourceSetName: String): Iterable<IdeaKotlinDependency> =
+    resolveDependencies(sourceSetName).filter { it !is IdeaKotlinBinaryDependency }
