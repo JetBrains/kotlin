@@ -232,7 +232,6 @@ private object CallableIds {
     // Special stdlib public functions
     val enumEntries = CallableId(FqName("kotlin.enums"), Name.identifier("enumEntries"))
     val println = CallableId(FqName("kotlin.io"), Name.identifier("println"))
-    val executeImpl = CallableId(KonanFqNames.packageName.child(Name.identifier("concurrent")), Name.identifier("executeImpl"))
     val createCleaner = CallableId(KonanFqNames.packageName.child(Name.identifier("ref")), Name.identifier("createCleaner"))
     val coroutineSuspended = CallableId(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME, StandardNames.COROUTINE_SUSPENDED_NAME)
     val invokeSuspend = CallableId(ClassIds.baseContinuationImpl, Name.identifier("invokeSuspend"))

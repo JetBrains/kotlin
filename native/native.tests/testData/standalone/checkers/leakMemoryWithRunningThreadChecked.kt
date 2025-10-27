@@ -49,6 +49,8 @@ import kotlinx.cinterop.*
 val global = AtomicInt(0)
 
 fun ensureInititalized() {
+    // Initialize worker
+    Worker.current
     // Leak memory
     StableRef.create(Any())
     global.value = 1
@@ -61,7 +63,7 @@ fun main() {
     assertTrue(global.value == 1)
 
     val activeWorkersCount = Worker.activeWorkers.size
-    check(activeWorkersCount == 1) {
-        "Cannot run checkers when there are ${activeWorkersCount - 1} alive runtimes at the shutdown"
+    check(activeWorkersCount == 0) {
+        "Cannot run checkers when there are $activeWorkersCount alive runtimes at the shutdown"
     }
 }

@@ -5,6 +5,8 @@
 @file:OptIn(ExperimentalForeignApi::class)
 package kotlin.native.concurrent
 
+import kotlinx.cinterop.CFunction
+import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.native.internal.*
 import kotlin.native.internal.ref.*
@@ -25,3 +27,7 @@ internal fun attachObjectGraphInternal(stable: NativePtr): Any? {
     disposeExternalRCRef(stable)
     return result
 }
+
+@ObsoleteWorkersApi
+internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any?,
+                         job: CPointer<CFunction<*>>): Future<Any?> = error("Should not call this")
