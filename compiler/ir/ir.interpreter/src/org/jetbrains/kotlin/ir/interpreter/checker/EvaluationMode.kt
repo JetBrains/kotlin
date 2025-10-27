@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.checker
 
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -44,15 +45,7 @@ sealed class EvaluationMode {
         return function.property != null
     }
 
-    protected fun IrDeclaration.isMarkedAsIntrinsicConstEvaluation() = isMarkedWith(intrinsicConstEvaluationAnnotation)
-
-    protected fun IrDeclaration.isMarkedWith(annotation: FqName): Boolean {
-        if (this is IrClass && this.isCompanion) return false
-        if (this.hasAnnotation(annotation)) return true
-        return (this.parent as? IrClass)?.isMarkedWith(annotation) ?: false
-    }
-
-    data object Full : EvaluationMode() {
+        data object Full : EvaluationMode() {
         override fun canEvaluateFunction(function: IrFunction): Boolean = true
         override fun canEvaluateEnumValue(enumEntry: IrGetEnumValue): Boolean = true
         override fun canEvaluateFunctionExpression(expression: IrFunctionExpression): Boolean = true
@@ -133,7 +126,8 @@ sealed class EvaluationMode {
             arguments.any { it != null && it.type.isUnsigned() }
     }
 
-    class OnlyIntrinsicConst(private val isFloatingPointOptimizationDisabled: Boolean = false) : EvaluationMode() {
+    class OnlyIntrinsicConst(private val currentApiVersion: ApiVersion, private val isFloatingPointOptimizationDisabled: Boolean = false) :
+        EvaluationMode() {
         override fun canEvaluateFunction(function: IrFunction): Boolean {
             if (isFloatingPointOptimizationDisabled && function.isFloatingPointOperation()) return false
             return function.isCompileTimePropertyAccessor() || function.isMarkedAsIntrinsicConstEvaluation()
@@ -148,6 +142,16 @@ sealed class EvaluationMode {
             val property = this?.property ?: return false
             return property.isConst || property.isMarkedAsIntrinsicConstEvaluation()
         }
+
+        private fun IrDeclaration.isMarkedAsIntrinsicConstEvaluation(): Boolean {
+            if (this is IrClass && this.isCompanion) return false
+            this.getAnnotation(intrinsicConstEvaluationAnnotation)?.let { annotationConstructor ->
+                val since = (annotationConstructor.arguments.firstOrNull() as? IrConst)?.value as? String ?: "1.7"
+                return currentApiVersion >= ApiVersion.parse(since)!!
+            }
+            return (this.parent as? IrClass)?.isMarkedAsIntrinsicConstEvaluation() ?: false
+        }
+
 
         override fun canEvaluateBlock(block: IrBlock): Boolean = block.origin == IrStatementOrigin.WHEN || block.statements.size == 1
 

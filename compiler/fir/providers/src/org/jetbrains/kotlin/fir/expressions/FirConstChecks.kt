@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -433,7 +436,14 @@ private class FirConstCheckVisitor(
 
     // --- Utils ---
     private fun FirBasedSymbol<*>.canBeEvaluated(): Boolean {
-        return intrinsicConstEvaluation && this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
+        if (!intrinsicConstEvaluation) return false;
+
+        val intrinsicConstAnnotaiton =
+            this.annotations.firstOrNull { it.toAnnotationClassId(session) == StandardClassIds.Annotations.IntrinsicConstEvaluation }
+        if (intrinsicConstAnnotaiton == null) return false;
+        // FIXME: Some additional stuff that with the feature flag we can even eval newer stuff for testing?
+        val intrinsicSince = (intrinsicConstAnnotaiton.argumentMapping.mapping.get(Name.identifier("since")) as? FirLiteralExpression)?.value as? String ?: "1.7"
+        return session.languageVersionSettings.apiVersion >= ApiVersion.parse(intrinsicSince)!!
     }
 
     private fun FirExpression.hasAllowedCompileTimeType(): Boolean {
