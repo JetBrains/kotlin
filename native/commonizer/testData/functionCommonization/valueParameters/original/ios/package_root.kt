@@ -97,10 +97,12 @@ fun functionMismatchedParameterNames42(arg0: Int, arg1: String) {
 fun functionMismatchedParameterNames43(arg0: Int, arg1: String) {
 }
 
+@kotlinx.cinterop.ObjCSignatureOverride
 @kotlinx.cinterop.ObjCMethod("ofpn:s:", "", false)
 fun overloadedFunctionByParameterNames(i: Int, s: String) {
 }
 
+@kotlinx.cinterop.ObjCSignatureOverride
 @kotlinx.cinterop.ObjCMethod("ofpn:xs:", "", false)
 fun overloadedFunctionByParameterNames(xi: Int, xs: String) {
 }

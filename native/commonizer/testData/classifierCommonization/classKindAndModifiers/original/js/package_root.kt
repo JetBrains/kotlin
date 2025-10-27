@@ -108,11 +108,11 @@ inline class EE1(val value: String)
 inline class EE2(val value: String)
 
 external class FF1(val property1: String) {
-    val property2 = property1
-    val property3 get() = property1
+    val property2: String
+    val property3: String
     val property4: String
 
-    fun function1() = property1
+    fun function1(): String
     fun function2(): String
 }
 

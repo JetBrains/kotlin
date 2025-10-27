@@ -21,13 +21,16 @@ import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatformUnspecifiedTarget
+import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
-import kotlin.collections.map
-import kotlin.collections.orEmpty
-import kotlin.collections.plus
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.fail
 
@@ -286,8 +289,26 @@ private class AnalyzedModules(
                 if (isDependencyModule) "dependency-$it" else it
             }
 
+            val leafPlatforms = when (currentTarget) {
+                is LeafCommonizerTarget -> listOf(currentTarget)
+                is SharedCommonizerTarget -> currentTarget.targets
+            }
+
+            val targetPlatform = TargetPlatform(
+                leafPlatforms.map {
+                    when (it.name) {
+                        "jvm" -> JvmPlatforms.UNSPECIFIED_SIMPLE_JVM_PLATFORM
+                        "js" -> JsPlatforms.DefaultSimpleJsPlatform
+                        "wasm_js" -> WasmPlatformWithTarget(WasmTarget.JS)
+                        "wasm_wasi" -> WasmPlatformWithTarget(WasmTarget.WASI)
+                        else -> NativePlatformUnspecifiedTarget
+                    }
+                }.toSet()
+            )
+
             val (configuration, serializationArtifact) = serializeModuleToMetadata(
                 moduleName, moduleRoot.location,
+                targetPlatform = targetPlatform,
                 disposable = parentDisposable,
                 isCommon = true,
                 regularDependencies = dependencies.regularDependencies[currentTarget].orEmpty().map {
