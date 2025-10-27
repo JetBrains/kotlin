@@ -259,10 +259,15 @@ internal fun Any?.asReflectCallable(): ReflectKCallable<*>? = when (this) {
     else -> null
 }
 
-internal val CallableDescriptor.instanceReceiverParameter: ReceiverParameterDescriptor?
-    get() =
-        if (dispatchReceiverParameter != null) (containingDeclaration as ClassDescriptor).thisAsReceiverParameter
-        else null
+internal val DescriptorKCallable<*>.instanceReceiverParameter: ReceiverParameterDescriptor?
+    get() {
+        forceInstanceReceiverParameter?.let { return it }
+        val descriptor = descriptor
+        return when (descriptor.dispatchReceiverParameter != null) {
+            true -> (descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter
+            else -> null
+        }
+    }
 
 internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
     moduleAnchor: Class<*>,

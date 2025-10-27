@@ -1,12 +1,10 @@
 // FIR_IDENTICAL
-// ISSUE: KT-70395
+// WITH_STDLIB
 
-interface A {
-    fun m(x: B<out List<Number>>): Int
+open class Base<T> {
+    fun foo(t: T) = Unit
 }
 
-interface B<T : List<out Number>>
+open class Intermediate<S> : Base<S>()
 
-abstract class C : A {
-    override fun m(x: B<out List<Number>>): Int = TODO()
-}
+class Foo<R> : Intermediate<R>() {}

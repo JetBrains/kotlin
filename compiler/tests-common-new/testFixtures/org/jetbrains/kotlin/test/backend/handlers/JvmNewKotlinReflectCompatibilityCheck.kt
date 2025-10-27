@@ -144,7 +144,8 @@ class RunInAlienClassLoader {
     private fun IndentedStringBuilder.dumpKClass(kClass: KClass<*>) {
         indented("KClass: ${kClass.qualifiedName ?: kClass.jvmName}") {
             indented("members:") {
-                dumpKCallables(kClass.members)
+                val kCallables = kClass.members
+                dumpKCallables(kCallables)
             }
             indented("declaredMembers:") {
                 dumpKCallables(kClass.declaredMembers)

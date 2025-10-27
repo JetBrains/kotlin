@@ -15,6 +15,9 @@ import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.withNullabilit
 
 internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjection>) {
     fun substitute(type: KType): KTypeProjection {
+        // Small optimization
+        if (substitution.isEmpty()) return KTypeProjection.invariant(type)
+
         val lowerBound = (type as? AbstractKType)?.lowerBoundIfFlexible()
         val upperBound = (type as? AbstractKType)?.upperBoundIfFlexible()
         if (lowerBound != null && upperBound != null) {
@@ -42,6 +45,16 @@ internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KT
             )
         )
         return result
+    }
+
+    /**
+     * Create combined [kotlin.reflect.jvm.internal.types.KTypeSubstitutor].
+     *
+     * Returns `null` if star projection
+     */
+    fun createCombinedSubstitutorOrNull(type: KType): KTypeSubstitutor? {
+        val type = substitute(type).type ?: return null
+        return create(type)
     }
 
     // TODO (KT-77700): also keep annotations of 'other'

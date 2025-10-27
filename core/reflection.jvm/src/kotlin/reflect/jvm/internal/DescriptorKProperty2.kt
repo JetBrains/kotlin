@@ -19,6 +19,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
+import kotlin.math.sign
 import kotlin.reflect.KMutableProperty2
 import kotlin.reflect.KProperty2
 
@@ -41,8 +42,11 @@ internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, Des
 
     override fun invoke(receiver1: D, receiver2: E): V = get(receiver1, receiver2)
 
+    override fun shallowCopy(): DescriptorKProperty2<D, E, V> = DescriptorKProperty2<D, E, V>(container, name, signature)
+
     class Getter<D, E, out V>(override val property: DescriptorKProperty2<D, E, V>) : DescriptorKProperty.Getter<V>(), KProperty2.Getter<D, E, V> {
         override fun invoke(receiver1: D, receiver2: E): V = property.get(receiver1, receiver2)
+        override fun shallowCopy(): Getter<D, E, V> = Getter(property)
     }
 }
 
@@ -57,8 +61,11 @@ internal class DescriptorKMutableProperty2<D, E, V> : DescriptorKProperty2<D, E,
 
     override fun set(receiver1: D, receiver2: E, value: V) = setter.call(receiver1, receiver2, value)
 
+    override fun shallowCopy(): DescriptorKMutableProperty2<D, E, V> = DescriptorKMutableProperty2<D, E, V>(container, name, signature)
+
     class Setter<D, E, V>(override val property: DescriptorKMutableProperty2<D, E, V>) : DescriptorKProperty.Setter<V>(),
         KMutableProperty2.Setter<D, E, V> {
         override fun invoke(receiver1: D, receiver2: E, value: V): Unit = property.set(receiver1, receiver2, value)
+        override fun shallowCopy(): Setter<D, E, V> = Setter(property)
     }
 }

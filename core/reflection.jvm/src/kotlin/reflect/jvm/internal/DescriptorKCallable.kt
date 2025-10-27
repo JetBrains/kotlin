@@ -5,10 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -20,30 +17,35 @@ import java.lang.reflect.WildcardType
 import kotlin.coroutines.Continuation
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.types.DescriptorKType
+import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 
 internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
     abstract val descriptor: CallableMemberDescriptor
+    internal var forceInstanceReceiverParameter: ReceiverParameterDescriptor? = null
+    internal var kTypeSubstitutor: KTypeSubstitutor? = null
 
     private val _annotations = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
     override val annotations: List<Annotation> get() = _annotations()
 
+    internal abstract fun shallowCopy(): DescriptorKCallable<R>
+
     private val _receiverParameters = ReflectProperties.lazySoft {
         val result = ArrayList<KParameter>()
-        val instanceReceiver = descriptor.instanceReceiverParameter
+        val instanceReceiver = instanceReceiverParameter
         if (instanceReceiver != null) {
-            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.INSTANCE) { instanceReceiver })
+            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.INSTANCE, kTypeSubstitutor) { instanceReceiver })
         }
 
         val contextParameters = descriptor.computeContextParameters()
         for (i in contextParameters.indices) {
             @OptIn(ExperimentalContextParameters::class)
-            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.CONTEXT) { contextParameters[i] })
+            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.CONTEXT, kTypeSubstitutor) { contextParameters[i] })
         }
 
         val extensionReceiver = descriptor.extensionReceiverParameter
         if (extensionReceiver != null) {
-            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.EXTENSION_RECEIVER) { extensionReceiver })
+            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.EXTENSION_RECEIVER, kTypeSubstitutor) { extensionReceiver })
         }
         result
     }
@@ -59,7 +61,7 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
         }
 
         for (i in descriptor.valueParameters.indices) {
-            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.VALUE) { descriptor.valueParameters[i] })
+            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.VALUE, kTypeSubstitutor) { descriptor.valueParameters[i] })
         }
 
         // Constructor parameters of Java annotations are not ordered in any way, we order them by name here to be more stable.
@@ -97,13 +99,14 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
         }
     }
 
-    override val parameters: List<KParameter>
+    final override val parameters: List<KParameter>
         get() = _parameters()
 
     private val _returnType = ReflectProperties.lazySoft {
-        DescriptorKType(descriptor.returnType!!) {
+        val type = DescriptorKType(descriptor.returnType!!) {
             extractContinuationArgument() ?: caller.returnType
         }
+        kTypeSubstitutor?.substitute(type)?.type ?: type
     }
 
     override val returnType: KType

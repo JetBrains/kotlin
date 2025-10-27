@@ -306,25 +306,25 @@ internal class KClassImpl<T : Any>(
             by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
         private val declaredStaticMembers: Collection<DescriptorKCallable<*>>
             by ReflectProperties.lazySoft { getMembers(staticScope, DECLARED) }
-        private val inheritedNonStaticMembers: Collection<DescriptorKCallable<*>>
-            by ReflectProperties.lazySoft {
-                when (useK1Implementation) {
-                    true -> getMembers(memberScope, INHERITED)
-                    else -> getNewMembers(this@KClassImpl)
-                }
-            }
-        private val inheritedStaticMembers: Collection<DescriptorKCallable<*>>
-            by ReflectProperties.lazySoft {
-                when (useK1Implementation) {
-                    true -> getMembers(staticScope, INHERITED)
-                    else -> getNewMembers(this@KClassImpl)
-                }
-            }
+        private val inheritedNonStaticMembers_k1Impl: Collection<DescriptorKCallable<*>>
+            by ReflectProperties.lazySoft { getMembers(memberScope, INHERITED) }
+        private val inheritedStaticMembers_k1Impl: Collection<DescriptorKCallable<*>>
+            by ReflectProperties.lazySoft { getMembers(staticScope, INHERITED) }
 
-        val allNonStaticMembers: Collection<DescriptorKCallable<*>>
-            by ReflectProperties.lazySoft { declaredNonStaticMembers + inheritedNonStaticMembers }
-        val allStaticMembers: Collection<DescriptorKCallable<*>>
-            by ReflectProperties.lazySoft { declaredStaticMembers + inheritedStaticMembers }
+        val allNonStaticMembers: Collection<DescriptorKCallable<*>> // todo test this property
+            by ReflectProperties.lazySoft {
+                when (useK1Implementation) {
+                    true -> declaredNonStaticMembers + inheritedNonStaticMembers_k1Impl
+                    else -> getAllMembers_newKotlinReflectImpl(this@KClassImpl, MemberKind.INNER)
+                }
+            }
+        val allStaticMembers: Collection<DescriptorKCallable<*>> // todo test this property
+            by ReflectProperties.lazySoft {
+                when (useK1Implementation) {
+                    true -> declaredStaticMembers + inheritedStaticMembers_k1Impl
+                    else -> getAllMembers_newKotlinReflectImpl(this@KClassImpl, MemberKind.STATIC)
+                }
+            }
         val declaredMembers: Collection<DescriptorKCallable<*>>
             by ReflectProperties.lazySoft { declaredNonStaticMembers + declaredStaticMembers }
         val allMembers: Collection<DescriptorKCallable<*>>

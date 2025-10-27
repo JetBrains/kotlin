@@ -19,6 +19,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
@@ -139,6 +140,9 @@ internal class DescriptorKFunction private constructor(
         }?.createValueClassAwareCallerIfNeeded(descriptor, isDefault = true)
     }
 
+    override fun shallowCopy(): DescriptorKFunction =
+        DescriptorKFunction(container, name, signature, descriptor, rawBoundReceiver)
+
     private fun getFunctionWithDefaultParametersForValueClassOverride(descriptor: FunctionDescriptor): FunctionDescriptor? {
         if (
             descriptor.valueParameters.none { it.declaresDefaultValue() } &&
@@ -146,7 +150,7 @@ internal class DescriptorKFunction private constructor(
             Modifier.isStatic(caller.member!!.modifiers)
         ) {
             // firstOrNull is used to mimic the wrong behaviour of regular class reflection as KT-40327 is not fixed.
-            // The behaviours equality is currently backed by codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt. 
+            // The behaviours equality is currently backed by codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt.
             return descriptor.overriddenTreeAsSequence(useOriginal = false)
                 .firstOrNull { function -> function.valueParameters.any { it.declaresDefaultValue() } } as? FunctionDescriptor
         }

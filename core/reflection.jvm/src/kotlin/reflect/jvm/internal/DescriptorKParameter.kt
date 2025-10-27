@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValu
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.types.DescriptorKType
+import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 
 internal class DescriptorKParameter(
     override val callable: DescriptorKCallable<*>,
     override val index: Int,
     override val kind: KParameter.Kind,
+    private val kTypeSubstitutor: KTypeSubstitutor? = null,
     computeDescriptor: () -> ParameterDescriptor,
 ) : ReflectKParameter() {
     private val descriptor: ParameterDescriptor by ReflectProperties.lazySoft(computeDescriptor)
@@ -47,7 +49,7 @@ internal class DescriptorKParameter(
                 val descriptor = descriptor
 
                 if (descriptor is ReceiverParameterDescriptor &&
-                    callable.descriptor.instanceReceiverParameter == descriptor &&
+                    callable.instanceReceiverParameter == descriptor &&
                     callable.descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
                 ) {
                     // In case of fake overrides, dispatch receiver type should be computed manually because Caller.parameterTypes returns
@@ -59,7 +61,7 @@ internal class DescriptorKParameter(
                     callable.caller.parameterTypes[index]
                 }
             }
-            return type
+            return kTypeSubstitutor?.substitute(type)?.type ?: type
         }
 
     override val isOptional: Boolean

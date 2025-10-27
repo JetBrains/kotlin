@@ -27,7 +27,11 @@ internal open class DescriptorKPropertyN<out V> : DescriptorKProperty<V> {
 
     override val getter: Getter<V> get() = _getter.value
 
-    class Getter<out V>(override val property: DescriptorKPropertyN<V>) : DescriptorKProperty.Getter<V>()
+    override fun shallowCopy(): DescriptorKPropertyN<V> = DescriptorKPropertyN<V>(container, descriptor)
+
+    class Getter<out V>(override val property: DescriptorKPropertyN<V>) : DescriptorKProperty.Getter<V>() {
+        override fun shallowCopy(): Getter<V> = Getter(property)
+    }
 }
 
 internal class DescriptorKMutablePropertyN<V> : DescriptorKPropertyN<V>, KMutableProperty<V> {
@@ -37,5 +41,9 @@ internal class DescriptorKMutablePropertyN<V> : DescriptorKPropertyN<V>, KMutabl
 
     override val setter: Setter<V> get() = _setter.value
 
-    class Setter<V>(override val property: DescriptorKMutablePropertyN<V>) : DescriptorKProperty.Setter<V>()
+    override fun shallowCopy(): DescriptorKMutablePropertyN<V> = DescriptorKMutablePropertyN(container, descriptor)
+
+    class Setter<V>(override val property: DescriptorKMutablePropertyN<V>) : DescriptorKProperty.Setter<V>() {
+        override fun shallowCopy(): Setter<V> = Setter(property)
+    }
 }

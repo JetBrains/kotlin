@@ -40,8 +40,12 @@ internal open class DescriptorKProperty1<T, out V> : KProperty1<T, V>, Descripto
 
     override fun invoke(receiver: T): V = get(receiver)
 
+    override fun shallowCopy(): DescriptorKProperty1<T, V> =
+        DescriptorKProperty1(container, name, signature, boundReceiver)
+
     class Getter<T, out V>(override val property: DescriptorKProperty1<T, V>) : DescriptorKProperty.Getter<V>(), KProperty1.Getter<T, V> {
         override fun invoke(receiver: T): V = property.get(receiver)
+        override fun shallowCopy(): Getter<T, V> = Getter(property)
     }
 }
 
@@ -57,8 +61,11 @@ internal class DescriptorKMutableProperty1<T, V> : DescriptorKProperty1<T, V>, K
     override val setter: Setter<T, V> get() = _setter.value
 
     override fun set(receiver: T, value: V) = setter.call(receiver, value)
+    override fun shallowCopy(): DescriptorKMutableProperty1<T, V> =
+        DescriptorKMutableProperty1<T, V>(container, name, signature, boundReceiver)
 
     class Setter<T, V>(override val property: DescriptorKMutableProperty1<T, V>) : DescriptorKProperty.Setter<V>(), KMutableProperty1.Setter<T, V> {
         override fun invoke(receiver: T, value: V): Unit = property.set(receiver, value)
+        override fun shallowCopy(): Setter<T, V> = Setter(property)
     }
 }
