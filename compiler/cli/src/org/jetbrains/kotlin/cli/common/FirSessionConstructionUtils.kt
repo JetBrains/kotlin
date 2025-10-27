@@ -256,6 +256,7 @@ fun <F> prepareMetadataSessions(
                 configuration,
                 projectEnvironment,
                 librariesScope,
+                registerJvmDeserializationExtension = false,
             )
         },
         createJsContext = { FirJsSessionFactory.Context(configuration) },
