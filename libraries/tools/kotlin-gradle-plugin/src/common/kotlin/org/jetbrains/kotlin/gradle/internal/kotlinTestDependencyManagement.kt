@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
@@ -235,7 +236,7 @@ private fun addMissingKotlinTestDependency(
     configurations.forEach {
         it.withDependencies { dependencies ->
             val hasLegacyDependency = dependencies.any { dependency ->
-                dependency is ModuleDependency &&
+                dependency !is ProjectDependency &&
                         dependency.group == KOTLIN_MODULE_GROUP &&
                         (dependency.name == "kotlin-test-common" || dependency.name == "kotlin-test-annotations-common")
             }
