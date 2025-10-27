@@ -92,7 +92,7 @@ class CandidateFactory private constructor(
         explicitReceiverKind: ExplicitReceiverKind,
         scope: FirScope?,
         dispatchReceiver: FirExpression? = null,
-        givenExtensionReceiverOptions: List<FirExpression> = emptyList(),
+        givenExtensionReceiver: FirExpression? = null,
         objectsByName: Boolean = false,
         isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
     ): Candidate {
@@ -115,7 +115,7 @@ class CandidateFactory private constructor(
         val result = Candidate(
             symbol,
             ConeResolutionAtom.createRawAtom(dispatchReceiver),
-            givenExtensionReceiverOptions.map { ConeResolutionAtom.createRawAtom(it) },
+            ConeResolutionAtom.createRawAtom(givenExtensionReceiver),
             explicitReceiverKind,
             context.inferenceComponents.constraintSystemFactory,
             baseSystem,
@@ -123,7 +123,7 @@ class CandidateFactory private constructor(
             scope,
             isFromCompanionObjectTypeScope = when (explicitReceiverKind) {
                 ExplicitReceiverKind.EXTENSION_RECEIVER ->
-                    givenExtensionReceiverOptions.singleOrNull().isCandidateFromCompanionObjectTypeScope(callInfo.session)
+                    givenExtensionReceiver.isCandidateFromCompanionObjectTypeScope(callInfo.session)
                 ExplicitReceiverKind.DISPATCH_RECEIVER -> dispatchReceiver.isCandidateFromCompanionObjectTypeScope(callInfo.session)
                 // The following cases are not applicable for companion objects.
                 ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> false
@@ -176,11 +176,8 @@ class CandidateFactory private constructor(
             result.addDiagnostic(dispatchReceiver.toInaccessibleReceiverDiagnostic())
         }
 
-        for (receiver in givenExtensionReceiverOptions) {
-            if (receiver.isInaccessibleFromStaticNestedClass()) {
-                result.addDiagnostic(receiver.toInaccessibleReceiverDiagnostic())
-                break
-            }
+        if (givenExtensionReceiver.isInaccessibleFromStaticNestedClass()) {
+            result.addDiagnostic(givenExtensionReceiver.toInaccessibleReceiverDiagnostic())
         }
 
         return result
@@ -266,7 +263,7 @@ class CandidateFactory private constructor(
         return Candidate(
             symbol,
             dispatchReceiver = null,
-            givenExtensionReceiverOptions = emptyList(),
+            givenExtensionReceiver = null,
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             context.inferenceComponents.constraintSystemFactory,
             baseSystem,
