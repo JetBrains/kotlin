@@ -126,9 +126,6 @@ internal class BtaImplGenerator(
             val name = argument.extractName()
             if (skipXX && name.startsWith("XX_")) return@forEach
 
-            // TEMP
-            if (name == "X_KLIB_IR_INLINER") return@forEach
-
             // argument is newer than currently generated version, skip it
             if (argument.releaseVersionsMetadata.introducedVersion > kotlinVersion) {
                 return@forEach

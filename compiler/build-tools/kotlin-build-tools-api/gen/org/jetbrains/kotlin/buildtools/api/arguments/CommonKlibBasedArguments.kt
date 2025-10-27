@@ -9,6 +9,7 @@ import kotlin.Int
 import kotlin.String
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.KlibIrInlinerMode
 
 /**
  * @since 2.3.0
@@ -80,6 +81,22 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS: CommonKlibBasedArgument<Boolean> =
         CommonKlibBasedArgument("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS", KotlinReleaseVersion(2, 0, 20))
+
+    /**
+     * Set the mode of the experimental IR inliner on the first compilation stage.
+     * - `intra-module` mode enforces inlining of the functions only from the compiled module
+     * - `full` mode enforces inlining of all functions (from the compiled module and from all dependencies)
+     *    Warning: This mode will trigger setting the `pre-release` flag for the compiled library.
+     * - `disabled` mode completely disables the IR inliner
+     * - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
+     *         
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_KLIB_IR_INLINER: CommonKlibBasedArgument<KlibIrInlinerMode> =
+        CommonKlibBasedArgument("X_KLIB_IR_INLINER", KotlinReleaseVersion(2, 1, 20))
 
     /**
      * Normalize absolute paths in klibs.
