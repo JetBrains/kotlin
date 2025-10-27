@@ -147,8 +147,8 @@ private fun GradleProject.prepareKmpConsumer(consumer: Scenario.Project, depende
     buildScriptInjection {
         registerResolveDependenciesTask(
             "jvmCompileClasspath",
-            "androidFlavor1ReleaseCompileClasspath",
-            "androidFlavor1DebugCompileClasspath",
+            "flavor1ReleaseCompileClasspath",
+            "flavor1DebugCompileClasspath",
             "linuxX64CompileKlibraries",
             "linuxArm64CompileKlibraries"
         )

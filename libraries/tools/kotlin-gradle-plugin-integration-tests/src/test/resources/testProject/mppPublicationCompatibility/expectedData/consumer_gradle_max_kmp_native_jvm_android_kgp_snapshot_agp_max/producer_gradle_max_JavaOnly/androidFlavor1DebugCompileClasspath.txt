@@ -1,2 +1,0 @@
-org.jetbrains:annotations:13.0 => [compile]
-root project : => [androidFlavor1DebugCompileClasspath]
