@@ -53,7 +53,7 @@ fun buildProjectWithMPP(
 }
 
 /**
- * JVM + JS + Kotlin/Native(linuxX64) + Wasm js + Wasm wasi
+ * JVM + JS + Kotlin/Native + Wasm js + Wasm wasi
  */
 fun buildKMPWithAllBackends(
     projectBuilder: ProjectBuilder.() -> Unit = { },
@@ -63,7 +63,15 @@ fun buildKMPWithAllBackends(
     preApplyCode()
     project.applyMultiplatformPlugin()
     @OptIn(ExperimentalWasmDsl::class)
-    kotlin { jvm(); js(); linuxX64(); wasmJs(); wasmWasi(); }
+    kotlin {
+        jvm()
+        js()
+        linuxX64()
+        iosArm64()
+        iosSimulatorArm64()
+        wasmJs()
+        wasmWasi()
+    }
     code()
 }
 
