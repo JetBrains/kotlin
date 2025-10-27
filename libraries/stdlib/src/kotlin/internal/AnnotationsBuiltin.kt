@@ -28,8 +28,12 @@ internal annotation class PlatformDependent
 /**
  * When applied to a function or property, enables a compiler optimization that evaluates that function or property
  * at compile-time and replaces calls to it with the computed result.
+ *
+ * @property since the kotlin version where the function received the annotation.
  */
 @Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("1.7")
-internal annotation class IntrinsicConstEvaluation
+internal annotation class IntrinsicConstEvaluation(
+    val since: String = "1.7"
+)
