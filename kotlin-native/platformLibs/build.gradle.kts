@@ -97,6 +97,7 @@ enabledTargets(platformManager).forEach { target ->
                     "-Xdisable-experimental-annotation",
                     "-no-default-libs",
                     "-no-endorsed-libs",
+                    "-Xccall-mode", "indirect", // Default is `-Xccall-mode both`, but platform libs use `indirect` for now. See KT-82062.
             )
             if (target.family.isAppleFamily) {
                 // Platform Libraries for Apple targets use modules. Use shared cache for them.

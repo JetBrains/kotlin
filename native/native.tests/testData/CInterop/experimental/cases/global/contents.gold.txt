@@ -6,6 +6,7 @@ library {
 
     package {
 
+      @kotlinx/cinterop/internal/CCall.Direct(name = "getValue")
       @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency0_getValue")
       @kotlinx/cinterop/ExperimentalForeignApi
       public final external fun getValue(): kotlin/Int

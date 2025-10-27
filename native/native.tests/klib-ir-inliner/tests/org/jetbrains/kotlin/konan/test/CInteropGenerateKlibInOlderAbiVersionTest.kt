@@ -60,6 +60,7 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
         ).forEach { testData ->
             val cinteropArgs = listOf(
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
+                "-Xccall-mode", "indirect", // Required for -Xklib-abi-compatibility-level 2.2.
             )
 
             val cinteropResult = cinteropToLibrary(
@@ -138,6 +139,7 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
         ).forEach { testData ->
             val cinteropArgs = listOf(
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
+                "-Xccall-mode", "indirect", // Required for -Xklib-abi-compatibility-level 2.2.
             )
 
             val cinteropResult = cinteropToLibrary(

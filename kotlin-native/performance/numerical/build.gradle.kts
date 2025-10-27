@@ -26,6 +26,7 @@ native.apply {
     compilations["main"].cinterops {
         create("cinterop") {
             headers("$projectDir/src/nativeInterop/cinterop/pi.h")
+            extraOpts("-Xccall-mode", "indirect") // Required for -Xcompile-source
             extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/pi.c")
             extraOpts("-Xsource-compiler-option", "-O3")
         }

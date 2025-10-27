@@ -533,7 +533,10 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
                     "-opt-in=kotlin.native.internal.InternalForKotlinNative",
                     "-Xbinary=swiftExport=true",
                 ),
-                cinteropArgs = listOf("-Xcompile-source", srcDir.resolve("cinterop.m").path),
+                cinteropArgs = listOf(
+                    "-Xcompile-source", srcDir.resolve("cinterop.m").path,
+                    "-Xccall-mode", "indirect", // Required for -Xcompile-source
+                ),
                 objcArc = false
             ),
             extras = TestCase.NoTestRunnerExtras(),
