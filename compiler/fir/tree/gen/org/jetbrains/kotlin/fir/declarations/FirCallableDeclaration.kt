@@ -30,6 +30,7 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
+    abstract override val isLocal: Boolean
     abstract val returnTypeRef: FirTypeRef
     abstract val receiverParameter: FirReceiverParameter?
     abstract val deprecationsProvider: DeprecationsProvider

@@ -149,6 +149,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(typeParameterRefsOwner)
 
         +field("status", declarationStatus, withReplace = true, withTransform = true)
+        +field("isLocal", boolean)
     }
 
     val statement: Element by element(Expression) {
@@ -431,7 +432,6 @@ object FirTree : AbstractFirTreeBuilder() {
             isMutable = true
         }
         +field("scopeProvider", firScopeProviderType)
-        +field("isLocal", boolean)
     }
 
     val klass: Element by sealedElement(Declaration, name = "Class") {

@@ -156,6 +156,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
 
         this.name = name
         this.symbol = FirNamedFunctionSymbol(CallableId(DYNAMIC_FQ_NAME, this.name))
+        isLocal = false
 
         moduleData = session.moduleData
         origin = FirDeclarationOrigin.DynamicScope
@@ -188,6 +189,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
             Modality.FINAL,
             EffectiveVisibility.Public,
         )
+        isLocal = false
 
         moduleData = session.moduleData
         origin = FirDeclarationOrigin.DynamicScope

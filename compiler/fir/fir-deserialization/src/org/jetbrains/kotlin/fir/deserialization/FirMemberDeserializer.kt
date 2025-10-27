@@ -424,6 +424,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isExternal = Flags.IS_EXTERNAL_PROPERTY.get(flags)
                 returnValueStatus = ProtoEnumFlags.returnValueStatus(Flags.RETURN_VALUE_STATUS_PROPERTY.get(flags))
             }
+            isLocal = false
 
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
@@ -668,6 +669,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 hasStableParameterNames = !Flags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
                 returnValueStatus = ProtoEnumFlags.returnValueStatus(Flags.RETURN_VALUE_STATUS_FUNCTION.get(flags))
             }
+            isLocal = false
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -757,6 +759,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 this.isInner = isInner
                 returnValueStatus = ProtoEnumFlags.returnValueStatus(Flags.RETURN_VALUE_STATUS_CTOR.get(flags))
             }
+            isLocal = false
             this.symbol = symbol
             dispatchReceiverType =
                 if (!isInner) null

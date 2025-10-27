@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -48,6 +49,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
             Modality.FINAL,
             effectiveVisibility
         )
+        isLocal = symbol?.isLocal == true
         this.typeParameters += typeParameters
         this.returnTypeRef = returnType.toFirResolvedTypeRef()
         receiverParameter = buildReceiverParameter {

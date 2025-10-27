@@ -1580,7 +1580,7 @@ open class FirDeclarationsResolveTransformer(
 
             val newTypeRef: FirResolvedTypeRef = resultType?.let {
                 val expectedType = it.toExpectedTypeRef(fallbackSource = variable.source)
-                expectedType.approximateDeclarationType(session, variable.visibilityForApproximation(), variable.isLocal)
+                expectedType.approximateDeclarationType(session, variable.visibilityForApproximation(), variable.isLocalVariableOrParameter)
             } ?: buildErrorTypeRef {
                 diagnostic = ConeLocalVariableNoTypeOrInitializer(variable)
                 source = variable.source
@@ -1592,7 +1592,7 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-    private val FirVariable.isLocal: Boolean
+    private val FirVariable.isLocalVariableOrParameter: Boolean
         get() = when (symbol) {
             is FirValueParameterSymbol -> true
             is FirLocalPropertySymbol -> true

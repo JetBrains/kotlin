@@ -133,6 +133,7 @@ object FirFakeOverrideGenerator {
             isExpect = isExpect,
             isOverride = if (markAsOverride) true else baseFunction.status.isOverride
         )
+        isLocal = baseFunction.isLocal
         symbol = newSymbol
         resolvePhase = origin.resolvePhaseForCopy
 
@@ -177,6 +178,7 @@ object FirFakeOverrideGenerator {
         }
 
         status = baseConstructor.status.copy(isExpect = isExpect)
+        isLocal = baseConstructor.isLocal
         symbol = fakeOverrideSymbol
 
         typeParameters += configureAnnotationsTypeParametersAndSignature(
@@ -419,6 +421,7 @@ object FirFakeOverrideGenerator {
         isVar = baseProperty.isVar
         this.symbol = newSymbol
         status = baseProperty.status.copy(newVisibility, newModality, isExpect = isExpect, isOverride = true)
+        isLocal = baseProperty.isLocal
 
         resolvePhase = origin.resolvePhaseForCopy
         dispatchReceiverType = newDispatchReceiverType
@@ -584,6 +587,7 @@ object FirFakeOverrideGenerator {
         isVar = baseField.isVar
         this.symbol = newSymbol
         status = baseField.status.copy(newVisibility, newModality, isExpect = isExpect)
+        isLocal = baseField.isLocal
 
         resolvePhase = origin.resolvePhaseForCopy
         dispatchReceiverType = newDispatchReceiverType
@@ -732,6 +736,7 @@ object FirFakeOverrideGenerator {
         name = baseField.name
         isVar = baseField.isVar
         status = baseField.status
+        isLocal = baseField.isLocal
         resolvePhase = origin.resolvePhaseForCopy
         annotations += baseField.annotations
         attributes = baseField.attributes.copy()

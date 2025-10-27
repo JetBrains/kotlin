@@ -32,6 +32,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var status: FirDeclarationStatus
+    var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     lateinit var returnTypeRef: FirTypeRef
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     lateinit var name: Name
@@ -47,6 +48,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             origin,
             attributes,
             status,
+            isLocal,
             returnTypeRef,
             deprecationsProvider,
             name,
@@ -78,6 +80,7 @@ inline fun buildEnumEntryCopy(original: FirEnumEntry, init: FirEnumEntryBuilder.
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.status = original.status
+    copyBuilder.isLocal = original.isLocal
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.name = original.name

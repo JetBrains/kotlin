@@ -35,6 +35,7 @@ internal class FirEnumEntryImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var status: FirDeclarationStatus,
+    override val isLocal: Boolean,
     override var returnTypeRef: FirTypeRef,
     override var deprecationsProvider: DeprecationsProvider,
     override val name: Name,

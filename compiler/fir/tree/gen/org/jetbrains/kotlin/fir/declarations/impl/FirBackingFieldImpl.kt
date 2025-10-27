@@ -46,6 +46,8 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var status: FirDeclarationStatus,
 ) : FirBackingField() {
+    override val isLocal: Boolean
+        get() = propertySymbol.fir.isLocal
     override val receiverParameter: FirReceiverParameter?
         get() = null
     override val containerSource: DeserializedContainerSource?

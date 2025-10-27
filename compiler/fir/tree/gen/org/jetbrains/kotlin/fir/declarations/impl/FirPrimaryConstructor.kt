@@ -38,6 +38,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override val attributes: FirDeclarationAttributes,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
+    override val isLocal: Boolean,
     override var returnTypeRef: FirTypeRef,
     override var receiverParameter: FirReceiverParameter?,
     override var deprecationsProvider: DeprecationsProvider,
