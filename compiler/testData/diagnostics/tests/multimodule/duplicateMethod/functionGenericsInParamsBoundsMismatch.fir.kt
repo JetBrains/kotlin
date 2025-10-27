@@ -36,7 +36,7 @@ fun test(b: B?) {
     if (b is C) {
         // hard to find parameters for an ambiguous call, so we rely on NONE_APPLICABLE here
         // as opposed to diagnostics for a single unmatched candidate
-        b?.<!NONE_APPLICABLE!>foo<!>()
+        b?.<!NONE_APPLICABLE, NO_VALUE_FOR_PARAMETER!>foo<!>()
     }
 }
 

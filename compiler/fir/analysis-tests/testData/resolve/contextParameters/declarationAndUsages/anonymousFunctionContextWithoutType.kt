@@ -5,7 +5,7 @@ fun foo(f: context(String) () -> Unit) {}
 
 fun test(c: String) {
     // Invalid syntax: context call and anonymous function declaration are separated
-    foo(<!NONE_APPLICABLE!>context<!>(c)<!SYNTAX!><!> <!TOO_MANY_ARGUMENTS!>fun() { }<!>)
+    foo(<!NONE_APPLICABLE, NO_VALUE_FOR_PARAMETER!>context<!>(c)<!SYNTAX!><!> <!TOO_MANY_ARGUMENTS!>fun() { }<!>)
 }
 
 fun test2() {

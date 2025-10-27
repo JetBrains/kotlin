@@ -18,7 +18,7 @@ class A : B {
         foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>, y, myProp)
         x + y + myProp + parentProp + super.parentProp
     }
-    constructor(x: B, y: Int = <!UNRESOLVED_REFERENCE!>global2<!>): <!NONE_APPLICABLE!>this<!>("", x) {
+    constructor(x: B, y: Int = <!UNRESOLVED_REFERENCE!>global2<!>): <!NONE_APPLICABLE!>this<!>("", <!ARGUMENT_TYPE_MISMATCH!>x<!>) {
         x.parentProp + y + myProp + parentProp + super.parentProp
     }
 

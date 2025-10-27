@@ -1,10 +1,7 @@
 /test.kt:(47,57): error: None of the following candidates is applicable:
 
-static fun createWrap(type: Int, wrapFirstElement: Boolean): Unit:
-  Named arguments are prohibited for non-Kotlin functions.
-
+static fun createWrap(type: Int, wrapFirstElement: Boolean): Unit
 static fun createWrap(type: String!, wrapFirstElement: Boolean): Unit:
-  Named arguments are prohibited for non-Kotlin functions.
   Argument type mismatch: actual type is 'Int', but 'String!' was expected.
 
-
+/test.kt:(61,77): error: Named arguments are prohibited for non-Kotlin functions.

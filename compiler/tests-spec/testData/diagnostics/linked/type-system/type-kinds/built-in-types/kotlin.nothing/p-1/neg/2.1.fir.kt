@@ -27,5 +27,5 @@ class Case2 {
 
 fun case2(c: Case2) {
     val testValue = c.data ?: throw IllegalArgumentException("data required")
-    testValue checkType { <!NONE_APPLICABLE!>check<!><Nothing>() }
+    testValue checkType { <!NONE_APPLICABLE, NO_VALUE_FOR_PARAMETER!>check<!><Nothing>() }
 }
