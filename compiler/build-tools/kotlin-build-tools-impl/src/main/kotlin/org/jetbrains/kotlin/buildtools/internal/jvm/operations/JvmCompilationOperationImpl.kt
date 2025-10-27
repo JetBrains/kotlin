@@ -127,7 +127,7 @@ internal class JvmCompilationOperationImpl private constructor(
         return JvmSnapshotBasedIncrementalCompilationOptionsImpl()
     }
 
-    override fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
+    override fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
         val loggerAdapter =
             logger?.let { KotlinLoggerMessageCollectorAdapter(it) } ?: KotlinLoggerMessageCollectorAdapter(DefaultKotlinLogger)
         return when (executionPolicy) {

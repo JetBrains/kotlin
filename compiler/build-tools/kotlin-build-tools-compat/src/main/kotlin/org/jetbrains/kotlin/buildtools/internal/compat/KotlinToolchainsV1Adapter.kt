@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalBuildToolsApi::class)
+@file:OptIn(ExperimentalBuildToolsApi::class, ExperimentalAtomicApi::class)
 
 package org.jetbrains.kotlin.buildtools.internal.compat
 
@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.buildtools.internal.compat.arguments.JvmCompilerArgu
 import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.nio.file.Path
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.io.path.absolutePathString
 
 public class KotlinToolchainsV1Adapter(
@@ -107,7 +109,7 @@ private class JvmClasspathSnapshottingOperationV1Adapter(
         options[key] = value
     }
 
-    override fun execute(
+    override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicyV1Adapter,
         logger: KotlinLogger?,
@@ -187,7 +189,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
         val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS", null)
     }
 
-    override fun execute(
+    override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicyV1Adapter,
         logger: KotlinLogger?,
@@ -415,7 +417,13 @@ public fun CompilationService.asKotlinToolchains(): KotlinToolchains = KotlinToo
 
 private abstract class BuildOperationImpl<R> : BuildOperation<R> {
     private val options: Options = Options(BuildOperation::class)
+    private val executionStarted = AtomicBoolean(false)
 
+    private fun startExecutionOnce() {
+        check(executionStarted.compareAndSet(expectedValue = false, newValue = true)) {
+            "Build operation $this has already been started."
+        }
+    }
     override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
 
     @Deprecated("Use Builder")
@@ -423,7 +431,12 @@ private abstract class BuildOperationImpl<R> : BuildOperation<R> {
         options[key] = value
     }
 
-    abstract fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicyV1Adapter, logger: KotlinLogger? = null): R
+    fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicyV1Adapter, logger: KotlinLogger? = null): R {
+        startExecutionOnce()
+        return executeImpl(projectId, executionPolicy, logger)
+    }
+
+    abstract fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicyV1Adapter, logger: KotlinLogger? = null): R
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
