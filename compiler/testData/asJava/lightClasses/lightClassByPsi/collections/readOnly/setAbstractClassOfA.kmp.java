@@ -1,4 +1,12 @@
-public abstract class ASet /* test.ASet*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() test.A>, kotlin.collections.Set<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
+public final class A /* test.A*/ {
+  public  A();//  .ctor()
+}
+
+public abstract class ASet /* test.ASet*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  ASet();//  .ctor()
+}
+
+public abstract class ASet2 /* test.ASet2*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
@@ -22,5 +30,5 @@ public abstract class ASet /* test.ASet*/ implements java.util.Set<@org.jetbrain
   @java.lang.Override()
   public int getSize();//  getSize()
 
-  public  ASet();//  .ctor()
+  public  ASet2();//  .ctor()
 }
