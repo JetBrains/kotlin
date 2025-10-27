@@ -83,9 +83,11 @@ library {
 
     package {
 
+      @kotlinx/cinterop/internal/CCall.Direct(name = "IOHIDGetButtonEventNum")
       @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_IOHIDGetButtonEventNum")
       public final external fun IOHIDGetButtonEventNum(button: pod1/NXMouseButton): kotlin/Int
 
+      @kotlinx/cinterop/internal/CCall.Direct(name = "IOHIDPostEvent")
       @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_IOHIDPostEvent")
       public final external fun IOHIDPostEvent(location: kotlinx/cinterop/CValue<pod1/IOGPoint>): kotlin/Int
     }

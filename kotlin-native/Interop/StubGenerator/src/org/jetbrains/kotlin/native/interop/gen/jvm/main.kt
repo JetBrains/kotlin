@@ -498,12 +498,15 @@ private fun checkCCallModeCompatibility(
     Additionally, regardless of the bitcode inclusion, the compiler also doesn't support generating direct CCalls to
     functions defined through `compileSource`.
     */
+    val flag = "-$CCALL_MODE ${CCallMode.INDIRECT.name.lowercase()}"
     check(def.config.entryPoints.isEmpty()) {
-        "entryPoint= in the .def file is only supported with -$CCALL_MODE ${CCallMode.INDIRECT.name.lowercase()}"
+        "entryPoint= in the .def file is only supported with the legacy mode flag $flag.\n" +
+                "See https://youtrack.jetbrains.com/issue/KT-79747 for more details."
     }
 
     check(cinteropArguments.compileSource.isEmpty()) {
-        "-$COMPILE_SOURCES is only supported with -$CCALL_MODE ${CCallMode.INDIRECT.name.lowercase()}"
+        "-$COMPILE_SOURCES is only supported with the legacy mode flag $flag.\n" +
+                "See https://youtrack.jetbrains.com/issue/KT-79749 for more details."
     }
 }
 
