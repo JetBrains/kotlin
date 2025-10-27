@@ -2,3 +2,5 @@ $TESTDATA_DIR$/../kotlinPackage.kt
 -d
 $TEMP_DIR$
 -Xtarget-platform=JVM,JS,WASM_JS,WASM_WASI,Native
+-cp
+$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
