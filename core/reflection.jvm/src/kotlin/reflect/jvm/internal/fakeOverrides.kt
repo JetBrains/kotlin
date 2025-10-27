@@ -159,7 +159,7 @@ private fun collectVisitedSignaturesForSuperclassRecursively(
     for (notSubstitutedMember in currentClass.declaredDescriptorKCallableMembers) {
         // if (notSubstitutedMember.name != "containsAll" && notSubstitutedMember.name != "addAll") continue // todo debug
         if (notSubstitutedMember.visibility == KVisibility.PRIVATE) continue
-        if (notSubstitutedMember.fullVisibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY &&
+        if (notSubstitutedMember.isPackagePrivate &&
             currentClass.java.`package` != context.receiver.java.`package`
         ) {
             continue

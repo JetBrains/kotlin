@@ -24,6 +24,9 @@ internal abstract class KotlinKCallable<out R> : ReflectKCallable<R> {
     final override val isAbstract: Boolean
         get() = modality == Modality.ABSTRACT
 
+    override val isPackagePrivate: Boolean
+        get() = false // todo
+
     override val parameters: List<KParameter>
         get() {
             checkLocalDelegatedPropertyOrAccessor()
