@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.contentRoots
 import org.jetbrains.kotlin.cli.common.createPerformanceManagerFor
 import org.jetbrains.kotlin.cli.common.metadataDestinationDirectory
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
@@ -37,8 +38,12 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 data class NamedMetadata(
@@ -57,6 +62,8 @@ private fun nativeDistributionPath(): File =
 private fun nativeDistributionKlibPath(): File = nativeDistributionPath().resolve("klib")
 
 private fun stdlibPath(): File = nativeDistributionKlibPath().resolve("common").resolve("stdlib")
+
+private fun mockJdk(): File = KtTestUtil.findMockJdkRtJar()
 
 fun loadStdlibMetadata() = loadStdlibMetadata(KotlinTestUtils.newConfiguration())
 
@@ -127,7 +134,7 @@ fun serializeModuleAndAllDependenciesToMetadata(
     }
 
     return serializeModuleToMetadata(
-        module.name, moduleRoot, disposable,
+        module.name, moduleRoot, CommonPlatforms.defaultCommonPlatform, disposable,
         regularDependencies = module.dependencies.map { dependency ->
             dependencyToMetadata[dependency]?.let { JvmClasspathRoot(File(it.destination)) }
                 ?: error("Missing dependency metadata for ${dependency.name}")
@@ -138,6 +145,7 @@ fun serializeModuleAndAllDependenciesToMetadata(
 fun serializeModuleToMetadata(
     moduleName: String,
     moduleRoot: File,
+    targetPlatform: TargetPlatform,
     disposable: Disposable,
     regularDependencies: List<ContentRoot> = emptyList(),
     refinesDependencies: List<String> = emptyList(),
@@ -157,7 +165,13 @@ fun serializeModuleToMetadata(
         ),
     )
 
+    configuration.targetPlatform = targetPlatform
+    configuration.renderDiagnosticInternalName = true
+
     configuration.contentRoots += JvmClasspathRoot(stdlibPath())
+    if (targetPlatform.isJvm()) {
+        configuration.contentRoots += JvmClasspathRoot(mockJdk())
+    }
     configuration.contentRoots += regularDependencies + refinesDependencies.map { JvmClasspathRoot(File(it)) }
     configuration.putIfNotNull(K2MetadataConfigurationKeys.REFINES_PATHS, refinesDependencies.takeIf { it.isNotEmpty() })
     configuration.contentRoots += moduleRoot.walkTopDown()
