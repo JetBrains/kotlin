@@ -213,7 +213,9 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
                     .map { it.replace(TestVersions.Kotlin.CURRENT, "SNAPSHOT") }
                     .joinToString("\n")
 
-                assertEqualsToFile(expectedReportFile.toFile(), actualReportSanitized)
+                assertEqualsToFile(expectedReportFile.toFile(), actualReportSanitized) {
+                    if (it.endsWith("\n")) it.dropLast(1) else it
+                }
             }
             assertAll(consumer.resolvedConfigurationsNames.map { configurationName -> { assertResolvedDependencies(configurationName) } })
         }

@@ -55,8 +55,8 @@ data class Scenario(
                     "linuxArm64CompileKlibraries",
                     "jvmCompileClasspath".takeIf { variant.withJvm },
                 ) + if (variant.withAndroid) listOf(
-                    "androidFlavor1ReleaseCompileClasspath",
-                    "androidFlavor1DebugCompileClasspath"
+                    "flavor1ReleaseCompileClasspath",
+                    "flavor1DebugCompileClasspath"
                 ) else emptyList()
             }
     }
