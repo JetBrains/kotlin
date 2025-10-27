@@ -1463,7 +1463,7 @@ class UklibResolutionTestsWithMockComponents {
                     artifacts = mutableListOf()
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugCompileClasspath")
+            consumer.configurations.getByName("debugCompileClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
         assertEquals(
@@ -1473,7 +1473,7 @@ class UklibResolutionTestsWithMockComponents {
                     artifacts = mutableListOf()
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugRuntimeClasspath")
+            consumer.configurations.getByName("debugRuntimeClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
     }
@@ -1528,7 +1528,7 @@ class UklibResolutionTestsWithMockComponents {
                     configuration = "jvmApiElements-published",
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugCompileClasspath")
+            consumer.configurations.getByName("debugCompileClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
         assertEquals(
@@ -1547,7 +1547,7 @@ class UklibResolutionTestsWithMockComponents {
                     configuration = "jvmRuntimeElements-published",
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugRuntimeClasspath")
+            consumer.configurations.getByName("debugRuntimeClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
     }
@@ -1604,7 +1604,7 @@ class UklibResolutionTestsWithMockComponents {
                     configuration = "androidApiElements-published",
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugCompileClasspath")
+            consumer.configurations.getByName("debugCompileClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
         assertEquals(
@@ -1623,7 +1623,7 @@ class UklibResolutionTestsWithMockComponents {
                     configuration = "androidRuntimeElements-published",
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugRuntimeClasspath")
+            consumer.configurations.getByName("debugRuntimeClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
     }
