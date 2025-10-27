@@ -11,7 +11,15 @@ public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbr
 
   public @org.jetbrains.annotations.NotNull() test.A set(int, @org.jetbrains.annotations.NotNull() test.A);//  set(int, @org.jetbrains.annotations.NotNull() test.A)
 
+  public abstract @org.jetbrains.annotations.NotNull() test.A get(int);//  get(int)
+
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() test.A);//  contains(@org.jetbrains.annotations.NotNull() test.A)
+
   public abstract int getSize();//  getSize()
+
+  public abstract int indexOf(@org.jetbrains.annotations.NotNull() test.A);//  indexOf(@org.jetbrains.annotations.NotNull() test.A)
+
+  public abstract int lastIndexOf(@org.jetbrains.annotations.NotNull() test.A);//  lastIndexOf(@org.jetbrains.annotations.NotNull() test.A)
 
   public boolean add(@org.jetbrains.annotations.NotNull() test.A);//  add(@org.jetbrains.annotations.NotNull() test.A)
 
@@ -24,6 +32,14 @@ public abstract class AList /* test.AList*/ implements java.util.List<@org.jetbr
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  public final @org.jetbrains.annotations.NotNull() test.A get(int);//  get(int)
+
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
 
   public final int size();//  size()
 

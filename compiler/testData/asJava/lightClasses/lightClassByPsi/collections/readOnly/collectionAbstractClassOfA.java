@@ -7,6 +7,8 @@ public abstract class ACollection /* test.ACollection*/ implements java.util.Col
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() test.A);//  contains(@org.jetbrains.annotations.NotNull() test.A)
+
   public abstract int getSize();//  getSize()
 
   public boolean add(@org.jetbrains.annotations.NotNull() test.A);//  add(@org.jetbrains.annotations.NotNull() test.A)
@@ -18,6 +20,8 @@ public abstract class ACollection /* test.ACollection*/ implements java.util.Col
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   public final int size();//  size()
 
