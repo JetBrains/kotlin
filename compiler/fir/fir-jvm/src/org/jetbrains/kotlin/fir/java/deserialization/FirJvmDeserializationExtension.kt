@@ -40,6 +40,7 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
     }
 
     private fun FirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
+        if (this.status.isExpect) return
         if (!JvmBuiltInsSignatures.isSerializableInJava(classId.asSingleFqName().toUnsafe())) return
         superTypeRefs += buildResolvedTypeRef {
             coneType = ConeClassLikeTypeImpl(
