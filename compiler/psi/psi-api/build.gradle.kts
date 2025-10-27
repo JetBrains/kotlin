@@ -1,6 +1,7 @@
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("java-test-fixtures")
     id("project-tests-convention")
 }
@@ -33,12 +34,18 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-apiValidation {
-    nonPublicMarkers += listOf(
-        "org.jetbrains.kotlin.psi.KtImplementationDetail",
-        "org.jetbrains.kotlin.psi.KtNonPublicApi",
-        "org.jetbrains.kotlin.psi.KtExperimentalApi",
-    )
+kotlin {
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled.set(true)
+        filters {
+            exclude.annotatedWith.addAll(
+                "org.jetbrains.kotlin.psi.KtImplementationDetail",
+                "org.jetbrains.kotlin.psi.KtNonPublicApi",
+                "org.jetbrains.kotlin.psi.KtExperimentalApi",
+            )
+        }
+    }
 }
 
 testsJar()

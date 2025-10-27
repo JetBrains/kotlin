@@ -5,7 +5,7 @@ tasks.register("analysisAllTests") {
         ":analysis:decompiled:decompiler-js:test",
         ":analysis:decompiled:decompiler-native:test",
         ":analysis:analysis-api:test",
-        ":analysis:analysis-api:apiCheck",
+        ":analysis:analysis-api:checkKotlinAbi",
         ":analysis:analysis-api-fir:test",
         ":analysis:analysis-api-fe10:test",
         ":analysis:analysis-api-standalone:test",
@@ -13,7 +13,7 @@ tasks.register("analysisAllTests") {
         ":analysis:low-level-api-fir:tests-jdk11:test",
         ":analysis:stubs:test",
         ":analysis:symbol-light-classes:test",
-        ":compiler:psi:psi-api:apiCheck",
+        ":compiler:psi:psi-api:checkKotlinAbi",
         ":compiler:psi:psi-api:test",
     )
 

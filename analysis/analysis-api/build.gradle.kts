@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("project-tests-convention")
 }
 
@@ -36,22 +35,28 @@ dependencies {
 
 kotlin {
     explicitApi()
+
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled.set(true)
+
+        filters {
+            exclude.annotatedWith.addAll(
+                "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+                "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+                "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+                "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+                "org.jetbrains.kotlin.analysis.api.KaPlatformInterface", // Platform interface is not stable yet
+                "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
+            )
+        }
+    }
 }
+
 
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
-}
-
-apiValidation {
-    nonPublicMarkers += listOf(
-        "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
-        "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
-        "org.jetbrains.kotlin.analysis.api.KaIdeApi",
-        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
-        "org.jetbrains.kotlin.analysis.api.KaPlatformInterface", // Platform interface is not stable yet
-        "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
-    )
 }
 
 testsJar()
