@@ -10,9 +10,10 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":analysis:analysis-api:apiDump" />
+          <option value=":analysis:analysis-api:updateLegacyAbi" />
+          <option value=":analysis:analysis-api:updateLegacyAbiUnstable" />
           <option value=":analysis:analysis-api:test" />
-          <option value=":compiler:psi:psi-api:apiDump" />
+          <option value=":compiler:psi:psi-api:updateLegacyAbi" />
           <option value=":compiler:psi:psi-api:test" />
         </list>
       </option>

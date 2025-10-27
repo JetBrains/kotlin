@@ -11,9 +11,14 @@ import java.nio.file.Paths
 
 class AnalysisApiSurfaceDumpConsistencyTest : AbstractSurfaceDumpConsistencyTest() {
     private companion object {
-        private val API_SURFACE_PATH = Paths.get("analysis/analysis-api/api/analysis-api.api")
+        private val API_SURFACE_PATHS = listOf(
+            Paths.get("analysis/analysis-api/api/analysis-api.api"),
+            Paths.get("analysis/analysis-api/api-unstable/analysis-api.api")
+        )
     }
 
     @Test
-    fun testNestedClassCoverage() = validateApiDump(API_SURFACE_PATH)
+    fun testNestedClassCoverage() = API_SURFACE_PATHS.forEach { path ->
+        validateApiDump(path)
+    }
 }
