@@ -92,7 +92,12 @@ abstract class AbstractModule(
         assertions: CompilationOutcome.(Module) -> Unit,
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
-        val result = compileImpl(strategyConfig, compilationConfigAction, compilationAction, kotlinLogger)
+        val result = compileImpl(
+            strategyConfig = strategyConfig,
+            compilationConfigAction = compilationConfigAction,
+            compilationAction = compilationAction,
+            kotlinLogger = kotlinLogger
+        )
         val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel, result)
         try {
             assertions(outcome, this)

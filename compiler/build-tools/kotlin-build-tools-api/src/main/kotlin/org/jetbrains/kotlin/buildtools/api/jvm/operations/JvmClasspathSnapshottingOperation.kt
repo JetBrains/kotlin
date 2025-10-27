@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.buildtools.api.jvm.operations
 
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
@@ -37,13 +38,22 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
  */
 @ExperimentalBuildToolsApi
 public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEntrySnapshot> {
+
+    public interface Builder : BuildOperation.Builder {
+        public operator fun <V> get(key: Option<V>): V
+        public operator fun <V> set(key: Option<V>, value: V)
+        public fun build(): JvmClasspathSnapshottingOperation
+    }
+
+    public fun toBuilder(): Builder
+
     /**
      * Base class for [JvmClasspathSnapshottingOperation] options.
      *
      * @see get
      * @see set
      */
-    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
+    public class Option<out V> internal constructor(id: String) : BaseOption<V>(id)
 
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -56,6 +66,7 @@ public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEnt
     /**
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
+    @Deprecated("Use JvmClasspathSnapshottingOperation.Builder.set instead")
     public operator fun <V> set(key: Option<V>, value: V)
 
     public companion object {

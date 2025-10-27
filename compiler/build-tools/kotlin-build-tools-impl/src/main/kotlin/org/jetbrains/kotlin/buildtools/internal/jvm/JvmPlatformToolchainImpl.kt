@@ -32,10 +32,17 @@ internal class JvmPlatformToolchainImpl(private val buildIdToSessionFlagFile: Mu
     ): JvmCompilationOperation.Builder =
         JvmCompilationOperationImpl(sources, destinationDirectory, buildIdToSessionFlagFile = buildIdToSessionFlagFile)
 
+    @Deprecated(
+        "Use classpathSnapshottingOperationBuilder instead",
+        replaceWith = ReplaceWith("classpathSnapshottingOperationBuilder(classpathEntry)")
+    )
     override fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation {
         return JvmClasspathSnapshottingOperationImpl(classpathEntry)
     }
 
+    override fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperation.Builder {
+        return JvmClasspathSnapshottingOperationImpl(classpathEntry)
+    }
 
     override fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions {
         return JvmSnapshotBasedIncrementalCompilationOptionsImpl()

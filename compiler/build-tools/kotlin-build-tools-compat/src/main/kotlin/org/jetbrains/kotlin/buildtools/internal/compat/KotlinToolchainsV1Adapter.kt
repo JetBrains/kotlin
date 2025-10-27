@@ -58,15 +58,22 @@ public class KotlinToolchainsV1Adapter(
                 return JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter()
             }
 
+            @Deprecated(
+                "Use classpathSnapshottingOperationBuilder instead",
+                replaceWith = ReplaceWith("classpathSnapshottingOperationBuilder(classpathEntry)")
+            )
             override fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation {
+                return JvmClasspathSnapshottingOperationV1Adapter(compilationService, classpathEntry)
+            }
+
+            override fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperation.Builder {
                 return JvmClasspathSnapshottingOperationV1Adapter(compilationService, classpathEntry)
             }
         }
     }
 
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        return when (type) {
+        @Suppress("UNCHECKED_CAST") return when (type) {
             JvmPlatformToolchain::class.java -> jvm
             else -> error("Unsupported platform toolchain type: $type. Only JVM compilation is supported in BTA API v1 fallback (compiler version ${getCompilerVersion()}).")
         } as T
@@ -89,12 +96,18 @@ public class KotlinToolchainsV1Adapter(
     }
 }
 
-private class JvmClasspathSnapshottingOperationV1Adapter(
+private class JvmClasspathSnapshottingOperationV1Adapter private constructor(
+    override val options: Options = Options(JvmClasspathSnapshottingOperation::class),
     @Suppress("DEPRECATION") val compilationService: CompilationService,
     val classpathEntry: Path,
-) :
-    BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
-    private val options: Options = Options(JvmClasspathSnapshottingOperation::class)
+) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder {
+
+    constructor(
+        @Suppress("DEPRECATION") compilationService: CompilationService,
+        classpathEntry: Path,
+    ) : this(Options(JvmClasspathSnapshottingOperation::class), compilationService, classpathEntry)
+
+    override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder = copy()
 
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = options[key]
 
@@ -102,6 +115,11 @@ private class JvmClasspathSnapshottingOperationV1Adapter(
     override fun <V> set(key: JvmClasspathSnapshottingOperation.Option<V>, value: V) {
         options[key] = value
     }
+
+    override fun build(): JvmClasspathSnapshottingOperation = copy()
+
+    fun copy(): JvmClasspathSnapshottingOperationV1Adapter =
+        JvmClasspathSnapshottingOperationV1Adapter(options, compilationService, classpathEntry)
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
@@ -132,7 +150,7 @@ private class JvmClasspathSnapshottingOperationV1Adapter(
 }
 
 private class JvmCompilationOperationV1Adapter private constructor(
-    private val options: Options = Options(JvmCompilationOperation::class),
+    override val options: Options = Options(JvmCompilationOperation::class),
     @Suppress("DEPRECATION") val compilationService: CompilationService,
     val kotlinSources: List<Path>,
     val destinationDirectory: Path,
@@ -159,15 +177,13 @@ private class JvmCompilationOperationV1Adapter private constructor(
         return copy()
     }
 
-
     fun copy(): JvmCompilationOperationV1Adapter {
         return JvmCompilationOperationV1Adapter(
             options.deepCopy(),
             compilationService,
             kotlinSources,
             destinationDirectory,
-            JvmCompilerArgumentsImpl().also { it.applyArgumentStrings(compilerArguments.toArgumentStrings()) }
-        )
+            JvmCompilerArgumentsImpl().also { it.applyArgumentStrings(compilerArguments.toArgumentStrings()) })
     }
 
     private operator fun <V> get(key: Option<V>): V = options[key]
@@ -199,37 +215,25 @@ private class JvmCompilationOperationV1Adapter private constructor(
         this[INCREMENTAL_COMPILATION]?.let { icConfig ->
             if (icConfig !is JvmSnapshotBasedIncrementalCompilationConfiguration) return@let
             val options = icConfig.options as JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter
-            val snapshotBasedConfigV1 = config.makeClasspathSnapshotBasedIncrementalCompilationConfiguration()
-                .apply {
+            val snapshotBasedConfigV1 = config.makeClasspathSnapshotBasedIncrementalCompilationConfiguration().apply {
                     options[ROOT_PROJECT_DIR]?.let { setRootProjectDir(it.toFile()) }
                     options[MODULE_BUILD_DIR]?.let { setBuildDir(it.toFile()) }
-                }
-                .usePreciseJavaTracking(options[PRECISE_JAVA_TRACKING])
-                .usePreciseCompilationResultsBackup(options[BACKUP_CLASSES])
-                .keepIncrementalCompilationCachesInMemory(options[KEEP_IC_CACHES_IN_MEMORY])
-                .useOutputDirs(
+                }.usePreciseJavaTracking(options[PRECISE_JAVA_TRACKING]).usePreciseCompilationResultsBackup(options[BACKUP_CLASSES])
+                .keepIncrementalCompilationCachesInMemory(options[KEEP_IC_CACHES_IN_MEMORY]).useOutputDirs(
                     options[OUTPUT_DIRS]?.map(Path::toFile) ?: listOf(
-                        destinationDirectory.toFile(),
-                        icConfig.workingDirectory.toFile()
+                        destinationDirectory.toFile(), icConfig.workingDirectory.toFile()
                     )
-                )
-                .forceNonIncrementalMode(options[FORCE_RECOMPILATION])
-                .useFirRunner(options[USE_FIR_RUNNER])
+                ).forceNonIncrementalMode(options[FORCE_RECOMPILATION]).useFirRunner(options[USE_FIR_RUNNER])
             config.useIncrementalCompilation(
-                icConfig.workingDirectory.toFile(),
-                icConfig.sourcesChanges,
-                ClasspathSnapshotBasedIncrementalCompilationApproachParameters(
-                    icConfig.dependenciesSnapshotFiles.map(Path::toFile),
-                    icConfig.shrunkClasspathSnapshot.toFile()
-                ),
-                snapshotBasedConfigV1
+                icConfig.workingDirectory.toFile(), icConfig.sourcesChanges, ClasspathSnapshotBasedIncrementalCompilationApproachParameters(
+                    icConfig.dependenciesSnapshotFiles.map(Path::toFile), icConfig.shrunkClasspathSnapshot.toFile()
+                ), snapshotBasedConfigV1
             )
         }
 
         val javaSources = kotlinSources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
         val compilerArguments = compilerArguments.toArgumentStrings().fixForFirCheck() + listOf(
-            "-d",
-            destinationDirectory.absolutePathString()
+            "-d", destinationDirectory.absolutePathString()
         )
         return compilationService.compileJvm(
             projectId,
@@ -289,8 +293,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
 
             val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", null)
 
-            val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> =
-                Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
+            val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> = Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
 
             val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
         }
@@ -329,8 +332,7 @@ private interface ExecutionPolicyV1Adapter {
     val strategyConfiguration: CompilerExecutionStrategyConfiguration
 
     class InProcess(@Suppress("DEPRECATION") override val strategyConfiguration: CompilerExecutionStrategyConfiguration) :
-        ExecutionPolicyV1Adapter,
-        ExecutionPolicy.InProcess
+        ExecutionPolicyV1Adapter, ExecutionPolicy.InProcess
 
     class WithDaemon(@Suppress("DEPRECATION") private val compilationService: CompilationService) : ExecutionPolicyV1Adapter,
         ExecutionPolicy.WithDaemon {
@@ -416,7 +418,7 @@ private class BuildSessionV1Adapter(
 public fun CompilationService.asKotlinToolchains(): KotlinToolchains = KotlinToolchainsV1Adapter(this)
 
 private abstract class BuildOperationImpl<R> : BuildOperation<R> {
-    private val options: Options = Options(BuildOperation::class)
+    protected abstract val options: Options
     private val executionStarted = AtomicBoolean(false)
 
     private fun startExecutionOnce() {
@@ -424,6 +426,7 @@ private abstract class BuildOperationImpl<R> : BuildOperation<R> {
             "Build operation $this has already been started."
         }
     }
+
     override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
 
     @Deprecated("Use Builder")

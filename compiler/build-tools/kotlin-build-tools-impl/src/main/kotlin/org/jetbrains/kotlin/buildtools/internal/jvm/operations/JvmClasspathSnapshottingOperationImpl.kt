@@ -16,9 +16,17 @@ import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import java.nio.file.Path
 
-internal class JvmClasspathSnapshottingOperationImpl(
+internal class JvmClasspathSnapshottingOperationImpl private constructor(
+    override val options: Options = Options(JvmClasspathSnapshottingOperation::class),
     private val classpathEntry: Path,
-) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
+) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder,
+    DeepCopyable<JvmClasspathSnapshottingOperation> {
+
+    constructor(classpathEntry: Path) : this(Options(JvmClasspathSnapshottingOperation::class), classpathEntry)
+
+    override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder = deepCopy()
+
+    override fun build(): JvmClasspathSnapshottingOperation = deepCopy()
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = options[key]
@@ -27,8 +35,6 @@ internal class JvmClasspathSnapshottingOperationImpl(
     override fun <V> set(key: JvmClasspathSnapshottingOperation.Option<V>, value: V) {
         options[key] = value
     }
-
-    override val options: Options = Options(JvmClasspathSnapshottingOperation::class)
 
     override fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): ClasspathEntrySnapshot {
         val granularity: ClassSnapshotGranularity = options["GRANULARITY"]
@@ -45,6 +51,9 @@ internal class JvmClasspathSnapshottingOperationImpl(
     operator fun <V> set(key: Option<V>, value: V) {
         options[key] = value
     }
+
+    override fun deepCopy(): JvmClasspathSnapshottingOperationImpl =
+        JvmClasspathSnapshottingOperationImpl(options.deepCopy(), classpathEntry)
 
     class Option<V> : BaseOptionWithDefault<V> {
         constructor(id: String) : super(id)

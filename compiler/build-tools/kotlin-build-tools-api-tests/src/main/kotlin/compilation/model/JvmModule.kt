@@ -87,12 +87,12 @@ class JvmModule(
     }
 
     private fun generateClasspathSnapshot(dependency: Dependency): Path {
-        val snapshotOperation = kotlinToolchain.jvm.createClasspathSnapshottingOperation(
+        val snapshotOperation = kotlinToolchain.jvm.classpathSnapshottingOperationBuilder(
             dependency.location
         )
         snapshotOperation[JvmClasspathSnapshottingOperation.GRANULARITY] = snapshotConfig.granularity
         snapshotOperation[PARSE_INLINED_LOCAL_CLASSES] = snapshotConfig.useInlineLambdaSnapshotting
-        val snapshotResult = buildSession.executeOperation(snapshotOperation)
+        val snapshotResult = buildSession.executeOperation(snapshotOperation.build())
         val hash = snapshotResult.classSnapshots.values
             .filterIsInstance<AccessibleClassSnapshot>()
             .withIndex()

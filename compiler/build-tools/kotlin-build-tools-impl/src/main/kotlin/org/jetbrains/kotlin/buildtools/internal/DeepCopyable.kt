@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
-public interface DeepCopyable<T> {
+public interface DeepCopyable<out T> {
     public fun deepCopy(): T
 }
