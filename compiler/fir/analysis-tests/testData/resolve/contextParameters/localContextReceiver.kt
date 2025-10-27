@@ -6,7 +6,7 @@ class A(val a: String)
 
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
 private fun f1() {
-    <!NONE_APPLICABLE!>context<!>(<!NO_COMPANION_OBJECT!>A<!>)
+    <!NONE_APPLICABLE, NO_VALUE_FOR_PARAMETER!>context<!>(<!NO_COMPANION_OBJECT!>A<!>)
     fun f2() {
         foo(<!UNRESOLVED_REFERENCE!>a<!>)
     }

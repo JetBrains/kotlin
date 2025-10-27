@@ -122,7 +122,7 @@ fun hasOverload(x: String) {}
 
 fun testOverloads() {
     <!NONE_APPLICABLE!>hasOverload<!>(true)
-    {}
+    <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
 
     <!NONE_APPLICABLE!>hasOverload<!>(true)
     foo@ {}

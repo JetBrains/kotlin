@@ -15,7 +15,7 @@ class B : A() {
     fun test() {
         foo()
         bar()
-        <!NONE_APPLICABLE!>buz<!>()
+        <!NONE_APPLICABLE, NO_VALUE_FOR_PARAMETER!>buz<!>()
     }
 }
 

@@ -407,13 +407,39 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
         }
     }
 
-    fun ConeAmbiguityError.candidatesWithDiagnosticMessages(
+    fun ConeAmbiguityError.noneApplicable(
         source: KtSourceElement?,
         session: FirSession,
-    ): List<Pair<FirBasedSymbol<*>, List<String>>> {
-        return candidatesWithErrors.map {
-            it.key.symbol to it.value?.toFirDiagnostics(session, source, callOrAssignmentSource = null, valueParameter = null)
-                ?.map(KtDiagnostic::renderMessage).orEmpty()
+    ): List<KtDiagnostic> {
+        return buildList {
+            // For every overload, build a list with all its nested diagnostics.
+            val candidatesWithDiagnostics = candidatesWithErrors.map { (candidate, coneDiagnostic) ->
+                candidate.symbol to coneDiagnostic?.toFirDiagnostics(session, source, callOrAssignmentSource = null, valueParameter = null).orEmpty()
+            }
+
+            // Determine the list of nested diagnostics shared by every overload and report them on the top-level.
+            val sharedDiagnostics = candidatesWithDiagnostics
+                .flatMap { (symbol, diagnostics) -> diagnostics.map { it to symbol } }
+                .groupBy({ it.first }, { it.second })
+                .filter { it.value.size == candidatesWithDiagnostics.size }
+
+            // Report NONE_APPLICABLE with only the nested diagnostics that are not shared between all overloads.
+            val candidatesWithFilteredDiagnostics = candidatesWithDiagnostics.map { (symbol, diagnostics) ->
+                symbol to diagnostics.filter { it !in sharedDiagnostics }.map(KtDiagnostic::renderMessage)
+            }
+
+            addIfNotNull(
+                FirErrors.NONE_APPLICABLE.createOn(
+                    source,
+                    candidatesWithFilteredDiagnostics,
+                    session
+                )
+            )
+
+            for ((diagnostic) in sharedDiagnostics) {
+                add(diagnostic)
+            }
+
         }
     }
 
@@ -450,13 +476,7 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
                     )
                 )
             } else {
-                listOfNotNull(
-                    FirErrors.NONE_APPLICABLE.createOn(
-                        source,
-                        candidatesWithDiagnosticMessages(source, session),
-                        session
-                    )
-                )
+                noneApplicable(source, session)
             }
         }
 
@@ -467,13 +487,7 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
             listOfNotNull(unstableSmartcast.mapUnstableSmartCast(session))
         }
 
-        else -> listOfNotNull(
-            FirErrors.NONE_APPLICABLE.createOn(
-                source,
-                candidatesWithDiagnosticMessages(source, session),
-                session
-            )
-        )
+        else -> noneApplicable(source, session)
     }
 }
 

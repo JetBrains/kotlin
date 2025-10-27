@@ -16,7 +16,7 @@ class B {
         a = A()
         a<!UNSAFE_CALL!>.<!>f(true)
         takeInt(a<!UNSAFE_CALL!>.<!>f(""))
-        a.<!NONE_APPLICABLE!>f<!>()
+        a.<!NONE_APPLICABLE, UNSAFE_CALL!>f<!>()
     }
 
     fun g() {
