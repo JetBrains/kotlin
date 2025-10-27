@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompi
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinAndroidCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationLanguageSettingsConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.AndroidCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.AndroidCompilationSourceSetsContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJvmCompilerOptionsFactory
@@ -32,6 +33,7 @@ class KotlinJvmAndroidCompilationFactory internal constructor(
 
     private val compilationImplFactory: KotlinCompilationImplFactory = KotlinCompilationImplFactory(
         compilerOptionsFactory = KotlinJvmCompilerOptionsFactory,
+        compilationDependencyConfigurationsFactory = AndroidCompilationDependencyConfigurationsFactory(variant),
         compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
             friendArtifactResolver = DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver.composite(
                 DefaultKotlinCompilationFriendPathsResolver.DefaultFriendArtifactResolver,

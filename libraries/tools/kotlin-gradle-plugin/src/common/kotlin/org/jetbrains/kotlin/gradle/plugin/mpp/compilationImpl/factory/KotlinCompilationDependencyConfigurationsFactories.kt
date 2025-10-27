@@ -67,6 +67,18 @@ internal class JvmWithJavaCompilationDependencyConfigurationsFactory(private val
     }
 }
 
+internal class AndroidCompilationDependencyConfigurationsFactory(
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") private val variant: DeprecatedAndroidBaseVariant,
+) : KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
+    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
+        return KotlinCompilationDependencyConfigurationsContainer(
+            target = target, compilationName = compilationName, withRuntime = true,
+            compileClasspathConfigurationName = variant.compileConfiguration.name,
+            runtimeClasspathConfigurationName = variant.runtimeConfiguration.name
+        )
+    }
+}
+
 private fun interface ConfigurationNaming {
     fun name(vararg parts: String): String
 
