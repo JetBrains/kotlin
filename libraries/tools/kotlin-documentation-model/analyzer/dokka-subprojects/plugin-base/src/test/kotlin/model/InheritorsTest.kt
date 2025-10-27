@@ -756,4 +756,52 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
             }
         }
     }
+
+    @Test
+    fun `fake intersected and overridden fake fun should have correct DRI`() {
+        inlineModelTest(
+            """
+            |class NamedDomainObjectContainerScope<T : Any> 
+            | : NamedDomainObjectContainerDelegate<T>(), PolymorphicDomainObjectContainer<T> 
+            | 
+            |abstract class NamedDomainObjectContainerDelegate<T : Any> : NamedDomainObjectContainer<T> {
+            |  override fun getNamer(): T? = null
+            |}
+            |
+            |interface PolymorphicDomainObjectContainer<T>: NamedDomainObjectContainer<T>
+            |
+            |interface NamedDomainObjectContainer<T> {
+            |  fun getNamer(): T?  = null
+            |}
+        """
+        ) {
+            with((this / "inheritors" / "NamedDomainObjectContainerScope" / "getNamer").cast<DFunction>()) {
+                dri equals DRI("inheritors", "NamedDomainObjectContainerDelegate", org.jetbrains.dokka.links.Callable("getNamer", null, emptyList()) )
+            }
+        }
+    }
+
+    @Test
+    fun `fake intersected and overridden fake property should have correct DRI`() {
+        inlineModelTest(
+            """
+            |class NamedDomainObjectContainerScope<T : Any> 
+            | : NamedDomainObjectContainerDelegate<T>(), PolymorphicDomainObjectContainer<T> 
+            | 
+            |abstract class NamedDomainObjectContainerDelegate<T : Any> : NamedDomainObjectContainer<T> {
+            |  override var namer: T? = null
+            |}
+            |
+            |interface PolymorphicDomainObjectContainer<T>: NamedDomainObjectContainer<T>
+            |
+            |interface NamedDomainObjectContainer<T> {
+            |  var namer: T?  = null
+            |}
+        """
+        ) {
+            with((this / "inheritors" / "NamedDomainObjectContainerScope" / "namer").cast<DProperty>()) {
+                dri equals DRI("inheritors", "NamedDomainObjectContainerDelegate", org.jetbrains.dokka.links.Callable("namer", null, emptyList()) )
+            }
+        }
+    }
 }
