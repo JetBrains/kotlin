@@ -101,6 +101,9 @@ public abstract class JsVisitorWithContext {
     public void endVisit(@NotNull JsContinue x, @NotNull JsContext ctx) {
     }
 
+    public void endVisit(@NotNull JsYield x, @NotNull JsContext ctx) {
+    }
+
     public void endVisit(@NotNull JsYieldStar x, @NotNull JsContext ctx) {
     }
 
