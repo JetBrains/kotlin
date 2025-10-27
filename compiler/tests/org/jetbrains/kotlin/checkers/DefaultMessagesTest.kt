@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrorsDefaultMessages
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrorsDefaultMessages
+import org.jetbrains.kotlin.fir.cli.CliDiagnostics
+import org.jetbrains.kotlin.fir.cli.KtDiagnosticMessagesCli
 import org.jetbrains.kotlin.test.utils.verifyMessages
 import org.junit.Test
 
@@ -32,5 +34,6 @@ class DefaultMessagesTest {
         FirWasmErrorsDefaultMessages.MAP.verifyMessages(FirWasmErrors)
         FirWebCommonErrorsDefaultMessages.MAP.verifyMessages(FirWebCommonErrors)
         FirSyntaxErrorsDefaultMessages.MAP.verifyMessages(FirSyntaxErrors)
+        KtDiagnosticMessagesCli.MAP.verifyMessages(CliDiagnostics)
     }
 }

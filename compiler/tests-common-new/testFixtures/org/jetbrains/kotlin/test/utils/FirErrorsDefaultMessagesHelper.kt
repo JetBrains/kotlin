@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.utils
 
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.junit.Assert
 import kotlin.reflect.KProperty
@@ -15,7 +16,7 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessages(objectWithErrors: Any) {
     val errors = mutableListOf<String>()
     for (property in objectWithErrors::class.memberProperties) {
         when (val factory = property.getter.call(objectWithErrors)) {
-            is KtDiagnosticFactoryN -> {
+            is AbstractKtDiagnosticFactory -> {
                 errors += verifyMessageForFactory(factory, property)
             }
             is KtDiagnosticFactoryForDeprecation<*> -> {
@@ -42,95 +43,107 @@ private val lastCharExclusions = listOf(
     FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR.name,
 )
 
-fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: KtDiagnosticFactoryN, property: KProperty<*>) = buildList {
-    if (!containsKey(factory)) {
-        add("No default diagnostic renderer is provided for ${property.name}")
-        return@buildList
-    }
-
-    val renderer = get(factory)!!
-
-    val parameterCount = when (renderer) {
-        is KtDiagnosticWithParameters4Renderer<*, *, *, *> -> 4
-        is KtDiagnosticWithParameters3Renderer<*, *, *> -> 3
-        is KtDiagnosticWithParameters2Renderer<*, *> -> 2
-        is KtDiagnosticWithParameters1Renderer<*> -> 1
-        is KtSourcelessDiagnosticRenderer -> 1
-        is SimpleKtDiagnosticRenderer -> 0
-    }
-
-    val message = renderer.message
-
-    for (parameter in messageParameterRegex.findAll(message)) {
-        val index = parameter.value.substring(1, 2).toInt()
-        if (index >= parameterCount) {
-            add("Message for ${property.name} references wrong parameter {$index}")
+fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKtDiagnosticFactory, property: KProperty<*>): List<String> {
+    return buildList {
+        val renderer = get(factory) ?: run {
+            add("No default diagnostic renderer is provided for ${property.name}")
+            return@buildList
         }
-    }
 
-    if (parameterCount > 0 && message.contains("(?<!')'(?!')".toRegex())) {
-        add("Renderer for ${property.name} has parameters and contains a single quote. Text inside single quotes is not formatted in MessageFormat. Use double quotes instead.")
-    }
+        val message = renderer.message
 
-    if (parameterCount == 0 && message.contains("(?<!')''(?!')".toRegex())) {
-        add("Renderer for ${property.name} has no parameters and contains double quote. Single quotes should be used.")
-    }
+        if (factory is KtSourcelessDiagnosticFactory) {
+            if (message != BaseSourcelessDiagnosticFactory.MESSAGE_PLACEHOLDER) {
+                add(
+                    """
+                    ${KtSourcelessDiagnosticFactory::class.simpleName} currently supports only `${BaseSourcelessDiagnosticFactory.MESSAGE_PLACEHOLDER}` placeholder which implies passing particular messages directly to a reporter.
+                    The current value of ${property.name} is `${message}`.
+                    """.trimIndent()
+                )
+            }
+            return@buildList
+        }
 
-    if (property.name !in lastCharExclusions && !message.last().toString().matches(lastCharRegex)) {
-        add("Renderer for ${property.name} should end with a full stop. If this error is a false positive, add the name of the diagnostic to the list of exclusions.")
-    }
+        val parameterCount = when (renderer) {
+            is KtDiagnosticWithParameters4Renderer<*, *, *, *> -> 4
+            is KtDiagnosticWithParameters3Renderer<*, *, *> -> 3
+            is KtDiagnosticWithParameters2Renderer<*, *> -> 2
+            is KtDiagnosticWithParameters1Renderer<*> -> 1
+            is KtSourcelessDiagnosticRenderer -> 1
+            is SimpleKtDiagnosticRenderer -> 0
+        }
 
-    fun MutableList<String>.checkRule(regex: Regex, hasProblem: String, exclusions: Set<String> = emptySet()) {
-        if (property.name !in exclusions && message.contains(regex)) {
-            val updatedMessage = message.replace(regex) { matchResult -> "[[${matchResult.value}]]" }
-            add(
-                "Message of ${property.name} $hasProblem:\n$updatedMessage\nIf this error is a false positive, add the name of the diagnostic to the list of exclusions."
+        for (parameter in messageParameterRegex.findAll(message)) {
+            val index = parameter.value.substring(1, 2).toInt()
+            if (index >= parameterCount) {
+                add("Message for ${property.name} references wrong parameter {$index}")
+            }
+        }
+
+        if (parameterCount > 0 && message.contains("(?<!')'(?!')".toRegex())) {
+            add("Renderer for ${property.name} has parameters and contains a single quote. Text inside single quotes is not formatted in MessageFormat. Use double quotes instead.")
+        }
+
+        if (parameterCount == 0 && message.contains("(?<!')''(?!')".toRegex())) {
+            add("Renderer for ${property.name} has no parameters and contains double quote. Single quotes should be used.")
+        }
+
+        if (property.name !in lastCharExclusions && !message.last().toString().matches(lastCharRegex)) {
+            add("Renderer for ${property.name} should end with a full stop. If this error is a false positive, add the name of the diagnostic to the list of exclusions.")
+        }
+
+        fun MutableList<String>.checkRule(regex: Regex, hasProblem: String, exclusions: Set<String> = emptySet()) {
+            if (property.name !in exclusions && message.contains(regex)) {
+                val updatedMessage = message.replace(regex) { matchResult -> "[[${matchResult.value}]]" }
+                add(
+                    "Message of ${property.name} $hasProblem:\n$updatedMessage\nIf this error is a false positive, add the name of the diagnostic to the list of exclusions."
+                )
+            }
+        }
+
+        checkRule(
+            """\b(colour|favour|realise|analyse|centre|defence|offence|licence|cancelled|metre|tonne|cheque|catalogue|neighbour|grey|programme)\b""".toRegex(
+                RegexOption.IGNORE_CASE),
+            "uses British spelling. Use American spelling instead"
+        )
+
+        checkRule(
+            """\b(?:we|us|you(?!\s+have))\b""".toRegex(RegexOption.IGNORE_CASE),
+            "uses 'we', 'us' or 'you'.",
+            setOf(
+                FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name,
+                FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.name,
+                "PARCELABLE_TYPE_NOT_SUPPORTED",
             )
-        }
+        )
+        checkRule(
+            """\bplease\b""".toRegex(RegexOption.IGNORE_CASE),
+            "uses overly polite tone",
+            setOf(FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name, FirErrors.ERROR_SUPPRESSION.name)
+        )
+
+        checkRule(
+            """\b(?:probably|likely|maybe|certainly|possibly|undoubtedly|presumably|apparently|hopefully)\b""".toRegex(RegexOption.IGNORE_CASE),
+            "uses adverb of probability (likely, maybe, ...)",
+        )
+
+        checkRule(
+            """\b(?:could|should|would|shall)\b""".toRegex(RegexOption.IGNORE_CASE),
+            "uses modal verb (could, should, ...) with uncertainty",
+            setOf(
+                FirErrors.VERSION_REQUIREMENT_DEPRECATION.name,
+                FirErrors.NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE.name
+            )
+        )
+
+        checkRule(
+            """\b(?:must|ca|is|wo|do)n''?t\b""".toRegex(RegexOption.IGNORE_CASE),
+            "uses contraction",
+        )
+
+        checkRule(
+            """\bmust not\b""".toRegex(RegexOption.IGNORE_CASE),
+            "uses 'must not'. Replace with 'cannot'",
+        )
     }
-
-    checkRule(
-        """\b(colour|favour|realise|analyse|centre|defence|offence|licence|cancelled|metre|tonne|cheque|catalogue|neighbour|grey|programme)\b""".toRegex(
-            RegexOption.IGNORE_CASE),
-        "uses British spelling. Use American spelling instead"
-    )
-
-    checkRule(
-        """\b(?:we|us|you(?!\s+have))\b""".toRegex(RegexOption.IGNORE_CASE),
-        "uses 'we', 'us' or 'you'.",
-        setOf(
-            FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name,
-            FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.name,
-            "PARCELABLE_TYPE_NOT_SUPPORTED",
-        )
-    )
-    checkRule(
-        """\bplease\b""".toRegex(RegexOption.IGNORE_CASE),
-        "uses overly polite tone",
-        setOf(FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name, FirErrors.ERROR_SUPPRESSION.name)
-    )
-
-    checkRule(
-        """\b(?:probably|likely|maybe|certainly|possibly|undoubtedly|presumably|apparently|hopefully)\b""".toRegex(RegexOption.IGNORE_CASE),
-        "uses adverb of probability (likely, maybe, ...)",
-    )
-
-    checkRule(
-        """\b(?:could|should|would|shall)\b""".toRegex(RegexOption.IGNORE_CASE),
-        "uses modal verb (could, should, ...) with uncertainty",
-        setOf(
-            FirErrors.VERSION_REQUIREMENT_DEPRECATION.name,
-            FirErrors.NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE.name
-        )
-    )
-
-    checkRule(
-        """\b(?:must|ca|is|wo|do)n''?t\b""".toRegex(RegexOption.IGNORE_CASE),
-        "uses contraction",
-    )
-
-    checkRule(
-        """\bmust not\b""".toRegex(RegexOption.IGNORE_CASE),
-        "uses 'must not'. Replace with 'cannot'",
-    )
 }
