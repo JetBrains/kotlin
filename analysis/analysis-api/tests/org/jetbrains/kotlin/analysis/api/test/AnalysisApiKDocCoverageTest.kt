@@ -16,7 +16,7 @@ class AnalysisApiKDocCoverageTest : AbstractKDocCoverageTest() {
         ),
         SourceDirectory.ForDumpFileComparison(
             listOf("analysis/analysis-api-platform-interface/src/org/jetbrains/kotlin/analysis/api/platform"),
-            "analysis/analysis-api/api/analysis-api-platform-interface.undocumented",
+            "analysis/analysis-api-platform-interface/api/analysis-api-platform-interface.undocumented",
         ),
     )
 
