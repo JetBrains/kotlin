@@ -53682,6 +53682,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
       }
 
       @Test
+      @TestMetadata("membersWithDefaultValuesAndContextParams.kt")
+      public void testMembersWithDefaultValuesAndContextParams() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/membersWithDefaultValuesAndContextParams.kt");
+      }
+
+      @Test
       @TestMetadata("nonDefaultParameterOmitted.kt")
       public void testNonDefaultParameterOmitted() {
         runTest("compiler/testData/codegen/box/reflection/callBy/nonDefaultParameterOmitted.kt");
@@ -53727,6 +53733,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
       @TestMetadata("simpleTopLevelFunction.kt")
       public void testSimpleTopLevelFunction() {
         runTest("compiler/testData/codegen/box/reflection/callBy/simpleTopLevelFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelsWithDefaultValuesAndContextParams.kt")
+      public void testTopLevelsWithDefaultValuesAndContextParams() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/topLevelsWithDefaultValuesAndContextParams.kt");
       }
 
       @Nested
