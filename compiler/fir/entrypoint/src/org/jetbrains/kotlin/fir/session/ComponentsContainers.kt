@@ -150,6 +150,7 @@ class FirSharableJavaComponents(
 fun FirSession.registerJavaComponents(
     javaModuleResolver: JavaModuleResolver,
     predefinedComponents: FirSharableJavaComponents? = null,
+    registerJvmDeserializationExtension: Boolean = true,
 ) {
     register(FirJavaModuleResolverProvider::class, FirJavaModuleResolverProvider(javaModuleResolver))
     val jsr305State =
@@ -165,7 +166,10 @@ fun FirSession.registerJavaComponents(
     register(FirSyntheticPropertiesStorage::class, FirSyntheticPropertiesStorage(this))
     register(PlatformSupertypeUpdater::class, JvmSupertypeUpdater(this))
     register(JavaOverridabilityRules(this))
-    register(FirJvmDeserializationExtension(this))
+
+    if (registerJvmDeserializationExtension) {
+        register(FirJvmDeserializationExtension(this))
+    }
     register(FirEnumEntriesSupport::class, FirJvmEnumEntriesSupport(this))
     register(FirAnnotationsPlatformSpecificSupportComponent::class, FirJvmAnnotationsPlatformSpecificSupportComponent)
     register(FirPrimaryConstructorSuperTypeCheckerPlatformComponent::class, FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent)
