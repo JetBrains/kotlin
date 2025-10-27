@@ -5,3 +5,5 @@ $TESTDATA_DIR$/inheritorOfExpectSealedClass/common-3.kt
 $TEMP_DIR$
 -Xcommon-sources=$TESTDATA_DIR$/inheritorOfExpectSealedClass/common-1.kt,$TESTDATA_DIR$/inheritorOfExpectSealedClass/common-2.kt
 -Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
+-cp
+$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
