@@ -212,8 +212,8 @@ class C {
 }
 
 fun withDelegate() {
-    var <!VARIABLE_NEVER_READ!>s<!>: String by Delegates.notNull()
-    <!ASSIGNED_VALUE_IS_NEVER_READ!>s<!> = ""
+    var s: String by Delegates.notNull()
+    s = ""
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, classDeclaration, classReference,
