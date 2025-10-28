@@ -20,31 +20,31 @@ import kotlin.reflect.jvm.javaField
 /**
  * Unfortunately, getting members is not a transitive operation
  */
-internal fun getAllMembers_newKotlinReflect(kClass: KClassImpl<*>): Collection<DescriptorKCallable<*>> {
-    val membersReadOnlyList = kClass.data.value.allMembersPreservingTransitivity
+internal fun getAllMembers_newKotlinReflectImpl(kClass: KClassImpl<*>): Collection<DescriptorKCallable<*>> {
+    val membersReadOnly = kClass.data.value.allMembersPreservingTransitivity
     // Kotlin doesn't have statics (unless it's enum), and it never inherits statics from Java
     val doNeedToFilterOutStatics =
-        membersReadOnlyList.containsInheritedStatics && kClass.classKind != ClassKind.ENUM_CLASS && kClass.java.isKotlin
-    val doNeedToShrinkMembers = membersReadOnlyList.containsPackagePrivate || doNeedToFilterOutStatics
-    val membersMutableList = when (doNeedToShrinkMembers) {
+        membersReadOnly.containsInheritedStatics && kClass.classKind != ClassKind.ENUM_CLASS && kClass.java.isKotlin
+    val doNeedToShrinkMembers = membersReadOnly.containsPackagePrivate || doNeedToFilterOutStatics
+    val membersMutable = when (doNeedToShrinkMembers) {
         true -> lazyOf(
-            membersReadOnlyList.allMembers.filterNotTo(HashMap(membersReadOnlyList.allMembers.size)) { (_, member) ->
+            membersReadOnly.allMembers.filterNotTo(HashMap(membersReadOnly.allMembers.size)) { (_, member) ->
                 doNeedToFilterOutStatics && member.isStatic ||
                     member.isPackagePrivate && member.container.jClass.`package` != kClass.java.`package`
             }
         )
-        false -> lazy(LazyThreadSafetyMode.NONE) { HashMap(membersReadOnlyList.allMembers) }
+        false -> lazy(LazyThreadSafetyMode.NONE) { HashMap(membersReadOnly.allMembers) }
     }
     for (declaredMember in kClass.declaredDescriptorKCallableMembers) {
         val signature = declaredMember.toEquatableCallableSignature()
         // static members are not inherited, but the immediate statics in interfaces must appear in the 'members' list
         if (declaredMember.isStatic && kClass.classKind == ClassKind.INTERFACE) {
-            membersMutableList.value[signature] = declaredMember
+            membersMutable.value[signature] = declaredMember
         }
         // private members are not inherited, but immediate private members must appear in the 'members' list
-        if (declaredMember.visibility == KVisibility.PRIVATE) membersMutableList.value[signature] = declaredMember
+        if (declaredMember.visibility == KVisibility.PRIVATE) membersMutable.value[signature] = declaredMember
     }
-    return (if (membersMutableList.isInitialized()) membersMutableList.value else membersReadOnlyList.allMembers)
+    return (if (membersMutable.isInitialized()) membersMutable.value else membersReadOnly.allMembers)
         .map { it.value }
 }
 
@@ -90,7 +90,7 @@ internal data class AllMembersPreservingTransitivity(
  * todo KDoc
  */
 internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMembersPreservingTransitivity {
-    val outVisitedSignatures = HashMap<EquatableCallableSignature, DescriptorKCallable<*>>()
+    val result = HashMap<EquatableCallableSignature, DescriptorKCallable<*>>() // todo rename
     val thisReceiver = kClass.descriptor.thisAsReceiverParameter
     var containsInheritedStatics = false
     var containsPackagePrivate = false
@@ -106,7 +106,8 @@ internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMemb
                     it//.lowerBoundIfFlexible() // todo formatting
             }
         } ?: rawSupertype
-        val supertypeKClass = (supertype as AbstractKType).correctClassifier as? KClass<*> ?: nonDenotableSupertypesAreNotPossible()
+        val supertypeKClass = (supertype as AbstractKType).correctClassifier as? KClass<*>
+            ?: nonDenotableSupertypesAreNotPossible()
         val substitutor = KTypeSubstitutor.create(supertype)
         val supertypeMembers = supertypeKClass.allMembersPreservingTransitivity
         containsInheritedStatics = containsInheritedStatics || supertypeMembers.containsInheritedStatics
@@ -118,7 +119,7 @@ internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMemb
                 kTypeSubstitutor =
                     (notSubstitutedMember.kTypeSubstitutor ?: KTypeSubstitutor.EMPTY).combinedWith(substitutor)
             }
-            outVisitedSignatures.merge(member.toEquatableCallableSignature(), member) { a, b ->
+            result.merge(member.toEquatableCallableSignature(), member) { a, b ->
                 minOf(a, b, CovariantOverrideComparator)
             }
         }
@@ -130,9 +131,9 @@ internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMemb
         if (isStaticMember && kClass.classKind == ClassKind.INTERFACE) continue
         containsInheritedStatics = containsInheritedStatics || isStaticMember
         containsPackagePrivate = containsPackagePrivate || member.isPackagePrivate
-        outVisitedSignatures[member.toEquatableCallableSignature()] = member
+        result[member.toEquatableCallableSignature()] = member
     }
-    return AllMembersPreservingTransitivity(outVisitedSignatures, containsInheritedStatics, containsPackagePrivate)
+    return AllMembersPreservingTransitivity(result, containsInheritedStatics, containsPackagePrivate)
 }
 
 private val DescriptorKCallable<*>.isStatic: Boolean
@@ -182,7 +183,7 @@ private fun List<KTypeParameter>.substituteTypeParametersInto(typeParameters: Li
 }
 
 // Signatures that you can test for equality
-internal class EquatableCallableSignature(
+internal data class EquatableCallableSignature(
     val kind: SignatureKind,
     val name: String,
     val typeParameters: List<KTypeParameter>,

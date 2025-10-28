@@ -331,7 +331,7 @@ internal class KClassImpl<T : Any>(
             by ReflectProperties.lazySoft {
                 when (useK1Implementation) {
                     true -> allNonStaticMembers + allStaticMembers
-                    false -> getAllMembers_newKotlinReflect(this@KClassImpl)
+                    false -> getAllMembers_newKotlinReflectImpl(this@KClassImpl)
                 }
             }
         internal val allMembersPreservingTransitivity: AllMembersPreservingTransitivity
