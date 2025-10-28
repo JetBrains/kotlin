@@ -420,33 +420,16 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             else -> null
         } ?: return null
 
-//        if (signature.containsTypeParameter()) return null
-
         return method.wrap(signature = signature, substitutor = substitutor)
     }
-
-//    private fun MethodSignature.containsTypeParameter(): Boolean {
-//        return parameterTypes.any { it.containsTypeParameter() } || returnType.containsTypeParameter()
-//    }
-//
-//    private fun PsiType.containsTypeParameter(): Boolean {
-//        return when (this) {
-//            is PsiClassType -> resolve() is PsiTypeParameter || parameters.any { it.containsTypeParameter() }
-//            is PsiArrayType -> componentType.containsTypeParameter()
-//            is PsiWildcardType -> bound?.containsTypeParameter() == true
-//            else -> false
-//        }
-//    }
-
-    private fun singleTypeParameterAsType(): PsiType = typeParameters.single().asType()
 
     private fun createRemoveAt(baseMethod: PsiMethod, substitutor: PsiSubstitutor): PsiMethod {
         return baseMethod.wrap(
             name = "removeAt",
-            signature = MethodSignature(
-                parameterTypes = listOf(PsiTypes.intType()),
-                returnType = singleTypeParameterAsType()
-            ),
+//            signature = MethodSignature(
+//                parameterTypes = listOf(PsiTypes.intType()),
+//                returnType = singleTypeParameterAsType()
+//            ),
             substitutor = substitutor,
         )
     }
@@ -630,6 +613,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "containsAll" }
             matchesAddAllMethod(symbol) ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "addAll" }
+            matchesAddAll2Method(symbol) ->
+                getJavaListClass(allSupertypes)?.methods?.find { it.name == "addAll" && it.parameters.size == 2 }
             matchesRemoveAllMethod(symbol) ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "removeAll" }
             matchesRetainAllMethod(symbol) ->
@@ -687,6 +672,12 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         if (symbol.name?.asString() != "addAll") return false
         val parameter = symbol.valueParameters.singleOrNull() ?: return false
         return parameter.name.asString() == "elements"
+    }
+
+    private fun matchesAddAll2Method(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "addAll") return false
+        val parameters = symbol.valueParameters.takeIf { it.size == 2 } ?: return false
+        return parameters[0].name.asString() == "index" && parameters[1].name.asString() == "elements"
     }
 
     private fun matchesRemoveAllMethod(symbol: KaFunctionSymbol): Boolean {

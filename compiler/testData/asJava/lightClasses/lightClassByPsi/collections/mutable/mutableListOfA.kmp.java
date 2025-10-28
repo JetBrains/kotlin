@@ -1,4 +1,12 @@
-public abstract class AMutableList /* test.AMutableList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.collections.MutableList<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMutableList {
+public final class A /* test.A*/ {
+  public  A();//  .ctor()
+}
+
+public abstract class AMutableList /* test.AMutableList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMutableList {
+  public  AMutableList();//  .ctor()
+}
+
+public abstract class AMutableList2 /* test.AMutableList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMutableList {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.NotNull()
@@ -88,5 +96,5 @@ public abstract class AMutableList /* test.AMutableList*/ implements java.util.L
   @java.lang.Override()
   public void clear();//  clear()
 
-  public  AMutableList();//  .ctor()
+  public  AMutableList2();//  .ctor()
 }

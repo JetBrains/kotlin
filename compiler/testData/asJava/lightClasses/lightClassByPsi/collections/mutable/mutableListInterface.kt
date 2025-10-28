@@ -1,4 +1,3 @@
-// test.IMutableList
 // WITH_STDLIB
 
 package test
