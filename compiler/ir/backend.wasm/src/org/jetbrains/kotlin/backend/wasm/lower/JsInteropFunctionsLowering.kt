@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
+import org.jetbrains.kotlin.ir.backend.js.utils.isExplicitlyExported
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -55,7 +55,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         if (declaration.isFakeOverride) return null
         if (declaration !is IrSimpleFunction) return null
-        val isExported = declaration.isJsExport()
+        val isExported = declaration.isExplicitlyExported()
         val isExternal = declaration.isExternal || declaration.getJsFunAnnotation() != null
         if (declaration.isPropertyAccessor) return null
         if (declaration.parent !is IrPackageFragment) return null
@@ -202,7 +202,9 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         newFun.annotations += builder.irCallConstructor(jsRelatedSymbols.jsNameConstructor, typeArguments = emptyList()).also {
             it.arguments[0] = builder.irString(function.getJsNameOrKotlinName().identifier)
         }
-        function.annotations = function.annotations.filter { it.symbol != jsRelatedSymbols.jsExportConstructor }
+        function.annotations = function.annotations.filter {
+            it.symbol != jsRelatedSymbols.jsExportConstructor && it.symbol != jsRelatedSymbols.jsExportDefaultConstructor
+        }
 
         return listOf(function, newFun)
     }

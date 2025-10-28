@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonSymbols
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -281,6 +282,7 @@ class WasmSymbols(
         val jsInteropAdapters = JsInteropAdapters()
 
         val jsExportConstructor by ClassIds.JsExport.primaryConstructorSymbol()
+        val jsExportDefaultConstructor by ClassIds.JsExportDefault.primaryConstructorSymbol()
         val jsNameConstructor by ClassIds.JsName.primaryConstructorSymbol()
         val jsFunConstructor by ClassIds.JsFun.primaryConstructorSymbol()
 
@@ -362,6 +364,8 @@ private object ClassIds {
     val JsBigInt = "JsBigInt".jsClassId
     val Promise = "Promise".jsClassId
     val JsException = "JsException".jsClassId
+
+    val JsExportDefault = JsExport.createNestedClassId(Name.identifier("Default"))
 
     // Other
     val kTypeClass = ClassId(StandardNames.KOTLIN_REFLECT_FQ_NAME, Name.identifier("KClass"))

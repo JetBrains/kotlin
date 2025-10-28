@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.tsexport.*
+import org.jetbrains.kotlin.ir.backend.js.utils.getDeprecated
 import org.jetbrains.kotlin.ir.backend.js.utils.getFqNameWithJsNameWhenAvailable
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsExportDefault
+import org.jetbrains.kotlin.ir.backend.js.utils.isExplicitlyExported
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.backend.js.utils.typeScriptInnerClassReference
 import org.jetbrains.kotlin.ir.declarations.*
@@ -51,7 +51,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             modules.asSequence()
                 .flatMap { it.files }
                 .flatMap { it.declarations }
-                .filter { it.isJsExport() || it.isJsExportDefault() }
+                .filter { it.isExplicitlyExported() }
                 .forEach {
                     declarationsToExport.add(it)
                     addLast(it)
@@ -345,4 +345,9 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
     private val IrClassifierSymbol.isInterface
         get() = (owner as? IrClass)?.isInterface == true
+}
+
+private fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration): T {
+    declaration.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
+    return this
 }

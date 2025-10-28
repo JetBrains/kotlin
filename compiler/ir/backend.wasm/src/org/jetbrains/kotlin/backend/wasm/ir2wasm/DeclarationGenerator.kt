@@ -201,7 +201,7 @@ class DeclarationGenerator(
         wasmFileCodegenContext.defineFunction(declaration.symbol, function)
 
         val nameIfExported = when {
-            declaration.isJsExport() -> declaration.getJsNameOrKotlinName().identifier
+            declaration.isExplicitlyExported() -> declaration.getJsNameOrKotlinName().identifier
             else -> declaration.getWasmExportNameIfWasmExport()
         }
 
@@ -633,7 +633,7 @@ fun IrFunction.getEffectiveValueParameters(): List<IrValueParameter> {
 }
 
 fun IrFunction.isExported(): Boolean =
-    isJsExport() || getWasmExportNameIfWasmExport() != null
+    isExplicitlyExported() || getWasmExportNameIfWasmExport() != null
 
 fun generateConstExpression(
     expression: IrConst,
