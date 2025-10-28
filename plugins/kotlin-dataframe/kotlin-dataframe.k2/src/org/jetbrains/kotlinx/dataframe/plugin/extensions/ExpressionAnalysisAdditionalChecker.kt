@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
@@ -261,7 +262,7 @@ object ShadowedExtensionPropertyChecker : FirPropertyAccessExpressionChecker(mpp
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirPropertyAccessExpression) {
         val property = expression.toResolvedCallableReference()?.toResolvedPropertySymbol() ?: return
-        if (property.isLocal && !property.origin.isDataFrame) {
+        if (property is FirLocalPropertySymbol && !property.origin.isDataFrame) {
             val schema = context.findClosest<FirAnonymousFunctionSymbol>()
                 ?.resolvedReceiverType?.typeArguments?.getOrNull(0)
                 ?.type?.toRegularClassSymbol()

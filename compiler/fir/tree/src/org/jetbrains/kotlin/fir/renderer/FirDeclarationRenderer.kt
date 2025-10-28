@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.isCatchParameter
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 open class FirDeclarationRenderer(
@@ -43,7 +44,7 @@ open class FirDeclarationRenderer(
                     if (declaration.isCatchParameter == true) {
                         ""
                     } else {
-                        val prefix = if (declaration.isLocal || declaration.visibility == Visibilities.Local) localVariablePrefix else ""
+                        val prefix = if (declaration.symbol is FirLocalPropertySymbol || declaration.visibility == Visibilities.Local) localVariablePrefix else ""
                         prefix + if (declaration.isVal) "val" else "var"
                     }
                 }

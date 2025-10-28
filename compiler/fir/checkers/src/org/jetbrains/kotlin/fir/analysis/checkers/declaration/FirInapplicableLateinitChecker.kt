@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.declarations.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common) {
@@ -35,7 +35,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
         }
 
         if (declaration.initializer != null) {
-            if (declaration.isLocal) {
+            if (declaration.symbol is FirLocalPropertySymbol) {
                 reporter.reportError(declaration.source, "is not allowed on local variables with initializer")
             } else {
                 reporter.reportError(declaration.source, "is not allowed on properties with initializer")
@@ -51,7 +51,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
         }
 
         if (declaration.returnTypeRef.coneType.isPrimitive) {
-            if (declaration.isLocal) {
+            if (declaration.symbol is FirLocalPropertySymbol) {
                 reporter.reportError(declaration.source, "is not allowed on local variables of primitive types")
             } else {
                 reporter.reportError(declaration.source, "is not allowed on properties of primitive types")
@@ -80,7 +80,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
 
         if (declaration.returnTypeRef.coneType.isSingleFieldValueClass(context.session)) {
             val declarationType = declaration.returnTypeRef.coneType.fullyExpandedType()
-            val variables = if (declaration.isLocal) "local variables" else "properties"
+            val variables = if (declaration.symbol is FirLocalPropertySymbol) "local variables" else "properties"
             when {
                 declarationType.isUnsignedType -> reporter.reportError(
                     declaration.source,

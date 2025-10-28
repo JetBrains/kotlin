@@ -109,7 +109,7 @@ internal fun Collection<FirFile>.getDeclarationsToResolve(): List<FirDeclaration
 private val FirDeclaration.canBeResolved: Boolean
     get() = when (this) {
         is FirAnonymousFunction -> false
-        is FirProperty -> !isLocal
+        is FirProperty -> this.symbol is FirRegularPropertySymbol
         is FirValueParameter -> containingDeclarationSymbol.fir.canBeResolved
         is FirPropertyAccessor -> propertySymbol.fir.canBeResolved
         is FirBackingField -> propertySymbol.fir.canBeResolved

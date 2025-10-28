@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.forEachExpandedType
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -134,8 +136,8 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             PROPERTY_DELEGATE_FIELD -> "delegate fields" to ((declaration as? FirBackingField)?.propertySymbol?.delegate?.resolvedType
                 ?: return)
             RECEIVER -> "receivers" to ((declaration as? FirCallableDeclaration)?.receiverParameter?.typeRef?.coneType ?: return)
-            FILE, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, CONSTRUCTOR_PARAMETER, SETTER_PARAMETER, null -> when {
-                declaration is FirProperty && !declaration.isLocal -> {
+            FILE, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, CONSTRUCTOR_PARAMETER, SETTER_PARAMETER, null -> when (declaration) {
+                is FirProperty if declaration.symbol is FirRegularPropertySymbol -> {
                     val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
                     when {
                         declaration.fromPrimaryConstructor == true && allowedAnnotationTargets.contains(KotlinTarget.VALUE_PARAMETER) -> return // handled in FirValueParameter case
@@ -144,12 +146,10 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                         else -> return
                     }
                 }
-                declaration is FirField -> "fields" to declaration.returnTypeRef.coneType
-                declaration is FirValueParameter -> "parameters" to declaration.returnTypeRef.coneType
-                declaration is FirVariable -> "variables" to declaration.returnTypeRef.coneType
-                declaration is FirPropertyAccessor && declaration.isGetter && declaration.hasNoReceivers() ->
-                    "getters" to declaration.returnTypeRef.coneType
-
+                is FirField -> "fields" to declaration.returnTypeRef.coneType
+                is FirValueParameter -> "parameters" to declaration.returnTypeRef.coneType
+                is FirVariable -> "variables" to declaration.returnTypeRef.coneType
+                is FirPropertyAccessor if declaration.isGetter && declaration.hasNoReceivers() -> "getters" to declaration.returnTypeRef.coneType
                 else -> return
             }
             ALL -> TODO() // How @all: interoperates with ValueClasses feature?
@@ -300,7 +300,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                             }
                         }
                         is FirProperty -> {
-                            if (annotated.isLocal) {
+                            if (annotated.symbol is FirLocalPropertySymbol) {
                                 reporter.reportOn(
                                     annotation.source,
                                     FirErrors.INAPPLICABLE_ALL_TARGET,
@@ -350,7 +350,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         contract {
             returns(false) implies (annotated is FirProperty)
         }
-        val isReport = annotated !is FirProperty || annotated.isLocal
+        val isReport = annotated !is FirProperty || annotated.symbol is FirLocalPropertySymbol
         if (isReport) reporter.reportOn(annotation.source, diagnostic, target.renderName)
         return isReport
     }

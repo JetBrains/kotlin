@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -168,7 +169,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
     context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkProperty(declaration: FirProperty) {
         if (declaration.fromPrimaryConstructor == true) return
-        if (declaration.isLocal) return
+        if (declaration.symbol is FirLocalPropertySymbol) return
         if (declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration) return
         val propertyVisibility = declaration.effectiveVisibility
 
@@ -208,7 +209,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
 
         val property = correspondingProperty ?: return
-        if (property.isLocal) return
+        if (property.symbol is FirLocalPropertySymbol) return
         val propertyVisibility = property.effectiveVisibility
 
         if (propertyVisibility == EffectiveVisibility.Local) return

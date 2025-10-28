@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.util.SetMultimap
@@ -141,7 +142,7 @@ private class PropertyDeclarationCollector(
     }
 
     override fun visitProperty(property: FirProperty, data: FirStatement?) {
-        if (property.isLocal && data != null) {
+        if (property.symbol is FirLocalPropertySymbol && data != null) {
             declaredVariablesInLoop.put(data, property.symbol)
         }
         visitElement(property, data)

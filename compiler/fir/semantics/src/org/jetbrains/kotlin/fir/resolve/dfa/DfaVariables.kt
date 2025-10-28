@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -139,8 +140,10 @@ class RealVariable(
                 fir.delegate != null -> PropertyStability.DELEGATED_PROPERTY
                 // Local vars are only *sometimes* unstable (when there are concurrent assignments). `FirDataFlowAnalyzer`
                 // will check that at each use site individually and mark the access as stable when possible.
-                fir.isLocal && fir.isVar -> PropertyStability.CAPTURED_VARIABLE
-                fir.isLocal -> PropertyStability.PRIVATE_OR_CONST_VAL
+                fir.symbol is FirLocalPropertySymbol -> when {
+                    fir.isVal -> PropertyStability.PRIVATE_OR_CONST_VAL
+                    else -> PropertyStability.CAPTURED_VARIABLE
+                }
                 fir.isVar -> PropertyStability.MUTABLE_PROPERTY
                 fir.receiverParameter != null -> PropertyStability.PROPERTY_WITH_GETTER
                 fir.getter !is FirDefaultPropertyAccessor? -> PropertyStability.PROPERTY_WITH_GETTER

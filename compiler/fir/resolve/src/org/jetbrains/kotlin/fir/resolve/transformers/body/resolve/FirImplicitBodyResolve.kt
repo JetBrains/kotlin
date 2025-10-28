@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -256,7 +257,7 @@ open class ReturnTypeCalculatorWithJump(
 
     private fun resolvedToContractsIfNecessary(declaration: FirCallableDeclaration) {
         val canHaveContracts = when (declaration) {
-            is FirProperty if !declaration.isLocal -> true
+            is FirProperty if declaration.symbol is FirRegularPropertySymbol -> true
             is FirNamedFunction if declaration.status.visibility != Visibilities.Local -> true
             else -> false
         }

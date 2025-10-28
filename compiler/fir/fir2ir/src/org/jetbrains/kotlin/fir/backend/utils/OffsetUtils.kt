@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -67,7 +68,7 @@ internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
      */
     if (source?.kind == KtFakeSourceElementKind.DefaultAccessor) {
         val property = this.propertySymbol.fir
-        if (!property.isLocal) {
+        if (property.symbol is FirRegularPropertySymbol) {
             property.computeOffsetsWithoutInitializer()?.let { (startOffset, endOffset) ->
                 return f(startOffset, endOffset)
             }

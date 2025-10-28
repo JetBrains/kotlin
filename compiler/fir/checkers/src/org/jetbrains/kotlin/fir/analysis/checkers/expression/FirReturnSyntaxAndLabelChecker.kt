@@ -83,7 +83,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
                     return FirErrors.RETURN_NOT_ALLOWED
                 }
                 is FirPropertySymbol -> {
-                    if (!containingDeclaration.isLocal) {
+                    if (containingDeclaration is FirRegularPropertySymbol) {
                         return FirErrors.RETURN_NOT_ALLOWED
                     } else {
                         existingFalseNegative = true

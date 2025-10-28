@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
@@ -38,7 +38,7 @@ class FirAssignmentPluginAssignAltererExtension(
 
     private fun FirVariableAssignment.supportsTransformVariableAssignment(): Boolean {
         return when (val lSymbol = calleeReference?.toResolvedVariableSymbol()) {
-            is FirPropertySymbol -> lSymbol.isVal && !lSymbol.isLocal && lSymbol.hasSpecialAnnotation()
+            is FirRegularPropertySymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
             is FirBackingFieldSymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
             is FirFieldSymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
             else -> false

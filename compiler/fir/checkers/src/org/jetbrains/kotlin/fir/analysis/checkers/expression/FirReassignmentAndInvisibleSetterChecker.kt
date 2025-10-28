@@ -141,7 +141,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
                  * and [FirTopLevelPropertiesChecker] for top-level properties.
                  */
                 if (
-                    (variable.isLocal || isInFileGraph(variable))
+                    (variable is FirLocalPropertySymbol || isInFileGraph(variable))
                     && variable.requiresInitialization(isForInitialization = false)
                 ) return
                 if (

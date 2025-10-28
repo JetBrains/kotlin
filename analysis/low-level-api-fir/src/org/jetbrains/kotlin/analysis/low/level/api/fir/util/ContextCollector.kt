@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.fir.resolve.dfa.smartCastedType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.addReceiversFromExtensions
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -827,7 +829,7 @@ private class ContextCollectorVisitor(
             }
         }
 
-        if (property.isLocal) {
+        if (property.symbol is FirLocalPropertySymbol) {
             context.storeVariable(property, property.moduleData.session)
         }
     }
@@ -843,7 +845,7 @@ private class ContextCollectorVisitor(
      * to preserve the implicit receivers introduced by the [addReceiversFromExtensions].
      */
     private fun BodyResolveContext.forPropertyInitializerIfNonLocal(property: FirProperty, f: () -> Unit) {
-        if (!property.isLocal) {
+        if (property.symbol is FirRegularPropertySymbol) {
             // TODO: the [skipCleanup] hack should be reverted on fixing KT-79107
             val skipCleanup = property.isScriptTopLevelDeclaration == true &&
                     getSessionHolder(property).session.scriptResolutionHacksComponent?.skipTowerDataCleanupForTopLevelInitializers == true

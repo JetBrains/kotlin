@@ -524,7 +524,7 @@ class Fir2IrVisitor(
     }
 
     private fun visitLocalVariable(variable: FirProperty): IrElement = whileAnalysing(session, variable) {
-        assert(variable.isLocal)
+        assert(variable.symbol is FirLocalPropertySymbol)
         val delegate = variable.delegate
         if (delegate != null) {
             val irProperty = declarationStorage.createAndCacheIrLocalDelegatedProperty(variable, conversionScope.parentFromStack())
@@ -572,7 +572,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitProperty(property: FirProperty, data: Any?): IrElement = whileAnalysing(session, property) {
-        if (property.isLocal) return visitLocalVariable(property)
+        if (property.symbol is FirLocalPropertySymbol) return visitLocalVariable(property)
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val irProperty = declarationStorage.getCachedIrPropertySymbol(property, fakeOverrideOwnerLookupTag = null)?.owner
             ?: return IrErrorExpressionImpl(

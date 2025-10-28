@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -112,7 +113,7 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
     }
 
     constructor(symbol: FirPropertySymbol, session: KaFirSession) : super(symbol, session) {
-        assert(symbol.isLocal)
+        assert(symbol is FirLocalPropertySymbol)
     }
 
     override val name: Name

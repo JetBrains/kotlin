@@ -142,7 +142,7 @@ internal object LLContainingClassCalculator {
 
     private fun canHaveContainingClassSymbol(symbol: FirBasedSymbol<*>): Boolean = when (symbol) {
         is FirValueParameterSymbol, is FirAnonymousFunctionSymbol -> false
-        is FirPropertySymbol -> !symbol.isLocal
+        is FirRegularPropertySymbol -> true
         is FirNamedFunctionSymbol -> symbol.rawStatus.visibility != Visibilities.Local
         is FirClassLikeSymbol -> symbol.classId.isNestedClass
         is FirCallableSymbol, is FirDanglingModifierSymbol -> true

@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.diagnostics.typeParametersList
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.isLocal
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 
 // KtExpression is the appropriate PsiElement type; local variables are used in increments/decrements of dot-qualified expressions.
 object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirProperty, KtExpression>() {
     override fun isApplicable(element: FirProperty, source: KtSourceElement): Boolean =
-        source.kind !is KtFakeSourceElementKind && element.isLocal
+        source.kind !is KtFakeSourceElementKind && element.symbol is FirLocalPropertySymbol
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(

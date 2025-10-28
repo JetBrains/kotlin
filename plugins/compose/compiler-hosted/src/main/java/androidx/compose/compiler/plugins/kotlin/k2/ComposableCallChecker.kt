@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.isInvoke
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.functionTypeKind
 import org.jetbrains.kotlin.name.CallableId
@@ -235,7 +236,7 @@ private fun checkComposableFunction(
         }
         // Only local variables can be implicitly composable, for top-level or class-level
         // declarations we require an explicit annotation.
-        if (!function.propertySymbol.isLocal) {
+        if (function.propertySymbol is FirRegularPropertySymbol) {
             reporter.reportOn(
                 function.propertySymbol.source,
                 ComposeErrors.COMPOSABLE_EXPECTED,

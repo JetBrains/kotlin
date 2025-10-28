@@ -30,8 +30,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -1324,13 +1326,13 @@ abstract class FirDataFlowAnalyzer(
 
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
         val property = assignment.calleeReference?.toResolvedPropertySymbol()?.fir
-        if (property != null && property.isLocal) {
+        if (property != null && property.symbol is FirLocalPropertySymbol) {
             context.variableAssignmentAnalyzer.visitAssignment(property, assignment.rValue.resolvedType.refinedTypeForDataFlowOrSelf)
         }
 
         graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow { _, flow ->
             property ?: return@mergeIncomingFlow
-            if (property.isLocal || property.isVal) {
+            if (property.symbol is FirLocalPropertySymbol || property.isVal) {
                 exitVariableInitialization(flow, assignment.rValue, property, assignment.lValue, hasExplicitType = false)
             } else {
                 val variable = flow.getRealVariableWithoutUnwrappingAlias(assignment.lValue)
@@ -1375,7 +1377,7 @@ abstract class FirDataFlowAnalyzer(
                 // val b = a
                 // if (b != null) { /* a != null */ }
                 logicSystem.addLocalVariableAlias(flow, propertyVariable, initializerVariable)
-            } else if (initializerVariable != null && !(property.isLocal && property.isVar)) {
+            } else if (initializerVariable != null && (property.symbol is FirRegularPropertySymbol || !property.isVar)) {
                 // Case 1:
                 //   val b = x is String // initializer is synthetic, condition is boolean
                 //   if (b) { /* x is String */ }

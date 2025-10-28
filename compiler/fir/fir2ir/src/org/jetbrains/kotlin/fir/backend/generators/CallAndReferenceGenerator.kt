@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -209,13 +208,11 @@ class CallAndReferenceGenerator(
 
             when (firSymbol) {
                 is FirSimpleSyntheticPropertySymbol -> convertReferenceToSyntheticProperty(firSymbol)
-                is FirPropertySymbol -> when {
-                    firSymbol.isLocal -> when {
-                        firSymbol.hasDelegate -> convertReferenceToLocalDelegatedProperty(firSymbol)
-                        else -> null
-                    }
-                    else -> convertReferenceToRegularProperty(firSymbol)
+                is FirLocalPropertySymbol -> when {
+                    firSymbol.hasDelegate -> convertReferenceToLocalDelegatedProperty(firSymbol)
+                    else -> null
                 }
+                is FirRegularPropertySymbol -> convertReferenceToRegularProperty(firSymbol)
                 is FirFunctionSymbol<*> -> convertReferenceToFunction(firSymbol)
                 is FirFieldSymbol -> convertReferenceToField(firSymbol)
                 else -> null
@@ -1405,8 +1402,8 @@ class CallAndReferenceGenerator(
                 require(statement is FirQualifiedAccessExpression)
                 val firDeclaration = declarationSiteSymbol!!.fir.propertyIfBackingField
                 // Top-level properties are considered as static in IR
-                val fieldIsStatic =
-                    firDeclaration.isStatic || (firDeclaration is FirProperty && !firDeclaration.isLocal && firDeclaration.containingClassLookupTag() == null)
+                val fieldIsStatic = firDeclaration.isStatic ||
+                        (firDeclaration is FirProperty && firDeclaration.symbol is FirRegularPropertySymbol && firDeclaration.containingClassLookupTag() == null)
                 if (!fieldIsStatic) {
                     receiver = statement.findIrDispatchReceiver(explicitReceiverExpression)
                     hasDispatchReceiver = true
