@@ -57598,6 +57598,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("javaTypeProjection.kt")
+        public void testJavaTypeProjection() {
+          runTest("compiler/testData/codegen/box/reflection/types/subtyping/javaTypeProjection.kt");
+        }
+
+        @Test
         @TestMetadata("nestedGenericCapturedType.kt")
         public void testNestedGenericCapturedType() {
           runTest("compiler/testData/codegen/box/reflection/types/subtyping/nestedGenericCapturedType.kt");
