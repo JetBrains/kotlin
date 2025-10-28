@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.noarg.fir
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.warning0
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.psi.KtElement
 
 object KtErrorsNoArg : KtDiagnosticsContainer() {
-    val NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
-    val NOARG_ON_INNER_CLASS_ERROR by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
-    val NOARG_ON_LOCAL_CLASS_ERROR by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
+    val NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS by error0<KtElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
+    val NOARG_ON_INNER_CLASS_ERROR by error0<KtElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
+    val NOARG_ON_LOCAL_CLASS_ERROR by error0<KtElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = DefaultErrorMessagesNoArg
 }

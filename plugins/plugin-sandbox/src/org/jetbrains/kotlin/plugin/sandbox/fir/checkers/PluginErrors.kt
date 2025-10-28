@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.plugin.sandbox.fir.checkers
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
@@ -13,10 +12,11 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.error2
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.warning1
+import org.jetbrains.kotlin.psi.KtElement
 
 object PluginErrors : KtDiagnosticsContainer() {
-    val FUNCTION_WITH_DUMMY_NAME by warning1<PsiElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val ILLEGAL_NUMBER_SIGN by error2<PsiElement, String, String>()
+    val FUNCTION_WITH_DUMMY_NAME by warning1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val ILLEGAL_NUMBER_SIGN by error2<KtElement, String, String>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Renderers
 
