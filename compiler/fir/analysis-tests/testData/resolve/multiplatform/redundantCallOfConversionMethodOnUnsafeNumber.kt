@@ -9,7 +9,7 @@ annotation class UnsafeNumber
 typealias size_t = Int
 
 fun test(s: size_t) {
-    s.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
+    s.toInt()
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, typeAliasDeclaration */

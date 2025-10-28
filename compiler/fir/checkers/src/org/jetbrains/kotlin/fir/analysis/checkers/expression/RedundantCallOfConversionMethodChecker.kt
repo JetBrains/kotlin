@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -23,6 +26,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object RedundantCallOfConversionMethodChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+    private val unsafeNumberClassId = ClassId.fromString("kotlinx.cinterop/UnsafeNumber")
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val functionName = expression.calleeReference.name.asString()
@@ -33,6 +38,7 @@ object RedundantCallOfConversionMethodChecker : FirFunctionCallChecker(MppChecke
         }
     }
 
+    context(context: CheckerContext)
     private fun FirExpression.isRedundant(qualifiedClassId: ClassId, session: FirSession): Boolean {
         val thisTypeId = if (this is FirLiteralExpression) {
             resolvedType.classId
@@ -40,6 +46,7 @@ object RedundantCallOfConversionMethodChecker : FirFunctionCallChecker(MppChecke
             when {
                 resolvedType is ConeFlexibleType -> null
                 resolvedType.isMarkedNullable -> null
+                resolvedType.abbreviatedTypeOrSelf.toClassLikeSymbol()?.hasAnnotation(unsafeNumberClassId, session) == true -> null
                 else -> resolvedType.fullyExpandedClassId(session)
             }
         }
