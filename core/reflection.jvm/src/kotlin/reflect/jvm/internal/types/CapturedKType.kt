@@ -8,18 +8,36 @@ package kotlin.reflect.jvm.internal.types
 import org.jetbrains.kotlin.types.model.CapturedTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
 // Based on NewCapturedType but greatly simplified.
 internal class CapturedKType(
     val lowerType: KType?,
     val typeConstructor: CapturedKTypeConstructor,
     override val isMarkedNullable: Boolean,
-) : KType, CapturedTypeMarker {
+) : AbstractKType(::javaTypeNotSupported), CapturedTypeMarker {
     override val classifier: KClassifier? = null
 
     override val arguments: List<KTypeProjection> get() = emptyList()
 
     override val annotations: List<Annotation> get() = emptyList()
+
+    override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType =
+        if (nullable == isMarkedNullable) this else CapturedKType(lowerType, typeConstructor, nullable)
+
+    override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType =
+        if (!isDefinitelyNotNull) this
+        else throw KotlinReflectionInternalError("Definitely not null captured type is not supported yet: $this")
+
+    override val isDefinitelyNotNullType: Boolean get() = false
+
+    override val abbreviation: KType? get() = null
+    override val isNothingType: Boolean get() = false
+    override val isSuspendFunctionType: Boolean get() = false
+    override val isRawType: Boolean get() = false
+    override val mutableCollectionClass: KClass<*>? get() = null
+    override fun lowerBoundIfFlexible(): AbstractKType? = null
+    override fun upperBoundIfFlexible(): AbstractKType? = null
 
     override fun equals(other: Any?): Boolean =
         other is CapturedKType && lowerType == other.lowerType && typeConstructor == other.typeConstructor &&
@@ -85,3 +103,6 @@ internal fun captureKTypeFromArguments(type: KType): KType? {
 
 internal fun KClass<*>.allTypeParameters(): List<KTypeParameter> =
     generateSequence(this) { if (it.isInner) it.java.declaringClass?.kotlin else null }.flatMap { it.typeParameters }.toList()
+
+private fun javaTypeNotSupported(): Nothing =
+    throw KotlinReflectionInternalError("javaType for captured types is not supported")

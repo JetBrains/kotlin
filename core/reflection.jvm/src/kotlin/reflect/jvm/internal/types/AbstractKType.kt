@@ -48,6 +48,6 @@ internal abstract class AbstractKType(
     override fun hashCode(): Int =
         (31 * ((31 * classifier.hashCode()) + arguments.hashCode())) + isMarkedNullable.hashCode()
 
-    final override fun toString(): String =
+    override fun toString(): String =
         ReflectionObjectRenderer.renderType(this)
 }
