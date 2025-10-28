@@ -57,7 +57,7 @@ inline val FirDeclaration.isSynthetic: Boolean
 val FirDeclaration.isNonLocal: Boolean
     get() = symbol.isNonLocal
 
-val FirBasedSymbol<*>.isNonLocal: Boolean
+private val FirBasedSymbol<*>.isNonLocal: Boolean
     get() = when (this) {
         is FirFileSymbol -> true
         is FirCallableSymbol -> !callableId.isLocal
