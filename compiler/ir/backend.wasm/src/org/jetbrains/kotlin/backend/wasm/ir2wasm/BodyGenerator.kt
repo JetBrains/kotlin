@@ -869,6 +869,30 @@ class BodyGenerator(
         }
     }
 
+    private fun castAnyToInvokable(function: IrFunction, parentClass: IrClass, location: SourceLocation) {
+        require(function is IrSimpleFunction && function.isOverridable)
+        val realOverrideTargetClass = function.parentAsClass
+        val klass = when {
+            !realOverrideTargetClass.isInterface || parentClass.isInterface -> realOverrideTargetClass
+            else -> parentClass
+        }
+
+        val klassSymbol = klass.symbol
+        val vTableGcTypeReference = wasmFileCodegenContext.referenceVTableGcType(klassSymbol)
+
+        require(klass.isInterface)
+        require(!klassSymbol.isFunction())
+        body.commentGroupStart { "Interface call: ${function.fqNameWhenAvailable}" }
+        body.buildConstI64(wasmFileCodegenContext.referenceTypeId(klassSymbol), location)
+        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
+
+        body.buildRefCastStatic(vTableGcTypeReference, location)
+        val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
+            .indexOfFirst { it.function == function }
+        body.buildStructGet(vTableGcTypeReference, WasmSymbol(vfSlot), location)
+        body.commentGroupEnd()
+    }
+
     private fun generateRefCast(fromType: IrType, toType: IrType, isRefNullCast: Boolean, location: SourceLocation) {
         when {
             isDownCastAlwaysSuccessInRuntime(fromType, toType) -> {
@@ -1157,27 +1181,33 @@ class BodyGenerator(
             in wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub -> {
                 when (function.symbol) {
                     wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0] -> {
-                        body.buildNop(location)
                         val suspendFunctionClassType = function.parameters[0].type
                         val suspendFunctionInvoke = suspendFunctionClassType.classOrFail.functions.singleOrNull {
                             it.owner.name.asString() == "invoke"
                         } ?: error("No `invoke` function for suspend function type\n${suspendFunctionClassType.dumpKotlinLike()}")
-                        val funType = wasmFileCodegenContext.referenceFunctionType(suspendFunctionInvoke)
                         val contType = wasmFileCodegenContext.referenceContType(suspendFunctionInvoke)
                         val contVarType = WasmRefNullType(WasmHeapType.Type(contType))
-                        val contLocalVarIdx = functionContext.defineTmpVariable(contVarType)
+                        val contLocalVarIdx = functionContext.defineVariable(contVarType, "continuation")
                         val contLocalVar = functionContext.referenceLocal(contLocalVarIdx)
-                        val kotlinAny = WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass))
+                        val completionVarIdx = functionContext.defineVariable(WasmAnyRef, "completion")
+                        val completionLocalVar = functionContext.referenceLocal(completionVarIdx)
+                        val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
+                        val kotlinAnyType = WasmHeapType.Type(kotlinAny)
+                        body.buildSetLocal(completionLocalVar, location)
 
-                        body.buildContNew(funType, location)
+                        castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
+
+                        body.buildContNew(contType, location)
                         body.buildSetLocal(contLocalVar, location)
-                        body.buildBlock("on_suspend", WasmRefNullType(kotlinAny)) { idx ->
-                            body.buildRefNull(kotlinAny, location)
+                        body.buildBlock("on_suspend", WasmRefNullType(kotlinAnyType)) { idx ->
+                            body.buildGetLocal(functionContext.referenceLocal(0), location)
+                            body.buildGetLocal(functionContext.referenceLocal(1), location)
+                            body.buildGetLocal(contLocalVar, location)
                             val contHandle = body.createNewContHandle(contTagId, idx)
                             body.buildResume(WasmHeapType.Type(contType), contHandle, location)
-                            body.buildGetLocal(contLocalVar, location)
                             body.buildInstr(WasmOp.RETURN, location)
                         }
+
 //                        TODO("wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0]")
                     }
                     else -> TODO("startCoroutineUninterceptedOrReturnIntrinsicsStub 1-2")
