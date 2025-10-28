@@ -4,6 +4,7 @@
     <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />
   </component>
   <component name="KotlinJpsPluginSettings">
+    <option name="externalSystemId" value="Gradle" />
     <option name="version" value="2.3.20-dev-5706" />
   </component>
 </project>
