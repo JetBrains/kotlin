@@ -303,16 +303,15 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             return emptyList()
         }
 
-        if (methodName == "remove" && method.parameterList.parameters.singleOrNull()?.type == PsiTypes.intType()) {
-            // remove(int) -> abstract removeAt(int), final bridge remove(int)
-            return listOf(method.finalBridge(substitutor), createRemoveAt(method, substitutor))
+        if (methodName == "remove") {
+            if (method.parameterList.parameters.singleOrNull()?.type == PsiTypes.intType()) {
+                // remove(int) -> abstract removeAt(int), final bridge remove(int)
+                return listOf(method.finalBridge(substitutor), createRemoveAt(method, substitutor))
+            } else if (javaBaseClass.qualifiedName == CommonClassNames.JAVA_UTIL_ITERATOR) {
+                // java.util.Iterator#remove() is a default method and should have been filtered out, but isn't for some reason
+                return emptyList()
+            }
         }
-
-//        if (methodName == "contains") {
-//            return emptyList()
-//        }
-
-//        return emptyList()
 
         val type = substitutor.substitutionMap.values.single()
         if (type.isTypeParameter()) return emptyList()
