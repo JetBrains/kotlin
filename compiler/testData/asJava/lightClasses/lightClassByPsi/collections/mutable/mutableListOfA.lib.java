@@ -1,4 +1,40 @@
+public final class A /* test.A*/ {
+  public  A();//  .ctor()
+}
+
 public abstract class AMutableList /* test.AMutableList*/ implements java.util.List<test.A>, kotlin.jvm.internal.markers.KMutableList {
+  public  AMutableList();//  .ctor()
+
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public abstract boolean contains(test.A);//  contains(test.A)
+
+  public abstract boolean remove(test.A);//  remove(test.A)
+
+  public abstract int getSize();//  getSize()
+
+  public abstract int indexOf(test.A);//  indexOf(test.A)
+
+  public abstract int lastIndexOf(test.A);//  lastIndexOf(test.A)
+
+  public abstract test.A removeAt(int);//  removeAt(int)
+
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  public final boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  public final int size();//  size()
+
+  public final test.A remove(int);//  remove(int)
+
+  public java.lang.Object[] toArray();//  toArray()
+}
+
+public abstract class AMutableList2 /* test.AMutableList2*/ implements java.util.List<test.A>, kotlin.jvm.internal.markers.KMutableList {
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.NotNull()
   public test.A removeAt(int);//  removeAt(int)
@@ -40,7 +76,7 @@ public abstract class AMutableList /* test.AMutableList*/ implements java.util.L
   @org.jetbrains.annotations.NotNull()
   public test.A get(int);//  get(int)
 
-  public  AMutableList();//  .ctor()
+  public  AMutableList2();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
