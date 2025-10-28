@@ -597,8 +597,14 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         return when {
             matchesContainsMethod(symbol) ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "contains" }
+            matchesRemoveMethod(symbol) ->
+                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "remove" }
             matchesContainsAllMethod(symbol) ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "containsAll" }
+            matchesRemoveAllMethod(symbol) ->
+                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "removeAll" }
+            matchesRetainAllMethod(symbol) ->
+                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "retainAll" }
             matchesIndexOfMethod(symbol) ->
                 getJavaListClass(allSupertypes)?.methods?.find { it.name == "indexOf" }
             matchesLastIndexOfMethod(symbol) ->
@@ -636,8 +642,26 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         return parameter.name.asString() == "element"
     }
 
+    private fun matchesRemoveMethod(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "remove") return false
+        val parameter = symbol.valueParameters.singleOrNull() ?: return false
+        return parameter.name.asString() == "element"
+    }
+
     private fun matchesContainsAllMethod(symbol: KaFunctionSymbol): Boolean {
         if (symbol.name?.asString() != "containsAll") return false
+        val parameter = symbol.valueParameters.singleOrNull() ?: return false
+        return parameter.name.asString() == "elements"
+    }
+
+    private fun matchesRemoveAllMethod(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "removeAll") return false
+        val parameter = symbol.valueParameters.singleOrNull() ?: return false
+        return parameter.name.asString() == "elements"
+    }
+
+    private fun matchesRetainAllMethod(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "retainAll") return false
         val parameter = symbol.valueParameters.singleOrNull() ?: return false
         return parameter.name.asString() == "elements"
     }
