@@ -155,7 +155,7 @@ fun main(args: Array<String>) {
     }
 
     categoryRangesGenerators.forEach {
-        bmpUnicodeDataLines.forEach { line -> it.appendLine(line) }
+        unicodeDataLines.forEach { line -> it.appendLine(line) }
         it.generate()
     }
     otherLowercaseGenerators.forEach {
@@ -168,7 +168,7 @@ fun main(args: Array<String>) {
     }
 
     categoryTestGenerator.let {
-        bmpUnicodeDataLines.forEach { line -> it.appendLine(line) }
+        unicodeDataLines.forEach { line -> it.appendLine(line) }
         propListLines.forEach { line -> it.appendPropertyLine(line) }
         it.generate()
     }
