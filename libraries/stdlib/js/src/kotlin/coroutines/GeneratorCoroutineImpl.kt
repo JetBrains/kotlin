@@ -38,13 +38,13 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
         while (!done) {
             try {
                 value = value.unsafeCast<() -> Any?>().invoke()
+                if (value === suspended) break
             } catch (e: dynamic) {
                 val nextStep = generator.throws(e)
                 value = nextStep.value
                 done = nextStep.done
-                continue
-            } finally {
                 if (value === suspended) break
+                continue
             }
             val nextStep = generator.next(value)
             value = nextStep.value
