@@ -847,10 +847,24 @@ private fun FirCallableSymbol<*>.containingClassUnsubstitutedScope(): FirTypeSco
     return containingClass.unsubstitutedScope()
 }
 
-val CheckerContext.closestNonLocal: FirBasedSymbol<*>? get() = containingDeclarations.takeWhile { it.isNonLocal }.lastOrNull()
+val CheckerContext.closestNonLocal: FirBasedSymbol<*>?
+    get() {
+        for (symbol in containingDeclarations) {
+            if (symbol is FirCallableSymbol || symbol is FirAnonymousInitializerSymbol) {
+                return symbol
+            }
+        }
+        return containingDeclarations.lastOrNull()
+    }
 
-fun CheckerContext.closestNonLocalWith(declaration: FirDeclaration): FirBasedSymbol<*>? =
-    (containingDeclarations + declaration.symbol).takeWhile { it.isNonLocal }.lastOrNull()
+fun CheckerContext.closestNonLocalWith(declaration: FirDeclaration): FirBasedSymbol<*>? {
+    for (symbol in containingDeclarations + declaration.symbol) {
+        if (symbol is FirCallableSymbol || symbol is FirAnonymousInitializerSymbol) {
+            return symbol
+        }
+    }
+    return declaration.symbol
+}
 
 val CheckerContext.isTopLevel: Boolean get() = containingDeclarations.lastOrNull().let { it is FirFileSymbol || it is FirScriptSymbol }
 

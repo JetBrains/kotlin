@@ -140,8 +140,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
         //   }
         val containingDeclarationForAccess = context.containingDeclarations.lastOrNull {
             when (it) {
-                // for members of local classes `isNonLocal` returns `false`
-                is FirCallableSymbol -> it.isNonLocal || it.dispatchReceiverType != null
+                is FirCallableSymbol -> it.callableId?.isLocal == false || it.dispatchReceiverType != null
                 else -> false
             }
         }
