@@ -474,6 +474,11 @@ internal class MissingDependencyInInferredTypeAnnotationWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MissingDependencyInInferredTypeAnnotationWarning
 
+internal class RootIdePackageDeprecatedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RootIdePackageDeprecated
+
 internal class CreatingAnInstanceOfAbstractClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

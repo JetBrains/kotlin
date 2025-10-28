@@ -221,6 +221,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS", WARNING, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION: KtDiagnosticFactoryForDeprecation1<ConeKotlinType> = KtDiagnosticFactoryForDeprecation1("MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION", ForbidImplicitTypeAnnotationWithMissingDependency, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
+    val ROOT_IDE_PACKAGE_DEPRECATED: KtDiagnosticFactory0 = KtDiagnosticFactory0("ROOT_IDE_PACKAGE_DEPRECATED", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // Call resolution
     val CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())

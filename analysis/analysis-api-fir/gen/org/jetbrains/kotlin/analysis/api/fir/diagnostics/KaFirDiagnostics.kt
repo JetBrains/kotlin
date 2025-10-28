@@ -407,6 +407,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val type: KaType
     }
 
+    interface RootIdePackageDeprecated : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = RootIdePackageDeprecated::class
+    }
+
     interface CreatingAnInstanceOfAbstractClass : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = CreatingAnInstanceOfAbstractClass::class
     }

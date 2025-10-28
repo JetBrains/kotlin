@@ -125,6 +125,7 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKt
         checkRule(
             """\b(?:probably|likely|maybe|certainly|possibly|undoubtedly|presumably|apparently|hopefully)\b""".toRegex(RegexOption.IGNORE_CASE),
             "uses adverb of probability (likely, maybe, ...)",
+            setOf(FirErrors.ROOT_IDE_PACKAGE_DEPRECATED.name),
         )
 
         checkRule(
