@@ -162,6 +162,7 @@ object JvmStandardClassIds {
             val Target = "Target".javaAnnotationId()
             val ElementType = "ElementType".javaAnnotationId()
             val RetentionPolicy = "RetentionPolicy".javaAnnotationId()
+            val Inherited = "Inherited".javaAnnotationId()
         }
 
         object ParameterNames {
