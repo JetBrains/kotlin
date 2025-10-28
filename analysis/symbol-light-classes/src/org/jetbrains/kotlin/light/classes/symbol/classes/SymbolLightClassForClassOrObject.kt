@@ -607,7 +607,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         return when {
             matchesContainsMethod(symbol) ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "contains" }
-            matchesRemoveMethod(symbol) ->
+            matchesCollectionRemoveMethod(symbol) ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "remove" }
             matchesContainsAllMethod(symbol) ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "containsAll" }
@@ -629,6 +629,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 getJavaMapClass(allSupertypes)?.methods?.find { it.name == "containsValue" }
             matchesGetMethod(symbol) ->
                 getJavaMapClass(allSupertypes)?.methods?.find { it.name == "get" }
+            matchesMapRemoveMethod(symbol) ->
+                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "remove" }
             else -> null
         }
     }
@@ -656,7 +658,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         return parameter.name.asString() == "element"
     }
 
-    private fun matchesRemoveMethod(symbol: KaFunctionSymbol): Boolean {
+    private fun matchesCollectionRemoveMethod(symbol: KaFunctionSymbol): Boolean {
         if (symbol.name?.asString() != "remove") return false
         val parameter = symbol.valueParameters.singleOrNull() ?: return false
         return parameter.name.asString() == "element"
@@ -718,6 +720,12 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     private fun matchesGetMethod(symbol: KaFunctionSymbol): Boolean {
         if (symbol.name?.asString() != "get") return false
+        val parameter = symbol.valueParameters.singleOrNull() ?: return false
+        return parameter.name.asString() == "key"
+    }
+
+    private fun matchesMapRemoveMethod(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "remove") return false
         val parameter = symbol.valueParameters.singleOrNull() ?: return false
         return parameter.name.asString() == "key"
     }
