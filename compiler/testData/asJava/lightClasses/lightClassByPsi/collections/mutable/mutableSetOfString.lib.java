@@ -1,4 +1,24 @@
 public abstract class SMutableSet /* test.SMutableSet*/ implements java.util.Set<java.lang.String>, kotlin.jvm.internal.markers.KMutableSet {
+  public  SMutableSet();//  .ctor()
+
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public abstract boolean contains(java.lang.String);//  contains(java.lang.String)
+
+  public abstract boolean remove(java.lang.String);//  remove(java.lang.String)
+
+  public abstract int getSize();//  getSize()
+
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  public final boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  public final int size();//  size()
+
+  public java.lang.Object[] toArray();//  toArray()
+}
+
+public abstract class SMutableSet2 /* test.SMutableSet2*/ implements java.util.Set<java.lang.String>, kotlin.jvm.internal.markers.KMutableSet {
   @kotlin.IgnorableReturnValue()
   public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(java.lang.String)
 
@@ -17,7 +37,7 @@ public abstract class SMutableSet /* test.SMutableSet*/ implements java.util.Set
   @org.jetbrains.annotations.NotNull()
   public java.util.Iterator<java.lang.String> iterator();//  iterator()
 
-  public  SMutableSet();//  .ctor()
+  public  SMutableSet2();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
