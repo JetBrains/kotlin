@@ -258,8 +258,20 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         // TODO map method qualified name to Kotlin's FQN to avoid short name clashes (ex. `size`)
         //  or just remove `StandardNames.FqNames.atomic` names from the original map
         javaGetterNameToKotlinGetterName[methodName]?.let { kotlinName ->
+            // TODO workaround for a (FIR?) bug
+            //listAbstractClass.kt:
+            //  abstract class CList2<Elem> : List<Elem> by emptyList<Elem>()
+            //  delegated property "size" has a getter -> we generate it normally as "getSize"
+            //
+            //mutableListClass.kt:
+            //  abstract class CMutableList2<Elem> : MutableList<Elem> by mutableListOf<Elem>()
+            //  delegated property "size" has NO getter -> we try to generate it as "abstract" from `methodWrappers` -> red code
+            val hasImplementation = methodName == "size" && withClassSymbol { classSymbol ->
+                classSymbol.delegatedMemberScope.callables(Name.identifier("size")).toList().isNotEmpty()
+            }
+
             val finalBridgeForJava = method.finalBridge(substitutor)
-            val abstractKotlinGetter = method.wrap(substitutor, name = kotlinName)
+            val abstractKotlinGetter = method.wrap(substitutor, name = kotlinName, hasImplementation = hasImplementation)
             return listOf(finalBridgeForJava, abstractKotlinGetter)
         }
 
