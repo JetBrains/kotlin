@@ -180,12 +180,12 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         }
         val mutable = expression.setterFunction != null
         val i = needReceiversCount - boundReceivers.size
-        check(i in 0..2) { "Incorrect number of receivers (${i}) for property reference: ${expression.render()}" }
+        check(i in 0..2) { "Incorrect number of receivers ($i) for property reference: ${expression.render()}" }
         val symbols = context.symbols
         return PropertyReferenceKind(
             symbols.getPropertyReferenceClass(mutable, i, true),
             symbols.reflection.owner.functions.single {
-                it.name.asString() == (if (mutable) "mutableProperty${i}" else "property${i}")
+                it.name.asString() == (if (mutable) "mutableProperty$i" else "property$i")
             }
         )
     }
