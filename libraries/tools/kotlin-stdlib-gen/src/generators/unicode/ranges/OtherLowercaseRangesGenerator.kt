@@ -20,9 +20,6 @@ internal class OtherLowercaseRangesGenerator(
     private val otherLowerRanges = mutableListOf<IntRange>()
 
     fun appendLine(line: PropertyLine) {
-        // In Native the Other_Lowercase code points are also used to perform String.lowercase()
-        if (target != KotlinTarget.Native && line.rangeStart.hexToInt() > 0xFFFF) return
-
         if (line.property == "Other_Lowercase") {
             otherLowerRanges.add(line.intRange())
         }

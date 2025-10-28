@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ package kotlin.text
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
-// 222 ranges totally
+// 363 ranges totally
 private object Letter {
     val decodedRangeStart: IntArray
     val decodedRangeLength: IntArray
@@ -23,9 +23,9 @@ private object Letter {
             fromBase64[toBase64[i].code] = i
         }
         
-        // rangeStartDiff.length = 356
-        val rangeStartDiff = "hCgBpCQGYHZH5BRpBPPPPPPRMP5BPPlCPP6BkEPPPPcPXPzBvBrB3BOiDoBHwD+E3DauCnFmBmB2D6E1BlBTiBmBlBP5BhBiBrBvBjBqBnBPRtBiCmCtBlB0BmB5BiB7BmBgEmChBZgCoEoGVpBSfRhBPqKQ2BwBYoFgB4CJuTiEvBuCuDrF5DgEgFlJ1DgFmBQtBsBRGsB+BPiBlD1EIjDPRPPPQPPPPPGQSQS/DxENVNU+B9zCwBwBPPCkDPNnBPqDYY1R8B7FkFgTgwGgwUwmBgKwBuBScmEP/BPPPPPPrBP8B7F1B/ErBqC6B7BiBmBfQsBUwCw/KwqIwLwETPcPjQgJxFgBlBsD"
-        val diff = decodeVarLenBase64(rangeStartDiff, fromBase64, 222)
+        // rangeStartDiff.length = 603
+        val rangeStartDiff = "hCgBpCQGYHZH5BRpBPPPPPPRMP5BPPlCPP6BkEPPPPcPXPzBvBrB3BOiDoBHwD+E3DauCnFmBmB2D6E1BlBTiBmBlBP5BhBiBrBvBjBqBnBPRtBiCmCtBlB0BmB5BiB7BmBgEmChBZgCoEoGVpBSfRhBPqKQ2BwBYoFgB4CJuTiEvBuCuDrF5DgEgFlJ1DgFmBQtBsBRGsB+BPiBlD1EIjDPRPPPQPPPPPGQSQS/DxENVNU+B9zCwBwBPPCkDPNnBPqDYY1R8B7FkFgTgwGgwUwmBgKwBuBScmEP/BPPPPPPrBP8B7F1B/ErBqC6B7BiBmBfQsBUwCw/KwqIwLwETPcPjQgJxFgBlBsD7ByBhStFzCgEoBoBgDoBoBgIgKgG3BpB0EsEwEwCpD3EgJgCgCgMnF5FwH3D8B5CkFP2DlBTjGgEgIkG8FgIgFgB/BWsBgFqBxCkNyD5E8C5LwGwmBg8CggFggJgSgIgYgBgFgHghGgoBg4IwKw1CwEw7FaaaISaVPPQLaVPQaSIaaaaaaaaaaaaeaaGaaGaaGaaGaTjqCgOgqBgIiBpB1lBkBQTQQSSgB1qEg4pBgiEgHw0FwqKggC"
+        val diff = decodeVarLenBase64(rangeStartDiff, fromBase64, 363)
         val start = IntArray(diff.size)
         for (i in diff.indices) {
             if (i == 0) start[i] = diff[i]
@@ -33,13 +33,13 @@ private object Letter {
         }
         decodedRangeStart = start
         
-        // rangeLength.length = 328
-        val rangeLength = "aaMBXHYH5BRpBPPPPPPRMP5BPPlCPPzBDOOPPcPXPzBvBjB3BOhDmBBpB7DoDYxB+EiBP1DoExBkBQhBekBPmBgBhBctBiBMWOOXhCsBpBkBUV3Ba4BkB0DlCgBXgBtD4FSdBfPhBPpKP0BvBXjEQ2CGsT8DhBtCqDpFvD1D3E0IrD2EkBJrBDOBsB+BPiBlB1EIjDPPPPPPPPPPPGPPMNLsBNPNPKCvBvBPPCkDPBmBPhDXXgD4B6FzEgDguG9vUtkB9JcuBSckEP/BPPPPPPBPf4FrBjEhBpC3B5BKaWPrBOwCk/KsCuLqDHPbPxPsFtEaaqDL"
-        decodedRangeLength = decodeVarLenBase64(rangeLength, fromBase64, 222)
+        // rangeLength.length = 557
+        val rangeLength = "aaMBXHYH5BRpBPPPPPPRMP5BPPlCPPzBDOOPPcPXPzBvBjB3BOhDmBBpB7DoDYxB+EiBP1DoExBkBQhBekBPmBgBhBctBiBMWOOXhCsBpBkBUV3Ba4BkB0DlCgBXgBtD4FSdBfPhBPpKP0BvBXjEQ2CGsT8DhBtCqDpFvD1D3E0IrD2EkBJrBDOBsB+BPiBlB1EIjDPPPPPPPPPPPGPPMNLsBNPNPKCvBvBPPCkDPBmBPhDXXgD4B6FzEgDguG9vUtkB9JcuBSckEP/BPPPPPPBPf4FrBjEhBpC3B5BKaWPrBOwCk/KsCuLqDHPbPxPsFtEaaqD6BxB8FgFpCwCoBoBuCkBkBkD3JoB2BfzEmChEmBoDtEpHzBzBkB9E+EwG1DwB4CwCOwCkBQlBiDoCwF1DbsBgBgBVrBwEgBmC9EhC4E7CyBTqfkGvhBnS5RwHwCgBgBgF4gG2mBJ/IsNpEKaaaHSaVPPPLaVPPaPHaaaaaaaaaaaacZZGZZGZZGZZGZTPvCsBlGiBiBBjBPPOORRfR+2pB1hE+Gi0FxpH+Qr6E"
+        decodedRangeLength = decodeVarLenBase64(rangeLength, fromBase64, 363)
         
-        // rangeCategory.length = 959
-        val rangeCategory = "GFjgggUHGGFFZZZmzpz5qB6s6020B60ptltB6smt2sB60mz22B1+vv+8BZZ5s2850BW5q1ymtB506smzBF3q1q1qB1q1q1+Bgii4wDTm74g3KiggxqM60q1q1Bq1o1q1BF1qlrqrBZ2q5wprBGFZWWZGHFsjiooLowgmOowjkwCkgoiIk7ligGogiioBkwkiYkzj2oNoi+sbkwj04DghhkQ8wgiYkgoioDsgnkwC4gikQ//v+85BkwvoIsgoyI4yguI0whiwEowri4CoghsJowgqYowgm4DkwgsY/nwnzPowhmYkg6wI8yggZswikwHgxgmIoxgqYkwgk4DkxgmIkgoioBsgssoBgzgyI8g9gL8g9kI0wgwJoxgkoC0wgioFkw/wI0w53iF4gioYowjmgBHGq1qkgwBF1q1q8qBHwghuIwghyKk0goQkwgoQk3goQHGFHkyg0pBgxj6IoinkxDswno7Ikwhz9Bo0gioB8z48Rwli0xN0mpjoX8w78pDwltoqKHFGGwwgsIHFH3q1q16BFHWFZ1q10q1B2qlwq1B1q10q1B2q1yq1B6q1gq1Biq1qhxBir1qp1Bqt1q1qB1g1q1+B//3q16B///q1qBH/qlqq9Bholqq9B1i00a1q10qD1op1HkwmigEigiy6Cptogq1Bixo1kDq7/j00B2qgoBWGFm1lz50B6s5q1+BGWhggzhwBFFhgk4//Bo2jigE8wguI8wguI8wgugUog1qoB4qjmIwwi2KgkYHHH4lBgiFWkgIWoghssMmz5smrBZ3q1y50B5sm7gzBtz1smzB5smz50BqzqtmzB5sgzqzBF2/9//5BowgoIwmnkzPkwgk4C8ys65BkgoqI0wgy6FghquZo2giY0ghiIsgh24B4ghsQ8QF/v1q1OFs0O8iCHHF1qggz/B8wg6Iznv+//B08QgohsjK0QGFk7hsQ4gB"
-        decodedRangeCategory = decodeVarLenBase64(rangeCategory, fromBase64, 222)
+        // rangeCategory.length = 1409
+        val rangeCategory = "GFjgggUHGGFFZZZmzpz5qB6s6020B60ptltB6smt2sB60mz22B1+vv+8BZZ5s2850BW5q1ymtB506smzBF3q1q1qB1q1q1+Bgii4wDTm74g3KiggxqM60q1q1Bq1o1q1BF1qlrqrBZ2q5wprBGFZWWZGHFsjiooLowgmOowjkwCkgoiIk7ligGogiioBkwkiYkzj2oNoi+sbkwj04DghhkQ8wgiYkgoioDsgnkwC4gikQ//v+85BkwvoIsgoyI4yguI0whiwEowri4CoghsJowgqYowgm4DkwgsY/nwnzPowhmYkg6wI8yggZswikwHgxgmIoxgqYkwgk4DkxgmIkgoioBsgssoBgzgyI8g9gL8g9kI0wgwJoxgkoC0wgioFkw/wI0w53iF4gioYowjmgBHGq1qkgwBF1q1q8qBHwghuIwghyKk0goQkwgoQk3goQHGFHkyg0pBgxj6IoinkxDswno7Ikwhz9Bo0gioB8z48Rwli0xN0mpjoX8w78pDwltoqKHFGGwwgsIHFH3q1q16BFHWFZ1q10q1B2qlwq1B1q10q1B2q1yq1B6q1gq1Biq1qhxBir1qp1Bqt1q1qB1g1q1+B//3q16B///q1qBH/qlqq9Bholqq9B1i00a1q10qD1op1HkwmigEigiy6Cptogq1Bixo1kDq7/j00B2qgoBWGFm1lz50B6s5q1+BGWhggzhwBFFhgk4//Bo2jigE8wguI8wguI8wgugUog1qoB4qjmIwwi2KgkYHHH4lBgiFWkgIWoghssMmz5smrBZ3q1y50B5sm7gzBtz1smzB5smz50BqzqtmzB5sgzqzBF2/9//5BowgoIwmnkzPkwgk4C8ys65BkgoqI0wgy6FghquZo2giY0ghiIsgh24B4ghsQ8QF/v1q1OFs0O8iCHHF1qggz/B8wg6Iznv+//B08QgohsjK0QGFk7hsQ4ghm4IozgmJ8hh8wI0zhi7LwygwwB4jhoiBGFHGFglEH4iF4ghiIowhiQ8yk+pQoglsxCgnjkgQwwgmI0zh65IwztszCsymkxbGFHoljkwTkgksxa8imq7SkjtoqHkgkmagmnooFkwxkJ8wgiI8xg04BghhkQ8wgkIkgpigD0mpogFgmqkI810ogJkw92qDHHGFghhiQowgw5DkgvxQkwgigHg1jioF41piwIkxgqqE4j4vI40qioGowggyDHkwnBHHHH8z49xEwwvqpBGFs5iiwQowgigHHHHswoogCs9i6YHGFGFFGF1qilowBi0q0q1B2qkq1qBFGF1qq0qwBq1q0q1BFq0q0qxBGFGFGFGFGFGFGFGFFGFFGFFGFFGF1qxq1sB0llugEHHGFHwwg2JkghiI/nzhg4Bz58nvOz5smvOwwguIwwgiIkyimIHHHHHHHH"
+        decodedRangeCategory = decodeVarLenBase64(rangeCategory, fromBase64, 363)
     }
 }
 
