@@ -202,6 +202,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         ) {
             parameter<ConeKotlinType>("type")
         }
+        val ROOT_IDE_PACKAGE_DEPRECATED by warning<PsiElement>(PositioningStrategy.DEFAULT)
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {

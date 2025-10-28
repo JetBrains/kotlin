@@ -114,12 +114,17 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKt
                 FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name,
                 FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.name,
                 "PARCELABLE_TYPE_NOT_SUPPORTED",
+                FirErrors.ROOT_IDE_PACKAGE_DEPRECATED.name,
             )
         )
         checkRule(
             """\bplease\b""".toRegex(RegexOption.IGNORE_CASE),
             "uses overly polite tone",
-            setOf(FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name, FirErrors.ERROR_SUPPRESSION.name)
+            setOf(
+                FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name,
+                FirErrors.ERROR_SUPPRESSION.name,
+                FirErrors.ROOT_IDE_PACKAGE_DEPRECATED.name,
+            )
         )
 
         checkRule(
