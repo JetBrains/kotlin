@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -311,7 +312,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
             tags += FirTags.GETTER
         if (property.setter?.symbol?.isDefault == false) tags += FirTags.SETTER
         if (property.contextParameters.isNotEmpty()) tags += FirTags.PROPERTY_WITH_CONTEXT
-        if (property.isLocal) tags += FirTags.LOCAL_PROPERTY
+        if (property.symbol is FirLocalPropertySymbol) tags += FirTags.LOCAL_PROPERTY
         if (property.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) tags += FirTags.UNNAMED_LOCAL_VARIABLE
         if (property.hasExplicitBackingField) tags += FirTags.EXPLICIT_BACKING_FIELD
         checkPropertyStatus(property.status)

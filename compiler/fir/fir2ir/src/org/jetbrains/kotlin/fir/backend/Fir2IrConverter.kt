@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.java.javaElementFinder
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.isNothingOrNullableNothing
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -586,7 +587,7 @@ class Fir2IrConverter(
             val needProcessMember = when (scriptDeclaration) {
                 is FirAnonymousInitializer -> false // processed later
                 is FirProperty -> {
-                    !scriptDeclaration.isLocal &&
+                    scriptDeclaration.symbol is FirRegularPropertySymbol &&
                             // '_' DD element
                             (scriptDeclaration.name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR ||
                                     scriptDeclaration.destructuringDeclarationContainerVariable == null)

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -173,7 +174,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
             // If we found the nearest suspend function, we're finished.
             if (declaration == enclosingSuspendFunction) return true
             // Local variables are okay.
-            if (declaration is FirPropertySymbol && declaration.isLocal) continue
+            if (declaration is FirPropertySymbol && declaration is FirLocalPropertySymbol) continue
             // Inline lambdas are okay.
             if (declaration is FirAnonymousFunctionSymbol && declaration.inlineStatus.returnAllowed) continue
             // We already report UNSUPPORTED on suspend calls in value parameters default values, so they are okay for our purposes.

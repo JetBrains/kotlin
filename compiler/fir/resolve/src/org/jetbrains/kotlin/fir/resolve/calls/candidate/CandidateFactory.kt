@@ -140,13 +140,13 @@ class CandidateFactory private constructor(
         // Here, we explicitly check if the referred declaration/symbol is value parameter, local variable, enum entry, or backing field.
         val callSite = callInfo.callSite
         if (callSite is FirCallableReferenceAccess) {
-            when {
-                symbol is FirValueParameterSymbol || symbol is FirPropertySymbol && symbol.isLocal || symbol is FirBackingFieldSymbol -> {
+            when (symbol) {
+                is FirValueParameterSymbol, is FirLocalPropertySymbol, is FirBackingFieldSymbol -> {
                     result.addDiagnostic(
                         Unsupported("References to variables aren't supported yet", callSite.calleeReference.source)
                     )
                 }
-                symbol is FirEnumEntrySymbol -> {
+                is FirEnumEntrySymbol -> {
                     result.addDiagnostic(
                         Unsupported("References to enum entries aren't supported", callSite.calleeReference.source)
                     )

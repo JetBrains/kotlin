@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
@@ -228,20 +226,19 @@ private class CodeFragmentCapturedValueVisitor(
                 val capturedValue = CodeFragmentCapturedValue.Local(name, isMutated, isCrossingInlineBounds, depth)
                 register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
             }
-            is FirPropertySymbol -> {
-                if (symbol.isLocal) {
-                    val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                    val capturedValue = when {
-                        symbol.isForeignValue -> CodeFragmentCapturedValue.ForeignValue(symbol.name, isCrossingInlineBounds, depth)
-                        symbol.hasDelegate -> CodeFragmentCapturedValue.LocalDelegate(symbol.name, isMutated, isCrossingInlineBounds, depth)
-                        else -> CodeFragmentCapturedValue.Local(symbol.name, isMutated, isCrossingInlineBounds, depth)
-                    }
-                    register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
-                } else {
-                    // Property call generation depends on complete backing field resolution (Fir2IrLazyProperty.backingField)
-                    symbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                    registerFileIfRequired(symbol)
+            is FirLocalPropertySymbol -> {
+                val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
+                val capturedValue = when {
+                    symbol.isForeignValue -> CodeFragmentCapturedValue.ForeignValue(symbol.name, isCrossingInlineBounds, depth)
+                    symbol.hasDelegate -> CodeFragmentCapturedValue.LocalDelegate(symbol.name, isMutated, isCrossingInlineBounds, depth)
+                    else -> CodeFragmentCapturedValue.Local(symbol.name, isMutated, isCrossingInlineBounds, depth)
                 }
+                register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
+            }
+            is FirRegularPropertySymbol -> {
+                // Property call generation depends on complete backing field resolution (Fir2IrLazyProperty.backingField)
+                symbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+                registerFileIfRequired(symbol)
             }
             is FirBackingFieldSymbol -> {
                 val propertyName = symbol.propertySymbol.name

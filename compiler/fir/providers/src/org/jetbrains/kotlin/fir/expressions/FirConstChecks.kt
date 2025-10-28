@@ -293,7 +293,7 @@ private class FirConstCheckVisitor(
                         }
                         receivers.singleOrNull { it != null }?.accept(this, data)?.ifNotValidConst { return it }
                     }
-                    propertySymbol.isLocal -> return ConstantArgumentKind.NOT_CONST
+                    propertySymbol is FirLocalPropertySymbol -> return ConstantArgumentKind.NOT_CONST
                     propertyAccessExpression.getExpandedType().classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
                 }
 

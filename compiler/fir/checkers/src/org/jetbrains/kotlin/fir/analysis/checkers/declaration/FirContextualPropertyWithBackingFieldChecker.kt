@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 
 object FirContextualPropertyWithBackingFieldChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -27,7 +27,7 @@ object FirContextualPropertyWithBackingFieldChecker : FirPropertyChecker(MppChec
         }
         if (declaration.contextParameters.isEmpty()) return
 
-        if (declaration.hasBackingField && !declaration.isLateInit && !declaration.isLocal) {
+        if (declaration.hasBackingField && !declaration.isLateInit && declaration.symbol is FirRegularPropertySymbol) {
             reporter.reportOn(
                 declaration.initializer?.source ?: declaration.source,
                 FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD

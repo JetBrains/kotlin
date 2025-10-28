@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.symbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -195,7 +195,7 @@ private fun FirExpression.hasSideEffect(): Boolean {
             if (source?.kind == KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess) true
             else when (val propertySymbol = calleeReference.symbol) {
                 is FirValueParameterSymbol, is FirReceiverParameterSymbol -> false
-                is FirPropertySymbol -> !propertySymbol.isLocal || propertySymbol.hasDelegate
+                is FirLocalPropertySymbol -> propertySymbol.hasDelegate
                 else -> true
             }
         }

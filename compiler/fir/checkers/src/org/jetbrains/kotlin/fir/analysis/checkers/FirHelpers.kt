@@ -686,7 +686,7 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
         )
         is FirProperty -> {
             when {
-                annotated.isLocal ->
+                annotated.symbol is FirLocalPropertySymbol ->
                     when {
                         annotated.name == SpecialNames.DESTRUCT -> TargetLists.T_DESTRUCTURING_DECLARATION
                         annotated.isCatchParameter == true -> TargetLists.T_CATCH_PARAMETER

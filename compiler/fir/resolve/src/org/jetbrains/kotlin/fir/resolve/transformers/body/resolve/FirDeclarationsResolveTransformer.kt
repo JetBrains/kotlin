@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -145,7 +145,7 @@ open class FirDeclarationsResolveTransformer(
 
         // script top level destructuring declaration container variables should be treated as properties here
         // to avoid CFG/DFA complications
-        if (property.isLocal && property.origin != FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer) {
+        if (property.symbol is FirLocalPropertySymbol && property.origin != FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer) {
             // approximation is required for properties in snippets because they may "leak" to the next snippet
             // it is also reflects the current script behavior (in contrast to a local context), i.e. the code
             // `val x = object { val v = 42 }; x.v`
@@ -1593,9 +1593,9 @@ open class FirDeclarationsResolveTransformer(
     }
 
     private val FirVariable.isLocal: Boolean
-        get() = when (val symbol = symbol) {
+        get() = when (symbol) {
             is FirValueParameterSymbol -> true
-            is FirPropertySymbol -> symbol.isLocal
+            is FirLocalPropertySymbol -> true
             else -> false
         }
 

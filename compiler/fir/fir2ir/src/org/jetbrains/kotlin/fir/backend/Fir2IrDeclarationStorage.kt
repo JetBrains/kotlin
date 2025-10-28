@@ -667,7 +667,7 @@ class Fir2IrDeclarationStorage(
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
     ): IrSymbol {
         val property = prepareProperty(firPropertySymbol.fir)
-        if (property.isLocal) {
+        if (property.symbol is FirLocalPropertySymbol) {
             return localStorage.getDelegatedProperty(property) ?: getIrVariableSymbol(property)
         }
         getCachedIrPropertySymbol(property, fakeOverrideOwnerLookupTag)?.let { return it }
@@ -942,7 +942,7 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun getIrPropertyForwardedSymbol(fir: FirProperty): IrSymbol {
-        if (fir.isLocal) {
+        if (fir.symbol is FirLocalPropertySymbol) {
             // local property cannot be referenced before declaration, so it's safe to take an owner from the symbol
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             val delegatedProperty = localStorage.getDelegatedProperty(fir)?.owner
