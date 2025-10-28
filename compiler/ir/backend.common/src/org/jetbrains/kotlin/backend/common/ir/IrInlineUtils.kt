@@ -76,17 +76,16 @@ fun IrFunction.moveBodyTo(target: IrFunction): IrBody? =
     moveBodyTo(target, createParameterMapping(this, target))
 
 fun IrFunction.moveBodyTo(target: IrFunction, arguments: Map<IrValueParameter, IrValueDeclaration>): IrBody? =
-    body?.move(this, symbol, target, target.symbol, arguments)
+    body?.move(this, target, target.symbol, arguments)
 
-fun IrBody.move(
-    source: IrDeclarationParent,
-    sourceSymbol: IrReturnTargetSymbol,
+private fun IrBody.move(
+    source: IrFunction,
     target: IrDeclarationParent,
     targetSymbol: IrReturnTargetSymbol,
     arguments: Map<IrValueParameter, IrValueDeclaration>
 ): IrBody = transform(object : VariableRemapper(arguments) {
     override fun visitReturn(expression: IrReturn): IrExpression = super.visitReturn(
-        if (expression.returnTargetSymbol == sourceSymbol)
+        if (expression.returnTargetSymbol == source.symbol)
             IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, targetSymbol, expression.value)
         else
             expression
@@ -111,7 +110,7 @@ fun IrBody.move(
 // Inline simple function calls without type parameters, default parameters, or varargs.
 fun IrFunction.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrReturnableBlock =
     IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(), null).apply {
-        statements += body!!.move(this@inline, this@inline.symbol, target, symbol, parameters.zip(arguments).toMap()).statements
+        statements += body!!.move(this@inline, target, symbol, parameters.zip(arguments).toMap()).statements
     }
 
 fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrExpression =

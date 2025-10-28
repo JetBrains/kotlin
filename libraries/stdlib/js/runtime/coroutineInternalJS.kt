@@ -16,6 +16,12 @@ internal fun <T> getContinuation(): Continuation<T> { throw Exception("Implement
 // Do we really need this intrinsic in JS?
 
 @PublishedApi
+@Suppress("UNCHECKED_CAST")
+internal suspend fun <T> returnIfSuspended(value: Any?): T {
+    return value as T
+}
+
+@PublishedApi
 internal fun <T> interceptContinuationIfNeeded(
     context: CoroutineContext,
     continuation: Continuation<T>
@@ -28,12 +34,6 @@ internal fun <T> interceptContinuationIfNeeded(
 internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
 
 @PublishedApi
-@Suppress("UNCHECKED_CAST")
-internal suspend fun <T> returnIfSuspended(value: Any?): T {
-    return value as T
-}
-
-@PublishedApi
 @UsedFromCompilerGeneratedCode
-internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnJS(block: (Continuation<T>) -> Any?): T =
+internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturnJS(block: (Continuation<T>) -> Any?): T =
     returnIfSuspended<T>(block(getContinuation<T>()))

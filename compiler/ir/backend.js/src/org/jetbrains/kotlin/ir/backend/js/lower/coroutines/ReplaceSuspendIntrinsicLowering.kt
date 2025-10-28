@@ -7,24 +7,23 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.ir.move
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
-import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
-import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -40,8 +39,6 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
         context.symbols.jsYieldFunctionSymbol
     private val returnIfSuspended =
         context.symbols.returnIfSuspended
-    private val suspendCoroutineUninterceptedOrReturnJS =
-        context.symbols.suspendCoroutineUninterceptedOrReturnJS
     private val valueParamSizeToItsCreateCoroutineUnintercepted =
         context.symbols.createCoroutineUninterceptedGeneratorVersion.groupPerValueParamSize()
     private val valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion =
@@ -57,17 +54,11 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (!context.compileSuspendAsJsGenerator) return
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitReturnableBlock(expression: IrReturnableBlock): IrExpression {
-                val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
+            private val containerFunctionStack = mutableListOf(container)
 
-                if (inlinedBlock?.inlinedFunctionSymbol != suspendCoroutineUninterceptedOrReturnJS) {
-                    return super.visitReturnableBlock(expression)
-                }
-
-                return JsIrBuilder.buildCall(jsYield, expression.type, listOf(expression.type))
-                    .apply {
-                        arguments[0] = super.visitFunctionExpression(expression.wrapInAnonymousFunction(inlinedBlock, container))
-                    }
+            override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+                containerFunctionStack.add(declaration)
+                return super.visitSimpleFunction(declaration).also { containerFunctionStack.removeLast() }
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
@@ -75,7 +66,9 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
                     returnIfSuspended -> {
                         val returnedValue = expression.arguments.single()
                             ?: compilationException("Unexpected empty argument list for returnIfSuspended function", expression)
+
                         return super.visitExpression(returnedValue)
+                            .toGeneratorSuspensionExpression(containerFunctionStack.last())
                     }
                     in context.symbols.createCoroutineUnintercepted -> {
                         expression.symbol = valueParamSizeToItsCreateCoroutineUnintercepted.getValue(symbol.regularParamCount)
@@ -90,27 +83,24 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
         })
     }
 
-    private fun IrReturnableBlock.wrapInAnonymousFunction(
-        inlinedBlock: IrInlinedFunctionBlock,
-        container: IrDeclaration,
-    ): IrFunctionExpression {
-        val returnableBlockSymbol = symbol
+    private fun IrExpression.toGeneratorSuspensionExpression(container: IrDeclaration): IrExpression {
         val wrapperFunction = context.irFactory.buildFun {
             name = SpecialNames.NO_NAME_PROVIDED
             visibility = DescriptorVisibilities.LOCAL
             isSuspend = false
-            returnType = inlinedBlock.type
+            returnType = context.irBuiltIns.anyNType
             origin = YIELDED_WRAPPER_FUNCTION
         }.also {
             it.parent = container as IrDeclarationParent
-            it.body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-                .apply { statements.addAll(inlinedBlock.statements) }
-                .move(container, returnableBlockSymbol, it, it.symbol, emptyMap())
+            it.body = with(context.createIrBuilder(it.symbol)) {
+                irBlockBody {
+                    +irReturn(this@toGeneratorSuspensionExpression)
+                }
+            }
         }
 
-        return JsIrBuilder.buildFunctionExpression(
-            context.symbols.dynamicType,
-            wrapperFunction
-        )
+        return JsIrBuilder.buildCall(jsYield).apply {
+            arguments[0] = JsIrBuilder.buildFunctionExpression(context.dynamicType, wrapperFunction)
+        }
     }
 }
