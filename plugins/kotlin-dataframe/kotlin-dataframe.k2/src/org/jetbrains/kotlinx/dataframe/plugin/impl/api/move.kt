@@ -17,8 +17,12 @@ class Move0 : AbstractInterpreter<MoveClauseApproximation>() {
 /** Implementation of `move {}.toTop()` operation. */
 class ToTop : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: MoveClauseApproximation by arg()
+    val Arguments.newColumnName: Any? by arg(defaultValue = Present(null))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
+        // TODO we don't support analyzing the `newColumnName` lambda yet, so return empty schema if it's provided
+        if (newColumnName != null) return PluginDataFrameSchema.EMPTY
+
         val columns = receiver.columns.resolve(receiver.df).map { it.path }
         return receiver.df.asDataFrame().move { columns.toColumnSet() }.toTop().toPluginDataFrameSchema()
     }
