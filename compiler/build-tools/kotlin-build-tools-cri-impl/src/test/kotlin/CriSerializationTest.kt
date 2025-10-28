@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.internal.cri.CriDataSerializerImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.FileIdToPathEntryImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.LookupEntryImpl
 import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -31,7 +32,7 @@ class CriSerializationTest {
                     to listOf(file2, file3),
         )
 
-        val (serializedLookups, serializedFileIdsToPaths) = CriDataSerializerImpl().serializeLookups(lookups)
+        val (serializedLookups, serializedFileIdsToPaths) = CriDataSerializerImpl().serializeLookups(lookups, BasicFileToPathConverter)
 
         val deserializer = CriDataDeserializerImpl()
         val decodedLookups = deserializer.deserializeLookupData(serializedLookups)
@@ -72,8 +73,8 @@ class CriSerializationTest {
                     to listOf(file1, file2),
         )
 
-        val (serializedLookups1, _) = CriDataSerializerImpl().serializeLookups(lookups1)
-        val (serializedLookups2, _) = CriDataSerializerImpl().serializeLookups(lookups2)
+        val (serializedLookups1, _) = CriDataSerializerImpl().serializeLookups(lookups1, BasicFileToPathConverter)
+        val (serializedLookups2, _) = CriDataSerializerImpl().serializeLookups(lookups2, BasicFileToPathConverter)
         val serializedLookups = ByteArrayOutputStream().use { stream ->
             stream.write(serializedLookups1)
             stream.write(serializedLookups2)

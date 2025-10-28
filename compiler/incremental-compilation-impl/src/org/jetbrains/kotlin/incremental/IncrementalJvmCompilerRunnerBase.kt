@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.javaInterop.JavaInteropCoordinator
+import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -186,8 +187,8 @@ abstract class IncrementalJvmCompilerRunnerBase(
         return exitCode to sourcesToCompile
     }
 
-    override fun generateCompilerRefIndexIfNeeded(services: Services) {
-        super.generateCompilerRefIndexIfNeeded(services)
+    override fun generateCompilerRefIndexIfNeeded(services: Services, sourceFilesPathConverter: FileToPathConverter) {
+        super.generateCompilerRefIndexIfNeeded(services, sourceFilesPathConverter)
         if (!generateCompilerRefIndex) return
 
         reporter.info { "Generating Compiler Reference Index..." }
@@ -196,7 +197,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         val criDir = File(workingDir, COMPILER_REF_INDEX_DIR).apply { mkdirs() }
 
         val lookupTracker = services[LookupTracker::class.java] as LookupTrackerImpl
-        val lookupData = serializer.serializeLookups(lookupTracker.lookups.toHashMap())
+        val lookupData = serializer.serializeLookups(lookupTracker.lookups.toHashMap(), sourceFilesPathConverter)
 
         val lookupsFile = File(criDir, LOOKUPS_FILENAME)
         BufferedOutputStream(lookupsFile.outputStream()).use { stream ->

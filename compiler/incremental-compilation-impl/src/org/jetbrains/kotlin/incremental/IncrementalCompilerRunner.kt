@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesProvider
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileLocations
+import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -554,7 +555,7 @@ abstract class IncrementalCompilerRunner<
                 updateCaches(services, caches, generatedFiles, changesCollector)
             }
 
-            generateCompilerRefIndexIfNeeded(services)
+            generateCompilerRefIndexIfNeeded(services, icContext.pathConverterForSourceFiles)
 
             if (compilationMode is CompilationMode.Rebuild) {
                 if (icFeatures.withAbiSnapshot) {
@@ -626,7 +627,7 @@ abstract class IncrementalCompilerRunner<
         return exitCode
     }
 
-    protected open fun generateCompilerRefIndexIfNeeded(services: Services): Unit = Unit
+    protected open fun generateCompilerRefIndexIfNeeded(services: Services, sourceFilesPathConverter: FileToPathConverter): Unit = Unit
 
     open fun getLookupTrackerDelegate(): LookupTracker = LookupTracker.DO_NOTHING
 
