@@ -26,10 +26,10 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
 
     public override val context: CoroutineContext get() = _context!!
 
-    fun runGenerator(result: Result<Any?>? = null): Any? {
+    fun runGenerator(result: Result<Any?> = Result(null)): Any? {
         val suspended = COROUTINE_SUSPENDED
-        val stepResult = when (val e = result?.exceptionOrNull()) {
-            null -> generator.next(result?.value)
+        val stepResult = when (val e = result.exceptionOrNull()) {
+            null -> generator.next(result.value)
             else -> generator.throws(e)
         }
 
@@ -37,9 +37,16 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
         var value = stepResult.value
 
         while (!done) {
-            val suspendOrReturn = value.unsafeCast<() -> Any?>()
-            value = suspendOrReturn.invoke()
-            if (value === suspended) break
+            try {
+                value = value.unsafeCast<() -> Any?>().invoke()
+            } catch (e: dynamic) {
+                val nextStep = generator.throws(e)
+                value = nextStep.value
+                done = nextStep.done
+                continue
+            } finally {
+                if (value === suspended) break
+            }
             val nextStep = generator.next(value)
             value = nextStep.value
             done = nextStep.done
