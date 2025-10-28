@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.name.Name
@@ -349,7 +350,8 @@ class JvmCachedDeclarations(
             containerClass.annotations = annotationClass.annotations
                 .filter {
                     it.isAnnotationWithEqualFqName(StandardNames.FqNames.retention) ||
-                            it.isAnnotationWithEqualFqName(StandardNames.FqNames.target)
+                            it.isAnnotationWithEqualFqName(StandardNames.FqNames.target) ||
+                            it.isAnnotationWithEqualFqName(JvmAnnotationNames.INHERITED_ANNOTATION)
                 }
                 .map { it.deepCopyWithSymbols(containerClass) } +
                     context.createJvmIrBuilder(containerClass.symbol).irCall(context.symbols.repeatableContainer.constructors.single())
