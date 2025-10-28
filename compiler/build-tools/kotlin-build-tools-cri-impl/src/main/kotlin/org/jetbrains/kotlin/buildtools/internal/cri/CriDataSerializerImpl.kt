@@ -37,6 +37,7 @@ public class CriDataSerializerImpl {
         val lookups = lookups.asSequence().map { it.toLookupEntry() }
         val serializedLookups = lookups.encodeToByteArrayWithLengthPrefix()
 
+        // TODO normalize file paths against the project root
         val fileIdsToPaths = filePathToId.asSequence().map { (filePath, fileId) ->
             FileIdToPathEntryImpl(fileId, filePath)
         }
