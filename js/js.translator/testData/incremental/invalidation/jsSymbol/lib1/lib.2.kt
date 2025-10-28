@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.ExperimentalStdlibApi::class)
+
 interface Foo {
     @JsSymbol("toPrimitive")
     fun foo(hint: String = "X"): String

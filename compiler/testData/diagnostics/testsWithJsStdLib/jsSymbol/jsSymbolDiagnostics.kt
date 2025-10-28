@@ -1,4 +1,4 @@
-// OPT_IN: kotlin.js.ExperimentalJsExport
+// OPT_IN: kotlin.ExperimentalStdlibApi
 package diagnostics
 
 class Host1 {

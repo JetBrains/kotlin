@@ -6,6 +6,7 @@
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
+// OPT_IN: kotlin.ExperimentalStdlibApi
 // FILE: js-symbol-combined.kt
 
 @file:JsExport
