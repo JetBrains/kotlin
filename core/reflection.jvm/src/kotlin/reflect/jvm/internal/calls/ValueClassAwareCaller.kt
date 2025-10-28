@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
@@ -163,8 +163,9 @@ private fun makeKotlinParameterTypes(descriptor: CallableMemberDescriptor, membe
                 // Hack to forbid unboxing dispatchReceiver if it is used upcasted.
                 // `kotlinParameterTypes` are used to determine shifts and calls according to whether type is an inline class or not.
                 // If it is an inline class, boxes are unboxed. If the actual called member lies in the interface/DefaultImpls class,
-                // it accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
-                result.add(containingDeclaration.defaultType.makeNullable())
+                // it accepts a boxed parameter as ex-dispatch receiver. Use Any? here to strictly prevent unboxing regardless of
+                // the inline class underlying type (see KT-81987).
+                result.add(containingDeclaration.builtIns.nullableAnyType)
             } else {
                 result.add(containingDeclaration.defaultType)
             }
