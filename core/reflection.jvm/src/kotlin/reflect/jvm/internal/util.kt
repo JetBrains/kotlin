@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaAnnotation
 import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import java.lang.annotation.Repeatable
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Type
@@ -53,6 +55,7 @@ import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.jvm.internal.RepeatableContainer
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVisibility
@@ -150,17 +153,45 @@ internal fun Annotated.computeAnnotations(): List<Annotation> =
             is RuntimeSourceElementFactory.RuntimeSourceElement -> (source.javaElement as? ReflectJavaAnnotation)?.annotation
             else -> it.toAnnotationInstance()
         }
-    }.unwrapRepeatableAnnotations()
+    }.unwrapKotlinRepeatableAnnotations()
 
-fun List<Annotation>.unwrapRepeatableAnnotations(): List<Annotation> =
+internal fun Annotation.hasInherited(): Boolean =
+    null != annotationClass.java.declaredAnnotations.find { it.annotationClass.java.name == JvmAnnotationNames.INHERITED_ANNOTATION.asString() }
+
+internal val Annotation.unwrappedAnnotationClass: KClass<out Annotation>
+    get() {
+        val annotationOrContainerClass = annotationClass
+        if (isKotlinRepeatableContainer(annotationOrContainerClass) || isJavaRepeatableContainer(annotationOrContainerClass))
+            @Suppress("UNCHECKED_CAST")
+            return annotationOrContainerClass.java.getDeclaredMethod("value").returnType.componentType!!.kotlin as KClass<out Annotation>
+        else
+            return annotationOrContainerClass
+    }
+
+private fun isKotlinRepeatableContainer(klass: KClass<out Annotation>): Boolean {
+    val jClass = klass.java
+    return jClass.simpleName == JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME &&
+            jClass.getAnnotation(RepeatableContainer::class.java) != null
+}
+
+private fun isJavaRepeatableContainer(klass: KClass<out Annotation>): Boolean {
+    val jClass = klass.java
+    val valueMethod = jClass.getDeclaredMethodOrNull("value") ?: return false
+    val returnComponentType = valueMethod.returnType.componentType ?: return false
+    if (!returnComponentType.isAnnotation) return false
+
+    val javaRepeatable = returnComponentType.getAnnotation(Repeatable::class.java) ?: return false
+    val repeatableContainerClass = javaRepeatable.value
+    return klass == repeatableContainerClass
+}
+
+fun List<Annotation>.unwrapKotlinRepeatableAnnotations(): List<Annotation> =
     if (any { it.annotationClass.java.simpleName == JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME })
         flatMap {
-            val klass = it.annotationClass.java
-            if (klass.simpleName == JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME &&
-                klass.getAnnotation(RepeatableContainer::class.java) != null
-            )
+            val klass = it.annotationClass
+            if (isKotlinRepeatableContainer(klass))
                 @Suppress("UNCHECKED_CAST")
-                (klass.getDeclaredMethod("value").invoke(it) as Array<out Annotation>).asList()
+                (klass.java.getDeclaredMethod("value").invoke(it) as Array<out Annotation>).asList()
             else
                 listOf(it)
         }
