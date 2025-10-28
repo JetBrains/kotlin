@@ -489,12 +489,6 @@ open class UpgradeCallableReferences(
 
                 val bound = captured.map { it.first }.toSet()
                 val (boundParameters, unboundParameters) = referencedFunction.parameters.partition { it in bound }
-                val parameters =
-                    if (referencedFunction.isMissingObjectDispatchReceiver() && origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
-                        parameters.drop(1)
-                    } else {
-                        parameters
-                    }
                 require(boundParameters.size + unboundParameters.size == parameters.size) {
                     "Wrong number of parameters in wrapper: expected: ${boundParameters.size} bound and ${unboundParameters.size} unbound, but ${parameters.size} found"
                 }
