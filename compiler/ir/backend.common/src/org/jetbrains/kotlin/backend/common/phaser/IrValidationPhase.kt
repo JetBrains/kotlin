@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.validation.*
+import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.InlineFunctionUseSiteChecker
@@ -45,6 +46,9 @@ abstract class IrValidationBeforeLoweringPhase<Context : LoweringContext>(contex
             .applyIf(context.configuration.enableIrVisibilityChecks) {
                 withCheckers(IrVisibilityChecker.Strict)
             }
+            .applyIf(context.configuration.enableIrNestedOffsetsChecks) {
+                withCheckers(IrNestedOffsetRangeChecker)
+            }
             .applyIf(context.configuration.enableIrVarargTypesChecks) {
                 withVarargChecks()
             }
@@ -74,6 +78,9 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringConte
             .applyIf(context.configuration.enableIrVisibilityChecks) {
                 withCheckers(IrVisibilityChecker.Strict)
             }
+            .applyIf(context.configuration.enableIrNestedOffsetsChecks) {
+                withCheckers(IrNestedOffsetRangeChecker)
+            }
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             .applyIf(context.configuration.enableIrVarargTypesChecks) {
                 withVarargChecks()
@@ -91,6 +98,9 @@ class IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase<Context : Lower
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             .applyIf(context.configuration.enableIrVisibilityChecks) {
                 withCheckers(IrVisibilityChecker.Relaxed, IrCrossFileFieldUsageChecker, IrValueAccessScopeChecker)
+            }
+            .applyIf(context.configuration.enableIrNestedOffsetsChecks) {
+                withCheckers(IrNestedOffsetRangeChecker)
             }
             .applyIf(context.configuration.enableIrVarargTypesChecks) {
                 withVarargChecks()
@@ -112,4 +122,7 @@ open class IrValidationAfterLoweringPhase<Context : LoweringContext>(context: Co
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(checkTreeConsistency = true)
             .withBasicChecks()
+            .applyIf(context.configuration.enableIrNestedOffsetsChecks) {
+                withCheckers(IrNestedOffsetRangeChecker)
+            }
 }

@@ -26,6 +26,7 @@ class CheckerContext(
     val parentChain: MutableList<IrElement> = mutableListOf()
     val typeParameterScopeStack = ScopeStack<IrTypeParameterSymbol>()
     val valueSymbolScopeStack = ScopeStack<IrValueSymbol>()
+    val offsetRanges: MutableList<OffsetRange> = mutableListOf()
 
     var withinAnnotationUsageSubTree: Boolean = false
         private set

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.validation
 
 import org.jetbrains.kotlin.ir.validation.checkers.IrChecker
+import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.IrOffsetsChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.*
 import org.jetbrains.kotlin.ir.validation.checkers.expression.*
@@ -64,5 +65,6 @@ fun IrValidatorConfig.withAllChecks() = withBasicChecks()
         IrTypeParameterScopeChecker,
         IrCrossFileFieldUsageChecker,
         IrFieldVisibilityChecker,
-        IrExpressionBodyInFunctionChecker
+        IrExpressionBodyInFunctionChecker,
+        IrNestedOffsetRangeChecker,
     )

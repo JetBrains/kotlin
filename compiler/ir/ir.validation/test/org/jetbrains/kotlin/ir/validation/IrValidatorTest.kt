@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -101,8 +103,12 @@ class IrValidatorTest {
         return file
     }
 
-    private fun createIrFile(name: String = "test.kt", packageFqName: FqName = FqName("org.sample")): IrFile {
-        val fileEntry = NaiveSourceBasedFileEntryImpl(name, lineStartOffsets = intArrayOf(0, 10, 25), maxOffset = 75)
+    private fun createIrFile(
+        name: String = "test.kt",
+        packageFqName: FqName = FqName("org.sample"),
+        maxOffset: Int = 75,
+    ): IrFile {
+        val fileEntry = NaiveSourceBasedFileEntryImpl(name, lineStartOffsets = intArrayOf(0, 10, 25), maxOffset = maxOffset)
         return IrFileImpl(fileEntry, IrFileSymbolImpl(), packageFqName).also(module::addFile)
     }
 
@@ -2570,6 +2576,479 @@ class IrValidatorTest {
                     CompilerMessageLocation.create("test.kt", 1, 5, null),
                 ),
             ),
+        )
+    }
+
+    @Test
+    fun `nested offset ranges violations are reported`() {
+        class Context(
+            val offsetRangeStart: Int, val offsetRangeEnd: Int,
+            val parent: IrDeclarationParent,
+            val container: IrElement,
+        ) {
+            fun buildFun(
+                start: Int,
+                end: Int,
+                block: (Context.() -> Unit)? = null,
+            ) {
+                fun StringBuilder.appendOffset(offset: Int) = if (offset < 0) append('m').append(-offset) else append(offset)
+                val funName = buildString {
+                    append("f_").appendOffset(start).append("_").appendOffset(end)
+                }
+                val function = IrFactoryImpl.buildFun builder@{
+                    this@builder.name = Name.identifier(funName)
+                    this@builder.startOffset = start
+                    this@builder.endOffset = end
+                    this@builder.returnType = TestIrBuiltins.unitType
+                }
+                val body = IrFactoryImpl.createBlockBody(-1, -1) // Use synthetic offsets to bypass this block during the validation.
+                function.body = body
+
+                function.setDeclarationsParent(parent)
+                addToContainer(function)
+
+                if (block != null) {
+                    Context(
+                        offsetRangeStart = start,
+                        offsetRangeEnd = end,
+                        parent = function,
+                        container = body
+                    ).block()
+                }
+            }
+
+            fun buildInlinedFunBlock(
+                start: Int,
+                end: Int,
+                block: (Context.() -> Unit),
+            ) {
+                val inlinedFunBlock = IrInlinedFunctionBlockImpl(
+                    startOffset = -1, // Use synthetic offsets to bypass this block during the validation.
+                    endOffset = -1,
+                    type = TestIrBuiltins.unitType,
+                    inlinedFunctionSymbol = null,
+                    inlinedFunctionStartOffset = start,
+                    inlinedFunctionEndOffset = end,
+                    inlinedFunctionFileEntry = NaiveSourceBasedFileEntryImpl(name = "dummy"),
+                )
+                addToContainer(inlinedFunBlock)
+
+                Context(
+                    offsetRangeStart = start,
+                    offsetRangeEnd = end,
+                    parent = this.parent,
+                    container = inlinedFunBlock
+                ).block()
+            }
+
+            private fun addToContainer(statement: IrStatement) {
+                when (container) {
+                    is IrDeclarationContainer -> container.declarations += statement as IrDeclaration
+                    is IrStatementContainer -> container.statements += statement
+                    else -> error("Unexpected container type: ${container::class.java}")
+                }
+            }
+        }
+
+        val file = createIrFile(maxOffset = 2000)
+        val fileContext = Context(
+            offsetRangeStart = file.startOffset,
+            offsetRangeEnd = file.endOffset,
+            parent = file,
+            container = file,
+        )
+
+        with(fileContext) {
+            // Top-level entities with any non-violating offsets.
+            buildFun(start = -1, end = -1)
+            buildFun(start = -2, end = -2)
+            buildFun(start = 0, end = 0)
+            buildFun(start = file.endOffset, end = file.endOffset)
+            buildFun(start = 0, end = file.endOffset)
+            buildFun(start = 1, end = file.endOffset - 1)
+
+            // Top-level entity that violates offsets.
+            buildFun(start = 0, end = file.endOffset + 1)
+
+            buildFun(start = 100, end = 200) {
+                val topLevelFunContext = this
+
+                // Nested entities, which do not violate offsets.
+                buildFun(start = -1, end = -1)
+                buildFun(start = -2, end = -2)
+                buildFun(start = topLevelFunContext.offsetRangeStart, end = topLevelFunContext.offsetRangeStart)
+                buildFun(start = topLevelFunContext.offsetRangeEnd, end = topLevelFunContext.offsetRangeEnd)
+                buildFun(start = topLevelFunContext.offsetRangeStart, end = topLevelFunContext.offsetRangeEnd)
+                buildFun(start = topLevelFunContext.offsetRangeStart + 1, end = topLevelFunContext.offsetRangeEnd - 1)
+
+                // Nested entities, which violate offsets.
+                buildFun(start = topLevelFunContext.offsetRangeStart - 1, end = topLevelFunContext.offsetRangeEnd)
+                buildFun(start = topLevelFunContext.offsetRangeStart, end = topLevelFunContext.offsetRangeEnd + 1)
+
+                // Nested entities, which transitively violate offsets.
+                buildFun(start = -1, end = -1) {
+                    buildFun(start = -2, end = -2) {
+                        buildFun(start = topLevelFunContext.offsetRangeStart - 1, end = topLevelFunContext.offsetRangeEnd)
+                        buildFun(start = topLevelFunContext.offsetRangeStart, end = topLevelFunContext.offsetRangeEnd + 1)
+
+                        buildFun(start = topLevelFunContext.offsetRangeStart + 10, end = topLevelFunContext.offsetRangeEnd - 10) {
+                            val nestedClassContext = this
+                            buildFun(start = nestedClassContext.offsetRangeStart - 1, end = nestedClassContext.offsetRangeEnd)
+                            buildFun(start = nestedClassContext.offsetRangeStart, end = nestedClassContext.offsetRangeEnd + 1)
+                        }
+                    }
+                }
+            }
+
+            buildFun(start = 300, end = 400) {
+                val topLevelFunContext = this
+
+                buildInlinedFunBlock(start = -1, end = -1) {
+                    // Nested entities, which do not violate offsets.
+                    buildFun(start = -1, end = -1)
+                    buildFun(start = -2, end = -2)
+                    buildFun(start = topLevelFunContext.offsetRangeStart, end = topLevelFunContext.offsetRangeStart)
+                    buildFun(start = topLevelFunContext.offsetRangeEnd, end = topLevelFunContext.offsetRangeEnd)
+                    buildFun(start = topLevelFunContext.offsetRangeStart, end = topLevelFunContext.offsetRangeEnd)
+                    buildFun(start = topLevelFunContext.offsetRangeStart + 1, end = topLevelFunContext.offsetRangeEnd - 1)
+
+                    // Nested entities, which violate offsets.
+                    buildFun(start = topLevelFunContext.offsetRangeStart - 1, end = topLevelFunContext.offsetRangeEnd)
+                    buildFun(start = topLevelFunContext.offsetRangeStart, end = topLevelFunContext.offsetRangeEnd + 1)
+
+                    // Nested entities, which transitively violate offsets.
+                    buildFun(start = -1, end = -1) {
+                        buildFun(start = -2, end = -2) {
+                            buildFun(start = topLevelFunContext.offsetRangeStart - 1, end = topLevelFunContext.offsetRangeEnd)
+                            buildFun(start = topLevelFunContext.offsetRangeStart, end = topLevelFunContext.offsetRangeEnd + 1)
+
+                            buildFun(start = topLevelFunContext.offsetRangeStart + 10, end = topLevelFunContext.offsetRangeEnd - 10) {
+                                val nestedClassContext = this
+                                buildFun(start = nestedClassContext.offsetRangeStart - 1, end = nestedClassContext.offsetRangeEnd)
+                                buildFun(start = nestedClassContext.offsetRangeStart, end = nestedClassContext.offsetRangeEnd + 1)
+                            }
+                        }
+                    }
+                }
+            }
+
+            buildFun(start = 500, end = 600) {
+                buildInlinedFunBlock(start = 700, end = 800) {
+                    val inlinedBlockContext = this
+
+                    // Nested entities, which do not violate offsets.
+                    buildFun(start = -1, end = -1)
+                    buildFun(start = -2, end = -2)
+                    buildFun(start = inlinedBlockContext.offsetRangeStart, end = inlinedBlockContext.offsetRangeStart)
+                    buildFun(start = inlinedBlockContext.offsetRangeEnd, end = inlinedBlockContext.offsetRangeEnd)
+                    buildFun(start = inlinedBlockContext.offsetRangeStart, end = inlinedBlockContext.offsetRangeEnd)
+                    buildFun(start = inlinedBlockContext.offsetRangeStart + 1, end = inlinedBlockContext.offsetRangeEnd - 1)
+
+                    // Nested entities, which violate offsets.
+                    buildFun(start = inlinedBlockContext.offsetRangeStart - 1, end = inlinedBlockContext.offsetRangeEnd)
+                    buildFun(start = inlinedBlockContext.offsetRangeStart, end = inlinedBlockContext.offsetRangeEnd + 1)
+
+                    // Nested entities, which transitively violate offsets.
+                    buildFun(start = -1, end = -1) {
+                        buildFun(start = -2, end = -2) {
+                            buildFun(start = inlinedBlockContext.offsetRangeStart - 1, end = inlinedBlockContext.offsetRangeEnd)
+                            buildFun(start = inlinedBlockContext.offsetRangeStart, end = inlinedBlockContext.offsetRangeEnd + 1)
+
+                            buildFun(start = inlinedBlockContext.offsetRangeStart + 10, end = inlinedBlockContext.offsetRangeEnd - 10) {
+                                val nestedClassContext = this
+                                buildFun(start = nestedClassContext.offsetRangeStart - 1, end = nestedClassContext.offsetRangeEnd)
+                                buildFun(start = nestedClassContext.offsetRangeStart, end = nestedClassContext.offsetRangeEnd + 1)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [0:2001] is not within the outer offsets range [0:2000] (owner = FILE fqName:org.sample fileName:test.kt)
+                    FUN name:f_0_2001 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside FILE fqName:org.sample fileName:test.kt
+                                        """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 1, 1, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [99:200] is not within the outer offsets range [100:200] (owner = FUN name:f_100_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_99_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_100_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 75, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [100:201] is not within the outer offsets range [100:200] (owner = FUN name:f_100_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_100_201 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_100_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 76, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [99:200] is not within the outer offsets range [100:200] (owner = FUN name:f_100_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_99_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside BLOCK_BODY
+                                inside FUN name:f_100_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                  inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 75, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [100:201] is not within the outer offsets range [100:200] (owner = FUN name:f_100_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_100_201 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside BLOCK_BODY
+                                inside FUN name:f_100_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                  inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 76, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [109:190] is not within the outer offsets range [110:190] (owner = FUN name:f_110_190 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_109_190 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_110_190 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside BLOCK_BODY
+                                inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                  inside BLOCK_BODY
+                                    inside FUN name:f_100_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 85, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [110:191] is not within the outer offsets range [110:190] (owner = FUN name:f_110_190 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_110_191 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_110_190 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside BLOCK_BODY
+                                inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                  inside BLOCK_BODY
+                                    inside FUN name:f_100_200 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 86, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [299:400] is not within the outer offsets range [300:400] (owner = FUN name:f_300_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_299_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside INLINED_BLOCK type=kotlin.Unit origin=null
+                        inside BLOCK_BODY
+                          inside FUN name:f_300_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                            inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 275, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [300:401] is not within the outer offsets range [300:400] (owner = FUN name:f_300_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_300_401 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside INLINED_BLOCK type=kotlin.Unit origin=null
+                        inside BLOCK_BODY
+                          inside FUN name:f_300_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                            inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 276, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [299:400] is not within the outer offsets range [300:400] (owner = FUN name:f_300_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_299_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside INLINED_BLOCK type=kotlin.Unit origin=null
+                                inside BLOCK_BODY
+                                  inside FUN name:f_300_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                    inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 275, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [300:401] is not within the outer offsets range [300:400] (owner = FUN name:f_300_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_300_401 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside INLINED_BLOCK type=kotlin.Unit origin=null
+                                inside BLOCK_BODY
+                                  inside FUN name:f_300_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                    inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 276, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [309:390] is not within the outer offsets range [310:390] (owner = FUN name:f_310_390 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_309_390 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_310_390 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside BLOCK_BODY
+                                inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                  inside INLINED_BLOCK type=kotlin.Unit origin=null
+                                    inside BLOCK_BODY
+                                      inside FUN name:f_300_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 285, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [310:391] is not within the outer offsets range [310:390] (owner = FUN name:f_310_390 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_310_391 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_310_390 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside BLOCK_BODY
+                                inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                  inside INLINED_BLOCK type=kotlin.Unit origin=null
+                                    inside BLOCK_BODY
+                                      inside FUN name:f_300_400 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 286, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [699:800] is not within the outer offsets range [700:800] (owner = INLINED_BLOCK type=kotlin.Unit origin=null)
+                    FUN name:f_699_800 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside INLINED_BLOCK type=kotlin.Unit origin=null
+                        inside BLOCK_BODY
+                          inside FUN name:f_500_600 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                            inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 675, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [700:801] is not within the outer offsets range [700:800] (owner = INLINED_BLOCK type=kotlin.Unit origin=null)
+                    FUN name:f_700_801 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside INLINED_BLOCK type=kotlin.Unit origin=null
+                        inside BLOCK_BODY
+                          inside FUN name:f_500_600 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                            inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 676, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [699:800] is not within the outer offsets range [700:800] (owner = INLINED_BLOCK type=kotlin.Unit origin=null)
+                    FUN name:f_699_800 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside INLINED_BLOCK type=kotlin.Unit origin=null
+                                inside BLOCK_BODY
+                                  inside FUN name:f_500_600 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                    inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 675, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [700:801] is not within the outer offsets range [700:800] (owner = INLINED_BLOCK type=kotlin.Unit origin=null)
+                    FUN name:f_700_801 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside INLINED_BLOCK type=kotlin.Unit origin=null
+                                inside BLOCK_BODY
+                                  inside FUN name:f_500_600 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                    inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 676, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [709:790] is not within the outer offsets range [710:790] (owner = FUN name:f_710_790 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_709_790 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_710_790 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside BLOCK_BODY
+                                inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                  inside INLINED_BLOCK type=kotlin.Unit origin=null
+                                    inside BLOCK_BODY
+                                      inside FUN name:f_500_600 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 685, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The offsets range [710:791] is not within the outer offsets range [710:790] (owner = FUN name:f_710_790 visibility:public modality:FINAL <> () returnType:kotlin.Unit)
+                    FUN name:f_710_791 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside BLOCK_BODY
+                        inside FUN name:f_710_790 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside BLOCK_BODY
+                            inside FUN name:f_m2_m2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside BLOCK_BODY
+                                inside FUN name:f_m1_m1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                  inside INLINED_BLOCK type=kotlin.Unit origin=null
+                                    inside BLOCK_BODY
+                                      inside FUN name:f_500_600 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create(file.fileEntry.name, 3, 686, null),
+                ),
+            )
         )
     }
 
