@@ -7,7 +7,6 @@
 package kotlin.js
 
 import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
 
@@ -17,8 +16,8 @@ internal fun <T> getContinuation(): Continuation<T> { throw Exception("Implement
 
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
-internal suspend fun <T> returnIfSuspended(value: Any?): T {
-    return value as T
+internal suspend fun <T> returnIfSuspended(argument: Any?): T {
+    return argument as T
 }
 
 @PublishedApi
@@ -33,7 +32,10 @@ internal fun <T> interceptContinuationIfNeeded(
 @PublishedApi
 internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
 
-@PublishedApi
+// TODO: remove `JS` suffix oncec `NameGenerator` is implemented
 @UsedFromCompilerGeneratedCode
+@PublishedApi
 internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturnJS(block: (Continuation<T>) -> Any?): T =
     returnIfSuspended<T>(block(getContinuation<T>()))
+
+
