@@ -6,7 +6,6 @@
 package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
-import kotlin.js.unsafeCast
 
 internal external interface JsIterationStep<T> {
     val done: Boolean
