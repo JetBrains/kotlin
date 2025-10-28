@@ -64,8 +64,8 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
             override fun visitCall(expression: IrCall): IrExpression {
                 when (val symbol = expression.symbol) {
                     returnIfSuspended -> {
-                        val returnedValue = expression.arguments.single()
-                            ?: compilationException("Unexpected empty argument list for returnIfSuspended function", expression)
+                        val returnedValue = expression.arguments.singleOrNull()
+                            ?: compilationException("Expected exactly one argument for returnIfSuspended function call", expression)
 
                         return super.visitExpression(returnedValue)
                             .toGeneratorSuspensionExpression(containerFunctionStack.last())
