@@ -298,8 +298,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         return Name.identifier(name) in kotlinNames
     }
 
-    // TODO difference with backend in `iterator`
-    //  it is de-facto required to implement in `J`, because our backend just throws an Exception (probably a backend bug)
     private fun methodsWithSpecializedSignature(method: PsiMethod, javaBaseClass: PsiClass, substitutor: PsiSubstitutor): List<PsiMethod> {
         val methodName = method.name
 

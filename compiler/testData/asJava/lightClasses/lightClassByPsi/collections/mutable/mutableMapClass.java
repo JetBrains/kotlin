@@ -45,9 +45,6 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
   @java.lang.Override()
   public void clear();//  clear()
 
-  @java.lang.Override()
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>)
-
   public  CMutableMap2();//  .ctor()
 
   public VElem get(java.lang.Object);//  get(java.lang.Object)
@@ -65,4 +62,6 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
   public final java.util.Set<KElem> keySet();//  keySet()
 
   public final java.util.Set<java.util.Map.Entry<KElem, VElem>> entrySet();//  entrySet()
+
+  public void putAll(java.util.Map<? extends KElem, ? extends VElem>);//  putAll(java.util.Map<? extends KElem, ? extends VElem>)
 }
