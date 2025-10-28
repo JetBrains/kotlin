@@ -10,7 +10,6 @@ import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightIdentifier
 import com.intellij.psi.impl.light.LightParameter
 import com.intellij.psi.impl.light.LightParameterListBuilder
-import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -541,27 +540,44 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             when (callableSymbol) {
                 is KaNamedFunctionSymbol -> {
                     val javaMethod = getJavaMethodForCollectionMethodWithSpecialSignature(callableSymbol, allSupertypes)
-                    val javaReturnType = (javaMethod?.returnType as? PsiClassReferenceType)?.resolve()
+                    if (javaMethod == null) {
+                        // Default case: method is not mapped to Java collections method - just create the delegate
+                        createDelegateMethod(functionSymbol = callableSymbol)
+                        return@forEach
+                    }
 
-                    // TODO this is for Map#get:
-                    //  public V get(java.lang.Object);// return type is not substituted
-                    //  should probably support other methods (and parameter types)?
-                    val typeParameterMapping = mutableMapOf<PsiTypeParameter, PsiType>()
-                    if (javaReturnType is PsiTypeParameter) {
-                        val kotlinReturnType = callableSymbol.returnType.asPsiType(useSitePosition = this@SymbolLightClassForClassOrObject, allowErrorTypes = true)
-                        if (kotlinReturnType != null) {
-                            typeParameterMapping[javaReturnType] = kotlinReturnType
+                    //val javaReturnType = (javaMethod.returnType as? PsiClassReferenceType)?.resolve()
+                    //val defaultType = classSymbol.defaultType
+                    //supertype.symbol.typeParameters
+                    //val supertypeDefaultType = supertype.symbol?.defaultType
+                    //val allOverriddenSymbols = callableSymbol.allOverriddenSymbols
+
+                    // TODO what about indirect inheritance?
+                    val supertype = classSymbol.superTypes.firstOrNull() as? KaClassType
+                    val typeParameters = javaMethod.containingClass?.typeParameters.orEmpty()
+                    val typeArguments = supertype?.typeArguments.orEmpty()
+                    val typeParameterMapping = buildMap<PsiTypeParameter, PsiType> {
+                        typeParameters.zip(typeArguments).forEach { (typeParameter, typeArgument) ->
+                            val type = typeArgument.type?.asPsiType(
+                                useSitePosition = this@SymbolLightClassForClassOrObject,
+                                allowErrorTypes = true
+                            )
+                            if (type != null) put(typeParameter, type)
                         }
                     }
+
+//                    if (javaReturnType is PsiTypeParameter) {
+//                        val kotlinReturnType = callableSymbol.returnType.asPsiType(useSitePosition = this@SymbolLightClassForClassOrObject, allowErrorTypes = true)
+//                        if (kotlinReturnType != null) {
+//                            typeParameterMapping[javaReturnType] = kotlinReturnType
+//                        }
+//                    }
 
                     val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
 
                     when {
-                        javaMethod == null -> {
-                            createDelegateMethod(functionSymbol = callableSymbol)
-                        }
-
-                        javaMethod.name !in SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES -> {
+                        // TODO integrate addAll into a custom map
+                        javaMethod.name !in SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES + "addAll" -> {
                             if (callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }) {
                                 result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = false))
                             } else {
@@ -601,6 +617,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "remove" }
             matchesContainsAllMethod(symbol) ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "containsAll" }
+            matchesAddAllMethod(symbol) ->
+                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "addAll" }
             matchesRemoveAllMethod(symbol) ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "removeAll" }
             matchesRetainAllMethod(symbol) ->
@@ -650,6 +668,12 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     private fun matchesContainsAllMethod(symbol: KaFunctionSymbol): Boolean {
         if (symbol.name?.asString() != "containsAll") return false
+        val parameter = symbol.valueParameters.singleOrNull() ?: return false
+        return parameter.name.asString() == "elements"
+    }
+
+    private fun matchesAddAllMethod(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "addAll") return false
         val parameter = symbol.valueParameters.singleOrNull() ?: return false
         return parameter.name.asString() == "elements"
     }
