@@ -76,10 +76,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun RigidTypeMarker.withNullability(nullable: Boolean): RigidTypeMarker {
-        if (this is CapturedKType)
-            return if (nullable == isMarkedNullable) this else CapturedKType(lowerType, typeConstructor, nullable)
-        this as AbstractKType
-        return makeNullableAsSpecified(nullable)
+        return (this as AbstractKType).makeNullableAsSpecified(nullable)
     }
 
     override fun RigidTypeMarker.typeConstructor(): TypeConstructorMarker {
