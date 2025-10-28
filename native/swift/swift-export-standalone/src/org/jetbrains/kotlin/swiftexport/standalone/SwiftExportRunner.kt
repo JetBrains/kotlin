@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
+import org.jetbrains.kotlin.analysis.api.klib.reader.createKaModulesForStandaloneAnalysis
+import org.jetbrains.kotlin.library.metadata.KlibInputModule
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
@@ -12,7 +14,6 @@ import org.jetbrains.kotlin.sir.providers.impl.SirEnumGeneratorImpl
 import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.SimpleUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
-import org.jetbrains.kotlin.swiftexport.standalone.builders.KaModulesFactoryForSwiftExport
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.translation.TranslationResult
@@ -45,11 +46,7 @@ public enum class ErrorTypeStrategy {
     }
 }
 
-public class InputModule(
-    public val name: String,
-    public val path: Path,
-    public val config: SwiftModuleConfig,
-)
+public typealias InputModule = KlibInputModule<SwiftModuleConfig>
 
 public sealed class SwiftExportModule(
     public val name: String,
@@ -149,7 +146,7 @@ private fun translateModules(
     config: SwiftExportConfig,
 ): List<TranslationResult> {
     val allModules = inputModules + config.stdlibInputModule
-    val kaModules = KaModulesFactoryForSwiftExport.createKaModulesForStandaloneAnalysis(
+    val kaModules = createKaModulesForStandaloneAnalysis(
         allModules,
         config.targetPlatform,
         config.platformLibsInputModule

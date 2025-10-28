@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.swiftexport.standalone.builders
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.klib.reader.KaModulesFactory
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -20,11 +19,9 @@ import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
 import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.trampolineDeclarations
 import org.jetbrains.kotlin.sir.util.addChild
-import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
-import java.nio.file.Path
 
 internal fun buildSirSession(
     mainModuleName: String,
@@ -83,15 +80,4 @@ private fun extractAllTransitively(
     }.takeIf { it.isNotEmpty() }
 }.flatten()
 
-internal typealias KaModules = org.jetbrains.kotlin.analysis.api.klib.reader.KaModules<InputModule>
-
-internal object KaModulesFactoryForSwiftExport : KaModulesFactory<InputModule>() {
-    override val InputModule.moduleName: String
-        get() = name
-
-    override val InputModule.modulePath: Path
-        get() = path
-}
-
-internal fun KaModules.configFor(module: KaLibraryModule): SwiftModuleConfig =
-    inputModuleFor(module)?.config ?: error("No config for module ${module.libraryName}")
+internal typealias KaModules = org.jetbrains.kotlin.analysis.api.klib.reader.KaModules<SwiftModuleConfig>
