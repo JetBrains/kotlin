@@ -30,7 +30,7 @@ internal class CharCategoryTestGenerator(private val outputFile: File) {
 
         val isStart = line.name.endsWith(", First>")
 
-        writer?.appendLine("    CharProperties(char = '\\u${line.char}', isStartOfARange = $isStart, categoryCode = \"${line.categoryCode}\"),")
+        writer?.appendLine("    CharProperties(code = 0x${line.char}, isStartOfARange = $isStart, categoryCode = \"${line.categoryCode}\"),")
 
         arraySize++
         if (arraySize == 2048) {
@@ -75,7 +75,7 @@ internal class CharCategoryTestGenerator(private val outputFile: File) {
         val file = outputFile.resolveSibling("_CharProperties.kt")
         generateFileHeader(file)
 
-        writer?.appendLine("data class CharProperties(val char: Char, val isStartOfARange: Boolean, val categoryCode: String)")
+        writer?.appendLine("data class CharProperties(val code: Int, val isStartOfARange: Boolean, val categoryCode: String)")
         writer?.close()
     }
 
@@ -89,17 +89,17 @@ import kotlin.test.*
 class CharCategoryTest {
     @Test
     fun category() {
-        val charProperties = hashMapOf<Char, CharProperties>()
+        val charProperties = hashMapOf<Int, CharProperties>()
 
         for (properties in unicodeData) {
-            charProperties[properties.char] = properties
+            charProperties[properties.code] = properties
         }
 
         var properties: CharProperties? = null
 
         for (char in Char.MIN_VALUE..Char.MAX_VALUE) {
-            if (charProperties.containsKey(char)) {
-                properties = charProperties.getValue(char)
+            if (charProperties.containsKey(char.code)) {
+                properties = charProperties.getValue(char.code)
             } else if (properties?.isStartOfARange != true) {
                 properties = null
             }
