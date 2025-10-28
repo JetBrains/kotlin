@@ -77,7 +77,7 @@ public abstract class ABMap2 /* test.ABMap2*/ implements java.util.Map<@org.jetb
 
   public @org.jetbrains.annotations.NotNull() test.B remove(java.lang.Object);//  remove(java.lang.Object)
 
-  public final @org.jetbrains.annotations.Nullable() test.B get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.NotNull() test.B get(java.lang.Object);//  get(java.lang.Object)
 
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 
