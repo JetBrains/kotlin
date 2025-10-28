@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirCallableSignature
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
@@ -193,7 +194,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
             when {
                 backingPsi != null -> backingPsi.location
                 firSymbol.origin == FirDeclarationOrigin.DynamicScope -> KaSymbolLocation.CLASS
-                firSymbol.isLocal -> KaSymbolLocation.LOCAL
+                firSymbol.rawStatus.visibility == Visibilities.Local -> KaSymbolLocation.LOCAL
                 firSymbol.containingClassLookupTag()?.classId == null -> KaSymbolLocation.TOP_LEVEL
                 else -> KaSymbolLocation.CLASS
             }
