@@ -294,7 +294,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
 
         fun lessVisibleVisibilityOrNull(classLikeSymbol: FirClassLikeSymbol<*>, ignoreLocal: Boolean): EffectiveVisibility? {
-            if (classLikeSymbol.isLocalMember && ignoreLocal) return null
+            if (classLikeSymbol.isLocal && ignoreLocal) return null
             val symbolEffectiveVisibility = classLikeSymbol.let { it.publishedApiEffectiveVisibility ?: it.effectiveVisibility }
             return symbolEffectiveVisibility.takeIf { isLessVisibleThanInlineFunction(it) }
         }
