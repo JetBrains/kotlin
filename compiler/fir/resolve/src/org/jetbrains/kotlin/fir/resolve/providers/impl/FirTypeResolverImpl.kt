@@ -118,9 +118,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
 
         if (collector.applicability != CandidateApplicability.RESOLVED) {
-            val symbol = qualifierResolver.resolveFullyQualifiedSymbol(qualifier)
-            if (symbol != null) {
-                collector.processCandidate(symbol, null, resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified)
+            qualifierResolver.resolveFullyQualifiedSymbol(qualifier)?.let { (symbol, resolvedSymbolOrigin) ->
+                collector.processCandidate(symbol, substitutor = null, resolvedSymbolOrigin)
             }
         }
 

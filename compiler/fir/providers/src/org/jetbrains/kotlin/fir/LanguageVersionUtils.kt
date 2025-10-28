@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageFeature
 
 context(c: SessionHolder)
 fun LanguageFeature.isEnabled(): Boolean {
     return c.session.languageVersionSettings.supportsFeature(this)
 }
+
+context(c: SessionHolder)
+fun AnalysisFlag<Boolean>.isSet(): Boolean = c.session.languageVersionSettings.getFlag(this)
 
 context(c: SessionHolder)
 fun LanguageFeature.isDisabled(): Boolean = !isEnabled()
