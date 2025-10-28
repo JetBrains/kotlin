@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PROPERTY_REFERENCE_FOR_DELEGATE
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.apply
 
 /**
  * Constructs `KProperty` instances returned by expressions such as `A::x` and `A()::x`.
@@ -285,7 +287,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         if (!expression.symbol.owner.isInline) return super.visitCall(expression)
         for (parameter in expression.symbol.owner.parameters) {
             val value = expression.arguments[parameter]
-            if (value is IrRichPropertyReference && value.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
+            if (value is IrRichPropertyReference && value.origin == PROPERTY_REFERENCE_FOR_DELEGATE) {
                 val resolved = expression.symbol.owner.resolveFakeOverride() ?: expression.symbol.owner
                 if (!usesPropertyParameterCache.getOrPut(resolved.symbol) { resolved.usesParameter(parameter) }) {
                     expression.arguments[parameter] = IrConstImpl.constNull(value.startOffset, value.endOffset, value.type)
@@ -297,11 +299,14 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
     private fun cachedKProperty(expression: IrRichPropertyReference): IrExpression {
         expression.transformChildrenVoid()
-        if (expression.origin == REFLECTED_PROPERTY_REFERENCE)
-            return createReflectedKProperty(expression)
-        if (expression.origin != IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE)
-            return createSpecializedKProperty(expression)
+        return when (expression.origin) {
+            REFLECTED_PROPERTY_REFERENCE -> createReflectedKProperty(expression)
+            PROPERTY_REFERENCE_FOR_DELEGATE -> createKPropertyReferenceForDelegate(expression)
+            else -> createSpecializedKProperty(expression)
+        }
+    }
 
+    private fun createKPropertyReferenceForDelegate(expression: IrRichPropertyReference): IrFunctionAccessExpression {
         val data = currentClassData ?: throw AssertionError("property reference not in class: ${expression.render()}")
         // For delegated properties, the getter and setter contain a reference each as the second argument to getValue
         // and setValue. Since it's highly unlikely that anyone will call get/set on these, optimize for space.
