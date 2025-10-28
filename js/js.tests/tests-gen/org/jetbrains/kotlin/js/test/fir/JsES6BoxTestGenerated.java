@@ -8097,6 +8097,12 @@ public class JsES6BoxTestGenerated extends AbstractJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("multipleOverriddenMembersWithDifferentJsSymbol.kt")
+    public void testMultipleOverriddenMembersWithDifferentJsSymbol() {
+      runTest("js/js.translator/testData/box/jsName/multipleOverriddenMembersWithDifferentJsSymbol.kt");
+    }
+
+    @Test
     @TestMetadata("overriddenMethod.kt")
     public void testOverriddenMethod() {
       runTest("js/js.translator/testData/box/jsName/overriddenMethod.kt");

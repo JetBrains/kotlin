@@ -63,7 +63,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_OPERAT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_SYMBOL_ON_TOP_LEVEL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_SYMBOL_PROHIBITED_FOR_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_SYMBOL_ON_PRIMARY_CONSTRUCTOR_PROHIBITED
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_SYMBOL_ON_ACCESSOR_AND_PROPERTY
 
 @Suppress("unused")
 object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
@@ -196,7 +195,6 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(JS_SYMBOL_ON_TOP_LEVEL_DECLARATION, "'@JsSymbol' annotation is only allowed on member functions.")
         map.put(JS_SYMBOL_PROHIBITED_FOR_OVERRIDE, "'@JsSymbol' is prohibited for overridden members.")
         map.put(JS_SYMBOL_ON_PRIMARY_CONSTRUCTOR_PROHIBITED, "'@JsSymbol' annotation is prohibited for primary constructors.")
-        map.put(JS_SYMBOL_ON_ACCESSOR_AND_PROPERTY, "'@JsSymbol' can be either on a property or its accessors, not both of them.")
 
         map.put(WRONG_EXPORTED_DECLARATION, "Declaration of such kind ({0}) cannot be exported to JavaScript.", CommonRenderers.STRING)
         map.put(

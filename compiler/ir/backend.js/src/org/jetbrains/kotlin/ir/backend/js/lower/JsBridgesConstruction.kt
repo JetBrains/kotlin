@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsSymbol
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStableJsName
 import org.jetbrains.kotlin.ir.backend.js.utils.jsFunctionSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -46,7 +47,7 @@ class JsBridgesConstruction(val context: JsIrBackendContext) : BridgesConstructi
 
     override fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin =
         when {
-            bridge.hasStableJsName(context) -> JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME
+            bridge.getJsSymbol() != null || bridge.hasStableJsName(context) -> JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME
             bridge.correspondingPropertySymbol != null -> JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR
             else -> JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME
         }

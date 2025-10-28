@@ -71,7 +71,6 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val JS_SYMBOL_ON_TOP_LEVEL_DECLARATION by error<KtElement>()
         val JS_SYMBOL_PROHIBITED_FOR_OVERRIDE by error<KtElement>()
         val JS_SYMBOL_ON_PRIMARY_CONSTRUCTOR_PROHIBITED by error<KtElement>()
-        val JS_SYMBOL_ON_ACCESSOR_AND_PROPERTY by error<KtElement>()
     }
 
     val SUPERTYPES by object : DiagnosticGroup("Supertypes") {

@@ -30,10 +30,8 @@ public class ExportedNamespace(
 ) : ExportedDeclaration()
 
 public sealed interface ExportedFunctionName {
-    @JvmInline
-    public value class Identifier(public val value: String) : ExportedFunctionName
-    @JvmInline
-    public value class WellKnownSymbol(public val value: String) : ExportedFunctionName
+    public class Identifier(public val value: String) : ExportedFunctionName
+    public class WellKnownSymbol(public val value: String) : ExportedFunctionName
 }
 
 public data class ExportedFunction(

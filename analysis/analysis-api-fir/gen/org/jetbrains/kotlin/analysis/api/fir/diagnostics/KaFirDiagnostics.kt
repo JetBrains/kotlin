@@ -1188,10 +1188,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JsSymbolOnPrimaryConstructorProhibited::class
     }
 
-    interface JsSymbolOnAccessorAndProperty : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = JsSymbolOnAccessorAndProperty::class
-    }
-
     interface WrongJsQualifier : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = WrongJsQualifier::class
     }

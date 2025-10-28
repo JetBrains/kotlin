@@ -52,8 +52,8 @@ import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
 
-fun String.toWellKnownSymbolAccess(): JsNameRef =
-    JsNameRef(this, JsNameRef("Symbol"))
+fun String.toWellKnownSymbolAccess(): JsExpression =
+    jsElementAccess(this, JsNameRef("Symbol"))
 
 fun jsUndefined(context: JsStaticContext): JsExpression {
     return when (val void = context.backendContext.getVoid()) {
@@ -84,12 +84,10 @@ fun JsExpression.putIntoVariableWitName(name: JsName): JsVars {
     return JsVars(JsVars.JsVar(name, this))
 }
 
-fun jsElementAccess(name: JsName, computedName: JsNameRef?, receiver: JsExpression?): JsExpression =
-    computedName?.let { jsElementAccess(it, receiver) }
+fun jsElementAccess(name: JsName, computedName: JsExpression?, receiver: JsExpression?): JsExpression =
+    computedName?.let { JsArrayAccess(receiver, it) }
         ?: jsElementAccess(name, receiver)
 
-fun jsElementAccess(name: JsNameRef, receiver: JsExpression?): JsExpression =
-    JsArrayAccess(receiver, name)
 
 fun jsElementAccess(name: JsName, receiver: JsExpression?): JsExpression =
     if (receiver == null || name.ident.isValidES5Identifier()) {
@@ -206,7 +204,7 @@ private fun parseSourceMap(sourceMap: String, file: IrFile?, annotation: IrConst
 fun translateFunction(
     declaration: IrFunction,
     name: JsName?,
-    computedName: JsNameRef?,
+    computedName: JsExpression?,
     context: JsGenerationContext
 ): JsFunction {
     with(context.staticContext.backendContext) {
@@ -361,7 +359,7 @@ fun translateCall(
 
     val ref = when (jsDispatchReceiver) {
         null -> JsNameRef(functionName)
-        else -> symbolKey?.let { jsElementAccess(symbolKey, jsDispatchReceiver) } ?: jsElementAccess(functionName.ident, jsDispatchReceiver)
+        else -> jsElementAccess(functionName, symbolKey, jsDispatchReceiver)
     }
 
     if (functionName.isGeneratorFunction || symbolKey?.isGeneratorFunction == true) {

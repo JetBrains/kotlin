@@ -72,6 +72,7 @@ public actual annotation class JsName(actual val name: String)
  * @property name the name of a well-known symbol by which the declaration would be accessible.
  *           It's required the symbol to be presented under the [name] inside the `Symbol` static scope.
  */
+@ExperimentalStdlibApi
 @Retention(AnnotationRetention.BINARY)
 @Target(FUNCTION, CONSTRUCTOR)
 public actual annotation class JsSymbol(actual val name: String)

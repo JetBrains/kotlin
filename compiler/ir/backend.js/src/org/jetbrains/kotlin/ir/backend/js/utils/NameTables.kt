@@ -115,10 +115,15 @@ private fun IrFunction.findOriginallyContainingModule(): IrModuleFragment? {
     return (getPackageFragment() as? IrFile)?.module
 }
 
-fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): String {
-    val declarationName = declaration.nameIfPropertyAccessor() ?: declaration.getJsNameOrKotlinName().asString()
-
+fun calculateJsFunctionSignature(
+    symbolKey: String?,
+    declaration: IrFunction,
+    context: JsIrBackendContext
+): String {
     val nameBuilder = StringBuilder()
+    val declarationName = symbolKey ?: declaration.nameIfPropertyAccessor() ?: declaration.getJsNameOrKotlinName().asString()
+    if (symbolKey != null) nameBuilder.append("_\$js_s_")
+
     nameBuilder.append(declarationName)
 
     if (declaration.visibility === INTERNAL && declaration.parentClassOrNull != null) {
@@ -173,8 +178,8 @@ fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendCo
 fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): String {
     require(!declaration.isStaticMethodOfClass)
     require(declaration.dispatchReceiverParameter != null)
-
-    if (declaration.hasStableJsName(context)) {
+    val symbol = declaration.getJsSymbolForOverriddenDeclaration()
+    if (symbol == null && declaration.hasStableJsName(context)) {
         val declarationName = declaration.getJsNameOrKotlinName().asString()
         // TODO: Handle reserved suffix in FE
         require(!declarationName.endsWith(RESERVED_MEMBER_NAME_SUFFIX)) {
@@ -184,7 +189,7 @@ fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): S
     }
 
     val declarationSignature = (declaration as? IrSimpleFunction)?.resolveFakeOverride() ?: declaration
-    return calculateJsFunctionSignature(declarationSignature, context)
+    return calculateJsFunctionSignature(symbol, declarationSignature, context)
 }
 
 class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrVisitorVoid() {

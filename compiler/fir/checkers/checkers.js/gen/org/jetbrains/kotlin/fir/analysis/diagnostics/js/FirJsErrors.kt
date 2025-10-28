@@ -60,7 +60,6 @@ object FirJsErrors : KtDiagnosticsContainer() {
     val JS_SYMBOL_ON_TOP_LEVEL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_SYMBOL_ON_TOP_LEVEL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val JS_SYMBOL_PROHIBITED_FOR_OVERRIDE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_SYMBOL_PROHIBITED_FOR_OVERRIDE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val JS_SYMBOL_ON_PRIMARY_CONSTRUCTOR_PROHIBITED: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_SYMBOL_ON_PRIMARY_CONSTRUCTOR_PROHIBITED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val JS_SYMBOL_ON_ACCESSOR_AND_PROPERTY: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_SYMBOL_ON_ACCESSOR_AND_PROPERTY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // Supertypes
     val WRONG_MULTIPLE_INHERITANCE: KtDiagnosticFactory1<FirCallableSymbol<*>> = KtDiagnosticFactory1("WRONG_MULTIPLE_INHERITANCE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())

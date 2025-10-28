@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 // OPT_IN: kotlin.js.ExperimentalJsExport
 package diagnostics
 

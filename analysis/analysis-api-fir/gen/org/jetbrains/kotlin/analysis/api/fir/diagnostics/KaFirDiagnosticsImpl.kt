@@ -1430,11 +1430,6 @@ internal class JsSymbolOnPrimaryConstructorProhibitedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsSymbolOnPrimaryConstructorProhibited
 
-internal class JsSymbolOnAccessorAndPropertyImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsSymbolOnAccessorAndProperty
-
 internal class WrongJsQualifierImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

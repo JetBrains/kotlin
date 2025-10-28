@@ -1670,12 +1670,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJsErrors.JS_SYMBOL_ON_ACCESSOR_AND_PROPERTY) { firDiagnostic ->
-        JsSymbolOnAccessorAndPropertyImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirWebCommonErrors.WRONG_JS_QUALIFIER) { firDiagnostic ->
         WrongJsQualifierImpl(
             firDiagnostic as KtPsiDiagnostic,

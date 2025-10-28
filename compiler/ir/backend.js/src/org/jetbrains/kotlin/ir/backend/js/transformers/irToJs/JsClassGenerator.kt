@@ -353,7 +353,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return !superIrClass.isSubclassOf(this)
     }
 
-    private fun generateMemberFunction(declaration: IrSimpleFunction): Triple<JsName, JsNameRef?, JsFunction?> {
+    private fun generateMemberFunction(declaration: IrSimpleFunction): Triple<JsName, JsExpression?, JsFunction?> {
         val symbolKey = declaration.getJsSymbolForOverriddenDeclaration()?.toWellKnownSymbolAccess()
         val memberName = context.getNameForMemberFunction(declaration.realOverrideTargetOrNull ?: declaration)
 
