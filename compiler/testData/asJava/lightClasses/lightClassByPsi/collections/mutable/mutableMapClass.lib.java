@@ -19,44 +19,33 @@ public abstract class CMutableMap /* test.CMutableMap*/<KElem, VElem>  implement
 }
 
 public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
-  @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
-  public @org.jetbrains.annotations.Nullable() VElem put(KElem, VElem);//  put(KElem, VElem)
+  public VElem put(KElem, VElem);//  put(KElem, VElem)
 
-  @java.lang.Override()
+  @kotlin.IgnorableReturnValue()
+  @org.jetbrains.annotations.Nullable()
+  public VElem remove(java.lang.Object);//  remove(java.lang.Object)
+
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Collection<VElem> getValues();//  getValues()
+  public java.util.Collection<VElem> getValues();//  getValues()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<KElem, VElem>> getEntries();//  getEntries()
+  public java.util.Set<KElem> getKeys();//  getKeys()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<KElem> getKeys();//  getKeys()
+  public java.util.Set<java.util.Map.Entry<KElem, VElem>> getEntries();//  getEntries()
 
-  @java.lang.Override()
-  public boolean isEmpty();//  isEmpty()
-
-  @java.lang.Override()
-  public int getSize();//  getSize()
-
-  @java.lang.Override()
-  public void clear();//  clear()
-
-  @java.lang.Override()
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>)
-
-  public  CMutableMap2();//  .ctor()
-
+  @org.jetbrains.annotations.Nullable()
   public VElem get(java.lang.Object);//  get(java.lang.Object)
 
-  public VElem remove(java.lang.Object);//  remove(java.lang.Object)
+  public  CMutableMap2();//  .ctor()
 
   public boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 
   public boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+
+  public boolean isEmpty();//  isEmpty()
 
   public final int size();//  size()
 
@@ -65,4 +54,10 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
   public final java.util.Set<KElem> keySet();//  keySet()
 
   public final java.util.Set<java.util.Map.Entry<KElem, VElem>> entrySet();//  entrySet()
+
+  public int getSize();//  getSize()
+
+  public void clear();//  clear()
+
+  public void putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>);//  putAll(java.util.Map<? extends KElem, ? extends VElem>)
 }
