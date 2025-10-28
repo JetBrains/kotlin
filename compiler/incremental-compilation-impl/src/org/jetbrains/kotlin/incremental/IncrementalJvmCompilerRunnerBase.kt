@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.io.BufferedOutputStream
 import java.io.File
 
 /**
@@ -199,14 +198,12 @@ abstract class IncrementalJvmCompilerRunnerBase(
         val lookupTracker = services[LookupTracker::class.java] as LookupTrackerImpl
         val lookupData = serializer.serializeLookups(lookupTracker.lookups.toHashMap(), sourceFilesPathConverter)
 
+        // TODO KT-82000 Find better approach for generating CRI data with IC instead of appending new data
+        // TODO write better tests for this case
         val lookupsFile = File(criDir, LOOKUPS_FILENAME)
-        BufferedOutputStream(lookupsFile.outputStream()).use { stream ->
-            stream.write(lookupData.lookups)
-        }
+        lookupsFile.appendBytes(lookupData.lookups)
         val fileIdsToPathsFile = File(criDir, FILE_IDS_TO_PATHS_FILENAME)
-        BufferedOutputStream(fileIdsToPathsFile.outputStream()).use { stream ->
-            stream.write(lookupData.fileIdsToPaths)
-        }
+        fileIdsToPathsFile.appendBytes(lookupData.fileIdsToPaths)
 
         reporter.info { "Compiler Reference Index data saved to ${lookupsFile.path}, ${fileIdsToPathsFile.path}" }
         reporter.debug { "${lookupTracker.lookups.size()} lookups stored" }
