@@ -44,6 +44,25 @@ fun Test.setUpJsBoxTests(tag: String) {
     }
     dependsOn(":dist")
     systemProperty("kotlin.js.test.root.out.dir", "${node.nodeProjectDir.get().asFile}/")
+
+    dependsOn(":kotlin-stdlib:jsJar")
+    systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/build/classes/kotlin/js/main")
+    inputs.dir(rootDir.resolve("libraries/stdlib/build/classes/kotlin/js/main"))
+
+    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib")
+    inputs.file(rootDir.resolve("libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib"))
+
+    dependsOn(":kotlin-stdlib-js-ir-minimal-for-test:compileKotlinJs")
+    systemProperty("kotlin.js.reduced.stdlib.path", "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main")
+    inputs.dir(rootDir.resolve("libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main"))
+
+    dependsOn(":kotlin-test:jsJar")
+    systemProperty("kotlin.js.kotlin.test.klib.path", "libraries/kotlin.test/build/libs/kotlin-test-js-$version.klib")
+    inputs.file(rootDir.resolve("libraries/kotlin.test/build/libs/kotlin-test-js-$version.klib"))
+
+    systemProperty("kotlin.js.full.test.path", "libraries/kotlin.test/build/classes/kotlin/js/main")
+    inputs.dir(rootDir.resolve("libraries/kotlin.test/build/classes/kotlin/js/main"))
+
     useJUnitPlatform { includeTags(tag) }
     workingDir = rootDir
 }
@@ -111,11 +130,14 @@ fun Project.customFirstPhaseTest(rawVersion: String): TaskProvider<out Task> {
     )
 }
 
-fun Project.customSecondPhaseTest(rawVersion: String): TaskProvider<out Task> = customCompilerTest(
-    version = CustomCompilerVersion(rawVersion),
-    taskName = "testCustomSecondPhase",
-    tag = "custom-second-phase"
-)
+fun Project.customSecondPhaseTest(rawVersion: String): TaskProvider<out Task> {
+    val version = CustomCompilerVersion(rawVersion)
+    return customCompilerTest(
+        version = version,
+        taskName = "testCustomSecondPhase_$version",
+        tag = "custom-second-phase"
+    )
+}
 
 /* Custom-first-phase test tasks for different compiler versions. */
 customFirstPhaseTest("1.9.20")
@@ -124,9 +146,10 @@ customFirstPhaseTest("2.1.0")
 customFirstPhaseTest("2.2.0")
 // TODO: Add a new task for the "custom-first-phase" test here.
 
-/* Custom-second-phase test task for the latest compiler version. */
-// TODO: Update the compiler version to the latest one.
+/* Custom-second-phase test task for the previous and latest compiler major versions. */
+// TODO: Update two following compiler versions to the previous and latest ones.
 customSecondPhaseTest("2.2.0")
+customSecondPhaseTest("2.3.0-Beta2")
 
 tasks.test {
     // The default test task does not resolve the necessary dependencies and does not set up the environment.

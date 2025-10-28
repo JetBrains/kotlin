@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import java.io.File
 import java.io.PrintStream
 import java.lang.ref.SoftReference
@@ -49,6 +50,7 @@ val customWasmJsCompilerSettings: CustomWebCompilerSettings by lazy {
 interface CustomWebCompilerSettings {
     val version: String
     val stdlib: File
+    val defaultStdlib: File
     val kotlinTest: File
     val customCompiler: CustomWebCompiler
 }
@@ -70,6 +72,7 @@ private fun createCustomWebCompilerSettings(
 
     override val version: String get() = artifacts.version
     override val stdlib: File by lazy { artifacts.runtimeDependency(stdlibArtifactName, "klib") }
+    override val defaultStdlib: File by lazy { StandardLibrariesPathProviderForKotlinProject.defaultJsStdlib() }
 
     override val kotlinTest: File by lazy {
         // Older versions of Kotlin/JS 'kotlin-test' had KLIBs with *.jar file extension.

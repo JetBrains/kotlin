@@ -50,6 +50,7 @@ class CustomJsCompilerSecondPhaseFacade(
         val compilerXmlOutput = ByteArrayOutputStream()
 
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
+            val regularAndFriendDependencies = regularDependencies + friendDependencies
             customJsCompilerSettings.customCompiler.callCompiler(
                 output = printStream,
                 listOfNotNull(
@@ -57,12 +58,12 @@ class CustomJsCompilerSecondPhaseFacade(
                     K2JSCompilerArguments::includes.cliArgument(mainLibrary),
 
                     K2JSCompilerArguments::outputDir.cliArgument, jsArtifactFile.parentFile.path,
-                    K2JSCompilerArguments::moduleName.cliArgument, jsArtifactFile.nameWithoutExtension,
+                    K2JSCompilerArguments::moduleName.cliArgument, module.name,
                 ),
-                runIf(regularDependencies.isNotEmpty()) {
+                runIf(regularAndFriendDependencies.isNotEmpty()) {
                     listOf(
                         K2JSCompilerArguments::libraries.cliArgument,
-                        regularDependencies.joinToString(File.pathSeparator),
+                        regularAndFriendDependencies.joinToString(File.pathSeparator),
                     )
                 },
                 runIf(friendDependencies.isNotEmpty()) {
@@ -74,6 +75,12 @@ class CustomJsCompilerSecondPhaseFacade(
 
         if (exitCode == ExitCode.OK) {
             // Successfully compiled. Return the artifact.
+
+            // CLI compilation creates an output file of different name than testInfra usually does.
+            // A rename is needed, in order the testInfra runner can use its usual logic to run the test script.
+            val generatedJsScript = File(jsArtifactFile.parentFile.path, module.name + ".js")
+            generatedJsScript.renameTo(jsArtifactFile)
+
             return BinaryArtifacts.Js.JsIrArtifact(
                 outputFile = jsArtifactFile,
                 compilerResult = CompilerResult(
