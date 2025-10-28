@@ -38,11 +38,5 @@
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlinx</groupId>
-      <artifactId>kotlinx-serialization-protobuf-jvm</artifactId>
-      <version>1.7.3</version>
-      <scope>runtime</scope>
-    </dependency>
   </dependencies>
 </project>

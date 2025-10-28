@@ -404,3 +404,5 @@
 }
 
 -dontwarn kotlinx.coroutines.internal.intellij.IntellijCoroutines
+
+-dontwarn org.jetbrains.kotlin.buildtools.internal.cri.**

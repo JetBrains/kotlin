@@ -10,7 +10,9 @@ dependencies {
     compileOnly(project(":kotlin-build-common"))
     compileOnly(project(":core:compiler.common"))
 
-    implementation(libs.kotlinx.serialization.protobuf)
+    compileOnly(libs.kotlinx.serialization.protobuf)
+    embedded(libs.kotlinx.serialization.protobuf) { isTransitive = false }
+    embedded(libs.kotlinx.serialization.core) { isTransitive = false }
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -18,11 +20,16 @@ dependencies {
 
     testImplementation(project(":kotlin-build-common"))
     testImplementation(project(":core:compiler.common"))
+    testImplementation(libs.kotlinx.serialization.protobuf)
 }
 
 publish()
 
-runtimeJar()
+runtimeJarWithRelocation {
+    from(mainSourceSet.output)
+    relocate("kotlinx.serialization", "org.jetbrains.kotlin.buildtools.internal.serialization")
+}
+
 sourcesJar()
 javadocJar()
 

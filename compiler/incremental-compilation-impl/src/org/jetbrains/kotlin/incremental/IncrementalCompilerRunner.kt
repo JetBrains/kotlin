@@ -45,7 +45,7 @@ abstract class IncrementalCompilerRunner<
         Args : CommonCompilerArguments,
         CacheManager : IncrementalCachesManager<*>,
         >(
-    private val workingDir: File,
+    protected val workingDir: File,
     cacheDirName: String,
     protected val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     protected val buildHistoryFile: File?,
@@ -553,6 +553,9 @@ abstract class IncrementalCompilerRunner<
                 }
                 updateCaches(services, caches, generatedFiles, changesCollector)
             }
+
+            generateCompilerRefIndexIfNeeded(services)
+
             if (compilationMode is CompilationMode.Rebuild) {
                 if (icFeatures.withAbiSnapshot) {
                     abiSnapshotData!!.snapshot.protos.putAll(changesCollector.protoDataChanges())
@@ -622,6 +625,8 @@ abstract class IncrementalCompilerRunner<
 
         return exitCode
     }
+
+    protected open fun generateCompilerRefIndexIfNeeded(services: Services): Unit = Unit
 
     open fun getLookupTrackerDelegate(): LookupTracker = LookupTracker.DO_NOTHING
 
