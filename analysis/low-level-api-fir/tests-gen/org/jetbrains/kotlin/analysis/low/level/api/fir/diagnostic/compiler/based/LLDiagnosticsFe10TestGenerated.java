@@ -48716,6 +48716,34 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/when/testTask")
+      @TestDataPath("$PROJECT_ROOT")
+      public class TestTask {
+        @Test
+        public void testAllFilesPresentInTestTask() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/when/testTask"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("backup.kt")
+        public void testBackup() {
+          runTest("compiler/testData/diagnostics/tests/when/testTask/backup.kt");
+        }
+
+        @Test
+        @TestMetadata("pass_for_k1.kt")
+        public void testPass_for_k1() {
+          runTest("compiler/testData/diagnostics/tests/when/testTask/pass_for_k1.kt");
+        }
+
+        @Test
+        @TestMetadata("pass_for_k2.kt")
+        public void testPass_for_k2() {
+          runTest("compiler/testData/diagnostics/tests/when/testTask/pass_for_k2.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable")
       @TestDataPath("$PROJECT_ROOT")
       public class WithSubjectVariable {
