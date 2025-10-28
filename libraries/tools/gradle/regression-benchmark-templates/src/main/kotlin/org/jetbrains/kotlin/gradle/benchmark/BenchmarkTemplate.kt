@@ -576,7 +576,7 @@ abstract class BenchmarkTemplate(
     }
 
     private val String.dropLeadingDir: String get() = substringAfter('/')
-    private val String.normalizeTitle: String get() = lowercase().replace(" ", "_")
+    private val String.normalizeTitle: String get() = lowercase().replace(" ", "_").replace(".", "_")
 
     private fun DataFrame<*>.flipColumnsWithRows(): DataFrame<*> {
         val firstColumn = columns().first()
@@ -667,7 +667,7 @@ abstract class BenchmarkTemplate(
 
     companion object {
         private const val STEP_SEPARATOR = "###############"
-        private const val GRADLE_PROFILER_VERSION = "0.22.0"
+        private const val GRADLE_PROFILER_VERSION = "0.23.0"
         private const val GRADLE_PROFILER_URL: String =
             "https://repo1.maven.org/maven2/org/gradle/profiler/gradle-profiler/$GRADLE_PROFILER_VERSION/gradle-profiler-$GRADLE_PROFILER_VERSION.zip"
         private const val ASYNC_PROFILER_VERSION = "4.1"
