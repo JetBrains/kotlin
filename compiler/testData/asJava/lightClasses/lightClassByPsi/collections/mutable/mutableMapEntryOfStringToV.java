@@ -1,4 +1,8 @@
-public abstract class SMutableMapEntry /* test.SMutableMapEntry*/<VElem>  implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.collections.MutableMap.MutableEntry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.jvm.internal.markers.KMutableMap$Entry {
+public abstract class SMutableMapEntry /* test.SMutableMapEntry*/<VElem>  implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.jvm.internal.markers.KMutableMap$Entry {
+  public  SMutableMapEntry();//  .ctor()
+}
+
+public abstract class SMutableMapEntry2 /* test.SMutableMapEntry2*/<VElem>  implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.jvm.internal.markers.KMutableMap$Entry {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   public VElem setValue(VElem);//  setValue(VElem)
@@ -10,5 +14,5 @@ public abstract class SMutableMapEntry /* test.SMutableMapEntry*/<VElem>  implem
   @java.lang.Override()
   public VElem getValue();//  getValue()
 
-  public  SMutableMapEntry();//  .ctor()
+  public  SMutableMapEntry2();//  .ctor()
 }

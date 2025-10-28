@@ -3,15 +3,16 @@ public abstract class CMutableMapEntry /* test.CMutableMapEntry*/<KElem, VElem> 
 }
 
 public abstract class CMutableMapEntry2 /* test.CMutableMapEntry2*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap$Entry {
-  @java.lang.Override()
+  private final KElem key;
+
+  private final VElem value;
+
   @kotlin.IgnorableReturnValue()
   public VElem setValue(VElem);//  setValue(VElem)
 
-  @java.lang.Override()
+  public  CMutableMapEntry2();//  .ctor()
+
   public KElem getKey();//  getKey()
 
-  @java.lang.Override()
   public VElem getValue();//  getValue()
-
-  public  CMutableMapEntry2();//  .ctor()
 }
