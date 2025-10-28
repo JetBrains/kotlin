@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.types.typeWithArguments
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -214,7 +216,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
                     endOffset = UNDEFINED_OFFSET,
                     type = testFun.returnType,
                     operator = IrTypeOperator.CAST,
-                    typeOperand = promiseSymbol.defaultType,
+                    typeOperand = promiseSymbol.typeWithArguments(listOf(IrStarProjectionImpl)),
                     argument = returnStatement.value
                 )
             }
