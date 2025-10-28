@@ -145,7 +145,7 @@ private val KClass<*>.classKind: ClassKind // todo do I need it?
         else -> error("Unknown type ${this::class}")
     }
 
-private fun KCallable<*>.toEquatableCallableSignature(): EquatableCallableSignature {
+private fun DescriptorKCallable<*>.toEquatableCallableSignature(): EquatableCallableSignature {
     val parameterTypes = parameters.filter { it.kind != KParameter.Kind.INSTANCE }.map { it.type }
     val kind = when (this) {
         is KProperty<*> if javaField?.declaringClass?.isKotlin == false -> SignatureKind.FIELD_IN_JAVA_CLASS
@@ -153,7 +153,7 @@ private fun KCallable<*>.toEquatableCallableSignature(): EquatableCallableSignat
         is KFunction<*> -> SignatureKind.FUNCTION
         else -> error("Unknown kind for ${this::class}")
     }
-    return EquatableCallableSignature(kind, name, this.typeParameters, parameterTypes)
+    return EquatableCallableSignature(kind, name, this.typeParameters, parameterTypes, isStatic)
 }
 
 internal enum class SignatureKind {
@@ -175,22 +175,24 @@ private fun List<KTypeParameter>.substituteTypeParametersInto(typeParameters: Li
 }
 
 // Signatures that you can test for equality
-internal data class EquatableCallableSignature(
+internal class EquatableCallableSignature(
     val kind: SignatureKind,
     val name: String,
     val typeParameters: List<KTypeParameter>,
     val parameterTypes: List<KType>,
+    val isStatic: Boolean,
 ) {
     init {
         check(kind != SignatureKind.FIELD_IN_JAVA_CLASS || parameterTypes.isEmpty() && typeParameters.isEmpty())
     }
 
-    override fun hashCode(): Int = Objects.hash(kind, name, typeParameters.size, parameterTypes.size)
+    override fun hashCode(): Int = Objects.hash(kind, name, typeParameters.size, parameterTypes.size, isStatic)
 
     override fun equals(other: Any?): Boolean {
         if (other !is EquatableCallableSignature) return false
         if (kind != other.kind) return false
         if (name != other.name) return false
+        if (isStatic != other.isStatic) return false
         if (typeParameters.size != other.typeParameters.size) return false
         if (parameterTypes.size != other.parameterTypes.size) return false
         val functionTypeParametersEliminator = other.typeParameters.substituteTypeParametersInto(typeParameters)
