@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
@@ -195,13 +196,19 @@ abstract class IncrementalJvmCompilerRunnerBase(
         val criDir = File(workingDir, COMPILER_REF_INDEX_DIR).apply { mkdirs() }
 
         val lookupTracker = services[LookupTracker::class.java] as LookupTrackerImpl
-        val lookupsFile = File(criDir, LOOKUPS_FILENAME)
         val lookupData = serializer.serializeLookups(lookupTracker.lookups.toHashMap())
+
+        val lookupsFile = File(criDir, LOOKUPS_FILENAME)
         BufferedOutputStream(lookupsFile.outputStream()).use { stream ->
             stream.write(lookupData.lookups)
         }
+        val fileIdsToPathsFile = File(criDir, FILE_IDS_TO_PATHS_FILENAME)
+        BufferedOutputStream(fileIdsToPathsFile.outputStream()).use { stream ->
+            stream.write(lookupData.fileIdsToPaths)
+        }
 
-        reporter.info { "Lookups table saved to ${lookupsFile.path}, ${lookupTracker.lookups.size()} lookups stored" }
+        reporter.info { "Compiler Reference Index data saved to ${lookupsFile.path}, ${fileIdsToPathsFile.path}" }
+        reporter.debug { "${lookupTracker.lookups.size()} lookups stored" }
     }
 
     companion object {
@@ -210,5 +217,6 @@ abstract class IncrementalJvmCompilerRunnerBase(
 
         // TODO KT-81912 Add the CRI generation filename overrides for JvmCompilationOperation
         private const val LOOKUPS_FILENAME = "lookups.table"
+        private const val FILE_IDS_TO_PATHS_FILENAME = "fileIdsToPaths.table"
     }
 }
