@@ -1,4 +1,8 @@
-public abstract class SMutableSet /* test.SMutableSet*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableSet<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableSet {
+public abstract class SMutableSet /* test.SMutableSet*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableSet {
+  public  SMutableSet();//  .ctor()
+}
+
+public abstract class SMutableSet2 /* test.SMutableSet2*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableSet {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   public boolean add(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -49,5 +53,5 @@ public abstract class SMutableSet /* test.SMutableSet*/ implements java.util.Set
   @java.lang.Override()
   public void clear();//  clear()
 
-  public  SMutableSet();//  .ctor()
+  public  SMutableSet2();//  .ctor()
 }
