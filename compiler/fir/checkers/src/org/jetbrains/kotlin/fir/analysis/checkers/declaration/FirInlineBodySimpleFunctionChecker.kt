@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -13,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -35,7 +35,7 @@ object FirInlineBodySimpleFunctionChecker : FirSimpleFunctionChecker(MppCheckerK
         for (it in context.containingDeclarations.asReversed()) {
             when {
                 it == outerInlineContext?.inlineFunction?.symbol -> when {
-                    !outerInlineContext.inlineFunction.symbol.isLocal -> return true
+                    outerInlineContext.inlineFunction.symbol.rawStatus.visibility != Visibilities.Local -> return true
                     else -> outerInlineContext = outerInlineContext.parentInlineContext
                 }
                 it.isObject -> return false

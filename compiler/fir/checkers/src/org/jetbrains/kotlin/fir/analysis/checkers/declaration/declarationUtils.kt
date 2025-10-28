@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -124,7 +125,7 @@ internal val FirBasedSymbol<*>.isLocalMember: Boolean
     get() = when (this) {
         is FirPropertySymbol -> this.isLocal
         is FirClassLikeSymbol -> this.isLocal
-        is FirNamedFunctionSymbol -> this.isLocal
+        is FirNamedFunctionSymbol -> this.rawStatus.visibility == Visibilities.Local
         // Anonymous functions and lambdas use DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS which has visibility public.
         is FirAnonymousFunctionSymbol -> true
         is FirBackingFieldSymbol -> this.propertySymbol.isLocal

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -256,9 +255,9 @@ open class ReturnTypeCalculatorWithJump(
     }
 
     private fun resolvedToContractsIfNecessary(declaration: FirCallableDeclaration) {
-        val canHaveContracts = when {
-            declaration is FirProperty && !declaration.isLocal -> true
-            declaration is FirNamedFunction && !declaration.isLocal -> true
+        val canHaveContracts = when (declaration) {
+            is FirProperty if !declaration.isLocal -> true
+            is FirNamedFunction if declaration.status.visibility != Visibilities.Local -> true
             else -> false
         }
 

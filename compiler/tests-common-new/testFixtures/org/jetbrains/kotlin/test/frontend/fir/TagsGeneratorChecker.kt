@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -288,7 +289,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
 
         if (namedFunction.receiverParameter != null) tags += FirTags.FUN_WITH_EXTENSION_RECEIVER
         if (namedFunction.contextParameters.isNotEmpty()) tags += FirTags.FUNCTION_WITH_CONTEXT
-        if (namedFunction.symbol.isLocal) tags += FirTags.LOCAL_FUNCTION
+        if (namedFunction.symbol.rawStatus.visibility == Visibilities.Local) tags += FirTags.LOCAL_FUNCTION
 
         checkSimpleFunctionStatus(namedFunction.status)
     }

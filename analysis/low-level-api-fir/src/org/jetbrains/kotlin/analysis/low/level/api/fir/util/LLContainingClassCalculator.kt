@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.isLazyResolvable
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -143,7 +143,7 @@ internal object LLContainingClassCalculator {
     private fun canHaveContainingClassSymbol(symbol: FirBasedSymbol<*>): Boolean = when (symbol) {
         is FirValueParameterSymbol, is FirAnonymousFunctionSymbol -> false
         is FirPropertySymbol -> !symbol.isLocal
-        is FirNamedFunctionSymbol -> !symbol.isLocal
+        is FirNamedFunctionSymbol -> symbol.rawStatus.visibility != Visibilities.Local
         is FirClassLikeSymbol -> symbol.classId.isNestedClass
         is FirCallableSymbol, is FirDanglingModifierSymbol -> true
         else -> false

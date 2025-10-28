@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -982,7 +982,7 @@ open class FirDeclarationsResolveTransformer(
                 doTransformTypeParameters(namedFunction)
             }
 
-            if (containingDeclaration != null && containingDeclaration !is FirClass && containingDeclaration !is FirFile && (containingDeclaration !is FirScript || namedFunction.isLocal)) {
+            if (containingDeclaration != null && containingDeclaration !is FirClass && containingDeclaration !is FirFile && (containingDeclaration !is FirScript || namedFunction.status.visibility == Visibilities.Local)) {
                 // For class members everything should be already prepared
                 prepareSignatureForBodyResolve(namedFunction)
                 namedFunction.transformStatus(this, namedFunction.resolveStatus().mode())
@@ -1029,7 +1029,7 @@ open class FirDeclarationsResolveTransformer(
                         approximateDeclarationType(
                             session,
                             namedFunction?.visibilityForApproximation(),
-                            isLocal = namedFunction?.isLocal == true,
+                            isLocal = namedFunction?.let { it.status.visibility == Visibilities.Local } == true,
                             isInlineFunction = namedFunction?.isInline == true
                         )
                 }
