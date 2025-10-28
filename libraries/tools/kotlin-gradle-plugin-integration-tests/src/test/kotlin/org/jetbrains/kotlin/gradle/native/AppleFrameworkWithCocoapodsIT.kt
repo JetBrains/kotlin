@@ -52,6 +52,35 @@ class AppleFrameworkWithCocoapodsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-80644 - Build app with cocoapods depenency and TARGET_DEVICE_IDENTIFIER defined")
+    @GradleTest
+    fun testXcodeEmbedAndSignWithPodDependencyAndTargetDeviceIdentifier(gradleVersion: GradleVersion) {
+        multiProjectWithCocoapodsDependency(gradleVersion) {
+            XCTestHelpers().use {
+                val targetDevice = it.createSimulator().udid
+
+                val environmentVariables = mapOf(
+                    "CONFIGURATION" to "debug",
+                    "SDK_NAME" to "iphonesimulator",
+                    "ARCHS" to "arm64",
+                    "TARGET_BUILD_DIR" to "no use",
+                    "FRAMEWORKS_FOLDER_PATH" to "no use",
+                    "BUILT_PRODUCTS_DIR" to projectPath.resolve("build/builtProductsDir").toString(),
+                    "TARGET_DEVICE_IDENTIFIER" to targetDevice,
+                ) + cocoaPodsEnvironmentVariables()
+
+                build(
+                    ":assembleDebugAppleFrameworkForXcodeIosSimulatorArm64",
+                    environmentVariables = EnvironmentalVariables(environmentVariables)
+                ) {
+                    assertTasksExecuted(":podSetupBuildBase64IosSimulator")
+                    assertOutputContains("xcodebuild -project Pods.xcodeproj -scheme Base64 -destination id=$targetDevice -configuration Debug")
+                    assertTasksExecuted(":assembleDebugAppleFrameworkForXcodeIosSimulatorArm64")
+                }
+            }
+        }
+    }
+
     private fun multiProjectWithCocoapodsDependency(
         gradleVersion: GradleVersion,
         test: TestProject.() -> Unit = {}
