@@ -187,7 +187,7 @@ class FirSignatureEnhancement(
                     this.symbol = symbol
                     this.name = name
                     returnTypeRef = newReturnTypeRef
-                    javaOrigin = javaOrigin(original.origin.fromSource)
+                    origin = original.origin
                     isVar = firElement.isVar
                     annotationList = FirDelegatedJavaAnnotationList(firElement)
                     status = firElement.status

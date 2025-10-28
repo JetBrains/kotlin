@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
+import org.jetbrains.kotlin.load.java.structure.JavaNamedElement
 import kotlin.reflect.KCallable
 
-internal fun javaOrigin(isFromSource: Boolean): FirDeclarationOrigin.Java {
-    return if (isFromSource) FirDeclarationOrigin.Java.Source else FirDeclarationOrigin.Java.Library
-}
+internal val JavaNamedElement.origin: FirDeclarationOrigin.Java
+    get() = if (isFromSource) FirDeclarationOrigin.Java.Source else FirDeclarationOrigin.Java.Library
 
 internal inline fun applyStatusTransformerExtensions(
     declaration: FirMemberDeclaration,

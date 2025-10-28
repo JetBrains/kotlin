@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationArgumentMappingImp
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
-import org.jetbrains.kotlin.fir.java.declarations.javaOrigin
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -157,7 +157,7 @@ internal fun JavaValueParameter.toFirValueParameter(
     index: Int,
 ): FirValueParameter = buildJavaValueParameter {
     source = toSourceElement()
-    javaOrigin = javaOrigin(this@toFirValueParameter.isFromSource)
+    javaOrigin = if (this@toFirValueParameter.isFromSource) FirDeclarationOrigin.Java.Source else FirDeclarationOrigin.Java.Library
     this.moduleData = moduleData
     containingDeclarationSymbol = functionSymbol
     name = this@toFirValueParameter.name ?: Name.identifier("p$index")

@@ -148,7 +148,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             this.moduleData = moduleData
             symbol = classSymbol
             name = javaClass.name
-            javaOrigin = javaOrigin(javaClass.isFromSource)
+            javaOrigin = javaClass.origin
             val visibility = javaClass.visibility
             this@buildJavaClass.visibility = visibility
             classKind = javaClass.classKind
@@ -399,7 +399,7 @@ private fun JavaTypeParameter.toFirTypeParameter(
 ): FirTypeParameter = buildJavaTypeParameter {
     javaTypeParameter = this@toFirTypeParameter
     this.moduleData = moduleData
-    origin = javaOrigin(isFromSource)
+    origin = this@toFirTypeParameter.origin
     name = this@toFirTypeParameter.name
     symbol = FirTypeParameterSymbol()
     this.source = this@toFirTypeParameter.toSourceElement()
@@ -430,7 +430,7 @@ private fun createDeclarationsForJavaRecord(
             source = recordComponent.toSourceElement(KtFakeSourceElementKind.JavaRecordComponentFunction)
             symbol = FirNamedFunctionSymbol(componentId)
             this.name = name
-            javaOrigin = javaOrigin(recordComponent.isFromSource)
+            javaOrigin = recordComponent.origin
             returnTypeRef = recordComponent.type.toFirJavaTypeRef(session, source)
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
@@ -454,7 +454,7 @@ private fun createDeclarationsForJavaRecord(
             this.containingClassSymbol = containingClassSymbol
             source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitJavaRecordConstructor)
             this.moduleData = moduleData
-            origin = javaOrigin(javaClass.isFromSource)
+            origin = javaClass.origin
             val constructorId = CallableId(classId, classId.shortClassName)
             symbol = FirConstructorSymbol(constructorId)
             status = FirResolvedDeclarationStatusImpl(
@@ -472,7 +472,7 @@ private fun createDeclarationsForJavaRecord(
                     containingDeclarationSymbol = this@buildJavaConstructor.symbol
                     source = component.toSourceElement(KtFakeSourceElementKind.ImplicitRecordConstructorParameter)
                     this.moduleData = moduleData
-                    javaOrigin = javaOrigin(component.isFromSource)
+                    javaOrigin = component.origin
                     returnTypeRef = component.type.toFirJavaTypeRef(session, source)
                     name = component.name
                     isVararg = component.isVararg
@@ -513,7 +513,7 @@ private fun convertJavaFieldToFir(
             returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
                 .resolveIfJavaType(session, javaTypeParameterStack, fakeSource, mode = FirJavaTypeConversionMode.ANNOTATION_MEMBER)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            origin = javaOrigin(javaField.isFromSource)
+            origin = javaField.origin
         }.apply {
             containingClassForStaticMemberAttr = classId.toLookupTag()
             // TODO: check if this works properly with annotations that take the enum class as an argument
@@ -525,7 +525,7 @@ private fun convertJavaFieldToFir(
             this.moduleData = moduleData
             symbol = FirFieldSymbol(fieldId)
             name = fieldName
-            javaOrigin = javaOrigin(javaField.isFromSource)
+            javaOrigin = javaField.origin
             status = FirResolvedDeclarationStatusImpl(
                 javaField.visibility,
                 javaField.modality,
@@ -586,7 +586,7 @@ private fun convertJavaMethodToFir(
         source = javaMethod.toSourceElement()
         symbol = methodSymbol
         name = methodName
-        javaOrigin = javaOrigin(javaMethod.isFromSource)
+        javaOrigin = javaMethod.origin
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
         isStatic = javaMethod.isStatic
@@ -627,7 +627,7 @@ private fun convertJavaAnnotationMethodToValueParameter(
     buildJavaValueParameter {
         source = javaMethod.toSourceElement(KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor)
         this.moduleData = moduleData
-        javaOrigin = javaOrigin(javaMethod.isFromSource)
+        javaOrigin = javaMethod.origin
         returnTypeRef = firJavaMethod.returnTypeRef
         containingDeclarationSymbol = firJavaMethod.symbol
         name = javaMethod.name
@@ -662,7 +662,7 @@ private fun convertJavaConstructorToFir(
         containingClassSymbol = classSymbol
         source = javaConstructor?.toSourceElement() ?: javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
         this.moduleData = moduleData
-        origin = javaOrigin(javaClass.isFromSource)
+        origin = javaClass.origin
         symbol = constructorSymbol
         isInner = classIsInner
         status = methodStatus
@@ -714,7 +714,7 @@ private fun buildConstructorForAnnotationClass(
         containingClassSymbol = classSymbol
         source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
         this.moduleData = moduleData
-        origin = javaOrigin(javaClass.isFromSource)
+        origin = javaClass.origin
         symbol = FirConstructorSymbol(constructorId)
         status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
         returnTypeRef = buildResolvedTypeRef {
