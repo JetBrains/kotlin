@@ -1,4 +1,8 @@
-public abstract class SMutableList /* test.SMutableList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableList<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableList {
+public abstract class SMutableList /* test.SMutableList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableList {
+  public  SMutableList();//  .ctor()
+}
+
+public abstract class SMutableList2 /* test.SMutableList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableList {
   private final int size;
 
   @kotlin.IgnorableReturnValue()
@@ -54,7 +58,7 @@ public abstract class SMutableList /* test.SMutableList*/ implements java.util.L
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator(int);//  listIterator(int)
 
-  public  SMutableList();//  .ctor()
+  public  SMutableList2();//  .ctor()
 
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
 
