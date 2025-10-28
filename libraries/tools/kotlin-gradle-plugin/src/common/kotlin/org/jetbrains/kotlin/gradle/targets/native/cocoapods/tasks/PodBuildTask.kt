@@ -18,6 +18,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.Path
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.genericPlatformDestination
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -104,7 +105,14 @@ abstract class PodBuildTask @Inject constructor(
         // Run the xcodebuild command
         runCommand(podXcodeBuildCommand, logger) {
             directory(podsXcodeProjDir.asFile.parentFile)
-            environment() // workaround for https://github.com/gradle/gradle/issues/27346
+            environment().apply { // workaround for https://github.com/gradle/gradle/issues/27346
+                keys.filter {
+                    // KT-80641 EXECUTABLE_DEBUG_DYLIB_PATH problem
+                    AppleSdk.xcodeEnvironmentDebugDylibVars.contains(it)
+                }.forEach {
+                    remove(it)
+                }
+            }
         }
     }
 }
