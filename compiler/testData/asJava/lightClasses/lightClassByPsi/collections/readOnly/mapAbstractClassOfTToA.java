@@ -58,11 +58,11 @@ public abstract class TAMap2 /* test.TAMap2*/<T>  implements java.util.Map<T, @o
 
   public  TAMap2();//  .ctor()
 
+  public @org.jetbrains.annotations.NotNull() test.A get(java.lang.Object);//  get(java.lang.Object)
+
   public @org.jetbrains.annotations.NotNull() test.A put(T, @org.jetbrains.annotations.NotNull() test.A);//  put(T, @org.jetbrains.annotations.NotNull() test.A)
 
   public @org.jetbrains.annotations.NotNull() test.A remove(java.lang.Object);//  remove(java.lang.Object)
-
-  public @org.jetbrains.annotations.Nullable() test.A get(java.lang.Object);//  get(java.lang.Object)
 
   public boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 
