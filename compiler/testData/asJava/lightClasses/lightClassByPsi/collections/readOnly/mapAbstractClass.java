@@ -47,7 +47,7 @@ public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements java.util.
 
   public  CMap2();//  .ctor()
 
-  public @org.jetbrains.annotations.Nullable() VElem get(java.lang.Object);//  get(java.lang.Object)
+  public VElem get(java.lang.Object);//  get(java.lang.Object)
 
   public VElem put(KElem, VElem);//  put(KElem, VElem)
 
