@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.resolve.ContractsDslNames
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -31,13 +32,31 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name.identifier
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import java.util.ArrayDeque
 
 class FunctionInlining(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
+    private val fileEntriesStack = ArrayDeque<IrFileEntry>()
+
+    private inline fun <T> withFileEntry(newFileEntry: IrFileEntry, block: () -> T): T {
+        fileEntriesStack.addLast(newFileEntry)
+        val result = block()
+        fileEntriesStack.removeLast()
+        return result
+    }
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.accept(this, container)
+        withFileEntry(container.fileEntry) {
+            irBody.accept(this, container)
+        }
+    }
+
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: IrDeclaration): IrExpression {
+        return withFileEntry(inlinedBlock.inlinedFunctionFileEntry) {
+            super.visitInlinedFunctionBlock(inlinedBlock, data)
+        }
     }
 
     override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration): IrStatement {
@@ -68,15 +87,22 @@ class FunctionInlining(
         }
 
         return CallInlining(
-            context,
-            data.file,
+            context = context,
+            currentFileEntry = fileEntriesStack.getLast(),
+            currentFile = data.file,
             parent = data as? IrDeclarationParent ?: data.parent
         ).inline(expression, actualCallee)
     }
 }
 
+/**
+ * @property currentFileEntry The effective [IrFileEntry]. Initially, it's the same as [IrFile.fileEntry].
+ *  But it's changed each time when we cross the [IrInlinedFunctionBlock] boundary.
+ * @property currentFile The currently processed [IrFile].
+ */
 private class CallInlining(
     private val context: LoweringContext,
+    private val currentFileEntry: IrFileEntry,
     private val currentFile: IrFile,
     private val parent: IrDeclarationParent
 ) {
@@ -92,13 +118,15 @@ private class CallInlining(
         inlineFunction(
             callSite = callSite,
             callee = callee,
-            inlinedFunctionSymbol = ((callee as? IrSimpleFunction)?.originalOfPreparedInlineFunctionCopy ?: callee).symbol
+            inlinedFunctionSymbol = ((callee as? IrSimpleFunction)?.originalOfPreparedInlineFunctionCopy ?: callee).symbol,
+            callee.fileEntry,
         ).patchDeclarationParents(parent)
 
     private fun inlineFunction(
         callSite: IrFunctionAccessExpression,
         callee: IrFunction,
         inlinedFunctionSymbol: IrFunctionSymbol?,
+        inlineFileEntry: IrFileEntry,
     ): IrExpression {
         val copiedCallee = run {
             val allTypeParameters = extractTypeParameters(callee)
@@ -137,7 +165,7 @@ private class CallInlining(
                     inlinedFunctionEndOffset = callee.endOffset,
                     resultType = returnType,
                     inlinedFunctionSymbol = inlinedFunctionSymbol,
-                    inlinedFunctionFileEntry = callee.fileEntry,
+                    inlinedFunctionFileEntry = inlineFileEntry,
                     origin = null,
                 ) {
                     evaluateArguments(
@@ -255,6 +283,7 @@ private class CallInlining(
                 callSite = callToInline,
                 callee = callToInline.symbol.owner,
                 inlinedFunctionSymbol = null,
+                currentFileEntry,
             )
 
             // Substitute lambda arguments with target function arguments.
