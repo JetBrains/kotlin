@@ -315,20 +315,31 @@ internal class KClassImpl<T : Any>(
             by ReflectProperties.lazySoft {
                 when (useK1Implementation) {
                     true -> declaredNonStaticMembers + inheritedNonStaticMembers_k1Impl
-                    else -> getAllMembers_newKotlinReflectImpl(this@KClassImpl, MemberKind.INNER)
+                    else -> allMembers.filter { it.instanceReceiverParameter != null }
                 }
             }
         val allStaticMembers: Collection<DescriptorKCallable<*>> // todo test this property
             by ReflectProperties.lazySoft {
                 when (useK1Implementation) {
                     true -> declaredStaticMembers + inheritedStaticMembers_k1Impl
-                    else -> getAllMembers_newKotlinReflectImpl(this@KClassImpl, MemberKind.STATIC)
+                    else -> when {
+                        // Kotlin doesn't have statics (unless it's enum), and it never inherits statics from Java
+                        this@KClassImpl.classKind != ClassKind.ENUM_CLASS && this@KClassImpl.java.isKotlin -> emptyList()
+                        else -> allMembers.filter { it.instanceReceiverParameter == null }
+                    }
                 }
             }
         val declaredMembers: Collection<DescriptorKCallable<*>>
             by ReflectProperties.lazySoft { declaredNonStaticMembers + declaredStaticMembers }
         val allMembers: Collection<DescriptorKCallable<*>>
-            by ReflectProperties.lazySoft { allNonStaticMembers + allStaticMembers }
+            by ReflectProperties.lazySoft {
+                when (useK1Implementation) {
+                    true -> allNonStaticMembers + allStaticMembers
+                    else -> getAllMembersNonTransitive(this@KClassImpl)
+                }
+            }
+        internal val allMembersTransitiveVersion: Collection<DescriptorKCallable<*>>
+            by ReflectProperties.lazySoft { getAllMembersTransitiveVersion(this@KClassImpl) }
     }
 
     val data = lazy(PUBLICATION) { Data() }

@@ -5,9 +5,6 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
-import org.jetbrains.kotlin.types.model.isFlexible
 import java.util.*
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
@@ -20,87 +17,31 @@ import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext
 import kotlin.reflect.jvm.javaField
 
-internal fun getAllMembers_newKotlinReflectImpl(
-    kClass: KClassImpl<*>,
-    memberKind: MemberKind,
-): List<DescriptorKCallable<*>> {
-    // return emptyList()
-    val isKotlin = kClass.java.isKotlin
-    // Kotlin doesn't have statics (unless it's enum), and it never inherits statics from Java
-    if (kClass.classKind != ClassKind.ENUM_CLASS && memberKind == MemberKind.STATIC && isKotlin) return emptyList()
-    val visitedSignatures = kClass.declaredDescriptorKCallableMembers
-        .filter {
-            val isStaticMember = it.instanceReceiverParameter == null
-            isStaticMember == (memberKind == MemberKind.STATIC)
-        }
-        .associateTo(HashMap()) {
-            Pair(it.toEquatableCallableSignature(), TopologicalKCallable(topologicalLevel = PartiallyOrderedNumber.zero, it))
-        }
-    val visitedClassifiers = HashSet<KClass<*>>()
-    visitedClassifiers.add(kClass)
-    val supertypes = kClass.supertypes
-    val receiver = kClass.descriptor.thisAsReceiverParameter
-    for (supertype in supertypes) {
-        val context = RecursionContext(kClass, receiver, visitedClassifiers, memberKind)
-        collectVisitedSignaturesForSuperclassRecursively(
-            supertype,
-            KTypeSubstitutor.EMPTY,
-            PartiallyOrderedNumber.zero,
-            context,
-            visitedSignatures
-        )
+/**
+ * Unfortunately, getting members is not a transitive operation
+ */
+internal fun getAllMembersNonTransitive(kClass: KClassImpl<*>): Collection<DescriptorKCallable<*>> {
+    val membersReadOnlyList = kClass.data.value.allMembersTransitiveVersion
+    val membersMutableList = lazy(LazyThreadSafetyMode.NONE) { ArrayList(membersReadOnlyList) }
+    for (declaredMember in kClass.declaredDescriptorKCallableMembers) {
+        val isStaticMember = declaredMember.instanceReceiverParameter == null
+        // static members are not inherited, but the immediate statics must appear in the 'members' list
+        if (isStaticMember && kClass.classKind == ClassKind.INTERFACE) membersMutableList.value.add(declaredMember)
+        // private members are not inherited, but immediate private members must appear in the 'members' list
+        if (declaredMember.visibility == KVisibility.PRIVATE) membersMutableList.value.add(declaredMember)
     }
-    return visitedSignatures.map { it.value.callable }
-}
-
-internal enum class MemberKind {
-    STATIC, INNER
+    return if (membersMutableList.isInitialized()) membersMutableList.value else membersReadOnlyList
 }
 
 private fun nonDenotableSupertypesAreNotPossible(): Nothing = error("Non-denotable supertypes are not possible")
 private fun starProjectionSupertypesAreNotPossible(): Nothing = error("Star projection supertypes are not possible")
 
-private data class RecursionContext(
-    val receiver: KClassImpl<*>,
-    val receiverParameterDescriptor: ReceiverParameterDescriptor,
-    val visitedClassifiers: HashSet<KClass<*>>,
-    val memberKind: MemberKind,
-)
-
-private class PartiallyOrderedNumber private constructor(val prev: PartiallyOrderedNumber?) {
-    fun compareToOrNullIfNotComparable(other: PartiallyOrderedNumber): Int? = when {
-        this == other -> 0
-        this.isStricklyBiggerThan(other) -> 1
-        other.isStricklyBiggerThan(this) -> -1
-        else -> null // not comparable
-    }
-
-    fun isStricklyBiggerThan(other: PartiallyOrderedNumber): Boolean {
-        var current = this
-        while (true) {
-            current = current.prev ?: return false
-            if (current == other) return true
-        }
-    }
-
-    fun createBiggerNumber(): PartiallyOrderedNumber = PartiallyOrderedNumber(this)
-
-    companion object {
-        val zero = PartiallyOrderedNumber(null)
-    }
-}
-
 // The Comparator assumes similar signature KCallables
-private object CovariantOverrideComparator : Comparator<TopologicalKCallable<*>> { // todo IntersectionOverrideComparator?
-    override fun compare(a: TopologicalKCallable<*>, b: TopologicalKCallable<*>): Int {
-        a.topologicalLevel.compareToOrNullIfNotComparable(b.topologicalLevel)?.let {
-            check(it != 0) { "CONFLICTING_OVERLOADS" }
-            return it
-        }
-        val typeParametersEliminator = b.callable.typeParameters.substituteTypeParametersInto(a.callable.typeParameters)
-        val aReturnType =
-            typeParametersEliminator.substitute(a.callable.returnType).type ?: starProjectionSupertypesAreNotPossible()
-        val bReturnType = b.callable.returnType
+private object CovariantOverrideComparator : Comparator<DescriptorKCallable<*>> {
+    override fun compare(a: DescriptorKCallable<*>, b: DescriptorKCallable<*>): Int {
+        val typeParametersEliminator = b.typeParameters.substituteTypeParametersInto(a.typeParameters)
+        val aReturnType = typeParametersEliminator.substitute(a.returnType).type ?: starProjectionSupertypesAreNotPossible()
+        val bReturnType = b.returnType
         val aIsSubtypeOfB = aReturnType.isSubtypeOf(bReturnType)
         val bIsSubtypeOfA = bReturnType.isSubtypeOf(aReturnType)
 
@@ -117,97 +58,66 @@ private object CovariantOverrideComparator : Comparator<TopologicalKCallable<*>>
             }
             aIsSubtypeOfB -> -1
             bIsSubtypeOfA -> 1
-            else -> error("RETURN_TYPE_MISMATCH_ON_INHERITANCE")
+            else -> 0 //error("RETURN_TYPE_MISMATCH_ON_INHERITANCE") // todo
         }
     }
 }
-
-private data class TopologicalKCallable<out T>(
-    // The closer to the 'Any' type the member is, the bigger the number is
-    val topologicalLevel: PartiallyOrderedNumber,
-    val callable: DescriptorKCallable<T>,
-)
 
 private val collectionKType = typeOf<Collection<*>>()
 
-private fun collectVisitedSignaturesForSuperclassRecursively(
-    rawCurrentType: KType,
-    accumulateClassGenericsSubstitutor: KTypeSubstitutor,
-    prevTopologicalLevel: PartiallyOrderedNumber,
-    context: RecursionContext,
-
-    outVisitedSignatures: MutableMap<EquatableCallableSignature, TopologicalKCallable<*>>,
-) {
-    val currentType = (rawCurrentType as? AbstractKType)?.let {
-        // It's a hack for Flexible Collection types.
-        // They don't have proper KClasses KT-11754
-        // which leads to type substitution quirks (because we have proper KTypes for them)
-        when (it.isSubtypeOf(collectionKType)) {
-            true ->
-                it.upperBoundIfFlexible()
-            false ->
-                it//.lowerBoundIfFlexible() // todo formatting
+/**
+ * todo KDoc
+ */
+internal fun getAllMembersTransitiveVersion(kClass: KClassImpl<*>): Collection<DescriptorKCallable<*>> {
+    val outVisitedSignatures = HashMap<EquatableCallableSignature, DescriptorKCallable<*>>()
+    val thisReceiver = kClass.descriptor.thisAsReceiverParameter
+    for (rawSupertype in kClass.supertypes) {
+        val supertype = (rawSupertype as? AbstractKType)?.let {
+            // It's a hack for Flexible Collection types.
+            // They don't have proper KClasses KT-11754
+            // which leads to type substitution quirks (because we have proper KTypes for them)
+            when (it.isSubtypeOf(collectionKType)) {
+                true ->
+                    it.upperBoundIfFlexible()
+                false ->
+                    it//.lowerBoundIfFlexible() // todo formatting
+            }
+        } ?: rawSupertype
+        val supertypeKClass = (supertype as AbstractKType).correctClassifier as? KClass<*> ?: nonDenotableSupertypesAreNotPossible()
+        val substitutor = KTypeSubstitutor.create(supertype)
+        val supertypeMembers = supertypeKClass.allMembersTransitiveMap
+        for (notSubstitutedMember in supertypeMembers) {
+            val isStaticMember = notSubstitutedMember.instanceReceiverParameter == null
+            val member = notSubstitutedMember.shallowCopy().apply {
+                forceInstanceReceiverParameter = if (isStaticMember) null else thisReceiver
+                kTypeSubstitutor = (notSubstitutedMember.kTypeSubstitutor ?: KTypeSubstitutor.EMPTY).combinedWith(substitutor)
+            }
+            outVisitedSignatures.merge(member.toEquatableCallableSignature(), member) { a, b -> minOf(a, b, CovariantOverrideComparator) }
         }
-    } ?: rawCurrentType
-
-    val currentClass = (currentType as AbstractKType).correctClassifier as? KClass<*>
-        ?: nonDenotableSupertypesAreNotPossible()
-    val topologicalLevel = prevTopologicalLevel.createBiggerNumber()
-    if (!context.visitedClassifiers.add(currentClass)) return
-    val classGenericsSubstitutor = accumulateClassGenericsSubstitutor.createCombinedSubstitutorOrNull(currentType)
-        ?: starProjectionSupertypesAreNotPossible()
-    for (notSubstitutedMember in currentClass.declaredDescriptorKCallableMembers) {
-        // if (notSubstitutedMember.name != "containsAll" && notSubstitutedMember.name != "addAll") continue // todo debug
-        if (notSubstitutedMember.visibility == KVisibility.PRIVATE) continue
-        if (notSubstitutedMember.isPackagePrivate &&
-            currentClass.java.`package` != context.receiver.java.`package`
-        ) {
-            continue
-        }
-        val isStaticMember = notSubstitutedMember.instanceReceiverParameter == null
+    }
+    for (member in kClass.declaredDescriptorKCallableMembers) {
+        if (member.visibility == KVisibility.PRIVATE) continue
+        if (member.isPackagePrivate && kClass.java.`package` != kClass.java.`package`) continue
+        val isStaticMember = member.instanceReceiverParameter == null
         // static members in interfaces are never inherited (not in Java, not in Kotlin enums)
-        if (isStaticMember && currentClass.classKind == ClassKind.INTERFACE) continue
-        if (isStaticMember != (context.memberKind == MemberKind.STATIC)) continue
-
-        val member = notSubstitutedMember.shallowCopy().apply {
-            forceInstanceReceiverParameter = if (isStaticMember) null else context.receiverParameterDescriptor
-            kTypeSubstitutor = classGenericsSubstitutor
-        }
-
-        // Unit // todo
-        //
-        // val foo = member.shallowCopy().apply {
-        //     forceInstanceReceiverParameter = member.forceInstanceReceiverParameter
-        //     kTypeSubstitutor = member.kTypeSubstitutor
-        // }
-        // println(foo.toString())
-
-        val signature = member.toEquatableCallableSignature()
-        val topologicalMember = TopologicalKCallable(topologicalLevel, member)
-        val existingMember = outVisitedSignatures[signature]
-
-        if (existingMember == null || CovariantOverrideComparator.compare(topologicalMember, existingMember) < 0) {
-            outVisitedSignatures[signature] = topologicalMember
-        }
+        if (isStaticMember && kClass.classKind == ClassKind.INTERFACE) continue
+        outVisitedSignatures[member.toEquatableCallableSignature()] = member
     }
-    for (supertype in currentClass.supertypes) {
-        collectVisitedSignaturesForSuperclassRecursively(
-            supertype,
-            classGenericsSubstitutor,
-            topologicalLevel,
-            context,
-            outVisitedSignatures
-        )
-    }
+    return outVisitedSignatures.map { it.value }
 }
 
+private val KClass<*>.allMembersTransitiveMap: Collection<DescriptorKCallable<*>>
+    get() = when (this) {
+        is KClassImpl<*> -> data.value.allMembersTransitiveVersion
+        is MutableCollectionKClass<*> -> klass.allMembersTransitiveMap
+        else -> error("Unknown type ${this::class}")
+    }
+
 private val KClass<*>.classKind: ClassKind // todo do I need it?
-    get() {
-        return when (this) {
-            is KClassImpl<*> -> classKind
-            is MutableCollectionKClass<*> -> klass.classKind
-            else -> error("Unknown type ${this::class}")
-        }
+    get() = when (this) {
+        is KClassImpl<*> -> classKind
+        is MutableCollectionKClass<*> -> klass.classKind
+        else -> error("Unknown type ${this::class}")
     }
 
 private fun KCallable<*>.toEquatableCallableSignature(): EquatableCallableSignature {
@@ -221,17 +131,18 @@ private fun KCallable<*>.toEquatableCallableSignature(): EquatableCallableSignat
     return EquatableCallableSignature(kind, name, this.typeParameters, parameterTypes)
 }
 
-private enum class SignatureKind {
+internal enum class SignatureKind {
     FUNCTION, PROPERTY, FIELD_IN_JAVA_CLASS
 }
 
-private val Class<*>.isKotlin: Boolean get() = getAnnotation(Metadata::class.java) != null
+internal val Class<*>.isKotlin: Boolean get() = getAnnotation(Metadata::class.java) != null
 
 @Suppress("UNCHECKED_CAST")
 private val KClass<*>.declaredDescriptorKCallableMembers: Collection<DescriptorKCallable<*>>
     get() = declaredMembers as Collection<DescriptorKCallable<*>>
 
 private fun List<KTypeParameter>.substituteTypeParametersInto(typeParameters: List<KTypeParameter>): KTypeSubstitutor {
+    if (isEmpty() || typeParameters.isEmpty()) return KTypeSubstitutor.EMPTY
     val arguments = this
     val substitutionMap = typeParameters.zip(arguments)
         .associate { (x, y) -> Pair(x, KTypeProjection.invariant(y.createType())) }
@@ -239,7 +150,7 @@ private fun List<KTypeParameter>.substituteTypeParametersInto(typeParameters: Li
 }
 
 // Signatures that you can test for equality
-private data class EquatableCallableSignature(
+internal data class EquatableCallableSignature(
     val kind: SignatureKind,
     val name: String,
     val typeParameters: List<KTypeParameter>,

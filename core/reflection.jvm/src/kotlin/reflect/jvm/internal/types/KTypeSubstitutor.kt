@@ -66,14 +66,18 @@ internal class KTypeSubstitutor(public val substitution: Map<KTypeParameter, KTy
         return result
     }
 
-    /**
-     * Create combined [kotlin.reflect.jvm.internal.types.KTypeSubstitutor].
-     *
-     * Returns `null` if the [type] is subtituted with star projection
-     */
-    fun createCombinedSubstitutorOrNull(type: KType): KTypeSubstitutor? {
-        val type = substitute(type).type ?: return null
-        return create(type)
+    fun combinedWith(other: KTypeSubstitutor): KTypeSubstitutor {
+        if (this.substitution.isEmpty()) return other
+        if (other.substitution.isEmpty()) return this
+        val map = substitution.mapValues { (_, typeProjection) ->
+            val type = typeProjection.type
+            val variance = typeProjection.variance
+            when {
+                type != null && variance != null -> other.substitute(type, variance)
+                else -> typeProjection
+            }
+        }
+        return KTypeSubstitutor(map)
     }
 
     // TODO (KT-77700): also keep annotations of 'other'
