@@ -6804,6 +6804,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public void testRedeclarationOfExpectActualFromDependency() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multiplatform/redeclarationOfExpectActualFromDependency.kt");
       }
+
+      @Test
+      @TestMetadata("redundantCallOfConversionMethodOnUnsafeNumber.kt")
+      public void testRedundantCallOfConversionMethodOnUnsafeNumber() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/multiplatform/redundantCallOfConversionMethodOnUnsafeNumber.kt");
+      }
     }
 
     @Nested
