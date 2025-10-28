@@ -560,18 +560,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                         }
                     }
 
-//                    if (javaReturnType is PsiTypeParameter) {
-//                        val kotlinReturnType = callableSymbol.returnType.asPsiType(useSitePosition = this@SymbolLightClassForClassOrObject, allowErrorTypes = true)
-//                        if (kotlinReturnType != null) {
-//                            typeParameterMapping[javaReturnType] = kotlinReturnType
-//                        }
-//                    }
-
                     val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
 
                     when {
-                        // TODO integrate addAll into a custom map
-                        javaMethod.name !in SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES + "addAll" -> {
+                        // TODO integrate addAll/putAll into a custom map
+                        javaMethod.name !in SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES + listOf("addAll", "putAll") -> {
                             if (callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }) {
                                 result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = false))
                             } else {
@@ -631,6 +624,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 getJavaMapClass(allSupertypes)?.methods?.find { it.name == "get" }
             matchesMapRemoveMethod(symbol) ->
                 getJavaMapClass(allSupertypes)?.methods?.find { it.name == "remove" }
+            matchesPutAllMethod(symbol) ->
+                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "putAll" }
             else -> null
         }
     }
@@ -728,6 +723,12 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         if (symbol.name?.asString() != "remove") return false
         val parameter = symbol.valueParameters.singleOrNull() ?: return false
         return parameter.name.asString() == "key"
+    }
+
+    private fun matchesPutAllMethod(symbol: KaFunctionSymbol): Boolean {
+        if (symbol.name?.asString() != "putAll") return false
+        val parameter = symbol.valueParameters.singleOrNull() ?: return false
+        return parameter.name.asString() == "from"
     }
 
 
