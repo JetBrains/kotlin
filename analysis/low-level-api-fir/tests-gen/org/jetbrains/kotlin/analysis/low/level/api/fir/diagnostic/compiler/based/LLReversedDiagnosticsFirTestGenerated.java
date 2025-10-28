@@ -7367,6 +7367,22 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/qualifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Qualifiers {
+      @Test
+      public void testAllFilesPresentInQualifiers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/qualifiers"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("noRootIdePackageInCli.kt")
+      public void testNoRootIdePackageInCli() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/qualifiers/noRootIdePackageInCli.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/references")
     @TestDataPath("$PROJECT_ROOT")
     public class References {
