@@ -72,7 +72,7 @@ public abstract class ATMap2 /* test.ATMap2*/<T>  implements java.util.Map<@org.
 
   public boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
 
-  public final @org.jetbrains.annotations.Nullable() T get(java.lang.Object);//  get(java.lang.Object)
+  public final T get(java.lang.Object);//  get(java.lang.Object)
 
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 
