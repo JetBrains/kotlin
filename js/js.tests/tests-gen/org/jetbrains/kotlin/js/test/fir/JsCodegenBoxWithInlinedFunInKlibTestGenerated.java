@@ -56709,6 +56709,12 @@ public class JsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractJsCod
           }
 
           @Test
+          @TestMetadata("javaTypeProjection.kt")
+          public void testJavaTypeProjection() {
+            runTest("compiler/testData/codegen/box/reflection/types/subtyping/javaTypeProjection.kt");
+          }
+
+          @Test
           @TestMetadata("nestedGenericCapturedType.kt")
           public void testNestedGenericCapturedType() {
             runTest("compiler/testData/codegen/box/reflection/types/subtyping/nestedGenericCapturedType.kt");
