@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <excludedPredefinedLibrary name="kotlin/libraries/tools/kotlin-test-js-runner/.gradle/nodejs/node-v22.0.0-darwin-arm64/lib/node_modules" />
+    <excludedPredefinedLibrary name="kotlin/libraries/tools/kotlin-test-js-runner/node_modules" />
+  </component>
+</project>
