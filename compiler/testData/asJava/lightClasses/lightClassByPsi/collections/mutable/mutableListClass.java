@@ -28,10 +28,6 @@ public abstract class CMutableList2 /* test.CMutableList2*/<Elem>  implements ja
   public boolean add(Elem);//  add(Elem)
 
   @java.lang.Override()
-  @kotlin.IgnorableReturnValue()
-  public boolean addAll(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  addAll(int, @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
-
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
@@ -62,6 +58,8 @@ public abstract class CMutableList2 /* test.CMutableList2*/<Elem>  implements ja
   public  CMutableList2();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public boolean addAll(int, java.util.Collection<? extends Elem>);//  addAll(int, java.util.Collection<? extends Elem>)
 
   public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
 
