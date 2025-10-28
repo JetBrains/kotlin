@@ -1,0 +1,917 @@
+public abstract interface annotation class org/jetbrains/kotlin/analysis/api/platform/KaCachedService : java/lang/annotation/Annotation {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinComposableProvider {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinComposableProviderMerger {
+	public abstract fun merge (Ljava/util/List;)Lorg/jetbrains/kotlin/analysis/api/platform/KotlinComposableProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinCompositeProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinComposableProvider {
+	public abstract fun getProviders ()Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/KotlinCompositeProviderFactory {
+	public fun <init> (Lorg/jetbrains/kotlin/analysis/api/platform/KotlinComposableProvider;Lkotlin/jvm/functions/Function1;)V
+	public final fun create (Ljava/util/List;)Lorg/jetbrains/kotlin/analysis/api/platform/KotlinComposableProvider;
+	public final fun createFlattened (Ljava/util/List;)Lorg/jetbrains/kotlin/analysis/api/platform/KotlinComposableProvider;
+	public final fun flatten (Ljava/util/List;)Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/KotlinDeserializedDeclarationsOrigin : java/lang/Enum {
+	public static final field BINARIES Lorg/jetbrains/kotlin/analysis/api/platform/KotlinDeserializedDeclarationsOrigin;
+	public static final field STUBS Lorg/jetbrains/kotlin/analysis/api/platform/KotlinDeserializedDeclarationsOrigin;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/platform/KotlinDeserializedDeclarationsOrigin;
+	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/platform/KotlinDeserializedDeclarationsOrigin;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinMessageBusProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/KotlinMessageBusProvider$Companion;
+	public abstract fun getMessageBus ()Lcom/intellij/util/messages/MessageBus;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/KotlinMessageBusProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/KotlinMessageBusProvider;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/KotlinMessageBusProviderKt {
+	public static final fun getAnalysisMessageBus (Lcom/intellij/openapi/project/Project;)Lcom/intellij/util/messages/MessageBus;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformSettings : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/KotlinPlatformSettings$Companion;
+	public fun getAllowUseSiteLibraryModuleAnalysis ()Z
+	public abstract fun getDeserializedDeclarationsOrigin ()Lorg/jetbrains/kotlin/analysis/api/platform/KotlinDeserializedDeclarationsOrigin;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformSettings$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/KotlinPlatformSettings;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/KotlinProjectMessageBusProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinMessageBusProvider {
+	public fun <init> (Lcom/intellij/openapi/project/Project;)V
+	public fun getMessageBus ()Lcom/intellij/util/messages/MessageBus;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/caches/NullValue {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/caches/NullValue;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/caches/NullValueKt {
+	public static final fun getOrPutWithNullableValue (Lcom/github/benmanes/caffeine/cache/Cache;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun getOrPutWithNullableValue (Ljava/util/concurrent/ConcurrentMap;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun nullValueToNull (Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/caches/NullableCaffeineCache {
+	public static final synthetic fun box-impl (Lcom/github/benmanes/caffeine/cache/Cache;)Lorg/jetbrains/kotlin/analysis/api/platform/caches/NullableCaffeineCache;
+	public static fun constructor-impl (Lcom/github/benmanes/caffeine/cache/Cache;)Lcom/github/benmanes/caffeine/cache/Cache;
+	public static fun constructor-impl (Lkotlin/jvm/functions/Function1;)Lcom/github/benmanes/caffeine/cache/Cache;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Lcom/github/benmanes/caffeine/cache/Cache;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Lcom/github/benmanes/caffeine/cache/Cache;Lcom/github/benmanes/caffeine/cache/Cache;)Z
+	public static final fun get-impl (Lcom/github/benmanes/caffeine/cache/Cache;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public final fun getCache ()Lcom/github/benmanes/caffeine/cache/Cache;
+	public static final fun getEstimatedSize-impl (Lcom/github/benmanes/caffeine/cache/Cache;)J
+	public static final fun getOrPut-impl (Lcom/github/benmanes/caffeine/cache/Cache;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Lcom/github/benmanes/caffeine/cache/Cache;)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Lcom/github/benmanes/caffeine/cache/Cache;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Lcom/github/benmanes/caffeine/cache/Cache;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/caches/NullableConcurrentCache {
+	public static final synthetic fun box-impl (Ljava/util/concurrent/ConcurrentMap;)Lorg/jetbrains/kotlin/analysis/api/platform/caches/NullableConcurrentCache;
+	public static fun constructor-impl (Ljava/util/concurrent/ConcurrentMap;)Ljava/util/concurrent/ConcurrentMap;
+	public static synthetic fun constructor-impl$default (Ljava/util/concurrent/ConcurrentMap;ILkotlin/jvm/internal/DefaultConstructorMarker;)Ljava/util/concurrent/ConcurrentMap;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Ljava/util/concurrent/ConcurrentMap;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Ljava/util/concurrent/ConcurrentMap;Ljava/util/concurrent/ConcurrentMap;)Z
+	public final fun getMap ()Ljava/util/concurrent/ConcurrentMap;
+	public static final fun getOrPut-impl (Ljava/util/concurrent/ConcurrentMap;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Ljava/util/concurrent/ConcurrentMap;)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Ljava/util/concurrent/ConcurrentMap;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Ljava/util/concurrent/ConcurrentMap;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/caches/UtilsKt {
+	public static final fun getOrPut (Lcom/github/benmanes/caffeine/cache/Cache;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun withStatsCounter (Lcom/github/benmanes/caffeine/cache/Caffeine;Lcom/github/benmanes/caffeine/cache/stats/StatsCounter;)Lcom/github/benmanes/caffeine/cache/Caffeine;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinAnnotationsResolver {
+	public abstract fun annotationsOnDeclaration (Lorg/jetbrains/kotlin/psi/KtAnnotated;)Ljava/util/Set;
+	public abstract fun declarationsByAnnotation (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Set;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinAnnotationsResolverFactory : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinAnnotationsResolverFactory$Companion;
+	public abstract fun createAnnotationResolver (Lcom/intellij/psi/search/GlobalSearchScope;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinAnnotationsResolver;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinAnnotationsResolverFactory$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinAnnotationsResolverFactory;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinAnnotationsResolverKt {
+	public static final fun createAnnotationResolver (Lcom/intellij/openapi/project/Project;Lcom/intellij/psi/search/GlobalSearchScope;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinAnnotationsResolver;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinCompositeDeclarationProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinCompositeProvider, org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinCompositeDeclarationProvider$Companion;
+	public synthetic fun <init> (Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun computePackageNames ()Ljava/util/Set;
+	public fun computePackageNamesWithTopLevelCallables ()Ljava/util/Set;
+	public fun computePackageNamesWithTopLevelClassifiers ()Ljava/util/Set;
+	public fun findFilesForFacade (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun findFilesForFacadeByPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun findFilesForScript (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun findInternalFilesForFacade (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun getAllClassesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
+	public fun getAllTypeAliasesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
+	public fun getClassLikeDeclarationByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/psi/KtClassLikeDeclaration;
+	public fun getHasSpecificCallablePackageNamesComputation ()Z
+	public fun getHasSpecificClassifierPackageNamesComputation ()Z
+	public fun getProviders ()Ljava/util/List;
+	public fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinCompositeDeclarationProvider$Companion {
+	public final fun create (Ljava/util/List;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider;
+	public final fun getFactory ()Lorg/jetbrains/kotlin/analysis/api/platform/KotlinCompositeProviderFactory;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinComposableProvider {
+	public fun computePackageNames ()Ljava/util/Set;
+	public fun computePackageNamesWithTopLevelCallables ()Ljava/util/Set;
+	public fun computePackageNamesWithTopLevelClassifiers ()Ljava/util/Set;
+	public abstract fun findFilesForFacade (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public abstract fun findFilesForFacadeByPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public abstract fun findFilesForScript (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public abstract fun findInternalFilesForFacade (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public abstract fun getAllClassesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
+	public abstract fun getAllTypeAliasesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
+	public abstract fun getClassLikeDeclarationByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/psi/KtClassLikeDeclaration;
+	public abstract fun getHasSpecificCallablePackageNamesComputation ()Z
+	public abstract fun getHasSpecificClassifierPackageNamesComputation ()Z
+	public abstract fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public abstract fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public abstract fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public abstract fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public abstract fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProviderFactory : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProviderFactory$Companion;
+	public abstract fun createDeclarationProvider (Lcom/intellij/psi/search/GlobalSearchScope;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProviderFactory$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProviderFactory;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProviderFactoryKt {
+	public static final fun createDeclarationProvider (Lcom/intellij/openapi/project/Project;Lcom/intellij/psi/search/GlobalSearchScope;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider;
+	public static final fun mergeDeclarationProviders (Lcom/intellij/openapi/project/Project;Ljava/util/List;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProviderMerger : org/jetbrains/kotlin/analysis/api/platform/KotlinComposableProviderMerger, org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProviderMerger$Companion;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProviderMerger$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProviderMerger;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDirectInheritorsProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDirectInheritorsProvider$Companion;
+	public abstract fun getDirectKotlinInheritors (Lorg/jetbrains/kotlin/psi/KtClass;Lcom/intellij/psi/search/GlobalSearchScope;Z)Ljava/lang/Iterable;
+	public static synthetic fun getDirectKotlinInheritors$default (Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDirectInheritorsProvider;Lorg/jetbrains/kotlin/psi/KtClass;Lcom/intellij/psi/search/GlobalSearchScope;ZILjava/lang/Object;)Ljava/lang/Iterable;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDirectInheritorsProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDirectInheritorsProvider;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinEmptyDeclarationProvider : org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinEmptyDeclarationProvider;
+	public fun computePackageNames ()Ljava/util/Set;
+	public synthetic fun findFilesForFacade (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun findFilesForFacade (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/List;
+	public synthetic fun findFilesForFacadeByPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun findFilesForFacadeByPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/List;
+	public synthetic fun findFilesForScript (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun findFilesForScript (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/List;
+	public synthetic fun findInternalFilesForFacade (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun findInternalFilesForFacade (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/List;
+	public synthetic fun getAllClassesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
+	public fun getAllClassesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/List;
+	public synthetic fun getAllTypeAliasesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
+	public fun getAllTypeAliasesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/List;
+	public fun getClassLikeDeclarationByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/psi/KtClassLikeDeclaration;
+	public fun getHasSpecificCallablePackageNamesComputation ()Z
+	public fun getHasSpecificClassifierPackageNamesComputation ()Z
+	public synthetic fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
+	public fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public synthetic fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
+	public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public synthetic fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinFileBasedDeclarationProvider : org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider {
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtFile;)V
+	public fun computePackageNames ()Ljava/util/Set;
+	public fun findFilesForFacade (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun findFilesForFacadeByPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun findFilesForScript (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun findInternalFilesForFacade (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Collection;
+	public fun getAllClassesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
+	public fun getAllTypeAliasesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
+	public fun getClassLikeDeclarationByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/psi/KtClassLikeDeclaration;
+	public fun getHasSpecificCallablePackageNamesComputation ()Z
+	public fun getHasSpecificClassifierPackageNamesComputation ()Z
+	public final fun getKotlinFile ()Lorg/jetbrains/kotlin/psi/KtFile;
+	public fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinForeignValueProviderService : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinForeignValueProviderService$Companion;
+	public abstract fun getForeignValues (Lorg/jetbrains/kotlin/psi/KtCodeFragment;)Ljava/util/Map;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinForeignValueProviderService$Companion {
+	public final fun getInstance ()Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinForeignValueProviderService;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinForwardDeclarationProviderFactory : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinForwardDeclarationProviderFactory$Companion;
+	public abstract fun createDeclarationProvider (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinForwardDeclarationProviderFactory$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinForwardDeclarationProviderFactory;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinForwardDeclarationProviderFactoryKt {
+	public static final fun createForwardDeclarationProvider (Lcom/intellij/openapi/project/Project;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityChecker {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityChecker$Companion;
+	public abstract fun checkAccessibility (Lcom/intellij/openapi/vfs/VirtualFile;Lcom/intellij/openapi/vfs/VirtualFile;Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityChecker$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityChecker;
+}
+
+public abstract class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError {
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError$ModuleDoesNotExportPackage : org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError$ModuleDoesNotExportPackage;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError$ModuleDoesNotExportPackage;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError$ModuleDoesNotExportPackage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDependencyModuleName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError$ModuleDoesNotReadModule : org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError$ModuleDoesNotReadModule;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError$ModuleDoesNotReadModule;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError$ModuleDoesNotReadModule;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDependencyModuleName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError$ModuleDoesNotReadUnnamedModule : org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAccessibilityError$ModuleDoesNotReadUnnamedModule;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAnnotationsProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAnnotationsProvider$Companion;
+	public abstract fun getAnnotationsForModuleOwnerOfClass (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAnnotationsProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAnnotationsProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleJavaAnnotationsProvider : org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAnnotationsProvider {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModulePsiAnnotationsProvider : org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAnnotationsProvider {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/lifetime/KaLifetimeTracker : org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/lifetime/KaLifetimeTracker$Companion;
+	public abstract fun getCurrentToken ()Lorg/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/lifetime/KaLifetimeTracker$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/lifetime/KaLifetimeTracker;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/lifetime/KotlinAlwaysAccessibleLifetimeToken : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken {
+	public fun <init> (Lcom/intellij/openapi/project/Project;)V
+	public fun getInaccessibilityReason ()Ljava/lang/String;
+	public fun getInvalidationReason ()Ljava/lang/String;
+	public fun isAccessible ()Z
+	public fun isValid ()Z
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/lifetime/KotlinAlwaysAccessibleLifetimeTokenFactory : org/jetbrains/kotlin/analysis/api/platform/lifetime/KotlinLifetimeTokenFactory {
+	public fun <init> ()V
+	public fun create (Lcom/intellij/openapi/project/Project;Lcom/intellij/openapi/util/ModificationTracker;)Lorg/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken;
+	public fun getIdentifier ()Lkotlin/reflect/KClass;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/lifetime/KotlinLifetimeTokenFactory : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/lifetime/KotlinLifetimeTokenFactory$Companion;
+	public abstract fun create (Lcom/intellij/openapi/project/Project;Lcom/intellij/openapi/util/ModificationTracker;)Lorg/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken;
+	public abstract fun getIdentifier ()Lkotlin/reflect/KClass;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/lifetime/KotlinLifetimeTokenFactory$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/lifetime/KotlinLifetimeTokenFactory;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/lifetime/KotlinReadActionConfinementLifetimeToken : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken {
+	public fun <init> (Lcom/intellij/openapi/project/Project;Lcom/intellij/openapi/util/ModificationTracker;)V
+	public fun getInaccessibilityReason ()Ljava/lang/String;
+	public fun getInvalidationReason ()Ljava/lang/String;
+	public fun isAccessible ()Z
+	public fun isValid ()Z
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/lifetime/KotlinReadActionConfinementLifetimeTokenFactory : org/jetbrains/kotlin/analysis/api/platform/lifetime/KotlinLifetimeTokenFactory {
+	public fun <init> ()V
+	public fun create (Lcom/intellij/openapi/project/Project;Lcom/intellij/openapi/util/ModificationTracker;)Lorg/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken;
+	public fun getIdentifier ()Lkotlin/reflect/KClass;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType {
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType$ElementAdded : org/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType$ElementAdded;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType$ElementRemoved : org/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType {
+	public fun <init> (Lcom/intellij/psi/PsiElement;)V
+	public final fun getRemovedElement ()Lcom/intellij/psi/PsiElement;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType$Unknown : org/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType$Unknown;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationService : org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationService$Companion;
+	public abstract fun ancestorAffectedByInBlockModification (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
+	public abstract fun handleElementModification (Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType;)V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationService$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationService;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinCodeFragmentContextModificationEvent : org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent {
+	public fun <init> (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getModule ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public fun hashCode ()I
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinGlobalModuleStateModificationEvent : org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinGlobalModuleStateModificationEvent;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinGlobalScriptModuleStateModificationEvent : org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinGlobalScriptModuleStateModificationEvent;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinGlobalSourceModuleStateModificationEvent : org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinGlobalSourceModuleStateModificationEvent;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinGlobalSourceOutOfBlockModificationEvent : org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinGlobalSourceOutOfBlockModificationEvent;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent$Companion;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent$Companion {
+	public final fun getTOPIC ()Lcom/intellij/util/messages/Topic;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind : java/lang/Enum {
+	public static final field CODE_FRAGMENT_CONTEXT_MODIFICATION Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind;
+	public static final field GLOBAL_MODULE_STATE_MODIFICATION Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind;
+	public static final field GLOBAL_SCRIPT_MODULE_STATE_MODIFICATION Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind;
+	public static final field GLOBAL_SOURCE_MODULE_STATE_MODIFICATION Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind;
+	public static final field GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind;
+	public static final field MODULE_OUT_OF_BLOCK_MODIFICATION Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind;
+	public static final field MODULE_STATE_MODIFICATION Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind;
+	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKt {
+	public static final fun isGlobalLevel (Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind;)Z
+	public static final fun isModuleLevel (Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventKind;)Z
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEventListener {
+	public abstract fun onModification (Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent;)V
+}
+
+public abstract class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationTrackerByEventFactoryBase : com/intellij/openapi/Disposable, org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationTrackerFactory {
+	public fun <init> (Lcom/intellij/openapi/project/Project;)V
+	public fun createProjectWideLibraryModificationTracker ()Lcom/intellij/openapi/util/ModificationTracker;
+	public fun createProjectWideSourceModificationTracker ()Lcom/intellij/openapi/util/ModificationTracker;
+	public fun dispose ()V
+	protected final fun getEventLibraryModificationTracker ()Lcom/intellij/openapi/util/SimpleModificationTracker;
+	protected final fun getEventSourceModificationTracker ()Lcom/intellij/openapi/util/SimpleModificationTracker;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationTrackerFactory : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationTrackerFactory$Companion;
+	public abstract fun createProjectWideLibraryModificationTracker ()Lcom/intellij/openapi/util/ModificationTracker;
+	public abstract fun createProjectWideSourceModificationTracker ()Lcom/intellij/openapi/util/ModificationTracker;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationTrackerFactory$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationTrackerFactory;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationTrackerFactoryKt {
+	public static final fun createProjectWideLibraryModificationTracker (Lcom/intellij/openapi/project/Project;)Lcom/intellij/openapi/util/ModificationTracker;
+	public static final fun createProjectWideSourceModificationTracker (Lcom/intellij/openapi/project/Project;)Lcom/intellij/openapi/util/ModificationTracker;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModuleOutOfBlockModificationEvent : org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent {
+	public fun <init> (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getModule ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public fun hashCode ()I
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModuleStateModificationEvent : org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent {
+	public fun <init> (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModuleStateModificationKind;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getModificationKind ()Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModuleStateModificationKind;
+	public final fun getModule ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public fun hashCode ()I
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModuleStateModificationKind : java/lang/Enum {
+	public static final field REMOVAL Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModuleStateModificationKind;
+	public static final field UPDATE Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModuleStateModificationKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModuleStateModificationKind;
+	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModuleStateModificationKind;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/UtilsKt {
+	public static final fun publishCodeFragmentContextModificationEvent (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)V
+	public static final fun publishGlobalModuleStateModificationEvent (Lcom/intellij/openapi/project/Project;)V
+	public static final fun publishGlobalScriptModuleStateModificationEvent (Lcom/intellij/openapi/project/Project;)V
+	public static final fun publishGlobalSourceModuleStateModificationEvent (Lcom/intellij/openapi/project/Project;)V
+	public static final fun publishGlobalSourceOutOfBlockModificationEvent (Lcom/intellij/openapi/project/Project;)V
+	public static final fun publishModificationEvent (Lcom/intellij/openapi/project/Project;Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent;)V
+	public static final fun publishModuleOutOfBlockModificationEvent (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)V
+	public static final fun publishModuleStateModificationEvent (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/analysis/api/platform/modification/KotlinModuleStateModificationKind;)V
+}
+
+public abstract class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinCachingPackageProviderFactory : com/intellij/openapi/Disposable, org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProviderFactory {
+	public fun <init> (Lcom/intellij/openapi/project/Project;)V
+	protected abstract fun createNewPackageProvider (Lcom/intellij/psi/search/GlobalSearchScope;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider;
+	public fun createPackageProvider (Lcom/intellij/psi/search/GlobalSearchScope;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider;
+	public fun dispose ()V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinCompositePackageProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinCompositeProvider, org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinCompositePackageProvider$Companion;
+	public synthetic fun <init> (Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun doesKotlinOnlyPackageExist (Lorg/jetbrains/kotlin/name/FqName;)Z
+	public fun doesPackageExist (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public fun doesPlatformSpecificPackageExist (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public fun getKotlinOnlySubpackageNames (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public fun getPlatformSpecificSubpackageNames (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/util/Set;
+	public fun getProviders ()Ljava/util/List;
+	public fun getSubpackageNames (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinCompositePackageProvider$Companion {
+	public final fun create (Ljava/util/List;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider;
+	public final fun getFactory ()Lorg/jetbrains/kotlin/analysis/api/platform/KotlinCompositeProviderFactory;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinEmptyPackageProvider : org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinEmptyPackageProvider;
+	public fun doesKotlinOnlyPackageExist (Lorg/jetbrains/kotlin/name/FqName;)Z
+	public fun doesPackageExist (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public fun doesPlatformSpecificPackageExist (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public fun getKotlinOnlySubpackageNames (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public fun getPlatformSpecificSubpackageNames (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/util/Set;
+	public fun getSubpackageNames (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/util/Set;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinForwardDeclarationsPackageProviderFactory : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinForwardDeclarationsPackageProviderFactory$Companion;
+	public abstract fun createPackageProvider (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinForwardDeclarationsPackageProviderFactory$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinForwardDeclarationsPackageProviderFactory;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinForwardDeclarationsPackageProviderFactoryKt {
+	public static final fun createForwardDeclarationsPackageProvider (Lcom/intellij/openapi/project/Project;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactory : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactory$Companion;
+	public abstract fun createPackagePartProvider (Lcom/intellij/psi/search/GlobalSearchScope;)Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactory$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactory;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactoryKt {
+	public static final fun createPackagePartProvider (Lcom/intellij/openapi/project/Project;Lcom/intellij/psi/search/GlobalSearchScope;)Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinComposableProvider {
+	public abstract fun doesKotlinOnlyPackageExist (Lorg/jetbrains/kotlin/name/FqName;)Z
+	public abstract fun doesPackageExist (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public abstract fun doesPlatformSpecificPackageExist (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public abstract fun getKotlinOnlySubpackageNames (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public abstract fun getPlatformSpecificSubpackageNames (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/util/Set;
+	public abstract fun getSubpackageNames (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/util/Set;
+}
+
+public abstract class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProviderBase : org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider {
+	public fun <init> (Lcom/intellij/openapi/project/Project;Lcom/intellij/psi/search/GlobalSearchScope;)V
+	public fun doesPackageExist (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public fun doesPlatformSpecificPackageExist (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public fun getPlatformSpecificSubpackageNames (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/util/Set;
+	protected final fun getProject ()Lcom/intellij/openapi/project/Project;
+	public final fun getSearchScope ()Lcom/intellij/psi/search/GlobalSearchScope;
+	public fun getSubpackageNames (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/util/Set;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProviderFactory : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProviderFactory$Companion;
+	public abstract fun createPackageProvider (Lcom/intellij/psi/search/GlobalSearchScope;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProviderFactory$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProviderFactory;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProviderFactoryKt {
+	public static final fun createPackageProvider (Lcom/intellij/openapi/project/Project;Lcom/intellij/psi/search/GlobalSearchScope;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider;
+	public static final fun mergePackageProviders (Lcom/intellij/openapi/project/Project;Ljava/util/List;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProviderMerger : org/jetbrains/kotlin/analysis/api/platform/KotlinComposableProviderMerger, org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProviderMerger$Companion;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProviderMerger$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProviderMerger;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/permissions/KaAnalysisPermissionChecker : org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/permissions/KaAnalysisPermissionChecker$Companion;
+	public abstract fun getRejectionReason ()Ljava/lang/String;
+	public abstract fun isAnalysisAllowed ()Z
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/permissions/KaAnalysisPermissionChecker$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/permissions/KaAnalysisPermissionChecker;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/permissions/KotlinAnalysisPermissionOptions : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/permissions/KotlinAnalysisPermissionOptions$Companion;
+	public abstract fun getDefaultIsAnalysisAllowedInWriteAction ()Z
+	public abstract fun getDefaultIsAnalysisAllowedOnEdt ()Z
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/permissions/KotlinAnalysisPermissionOptions$Companion {
+	public final fun getInstance ()Lorg/jetbrains/kotlin/analysis/api/platform/permissions/KotlinAnalysisPermissionOptions;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/permissions/KotlinDefaultAnalysisPermissionOptions : org/jetbrains/kotlin/analysis/api/platform/permissions/KotlinAnalysisPermissionOptions {
+	public fun <init> ()V
+	public fun getDefaultIsAnalysisAllowedInWriteAction ()Z
+	public fun getDefaultIsAnalysisAllowedOnEdt ()Z
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaContentScopeProvider : org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaContentScopeProvider$Companion;
+	public abstract fun getRefinedContentScope (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lcom/intellij/psi/search/GlobalSearchScope;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaContentScopeProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaContentScopeProvider;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaDanglingFileModuleImpl : org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModuleBase, org/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileModule {
+	public fun <init> (Ljava/util/List;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionMode;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getBaseContentScope ()Lcom/intellij/psi/search/GlobalSearchScope;
+	public fun getContextModule ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public fun getDirectDependsOnDependencies ()Ljava/util/List;
+	public fun getDirectFriendDependencies ()Ljava/util/List;
+	public fun getDirectRegularDependencies ()Ljava/util/List;
+	public fun getFiles ()Ljava/util/List;
+	public fun getProject ()Lcom/intellij/openapi/project/Project;
+	public fun getResolutionMode ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionMode;
+	public fun getTargetPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public fun getTransitiveDependsOnDependencies ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun isCodeFragment ()Z
+	public fun isValid ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaGlobalSearchScopeMerger : org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaGlobalSearchScopeMerger$Companion;
+	public abstract fun union (Ljava/util/Collection;)Lcom/intellij/psi/search/GlobalSearchScope;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaGlobalSearchScopeMerger$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaGlobalSearchScopeMerger;
+}
+
+public abstract class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModuleBase : org/jetbrains/kotlin/analysis/api/projectStructure/KaModule {
+	public fun <init> ()V
+	public fun getContentScope ()Lcom/intellij/psi/search/GlobalSearchScope;
+	public fun getTransitiveDependsOnDependencies ()Ljava/util/List;
+}
+
+public abstract class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaResolutionScope : com/intellij/psi/search/GlobalSearchScope {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaResolutionScope$Companion;
+	public fun <init> ()V
+	public abstract fun contains (Lcom/intellij/psi/PsiElement;)Z
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaResolutionScope$Companion {
+	public final fun forModule (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaResolutionScope;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaResolutionScopeProvider : org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaResolutionScopeProvider$Companion;
+	public abstract fun getResolutionScope (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaResolutionScope;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaResolutionScopeProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaResolutionScopeProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinActualDeclarationProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinActualDeclarationProvider$Companion;
+	public abstract fun getActualDeclarations (Lorg/jetbrains/kotlin/psi/KtDeclaration;)Lkotlin/sequences/Sequence;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinActualDeclarationProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinActualDeclarationProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinAnchorModuleProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinAnchorModuleProvider$Companion;
+	public abstract fun getAllAnchorModules ()Ljava/util/Collection;
+	public abstract fun getAllAnchorModulesIfComputed ()Ljava/util/Collection;
+	public abstract fun getAnchorModule (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaSourceModule;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinAnchorModuleProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinAnchorModuleProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider$Companion;
+	public abstract fun getRegisteredExtensions (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/extensions/ProjectExtensionDescriptor;)Ljava/util/List;
+	public abstract fun isPluginOfTypeRegistered (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider$CompilerPluginType;)Z
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider$CompilerPluginType : java/lang/Enum {
+	public static final field ASSIGNMENT Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider$CompilerPluginType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider$CompilerPluginType;
+	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider$CompilerPluginType;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinContentScopeRefiner : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinContentScopeRefiner$Companion;
+	public fun getEnlargementScopes (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Ljava/util/List;
+	public fun getRestrictionScopes (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinContentScopeRefiner$Companion {
+	public final fun getEP_NAME ()Lcom/intellij/openapi/extensions/ExtensionPointName;
+	public final fun getRefiners (Lcom/intellij/openapi/project/Project;)Ljava/util/List;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinGlobalSearchScopeMergeStrategy : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinGlobalSearchScopeMergeStrategy$Companion;
+	public abstract fun getTargetType ()Lkotlin/reflect/KClass;
+	public abstract fun uniteScopes (Ljava/util/List;)Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinGlobalSearchScopeMergeStrategy$Companion {
+	public final fun getEP_NAME ()Lcom/intellij/openapi/extensions/ExtensionPointName;
+	public final fun getMergeStrategies (Lcom/intellij/openapi/project/Project;)Ljava/util/List;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinIntersectionScopeMergeTarget {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleDependentsProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleDependentsProvider$Companion;
+	public abstract fun getDirectDependents (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Ljava/util/Set;
+	public abstract fun getRefinementDependents (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Ljava/util/Set;
+	public abstract fun getTransitiveDependents (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleDependentsProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleDependentsProvider;
+}
+
+public abstract class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleDependentsProviderBase : org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleDependentsProvider {
+	public fun <init> ()V
+	protected final fun computeTransitiveDependents (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Ljava/util/Set;
+	public fun getTransitiveDependents (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Ljava/util/Set;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleInformationProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleInformationProvider$Companion;
+	public abstract fun isEmpty (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Ljava/lang/Boolean;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleInformationProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleInformationProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleOutputProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleOutputProvider$Companion;
+	public abstract fun getCompilationOutput (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaSourceModule;)Lcom/intellij/openapi/vfs/VirtualFile;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleOutputProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinModuleOutputProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinProjectStructureProvider {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinProjectStructureProvider$Companion;
+	public fun getGlobalLanguageVersionSettings ()Lorg/jetbrains/kotlin/config/LanguageVersionSettings;
+	public abstract fun getImplementingModules (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Ljava/util/List;
+	public fun getLibraryLanguageVersionSettings ()Lorg/jetbrains/kotlin/config/LanguageVersionSettings;
+	public abstract fun getModule (Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinProjectStructureProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinProjectStructureProvider;
+	public final fun getModule (Lcom/intellij/openapi/project/Project;Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+}
+
+public abstract class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinProjectStructureProviderBase : org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinProjectStructureProvider {
+	public fun <init> ()V
+	protected final fun computeSpecialModule (Lcom/intellij/psi/PsiFile;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	protected abstract fun getNotUnderContentRootModule (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaNotUnderContentRootModule;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinProjectStructureProviderBaseKt {
+	public static final fun getForcedSpecialModule (Lorg/jetbrains/kotlin/psi/KtCodeFragment;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileModule;
+	public static final fun setForcedSpecialModule (Lorg/jetbrains/kotlin/psi/KtCodeFragment;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileModule;)V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/UtilsKt {
+	public static final fun areCompilerPluginsSupported (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Z
+	public static final fun asDebugString (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;I)Ljava/lang/String;
+	public static synthetic fun asDebugString$default (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;IILjava/lang/Object;)Ljava/lang/String;
+	public static final fun computeTransitiveDependsOnDependencies (Ljava/util/List;)Ljava/util/List;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/resolution/KaResolutionActivityTracker : org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/resolution/KaResolutionActivityTracker$Companion;
+	public abstract fun isKotlinResolutionActive ()Z
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/resolution/KaResolutionActivityTracker$Companion {
+	public final fun getInstance ()Lorg/jetbrains/kotlin/analysis/api/platform/resolution/KaResolutionActivityTracker;
+}
+
+public abstract class org/jetbrains/kotlin/analysis/api/platform/restrictedAnalysis/KaRestrictedAnalysisException : java/lang/Exception {
+	public fun <init> (Ljava/lang/Throwable;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/restrictedAnalysis/KotlinRestrictedAnalysisService : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/restrictedAnalysis/KotlinRestrictedAnalysisService$Companion;
+	public abstract fun isAnalysisRestricted ()Z
+	public abstract fun isRestrictedAnalysisAllowed ()Z
+	public abstract fun rejectRestrictedAnalysis ()Ljava/lang/Void;
+	public abstract fun runWithRestrictedDataAccess (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/restrictedAnalysis/KotlinRestrictedAnalysisService$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/restrictedAnalysis/KotlinRestrictedAnalysisService;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/restrictedAnalysis/KotlinRestrictedAnalysisServiceKt {
+	public static final fun withRestrictedDataAccess (Lorg/jetbrains/kotlin/analysis/api/platform/restrictedAnalysis/KotlinRestrictedAnalysisService;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/statistics/KaStatisticsService : org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/statistics/KaStatisticsService$Companion;
+	public abstract fun start ()V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/statistics/KaStatisticsService$Companion {
+	public final fun getAreStatisticsEnabled ()Z
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/statistics/KaStatisticsService;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/statistics/KotlinGlobalOpenTelemetryProvider : org/jetbrains/kotlin/analysis/api/platform/statistics/KotlinOpenTelemetryProvider {
+	public fun <init> ()V
+	public fun getOpenTelemetry ()Lio/opentelemetry/api/OpenTelemetry;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/statistics/KotlinObjectSizeCalculator : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/statistics/KotlinObjectSizeCalculator$Companion;
+	public abstract fun shallowSize (Ljava/lang/Object;)J
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/statistics/KotlinObjectSizeCalculator$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/statistics/KotlinObjectSizeCalculator;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/statistics/KotlinOpenTelemetryProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/statistics/KotlinOpenTelemetryProvider$Companion;
+	public abstract fun getOpenTelemetry ()Lio/opentelemetry/api/OpenTelemetry;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/statistics/KotlinOpenTelemetryProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/statistics/KotlinOpenTelemetryProvider;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/utils/SublistMerger {
+	public fun <init> (Ljava/util/List;Ljava/util/List;)V
+	public final fun finish ()V
+	public final fun getDestination ()Ljava/util/List;
+	public final fun getRemainingElements ()Ljava/util/List;
+	public final fun setRemainingElements (Ljava/util/List;)V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/utils/SublistMergerKt {
+	public static final fun mergeInto (Ljava/util/List;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
+	public static final fun mergeWith (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/utils/UtilsKt {
+	public static final field KOTLIN_JAVA_ELEMENT_FINDER_CLASS_NAME Ljava/lang/String;
+	public static final fun forEachNonKotlinPsiElementFinder (Lcom/intellij/openapi/project/Project;Lkotlin/jvm/functions/Function1;)V
+}
+

@@ -13,7 +13,9 @@ class AnalysisApiSurfaceDumpConsistencyTest : AbstractSurfaceDumpConsistencyTest
     private companion object {
         private val API_SURFACE_PATHS = listOf(
             Paths.get("analysis/analysis-api/api/analysis-api.api"),
-            Paths.get("analysis/analysis-api/api-unstable/analysis-api.api")
+            Paths.get("analysis/analysis-api/api-unstable/analysis-api.api"),
+            Paths.get("analysis/analysis-api-standalone/api-unstable/analysis-api-standalone.api"),
+            Paths.get("analysis/analysis-api-platform-interface/api-unstable/analysis-api-platform-interface.api")
         )
     }
 
