@@ -15,6 +15,8 @@ class MavenProject {
     @NotNull
     private final File workingDir;
 
+    private static final File mavenSettingsXml = new File("../../maven-settings.xml");
+
     public enum ExecutionStrategy {
         IN_PROCESS,
         DAEMON,
@@ -43,7 +45,7 @@ class MavenProject {
 
     MavenExecutionResult exec(@Nullable ExecutionStrategy executionStrategy, String... targets) throws Exception {
         List<String> cmd = buildCmd(targets);
-        if (executionStrategy !=  null) { // else use the default strategy
+        if (executionStrategy != null) { // else use the default strategy
             boolean daemonEnabled;
             switch (executionStrategy) {
                 case IN_PROCESS:
@@ -56,6 +58,11 @@ class MavenProject {
             }
             cmd.add("-Dkotlin.compiler.daemon=" + daemonEnabled);
         }
+
+        assert mavenSettingsXml.exists() : "Could not find Maven settings file: " + mavenSettingsXml.getAbsolutePath();
+        cmd.add("--settings");
+        cmd.add(mavenSettingsXml.getAbsolutePath());
+
         ProcessBuilder processBuilder = new ProcessBuilder(cmd);
 
         processBuilder.directory(workingDir);
@@ -105,4 +112,3 @@ class MavenProject {
         return cmd;
     }
 }
-

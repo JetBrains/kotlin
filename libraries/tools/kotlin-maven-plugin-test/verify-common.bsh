@@ -2,8 +2,8 @@ String[] getFileLines(File file) {
     BufferedReader reader = new BufferedReader(new FileReader(file));
     List result = new ArrayList();
     String line;
-    while ((line = reader.readLine()) != null){
-        line=line.replaceAll("\\u001b[^m]*m","");
+    while ((line = reader.readLine()) != null) {
+        line = line.replaceAll("\\u001b[^m]*m", "");
         result.add(line);
     }
     reader.close();
@@ -61,9 +61,9 @@ int findBuildLogLineThatContains(String content) {
 int findLineThatContains(String[] lines, String content) {
     for (int i = 0; i < lines.length; i++) {
         String line = lines[i];
-	    if (line.contains(content)) {
-	        return i;
-	    }
+        if (line.contains(content)) {
+            return i;
+        }
     }
     return -1;
 }
@@ -74,3 +74,16 @@ void assertFileExists(String relativePath) {
         throw new Exception("Expected file not found: " + relativePath);
     }
 }
+
+void assertArtifactsAreDownloadedFromCacheRedirector() {
+    for (int i = 0; i < buildLog.length; i++) {
+        String line = buildLog[i];
+        if (line.startsWith("[INFO] Downloading from")) {
+            if (!line.contains("cache-redirector.jetbrains.com")) {
+                throw new Exception("cache-redirector is not enabled: " + line);
+            }
+        }
+    }
+}
+
+assertArtifactsAreDownloadedFromCacheRedirector();

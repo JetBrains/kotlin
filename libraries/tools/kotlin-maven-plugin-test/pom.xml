@@ -115,7 +115,10 @@
                             </properties>
                             <!--This could speed up test by providing local repo as remote repo for test but might be tricky on different OS-->
                             <!--<settingsFile>src/it/settings.xml</settingsFile>-->
+                            <settingsFile>../../maven-settings.xml</settingsFile>
                             <localRepositoryPath>local-repo</localRepositoryPath>
+                            <streamLogsOnFailures>true</streamLogsOnFailures>
+                            <mavenOpts>-Dstyle.color=never</mavenOpts>
                             <extraArtifacts>
                                 <artifact>org.jetbrains.kotlin:kotlin-annotation-processing-embeddable:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-plugin:${project.version}</artifact>

@@ -360,7 +360,7 @@
 /libraries/pom.xml @JetBrains/kotlin-build-infrastructure
 /libraries/mvnw @JetBrains/kotlin-build-infrastructure
 /libraries/mvnw.cmd @JetBrains/kotlin-build-infrastructure
-/libraries/.mvn/wrapper/maven-wrapper.properties @JetBrains/kotlin-build-infrastructure
+/libraries/.mvn/ @JetBrains/kotlin-build-infrastructure
 /libraries/ReadMe.md vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
 
 /license/ @JetBrains/kotlin-build-infrastructure
