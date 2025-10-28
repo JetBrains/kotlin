@@ -1,4 +1,8 @@
-public abstract class SMutableSet /* test.SMutableSet*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableSet<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableSet {
+public abstract class SMutableSet /* test.SMutableSet*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableSet {
+  public  SMutableSet();//  .ctor()
+}
+
+public abstract class SMutableSet2 /* test.SMutableSet2*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableSet {
   private final int size;
 
   @kotlin.IgnorableReturnValue()
@@ -31,7 +35,7 @@ public abstract class SMutableSet /* test.SMutableSet*/ implements java.util.Set
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
 
-  public  SMutableSet();//  .ctor()
+  public  SMutableSet2();//  .ctor()
 
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
 
