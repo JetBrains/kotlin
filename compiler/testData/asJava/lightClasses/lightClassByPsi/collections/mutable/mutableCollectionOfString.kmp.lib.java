@@ -1,4 +1,8 @@
-public abstract class SMutableCollection /* test.SMutableCollection*/ implements java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableCollection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
+public abstract class SMutableCollection /* test.SMutableCollection*/ implements java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
+  public  SMutableCollection();//  .ctor()
+}
+
+public abstract class SMutableCollection2 /* test.SMutableCollection2*/ implements java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
   private final int size;
 
   @kotlin.IgnorableReturnValue()
@@ -19,7 +23,7 @@ public abstract class SMutableCollection /* test.SMutableCollection*/ implements
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
 
-  public  SMutableCollection();//  .ctor()
+  public  SMutableCollection2();//  .ctor()
 
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
 

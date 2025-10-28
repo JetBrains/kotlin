@@ -1,4 +1,24 @@
 public abstract class SMutableCollection /* test.SMutableCollection*/ implements java.util.Collection<java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
+  public  SMutableCollection();//  .ctor()
+
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public abstract boolean contains(java.lang.String);//  contains(java.lang.String)
+
+  public abstract boolean remove(java.lang.String);//  remove(java.lang.String)
+
+  public abstract int getSize();//  getSize()
+
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  public final boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  public final int size();//  size()
+
+  public java.lang.Object[] toArray();//  toArray()
+}
+
+public abstract class SMutableCollection2 /* test.SMutableCollection2*/ implements java.util.Collection<java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
   @kotlin.IgnorableReturnValue()
   public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(java.lang.String)
 
@@ -17,7 +37,7 @@ public abstract class SMutableCollection /* test.SMutableCollection*/ implements
   @org.jetbrains.annotations.NotNull()
   public java.util.Iterator<java.lang.String> iterator();//  iterator()
 
-  public  SMutableCollection();//  .ctor()
+  public  SMutableCollection2();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
