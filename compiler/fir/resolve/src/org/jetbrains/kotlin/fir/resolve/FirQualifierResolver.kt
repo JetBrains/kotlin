@@ -5,15 +5,24 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.name.ClassId
 
 abstract class FirQualifierResolver : FirSessionComponent {
     abstract fun resolveSymbolWithPrefix(prefix: ClassId, remainingParts: List<FirQualifierPart>): FirClassifierSymbol<*>?
-    abstract fun resolveFullyQualifiedSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>?
+    abstract fun resolveFullyQualifiedSymbol(parts: List<FirQualifierPart>): Pair<FirClassifierSymbol<*>, FirResolvedSymbolOrigin>?
+
+    companion object {
+        context(_: SessionHolder)
+        fun isRootIdePackageAllowed(): Boolean = AnalysisFlags.ideMode.isSet() || LanguageFeature.ForbidRootIdePackageInCli.isDisabled()
+
+        context(_: SessionHolder)
+        fun isRootIdePackageDeprecated(): Boolean = !AnalysisFlags.ideMode.isSet() && LanguageFeature.ForbidRootIdePackageInCli.isDisabled()
+    }
 }
 
 val FirSession.qualifierResolver: FirQualifierResolver by FirSession.sessionComponentAccessor()

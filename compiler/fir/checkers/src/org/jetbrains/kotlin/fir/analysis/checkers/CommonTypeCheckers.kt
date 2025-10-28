@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.type.FirInlineExposedLessVisibleTypeChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.*
 
 object CommonTypeCheckers : TypeCheckers() {
@@ -31,6 +30,7 @@ object CommonTypeCheckers : TypeCheckers() {
         RedundantNullableChecker,
         PlatformClassMappedToKotlinTypeRefChecker,
         FirMissingDependencyClassInTypeAliasTypeChecker,
+        FirRootIdePackageDeprecatedInCliTypeChecker,
     )
 
     override val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker> = setOf(

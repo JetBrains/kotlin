@@ -43,12 +43,16 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
     isUsedAsReceiver: Boolean,
 ): QualifierResolutionResult? {
     val name = namedReference.name
-    if (name.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
+    if (FirQualifierResolver.isRootIdePackageAllowed() && name.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
         return buildResolvedQualifierResult(
             qualifiedAccess = qualifiedAccess,
             packageFqName = FqName.ROOT,
             nonFatalDiagnostics = nonFatalDiagnosticsFromExpression,
-            resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified
+            resolvedSymbolOrigin =
+                if (FirQualifierResolver.isRootIdePackageDeprecated())
+                    FirResolvedSymbolOrigin.QualifiedWithDeprecatedRootIdePackage
+                else
+                    FirResolvedSymbolOrigin.Qualified
         )
     }
 
@@ -100,12 +104,18 @@ fun FirResolvedQualifier.continueQualifier(
 ): QualifierResolutionResult? {
     val name = namedReference.name
 
+    val resolvedSymbolOriginForNextQualifierPart =
+        (qualifiedAccess.explicitReceiver as? FirResolvedQualifier)?.resolvedSymbolOrigin
+            ?.takeIf { it == FirResolvedSymbolOrigin.QualifiedWithDeprecatedRootIdePackage }
+            ?: FirResolvedSymbolOrigin.Qualified
+
     // No symbol means it's a package. Continue resolution in that package.
     val outerClassSymbol = symbol ?: return packageFqName.continueQualifierInPackage(
         name,
         qualifiedAccess,
         nonFatalDiagnosticsFromExpression,
-        components
+        components,
+        resolvedSymbolOriginForNextQualifierPart,
     )
 
     val firClass = outerClassSymbol.fir
@@ -121,7 +131,7 @@ fun FirResolvedQualifier.continueQualifier(
         components.file.source
     )
 
-    val candidate = nestedClassifierScope.getUnambiguousCandidate(name, components) ?: return null
+    val candidate = nestedClassifierScope.getUnambiguousCandidate(name, components, resolvedSymbolOriginForNextQualifierPart) ?: return null
     val nestedClassSymbol = candidate.symbol as? FirClassLikeSymbol ?: return null
 
     val nonFatalDiagnostics = extractNonFatalDiagnostics(
@@ -144,10 +154,14 @@ fun FirResolvedQualifier.continueQualifier(
     )
 }
 
-private fun FirScope.getUnambiguousCandidate(name: Name, components: BodyResolveComponents): FirTypeCandidateCollector.TypeCandidate? {
+private fun FirScope.getUnambiguousCandidate(
+    name: Name,
+    components: BodyResolveComponents,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+): FirTypeCandidateCollector.TypeCandidate? {
     val collector = FirTypeCandidateCollector(components.session, components.file, components.containingDeclarations)
     processClassifiersByName(name) {
-        collector.processCandidate(it, null, this@getUnambiguousCandidate.toResolvedSymbolOrigin())
+        collector.processCandidate(it, null, resolvedSymbolOrigin ?: this@getUnambiguousCandidate.toResolvedSymbolOrigin())
     }
     return collector.getResult().resolvedCandidateOrNull()
 }
@@ -157,6 +171,7 @@ private fun FqName.continueQualifierInPackage(
     qualifiedAccess: FirQualifiedAccessExpression,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
     components: BodyResolveComponents,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified,
 ): QualifierResolutionResult? {
     val childFqName = this.child(name)
     if (components.symbolProvider.hasPackage(childFqName)) {
@@ -164,14 +179,14 @@ private fun FqName.continueQualifierInPackage(
             qualifiedAccess = qualifiedAccess,
             packageFqName = childFqName,
             nonFatalDiagnostics = nonFatalDiagnosticsFromExpression,
-            resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified,
+            resolvedSymbolOrigin = resolvedSymbolOrigin,
         )
     }
 
     val classId = ClassId.topLevel(childFqName)
     val symbol = components.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
     val collector = FirTypeCandidateCollector(components.session, components.file, components.containingDeclarations)
-    collector.processCandidate(symbol, resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified)
+    collector.processCandidate(symbol, resolvedSymbolOrigin = resolvedSymbolOrigin)
     val candidate = collector.getResult().resolvedCandidateOrNull()
 
     val nonFatalDiagnostics = extractNonFatalDiagnostics(

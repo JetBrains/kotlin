@@ -32,6 +32,12 @@ enum class FirResolvedSymbolOrigin {
     Qualified,
 
     /**
+     * Resolved through a qualified name `_root_ide_package_.some.package.Thing`.
+     * This thing might be removed once [org.jetbrains.kotlin.config.LanguageFeature.ForbidRootIdePackageInCli] is gone.
+     */
+    QualifiedWithDeprecatedRootIdePackage,
+
+    /**
      * Resolved through context-sensitive resolution.
      */
     ContextSensitive

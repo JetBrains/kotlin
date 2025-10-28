@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ForbidRootIdePackageInCli
 // ISSUE: KT-81357
 
 // FILE: test.kt
@@ -10,12 +11,12 @@ class Test {
     fun foo() {}
 }
 
-fun main1(t: _root_ide_package_.test.Test) {
-    _root_ide_package_.test.testMe()
-    _root_ide_package_.test.Test()
+fun main1(t: <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test.Test<!>) {
+    <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test<!>.testMe()
+    <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test<!>.Test()
 
     val x1 = ::<!UNRESOLVED_REFERENCE!>_root_ide_package_<!>.<!UNRESOLVED_REFERENCE!>test<!>.testMe
-    val x2 = _root_ide_package_.test.Test::foo
+    val x2 = <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test.Test<!>::foo
 }
 
 // FILE: main.kt
@@ -27,25 +28,25 @@ class RootClass {
 fun myRootTestMe() {}
 
 fun main2(
-    t1: _root_ide_package_.test.Test,
-    t2: _root_ide_package_.kotlin.collections.List<_root_ide_package_.test.Test>,
+    t1: <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test.Test<!>,
+    t2: <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.kotlin.collections.List<<!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test.Test<!>><!>,
     t3: <!UNRESOLVED_REFERENCE!>_root_ide_package_<!>.RootClass,
 ) {
-    _root_ide_package_.test.testMe()
-    _root_ide_package_.test.Test()
+    <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test<!>.testMe()
+    <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test<!>.Test()
 
     val x1 = ::<!UNRESOLVED_REFERENCE!>_root_ide_package_<!>.<!UNRESOLVED_REFERENCE!>test<!>.testMe
-    val x2 = _root_ide_package_.test.Test::foo
+    val x2 = <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test.Test<!>::foo
 
-    _root_ide_package_.myRootTestMe()
-    _root_ide_package_.RootClass()
+    <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_<!>.myRootTestMe()
+    <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_<!>.RootClass()
 
     val x3 = ::<!UNRESOLVED_REFERENCE!>_root_ide_package_<!>.<!UNRESOLVED_REFERENCE!>myRootTestMe<!>
-    val x4 = _root_ide_package_.RootClass::foo
+    val x4 = <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.RootClass<!>::foo
 
-    _root_ide_package_.kotlin.Any()
+    <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.kotlin<!>.Any()
 
-    <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>_root_ide_package_<!> // property access
+    <!EXPRESSION_EXPECTED_PACKAGE_FOUND, ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_<!> // property access
     <!UNRESOLVED_REFERENCE!>_root_ide_package_<!>()
 }
 
