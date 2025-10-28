@@ -14,6 +14,8 @@
           <option value=":analysis:analysis-api:test" />
           <option value=":compiler:psi:psi-api:updateKotlinAbi" />
           <option value=":compiler:psi:psi-api:test" />
+          <option value=":analysis:analysis-api-platform-interface:updateKotlinAbi" />
+          <option value=":analysis:analysis-api-standalone:updateKotlinAbi" />
         </list>
       </option>
       <option name="vmOptions" />

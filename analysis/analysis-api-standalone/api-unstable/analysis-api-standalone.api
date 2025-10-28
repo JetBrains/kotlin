@@ -1,0 +1,145 @@
+public final class org/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalysisAPISession {
+	public final fun getApplication ()Lcom/intellij/openapi/application/Application;
+	public final fun getCoreApplicationEnvironment ()Lcom/intellij/core/CoreApplicationEnvironment;
+	public final fun getModulesWithFiles ()Ljava/util/Map;
+	public final fun getProject ()Lcom/intellij/openapi/project/Project;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalysisAPISessionBuilder {
+	public fun <init> (Lcom/intellij/openapi/Disposable;Z)V
+	public final fun build ()Lorg/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalysisAPISession;
+	public final fun buildKtModuleProvider (Lkotlin/jvm/functions/Function1;)V
+	public final fun buildKtModuleProviderByCompilerConfiguration (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
+	public final fun enableCacheCleaner ()V
+	public final fun getApplication ()Lcom/intellij/openapi/application/Application;
+	public final fun getProject ()Lcom/intellij/openapi/project/Project;
+	public final fun registerApplicationService (Ljava/lang/Class;)V
+	public final fun registerApplicationService (Ljava/lang/Class;Ljava/lang/Object;)V
+	public final fun registerCompilerPluginServices (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
+	public final fun registerProjectExtensionPoint (Lorg/jetbrains/kotlin/extensions/ProjectExtensionDescriptor;)V
+	public final fun registerProjectService (Ljava/lang/Class;)V
+	public final fun registerProjectService (Ljava/lang/Class;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalysisAPISessionBuilderKt {
+	public static final fun buildStandaloneAnalysisAPISession (Lcom/intellij/openapi/Disposable;ZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalysisAPISession;
+	public static synthetic fun buildStandaloneAnalysisAPISession$default (Lcom/intellij/openapi/Disposable;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalysisAPISession;
+	public static final fun disposeGlobalStandaloneApplicationServices ()V
+}
+
+public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaLibraryModuleBuilderKt {
+	public static final fun buildKtLibraryModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;
+}
+
+public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaLibrarySourceModuleBuilderKt {
+	public static final fun buildKtLibrarySourceModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibrarySourceModule;
+}
+
+public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaScriptModuleBuilderKt {
+	public static final fun buildKtScriptModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaScriptModule;
+}
+
+public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaSdkModuleBuilderKt {
+	public static final fun buildKtSdkModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;
+}
+
+public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaSourceModuleBuilderKt {
+	public static final fun buildKtSourceModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaSourceModule;
+}
+
+public abstract class org/jetbrains/kotlin/analysis/project/structure/builder/KtBinaryModuleBuilder : org/jetbrains/kotlin/analysis/project/structure/builder/KtModuleBuilder {
+	public fun <init> ()V
+	public final fun addBinaryRoot (Ljava/nio/file/Path;)V
+	public final fun addBinaryRoots (Ljava/util/Collection;)V
+	public final fun addBinaryVirtualFile (Lcom/intellij/openapi/vfs/VirtualFile;)V
+	public final fun addBinaryVirtualFiles (Ljava/util/Collection;)V
+	protected final fun getBinaryRoots ()Ljava/util/List;
+	protected final fun getBinaryVirtualFiles ()Ljava/util/List;
+	public final fun getContentScope ()Lcom/intellij/psi/search/GlobalSearchScope;
+	public final fun setContentScope (Lcom/intellij/psi/search/GlobalSearchScope;)V
+}
+
+public class org/jetbrains/kotlin/analysis/project/structure/builder/KtLibraryModuleBuilder : org/jetbrains/kotlin/analysis/project/structure/builder/KtBinaryModuleBuilder {
+	public field libraryName Ljava/lang/String;
+	public fun <init> (Lcom/intellij/core/CoreApplicationEnvironment;Lcom/intellij/openapi/project/Project;Z)V
+	public fun build ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public final fun getLibraryName ()Ljava/lang/String;
+	public final fun getLibrarySources ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibrarySourceModule;
+	public final fun setLibraryName (Ljava/lang/String;)V
+	public final fun setLibrarySources (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibrarySourceModule;)V
+}
+
+public final class org/jetbrains/kotlin/analysis/project/structure/builder/KtLibrarySourceModuleBuilder : org/jetbrains/kotlin/analysis/project/structure/builder/KtModuleBuilder {
+	public field binaryLibrary Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;
+	public field contentScope Lcom/intellij/psi/search/GlobalSearchScope;
+	public field libraryName Ljava/lang/String;
+	public fun <init> (Lcom/intellij/openapi/project/Project;)V
+	public fun build ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibrarySourceModule;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public final fun getBinaryLibrary ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;
+	public final fun getContentScope ()Lcom/intellij/psi/search/GlobalSearchScope;
+	public final fun getLibraryName ()Ljava/lang/String;
+	public final fun setBinaryLibrary (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;)V
+	public final fun setContentScope (Lcom/intellij/psi/search/GlobalSearchScope;)V
+	public final fun setLibraryName (Ljava/lang/String;)V
+}
+
+public abstract class org/jetbrains/kotlin/analysis/project/structure/builder/KtModuleBuilder {
+	public field platform Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public fun <init> ()V
+	public final fun addDependsOnDependency (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)V
+	public final fun addFriendDependency (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)V
+	public final fun addRegularDependency (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)V
+	public abstract fun build ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	protected final fun getDirectDependsOnDependencies ()Ljava/util/List;
+	protected final fun getDirectFriendDependencies ()Ljava/util/List;
+	protected final fun getDirectRegularDependencies ()Ljava/util/List;
+	public final fun getPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun setPlatform (Lorg/jetbrains/kotlin/platform/TargetPlatform;)V
+}
+
+public final class org/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder {
+	public field platform Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public fun <init> (Lcom/intellij/core/CoreApplicationEnvironment;Lcom/intellij/openapi/project/Project;)V
+	public final fun addModule (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public final fun build ()Lorg/jetbrains/kotlin/analysis/api/standalone/base/projectStructure/KotlinStaticProjectStructureProvider;
+	public final fun getCoreApplicationEnvironment ()Lcom/intellij/core/CoreApplicationEnvironment;
+	public final fun getPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun getProject ()Lcom/intellij/openapi/project/Project;
+	public final fun setPlatform (Lorg/jetbrains/kotlin/platform/TargetPlatform;)V
+}
+
+public final class org/jetbrains/kotlin/analysis/project/structure/builder/KtScriptModuleBuilder : org/jetbrains/kotlin/analysis/project/structure/builder/KtModuleBuilder {
+	public field file Lorg/jetbrains/kotlin/psi/KtFile;
+	public fun <init> (Lcom/intellij/openapi/project/Project;)V
+	public synthetic fun build ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public fun build ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaScriptModule;
+	public final fun getFile ()Lorg/jetbrains/kotlin/psi/KtFile;
+	public final fun getLanguageVersionSettings ()Lorg/jetbrains/kotlin/config/LanguageVersionSettings;
+	public final fun setFile (Lorg/jetbrains/kotlin/psi/KtFile;)V
+	public final fun setLanguageVersionSettings (Lorg/jetbrains/kotlin/config/LanguageVersionSettings;)V
+}
+
+public final class org/jetbrains/kotlin/analysis/project/structure/builder/KtSdkModuleBuilder : org/jetbrains/kotlin/analysis/project/structure/builder/KtLibraryModuleBuilder {
+	public fun <init> (Lcom/intellij/core/CoreApplicationEnvironment;Lcom/intellij/openapi/project/Project;)V
+	public final fun addBinaryRootsFromJdkHome (Ljava/nio/file/Path;Z)V
+}
+
+public final class org/jetbrains/kotlin/analysis/project/structure/builder/KtSourceModuleBuilder : org/jetbrains/kotlin/analysis/project/structure/builder/KtModuleBuilder {
+	public field moduleName Ljava/lang/String;
+	public fun <init> (Lcom/intellij/core/CoreApplicationEnvironment;Lcom/intellij/openapi/project/Project;)V
+	public final fun addSourceRoot (Ljava/nio/file/Path;)V
+	public final fun addSourceRoots (Ljava/util/Collection;)V
+	public final fun addSourceVirtualFile (Lcom/intellij/openapi/vfs/VirtualFile;)V
+	public final fun addSourceVirtualFiles (Ljava/util/Collection;)V
+	public synthetic fun build ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public fun build ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaSourceModule;
+	public final fun getContentScope ()Lcom/intellij/psi/search/GlobalSearchScope;
+	public final fun getLanguageVersionSettings ()Lorg/jetbrains/kotlin/config/LanguageVersionSettings;
+	public final fun getModuleName ()Ljava/lang/String;
+	public final fun setContentScope (Lcom/intellij/psi/search/GlobalSearchScope;)V
+	public final fun setLanguageVersionSettings (Lorg/jetbrains/kotlin/config/LanguageVersionSettings;)V
+	public final fun setModuleName (Ljava/lang/String;)V
+}
+
