@@ -15,13 +15,14 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
+    val k1BoxTestDir = "multiplatform/k1"
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/klib-compatibility/tests-gen", "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomJsCompilerFirstPhaseTest>(
                 annotations = listOf(annotation(HeavyTest::class.java))
             ) {
-                model("box", excludeDirs = jvmOnlyBoxTests)
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("boxInline")
             }
         }
@@ -29,7 +30,7 @@ fun main(args: Array<String>) {
             testClass<AbstractCustomJsCompilerSecondPhaseTest>(
                 annotations = listOf(annotation(HeavyTest::class.java))
             ) {
-                model("box", excludeDirs = jvmOnlyBoxTests)
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("boxInline")
             }
         }
