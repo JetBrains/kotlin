@@ -31,7 +31,6 @@ import java.net.URI
 // Gradle 7.6 javadoc does not have published 'package-list' file
 internal fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(pluginVariant: GradlePluginVariant) {
     if (pluginVariant == GradlePluginVariant.GRADLE_MIN ||
-        pluginVariant == GradlePluginVariant.GRADLE_80 ||
         pluginVariant == GradlePluginVariant.GRADLE_81 ||
         pluginVariant == GradlePluginVariant.GRADLE_82 ||
         pluginVariant == GradlePluginVariant.GRADLE_85 ||
