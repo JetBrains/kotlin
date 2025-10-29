@@ -5,12 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+/**
+ * @param mode
+ */
 enum class JsMainFunctionExecutionMode(val mode: String) {
+    /***/
     CALL("call"),
+    /***/
     NO_CALL("noCall"),
     ;
 
+    /***/
     companion object {
+        /***/
         @JvmStatic
         fun fromMode(mode: String): JsMainFunctionExecutionMode =
             JsMainFunctionExecutionMode.values().firstOrNull { it.mode == mode }
