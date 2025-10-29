@@ -16,6 +16,7 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.nativeDistribution.asProperties
 import org.jetbrains.kotlin.nativeDistribution.llvmDistributionSource
@@ -45,6 +46,16 @@ open class PlatformManagerProvider @Inject constructor(
 
     @get:Input
     val konanPropertiesOverride: Map<String, String> = project.llvmDistributionSource.asProperties
+
+    /**
+     * [PlatformManager] may depend on the current host, so the current host must be an input
+     *
+     * One example is `llvm`: we do not guarantee that llvm version is the same between Linux and macOS.
+     * There could be other problems as well.
+     */
+    @get:Input
+    @Suppress("UNUSED") // used by Gradle via reflection
+    protected val currentHost = HostManager.host
 
     @get:Input
     @get:Optional
