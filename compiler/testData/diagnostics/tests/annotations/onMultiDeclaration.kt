@@ -1,7 +1,7 @@
-// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 fun test(): Any? {
-    <!WRONG_ANNOTATION_TARGET!>@ann<!> val (a, b) = P(1, 1)
+    @ann val (a, b) = P(1, 1)
     return a + b
 }
 
