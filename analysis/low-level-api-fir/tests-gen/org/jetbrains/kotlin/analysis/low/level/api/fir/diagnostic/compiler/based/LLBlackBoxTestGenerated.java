@@ -54557,6 +54557,18 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("brokenDefaultParametersFromDifferentFunctions.kt")
+      public void testBrokenDefaultParametersFromDifferentFunctions() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt");
+      }
+
+      @Test
+      @TestMetadata("brokenDefaultParametersFromDifferentFunctionsJvmDefault.kt")
+      public void testBrokenDefaultParametersFromDifferentFunctionsJvmDefault() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctionsJvmDefault.kt");
+      }
+
+      @Test
       @TestMetadata("companionObject.kt")
       public void testCompanionObject() {
         runTest("compiler/testData/codegen/box/reflection/callBy/companionObject.kt");
