@@ -489,7 +489,9 @@ class JsSymbols(
             .filter { it.name != "LONG" && it.name != "CHAR" } // skip due to they have own explicit companions
             .map { it.typeName }
 
-        return numbers + listOf(Name.identifier("String"), Name.identifier("Boolean"))
+        val primitiveArrays = PrimitiveType.entries.map { it.arrayTypeName }
+
+        return numbers + primitiveArrays + listOf(Name.identifier("Array"), Name.identifier("String"), Name.identifier("Boolean"))
     }
 
     val newThrowableSymbol = CallableIds.newThrowable.functionSymbol()
