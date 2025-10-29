@@ -27,7 +27,7 @@ import java.lang.ref.SoftReference
 import java.net.URL
 import java.net.URLClassLoader
 
-abstract class KotlinStandardLibrariesPathProvider : TestService {
+interface KotlinStandardLibrariesPathProvider : TestService {
     companion object {
         @Volatile
         private var runtimeJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
@@ -137,7 +137,7 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
     }
 }
 
-object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPathProvider() {
+object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPathProvider {
     override fun runtimeJarForTests(): File =
         extractFromPropertyFirstFile(KOTLIN_FULL_STDLIB_PATH) { ForTestCompileRuntime.runtimeJarForTests() }
 
@@ -218,7 +218,7 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
     }
 }
 
-object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPathProvider() {
+object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPathProvider {
     const val KOTLIN_STDLIB_PROP = "org.jetbrains.kotlin.test.kotlin-stdlib"
     const val KOTLIN_STDLIB_JS_PROP = "org.jetbrains.kotlin.test.kotlin-stdlib-js"
     const val KOTLIN_STDLIB_JDK8_PROP = "org.jetbrains.kotlin.test.kotlin-stdlib-jdk8"

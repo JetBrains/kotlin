@@ -4,7 +4,9 @@
  */
 // WITH_STDLIB
 // WITH_REFLECT
-
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
+// ^^^ Illegal value: <T>
+//     at assertNotEquals
 
 import kotlin.test.*
 import kotlin.reflect.*

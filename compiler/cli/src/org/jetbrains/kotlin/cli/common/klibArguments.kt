@@ -132,7 +132,7 @@ private class DisposableZipFileSystemAccessor(
     }
 }
 
-private fun CompilerConfiguration.setupKlibAbiCompatibilityLevel() {
+fun CompilerConfiguration.setupKlibAbiCompatibilityLevel() {
     val languageVersionSettings = this[LANGUAGE_VERSION_SETTINGS]
         ?: error("Language version settings should be already set up")
 
