@@ -2267,6 +2267,21 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/destructuring"), Pattern.compile("^(.*)\\.kts?$"), null, true);
       }
 
+      @TestMetadata("annotationOnFullNameBasedDestructuring.kt")
+      public void testAnnotationOnFullNameBasedDestructuring() {
+        runTest("compiler/testData/psi/destructuring/annotationOnFullNameBasedDestructuring.kt");
+      }
+
+      @TestMetadata("annotationOnFullNameBasedDestructuringScript.kts")
+      public void testAnnotationOnFullNameBasedDestructuringScript() {
+        runTest("compiler/testData/psi/destructuring/annotationOnFullNameBasedDestructuringScript.kts");
+      }
+
+      @TestMetadata("danglingAnnotation.kt")
+      public void testDanglingAnnotation() {
+        runTest("compiler/testData/psi/destructuring/danglingAnnotation.kt");
+      }
+
       @TestMetadata("freezeKt79951.kt")
       public void testFreezeKt79951() {
         runTest("compiler/testData/psi/destructuring/freezeKt79951.kt");

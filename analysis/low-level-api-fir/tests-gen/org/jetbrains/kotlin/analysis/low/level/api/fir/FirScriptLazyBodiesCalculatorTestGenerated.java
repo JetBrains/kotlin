@@ -34,6 +34,12 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
     }
 
     @Test
+    @TestMetadata("annotationOnFullNameBasedDestructuringScript.kts")
+    public void testAnnotationOnFullNameBasedDestructuringScript() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnFullNameBasedDestructuringScript.kts");
+    }
+
+    @Test
     @TestMetadata("script.kts")
     public void testScript() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/script.kts");

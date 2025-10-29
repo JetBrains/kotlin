@@ -1,0 +1,7 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationOnFullNameBasedDestructuringKt]]
+  facadeFqName: AnnotationOnFullNameBasedDestructuringKt
+  partSimpleName: "AnnotationOnFullNameBasedDestructuringKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=test1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test1]
+    VALUE_PARAMETER_LIST

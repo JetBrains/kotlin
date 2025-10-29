@@ -1,0 +1,71 @@
+FILE: annotationOnFullNameBasedDestructuringScript.kts
+    SCRIPT: <script-annotationOnFullNameBasedDestructuringScript.kts>
+
+        public final? [ContainingScriptKey=FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts>, ScriptTopLevelDeclaration=true] annotation class Ann : R|kotlin/Annotation| {
+            public? [ContainingClassKey=Ann] constructor([CorrespondingProperty=/Ann.x] x: String = String()): R|Ann| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [IsFromPrimaryConstructor=true] val x: String = R|<local>/x|
+                public? [ContainingClassKey=Ann] get(): String
+
+        }
+
+        public final? data [ContainingScriptKey=FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
+            public? [ContainingClassKey=Foo] constructor([CorrespondingProperty=/Foo.first] first: String): R|Foo| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [ComponentFunctionSymbolKey=/Foo.component1, IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+                public? [ContainingClassKey=Foo] get(): String
+
+            public? final operator fun component1(): String
+
+            public? final fun copy(first: String = this@R|/Foo|.R|/Foo.first|): R|Foo|
+
+        }
+
+        public? final? [ScriptTopLevelDeclaration=true] val x: <implicit> = Foo#(String())
+            public? get(): <implicit>
+
+        [ScriptTopLevelDeclaration=true] init {
+            @Ann(ERROR_EXPR(Argument is absent)) first#
+        }
+
+        [ScriptTopLevelDeclaration=true] init {
+            x#
+        }
+
+        [ScriptTopLevelDeclaration=true] init {
+            @Ann(ERROR_EXPR(Argument is absent)) a# = first#
+        }
+
+        [ScriptTopLevelDeclaration=true] init {
+            x#
+        }
+
+        @Ann() [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = x#
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] var b: <implicit> = R|<local>/<destruct>|.first#
+            public get(): <implicit>
+            public set(value: <implicit>): R|kotlin/Unit|
+
+        @Ann(String()) [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = x#
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] var c: <implicit> = R|<local>/<destruct>|.first#
+            public get(): <implicit>
+            public set(value: <implicit>): R|kotlin/Unit|
+
+        [ScriptTopLevelDeclaration=true] init {
+            @Ann(ERROR_EXPR(Argument is absent)) d# = first#
+        }
+
+        [ScriptTopLevelDeclaration=true] init {
+            x#
+        }
+
+        @Ann() [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = x#
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val e: <implicit> = R|<local>/<destruct>|.first#
+            public get(): <implicit>
+
+        @Ann(String()) [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = x#
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val f: <implicit> = R|<local>/<destruct>|.first#
+            public get(): <implicit>

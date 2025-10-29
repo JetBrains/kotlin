@@ -2574,6 +2574,24 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("annotationOnFullNameBasedDestructuring.kt")
+    public void testAnnotationOnFullNameBasedDestructuring() {
+      runTest("compiler/testData/psi/destructuring/annotationOnFullNameBasedDestructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnFullNameBasedDestructuringScript.kts")
+    public void testAnnotationOnFullNameBasedDestructuringScript() {
+      runTest("compiler/testData/psi/destructuring/annotationOnFullNameBasedDestructuringScript.kts");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotation.kt")
+    public void testDanglingAnnotation() {
+      runTest("compiler/testData/psi/destructuring/danglingAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("freezeKt79951.kt")
     public void testFreezeKt79951() {
       runTest("compiler/testData/psi/destructuring/freezeKt79951.kt");

@@ -1,0 +1,14 @@
+FILE: annotationOnFullNameBasedDestructuring.kt
+    public? final? fun test1(): R|kotlin/Unit| {
+        @Ann(ERROR_EXPR(Argument is absent)) first#
+        @Ann(ERROR_EXPR(Argument is absent)) first#
+        @Ann() lval <destruct>: <implicit> = x#
+        lvar first: <implicit> = R|<local>/<destruct>|.first#
+        @Ann(String()) lval <destruct>: <implicit> = x#
+        lvar first: <implicit> = R|<local>/<destruct>|.first#
+        @Ann(ERROR_EXPR(Argument is absent)) first#
+        @Ann() lval <destruct>: <implicit> = x#
+        lval first: <implicit> = R|<local>/<destruct>|.first#
+        @Ann(String()) lval <destruct>: <implicit> = x#
+        lval first: <implicit> = R|<local>/<destruct>|.first#
+    }
