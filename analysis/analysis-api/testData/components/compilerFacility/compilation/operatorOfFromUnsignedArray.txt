@@ -1,0 +1,82 @@
+// class version 52.0 (52)
+// access flags 0x31
+public final class OperatorOfFromUnsignedArrayKt {
+
+  // compiled from: operatorOfFromUnsignedArray.kt
+
+  @Lkotlin/Metadata;(mv={2, 3, 0}, k=2, xi=48, d1={"\u0000\u0014\n\u0000\n\u0002\u0010\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0008\u0003\u001a\u0019\u0010\u0000\u001a\u00020\u00012\n\u0010\u0002\u001a\u00020\u0003\"\u00020\u0004\u00a2\u0006\u0004\u0008\u0005\u0010\u0006\u001a\u0006\u0010\u0007\u001a\u00020\u0001"}, d2={"takeULongs", "", "ulong", "Lkotlin/ULongArray;", "Lkotlin/ULong;", "takeULongs-QwZRm1k", "([J)V", "main"})
+
+  // access flags 0x99
+  public final static varargs takeULongs-QwZRm1k([J)V
+    // annotable parameter count: 1 (invisible)
+    @Lorg/jetbrains/annotations/NotNull;() // invisible, parameter 0
+   L0
+    ALOAD 0
+    LDC "$v$c$kotlin-ULongArray$-ulong$0"
+    INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkNotNullParameter (Ljava/lang/Object;Ljava/lang/String;)V
+   L1
+    LINENUMBER 6 L1
+    RETURN
+   L2
+    LOCALVARIABLE $v$c$kotlin-ULongArray$-ulong$0 [J L0 L2 0
+    MAXSTACK = 2
+    MAXLOCALS = 1
+
+  // access flags 0x19
+  public final static main()V
+   L0
+    LINENUMBER 10 L0
+    ICONST_3
+    NEWARRAY T_LONG
+    ASTORE 1
+    ALOAD 1
+    ICONST_0
+    LCONST_1
+    LASTORE
+    ALOAD 1
+    ICONST_1
+    LDC 2
+    LASTORE
+    ALOAD 1
+    ICONST_2
+    LDC 3
+    LASTORE
+    ALOAD 1
+    ASTORE 0
+   L1
+    LINENUMBER 11 L1
+    ICONST_3
+    NEWARRAY T_LONG
+    ASTORE 1
+    ALOAD 1
+    ICONST_0
+    LCONST_1
+    LASTORE
+    ALOAD 1
+    ICONST_1
+    LDC 2
+    LASTORE
+    ALOAD 1
+    ICONST_2
+    LDC 3
+    LASTORE
+    ALOAD 1
+    INVOKESTATIC OperatorOfFromUnsignedArrayKt.takeULongs-QwZRm1k ([J)V
+   L2
+    LINENUMBER 12 L2
+    RETURN
+   L3
+    LOCALVARIABLE it [J L1 L3 0
+    MAXSTACK = 4
+    MAXLOCALS = 2
+
+  // access flags 0x1009
+  public static synthetic main([Ljava/lang/String;)V
+   L0
+    INVOKESTATIC OperatorOfFromUnsignedArrayKt.main ()V
+    RETURN
+   L1
+    LOCALVARIABLE args [Ljava/lang/String; L0 L1 0
+    MAXSTACK = 0
+    MAXLOCALS = 1
+}
