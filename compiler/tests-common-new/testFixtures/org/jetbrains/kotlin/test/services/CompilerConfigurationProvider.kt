@@ -187,6 +187,9 @@ fun createCompilerConfiguration(
     configuration.messageCollector = messageCollector
     configuration.languageVersionSettings = module.languageVersionSettings
     configuration.targetPlatform = module.targetPlatform(testServices)
+    KlibAbiCompatibilityLevel.fromLanguageVersion(module.languageVersionSettings.languageVersion)?.let {
+        configuration.klibAbiCompatibilityLevel = it
+    }
 
     for (configurator in configurators) {
         if (compilationStage == configurator.compilationStage) {

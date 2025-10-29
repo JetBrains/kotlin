@@ -2,7 +2,8 @@
 // LANGUAGE: +SuspendFunctionAsSupertype
 // LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // ^^^ This test demonstrates how after IR Inliner on 1st phase, there is no discrepancy in the name of value parameter of `FAKE_OVERRIDE name:invoke`
-
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
+// ^^^ IrReturnableBlockImpl serialization is not supported at ABI compatibility level 2.2:
 import kotlin.coroutines.*
 
 var failure: String? = "FAIL ILLEGAL STATE"
