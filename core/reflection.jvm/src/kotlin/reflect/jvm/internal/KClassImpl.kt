@@ -441,6 +441,9 @@ internal class KClassImpl<T : Any>(
             member.kind.isReal == (this == DECLARED)
     }
 
+    override val functionsMetadata: Collection<KmFunction>
+        get() = kmClass?.functions.orEmpty()
+
     override val propertiesMetadata: Collection<KmProperty>
         get() = kmClass?.properties.orEmpty()
 

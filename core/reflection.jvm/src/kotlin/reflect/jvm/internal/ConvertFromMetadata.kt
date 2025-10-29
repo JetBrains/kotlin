@@ -307,3 +307,9 @@ internal fun createProperty(property: KmProperty, container: KDeclarationContain
         "Unsupported property: name=${property.name} signature=$signature container=$container"
     )
 }
+
+internal fun createFunction(function: KmFunction, container: KDeclarationContainerImpl): KotlinKFunction {
+    val signature = function.signature?.toString()
+        ?: throw KotlinReflectionInternalError("No signature for function: ${function.name}")
+    return KotlinKFunction(container, signature, CallableReference.NO_RECEIVER, function)
+}
