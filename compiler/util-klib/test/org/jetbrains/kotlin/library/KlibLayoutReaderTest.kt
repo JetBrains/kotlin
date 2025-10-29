@@ -148,9 +148,9 @@ class KlibLayoutReaderTest {
 private class TestLib(val location: KlibFile) {
     private val layoutReaderFactory = KlibLayoutReaderFactory(location, ZipFileSystemInPlaceAccessor)
 
-    private val components: Map<KlibComponent.Kind<*>, KlibComponent> = KlibComponentsBuilder(layoutReaderFactory = layoutReaderFactory)
-        .withMandatory(TestMandatoryComponent.Kind, ::TestMandatoryComponentLayout, ::TestMandatoryComponentImpl)
-        .withOptional(TestOptionalComponent.Kind, ::TestOptionalComponentLayout, ::TestOptionalComponentImpl)
+    private val components: Map<KlibComponent.Kind<*, *>, KlibComponent> = KlibComponentsBuilder(layoutReaderFactory = layoutReaderFactory)
+        .withComponent(TestMandatoryComponent.Kind, ::TestMandatoryComponentLayout, ::TestMandatoryComponentImpl)
+        .withComponent(TestOptionalComponent.Kind, ::TestOptionalComponentLayout, ::TestOptionalComponentImpl)
         .build()
 
     val mandatoryComponent: TestMandatoryComponent
@@ -163,11 +163,11 @@ private class TestLib(val location: KlibFile) {
     override fun toString() = location.absolutePath
 }
 
-private interface TestOptionalComponent : KlibOptionalComponent {
+private interface TestOptionalComponent : KlibComponent {
     val stringValue: String
     val pathsOfExtractedFiles: Collection<String>
 
-    companion object Kind : KlibOptionalComponent.Kind<TestOptionalComponent, TestOptionalComponentLayout> {
+    companion object Kind : KlibComponent.Kind<TestOptionalComponent, TestOptionalComponentLayout> {
         override fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<TestOptionalComponentLayout>) =
             layoutReader.readInPlaceOrFallback(false) { it.baseDir.exists }
     }
@@ -189,10 +189,12 @@ private class TestOptionalComponentLayout(root: KlibFile) : KlibComponentLayout(
     val extractedFilesDir: KlibFile get() = baseDir.child(OPTIONAL_COMPONENT_EXTRACTED_FILES_FOLDER_NAME)
 }
 
-private interface TestMandatoryComponent : KlibMandatoryComponent {
+private interface TestMandatoryComponent : KlibComponent {
     val intValue: Int
 
-    companion object Kind : KlibMandatoryComponent.Kind<TestMandatoryComponent>
+    companion object Kind : KlibComponent.Kind<TestMandatoryComponent, TestMandatoryComponentLayout> {
+        override fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<TestMandatoryComponentLayout>) = true
+    }
 }
 
 private class TestMandatoryComponentImpl(private val layoutReader: KlibLayoutReader<TestMandatoryComponentLayout>) : TestMandatoryComponent {
