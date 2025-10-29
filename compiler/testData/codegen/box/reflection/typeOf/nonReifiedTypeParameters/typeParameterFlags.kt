@@ -1,5 +1,8 @@
 // WITH_REFLECT
 // WITH_STDLIB
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
+// ^^^ Expected <in IN>, actual <IN>.
+//     at assertEquals
 
 // FILE: lib.kt
 package test

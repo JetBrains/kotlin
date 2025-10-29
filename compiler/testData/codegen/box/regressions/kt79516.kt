@@ -1,3 +1,5 @@
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
+// ^^^ KT-79516 is fixed in 2.2.20-Beta1
 interface Key<T, R>
 
 interface ErrorTest {

@@ -17,4 +17,14 @@ object CustomKlibCompilerTestDirectives : SimpleDirectivesContainer() {
             to be ignored.
         """.trimIndent(),
     )
+
+    val IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE by stringDirective(
+        description = """
+            Ignore a KLIB forward-compatibility test (i.e. the test with the custom KLIB compiler version
+            used on the second phase of the test pipeline).
+            
+            The value of this directive is the specific compiler version prefixes where the test is expected
+            to be ignored.
+        """.trimIndent(),
+    )
 }
