@@ -74,7 +74,8 @@ public actual annotation class JsName(actual val name: String)
  */
 @ExperimentalStdlibApi
 @Retention(AnnotationRetention.BINARY)
-@Target(FUNCTION, CONSTRUCTOR)
+@Target(FUNCTION)
+@SinceKotlin("2.3")
 public actual annotation class JsSymbol(actual val name: String)
 
 /**

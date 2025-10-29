@@ -24,7 +24,8 @@ public expect annotation class JsName(val name: String)
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol#well-known_symbols
  */
 @ExperimentalStdlibApi
-@Target(FUNCTION, CONSTRUCTOR)
+@Target(FUNCTION)
+@SinceKotlin("2.3")
 @OptionalExpectation
 public expect annotation class JsSymbol(val name: String)
 
