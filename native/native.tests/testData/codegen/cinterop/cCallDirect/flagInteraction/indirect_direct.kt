@@ -10,6 +10,7 @@ headers = lib.h
 
 // FILE: lib.h
 int foo(int);
+extern int bar;
 
 // FILE: lib.c
 #include "lib.h"
@@ -18,11 +19,19 @@ int foo(int p) {
     return p + 1;
 }
 
+int bar = 2;
+
 // MODULE: main(cinterop)
 // FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
+import lib.*
+
 fun box(): String {
-    val result = lib.foo(4)
-    return if (result != 5) "FAIL: $result" else "OK"
+    val result = foo(4)
+    if (result != 5) return "FAIL 1: $result"
+
+    if (bar != 2) return "FAIL 2: $bar"
+
+    return "OK"
 }

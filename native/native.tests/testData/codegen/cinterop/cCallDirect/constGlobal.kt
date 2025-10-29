@@ -1,37 +1,24 @@
 // TARGET_BACKEND: NATIVE
-
-// IGNORE_BACKEND: NATIVE
 // FREE_CINTEROP_ARGS: -Xccall-mode direct
-// FREE_COMPILER_ARGS: -Xbinary=cCallMode=indirect
-
 // MODULE: cinterop
 // FILE: lib.def
 headers = lib.h
 
 // FILE: lib.h
-int foo(int);
-extern int bar;
+extern const long long constGlobal;
 
 // FILE: lib.c
 #include "lib.h"
 
-int foo(int p) {
-    return p + 1;
-}
-
-int bar = 2;
+const long long constGlobal = 0x100000000L;
 
 // MODULE: main(cinterop)
 // FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
-import lib.*
-
 fun box(): String {
-    val result = foo(4)
-    if (result != 5) return "FAIL 1: $result"
-
-    if (bar != 2) return "FAIL 2: $bar"
+    val result = lib.constGlobal
+    if (result != UInt.MAX_VALUE.toLong() + 1) return "FAIL: $result"
 
     return "OK"
 }

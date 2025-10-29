@@ -1,25 +1,16 @@
 // TARGET_BACKEND: NATIVE
-
-// IGNORE_BACKEND: NATIVE
 // FREE_CINTEROP_ARGS: -Xccall-mode direct
-// FREE_COMPILER_ARGS: -Xbinary=cCallMode=indirect
-
 // MODULE: cinterop
 // FILE: lib.def
 headers = lib.h
 
 // FILE: lib.h
-int foo(int);
-extern int bar;
+extern unsigned long long globalWithAsm __asm("globalWithAsm0");
 
 // FILE: lib.c
 #include "lib.h"
 
-int foo(int p) {
-    return p + 1;
-}
-
-int bar = 2;
+unsigned long long globalWithAsm = 333ULL;
 
 // MODULE: main(cinterop)
 // FILE: main.kt
@@ -28,10 +19,5 @@ int bar = 2;
 import lib.*
 
 fun box(): String {
-    val result = foo(4)
-    if (result != 5) return "FAIL 1: $result"
-
-    if (bar != 2) return "FAIL 2: $bar"
-
-    return "OK"
+    return if (globalWithAsm != 333uL) "FAIL: $globalWithAsm" else "OK"
 }

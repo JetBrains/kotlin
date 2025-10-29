@@ -37,6 +37,7 @@ private val cCall = RuntimeNames.cCall
 fun IrFunction.isCFunctionOrGlobalAccessor(): Boolean =
         annotations.hasAnnotation(RuntimeNames.cCall)
                 || annotations.hasAnnotation(RuntimeNames.cCallDirect)
+                || this.isCGlobalAccess()
 
 fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
         this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
@@ -123,3 +124,6 @@ fun cBoolType(target: KonanTarget): CType? = when (target.family) {
     Family.IOS, Family.TVOS, Family.WATCHOS -> CTypes.C99Bool
     else -> CTypes.signedChar
 }
+
+fun IrFunction.isCGlobalAccess(): Boolean =
+    this.hasAnnotation(RuntimeNames.cGlobalAccess)
