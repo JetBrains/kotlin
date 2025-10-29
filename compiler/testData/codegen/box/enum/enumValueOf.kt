@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
+// KT-78701: Fixed in 2.2.20-Beta2
 
 import kotlin.test.assertSame
 import kotlin.test.assertFailsWith

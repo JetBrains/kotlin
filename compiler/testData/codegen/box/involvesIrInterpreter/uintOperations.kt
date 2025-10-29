@@ -1,6 +1,8 @@
 // LANGUAGE: +IntrinsicConstEvaluation
 // IGNORE_BACKEND_K1: ANY
 // ^^^^^^^^^^^^^^^^^^^^^^ Unsigned operations will not be supported in the legacy K1 frontend.
+// IGNORE_KLIB_1ST_PHASE_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0 2.3.0
+// KT-51065: Fixed in 2.3.20-Beta1
 // WITH_STDLIB
 fun <T> T.id() = this
 

@@ -6,6 +6,7 @@ plugins {
     id("java-test-fixtures")
     id("d8-configuration")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -140,5 +141,8 @@ tasks.test {
 
 projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt")
+    testData(project(":compiler").isolated, "testData/codegen/box")
+    testData(project(":compiler").isolated, "testData/codegen/boxInline")
+    testData(project(":js").isolated, "js.translator/testData")
 }
 

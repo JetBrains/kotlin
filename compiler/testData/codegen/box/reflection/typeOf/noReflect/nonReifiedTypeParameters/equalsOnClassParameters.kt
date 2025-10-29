@@ -1,4 +1,7 @@
 // WITH_STDLIB
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
+// ^^^ Illegal value: <X>
+//     at assertNotEquals
 
 package test
 

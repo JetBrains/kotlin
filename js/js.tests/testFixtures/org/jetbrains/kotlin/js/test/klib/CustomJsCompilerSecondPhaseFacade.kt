@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
@@ -59,6 +60,7 @@ class CustomJsCompilerSecondPhaseFacade(
 
                     K2JSCompilerArguments::outputDir.cliArgument, jsArtifactFile.parentFile.path,
                     K2JSCompilerArguments::moduleName.cliArgument, module.name,
+                    CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
                 ),
                 runIf(regularAndFriendDependencies.isNotEmpty()) {
                     listOf(
