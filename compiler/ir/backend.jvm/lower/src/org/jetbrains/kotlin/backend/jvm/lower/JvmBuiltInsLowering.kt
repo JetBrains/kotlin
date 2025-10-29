@@ -43,17 +43,14 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
                     return expression.replaceWithCallTo(jvm8Replacement)
                 }
 
-                return when {
-                    callee.isArrayOf() ->
-                        expression.arguments[0]
-                            ?: throw AssertionError("Argument #0 expected: ${expression.dump()}")
-
-                    callee.isEmptyArray() ->
-                        context.createJvmIrBuilder(currentScope!!, expression).irArrayOf(expression.type)
-
-                    else ->
-                        expression
+                expression.arrayOfVarargArgument?.let {
+                    return it
                 }
+
+                if (callee.isEmptyArray())
+                    return context.createJvmIrBuilder(currentScope!!, expression).irArrayOf(expression.type)
+
+                return expression
             }
         }
 
