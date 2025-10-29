@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
 
 /**
  * The default implementation of [KlibIrComponent].
- *
- * TODO (KT-81411): This class is an implementation detail. It should be made internal after dropping `KonanLibraryImpl`.
  */
-class KlibIrComponentImpl(
+internal class KlibIrComponentImpl(
     private val layoutReader: KlibLayoutReader<KlibIrComponentLayout>
 ) : KlibIrComponent {
 
