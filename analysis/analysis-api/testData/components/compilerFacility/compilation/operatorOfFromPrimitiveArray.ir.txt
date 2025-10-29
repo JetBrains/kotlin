@@ -1,0 +1,25 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:operatorOfFromPrimitiveArray.kt
+    FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
+      annotations:
+        OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      BLOCK_BODY
+        VAR name:it type:kotlin.LongArray [val]
+          CALL 'public final fun of (vararg elements: kotlin.Long): kotlin.LongArray [operator] declared in kotlin.LongArray.Companion' type=kotlin.LongArray origin=null
+            ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.LongArray.Companion
+            ARG elements: VARARG type=kotlin.LongArray varargElementType=kotlin.Long
+              CONST Long type=kotlin.Long value=1
+              CONST Long type=kotlin.Long value=2
+              CONST Long type=kotlin.Long value=3
+        CALL 'public final fun takeLongs (vararg longs: kotlin.Long): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          ARG longs: VARARG type=kotlin.LongArray varargElementType=kotlin.Long
+            SPREAD_ELEMENT
+              CALL 'public final fun of (vararg elements: kotlin.Long): kotlin.LongArray [operator] declared in kotlin.LongArray.Companion' type=kotlin.LongArray origin=null
+                ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.LongArray.Companion
+                ARG elements: VARARG type=kotlin.LongArray varargElementType=kotlin.Long
+                  CONST Long type=kotlin.Long value=1
+                  CONST Long type=kotlin.Long value=2
+                  CONST Long type=kotlin.Long value=3
+    FUN name:takeLongs visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:Regular name:longs index:0 type:kotlin.LongArray varargElementType:kotlin.Long [vararg]
+      BLOCK_BODY

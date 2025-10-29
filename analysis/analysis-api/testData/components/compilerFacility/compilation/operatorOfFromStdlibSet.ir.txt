@@ -1,0 +1,14 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:operatorOfFromStdlibSet.kt
+    FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
+      annotations:
+        OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      BLOCK_BODY
+        VAR name:it type:kotlin.collections.Set<kotlin.Long> [val]
+          CALL 'public final fun of <T> (vararg elements: T of kotlin.collections.Set.Companion.of): kotlin.collections.Set<T of kotlin.collections.Set.Companion.of> [operator] declared in kotlin.collections.Set.Companion' type=kotlin.collections.Set<kotlin.Long> origin=null
+            TYPE_ARG T: kotlin.Long
+            ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.collections.Set.Companion
+            ARG elements: VARARG type=kotlin.Array<out kotlin.Long> varargElementType=kotlin.Long
+              CONST Long type=kotlin.Long value=1
+              CONST Long type=kotlin.Long value=2
+              CONST Long type=kotlin.Long value=3
