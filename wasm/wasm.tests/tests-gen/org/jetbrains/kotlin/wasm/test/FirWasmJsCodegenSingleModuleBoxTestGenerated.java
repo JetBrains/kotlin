@@ -27231,6 +27231,18 @@ public class FirWasmJsCodegenSingleModuleBoxTestGenerated extends AbstractFirWas
     }
 
     @Test
+    @TestMetadata("inlineFunctionOverridesAbstractMethodWithDefaultValue.kt")
+    public void testInlineFunctionOverridesAbstractMethodWithDefaultValue() {
+      runTest("compiler/testData/codegen/box/inline/inlineFunctionOverridesAbstractMethodWithDefaultValue.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationEnabled.kt")
+    public void testInlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationEnabled() {
+      runTest("compiler/testData/codegen/box/inline/inlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationEnabled.kt");
+    }
+
+    @Test
     @TestMetadata("inlinedLambdaWithErasedParamType.kt")
     public void testInlinedLambdaWithErasedParamType() {
       runTest("compiler/testData/codegen/box/inline/inlinedLambdaWithErasedParamType.kt");
