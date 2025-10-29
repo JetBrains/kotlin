@@ -6,13 +6,25 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
 object CompanionObjectMapping {
+    private val fqNamesWithOperatorOf: Set<FqName> = buildSet {
+        StandardNames.FqNames.run {
+            add(list)
+            add(mutableList)
+            add(set)
+            add(mutableSet)
+            add(array.toSafe())
+        }
+        addAll(PrimitiveType.entries.map(StandardNames::getPrimitiveArrayFqName))
+    }
+
     val classIds: Set<ClassId> = (
-            PrimitiveType.NUMBER_TYPES.map(StandardNames::getPrimitiveFqName) +
+            PrimitiveType.entries.map(StandardNames::getPrimitiveFqName) +
                     StandardNames.FqNames.string.toSafe() +
-                    StandardNames.FqNames._boolean.toSafe() +
-                    StandardNames.FqNames._enum.toSafe()
+                    StandardNames.FqNames._enum.toSafe() +
+                    fqNamesWithOperatorOf
             ).mapTo(linkedSetOf(), ClassId::topLevel)
 
     fun allClassesWithIntrinsicCompanions(): Set<ClassId> = classIds

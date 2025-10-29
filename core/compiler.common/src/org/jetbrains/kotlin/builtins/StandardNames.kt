@@ -333,4 +333,9 @@ object StandardNames {
     fun getPrimitiveFqName(primitiveType: PrimitiveType): FqName {
         return BUILT_INS_PACKAGE_FQ_NAME.child(primitiveType.typeName)
     }
+
+    @JvmStatic
+    fun getPrimitiveArrayFqName(primitiveType: PrimitiveType): FqName {
+        return BUILT_INS_PACKAGE_FQ_NAME.child(primitiveType.arrayTypeName)
+    }
 }
