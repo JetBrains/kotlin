@@ -40,8 +40,8 @@ class KlibTargetHierarchyTest {
 
     @Test
     fun testEveryMappedTargetIsWithinTheHierarchy() {
-        KlibTarget.Companion.supportedKonanNames().forEach { underlyingTarget ->
-            val name = KlibTarget.Companion.fromKonanTargetName(underlyingTarget).targetName
+        KlibTarget.supportedKonanNames().forEach { underlyingTarget ->
+            val name = KlibTarget.fromKonanTargetName(underlyingTarget).targetName
             assertNotNull(
                 TargetHierarchy.parent(name),
                 "Target $name.$underlyingTarget is missing from the hierarchy.")
@@ -50,7 +50,7 @@ class KlibTargetHierarchyTest {
 
     @Test
     fun testAllTargetsAreMapped() {
-        val notMappedTargets = KonanTarget.predefinedTargets.keys.subtract(KlibTarget.Companion.supportedKonanNames())
+        val notMappedTargets = KonanTarget.predefinedTargets.keys.subtract(KlibTarget.supportedKonanNames())
         assertEquals(emptySet(), notMappedTargets,
             "Following targets are not mapped: $notMappedTargets")
     }

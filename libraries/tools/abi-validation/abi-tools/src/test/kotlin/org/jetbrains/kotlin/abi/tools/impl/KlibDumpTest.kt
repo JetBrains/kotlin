@@ -239,22 +239,22 @@ class KlibDumpTest {
     @Test
     fun loadDumpWithSingleTarget() {
         val klibDump = AbiToolsImpl.loadKlibDump(asFile(rawLinuxDump))
-        assertEquals(setOf(KlibTarget.Companion.parse("linuxX64")), klibDump.targets)
+        assertEquals(setOf(KlibTarget.parse("linuxX64")), klibDump.targets)
         assertEquals(mergedLinuxDump, buildString { klibDump.print(this) })
 
         val mergedKlibDump = AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDump))
-        assertEquals(setOf(KlibTarget.Companion.parse("linuxX64")), mergedKlibDump.targets)
+        assertEquals(setOf(KlibTarget.parse("linuxX64")), mergedKlibDump.targets)
         assertEquals(mergedLinuxDump, buildString { mergedKlibDump.print(this) })
     }
 
     @Test
     fun mergeDumpWithSingleTarget() {
         val klibDump = AbiToolsImpl.createKlibDump().also { it.merge(asFile(rawLinuxDump)) }
-        assertEquals(setOf(KlibTarget.Companion.parse("linuxX64")), klibDump.targets)
+        assertEquals(setOf(KlibTarget.parse("linuxX64")), klibDump.targets)
         assertEquals(mergedLinuxDump, buildString { klibDump.print(this) })
 
         val mergedKlibDump = AbiToolsImpl.createKlibDump().also { it.merge(asFile(mergedLinuxDump)) }
-        assertEquals(setOf(KlibTarget.Companion.parse("linuxX64")), mergedKlibDump.targets)
+        assertEquals(setOf(KlibTarget.parse("linuxX64")), mergedKlibDump.targets)
         assertEquals(mergedLinuxDump, buildString { mergedKlibDump.print(this) })
     }
 
@@ -262,16 +262,16 @@ class KlibDumpTest {
     fun loadDumpWithSingleTargetWithCustomName() {
         val klibDump = AbiToolsImpl.loadKlibDump(asFile(rawLinuxDump))
         klibDump.setCustomName("testTarget")
-        assertEquals(setOf(KlibTarget.Companion.parse("linuxX64.testTarget")), klibDump.targets)
+        assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), klibDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { klibDump.print(this) })
 
         val mergedKlibDump = AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDump))
         mergedKlibDump.setCustomName("testTarget")
-        assertEquals(setOf(KlibTarget.Companion.parse("linuxX64.testTarget")), mergedKlibDump.targets)
+        assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), mergedKlibDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { mergedKlibDump.print(this) })
 
         val customTargetDump = AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDumpWithCustomName))
-        assertEquals(setOf(KlibTarget.Companion.parse("linuxX64.testTarget")), customTargetDump.targets)
+        assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), customTargetDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { customTargetDump.print(this) })
     }
 
@@ -279,17 +279,17 @@ class KlibDumpTest {
     fun mergeDumpWithSingleTargetWithCustomName() {
         val klibDump = AbiToolsImpl.createKlibDump().also { it.merge(asFile(rawLinuxDump)) }
         klibDump.setCustomName("testTarget")
-        assertEquals(setOf(KlibTarget.Companion.parse("linuxX64.testTarget")), klibDump.targets)
+        assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), klibDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { klibDump.print(this) })
 
         val mergedKlibDump =
             AbiToolsImpl.createKlibDump().also { it.merge(asFile(mergedLinuxDump)) }
         mergedKlibDump.setCustomName("testTarget")
-        assertEquals(setOf(KlibTarget.Companion.parse("linuxX64.testTarget")), mergedKlibDump.targets)
+        assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), mergedKlibDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { mergedKlibDump.print(this) })
 
         val customTargetDump = AbiToolsImpl.createKlibDump().also { it.merge(asFile(mergedLinuxDumpWithCustomName)) }
-        assertEquals(setOf(KlibTarget.Companion.parse("linuxX64.testTarget")), customTargetDump.targets)
+        assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), customTargetDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { customTargetDump.print(this) })
     }
 
@@ -336,7 +336,7 @@ class KlibDumpTest {
     @Test
     fun retainSingle() {
         val dump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
-        val singleTarget = KlibTarget.Companion.parse("androidNativeArm32")
+        val singleTarget = KlibTarget.parse("androidNativeArm32")
 
         dump.retain(setOf(singleTarget))
         assertEquals(setOf(singleTarget), dump.targets)
@@ -374,7 +374,7 @@ class KlibDumpTest {
     @Test
     fun removeSome() {
         val dump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
-        val singleTarget = KlibTarget.Companion.parse("androidNativeArm32")
+        val singleTarget = KlibTarget.parse("androidNativeArm32")
 
         dump.remove(dump.targets.subtract(setOf(singleTarget)))
         assertEquals(setOf(singleTarget), dump.targets)
@@ -385,17 +385,17 @@ class KlibDumpTest {
     fun removeOrRetainTargetsNotPresentedInDump() {
         val dump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
         val targets = setOf(*dump.targets.toTypedArray())
-        dump.remove(listOf(KlibTarget.Companion.parse("linuxX64.blablabla")))
+        dump.remove(listOf(KlibTarget.parse("linuxX64.blablabla")))
         assertEquals(targets, dump.targets)
 
-        dump.retain(listOf(KlibTarget.Companion.parse("macosArm64.macos")))
+        dump.retain(listOf(KlibTarget.parse("macosArm64.macos")))
         assertTrue(dump.targets.isEmpty())
     }
 
     @Test
     fun removeDeclarationsAlongWithTargets() {
         val dump = AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDumpWithTargetSpecificDeclaration))
-        val toRemove = KlibTarget.Companion.parse("linuxArm64")
+        val toRemove = KlibTarget.parse("linuxArm64")
 
         dump.remove(listOf(toRemove))
         assertEquals(mergedLinuxDump, buildString { dump.print(this) })
@@ -406,7 +406,7 @@ class KlibDumpTest {
         val dump = AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDumpWithTargetSpecificDeclaration))
         val copy = dump.copy()
 
-        dump.remove(listOf(KlibTarget.Companion.parse("linuxArm64")))
+        dump.remove(listOf(KlibTarget.parse("linuxArm64")))
         assertEquals(mergedLinuxDumpWithTargetSpecificDeclaration, buildString { copy.print(this) })
     }
 
@@ -434,7 +434,7 @@ class KlibDumpTest {
 
     @Test
     fun inferWithoutAnOldDump() {
-        val unsupportedTarget = KlibTarget.Companion.parse("iosArm64")
+        val unsupportedTarget = KlibTarget.parse("iosArm64")
 
         val linuxDump = AbiToolsImpl.loadKlibDump(
             asFile(
@@ -480,7 +480,7 @@ class KlibDumpTest {
 
     @Test
     fun inferFromAnOldDumpOnly() {
-        val unsupportedTarget = KlibTarget.Companion.parse("iosArm64")
+        val unsupportedTarget = KlibTarget.parse("iosArm64")
 
         val oldDump = AbiToolsImpl.loadKlibDump(
             asFile(
@@ -529,7 +529,7 @@ class KlibDumpTest {
 
     @Test
     fun inferOutOfThinAir() {
-        val unsupportedTarget = KlibTarget.Companion.parse("iosArm64")
+        val unsupportedTarget = KlibTarget.parse("iosArm64")
 
         assertFailsWith<IllegalArgumentException> {
             inferAbi(unsupportedTarget, emptySet(), null)
@@ -548,7 +548,7 @@ class KlibDumpTest {
     fun inferFromIntersectingDumps() {
         assertFailsWith<IllegalArgumentException> {
             inferAbi(
-                KlibTarget.Companion.parse("iosArm64.unsupported"),
+                KlibTarget.parse("iosArm64.unsupported"),
                 listOf(
                     AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDump)),
                     AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))

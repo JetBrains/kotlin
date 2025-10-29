@@ -247,7 +247,7 @@ class KlibAbiMergingTest {
     fun renameWasmTargetHavingNameInManifest() {
         val klib = KlibAbiDumpMerger()
         klib.merge(loadAndRename(file("/merge/explicitWasmTargets/wasmWasi.abi"), "wasm"))
-        assertEquals(setOf(KlibTarget.Companion.parse("wasmWasi.wasm")), klib.targets)
+        assertEquals(setOf(KlibTarget.parse("wasmWasi.wasm")), klib.targets)
     }
 
     @Test

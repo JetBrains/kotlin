@@ -9,8 +9,7 @@ import java.io.File
 import java.util.ServiceLoader.load
 
 /**
- * The set of features for working with legacy format dumps,
- * used in previous [Binary Compatibility Validator plugin](https://github.com/Kotlin/binary-compatibility-validator).
+ * The set of features for working with ABI dumps.
  *
  * @since 2.3.20
  */

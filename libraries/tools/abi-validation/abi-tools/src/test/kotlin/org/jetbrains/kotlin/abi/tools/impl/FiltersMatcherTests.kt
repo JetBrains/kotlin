@@ -25,7 +25,7 @@ class FiltersMatcherTests {
         assertFalse(emptyMatcherManual.isExcludedByAnnotations(listOf("some.Annotation")))
 
         // default empty
-        val emptyMatcherDefault = compileMatcher(AbiFilters.Companion.EMPTY)
+        val emptyMatcherDefault = compileMatcher(AbiFilters.EMPTY)
         assertTrue(emptyMatcherDefault.isEmpty)
         assertFalse(emptyMatcherDefault.isExcludedByName("some.Name"))
         assertFalse(emptyMatcherDefault.isExcludedByAnnotations(listOf("some.Annotation")))

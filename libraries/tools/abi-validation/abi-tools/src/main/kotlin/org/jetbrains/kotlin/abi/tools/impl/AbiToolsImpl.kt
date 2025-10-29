@@ -40,11 +40,11 @@ internal object AbiToolsImpl : AbiTools {
     }
 
     override fun loadKlibDump(dumpFile: File): KlibDump {
-        return KlibDumpImpl.Companion.from(dumpFile)
+        return KlibDumpImpl.from(dumpFile)
     }
 
     override fun loadKlibDump(dump: CharSequence): KlibDump {
-        return KlibDumpImpl.Companion.from(dump)
+        return KlibDumpImpl.from(dump)
     }
 
     override fun extractKlibAbi(

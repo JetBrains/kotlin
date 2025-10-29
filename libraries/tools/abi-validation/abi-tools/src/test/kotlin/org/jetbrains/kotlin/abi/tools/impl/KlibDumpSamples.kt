@@ -171,7 +171,7 @@ class KlibDumpSamples {
             """.trimIndent(), mergedDumpContent
         )
 
-        mergedDump.remove(listOf(KlibTarget.Companion.parse("linuxX64.linuxX86_64")))
+        mergedDump.remove(listOf(KlibTarget.parse("linuxX64.linuxX86_64")))
         val filteredDumpContent = buildString { mergedDump.print(this) }
         assertEquals(
             """
@@ -342,7 +342,7 @@ class KlibDumpSamples {
     @Test
     fun inferDump() {
         // We want to get a dump for iosArm64, but our host compiler doesn't support it.
-        val unsupportedTarget = KlibTarget.Companion.parse("iosArm64")
+        val unsupportedTarget = KlibTarget.parse("iosArm64")
         // Thankfully, we have an old merged dump ...
         val oldMergedDump = createDumpFileWithContent("""
             // Klib ABI Dump
