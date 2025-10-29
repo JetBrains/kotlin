@@ -26,13 +26,16 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_METADATA
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile.Companion.DUMP_FILE_ARGS_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.property
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.konan.target.Architecture
@@ -44,7 +47,6 @@ import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.projectPathOrNull
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import java.security.MessageDigest
@@ -52,6 +54,8 @@ import java.util.UUID
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import java.io.Serializable
+import kotlin.io.readLines
 
 
 internal val SwiftImportSetupAction = KotlinProjectSetupAction {
@@ -63,6 +67,20 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     val swiftPMImportExtension = kotlinExtension.getExtension<SwiftImportExtension>(
         SwiftImportExtension.EXTENSION_NAME
     )!!
+
+    val productTypeProvider = provider {
+        val hasDynamicFrameworks = kotlinExtension.targets.filterIsInstance<KotlinNativeTarget>().any { target ->
+            target.binaries.filterIsInstance<Framework>().any {
+                !it.isStatic
+            }
+        }
+        if (hasDynamicFrameworks) {
+            // FIXME: This needs more research. Right now all the project/modular dependencies will litter embedAndSign integration with useless dylibs
+            SyntheticProductType.DYNAMIC
+        } else {
+            SyntheticProductType.INFERRED
+        }
+    }
 
     val swiftPMDependenciesMetadata = project.registerTask<SerializeSwiftPMDependenciesMetadata>(
         SerializeSwiftPMDependenciesMetadata.TASK_NAME,
@@ -98,6 +116,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     syntheticImportProjectGenerationTaskForEmbedAndSignLinkage.configure {
         it.configureWithExtension(swiftPMImportExtension)
         it.dependencyIdentifierToImportedSwiftPMDependencies.set(transitiveSwiftPMDependenciesMap)
+        it.syntheticProductType.set(productTypeProvider)
     }
 
     val projectPathProvider = project.providers.environmentVariable(IntegrateLinkagePackageIntoXcodeProject.PROJECT_PATH_ENV)
@@ -117,6 +136,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 )
             }
         )
+        it.syntheticProductType.set(productTypeProvider)
     }
 
     project.locateOrRegisterTask<IntegrateLinkagePackageIntoXcodeProject>(IntegrateLinkagePackageIntoXcodeProject.TASK_NAME) {
@@ -124,20 +144,26 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.xcodeprojPath.set(projectPathProvider)
     }
 
+    // FIXME: Move syntheticImportProjectGenerationTaskForCinteropsAndLdDump from spmDependencies.all. We always want to run this task
     swiftPMImportExtension.spmDependencies.all { swiftPMDependency ->
         kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin = true
-        val syntheticImportProjectGenerationTaskForCinterops = project.locateOrRegisterTask<GenerateSyntheticLinkageImportProject>(
+        val syntheticImportProjectGenerationTaskForCinteropsAndLdDump = project.locateOrRegisterTask<GenerateSyntheticLinkageImportProject>(
             lowerCamelCaseName(
                 GenerateSyntheticLinkageImportProject.TASK_NAME,
-                "forCinterops",
+                "forCinteropsAndLdDump",
             ),
         ) {
             it.configureWithExtension(swiftPMImportExtension)
             it.dependencyIdentifierToImportedSwiftPMDependencies.set(transitiveSwiftPMDependenciesMap)
+            /**
+             * FIXME: This is not what we actually want. Having dynamic linkage here might erroneously fail def file creation if the linkage
+             * type is incompatible with consumed targets. Probably we want to do LD dump in a separate step and only if necessary
+             */
+            it.syntheticProductType.set(SyntheticProductType.DYNAMIC)
         }
 
         val syntheticImportTasks = listOf(
-            syntheticImportProjectGenerationTaskForCinterops,
+            syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
             syntheticImportProjectGenerationTaskForLinkageForCli,
             syntheticImportProjectGenerationTaskForEmbedAndSignLinkage,
         )
@@ -147,8 +173,8 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         val packageFetchTask = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
             FetchSyntheticImportProjectPackages.TASK_NAME,
         ) {
-            it.dependsOn(syntheticImportProjectGenerationTaskForCinterops)
-            it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinterops.map { it.syntheticImportProjectRoot.get() })
+            it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
+            it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
         }
 
         kotlinExtension.targets.matching {
@@ -156,6 +182,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             targetSupportsSwiftPMImport
         }.all { target ->
             target as KotlinNativeTarget
+
             syntheticImportTasks.forEach {
                 it.configure {
                     it.konanTargets.add(target.konanTarget)
@@ -166,7 +193,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             val targetPlatform = target.konanTarget.applePlatform
             // use sdk for a more conventional name
             val targetSdk = target.konanTarget.appleTarget.sdk
-            val defFilesGenerationTask = project.locateOrRegisterTask<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(
+            val defFilesAndLdDumpGenerationTask = project.locateOrRegisterTask<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(
                 lowerCamelCaseName(
                     ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME,
                     targetSdk,
@@ -178,19 +205,36 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 it.xcodebuildPlatform.set(targetPlatform)
                 it.xcodebuildSdk.set(targetSdk)
                 it.swiftPMDependenciesCheckout.set(packageFetchTask.map { it.swiftPMDependenciesCheckout.get() })
-                it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinterops.map { it.syntheticImportProjectRoot.get() })
+                it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
             }
 
-            defFilesGenerationTask.configure {
+            target.binaries.all { binary ->
+                binary.linkTaskProvider.configure {
+                    // FIXME: Just do this once instead of in the spmDependencies.all callback
+                    val ldArgDumpPath = provider {
+                        defFilesAndLdDumpGenerationTask.get().ldFilePath(target.konanTarget.architecture)
+                    }.get()
+                    it.additionalLinkerOptsProperty.set(
+                        syntheticImportProjectGenerationTaskForCinteropsAndLdDump.flatMap {
+                            // Fight eager CC provider: fetch dump path eagerly, but read the file only when the task has executed
+                            it.outputs.files.elements
+                        }.map {
+                            ldArgDumpPath.get().asFile.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR)
+                        }
+                    )
+                }
+            }
+
+            defFilesAndLdDumpGenerationTask.configure {
                 it.clangModules.addAll(swiftPMDependency.cinteropClangModules)
             }
 
             if (cinteropName !in mainCompilationCinterops.names) {
-                defFilesGenerationTask.configure {
+                defFilesAndLdDumpGenerationTask.configure {
                     it.architectures.add(target.konanTarget.architecture)
                 }
                 mainCompilationCinterops.create(cinteropName).definitionFile.set(
-                    defFilesGenerationTask.map {
+                    defFilesAndLdDumpGenerationTask.map {
                         it.defFilePath(target.konanTarget.architecture).get()
                     }
                 )
@@ -248,12 +292,23 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
 
     @get:Input
     abstract val iosDeploymentVersion: Property<String>
+
     @get:Input
     abstract val macosDeploymentVersion: Property<String>
+
     @get:Input
     abstract val watchosDeploymentVersion: Property<String>
+
     @get:Input
     abstract val tvosDeploymentVersion: Property<String>
+
+    @get:Input
+    abstract val syntheticProductType: Property<SyntheticProductType>
+
+    enum class SyntheticProductType : Serializable {
+        DYNAMIC,
+        INFERRED,
+    }
 
     @get:Inject
     protected abstract val execOps: ExecOperations
@@ -315,6 +370,11 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
             }
         }
 
+        val productType = when (syntheticProductType.get()) {
+            SyntheticProductType.DYNAMIC -> ".dynamic"
+            SyntheticProductType.INFERRED -> ".none"
+        }
+
         val manifest = packageRoot.resolve(MANIFEST_NAME)
         manifest.also {
             it.parentFile.mkdirs()
@@ -332,7 +392,8 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                         products: [
                             .library(
                                 name: "$identifier",
-                                targets: ["$identifier"],
+                                type: ${productType},
+                                targets: ["$identifier"]
                             ),
                         ],
                     """.replaceIndent("  ")
@@ -442,6 +503,11 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         project.layout.buildDirectory.dir("kotlin/swiftImportDefs/${sdk}")
     }
 
+    @get:OutputDirectory
+    protected val ldDump = xcodebuildSdk.flatMap { sdk ->
+        project.layout.buildDirectory.dir("kotlin/swiftImportLdDump/${sdk}")
+    }
+
     @get:Internal
     abstract val swiftPMDependenciesCheckout: DirectoryProperty
 
@@ -473,16 +539,24 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     fun generateDefFiles() {
         val dumpIntermediates = xcodebuildSdk.flatMap { sdk ->
             layout.buildDirectory.dir("kotlin/swiftImportClangDump/${sdk}")
-        }.get().asFile.also { it.mkdirs() }
+        }.get().asFile.also {
+            if (it.exists()) {
+                it.deleteRecursively()
+            }
+            it.mkdirs()
+        }
 
         val clangArgsDumpScript = dumpIntermediates.resolve("clangDump.sh")
-        clangArgsDumpScript.writeText(searchPathsDumpScript())
+        clangArgsDumpScript.writeText(clangArgsDumpScript())
         clangArgsDumpScript.setExecutable(true)
         val clangArgsDump = dumpIntermediates.resolve("clang_args_dump")
-        if (clangArgsDump.exists()) {
-            clangArgsDump.deleteRecursively()
-        }
         clangArgsDump.mkdirs()
+
+        val ldArgsDumpScript = dumpIntermediates.resolve("ldDump.sh")
+        ldArgsDumpScript.writeText(ldArgsDumpScript())
+        ldArgsDumpScript.setExecutable(true)
+        val ldArgsDump = dumpIntermediates.resolve("ld_args_dump")
+        ldArgsDump.mkdirs()
 
         val targetArchitectures = architectures.get().map {
             clangArchitecture(it)
@@ -505,11 +579,15 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 "-derivedDataPath", dd.path,
                 XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER, swiftPMDependenciesCheckout.get().asFile.path,
                 "CC=${clangArgsDumpScript.path}",
+                "LD=${ldArgsDumpScript.path}",
                 "ARCHS=${targetArchitectures.joinToString(" ")}",
                 // FIXME: Check how truly necessary this is
                 "CODE_SIGN_IDENTITY=",
+                // FIXME: This will force the .dylib to be created instead of the framework
+                "-IDEPackageSupportCreateDylibsForDynamicProducts=YES"
             )
             exec.environment(KOTLIN_CLANG_ARGS_DUMP_FILE_ENV, clangArgsDump)
+            exec.environment(KOTLIN_LD_ARGS_DUMP_FILE_ENV, ldArgsDump)
 
             val environmentToFilter = listOf(
                 "EMBED_PACKAGE_RESOURCE_BUNDLE_NAMES",
@@ -534,14 +612,14 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
             }.filter {
                 val clangArgs = it.readLines().single()
                 "-fmodule-name=${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}" in clangArgs
-                        && "-target${CLANG_ARGS_SEPARATOR}${clangArchitecture}-apple" in clangArgs
+                        && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in clangArgs
             }
             val architectureSpecificProductClangCall = architectureSpecificProductClangCalls.single()
-            val searchPathStrings = architectureSpecificProductClangCall.readLines().single().split(CLANG_ARGS_SEPARATOR).filter { arg ->
+            val cinteropClangArgs = architectureSpecificProductClangCall.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR).filter { arg ->
                 arg.startsWith("-F") || arg.startsWith("-I") || arg.startsWith("-fmodule-map-file=")
-            }.toSet()
+            }.toList()
 
-            val defFileSearchPaths = searchPathStrings.joinToString(" ") { "\"${it}\"" }
+            val defFileSearchPaths = cinteropClangArgs.joinToString(" ") { "\"${it}\"" }
             val modules = clangModules.get().joinToString(" ") { "\"${it}\"" }
 
             val workaroundKT81695 = "-DSWIFT_TYPEDEFS"
@@ -554,10 +632,43 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                     package = $cinteropNamespace
                 """.trimIndent()
             )
+
+            val architectureSpecificProductLdCalls = ldArgsDump.listFiles().filter {
+                it.isFile
+            }.filter {
+                // This will actually be a clang call
+                val ldArgs = it.readLines().single()
+                "@rpath/lib${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.dylib" in ldArgs
+                        && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in ldArgs
+            }
+            val architectureSpecificProductLdCall = architectureSpecificProductLdCalls.single()
+            val ldArgs = mutableListOf<String>()
+            val resplitLdCall = architectureSpecificProductLdCall.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR)
+            resplitLdCall.forEachIndexed { index, arg ->
+                if (arg == "-framework" || (arg.startsWith("-") && arg.endsWith("_framework"))) {
+                    ldArgs.addAll(listOf(arg, resplitLdCall[index + 1]))
+                }
+                // FIXME: match all the other flavors of library linkage
+                if (arg.startsWith("-l")) {
+                    ldArgs.add(arg)
+                }
+                // FIXME: This is not accurate but whatever
+                if (arg.startsWith("-F/") || arg.startsWith("-L/")) {
+                    ldArgs.add(arg)
+                }
+                // FIXME: This is the branch that is necessary to link against other targets. Do this properly
+                if (arg.startsWith("/") && arg.endsWith(".dylib")) {
+                    ldArgs.add(arg)
+                }
+            }
+
+            val ldFilePath = ldFilePath(architecture)
+            ldFilePath.getFile().writeText(ldArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR))
         }
     }
 
     fun defFilePath(architecture: Architecture) = defFiles.map { it.file("${architecture.name}.def") }
+    fun ldFilePath(architecture: Architecture) = ldDump.map { it.file("${architecture.name}") }
 
     // FIXME: Fix watchos and use some different mapping here
     private fun clangArchitecture(architecture: Architecture) = when (architecture) {
@@ -568,22 +679,29 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
             -> error("???")
     }
 
-    private fun searchPathsDumpScript() = """
+    private fun clangArgsDumpScript() = argsDumpScript("clang", KOTLIN_CLANG_ARGS_DUMP_FILE_ENV)
+    private fun ldArgsDumpScript() = argsDumpScript("clang", KOTLIN_LD_ARGS_DUMP_FILE_ENV)
+
+    private fun argsDumpScript(
+        targetCli: String,
+        dumpPathEnv: String,
+    ) = """
         #!/bin/bash
 
-        DUMP_FILE="${'$'}{${KOTLIN_CLANG_ARGS_DUMP_FILE_ENV}}/${'$'}(/usr/bin/uuidgen)"
+        DUMP_FILE="${'$'}{${dumpPathEnv}}/${'$'}(/usr/bin/uuidgen)"
         for arg in "$@"
         do
            echo -n "${'$'}arg" >> "${'$'}{DUMP_FILE}"
-           echo -n "$CLANG_ARGS_SEPARATOR" >> "${'$'}{DUMP_FILE}"
+           echo -n "$DUMP_FILE_ARGS_SEPARATOR" >> "${'$'}{DUMP_FILE}"
         done
 
-        clang "$@"
+        ${targetCli} "$@"
     """.trimIndent()
 
     companion object {
         const val KOTLIN_CLANG_ARGS_DUMP_FILE_ENV = "KOTLIN_CLANG_ARGS_DUMP_FILE"
-        const val CLANG_ARGS_SEPARATOR = ";"
+        const val KOTLIN_LD_ARGS_DUMP_FILE_ENV = "KOTLIN_LD_ARGS_DUMP_FILE"
+        const val DUMP_FILE_ARGS_SEPARATOR = ";"
         const val TASK_NAME = "convertSyntheticImportProjectIntoDefFile"
     }
 

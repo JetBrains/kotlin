@@ -190,6 +190,9 @@ constructor(
     internal val additionalLinkerOpts: MutableList<String> = mutableListOf()
 
     @get:Input
+    internal val additionalLinkerOptsProperty: ListProperty<String> = project.objects.listProperty(String::class.java)
+
+    @get:Input
     val binaryOptions: Map<String, String> by lazy { PropertiesProvider(project).nativeBinaryOptions + binary.binaryOptions }
 
     @get:Input
@@ -281,7 +284,7 @@ constructor(
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
             args.generateTestRunner = processTests
             args.mainPackage = entryPoint
-            args.singleLinkerArguments = (linkerOpts + additionalLinkerOpts).toTypedArray()
+            args.singleLinkerArguments = (linkerOpts + additionalLinkerOpts + additionalLinkerOptsProperty.get()).toTypedArray()
             args.binaryOptions = binaryOptions.map { (key, value) -> "$key=$value" }.toTypedArray()
             args.staticFramework = isStaticFramework
             args.konanDataDir = kotlinNativeProvider.get().konanDataDir.orNull
