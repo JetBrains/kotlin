@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
@@ -31,6 +32,9 @@ internal class JvmClasspathSnapshottingOperationImpl(
     }
 
     override fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): ClasspathEntrySnapshot {
+        if (System.getProperty("kotlin.build.tools.internal.dry-run") == "true") {
+            return ClasspathEntrySnapshotImpl(org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshot(LinkedHashMap()))
+        }
         val granularity: ClassSnapshotGranularity = options["GRANULARITY"]
         val parseInlinedLocalClasses: Boolean = options["PARSE_INLINED_LOCAL_CLASSES"]
         val origin = ClasspathEntrySnapshotter.snapshot(

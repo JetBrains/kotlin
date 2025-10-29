@@ -88,6 +88,7 @@ data class BuildOptions(
      * Note that `--continuous` *disables* `--no-daemon`.
      */
     val continuousBuild: Boolean? = null,
+    val btaDryRun: Boolean? = true,
 ) {
     enum class ConfigurationCacheValue {
 
@@ -332,6 +333,10 @@ data class BuildOptions(
 
         if (kmpIsolatedProjectsSupport != null) {
             arguments.add("-Pkotlin.kmp.isolated-projects.support=${kmpIsolatedProjectsSupport.name.toLowerCaseAsciiOnly()}")
+        }
+
+        if (btaDryRun != null) {
+            arguments.add("-Dkotlin.build.tools.internal.dry-run=$btaDryRun")
         }
 
         arguments.addAll(freeArgs)

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.io.path.absolutePathString
 
 /**
  * Represents a configuration that enables incremental compilation.
@@ -40,7 +42,33 @@ public class JvmSnapshotBasedIncrementalCompilationConfiguration(
     public val dependenciesSnapshotFiles: List<Path>,
     public val shrunkClasspathSnapshot: Path,
     public val options: JvmSnapshotBasedIncrementalCompilationOptions,
-) : JvmIncrementalCompilationConfiguration
+) : JvmIncrementalCompilationConfiguration {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as JvmSnapshotBasedIncrementalCompilationConfiguration
+
+        if (workingDirectory != other.workingDirectory) return false
+        if (sourcesChanges != other.sourcesChanges) return false
+        if (dependenciesSnapshotFiles != other.dependenciesSnapshotFiles) return false
+        if (shrunkClasspathSnapshot != other.shrunkClasspathSnapshot) return false
+        if (options != other.options) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        val projectRootPath =
+            System.getProperty("kotlin.build.tools.internal.recorder.projectRootPath")?.let { Paths.get(it).absolutePathString() } ?: ""
+        var result = workingDirectory.absolutePathString().removePrefix(projectRootPath).hashCode()
+        result = 31 * result + sourcesChanges.hashCode()
+        result = 31 * result + dependenciesSnapshotFiles.hashCode()
+        result = 31 * result + shrunkClasspathSnapshot.absolutePathString().removePrefix(projectRootPath).hashCode()
+        result = 31 * result + options.hashCode()
+        return result
+    }
+}
 
 /**
  * Options for [JvmSnapshotBasedIncrementalCompilationConfiguration].

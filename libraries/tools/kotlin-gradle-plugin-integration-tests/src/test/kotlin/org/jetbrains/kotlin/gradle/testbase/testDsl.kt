@@ -10,7 +10,6 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.internal.DefaultGradleRunner
-import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.gradle.report.BuildReportType
@@ -274,7 +273,8 @@ private fun TestProject.buildWithAction(
             enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
             connectSubprocessVMToDebugger = connectSubprocessVMToDebugger,
             gradleVersion = gradleVersion,
-            kotlinDaemonDebugPort = kotlinDaemonDebugPort
+            kotlinDaemonDebugPort = kotlinDaemonDebugPort,
+            projectPath = projectPath,
         )
         val gradleRunnerForBuild = gradleRunner
             .also { if (forwardBuildOutput) it.forwardOutput() }
@@ -577,6 +577,7 @@ private fun commonBuildSetup(
     connectSubprocessVMToDebugger: Boolean,
     gradleVersion: GradleVersion,
     kotlinDaemonDebugPort: Int? = null,
+    projectPath: Path,
 ): List<String> {
     val jdkLocations = allJdkProperties
         .map { System.getProperty(it) }
@@ -623,6 +624,10 @@ private fun commonBuildSetup(
             @Suppress("DEPRECATION")
             "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${buildOptions.customKotlinDaemonRunFilesDirectory.absolutePath}"
         } else null,
+        "-Dkotlin.build.tools.internal.recorder.projectRootPath=${projectPath.absolutePathString()}",
+        "-Dkotlin.build.tools.internal.recorder.cacheDir=${kgpTestInfraWorkingDirectory.absolutePathString()}",
+        "-Dkotlin.build.tools.internal.recorder.enabled=true",
+
     )
 }
 

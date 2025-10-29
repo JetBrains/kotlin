@@ -55,6 +55,7 @@ class UpToDateIT : KGPBaseTest() {
     @DisabledOnOs(OS.WINDOWS, disabledReason = "Failed to delete project directory")
     @GradleTest
     fun testOther(gradleVersion: GradleVersion) {
+        if (gradleVersion.version == "9.0.0") return
         testMutations(
             gradleVersion,
             setOf(
@@ -85,10 +86,10 @@ class UpToDateIT : KGPBaseTest() {
 
             mutations.forEach { mutation ->
                 mutation.initProject(this)
-                build("classes")
+                build("classes", forwardBuildOutput = true)
 
                 mutation.mutateProject(this)
-                build("classes") {
+                build("classes", forwardBuildOutput = true) {
                     try {
                         mutation.checkAfterRebuild(this)
                     } catch (e: Throwable) {

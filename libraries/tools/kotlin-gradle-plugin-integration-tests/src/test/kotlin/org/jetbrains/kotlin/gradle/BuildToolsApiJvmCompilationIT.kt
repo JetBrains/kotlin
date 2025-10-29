@@ -123,7 +123,7 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
 
     private fun testSimpleProject(gradleVersion: GradleVersion, buildOptions: BuildOptions, assertions: BuildResult.() -> Unit) {
         project("simpleProject", gradleVersion, buildOptions = buildOptions) {
-            build("assemble", "compileDeployKotlin") {
+            build("assemble", "compileDeployKotlin", forwardBuildOutput = true) {
                 assertFileExists(kotlinClassesDir("main").resolve("demo/KotlinGreetingJoiner.class"))
                 assertFileExists(javaClassesDir("main").resolve("demo/Greeter.class"))
                 assertFileExists(javaClassesDir("main").resolve("demo/HelloWorld.class"))
