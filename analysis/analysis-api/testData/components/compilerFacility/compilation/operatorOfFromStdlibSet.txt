@@ -1,0 +1,52 @@
+// class version 52.0 (52)
+// access flags 0x31
+public final class OperatorOfFromStdlibSetKt {
+
+  // compiled from: operatorOfFromStdlibSet.kt
+
+  @Lkotlin/Metadata;(mv={2, 3, 0}, k=2, xi=48, d1={"\u0000\u0006\n\u0000\n\u0002\u0010\u0002\u001a\u0006\u0010\u0000\u001a\u00020\u0001"}, d2={"main", ""})
+
+  // access flags 0x19
+  public final static main()V
+   L0
+    LINENUMBER 7 L0
+    GETSTATIC kotlin/jvm/internal/SetCompanionObject.INSTANCE : Lkotlin/jvm/internal/SetCompanionObject;
+    ICONST_3
+    ANEWARRAY java/lang/Long
+    ASTORE 1
+    ALOAD 1
+    ICONST_0
+    LCONST_1
+    INVOKESTATIC java/lang/Long.valueOf (J)Ljava/lang/Long;
+    AASTORE
+    ALOAD 1
+    ICONST_1
+    LDC 2
+    INVOKESTATIC java/lang/Long.valueOf (J)Ljava/lang/Long;
+    AASTORE
+    ALOAD 1
+    ICONST_2
+    LDC 3
+    INVOKESTATIC java/lang/Long.valueOf (J)Ljava/lang/Long;
+    AASTORE
+    ALOAD 1
+    INVOKEVIRTUAL kotlin/jvm/internal/SetCompanionObject.of ([Ljava/lang/Object;)Ljava/util/Set;
+    ASTORE 0
+   L1
+    LINENUMBER 8 L1
+    RETURN
+   L2
+    LOCALVARIABLE it Ljava/util/Set; L1 L2 0
+    MAXSTACK = 5
+    MAXLOCALS = 2
+
+  // access flags 0x1009
+  public static synthetic main([Ljava/lang/String;)V
+   L0
+    INVOKESTATIC OperatorOfFromStdlibSetKt.main ()V
+    RETURN
+   L1
+    LOCALVARIABLE args [Ljava/lang/String; L0 L1 0
+    MAXSTACK = 0
+    MAXLOCALS = 1
+}

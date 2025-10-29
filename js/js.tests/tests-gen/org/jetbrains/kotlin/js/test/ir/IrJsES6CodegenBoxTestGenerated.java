@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.fir;
+package org.jetbrains.kotlin.js.test.ir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -20,16 +20,18 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/box")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("legacy-frontend")
 @Tag("es6")
-public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
+public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTest {
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "compileKotlinAgainstKotlin", "multiplatform/k1");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "compileKotlinAgainstKotlin", "multiplatform/k2");
   }
 
   @Nested
   @TestMetadata("compiler/testData/codegen/box/annotations")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Annotations {
     @Test
@@ -508,6 +510,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class AnnotatedLambda {
       @Test
@@ -555,6 +558,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations/instances")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Instances {
       @Test
@@ -842,6 +846,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations/kClassMapping")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class KClassMapping {
       @Test
@@ -889,6 +894,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations/repeatable")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Repeatable {
       @Test
@@ -930,6 +936,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations/typeAnnotations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class TypeAnnotations {
       @Test
@@ -1032,6 +1039,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/argumentOrder")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ArgumentOrder {
     @Test
@@ -1145,6 +1153,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/arithmetic")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Arithmetic {
     @Test
@@ -1222,6 +1231,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/arrays")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Arrays {
     @Test
@@ -1658,6 +1668,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arrays/arraysOfInlineClass")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ArraysOfInlineClass {
       @Test
@@ -1687,6 +1698,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arrays/forInReversed")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInReversed {
       @Test
@@ -1728,6 +1740,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arrays/forInUnsignedArray")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInUnsignedArray {
       @Test
@@ -1787,6 +1800,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class MultiDecl {
       @Test
@@ -1845,6 +1859,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/int")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Int {
         @Test
@@ -1880,6 +1895,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/long")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Long {
         @Test
@@ -1917,6 +1933,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/assert")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Assert {
     @Test
@@ -1969,6 +1986,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/assert/jvm")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Jvm {
       @Test
@@ -2113,6 +2131,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/associatedObjects")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class AssociatedObjects {
     @Test
@@ -2154,6 +2173,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/basics")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Basics {
     @Test
@@ -2411,6 +2431,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/bce")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Bce {
     @Test
@@ -2530,6 +2551,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/binaryOp")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class BinaryOp {
     @Test
@@ -2727,6 +2749,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/boxing")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Boxing {
     @Test
@@ -2858,6 +2881,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/boxingOptimization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class BoxingOptimization {
     @Test
@@ -3145,6 +3169,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/branching")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Branching {
     @Test
@@ -3228,6 +3253,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/bridges")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Bridges {
     @Test
@@ -3850,6 +3876,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges/declarationDifferentSignature")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class DeclarationDifferentSignature {
       @Test
@@ -3885,6 +3912,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges/diamond")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Diamond {
       @Test
@@ -3914,6 +3942,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges/doubleOverride")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class DoubleOverride {
       @Test
@@ -3937,6 +3966,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges/fakeOverride")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class FakeOverride {
       @Test
@@ -4056,6 +4086,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class FakeOverrideDifferentSignature {
       @Test
@@ -4091,6 +4122,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges/noBridges")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class NoBridges {
       @Test
@@ -4138,6 +4170,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges/overridesTwoDeclarations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class OverridesTwoDeclarations {
       @Test
@@ -4173,6 +4206,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class SubstitutionInSuperClass {
       @Test
@@ -4251,6 +4285,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class BuiltinStubMethods {
     @Test
@@ -4405,6 +4440,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class BridgesForStubs {
       @Test
@@ -4458,6 +4494,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ExtendJavaClasses {
       @Test
@@ -4577,6 +4614,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/mapGetOrDefault")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class MapGetOrDefault {
       @Test
@@ -4606,6 +4644,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/mapRemove")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class MapRemove {
       @Test
@@ -4642,6 +4681,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/callableReference")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class CallableReference {
     @Test
@@ -4964,30 +5004,13 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class AdaptedReferences {
       @Test
       @TestMetadata("adaptedArrayOf.kt")
       public void testAdaptedArrayOf() {
         runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedArrayOf.kt");
-      }
-
-      @Test
-      @TestMetadata("adaptedSecondArgArray.kt")
-      public void testAdaptedSecondArgArray() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedSecondArgArray.kt");
-      }
-
-      @Test
-      @TestMetadata("adaptedSecondArgTypeVariable.kt")
-      public void testAdaptedSecondArgTypeVariable() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedSecondArgTypeVariable.kt");
-      }
-
-      @Test
-      @TestMetadata("adaptedVarargArrayAgainstTypeVariable.kt")
-      public void testAdaptedVarargArrayAgainstTypeVariable() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedVarargArrayAgainstTypeVariable.kt");
       }
 
       @Test
@@ -5352,6 +5375,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class SuspendConversion {
         @Test
@@ -5550,6 +5574,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/bound")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Bound {
       @Test
@@ -5758,6 +5783,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/bound/equals")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Equals {
         @Test
@@ -5788,6 +5814,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/equality")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Equality {
       @Test
@@ -5895,6 +5922,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/funInterfaceConstructor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class FunInterfaceConstructor {
       @Test
@@ -5942,6 +5970,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/function")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Function {
       @Test
@@ -6444,6 +6473,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/function/local")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Local {
         @Test
@@ -6582,6 +6612,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/property")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Property {
       @Test
@@ -6845,6 +6876,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/serializability")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Serializability {
       @Test
@@ -6899,6 +6931,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/casts")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Casts {
     @Test
@@ -7227,6 +7260,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts/functions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Functions {
       @Test
@@ -7334,6 +7368,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class JavaInterop {
       @Test
@@ -7429,6 +7464,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class LiteralExpressionAsGenericArgument {
       @Test
@@ -7482,6 +7518,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts/mutableCollections")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class MutableCollections {
       @Test
@@ -7541,6 +7578,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts/nativeCCEMessage")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class NativeCCEMessage {
       @Test
@@ -7577,6 +7615,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/checkcastOptimization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class CheckcastOptimization {
     @Test
@@ -7618,6 +7657,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/classDelegation")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ClassDelegation {
     @Test
@@ -7749,6 +7789,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/classLiteral")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ClassLiteral {
     @Test
@@ -7783,6 +7824,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classLiteral/bound")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Bound {
       @Test
@@ -7824,6 +7866,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classLiteral/java")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Java {
       @Test
@@ -7884,6 +7927,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/classes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Classes {
     @Test
@@ -8626,6 +8670,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classes/inner")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Inner {
       @Test
@@ -8686,6 +8731,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/closures")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Closures {
     @Test
@@ -9014,6 +9060,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/closures/captureInSuperConstructorCall")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class CaptureInSuperConstructorCall {
       @Test
@@ -9217,6 +9264,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/closures/captureOuterProperty")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class CaptureOuterProperty {
       @Test
@@ -9276,6 +9324,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class CapturedVarsOptimization {
       @Test
@@ -9371,6 +9420,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/closures/closureInsideClosure")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ClosureInsideClosure {
       @Test
@@ -9419,6 +9469,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/collectionLiterals")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class CollectionLiterals {
     @Test
@@ -9496,6 +9547,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/collectionLiteralsInAnnotations")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class CollectionLiteralsInAnnotations {
     @Test
@@ -9531,6 +9583,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/collections")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Collections {
     @Test
@@ -9842,6 +9895,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/companion")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Companion {
     @Test
@@ -9889,6 +9943,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/compatibility")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Compatibility {
     @Test
@@ -9906,6 +9961,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/constants")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Constants {
     @Test
@@ -10001,6 +10057,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/constructor")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Constructor {
     @Test
@@ -10024,6 +10081,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/constructorCall")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ConstructorCall {
     @Test
@@ -10131,23 +10189,12 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/contextParameters")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ContextParameters {
     @Test
     public void testAllFilesPresentInContextParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("arrayAccessCompositveOperators.kt")
-    public void testArrayAccessCompositveOperators() {
-      runTest("compiler/testData/codegen/box/contextParameters/arrayAccessCompositveOperators.kt");
-    }
-
-    @Test
-    @TestMetadata("arrayAccessOperators.kt")
-    public void testArrayAccessOperators() {
-      runTest("compiler/testData/codegen/box/contextParameters/arrayAccessOperators.kt");
     }
 
     @Test
@@ -10187,27 +10234,9 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     }
 
     @Test
-    @TestMetadata("compoundAssignmentOperators.kt")
-    public void testCompoundAssignmentOperators() {
-      runTest("compiler/testData/codegen/box/contextParameters/compoundAssignmentOperators.kt");
-    }
-
-    @Test
-    @TestMetadata("contextAndExtensionLambdaIndy.kt")
-    public void testContextAndExtensionLambdaIndy() {
-      runTest("compiler/testData/codegen/box/contextParameters/contextAndExtensionLambdaIndy.kt");
-    }
-
-    @Test
     @TestMetadata("contextAndExtensionOverrideInJava.kt")
     public void testContextAndExtensionOverrideInJava() {
       runTest("compiler/testData/codegen/box/contextParameters/contextAndExtensionOverrideInJava.kt");
-    }
-
-    @Test
-    @TestMetadata("contextAndNoContextOverloads.kt")
-    public void testContextAndNoContextOverloads() {
-      runTest("compiler/testData/codegen/box/contextParameters/contextAndNoContextOverloads.kt");
     }
 
     @Test
@@ -10277,18 +10306,6 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     }
 
     @Test
-    @TestMetadata("contextualFunctionConversion.kt")
-    public void testContextualFunctionConversion() {
-      runTest("compiler/testData/codegen/box/contextParameters/contextualFunctionConversion.kt");
-    }
-
-    @Test
-    @TestMetadata("contextualInlineCall.kt")
-    public void testContextualInlineCall() {
-      runTest("compiler/testData/codegen/box/contextParameters/contextualInlineCall.kt");
-    }
-
-    @Test
     @TestMetadata("contextualLocalFunAndTopLevelFun.kt")
     public void testContextualLocalFunAndTopLevelFun() {
       runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunAndTopLevelFun.kt");
@@ -10325,12 +10342,6 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     }
 
     @Test
-    @TestMetadata("explicitPassing.kt")
-    public void testExplicitPassing() {
-      runTest("compiler/testData/codegen/box/contextParameters/explicitPassing.kt");
-    }
-
-    @Test
     @TestMetadata("falsePositiveAccidentalOverrides.kt")
     public void testFalsePositiveAccidentalOverrides() {
       runTest("compiler/testData/codegen/box/contextParameters/falsePositiveAccidentalOverrides.kt");
@@ -10346,12 +10357,6 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @TestMetadata("ImplicitReceiverWithTheSameContextAndExtension.kt")
     public void testImplicitReceiverWithTheSameContextAndExtension() {
       runTest("compiler/testData/codegen/box/contextParameters/ImplicitReceiverWithTheSameContextAndExtension.kt");
-    }
-
-    @Test
-    @TestMetadata("inferGenericPropertyType.kt")
-    public void testInferGenericPropertyType() {
-      runTest("compiler/testData/codegen/box/contextParameters/inferGenericPropertyType.kt");
     }
 
     @Test
@@ -10379,117 +10384,9 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     }
 
     @Test
-    @TestMetadata("kt51277.kt")
-    public void testKt51277() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt51277.kt");
-    }
-
-    @Test
-    @TestMetadata("kt51284.kt")
-    public void testKt51284() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt51284.kt");
-    }
-
-    @Test
-    @TestMetadata("kt51290.kt")
-    public void testKt51290() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt51290.kt");
-    }
-
-    @Test
-    @TestMetadata("kt51475.kt")
-    public void testKt51475() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt51475.kt");
-    }
-
-    @Test
-    @TestMetadata("kt51863.kt")
-    public void testKt51863() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt51863.kt");
-    }
-
-    @Test
-    @TestMetadata("kt51951.kt")
-    public void testKt51951() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt51951.kt");
-    }
-
-    @Test
-    @TestMetadata("kt52207.kt")
-    public void testKt52207() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt52207.kt");
-    }
-
-    @Test
-    @TestMetadata("kt52213.kt")
-    public void testKt52213() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt52213.kt");
-    }
-
-    @Test
-    @TestMetadata("kt52373.kt")
-    public void testKt52373() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt52373.kt");
-    }
-
-    @Test
-    @TestMetadata("kt52459.kt")
-    public void testKt52459() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt52459.kt");
-    }
-
-    @Test
-    @TestMetadata("kt53551.kt")
-    public void testKt53551() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt53551.kt");
-    }
-
-    @Test
-    @TestMetadata("kt58476.kt")
-    public void testKt58476() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt58476.kt");
-    }
-
-    @Test
-    @TestMetadata("kt63430.kt")
-    public void testKt63430() {
-      runTest("compiler/testData/codegen/box/contextParameters/kt63430.kt");
-    }
-
-    @Test
-    @TestMetadata("noRedeclaration.kt")
-    public void testNoRedeclaration() {
-      runTest("compiler/testData/codegen/box/contextParameters/noRedeclaration.kt");
-    }
-
-    @Test
-    @TestMetadata("plusAssign.kt")
-    public void testPlusAssign() {
-      runTest("compiler/testData/codegen/box/contextParameters/plusAssign.kt");
-    }
-
-    @Test
-    @TestMetadata("plusMatrix.kt")
-    public void testPlusMatrix() {
-      runTest("compiler/testData/codegen/box/contextParameters/plusMatrix.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyCompoundAssignment.kt")
-    public void testPropertyCompoundAssignment() {
-      runTest("compiler/testData/codegen/box/contextParameters/propertyCompoundAssignment.kt");
-    }
-
-    @Test
     @TestMetadata("propertyWithContextAndWithout.kt")
     public void testPropertyWithContextAndWithout() {
       runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
-    }
-
-    @Test
-    @TestMetadata("receiversOrder.kt")
-    public void testReceiversOrder() {
-      runTest("compiler/testData/codegen/box/contextParameters/receiversOrder.kt");
     }
 
     @Test
@@ -10547,45 +10444,15 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     }
 
     @Test
-    @TestMetadata("substitutedContextReceivers.kt")
-    public void testSubstitutedContextReceivers() {
-      runTest("compiler/testData/codegen/box/contextParameters/substitutedContextReceivers.kt");
-    }
-
-    @Test
     @TestMetadata("suspendContextParemetersWithExtension.kt")
     public void testSuspendContextParemetersWithExtension() {
       runTest("compiler/testData/codegen/box/contextParameters/suspendContextParemetersWithExtension.kt");
     }
 
     @Test
-    @TestMetadata("suspendContextualWithExtension.kt")
-    public void testSuspendContextualWithExtension() {
-      runTest("compiler/testData/codegen/box/contextParameters/suspendContextualWithExtension.kt");
-    }
-
-    @Test
     @TestMetadata("typealiasOnTypeWithContext.kt")
     public void testTypealiasOnTypeWithContext() {
       runTest("compiler/testData/codegen/box/contextParameters/typealiasOnTypeWithContext.kt");
-    }
-
-    @Test
-    @TestMetadata("unaryOperators.kt")
-    public void testUnaryOperators() {
-      runTest("compiler/testData/codegen/box/contextParameters/unaryOperators.kt");
-    }
-
-    @Test
-    @TestMetadata("useFromAnotherModuleSuspending.kt")
-    public void testUseFromAnotherModuleSuspending() {
-      runTest("compiler/testData/codegen/box/contextParameters/useFromAnotherModuleSuspending.kt");
-    }
-
-    @Test
-    @TestMetadata("useFromAnotherModuleWithDefaultParameterValues.kt")
-    public void testUseFromAnotherModuleWithDefaultParameterValues() {
-      runTest("compiler/testData/codegen/box/contextParameters/useFromAnotherModuleWithDefaultParameterValues.kt");
     }
 
     @Test
@@ -10610,6 +10477,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/contracts")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Contracts {
     @Test
@@ -10765,6 +10633,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/controlStructures")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ControlStructures {
     @Test
@@ -11279,6 +11148,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class BreakContinueInExpressions {
       @Test
@@ -11409,6 +11279,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class InlinedBreakContinue {
         @Test
@@ -11493,6 +11364,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArray")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInArray {
       @Test
@@ -11564,6 +11436,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInArrayWithIndex {
       @Test
@@ -11701,6 +11574,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInCharSequenceWithIndex {
       @Test
@@ -11808,6 +11682,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInIterableWithIndex {
       @Test
@@ -11903,6 +11778,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterator")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInIterator {
       @Test
@@ -11938,6 +11814,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInSequenceWithIndex {
       @Test
@@ -12021,6 +11898,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ReturnsNothing {
       @Test
@@ -12062,6 +11940,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/slowDsl")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class SlowDsl {
       @Test
@@ -12085,6 +11964,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class TryCatchInExpressions {
       @Test
@@ -12277,6 +12157,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/controlflow")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Controlflow {
     @Test
@@ -12408,6 +12289,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/coroutines")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Coroutines {
     @Test
@@ -13558,6 +13440,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/bridges")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Bridges {
       @Test
@@ -13611,6 +13494,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/controlFlow")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ControlFlow {
       @Test
@@ -13760,6 +13644,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/debug")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Debug {
       @Test
@@ -13831,6 +13716,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class FeatureIntersection {
       @Test
@@ -13961,6 +13847,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class CallableReference {
         @Test
@@ -14001,6 +13888,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Bound {
           @Test
@@ -14018,6 +13906,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Function {
           @Test
@@ -14052,6 +13941,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class Local {
             @Test
@@ -14071,6 +13961,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class FunInterface {
         @Test
@@ -14106,6 +13997,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class JvmDefault {
         @Test
@@ -14122,6 +14014,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Kt46007 {
           @Test
@@ -14152,6 +14045,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Tailrec {
         @Test
@@ -14248,6 +14142,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/generatedCodeMarkers")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class GeneratedCodeMarkers {
       @Test
@@ -14265,6 +14160,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class InlineClasses {
       @Test
@@ -14311,6 +14207,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/direct")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Direct {
         @Test
@@ -14610,6 +14507,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/resume")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Resume {
         @Test
@@ -14909,6 +14807,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class ResumeWithException {
         @Test
@@ -15173,6 +15072,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class IntLikeVarSpilling {
       @Test
@@ -15256,6 +15156,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class IntrinsicSemantics {
       @Test
@@ -15327,6 +15228,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class JavaInterop {
       @Test
@@ -15368,6 +15270,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class LocalFunctions {
       @Test
@@ -15378,6 +15281,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Named {
         @Test
@@ -15468,6 +15372,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/multiModule")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class MultiModule {
       @Test
@@ -15539,6 +15444,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/redundantLocalsElimination")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class RedundantLocalsElimination {
       @Test
@@ -15556,6 +15462,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/reflect")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Reflect {
       @Test
@@ -15591,6 +15498,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/stackUnwinding")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class StackUnwinding {
       @Test
@@ -15638,6 +15546,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/suspendConversion")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class SuspendConversion {
       @Test
@@ -15685,6 +15594,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class SuspendFunctionAsCoroutine {
       @Test
@@ -15804,6 +15714,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class SuspendFunctionTypeCall {
       @Test
@@ -15845,6 +15756,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class TailCallOptimizations {
       @Test
@@ -15969,6 +15881,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Unit {
         @Test
@@ -16048,70 +15961,12 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/simple.kt");
         }
       }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation")
-      @TestDataPath("$PROJECT_ROOT")
-      @Tag("es6")
-      public class WrapContinuation {
-        @Test
-        public void testAllFilesPresentInWrapContinuation() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("av23.kt")
-        public void testAv23() {
-          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av23.kt");
-        }
-
-        @Test
-        @TestMetadata("av24.kt")
-        public void testAv24() {
-          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av24.kt");
-        }
-
-        @Test
-        @TestMetadata("av24_wrapped.kt")
-        public void testAv24_wrapped() {
-          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av24_wrapped.kt");
-        }
-
-        @Test
-        @TestMetadata("correctContinuation.kt")
-        public void testCorrectContinuation() {
-          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/correctContinuation.kt");
-        }
-
-        @Test
-        @TestMetadata("inline.kt")
-        public void testInline() {
-          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/inline.kt");
-        }
-
-        @Test
-        @TestMetadata("locals.kt")
-        public void testLocals() {
-          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/locals.kt");
-        }
-
-        @Test
-        @TestMetadata("samDefault.kt")
-        public void testSamDefault() {
-          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/samDefault.kt");
-        }
-
-        @Test
-        @TestMetadata("samDefaultInline.kt")
-        public void testSamDefaultInline() {
-          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/samDefaultInline.kt");
-        }
-      }
     }
 
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/tailOperations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class TailOperations {
       @Test
@@ -16147,6 +16002,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class UnitTypeReturn {
       @Test
@@ -16200,6 +16056,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class VarSpilling {
       @Test
@@ -16306,6 +16163,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanup")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Cleanup {
         @Test
@@ -16365,6 +16223,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class CleanupWithoutStdlibFunction {
         @Test
@@ -16430,6 +16289,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/debugMode")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class DebugMode {
         @Test
@@ -16501,6 +16361,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class NoCleanup {
         @Test
@@ -16574,6 +16435,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/correctFrontendCode")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class CorrectFrontendCode {
     @Test
@@ -16591,6 +16453,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/cycles")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Cycles {
     @Test
@@ -16620,6 +16483,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/dataClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class DataClasses {
     @Test
@@ -16762,6 +16626,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses/components")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Components {
       @Test
@@ -16785,6 +16650,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses/copy")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Copy {
       @Test
@@ -16844,6 +16710,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses/equals")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Equals {
       @Test
@@ -16897,6 +16764,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses/hashCode")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class HashCode {
       @Test
@@ -16986,6 +16854,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses/toString")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ToString {
       @Test
@@ -17046,6 +16915,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/dataObjects")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class DataObjects {
     @Test
@@ -17087,6 +16957,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/dataflow")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Dataflow {
     @Test
@@ -17110,6 +16981,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/deadCodeElimination")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class DeadCodeElimination {
     @Test
@@ -17145,6 +17017,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/defaultArguments")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class DefaultArguments {
     @Test
@@ -17329,6 +17202,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/constructor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Constructor {
       @Test
@@ -17448,6 +17322,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/convention")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Convention {
       @Test
@@ -17495,6 +17370,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Function {
       @Test
@@ -17674,6 +17550,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/private")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Private {
       @Test
@@ -17715,6 +17592,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/reflection")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Reflection {
       @Test
@@ -17798,6 +17676,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Signature {
       @Test
@@ -17828,6 +17707,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/delegatedProperty")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class DelegatedProperty {
     @Test
@@ -18282,6 +18162,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToAnother")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class DelegateToAnother {
       @Test
@@ -18365,6 +18246,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToConst")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class DelegateToConst {
       @Test
@@ -18394,6 +18276,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class DelegateToFinalProperty {
       @Test
@@ -18465,6 +18348,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class DelegateToSingleton {
       @Test
@@ -18518,6 +18402,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToThis")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class DelegateToThis {
       @Test
@@ -18547,6 +18432,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Local {
       @Test
@@ -18672,6 +18558,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class OptimizedDelegatedProperties {
       @Test
@@ -18749,6 +18636,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ProvideDelegate {
       @Test
@@ -18917,6 +18805,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/delegation")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Delegation {
     @Test
@@ -19168,6 +19057,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/deprecated")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Deprecated {
     @Test
@@ -19185,6 +19075,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class DestructuringDeclInLambdaParam {
     @Test
@@ -19250,6 +19141,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/devirtualization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Devirtualization {
     @Test
@@ -19297,6 +19189,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/diagnostics")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Diagnostics {
     @Test
@@ -19307,6 +19200,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/diagnostics/functions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Functions {
       @Test
@@ -19317,6 +19211,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/inference")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Inference {
         @Test
@@ -19334,6 +19229,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Invoke {
         @Test
@@ -19344,6 +19240,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke/onObjects")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class OnObjects {
           @Test
@@ -19416,6 +19313,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class TailRecursion {
         @Test
@@ -19704,6 +19602,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/diagnostics/vararg")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Vararg {
       @Test
@@ -19722,6 +19621,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/differentDependencyVersion")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class DifferentDependencyVersion {
     @Test
@@ -19751,6 +19651,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/directInvokeOptimization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class DirectInvokeOptimization {
     @Test
@@ -19852,6 +19753,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/elvis")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Elvis {
     @Test
@@ -19929,6 +19831,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/enclosing")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Enclosing {
     @Test
@@ -20108,6 +20011,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/enum")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Enum {
     @Test
@@ -20874,6 +20778,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/enum/defaultCtor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class DefaultCtor {
       @Test
@@ -20928,6 +20833,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/equivalentCalls")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class EquivalentCalls {
     @Test
@@ -20945,6 +20851,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/escapeAnalysis")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class EscapeAnalysis {
     @Test
@@ -21052,6 +20959,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/evaluate")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Evaluate {
     @Test
@@ -21165,6 +21073,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/exceptions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Exceptions {
     @Test
@@ -21224,6 +21133,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/exclExcl")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ExclExcl {
     @Test
@@ -21259,6 +21169,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/extensionClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ExtensionClasses {
     @Test
@@ -21309,6 +21220,12 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("noRedeclaration.kt")
+    public void testNoRedeclaration() {
+      runTest("compiler/testData/codegen/box/extensionClasses/noRedeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("propertyWithContext.kt")
     public void testPropertyWithContext() {
       runTest("compiler/testData/codegen/box/extensionClasses/propertyWithContext.kt");
@@ -21336,6 +21253,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/extensionFunctions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ExtensionFunctions {
     @Test
@@ -21742,6 +21660,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ContextReceivers {
       @Test
@@ -22052,6 +21971,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class FromKEEP {
         @Test
@@ -22101,6 +22021,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/extensionProperties")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ExtensionProperties {
     @Test
@@ -22310,6 +22231,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/external")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class External {
     @Test
@@ -22339,6 +22261,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/fakeOverride")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class FakeOverride {
     @Test
@@ -22542,6 +22465,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/fieldRename")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class FieldRename {
     @Test
@@ -22583,6 +22507,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/finally")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Finally {
     @Test
@@ -22738,6 +22663,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/fir")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Fir {
     @Test
@@ -23330,6 +23256,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fir/contextSensitiveResolution")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ContextSensitiveResolution {
       @Test
@@ -23371,6 +23298,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fir/primitivesInJava")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class PrimitivesInJava {
       @Test
@@ -23425,6 +23353,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/fullJdk")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class FullJdk {
     @Test
@@ -23477,6 +23406,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fullJdk/native")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Native {
       @Test
@@ -23506,6 +23436,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fullJdk/regressions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Regressions {
       @Test
@@ -23530,6 +23461,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/funInterface")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class FunInterface {
     @Test
@@ -23798,6 +23730,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/funInterface/equality")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Equality {
       @Test
@@ -23840,6 +23773,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/function")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Function {
     @Test
@@ -24067,6 +24001,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/functions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Functions {
     @Test
@@ -24437,6 +24372,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/functions/bigArity")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class BigArity {
       @Test
@@ -24514,6 +24450,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/functions/functionExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class FunctionExpression {
       @Test
@@ -24555,6 +24492,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/functions/invoke")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Invoke {
       @Test
@@ -24656,6 +24594,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/functions/localFunctions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class LocalFunctions {
       @Test
@@ -24854,6 +24793,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/genericJvmSignature")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class GenericJvmSignature {
     @Test
@@ -24967,6 +24907,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/ieee754")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Ieee754 {
     @Test
@@ -25266,6 +25207,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/increment")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Increment {
     @Test
@@ -25439,6 +25381,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/inference")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Inference {
     @Test
@@ -25833,6 +25776,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inference/pcla")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Pcla {
       @Test
@@ -25901,9 +25845,9 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       }
 
       @Test
-      @TestMetadata("contextParameters.kt")
-      public void testContextParameters() {
-        runTest("compiler/testData/codegen/box/inference/pcla/contextParameters.kt");
+      @TestMetadata("contextReceivers.kt")
+      public void testContextReceivers() {
+        runTest("compiler/testData/codegen/box/inference/pcla/contextReceivers.kt");
       }
 
       @Test
@@ -26107,6 +26051,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inference/pcla/issues")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Issues {
         @Test
@@ -26571,18 +26516,6 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         }
 
         @Test
-        @TestMetadata("kt66359a.kt")
-        public void testKt66359a() {
-          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt66359a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt66359b.kt")
-        public void testKt66359b() {
-          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt66359b.kt");
-        }
-
-        @Test
         @TestMetadata("kt67993.kt")
         public void testKt67993() {
           runTest("compiler/testData/codegen/box/inference/pcla/issues/kt67993.kt");
@@ -26610,6 +26543,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class OneParameter {
         @Test
@@ -26620,6 +26554,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class OneTypeVariable {
           @Test
@@ -26630,6 +26565,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class OneTypeInfoOrigin {
             @Test
@@ -26664,6 +26600,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class SourceSinkFeedContexts {
               @Test
@@ -26729,6 +26666,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class TargetTypes {
               @Test
@@ -26956,6 +26894,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class TypeInfoSinks {
               @Test
@@ -27021,6 +26960,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class TypeInfoSources {
               @Test
@@ -27073,6 +27013,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/initializers")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Initializers {
     @Test
@@ -27215,6 +27156,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/initializers/files")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Files {
       @Test
@@ -27251,6 +27193,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/inline")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Inline {
     @Test
@@ -27652,6 +27595,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/inlineArgsInPlace")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class InlineArgsInPlace {
     @Test
@@ -27735,6 +27679,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/inlineClass")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class InlineClass {
     @Test
@@ -27770,6 +27715,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/inlineClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class InlineClasses {
     @Test
@@ -30378,6 +30324,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class BoxReturnValueInLambda {
       @Test
@@ -30557,6 +30504,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class BoxReturnValueOnOverride {
       @Test
@@ -30934,6 +30882,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class CallableReferences {
       @Test
@@ -31190,6 +31139,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences/let")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Let {
         @Test
@@ -31310,6 +31260,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ContextsAndAccessors {
       @Test
@@ -31585,6 +31536,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class DefaultParameterValues {
       @Test
@@ -31733,6 +31685,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class DefaultWithDefaultParameter {
         @Test
@@ -31780,6 +31733,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class OverrideFunctionWithDefaultParameter {
         @Test
@@ -31828,6 +31782,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class DelegationByUnderlyingType {
       @Test
@@ -31875,6 +31830,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/funInterface")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class FunInterface {
       @Test
@@ -31970,6 +31926,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/functionNameMangling")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class FunctionNameMangling {
       @Test
@@ -32197,6 +32154,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class GenericUnderlyingValue {
       @Test
@@ -32250,6 +32208,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/hiddenConstructor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class HiddenConstructor {
       @Test
@@ -32411,6 +32370,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/inlineClassCollection")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class InlineClassCollection {
       @Test
@@ -32464,6 +32424,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceDelegation")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class InterfaceDelegation {
       @Test
@@ -32565,6 +32526,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class InterfaceMethodCalls {
       @Test
@@ -32708,6 +32670,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class JavaInterop {
       @Test
@@ -32773,6 +32736,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Jvm8DefaultInterfaceMethods {
       @Test
@@ -32916,6 +32880,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class JvmExposeBoxed {
       @Test
@@ -33064,6 +33029,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Directive {
         @Test
@@ -33195,6 +33161,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class FeatureInteraction {
         @Test
@@ -33230,6 +33197,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Inherit {
         @Test
@@ -33240,6 +33208,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Child {
           @Test
@@ -33271,6 +33240,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class PropertyDelegation {
       @Test
@@ -33426,6 +33396,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/result")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Result {
       @Test
@@ -33485,6 +33456,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/returnResult")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ReturnResult {
       @Test
@@ -33532,6 +33504,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class UnboxGenericParameter {
       @Test
@@ -33548,6 +33521,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class FunInterface {
         @Test
@@ -33661,6 +33635,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Lambda {
         @Test
@@ -33774,6 +33749,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class ObjectLiteral {
         @Test
@@ -33889,6 +33865,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/innerClass")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class InnerClass {
     @Test
@@ -33972,6 +33949,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/innerNested")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class InnerNested {
     @Test
@@ -34216,6 +34194,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class SuperConstructorCall {
       @Test
@@ -34360,6 +34339,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/instructions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Instructions {
     @Test
@@ -34370,6 +34350,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/instructions/swap")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Swap {
       @Test
@@ -34394,6 +34375,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/interfaceCallsNCasts")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class InterfaceCallsNCasts {
     @Test
@@ -34429,6 +34411,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/intrinsics")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Intrinsics {
     @Test
@@ -34614,6 +34597,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/invokedynamic")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Invokedynamic {
     @Test
@@ -34630,6 +34614,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Lambdas {
       @Test
@@ -34820,6 +34805,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas/inlineClassInSignature")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class InlineClassInSignature {
         @Test
@@ -34868,6 +34854,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Sam {
       @Test
@@ -35124,6 +35111,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionExprToJavaInterface")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class FunctionExprToJavaInterface {
         @Test
@@ -35177,6 +35165,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class FunctionRefToJavaInterface {
         @Test
@@ -35409,6 +35398,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/specialFunctions")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class SpecialFunctions {
           @Test
@@ -35474,6 +35464,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class WithAccessor {
           @Test
@@ -35534,6 +35525,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class InlineClassInSignature {
         @Test
@@ -35617,6 +35609,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class SpecializedGenerics {
         @Test
@@ -35761,6 +35754,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/invokedynamic/serializable")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Serializable {
       @Test
@@ -35929,6 +35923,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class InvolvesIrInterpreter {
     @Test
@@ -36173,6 +36168,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ConstEvaluationFromJavaWorld {
       @Test
@@ -36220,6 +36216,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class IntrinsicConst {
       @Test
@@ -36291,6 +36288,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/serialization")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Serialization {
       @Test
@@ -36387,6 +36385,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/ir")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Ir {
     @Test
@@ -36541,6 +36540,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ir/closureConversion")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ClosureConversion {
       @Test
@@ -36600,6 +36600,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ir/primitiveNumberComparisons")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class PrimitiveNumberComparisons {
       @Test
@@ -36635,6 +36636,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ir/privateSignatures")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class PrivateSignatures {
       @Test
@@ -36694,6 +36696,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ir/serializationRegressions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class SerializationRegressions {
       @Test
@@ -36748,6 +36751,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/javaFieldAndKotlinProperty")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class JavaFieldAndKotlinProperty {
     @Test
@@ -36897,6 +36901,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/javaInterop")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class JavaInterop {
     @Test
@@ -37171,6 +37176,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/commonAtomicTypes")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class CommonAtomicTypes {
       @Test
@@ -37230,6 +37236,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForeignAnnotationsTests {
       @Test
@@ -37240,6 +37247,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Tests {
         @Test
@@ -37264,6 +37272,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/generics")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Generics {
       @Test
@@ -37317,6 +37326,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class NotNullAssertions {
       @Test
@@ -37465,6 +37475,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class EnhancedNullability {
         @Test
@@ -37524,6 +37535,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class ExpressionAssertionMessages {
         @Test
@@ -37607,6 +37619,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class NullCheckOnLambdaReturnValue {
         @Test
@@ -37679,6 +37692,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/objectMethods")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ObjectMethods {
       @Test
@@ -37726,6 +37740,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class PrimitiveVsWrapperTypeInInheritance {
       @Test
@@ -37791,6 +37806,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/statics")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Statics {
       @Test
@@ -37833,6 +37849,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/javaVisibility")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class JavaVisibility {
     @Test
@@ -37843,6 +37860,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaVisibility/package")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Package {
       @Test
@@ -37920,6 +37938,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaVisibility/protectedAndPackage")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ProtectedAndPackage {
       @Test
@@ -37985,6 +38004,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaVisibility/protectedStatic")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ProtectedStatic {
       @Test
@@ -38069,6 +38089,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jdk")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Jdk {
     @Test
@@ -38128,6 +38149,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/js")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Js {
     @Test
@@ -38168,6 +38190,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/js/inlinedReturnBreakContinue")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class InlinedReturnBreakContinue {
       @Test
@@ -38228,6 +38251,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvm8")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Jvm8 {
     @Test
@@ -38370,6 +38394,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvm8/defaults")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Defaults {
       @Test
@@ -38392,6 +38417,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class DefaultCompatibilityBridges {
         @Test
@@ -38463,6 +38489,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/delegationBy")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class DelegationBy {
         @Test
@@ -38480,6 +38507,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Enable {
         @Test
@@ -38778,6 +38806,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class DelegationBy {
           @Test
@@ -38802,6 +38831,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class NoCompatibility {
         @Test
@@ -39070,6 +39100,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class DelegationBy {
           @Test
@@ -39093,6 +39124,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Specialization {
           @Test
@@ -39110,6 +39142,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class WithCompatibility {
           @Test
@@ -39158,6 +39191,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class NonDefaultInheritance {
         @Test
@@ -39211,6 +39245,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/reflection")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Reflection {
         @Test
@@ -39229,6 +39264,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvm8/interfaceFlag")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class InterfaceFlag {
       @Test
@@ -39252,6 +39288,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvm8/javaDefaults")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class JavaDefaults {
       @Test
@@ -39354,6 +39391,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvmField")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class JvmField {
     @Test
@@ -39545,6 +39583,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvmName")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class JvmName {
     @Test
@@ -39663,6 +39702,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmName/fileFacades")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class FileFacades {
       @Test
@@ -39693,6 +39733,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvmOverloads")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class JvmOverloads {
     @Test
@@ -39830,6 +39871,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvmPackageName")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class JvmPackageName {
     @Test
@@ -39895,6 +39937,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvmStatic")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class JvmStatic {
     @Test
@@ -40139,6 +40182,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ProtectedInSuperClass {
       @Test
@@ -40169,6 +40213,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/kclass")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Kclass {
     @Test
@@ -40192,6 +40237,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/klib")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Klib {
     @Test
@@ -40209,6 +40255,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/ktype")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Ktype {
     @Test
@@ -40262,6 +40309,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/labels")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Labels {
     @Test
@@ -40321,6 +40369,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/lambda")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Lambda {
     @Test
@@ -40452,6 +40501,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/lateinit")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Lateinit {
     @Test
@@ -40523,6 +40573,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/lazyCodegen")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class LazyCodegen {
     @Test
@@ -40587,6 +40638,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/lazyCodegen/optimizations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Optimizations {
       @Test
@@ -40653,6 +40705,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/literals")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Literals {
     @Test
@@ -40676,6 +40729,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/localClass")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class LocalClass {
     @Test
@@ -40753,6 +40807,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/localClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class LocalClasses {
     @Test
@@ -41004,6 +41059,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/localEscapeAnalysis")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class LocalEscapeAnalysis {
     @Test
@@ -41021,6 +41077,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/lower")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Lower {
     @Test
@@ -41037,6 +41094,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/lower/forLoopsLowering")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForLoopsLowering {
       @Test
@@ -41115,6 +41173,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/mangling")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Mangling {
     @Test
@@ -41186,6 +41245,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/mixedNamedPosition")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class MixedNamedPosition {
     @Test
@@ -41221,6 +41281,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/multiDecl")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class MultiDecl {
     @Test
@@ -41345,6 +41406,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForIterator {
       @Test
@@ -41385,6 +41447,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator/longIterator")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class LongIterator {
         @Test
@@ -41421,6 +41484,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForRange {
       @Test
@@ -41473,6 +41537,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class ExplicitRangeTo {
         @Test
@@ -41513,6 +41578,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Int {
           @Test
@@ -41548,6 +41614,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Long {
           @Test
@@ -41584,6 +41651,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class ExplicitRangeToWithDot {
         @Test
@@ -41624,6 +41692,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Int {
           @Test
@@ -41659,6 +41728,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Long {
           @Test
@@ -41695,6 +41765,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/int")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Int {
         @Test
@@ -41730,6 +41801,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/long")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Long {
         @Test
@@ -41767,6 +41839,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/multifileClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class MultifileClasses {
     @Test
@@ -41867,6 +41940,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multifileClasses/optimized")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Optimized {
       @Test
@@ -41945,1481 +42019,295 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/multiplatform")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Multiplatform {
     @Test
     public void testAllFilesPresentInMultiplatform() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, true, "k1");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, true, "k2");
     }
 
     @Nested
-    @TestMetadata("compiler/testData/codegen/box/multiplatform/k2")
+    @TestMetadata("compiler/testData/codegen/box/multiplatform/k1")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
-    public class K2 {
+    public class K1 {
       @Test
-      @TestMetadata("AbstractMutableList_modCount.kt")
-      public void testAbstractMutableList_modCount() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/AbstractMutableList_modCount.kt");
+      public void testAllFilesPresentInK1() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k1"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
-      @TestMetadata("AbstractMutableList_modCount_deprecated.kt")
-      public void testAbstractMutableList_modCount_deprecated() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/AbstractMutableList_modCount_deprecated.kt");
+      @TestMetadata("annotationsViaActualTypeAliasFromBinary.kt")
+      public void testAnnotationsViaActualTypeAliasFromBinary() {
+        runTest("compiler/testData/codegen/box/multiplatform/k1/annotationsViaActualTypeAliasFromBinary.kt");
       }
 
       @Test
-      @TestMetadata("actualInnerClassesFirMemberMapping.kt")
-      public void testActualInnerClassesFirMemberMapping() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/actualInnerClassesFirMemberMapping.kt");
+      @TestMetadata("expectClassInJvmMultifileFacade.kt")
+      public void testExpectClassInJvmMultifileFacade() {
+        runTest("compiler/testData/codegen/box/multiplatform/k1/expectClassInJvmMultifileFacade.kt");
       }
 
       @Test
-      @TestMetadata("actualizeExpectProtectedToJavaProtected.kt")
-      public void testActualizeExpectProtectedToJavaProtected() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/actualizeExpectProtectedToJavaProtected.kt");
+      @TestMetadata("expectProperty.kt")
+      public void testExpectProperty() {
+        runTest("compiler/testData/codegen/box/multiplatform/k1/expectProperty.kt");
       }
 
       @Test
-      @TestMetadata("aliasSuperTypeInLazy.kt")
-      public void testAliasSuperTypeInLazy() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/aliasSuperTypeInLazy.kt");
+      @TestMetadata("noArgActualConstructor.kt")
+      public void testNoArgActualConstructor() {
+        runTest("compiler/testData/codegen/box/multiplatform/k1/noArgActualConstructor.kt");
       }
 
       @Test
-      public void testAllFilesPresentInK2() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, true);
-      }
-
-      @Test
-      @TestMetadata("annotationsViaActualTypeAliasFromBinary2.kt")
-      public void testAnnotationsViaActualTypeAliasFromBinary2() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/annotationsViaActualTypeAliasFromBinary2.kt");
-      }
-
-      @Test
-      @TestMetadata("anonymousObjectAndSpecificImplementationInDeserializedIr.kt")
-      public void testAnonymousObjectAndSpecificImplementationInDeserializedIr() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/anonymousObjectAndSpecificImplementationInDeserializedIr.kt");
-      }
-
-      @Test
-      @TestMetadata("assertDisabledAsActualFunction.kt")
-      public void testAssertDisabledAsActualFunction() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/assertDisabledAsActualFunction.kt");
-      }
-
-      @Test
-      @TestMetadata("assertDisabledAsActualFunctionHmpp.kt")
-      public void testAssertDisabledAsActualFunctionHmpp() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/assertDisabledAsActualFunctionHmpp.kt");
-      }
-
-      @Test
-      @TestMetadata("assertEnabledAsActualFunction.kt")
-      public void testAssertEnabledAsActualFunction() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/assertEnabledAsActualFunction.kt");
-      }
-
-      @Test
-      @TestMetadata("assertEnabledAsActualFunctionHmpp.kt")
-      public void testAssertEnabledAsActualFunctionHmpp() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/assertEnabledAsActualFunctionHmpp.kt");
-      }
-
-      @Test
-      @TestMetadata("callToJavaSuper.kt")
-      public void testCallToJavaSuper() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/callToJavaSuper.kt");
-      }
-
-      @Test
-      @TestMetadata("commonFakeOverridePropertyRef.kt")
-      public void testCommonFakeOverridePropertyRef() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/commonFakeOverridePropertyRef.kt");
-      }
-
-      @Test
-      @TestMetadata("commonInternal.kt")
-      public void testCommonInternal() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/commonInternal.kt");
-      }
-
-      @Test
-      @TestMetadata("covariantOverrideInActual.kt")
-      public void testCovariantOverrideInActual() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/covariantOverrideInActual.kt");
-      }
-
-      @Test
-      @TestMetadata("dataClassInCommonAndPlatform.kt")
-      public void testDataClassInCommonAndPlatform() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/dataClassInCommonAndPlatform.kt");
-      }
-
-      @Test
-      @TestMetadata("directJavaActualization.kt")
-      public void testDirectJavaActualization() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/directJavaActualization.kt");
-      }
-
-      @Test
-      @TestMetadata("enumStaticMethods.kt")
-      public void testEnumStaticMethods() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/enumStaticMethods.kt");
-      }
-
-      @Test
-      @TestMetadata("expectAnnotationAsTypeAlias.kt")
-      public void testExpectAnnotationAsTypeAlias() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/expectAnnotationAsTypeAlias.kt");
-      }
-
-      @Test
-      @TestMetadata("expectNonExpectOverloads.kt")
-      public void testExpectNonExpectOverloads() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/expectNonExpectOverloads.kt");
-      }
-
-      @Test
-      @TestMetadata("expectRefinement.kt")
-      public void testExpectRefinement() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/expectRefinement.kt");
-      }
-
-      @Test
-      @TestMetadata("expectValInInlineClass.kt")
-      public void testExpectValInInlineClass() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/expectValInInlineClass.kt");
-      }
-
-      @Test
-      @TestMetadata("expectValInInlineClassJVM.kt")
-      public void testExpectValInInlineClassJVM() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/expectValInInlineClassJVM.kt");
-      }
-
-      @Test
-      @TestMetadata("extensionPropertiesOverloads.kt")
-      public void testExtensionPropertiesOverloads() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/extensionPropertiesOverloads.kt");
-      }
-
-      @Test
-      @TestMetadata("hashSetSize.kt")
-      public void testHashSetSize() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/hashSetSize.kt");
-      }
-
-      @Test
-      @TestMetadata("internalOverride.kt")
-      public void testInternalOverride() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/internalOverride.kt");
-      }
-
-      @Test
-      @TestMetadata("internalOverride2.kt")
-      public void testInternalOverride2() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/internalOverride2.kt");
-      }
-
-      @Test
-      @TestMetadata("internalSetterInCommon.kt")
-      public void testInternalSetterInCommon() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/internalSetterInCommon.kt");
-      }
-
-      @Test
-      @TestMetadata("javaClassReferencedActualType.kt")
-      public void testJavaClassReferencedActualType() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/javaClassReferencedActualType.kt");
-      }
-
-      @Test
-      @TestMetadata("javaMethodWithTypeParameter.kt")
-      public void testJavaMethodWithTypeParameter() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/javaMethodWithTypeParameter.kt");
-      }
-
-      @Test
-      @TestMetadata("jvmDeclarationsUpdatedMembersInCommonModule.kt")
-      public void testJvmDeclarationsUpdatedMembersInCommonModule() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/jvmDeclarationsUpdatedMembersInCommonModule.kt");
-      }
-
-      @Test
-      @TestMetadata("kt57391.kt")
-      public void testKt57391() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/kt57391.kt");
-      }
-
-      @Test
-      @TestMetadata("kt59613.kt")
-      public void testKt59613() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/kt59613.kt");
-      }
-
-      @Test
-      @TestMetadata("kt60854.kt")
-      public void testKt60854() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/kt60854.kt");
-      }
-
-      @Test
-      @TestMetadata("kt61166.kt")
-      public void testKt61166() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/kt61166.kt");
-      }
-
-      @Test
-      @TestMetadata("kt66970.kt")
-      public void testKt66970() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/kt66970.kt");
-      }
-
-      @Test
-      @TestMetadata("kt68801.kt")
-      public void testKt68801() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/kt68801.kt");
-      }
-
-      @Test
-      @TestMetadata("kt70894.kt")
-      public void testKt70894() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/kt70894.kt");
-      }
-
-      @Test
-      @TestMetadata("kt-65249.kt")
-      public void testKt_65249() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/kt-65249.kt");
-      }
-
-      @Test
-      @TestMetadata("mergedOverrides.kt")
-      public void testMergedOverrides() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/mergedOverrides.kt");
-      }
-
-      @Test
-      @TestMetadata("optionalExpectationJvm.kt")
-      public void testOptionalExpectationJvm() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/optionalExpectationJvm.kt");
-      }
-
-      @Test
-      @TestMetadata("privateConstructorWithDefaults.kt")
-      public void testPrivateConstructorWithDefaults() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/privateConstructorWithDefaults.kt");
-      }
-
-      @Test
-      @TestMetadata("regularAndDeprecatedOverloads.kt")
-      public void testRegularAndDeprecatedOverloads() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/regularAndDeprecatedOverloads.kt");
-      }
-
-      @Test
-      @TestMetadata("starImportOfExpectEnumWithActualTypeAlias.kt")
-      public void testStarImportOfExpectEnumWithActualTypeAlias() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/starImportOfExpectEnumWithActualTypeAlias.kt");
-      }
-
-      @Test
-      @TestMetadata("staticjavaFieldInCommonCode.kt")
-      public void testStaticjavaFieldInCommonCode() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/staticjavaFieldInCommonCode.kt");
-      }
-
-      @Test
-      @TestMetadata("synteticProperty.kt")
-      public void testSynteticProperty() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/synteticProperty.kt");
-      }
-
-      @Test
-      @TestMetadata("unsignedArrayForLoop.kt")
-      public void testUnsignedArrayForLoop() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/unsignedArrayForLoop.kt");
+      @TestMetadata("optionalExpectation.kt")
+      public void testOptionalExpectation() {
+        runTest("compiler/testData/codegen/box/multiplatform/k1/optionalExpectation.kt");
       }
 
       @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
+      @TestMetadata("compiler/testData/codegen/box/multiplatform/k1/complexMatchings")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("es6")
-      public class Annotations {
-        @Test
-        public void testAllFilesPresentInAnnotations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("annotationsViaActualTypeAliasFromBinary.kt")
-        public void testAnnotationsViaActualTypeAliasFromBinary() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/annotationsViaActualTypeAliasFromBinary.kt");
-        }
-
-        @Test
-        @TestMetadata("deprecatedAnnotationOnlyOnActual_useInCommon.kt")
-        public void testDeprecatedAnnotationOnlyOnActual_useInCommon() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/deprecatedAnnotationOnlyOnActual_useInCommon.kt");
-        }
-
-        @Test
-        @TestMetadata("expectAnnotationCallInLibrary.kt")
-        public void testExpectAnnotationCallInLibrary() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/expectAnnotationCallInLibrary.kt");
-        }
-
-        @Test
-        @TestMetadata("expectClassInJvmMultifileFacade.kt")
-        public void testExpectClassInJvmMultifileFacade() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/expectClassInJvmMultifileFacade.kt");
-        }
-
-        @Test
-        @TestMetadata("optionalExpectation.kt")
-        public void testOptionalExpectation() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/optionalExpectation.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/basic")
-      @TestDataPath("$PROJECT_ROOT")
-      @Tag("es6")
-      public class Basic {
-        @Test
-        @TestMetadata("accessToLocalClassFromBackend.kt")
-        public void testAccessToLocalClassFromBackend() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/accessToLocalClassFromBackend.kt");
-        }
-
-        @Test
-        @TestMetadata("actualFunctionWithArgumentOfExpectType.kt")
-        public void testActualFunctionWithArgumentOfExpectType() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/actualFunctionWithArgumentOfExpectType.kt");
-        }
-
-        @Test
-        public void testAllFilesPresentInBasic() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("anyMethodInExpect.kt")
-        public void testAnyMethodInExpect() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/anyMethodInExpect.kt");
-        }
-
-        @Test
-        @TestMetadata("contextInFakeOverride.kt")
-        public void testContextInFakeOverride() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextInFakeOverride.kt");
-        }
-
-        @Test
-        @TestMetadata("contextOnExpect.kt")
-        public void testContextOnExpect() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextOnExpect.kt");
-        }
-
-        @Test
-        @TestMetadata("contextOnExpectActual.kt")
-        public void testContextOnExpectActual() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextOnExpectActual.kt");
-        }
-
-        @Test
-        @TestMetadata("correctParentForTypeParameter.kt")
-        public void testCorrectParentForTypeParameter() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/correctParentForTypeParameter.kt");
-        }
-
-        @Test
-        @TestMetadata("delegatedByExpectExtensionProperty.kt")
-        public void testDelegatedByExpectExtensionProperty() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/delegatedByExpectExtensionProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("enumEntryNameCall.kt")
-        public void testEnumEntryNameCall() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/enumEntryNameCall.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualCallableReference.kt")
-        public void testExpectActualCallableReference() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualCallableReference.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualDifferentExtensionReceiversOnOverloads.kt")
-        public void testExpectActualDifferentExtensionReceiversOnOverloads() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualDifferentExtensionReceiversOnOverloads.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualDifferentPackages.kt")
-        public void testExpectActualDifferentPackages() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualDifferentPackages.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualFakeOverrides.kt")
-        public void testExpectActualFakeOverrides() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverrides.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualFakeOverrides2.kt")
-        public void testExpectActualFakeOverrides2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverrides2.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualFakeOverrides3.kt")
-        public void testExpectActualFakeOverrides3() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverrides3.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualFakeOverridesWithTypeParameters.kt")
-        public void testExpectActualFakeOverridesWithTypeParameters() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverridesWithTypeParameters.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualFakeOverridesWithTypeParameters2.kt")
-        public void testExpectActualFakeOverridesWithTypeParameters2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverridesWithTypeParameters2.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualIntersectionOverride.kt")
-        public void testExpectActualIntersectionOverride() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualIntersectionOverride.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualIntersectionOverride2.kt")
-        public void testExpectActualIntersectionOverride2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualIntersectionOverride2.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualMultiCommon.kt")
-        public void testExpectActualMultiCommon() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualMultiCommon.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualNullabilityBasedOverloads.kt")
-        public void testExpectActualNullabilityBasedOverloads() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualNullabilityBasedOverloads.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualOverloads.kt")
-        public void testExpectActualOverloads() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualOverloads.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualSimple.kt")
-        public void testExpectActualSimple() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualSimple.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualTypeParameters.kt")
-        public void testExpectActualTypeParameters() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualTypeParameters.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualTypealias.kt")
-        public void testExpectActualTypealias() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualTypealias.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualTypealiasCoercion.kt")
-        public void testExpectActualTypealiasCoercion() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualTypealiasCoercion.kt");
-        }
-
-        @Test
-        @TestMetadata("expectAndCommonFunctionOverloads.kt")
-        public void testExpectAndCommonFunctionOverloads() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectAndCommonFunctionOverloads.kt");
-        }
-
-        @Test
-        @TestMetadata("expectInterfaceInSupertypes.kt")
-        public void testExpectInterfaceInSupertypes() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectInterfaceInSupertypes.kt");
-        }
-
-        @Test
-        @TestMetadata("expectInterfaceInSupertypes2.kt")
-        public void testExpectInterfaceInSupertypes2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectInterfaceInSupertypes2.kt");
-        }
-
-        @Test
-        @TestMetadata("expectProperty.kt")
-        public void testExpectProperty() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionAndFakeOverride.kt")
-        public void testExtensionAndFakeOverride() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionAndFakeOverride.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionFunction.kt")
-        public void testExtensionFunction() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunction.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionFunctionAsASupertype.kt")
-        public void testExtensionFunctionAsASupertype() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionAsASupertype.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionFunctionAsASupertypeConversion.kt")
-        public void testExtensionFunctionAsASupertypeConversion() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionAsASupertypeConversion.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionFunctionAsASupertypeWithJavaActualization.kt")
-        public void testExtensionFunctionAsASupertypeWithJavaActualization() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionAsASupertypeWithJavaActualization.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionFunctionAsAType.kt")
-        public void testExtensionFunctionAsAType() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionAsAType.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionFunctionAsATypeWithJavaActualization.kt")
-        public void testExtensionFunctionAsATypeWithJavaActualization() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionAsATypeWithJavaActualization.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionFunctionAsAnonymous.kt")
-        public void testExtensionFunctionAsAnonymous() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionAsAnonymous.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionFunctionInDelegatedSam.kt")
-        public void testExtensionFunctionInDelegatedSam() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionInDelegatedSam.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionFunctionOnExpect.kt")
-        public void testExtensionFunctionOnExpect() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionOnExpect.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionMember.kt")
-        public void testExtensionMember() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionMember.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionOnNestedReceiver.kt")
-        public void testExtensionOnNestedReceiver() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionOnNestedReceiver.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionPropertyWithAnonymousExtension.kt")
-        public void testExtensionPropertyWithAnonymousExtension() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionPropertyWithAnonymousExtension.kt");
-        }
-
-        @Test
-        @TestMetadata("fakeOverridesInPlatformModule.kt")
-        public void testFakeOverridesInPlatformModule() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/fakeOverridesInPlatformModule.kt");
-        }
-
-        @Test
-        @TestMetadata("getRidOfDoubleBindingInFir2IrLazyProperty.kt")
-        public void testGetRidOfDoubleBindingInFir2IrLazyProperty() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/getRidOfDoubleBindingInFir2IrLazyProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("independentCommonSourceModules.kt")
-        public void testIndependentCommonSourceModules() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/independentCommonSourceModules.kt");
-        }
-
-        @Test
-        @TestMetadata("interfaceMethodFromSuperTypeIsImplementedInOtherExpectSuperClass.kt")
-        public void testInterfaceMethodFromSuperTypeIsImplementedInOtherExpectSuperClass() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/interfaceMethodFromSuperTypeIsImplementedInOtherExpectSuperClass.kt");
-        }
-
-        @Test
-        @TestMetadata("intersectionOverrideInCommonModule.kt")
-        public void testIntersectionOverrideInCommonModule() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/intersectionOverrideInCommonModule.kt");
-        }
-
-        @Test
-        @TestMetadata("intersectionOverrideWithDefaultParameterInCommonModule.kt")
-        public void testIntersectionOverrideWithDefaultParameterInCommonModule() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/intersectionOverrideWithDefaultParameterInCommonModule.kt");
-        }
-
-        @Test
-        @TestMetadata("kt-51753-1.kt")
-        public void testKt_51753_1() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-51753-1.kt");
-        }
-
-        @Test
-        @TestMetadata("kt-51753-2.kt")
-        public void testKt_51753_2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-51753-2.kt");
-        }
-
-        @Test
-        @TestMetadata("kt-56329.kt")
-        public void testKt_56329() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-56329.kt");
-        }
-
-        @Test
-        @TestMetadata("localIntersectionOverrideInCommonModule.kt")
-        public void testLocalIntersectionOverrideInCommonModule() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/localIntersectionOverrideInCommonModule.kt");
-        }
-
-        @Test
-        @TestMetadata("localIntersectionOverrideWithDefaultParameterInCommonModule.kt")
-        public void testLocalIntersectionOverrideWithDefaultParameterInCommonModule() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/localIntersectionOverrideWithDefaultParameterInCommonModule.kt");
-        }
-
-        @Test
-        @TestMetadata("localSubstitutionOverrideInCommonModule.kt")
-        public void testLocalSubstitutionOverrideInCommonModule() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/localSubstitutionOverrideInCommonModule.kt");
-        }
-
-        @Test
-        @TestMetadata("nameBasedDestructuringFullForm.kt")
-        public void testNameBasedDestructuringFullForm() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nameBasedDestructuringFullForm.kt");
-        }
-
-        @Test
-        @TestMetadata("nameBasedDestructuringShortForm.kt")
-        public void testNameBasedDestructuringShortForm() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nameBasedDestructuringShortForm.kt");
-        }
-
-        @Test
-        @TestMetadata("noArgActualConstructor.kt")
-        public void testNoArgActualConstructor() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/noArgActualConstructor.kt");
-        }
-
-        @Test
-        @TestMetadata("nonExternalEquals.kt")
-        public void testNonExternalEquals() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nonExternalEquals.kt");
-        }
-
-        @Test
-        @TestMetadata("overridesOfExpectMembers.kt")
-        public void testOverridesOfExpectMembers() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/overridesOfExpectMembers.kt");
-        }
-
-        @Test
-        @TestMetadata("removeExpectDeclarationsFromMetadata.kt")
-        public void testRemoveExpectDeclarationsFromMetadata() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/removeExpectDeclarationsFromMetadata.kt");
-        }
-
-        @Test
-        @TestMetadata("substitutionOverrideInCommonModule.kt")
-        public void testSubstitutionOverrideInCommonModule() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/substitutionOverrideInCommonModule.kt");
-        }
-
-        @Test
-        @TestMetadata("transitiveSuperclassActualization.kt")
-        public void testTransitiveSuperclassActualization() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/transitiveSuperclassActualization.kt");
-        }
-
-        @Test
-        @TestMetadata("transitiveSuperclassActualization_java.kt")
-        public void testTransitiveSuperclassActualization_java() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/transitiveSuperclassActualization_java.kt");
-        }
-
-        @Test
-        @TestMetadata("valueClassOfExpectClass.kt")
-        public void testValueClassOfExpectClass() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/valueClassOfExpectClass.kt");
-        }
-
-        @Test
-        @TestMetadata("valueClasses.kt")
-        public void testValueClasses() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/valueClasses.kt");
-        }
-
-        @Test
-        @TestMetadata("widerVisibilityInActualClassifier.kt")
-        public void testWiderVisibilityInActualClassifier() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/widerVisibilityInActualClassifier.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/complexMatchings")
-      @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class ComplexMatchings {
         @Test
         public void testAllFilesPresentInComplexMatchings() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/complexMatchings"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k1/complexMatchings"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
         @TestMetadata("expectCtorlessFinalToActualObject.kt")
         public void testExpectCtorlessFinalToActualObject() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/complexMatchings/expectCtorlessFinalToActualObject.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/complexMatchings/expectCtorlessFinalToActualObject.kt");
         }
 
         @Test
         @TestMetadata("expectCtorlessFinalToActualPromiseOfUnit.kt")
         public void testExpectCtorlessFinalToActualPromiseOfUnit() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/complexMatchings/expectCtorlessFinalToActualPromiseOfUnit.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/complexMatchings/expectCtorlessFinalToActualPromiseOfUnit.kt");
         }
 
         @Test
         @TestMetadata("expectCtorlessFinalToActualUnit.kt")
         public void testExpectCtorlessFinalToActualUnit() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/complexMatchings/expectCtorlessFinalToActualUnit.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/complexMatchings/expectCtorlessFinalToActualUnit.kt");
         }
       }
 
       @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/defaultArguments")
+      @TestMetadata("compiler/testData/codegen/box/multiplatform/k1/defaultArguments")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class DefaultArguments {
         @Test
         public void testAllFilesPresentInDefaultArguments() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k1/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
         @TestMetadata("annotations.kt")
         public void testAnnotations() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/annotations.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/annotations.kt");
         }
 
         @Test
         @TestMetadata("bothInExpectAndActual.kt")
         public void testBothInExpectAndActual() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/bothInExpectAndActual.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/bothInExpectAndActual.kt");
         }
 
         @Test
         @TestMetadata("bothInExpectAndActual2.kt")
         public void testBothInExpectAndActual2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/bothInExpectAndActual2.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/bothInExpectAndActual2.kt");
         }
 
         @Test
         @TestMetadata("constructor.kt")
         public void testConstructor() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/constructor.kt");
-        }
-
-        @Test
-        @TestMetadata("defaultArgumentInDelegatedFunction.kt")
-        public void testDefaultArgumentInDelegatedFunction() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/defaultArgumentInDelegatedFunction.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/constructor.kt");
         }
 
         @Test
         @TestMetadata("delegatedExpectedInterface.kt")
         public void testDelegatedExpectedInterface() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/delegatedExpectedInterface.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/delegatedExpectedInterface.kt");
         }
 
         @Test
         @TestMetadata("dispatchReceiverValue.kt")
         public void testDispatchReceiverValue() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/dispatchReceiverValue.kt");
-        }
-
-        @Test
-        @TestMetadata("expectPropertyAsDefaultArgument.kt")
-        public void testExpectPropertyAsDefaultArgument() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/expectPropertyAsDefaultArgument.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/dispatchReceiverValue.kt");
         }
 
         @Test
         @TestMetadata("extensionReceiverValue.kt")
         public void testExtensionReceiverValue() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/extensionReceiverValue.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/extensionReceiverValue.kt");
         }
 
         @Test
         @TestMetadata("function.kt")
         public void testFunction() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/function.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/function.kt");
         }
 
         @Test
         @TestMetadata("functionFromOtherModule.kt")
         public void testFunctionFromOtherModule() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/functionFromOtherModule.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/functionFromOtherModule.kt");
         }
 
         @Test
         @TestMetadata("inheritedFromCommonClass.kt")
         public void testInheritedFromCommonClass() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/inheritedFromCommonClass.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/inheritedFromCommonClass.kt");
         }
 
         @Test
         @TestMetadata("inheritedFromExpectedClass.kt")
         public void testInheritedFromExpectedClass() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/inheritedFromExpectedClass.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/inheritedFromExpectedClass.kt");
         }
 
         @Test
         @TestMetadata("inheritedFromExpectedInterface.kt")
         public void testInheritedFromExpectedInterface() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/inheritedFromExpectedInterface.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/inheritedFromExpectedInterface.kt");
         }
 
         @Test
         @TestMetadata("inheritedFromExpectedMethod.kt")
         public void testInheritedFromExpectedMethod() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/inheritedFromExpectedMethod.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/inheritedFromExpectedMethod.kt");
         }
 
         @Test
         @TestMetadata("inheritedInExpectedDeclarations.kt")
         public void testInheritedInExpectedDeclarations() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/inheritedInExpectedDeclarations.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/inheritedInExpectedDeclarations.kt");
         }
 
         @Test
         @TestMetadata("inheritedViaAnotherInterfaceIndirectly.kt")
         public void testInheritedViaAnotherInterfaceIndirectly() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/inheritedViaAnotherInterfaceIndirectly.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/inheritedViaAnotherInterfaceIndirectly.kt");
         }
 
         @Test
         @TestMetadata("inlineFunctionWithDefaultLambda.kt")
         public void testInlineFunctionWithDefaultLambda() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/inlineFunctionWithDefaultLambda.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/inlineFunctionWithDefaultLambda.kt");
         }
 
         @Test
         @TestMetadata("jvmOverloads.kt")
         public void testJvmOverloads() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/jvmOverloads.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/jvmOverloads.kt");
         }
 
         @Test
         @TestMetadata("kt23239.kt")
         public void testKt23239() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/kt23239.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/kt23239.kt");
         }
 
         @Test
         @TestMetadata("kt23739.kt")
         public void testKt23739() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/kt23739.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/kt23739.kt");
         }
 
         @Test
         @TestMetadata("kt67488.kt")
         public void testKt67488() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/kt67488.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/kt67488.kt");
         }
 
         @Test
         @TestMetadata("nestedEnumEntryValue.kt")
         public void testNestedEnumEntryValue() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/nestedEnumEntryValue.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/nestedEnumEntryValue.kt");
         }
 
         @Test
         @TestMetadata("parametersInArgumentValues.kt")
         public void testParametersInArgumentValues() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/parametersInArgumentValues.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/parametersInArgumentValues.kt");
         }
 
         @Test
         @TestMetadata("superCall.kt")
         public void testSuperCall() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/superCall.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/superCall.kt");
         }
 
         @Test
         @TestMetadata("suspend.kt")
         public void testSuspend() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/suspend.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/suspend.kt");
         }
 
         @Test
         @TestMetadata("typeAlias.kt")
         public void testTypeAlias() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/typeAlias.kt");
-        }
-
-        @Test
-        @TestMetadata("typeAlias2.kt")
-        public void testTypeAlias2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/typeAlias2.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/typeAlias.kt");
         }
 
         @Test
         @TestMetadata("withTypeParameter.kt")
         public void testWithTypeParameter() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/withTypeParameter.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/defaultArguments/withTypeParameter.kt");
         }
       }
 
       @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/delegation")
+      @TestMetadata("compiler/testData/codegen/box/multiplatform/k1/migratedOldTests")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("es6")
-      public class Delegation {
-        @Test
-        public void testAllFilesPresentInDelegation() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/delegation"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterfaceByExpectFun.kt")
-        public void testDelegationToExpectInterfaceByExpectFun() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterfaceByExpectFun.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterfaceWithFakeOverride.kt")
-        public void testDelegationToExpectInterfaceWithFakeOverride() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterfaceWithFakeOverride.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterfaceWithOverrideFromExpect.kt")
-        public void testDelegationToExpectInterfaceWithOverrideFromExpect() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterfaceWithOverrideFromExpect.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterfaceWithOverride_noNewMembers.kt")
-        public void testDelegationToExpectInterfaceWithOverride_noNewMembers() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterfaceWithOverride_noNewMembers.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterfaceWithOverride_noNewMembers_javaActualization.kt")
-        public void testDelegationToExpectInterfaceWithOverride_noNewMembers_javaActualization() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterfaceWithOverride_noNewMembers_javaActualization.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterface_noNewMembers.kt")
-        public void testDelegationToExpectInterface_noNewMembers() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_noNewMembers.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterface_noNewMembers_javaActualization.kt")
-        public void testDelegationToExpectInterface_noNewMembers_javaActualization() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_noNewMembers_javaActualization.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterface_withJavaActualizationAndImpl.kt")
-        public void testDelegationToExpectInterface_withJavaActualizationAndImpl() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_withJavaActualizationAndImpl.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterface_withJavaImpl.kt")
-        public void testDelegationToExpectInterface_withJavaImpl() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_withJavaImpl.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterface_withNewMembers.kt")
-        public void testDelegationToExpectInterface_withNewMembers() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_withNewMembers.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterface_withNewMembersSameName.kt")
-        public void testDelegationToExpectInterface_withNewMembersSameName() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_withNewMembersSameName.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationToExpectInterface_withOverrideInDelegated.kt")
-        public void testDelegationToExpectInterface_withOverrideInDelegated() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_withOverrideInDelegated.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationWithIntersection.kt")
-        public void testDelegationWithIntersection() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationWithIntersection.kt");
-        }
-
-        @Test
-        @TestMetadata("delegationWithIntersectionAndJavaActualization.kt")
-        public void testDelegationWithIntersectionAndJavaActualization() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationWithIntersectionAndJavaActualization.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness")
-      @TestDataPath("$PROJECT_ROOT")
-      @Tag("es6")
-      public class Exhaustiveness {
-        @Test
-        public void testAllFilesPresentInExhaustiveness() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("commonEnum.kt")
-        public void testCommonEnum() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness/commonEnum.kt");
-        }
-
-        @Test
-        @TestMetadata("commonSealedClass.kt")
-        public void testCommonSealedClass() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness/commonSealedClass.kt");
-        }
-
-        @Test
-        @TestMetadata("commonSealedInterface.kt")
-        public void testCommonSealedInterface() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness/commonSealedInterface.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/hmpp")
-      @TestDataPath("$PROJECT_ROOT")
-      @Tag("es6")
-      public class Hmpp {
-        @Test
-        @TestMetadata("abstractExpectedActual2-2.kt")
-        public void testAbstractExpectedActual2_2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/abstractExpectedActual2-2.kt");
-        }
-
-        @Test
-        public void testAllFilesPresentInHmpp() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("arrayDeque.kt")
-        public void testArrayDeque() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/arrayDeque.kt");
-        }
-
-        @Test
-        @TestMetadata("differentDependenciesWithTheSameName.kt")
-        public void testDifferentDependenciesWithTheSameName() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/differentDependenciesWithTheSameName.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualChain2-2.kt")
-        public void testExpectActualChain2_2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain2-2.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualChain2-3.kt")
-        public void testExpectActualChain2_3() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain2-3.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualChain3-3.kt")
-        public void testExpectActualChain3_3() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-3.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualChain3-3-error.kt")
-        public void testExpectActualChain3_3_error() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-3-error.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualChain3-4.kt")
-        public void testExpectActualChain3_4() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-4.kt");
-        }
-
-        @Test
-        @TestMetadata("expectActualChain4-4.kt")
-        public void testExpectActualChain4_4() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain4-4.kt");
-        }
-
-        @Test
-        @TestMetadata("expectOfActualTypeAliasNotReferenced.kt")
-        public void testExpectOfActualTypeAliasNotReferenced() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectOfActualTypeAliasNotReferenced.kt");
-        }
-
-        @Test
-        @TestMetadata("expectRefinement.kt")
-        public void testExpectRefinement() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectRefinement.kt");
-        }
-
-        @Test
-        @TestMetadata("fakeOverrideExpectSuperType.kt")
-        public void testFakeOverrideExpectSuperType() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/fakeOverrideExpectSuperType.kt");
-        }
-
-        @Test
-        @TestMetadata("fakeOverrideExpectSuperTypeFromLib.kt")
-        public void testFakeOverrideExpectSuperTypeFromLib() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/fakeOverrideExpectSuperTypeFromLib.kt");
-        }
-
-        @Test
-        @TestMetadata("friendDependency.kt")
-        public void testFriendDependency() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/friendDependency.kt");
-        }
-
-        @Test
-        @TestMetadata("iheritanceFromExpected2-2.kt")
-        public void testIheritanceFromExpected2_2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/iheritanceFromExpected2-2.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritanceFromExpected2-3.kt")
-        public void testInheritanceFromExpected2_3() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected2-3.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritanceFromExpected3-3.kt")
-        public void testInheritanceFromExpected3_3() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected3-3.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritanceFromExpected3-4.kt")
-        public void testInheritanceFromExpected3_4() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected3-4.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritanceFromExpected4-4.kt")
-        public void testInheritanceFromExpected4_4() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected4-4.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritanceFromExpectedInApp2-2.kt")
-        public void testInheritanceFromExpectedInApp2_2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp2-2.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritanceFromExpectedInApp2-3.kt")
-        public void testInheritanceFromExpectedInApp2_3() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp2-3.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritanceFromExpectedInApp3-3.kt")
-        public void testInheritanceFromExpectedInApp3_3() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp3-3.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritanceFromLibraryExpectClass.kt")
-        public void testInheritanceFromLibraryExpectClass() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromLibraryExpectClass.kt");
-        }
-
-        @Test
-        @TestMetadata("mutlipleExpectsForOneActual.kt")
-        public void testMutlipleExpectsForOneActual() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/mutlipleExpectsForOneActual.kt");
-        }
-
-        @Test
-        @TestMetadata("openExpectedActual2-2.kt")
-        public void testOpenExpectedActual2_2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/openExpectedActual2-2.kt");
-        }
-
-        @Test
-        @TestMetadata("sameLibraryInTwoEdgesOfDiamond.kt")
-        public void testSameLibraryInTwoEdgesOfDiamond() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/sameLibraryInTwoEdgesOfDiamond.kt");
-        }
-
-        @Test
-        @TestMetadata("simple.kt")
-        public void testSimple() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/simple.kt");
-        }
-
-        @Test
-        @TestMetadata("stdlibRegressions.kt")
-        public void testStdlibRegressions() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/stdlibRegressions.kt");
-        }
-
-        @Test
-        @TestMetadata("typealiasActualisation2-2.kt")
-        public void testTypealiasActualisation2_2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualisation2-2.kt");
-        }
-
-        @Test
-        @TestMetadata("typealiasActualizationJavaSimple2-2.kt")
-        public void testTypealiasActualizationJavaSimple2_2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualizationJavaSimple2-2.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/lenientMode")
-      @TestDataPath("$PROJECT_ROOT")
-      @Tag("es6")
-      public class LenientMode {
-        @Test
-        public void testAllFilesPresentInLenientMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("classes.kt")
-        public void testClasses() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/classes.kt");
-        }
-
-        @Test
-        @TestMetadata("lenientModeSmokeTest.kt")
-        public void testLenientModeSmokeTest() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/lenientModeSmokeTest.kt");
-        }
-
-        @Test
-        @TestMetadata("overloads.kt")
-        public void testOverloads() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/overloads.kt");
-        }
-
-        @Test
-        @TestMetadata("returnTypes.kt")
-        public void testReturnTypes() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/returnTypes.kt");
-        }
-
-        @Test
-        @TestMetadata("typealias.kt")
-        public void testTypealias() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/typealias.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests")
-      @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class MigratedOldTests {
         @Test
         public void testAllFilesPresentInMigratedOldTests() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k1/migratedOldTests"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
         @TestMetadata("mpp1.kt")
         public void testMpp1() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests/mpp1.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/migratedOldTests/mpp1.kt");
         }
 
         @Test
         @TestMetadata("mpp2.kt")
         public void testMpp2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests/mpp2.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/migratedOldTests/mpp2.kt");
         }
 
         @Test
         @TestMetadata("mpp_default_args.kt")
         public void testMpp_default_args() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests/mpp_default_args.kt");
-        }
-
-        @Test
-        @TestMetadata("mpp_optional_expectation.kt")
-        public void testMpp_optional_expectation() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests/mpp_optional_expectation.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/migratedOldTests/mpp_default_args.kt");
         }
 
         @Test
         @TestMetadata("remap_expect_property_ref.kt")
         public void testRemap_expect_property_ref() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests/remap_expect_property_ref.kt");
+          runTest("compiler/testData/codegen/box/multiplatform/k1/migratedOldTests/remap_expect_property_ref.kt");
         }
       }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/multiModule")
-      @TestDataPath("$PROJECT_ROOT")
-      @Tag("es6")
-      public class MultiModule {
-        @Test
-        public void testAllFilesPresentInMultiModule() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("expectInterfaceInheritance.kt")
-        public void testExpectInterfaceInheritance() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/expectInterfaceInheritance.kt");
-        }
-
-        @Test
-        @TestMetadata("hmppSimple.kt")
-        public void testHmppSimple() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/hmppSimple.kt");
-        }
-
-        @Test
-        @TestMetadata("mutlimoduleActualizationByJavaClasses.kt")
-        public void testMutlimoduleActualizationByJavaClasses() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/mutlimoduleActualizationByJavaClasses.kt");
-        }
-
-        @Test
-        @TestMetadata("stdlibClassRedefine.kt")
-        public void testStdlibClassRedefine() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/stdlibClassRedefine.kt");
-        }
-      }
-    }
-  }
-
-  @Nested
-  @TestMetadata("compiler/testData/codegen/box/nameBasedDestructuring")
-  @TestDataPath("$PROJECT_ROOT")
-  @Tag("es6")
-  public class NameBasedDestructuring {
-    @Test
-    public void testAllFilesPresentInNameBasedDestructuring() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nameBasedDestructuring"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("fullForm.kt")
-    public void testFullForm() {
-      runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullForm.kt");
-    }
-
-    @Test
-    @TestMetadata("fullFormExtraPropType.kt")
-    public void testFullFormExtraPropType() {
-      runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormExtraPropType.kt");
-    }
-
-    @Test
-    @TestMetadata("fullFormFromSmartCast.kt")
-    public void testFullFormFromSmartCast() {
-      runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormFromSmartCast.kt");
-    }
-
-    @Test
-    @TestMetadata("fullFormGenericBounds.kt")
-    public void testFullFormGenericBounds() {
-      runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormGenericBounds.kt");
-    }
-
-    @Test
-    @TestMetadata("fullFormLoopsAndLambdas.kt")
-    public void testFullFormLoopsAndLambdas() {
-      runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormLoopsAndLambdas.kt");
-    }
-
-    @Test
-    @TestMetadata("shortForm.kt")
-    public void testShortForm() {
-      runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortForm.kt");
-    }
-
-    @Test
-    @TestMetadata("shortFormExtraPropType.kt")
-    public void testShortFormExtraPropType() {
-      runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormExtraPropType.kt");
-    }
-
-    @Test
-    @TestMetadata("shortFormFromSmartCast.kt")
-    public void testShortFormFromSmartCast() {
-      runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormFromSmartCast.kt");
-    }
-
-    @Test
-    @TestMetadata("shortFormGenericBounds.kt")
-    public void testShortFormGenericBounds() {
-      runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormGenericBounds.kt");
-    }
-
-    @Test
-    @TestMetadata("shortFormLoopsAndLambdas.kt")
-    public void testShortFormLoopsAndLambdas() {
-      runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormLoopsAndLambdas.kt");
     }
   }
 
   @Nested
   @TestMetadata("compiler/testData/codegen/box/nonLocalReturns")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class NonLocalReturns {
     @Test
@@ -43473,6 +42361,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/notNullAssertions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class NotNullAssertions {
     @Test
@@ -43544,6 +42433,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/nothingValue")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class NothingValue {
     @Test
@@ -43573,6 +42463,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/nullCheckOptimization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class NullCheckOptimization {
     @Test
@@ -43668,6 +42559,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/object")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Object {
     @Test
@@ -43733,6 +42625,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/objectExpression")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ObjectExpression {
     @Test
@@ -43768,6 +42661,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ObjectIntrinsics {
     @Test
@@ -43785,6 +42679,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/objects")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Objects {
     @Test
@@ -44287,6 +43182,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class CompanionObjectAccess {
       @Test
@@ -44393,6 +43289,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess/multipleCompanionsWithAccessors")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class MultipleCompanionsWithAccessors {
         @Test
@@ -44476,6 +43373,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class PrimitiveCompanion {
         @Test
@@ -44531,6 +43429,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/operatorConventions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class OperatorConventions {
     @Test
@@ -44697,6 +43596,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class CompareTo {
       @Test
@@ -44775,6 +43675,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/optimizations")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Optimizations {
     @Test
@@ -44804,6 +43705,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/package")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Package {
     @Test
@@ -44917,6 +43819,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/parametersMetadata")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ParametersMetadata {
     @Test
@@ -45000,6 +43903,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/platformTypes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class PlatformTypes {
     @Test
@@ -45076,6 +43980,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Primitives {
       @Test
@@ -45214,6 +44119,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/polymorphicSignature")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class PolymorphicSignature {
     @Test
@@ -45291,6 +44197,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/primitiveTypes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class PrimitiveTypes {
     @Test
@@ -45733,6 +44640,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class EqualityWithObject {
       @Test
@@ -45797,6 +44705,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Generated {
         @Test
@@ -45917,6 +44826,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class IdentityEqualsWithNullable {
       @Test
@@ -45952,6 +44862,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes/numberToChar")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class NumberToChar {
       @Test
@@ -46006,6 +44917,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/private")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Private {
     @Test
@@ -46029,6 +44941,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/privateConstructors")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class PrivateConstructors {
     @Test
@@ -46118,6 +45031,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/properties")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Properties {
     @Test
@@ -46758,6 +45672,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/properties/backingField")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class BackingField {
       @Test
@@ -46871,6 +45786,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/properties/const")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Const {
       @Test
@@ -46942,6 +45858,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/properties/lateinit")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Lateinit {
       @Test
@@ -47054,6 +45971,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class IsInitializedAndDeinitialize {
         @Test
@@ -47083,6 +46001,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/lateinit/local")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Local {
         @Test
@@ -47136,6 +46055,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/lateinit/topLevel")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class TopLevel {
         @Test
@@ -47179,6 +46099,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/propertyCallableReference")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class PropertyCallableReference {
     @Test
@@ -47238,6 +46159,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/publishedApi")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class PublishedApi {
     @Test
@@ -47279,6 +46201,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/ranges")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Ranges {
     @Test
@@ -47445,6 +46368,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/contains")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Contains {
       @Test
@@ -47767,6 +46691,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/contains/generated")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Generated {
         @Test
@@ -47941,6 +46866,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class EvaluationOrder {
       @Test
@@ -48005,6 +46931,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Stepped {
         @Test
@@ -48015,6 +46942,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInDownTo")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class ForInDownTo {
           @Test
@@ -48074,6 +47002,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInRangeLiteral")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class ForInRangeLiteral {
           @Test
@@ -48133,6 +47062,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInUntil")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class ForInUntil {
           @Test
@@ -48194,6 +47124,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/expression")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Expression {
       @Test
@@ -48391,6 +47322,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forInDownTo")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInDownTo {
       @Test
@@ -48450,6 +47382,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forInIndices")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInIndices {
       @Test
@@ -48605,6 +47538,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forInProgressionWithIndex")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInProgressionWithIndex {
       @Test
@@ -48706,6 +47640,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forInReversed")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInReversed {
       @Test
@@ -48825,6 +47760,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forInUntil")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForInUntil {
       @Test
@@ -48926,6 +47862,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ForWithPossibleOverflow {
       @Test
@@ -49015,6 +47952,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class JavaInterop {
       @Test
@@ -49139,6 +48077,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop/withIndex")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class WithIndex {
         @Test
@@ -49229,6 +48168,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/literal")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Literal {
       @Test
@@ -49426,6 +48366,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/nullableLoopParameter")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class NullableLoopParameter {
       @Test
@@ -49455,6 +48396,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/stepped")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Stepped {
       @Test
@@ -49465,6 +48407,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Expression {
         @Test
@@ -49475,6 +48418,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class DownTo {
           @Test
@@ -49581,6 +48525,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class NestedStep {
             @Test
@@ -49640,6 +48585,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class Reversed {
             @Test
@@ -49688,6 +48634,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class RangeTo {
           @Test
@@ -49794,6 +48741,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class NestedStep {
             @Test
@@ -49853,6 +48801,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class Reversed {
             @Test
@@ -49901,6 +48850,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class RangeUntil {
           @Test
@@ -49971,6 +48921,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class NestedStep {
             @Test
@@ -50030,6 +48981,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class Reversed {
             @Test
@@ -50078,6 +49030,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Until {
           @Test
@@ -50190,6 +49143,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class NestedStep {
             @Test
@@ -50249,6 +49203,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class Reversed {
             @Test
@@ -50298,6 +49253,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Literal {
         @Test
@@ -50308,6 +49264,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class DownTo {
           @Test
@@ -50414,6 +49371,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class NestedStep {
             @Test
@@ -50473,6 +49431,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class Reversed {
             @Test
@@ -50521,6 +49480,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class RangeTo {
           @Test
@@ -50627,6 +49587,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class NestedStep {
             @Test
@@ -50686,6 +49647,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class Reversed {
             @Test
@@ -50734,6 +49696,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class RangeUntil {
           @Test
@@ -50804,6 +49767,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class NestedStep {
             @Test
@@ -50863,6 +49827,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class Reversed {
             @Test
@@ -50911,6 +49876,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Until {
           @Test
@@ -51023,6 +49989,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class NestedStep {
             @Test
@@ -51082,6 +50049,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class Reversed {
             @Test
@@ -51131,6 +50099,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Unsigned {
         @Test
@@ -51141,6 +50110,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Expression {
           @Test
@@ -51151,6 +50121,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class DownTo {
             @Test
@@ -51257,6 +50228,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class NestedStep {
               @Test
@@ -51316,6 +50288,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class Reversed {
               @Test
@@ -51364,6 +50337,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class RangeTo {
             @Test
@@ -51470,6 +50444,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class NestedStep {
               @Test
@@ -51529,6 +50504,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class Reversed {
               @Test
@@ -51577,6 +50553,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class RangeUntil {
             @Test
@@ -51647,6 +50624,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class NestedStep {
               @Test
@@ -51706,6 +50684,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class Reversed {
               @Test
@@ -51754,6 +50733,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class Until {
             @Test
@@ -51866,6 +50846,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class NestedStep {
               @Test
@@ -51925,6 +50906,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class Reversed {
               @Test
@@ -51974,6 +50956,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Literal {
           @Test
@@ -51984,6 +50967,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class DownTo {
             @Test
@@ -52090,6 +51074,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class NestedStep {
               @Test
@@ -52149,6 +51134,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class Reversed {
               @Test
@@ -52197,6 +51183,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class RangeTo {
             @Test
@@ -52303,6 +51290,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class NestedStep {
               @Test
@@ -52362,6 +51350,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class Reversed {
               @Test
@@ -52410,6 +51399,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class RangeUntil {
             @Test
@@ -52480,6 +51470,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class NestedStep {
               @Test
@@ -52539,6 +51530,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class Reversed {
               @Test
@@ -52587,6 +51579,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class Until {
             @Test
@@ -52699,6 +51692,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class NestedStep {
               @Test
@@ -52758,6 +51752,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("legacy-frontend")
             @Tag("es6")
             public class Reversed {
               @Test
@@ -52809,6 +51804,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/unsigned")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Unsigned {
       @Test
@@ -52861,6 +51857,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/expression")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Expression {
         @Test
@@ -53058,6 +52055,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/literal")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Literal {
         @Test
@@ -53255,6 +52253,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class NullableLoopParameter {
         @Test
@@ -53286,6 +52285,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/recursiveRawTypes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class RecursiveRawTypes {
     @Test
@@ -53309,6 +52309,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/reflection")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Reflection {
     @Test
@@ -53319,6 +52320,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/annotations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Annotations {
       @Test
@@ -53449,6 +52451,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/annotations/onTypes")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class OnTypes {
         @Test
@@ -53508,6 +52511,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/annotations/repeatable")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Repeatable {
         @Test
@@ -53568,6 +52572,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/builtins")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Builtins {
       @Test
@@ -53597,6 +52602,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/caching")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Caching {
       @Test
@@ -53620,6 +52626,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/call")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Call {
       @Test
@@ -53786,6 +52793,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/call/bound")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Bound {
         @Test
@@ -53875,6 +52883,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class InlineClasses {
         @Test
@@ -53924,15 +52933,10 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/simpleConstructorWithInlineClassParameter.kt");
         }
 
-        @Test
-        @TestMetadata("unboxBothContextAndExtensionParameter.kt")
-        public void testUnboxBothContextAndExtensionParameter() {
-          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/unboxBothContextAndExtensionParameter.kt");
-        }
-
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class NonNullObject {
           @Test
@@ -54016,6 +53020,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class NullableObject {
           @Test
@@ -54099,6 +53104,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Primitive {
           @Test
@@ -54185,11 +53191,114 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           }
         }
       }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/reflection/call/valueClasses")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
+      @Tag("es6")
+      public class ValueClasses {
+        @Test
+        public void testAllFilesPresentInValueClasses() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("constructorWithMfvcParameters.kt")
+        public void testConstructorWithMfvcParameters() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/constructorWithMfvcParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("fieldAccessors.kt")
+        public void testFieldAccessors() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/fieldAccessors.kt");
+        }
+
+        @Test
+        @TestMetadata("functionsWithMfvcParameters.kt")
+        public void testFunctionsWithMfvcParameters() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/functionsWithMfvcParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("internalPrimaryValOfMfvc.kt")
+        public void testInternalPrimaryValOfMfvc() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/internalPrimaryValOfMfvc.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmStaticFieldInObject.kt")
+        public void testJvmStaticFieldInObject() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/jvmStaticFieldInObject.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmStaticFunction.kt")
+        public void testJvmStaticFunction() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/jvmStaticFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("mfvcConstructor.kt")
+        public void testMfvcConstructor() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/mfvcConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("nonOverridingFunOfMfvc.kt")
+        public void testNonOverridingFunOfMfvc() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/nonOverridingFunOfMfvc.kt");
+        }
+
+        @Test
+        @TestMetadata("nonOverridingVarOfMfvc.kt")
+        public void testNonOverridingVarOfMfvc() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/nonOverridingVarOfMfvc.kt");
+        }
+
+        @Test
+        @TestMetadata("overridingFunOfMfvc.kt")
+        public void testOverridingFunOfMfvc() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/overridingFunOfMfvc.kt");
+        }
+
+        @Test
+        @TestMetadata("overridingVarOfMfvc.kt")
+        public void testOverridingVarOfMfvc() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/overridingVarOfMfvc.kt");
+        }
+
+        @Test
+        @TestMetadata("primaryValOfMfvc.kt")
+        public void testPrimaryValOfMfvc() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/primaryValOfMfvc.kt");
+        }
+
+        @Test
+        @TestMetadata("properties.kt")
+        public void testProperties() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/properties.kt");
+        }
+
+        @Test
+        @TestMetadata("secondaryConstructorVisibilies.kt")
+        public void testSecondaryConstructorVisibilies() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/secondaryConstructorVisibilies.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunction.kt")
+        public void testSuspendFunction() {
+          runTest("compiler/testData/codegen/box/reflection/call/valueClasses/suspendFunction.kt");
+        }
+      }
     }
 
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/callBy")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class CallBy {
       @Test
@@ -54360,6 +53469,42 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       }
 
       @Test
+      @TestMetadata("mfvcDefaultArguments.kt")
+      public void testMfvcDefaultArguments() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/mfvcDefaultArguments.kt");
+      }
+
+      @Test
+      @TestMetadata("mfvcFunctionsAndConstructors.kt")
+      public void testMfvcFunctionsAndConstructors() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/mfvcFunctionsAndConstructors.kt");
+      }
+
+      @Test
+      @TestMetadata("mfvcInterface.kt")
+      public void testMfvcInterface() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/mfvcInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mfvcInterfaceJvmDefault.kt")
+      public void testMfvcInterfaceJvmDefault() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/mfvcInterfaceJvmDefault.kt");
+      }
+
+      @Test
+      @TestMetadata("mfvcKt61304.kt")
+      public void testMfvcKt61304() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/mfvcKt61304.kt");
+      }
+
+      @Test
+      @TestMetadata("mfvcMembers.kt")
+      public void testMfvcMembers() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/mfvcMembers.kt");
+      }
+
+      @Test
       @TestMetadata("nonDefaultParameterOmitted.kt")
       public void testNonDefaultParameterOmitted() {
         runTest("compiler/testData/codegen/box/reflection/callBy/nonDefaultParameterOmitted.kt");
@@ -54410,6 +53555,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class InlineClasses {
         @Test
@@ -54420,6 +53566,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class NonNullObject {
           @Test
@@ -54430,6 +53577,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class DefaultArguments {
             @Test
@@ -54490,6 +53638,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class NullableObject {
           @Test
@@ -54500,6 +53649,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class DefaultArguments {
             @Test
@@ -54560,6 +53710,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Primitive {
           @Test
@@ -54570,6 +53721,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("legacy-frontend")
           @Tag("es6")
           public class DefaultArguments {
             @Test
@@ -54632,6 +53784,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/classLiterals")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ClassLiterals {
       @Test
@@ -54709,6 +53862,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/classes")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Classes {
       @Test
@@ -54870,6 +54024,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/constructors")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Constructors {
       @Test
@@ -54917,6 +54072,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/createAnnotation")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class CreateAnnotation {
       @Test
@@ -55006,6 +54162,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/functions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Functions {
       @Test
@@ -55107,6 +54264,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/isInstance")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class IsInstance {
       @Test
@@ -55124,6 +54282,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/kClassInAnnotation")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class KClassInAnnotation {
       @Test
@@ -55189,6 +54348,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/lambdaClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class LambdaClasses {
       @Test
@@ -55212,6 +54372,12 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @TestMetadata("reflectOnDefaultWithInlineClassArgument.kt")
       public void testReflectOnDefaultWithInlineClassArgument() {
         runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnDefaultWithInlineClassArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("reflectOnDefaultWithMfvcArgument.kt")
+      public void testReflectOnDefaultWithMfvcArgument() {
+        runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnDefaultWithMfvcArgument.kt");
       }
 
       @Test
@@ -55260,6 +54426,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/localClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class LocalClasses {
       @Test
@@ -55289,6 +54456,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/mapping")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Mapping {
       @Test
@@ -55312,6 +54480,12 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @TestMetadata("constructorWithInlineClassParameters.kt")
       public void testConstructorWithInlineClassParameters() {
         runTest("compiler/testData/codegen/box/reflection/mapping/constructorWithInlineClassParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorWithMfvcParameters.kt")
+      public void testConstructorWithMfvcParameters() {
+        runTest("compiler/testData/codegen/box/reflection/mapping/constructorWithMfvcParameters.kt");
       }
 
       @Test
@@ -55443,6 +54617,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/mapping/fakeOverrides")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class FakeOverrides {
         @Test
@@ -55466,6 +54641,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/mapping/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class InlineClasses {
         @Test
@@ -55489,6 +54665,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/mapping/jvmStatic")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class JvmStatic {
         @Test
@@ -55512,6 +54689,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/mapping/types")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Types {
         @Test
@@ -55586,6 +54764,18 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("mfvcInSignature.kt")
+        public void testMfvcInSignature() {
+          runTest("compiler/testData/codegen/box/reflection/mapping/types/mfvcInSignature.kt");
+        }
+
+        @Test
+        @TestMetadata("mfvcPrimaryVal.kt")
+        public void testMfvcPrimaryVal() {
+          runTest("compiler/testData/codegen/box/reflection/mapping/types/mfvcPrimaryVal.kt");
+        }
+
+        @Test
         @TestMetadata("overrideAnyWithPrimitive.kt")
         public void testOverrideAnyWithPrimitive() {
           runTest("compiler/testData/codegen/box/reflection/mapping/types/overrideAnyWithPrimitive.kt");
@@ -55651,11 +54841,36 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
           runTest("compiler/testData/codegen/box/reflection/mapping/types/withNullability.kt");
         }
       }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/reflection/mapping/valueClasses")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
+      @Tag("es6")
+      public class ValueClasses {
+        @Test
+        public void testAllFilesPresentInValueClasses() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("mfvcPrimaryVal.kt")
+        public void testMfvcPrimaryVal() {
+          runTest("compiler/testData/codegen/box/reflection/mapping/valueClasses/mfvcPrimaryVal.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunctionWithMfvcInSignature.kt")
+        public void testSuspendFunctionWithMfvcInSignature() {
+          runTest("compiler/testData/codegen/box/reflection/mapping/valueClasses/suspendFunctionWithMfvcInSignature.kt");
+        }
+      }
     }
 
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/methodsFromAny")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class MethodsFromAny {
       @Test
@@ -55829,6 +55044,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/modifiers")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Modifiers {
       @Test
@@ -55912,6 +55128,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/multifileClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class MultifileClasses {
       @Test
@@ -55941,6 +55158,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class NoReflectAtRuntime {
       @Test
@@ -55993,6 +55211,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class MethodsFromAny {
         @Test
@@ -56023,6 +55242,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/parameters")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Parameters {
       @Test
@@ -56040,6 +55260,12 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @TestMetadata("bigArity.kt")
       public void testBigArity() {
         runTest("compiler/testData/codegen/box/reflection/parameters/bigArity.kt");
+      }
+
+      @Test
+      @TestMetadata("boundInnerClassConstructor.kt")
+      public void testBoundInnerClassConstructor() {
+        runTest("compiler/testData/codegen/box/reflection/parameters/boundInnerClassConstructor.kt");
       }
 
       @Test
@@ -56070,12 +55296,6 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @TestMetadata("functionParameterNameAndIndex.kt")
       public void testFunctionParameterNameAndIndex() {
         runTest("compiler/testData/codegen/box/reflection/parameters/functionParameterNameAndIndex.kt");
-      }
-
-      @Test
-      @TestMetadata("innerClassConstructor.kt")
-      public void testInnerClassConstructor() {
-        runTest("compiler/testData/codegen/box/reflection/parameters/innerClassConstructor.kt");
       }
 
       @Test
@@ -56136,6 +55356,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/properties")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Properties {
       @Test
@@ -56350,6 +55571,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/properties/accessors")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Accessors {
         @Test
@@ -56367,12 +55589,6 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @TestMetadata("extensionPropertyAccessors.kt")
         public void testExtensionPropertyAccessors() {
           runTest("compiler/testData/codegen/box/reflection/properties/accessors/extensionPropertyAccessors.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAccessors.kt")
-        public void testJavaFieldAccessors() {
-          runTest("compiler/testData/codegen/box/reflection/properties/accessors/javaFieldAccessors.kt");
         }
 
         @Test
@@ -56397,6 +55613,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class GetDelegate {
         @Test
@@ -56503,6 +55720,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/method")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class Method {
           @Test
@@ -56563,6 +55781,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/properties/jvmField")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class JvmField {
         @Test
@@ -56592,6 +55811,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/properties/localDelegated")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class LocalDelegated {
         @Test
@@ -56676,6 +55896,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/supertypes")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Supertypes {
       @Test
@@ -56759,6 +55980,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/syntheticClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class SyntheticClasses {
       @Test
@@ -56776,6 +55998,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/typeOf")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class TypeOf {
       @Test
@@ -56924,6 +56147,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/js")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Js {
         @Test
@@ -56983,6 +56207,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class NoReflect {
         @Test
@@ -57053,6 +56278,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("legacy-frontend")
         @Tag("es6")
         public class NonReifiedTypeParameters {
           @Test
@@ -57119,6 +56345,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class NonReifiedTypeParameters {
         @Test
@@ -57239,6 +56466,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/typeParameters")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class TypeParameters {
       @Test
@@ -57292,6 +56520,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/types")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Types {
       @Test
@@ -57398,6 +56627,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/types/createType")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class CreateType {
         @Test
@@ -57445,6 +56675,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/types/subtyping")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Subtyping {
         @Test
@@ -57468,12 +56699,6 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         @TestMetadata("innerGenericCapturedType.kt")
         public void testInnerGenericCapturedType() {
           runTest("compiler/testData/codegen/box/reflection/types/subtyping/innerGenericCapturedType.kt");
-        }
-
-        @Test
-        @TestMetadata("javaTypeProjection.kt")
-        public void testJavaTypeProjection() {
-          runTest("compiler/testData/codegen/box/reflection/types/subtyping/javaTypeProjection.kt");
         }
 
         @Test
@@ -57524,6 +56749,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/regressions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Regressions {
     @Test
@@ -58195,6 +57421,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/reified")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Reified {
     @Test
@@ -58493,6 +57720,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reified/arraysReification")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ArraysReification {
       @Test
@@ -58540,6 +57768,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reified/catchParameter")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class CatchParameter {
       @Test
@@ -58582,6 +57811,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/returnInExpressionBody")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ReturnInExpressionBody {
     @Test
@@ -58599,6 +57829,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/safeCall")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class SafeCall {
     @Test
@@ -58760,6 +57991,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/sam")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Sam {
     @Test
@@ -59118,6 +58350,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/adapters")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Adapters {
       @Test
@@ -59302,6 +58535,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/adapters/operators")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
       @Tag("es6")
       public class Operators {
         @Test
@@ -59374,6 +58608,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/approximation")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Approximation {
       @Test
@@ -59409,6 +58644,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/constructors")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Constructors {
       @Test
@@ -59528,6 +58764,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/equality")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Equality {
       @Test
@@ -59569,6 +58806,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class JavaSamWithEqualsHashCode {
       @Test
@@ -59599,6 +58837,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/sameFileInSourceAndDependencies")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class SameFileInSourceAndDependencies {
     @Test
@@ -59670,6 +58909,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/script")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Script {
     @Test
@@ -59735,6 +58975,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/sealed")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Sealed {
     @Test
@@ -59800,6 +59041,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/secondaryConstructors")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class SecondaryConstructors {
     @Test
@@ -60015,6 +59257,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/serialization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Serialization {
     @Test
@@ -60068,6 +59311,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/size")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Size {
     @Test
@@ -60115,6 +59359,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/smap")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Smap {
     @Test
@@ -60144,6 +59389,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/smartCasts")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class SmartCasts {
     @Test
@@ -60443,6 +59689,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/specialBuiltins")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class SpecialBuiltins {
     @Test
@@ -60658,6 +59905,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/statics")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Statics {
     @Test
@@ -60765,6 +60013,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/storeStackBeforeInline")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class StoreStackBeforeInline {
     @Test
@@ -60806,6 +60055,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/stringTrim")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class StringTrim {
     @Test
@@ -60823,6 +60073,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/strings")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Strings {
     @Test
@@ -61086,6 +60337,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/super")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Super {
     @Test
@@ -61306,6 +60558,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/super/superConstructor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class SuperConstructor {
       @Test
@@ -61360,6 +60613,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/suppressions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Suppressions {
     @Test
@@ -61383,6 +60637,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/suspendConversion")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class SuspendConversion {
     @Test
@@ -61478,6 +60733,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/synchronized")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Synchronized {
     @Test
@@ -61555,6 +60811,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/syntheticAccessors")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class SyntheticAccessors {
     @Test
@@ -61745,6 +61002,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class FunctionsWithDefaultValues {
       @Test
@@ -61852,6 +61110,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ProtectedJavaFieldAccessor {
       @Test
@@ -61917,6 +61176,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/protectedMemberReferenceAccessor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class ProtectedMemberReferenceAccessor {
       @Test
@@ -61977,6 +61237,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/syntheticExtensions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class SyntheticExtensions {
     @Test
@@ -62084,6 +61345,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/throws")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Throws {
     @Test
@@ -62107,6 +61369,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/toArray")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ToArray {
     @Test
@@ -62178,6 +61441,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/topLevelInitializtion")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class TopLevelInitializtion {
     @Test
@@ -62219,6 +61483,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/topLevelPrivate")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class TopLevelPrivate {
     @Test
@@ -62266,6 +61531,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/trailingComma")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class TrailingComma {
     @Test
@@ -62283,6 +61549,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/traits")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Traits {
     @Test
@@ -62540,6 +61807,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/try")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Try {
     @Test
@@ -62683,6 +61951,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/typeErasure")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class TypeErasure {
     @Test
@@ -62886,6 +62155,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/typeInfo")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class TypeInfo {
     @Test
@@ -62939,6 +62209,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/typeMapping")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class TypeMapping {
     @Test
@@ -63022,6 +62293,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/typealias")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Typealias {
     @Test
@@ -63255,6 +62527,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/unaryOp")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class UnaryOp {
     @Test
@@ -63302,6 +62575,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/underscoredTypeArguments")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class UnderscoredTypeArguments {
     @Test
@@ -63343,6 +62617,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/unit")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Unit {
     @Test
@@ -63444,6 +62719,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/unsignedTypes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class UnsignedTypes {
     @Test
@@ -63760,6 +63036,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Jvm8Intrinsics {
       @Test
@@ -63820,6 +63097,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/valueClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class ValueClasses {
     @Test
@@ -64088,6 +63366,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/valueClasses/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class JavaInterop {
       @Test
@@ -64124,6 +63403,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/vararg")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Vararg {
     @Test
@@ -64303,6 +63583,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/volatile")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Volatile {
     @Test
@@ -64404,6 +63685,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/wasm-new-exception-handling")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Wasm_new_exception_handling {
     @Test
@@ -64757,6 +64039,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/wasm-old-exception-handling")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class Wasm_old_exception_handling {
     @Test
@@ -65110,6 +64393,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box/when")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   @Tag("es6")
   public class When {
     @Test
@@ -65432,6 +64716,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/when/enumOptimization")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class EnumOptimization {
       @Test
@@ -65569,6 +64854,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/when/exhaustiveness")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Exhaustiveness {
       @Test
@@ -65598,6 +64884,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/when/guard")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class Guard {
       @Test
@@ -65615,6 +64902,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class StringOptimization {
       @Test
@@ -65692,6 +64980,7 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/when/whenSubjectVariable")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     @Tag("es6")
     public class WhenSubjectVariable {
       @Test

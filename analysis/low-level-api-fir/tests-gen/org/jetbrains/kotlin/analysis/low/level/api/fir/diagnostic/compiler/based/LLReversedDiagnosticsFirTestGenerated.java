@@ -2156,6 +2156,76 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes")
+      @TestDataPath("$PROJECT_ROOT")
+      public class StdlibTypes {
+        @Test
+        public void testAllFilesPresentInStdlibTypes() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("arrayOperatorOf.kt")
+        public void testArrayOperatorOf() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/arrayOperatorOf.kt");
+        }
+
+        @Test
+        @TestMetadata("collectionLiteralsAsGenericVarargArgument.kt")
+        public void testCollectionLiteralsAsGenericVarargArgument() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/collectionLiteralsAsGenericVarargArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("collectionLiteralsAsVarargArgument.kt")
+        public void testCollectionLiteralsAsVarargArgument() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/collectionLiteralsAsVarargArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("incorrectCollections.kt")
+        public void testIncorrectCollections() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/incorrectCollections.kt");
+        }
+
+        @Test
+        @TestMetadata("listOperatorOf.kt")
+        public void testListOperatorOf() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/listOperatorOf.kt");
+        }
+
+        @Test
+        @TestMetadata("mutableListOperatorOf.kt")
+        public void testMutableListOperatorOf() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/mutableListOperatorOf.kt");
+        }
+
+        @Test
+        @TestMetadata("mutableSetOperatorOf.kt")
+        public void testMutableSetOperatorOf() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/mutableSetOperatorOf.kt");
+        }
+
+        @Test
+        @TestMetadata("primitiveArraysOperatorOf.kt")
+        public void testPrimitiveArraysOperatorOf() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/primitiveArraysOperatorOf.kt");
+        }
+
+        @Test
+        @TestMetadata("sequenceOperatorOf.kt")
+        public void testSequenceOperatorOf() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/sequenceOperatorOf.kt");
+        }
+
+        @Test
+        @TestMetadata("setOperatorOf.kt")
+        public void testSetOperatorOf() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/setOperatorOf.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes")
       @TestDataPath("$PROJECT_ROOT")
       public class UserTypes {

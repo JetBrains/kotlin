@@ -179,6 +179,36 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
   }
 
   @Test
+  @TestMetadata("operatorOfFromArray.kt")
+  public void testOperatorOfFromArray() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/operatorOfFromArray.kt");
+  }
+
+  @Test
+  @TestMetadata("operatorOfFromPrimitiveArray.kt")
+  public void testOperatorOfFromPrimitiveArray() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/operatorOfFromPrimitiveArray.kt");
+  }
+
+  @Test
+  @TestMetadata("operatorOfFromStdlibSequence.kt")
+  public void testOperatorOfFromStdlibSequence() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/operatorOfFromStdlibSequence.kt");
+  }
+
+  @Test
+  @TestMetadata("operatorOfFromStdlibSet.kt")
+  public void testOperatorOfFromStdlibSet() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/operatorOfFromStdlibSet.kt");
+  }
+
+  @Test
+  @TestMetadata("operatorOfFromUnsignedArray.kt")
+  public void testOperatorOfFromUnsignedArray() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/operatorOfFromUnsignedArray.kt");
+  }
+
+  @Test
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/simple.kt");
