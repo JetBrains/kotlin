@@ -18,6 +18,4 @@ FILE: [ResolvedTo(IMPORTS)] destructuringNonLocalBeforeInitBlock.kt
             ^@init Unit
         }
         )
-
-
     }
