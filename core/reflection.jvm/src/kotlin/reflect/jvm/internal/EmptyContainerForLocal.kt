@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.Name
+import kotlin.metadata.KmFunction
 import kotlin.metadata.KmProperty
 import kotlin.reflect.KCallable
 
@@ -28,6 +29,9 @@ internal object EmptyContainerForLocal : KDeclarationContainerImpl() {
         get() = fail()
 
     override val members: Collection<KCallable<*>>
+        get() = fail()
+
+    override val functionsMetadata: Collection<KmFunction>
         get() = fail()
 
     override val propertiesMetadata: Collection<KmProperty>

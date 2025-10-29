@@ -30,8 +30,10 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
+import kotlin.metadata.KmFunction
 import kotlin.metadata.KmProperty
 import kotlin.metadata.isVar
+import kotlin.metadata.jvm.signature
 import kotlin.reflect.KProperty0
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
@@ -44,6 +46,8 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     protected open val methodOwner: Class<*>
         get() = jClass.wrapperByPrimitive ?: jClass
+
+    abstract val functionsMetadata: Collection<KmFunction>
 
     abstract val propertiesMetadata: Collection<KmProperty>
 
@@ -135,6 +139,23 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
 
         return properties.single()
+    }
+
+    fun findFunctionMetadata(name: String, signature: String): KmFunction {
+        require(this is KPackageImpl) { "Only top-level functions are supported for now: $this/$name ($signature)" }
+
+        val functions = functionsMetadata.filter { it.name == name && it.signature.toString() == signature }
+        if (functions.size != 1) {
+            val allMembers = functionsMetadata.joinToString("\n") { function ->
+                function.name + " | " + function.signature
+            }
+            throw KotlinReflectionInternalError(
+                "Function '$name' (JVM signature: $signature) not resolved in $this:" +
+                        if (allMembers.isEmpty()) " no members found" else " several matching members found:\n$allMembers"
+            )
+        }
+
+        return functions.single()
     }
 
     fun findFunctionDescriptor(name: String, signature: String): FunctionDescriptor {

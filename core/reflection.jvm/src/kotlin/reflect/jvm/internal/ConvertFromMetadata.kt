@@ -23,6 +23,7 @@ import kotlin.metadata.*
 import kotlin.metadata.jvm.annotations
 import kotlin.metadata.jvm.fieldSignature
 import kotlin.metadata.jvm.getterSignature
+import kotlin.metadata.jvm.signature
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
 import kotlin.reflect.jvm.internal.types.AbstractKType
@@ -308,4 +309,10 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
     } ?: throw KotlinReflectionInternalError(
         "Unsupported property: name=${property.name} signature=$signature container=$container"
     )
+}
+
+internal fun createUnboundFunction(function: KmFunction, container: KDeclarationContainerImpl): KotlinKFunction {
+    val signature = function.signature?.toString()
+        ?: throw KotlinReflectionInternalError("No signature for function: ${function.name}")
+    return KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, function)
 }

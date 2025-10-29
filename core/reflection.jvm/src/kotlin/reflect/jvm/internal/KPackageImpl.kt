@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.metadata.KmFunction
 import kotlin.metadata.KmPackage
 import kotlin.metadata.KmProperty
 import kotlin.metadata.internal.toKmPackage
@@ -112,17 +113,11 @@ internal class KPackageImpl(
                     for (property in pkg.properties) {
                         result.add(createUnboundProperty(property, this@KPackageImpl))
                     }
+                    for (function in pkg.functions) {
+                        result.add(createUnboundFunction(function, this@KPackageImpl))
+                    }
                 }
                 result.toList()
-
-                // For now, functions are still descriptor-based.
-                val visitor = object : CreateKFunctionVisitor(this@KPackageImpl) {
-                    override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
-                        throw IllegalStateException("No constructors should appear here: $descriptor")
-                }
-                scope.getContributedDescriptors().mapNotNullTo(result) { descriptor ->
-                    if (descriptor is CallableMemberDescriptor) descriptor.accept(visitor, Unit) else null
-                }
             }
         }
     }
@@ -137,6 +132,9 @@ internal class KPackageImpl(
 
     internal val isMultifilePart: Boolean
         get() = data.value.kotlinClass?.classHeader?.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
+
+    override val functionsMetadata: Collection<KmFunction>
+        get() = data.value.kmPackages.flatMap(KmPackage::functions)
 
     override val propertiesMetadata: Collection<KmProperty>
         get() = data.value.kmPackages.flatMap(KmPackage::properties)
