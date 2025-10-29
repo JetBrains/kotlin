@@ -32,7 +32,7 @@ internal abstract class ToolingDiagnosticFactory(
         severity: ToolingDiagnostic.Severity? = null,
         group: DiagnosticGroup? = null,
         throwable: Throwable? = null,
-        builder: ToolingDiagnostics.TitleStep.() -> ToolingDiagnostics.OptionalStep,
+        builder: ToolingDiagnostics.TitleStep.() -> ToolingDiagnostics.NoOpStep,
     ) = ToolingDiagnostics.diagnostic(
         id = if (idSuffix.isNotBlank()) "${id}_$idSuffix" else id,
         group = group ?: predefinedGroup,
@@ -136,12 +136,14 @@ internal object ToolingDiagnostics {
         fun solutions(values: () -> List<String>): OptionalStep
     }
 
-    interface OptionalStep {
+    interface OptionalStep : NoOpStep {
         fun documentationLink(
             url: URI,
             textWithUrl: (String) -> String = { "See $url for more details." },
-        ): OptionalStep
+        ): NoOpStep
     }
+
+    interface NoOpStep
 
     private data class BuilderState(
         val id: String,
@@ -163,7 +165,7 @@ internal object ToolingDiagnostics {
         group: DiagnosticGroup,
         severity: ToolingDiagnostic.Severity,
         throwable: Throwable? = null,
-    ) : TitleStep, DescriptionStep, SolutionStep, OptionalStep {
+    ) : TitleStep, DescriptionStep, SolutionStep, OptionalStep, NoOpStep {
         private var state = BuilderState(
             id = id,
             group = group,
@@ -201,6 +203,7 @@ internal object ToolingDiagnostics {
             url: URI,
             textWithUrl: (String) -> String,
         ) = apply {
+            require(state.documentation == null) { "Documentation link has already been set"}
             state = state.copy(
                 documentation = ToolingDiagnostic.Documentation(url.toString(), textWithUrl(url.toString()))
             )
@@ -235,6 +238,6 @@ internal object ToolingDiagnostics {
         group: DiagnosticGroup,
         severity: ToolingDiagnostic.Severity,
         throwable: Throwable? = null,
-        builder: TitleStep.() -> OptionalStep,
+        builder: TitleStep.() -> NoOpStep,
     ) = BuilderImpl(id, group, severity, throwable).apply { builder() }.build()
 }
