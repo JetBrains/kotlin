@@ -32,9 +32,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         val jvm2Src = File(root, "jvm2.kt").takeIf(File::exists)
 
         val tmpdir = KtTestUtil.tmpDir(getTestName(true))
-
-        val withStdlib = InTextDirectivesUtils.isDirectiveDefined(commonSrc.readText(), "WITH_STDLIB")
-        val optionalStdlibCommon = if (withStdlib) arrayOf("-cp", findStdlibCommon().absolutePath) else emptyArray()
+        val stdlibCommon = findStdlibCommon().absolutePath
 
         val commonDest = File(tmpdir, "common").absolutePath
         val jvmDest = File(tmpdir, "jvm").absolutePath.takeIf { jvmSrc != null }
@@ -44,7 +42,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
 
         val result = buildString {
             appendLine("-- Common --")
-            appendLine(KotlinMetadataCompiler().compile(commonSrc, null, "-d", commonDest, *optionalStdlibCommon, "-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native"))
+            appendLine(KotlinMetadataCompiler().compile(commonSrc, null, "-d", commonDest, "-cp", stdlibCommon, "-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native"))
 
             if (jvmSrc != null) {
                 appendLine()
@@ -73,7 +71,13 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
             if (common2Src != null) {
                 appendLine()
                 appendLine("-- Common (2) --")
-                appendLine(KotlinMetadataCompiler().compile(common2Src, null, "-d", common2Dest!!, "-cp", commonDest, *optionalStdlibCommon))
+                appendLine(KotlinMetadataCompiler().compile(
+                        sources = common2Src,
+                        commonSources = null,
+                        "-d", common2Dest!!,
+                        "-cp", listOf(commonDest, stdlibCommon).joinToString(File.pathSeparator)
+                    )
+                )
             }
 
             if (jvm2Src != null) {
