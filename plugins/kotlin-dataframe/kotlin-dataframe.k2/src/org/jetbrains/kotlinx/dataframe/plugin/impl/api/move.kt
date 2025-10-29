@@ -24,7 +24,9 @@ class ToTop : AbstractSchemaModificationInterpreter() {
         if (newColumnName != null) return PluginDataFrameSchema.EMPTY
 
         val columns = receiver.columns.resolve(receiver.df).map { it.path }
-        return receiver.df.asDataFrame().move { columns.toColumnSet() }.toTop().toPluginDataFrameSchema()
+        return receiver.df.asDataFrame()
+            .move { columns.toColumnSet() }.toTop()
+            .toPluginDataFrameSchema()
     }
 }
 
@@ -35,7 +37,9 @@ class MoveUnder0 : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = receiver.columns.resolve(receiver.df).map { it.path }
-        return receiver.df.asDataFrame().move { columns.toColumnSet() }.under(column).toPluginDataFrameSchema()
+        return receiver.df.asDataFrame()
+            .move { columns.toColumnSet() }.under(column)
+            .toPluginDataFrameSchema()
     }
 }
 
@@ -46,7 +50,9 @@ class MoveUnder1 : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = receiver.columns.resolve(receiver.df).map { it.path }
-        return receiver.df.asDataFrame().move { columns.toColumnSet() }.under { column.col.path }.toPluginDataFrameSchema()
+        return receiver.df.asDataFrame()
+            .move { columns.toColumnSet() }.under { column.col.path }
+            .toPluginDataFrameSchema()
     }
 }
 
@@ -57,17 +63,22 @@ class MoveInto0 : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = receiver.columns.resolve(receiver.df).map { it.path }
-        return receiver.df.asDataFrame().move { columns.toColumnSet() }.into(column).toPluginDataFrameSchema()
+        return receiver.df.asDataFrame()
+            .move { columns.toColumnSet() }.into(column)
+            .toPluginDataFrameSchema()
     }
 }
 
 /** Implementation of `move {}.toStart()` operation. */
 class MoveToStart0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: MoveClauseApproximation by arg()
+    val Arguments.insideGroup: Boolean by arg(defaultValue = Present(value = false))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = receiver.columns.resolve(receiver.df).map { it.path }
-        return receiver.df.asDataFrame().move { columns.toColumnSet() }.toStart().toPluginDataFrameSchema()
+        return receiver.df.asDataFrame()
+            .move { columns.toColumnSet() }.toStart(insideGroup)
+            .toPluginDataFrameSchema()
     }
 }
 
@@ -75,31 +86,40 @@ class MoveToStart0 : AbstractSchemaModificationInterpreter() {
 class MoveToStart1 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.columns: ColumnsResolver by arg()
+    val Arguments.insideGroup: Boolean by arg(defaultValue = Present(value = false))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = columns.resolve(receiver).map { it.path }
-        return receiver.asDataFrame().moveToStart { columns.toColumnSet() }.toPluginDataFrameSchema()
+        return receiver.asDataFrame()
+            .moveToStart(insideGroup) { columns.toColumnSet() }
+            .toPluginDataFrameSchema()
     }
 }
 
 /** Implementation of `move {}.toEnd()` operation. */
 class MoveToEnd0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: MoveClauseApproximation by arg()
+    val Arguments.insideGroup: Boolean by arg(defaultValue = Present(value = false))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = receiver.columns.resolve(receiver.df).map { it.path }
-        return receiver.df.asDataFrame().move { columns.toColumnSet() }.toEnd().toPluginDataFrameSchema()
+        return receiver.df.asDataFrame()
+            .move { columns.toColumnSet() }.toEnd(insideGroup)
+            .toPluginDataFrameSchema()
     }
 }
 
 /** Implementation of `moveToEnd {}` operation. */
 class MoveToEnd1 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.insideGroup: Boolean by arg(defaultValue = Present(value = false))
     val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = columns.resolve(receiver).map { it.path }
-        return receiver.asDataFrame().moveToEnd { columns.toColumnSet() }.toPluginDataFrameSchema()
+        return receiver.asDataFrame()
+            .moveToEnd(insideGroup) { columns.toColumnSet() }
+            .toPluginDataFrameSchema()
     }
 }
 
@@ -110,7 +130,9 @@ class MoveBefore0 : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = receiver.columns.resolve(receiver.df).map { it.path }
-        return receiver.df.asDataFrame().move { columns.toColumnSet() }.before { column.col.path }.toPluginDataFrameSchema()
+        return receiver.df.asDataFrame()
+            .move { columns.toColumnSet() }.before { column.col.path }
+            .toPluginDataFrameSchema()
     }
 }
 
@@ -121,7 +143,9 @@ class MoveAfter0 : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = receiver.columns.resolve(receiver.df).map { it.path }
-        return receiver.df.asDataFrame().move { columns.toColumnSet() }.after { column.col.path }.toPluginDataFrameSchema()
+        return receiver.df.asDataFrame()
+            .move { columns.toColumnSet() }.after { column.col.path }
+            .toPluginDataFrameSchema()
     }
 }
 
@@ -129,9 +153,13 @@ class MoveAfter0 : AbstractSchemaModificationInterpreter() {
 class MoveTo : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: MoveClauseApproximation by arg()
     val Arguments.columnIndex: Int by arg()
+    val Arguments.insideGroup: Boolean by arg(defaultValue = Present(value = false))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.asDataFrame().move { receiver.columns }.to(columnIndex).toPluginDataFrameSchema()
+        val columns = receiver.columns.resolve(receiver.df).map { it.path }
+        return receiver.df.asDataFrame()
+            .move { columns.toColumnSet() }.to(columnIndex, insideGroup)
+            .toPluginDataFrameSchema()
     }
 }
 
@@ -139,11 +167,14 @@ class MoveTo : AbstractSchemaModificationInterpreter() {
 class MoveTo1 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.newColumnIndex: Int by arg()
+    val Arguments.insideGroup: Boolean by arg(defaultValue = Present(value = false))
     val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = columns.resolve(receiver).map { it.path }
-        return receiver.asDataFrame().moveTo(newColumnIndex) { columns.toColumnSet() }.toPluginDataFrameSchema()
+        return receiver.asDataFrame()
+            .moveTo(newColumnIndex, insideGroup) { columns.toColumnSet() }
+            .toPluginDataFrameSchema()
     }
 }
 
