@@ -54772,6 +54772,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       public void testUpperBoundViolated2() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/typealias/upperBoundViolated2.kt");
       }
+
+      @Test
+      @TestMetadata("upperBoundViolated3.kt")
+      public void testUpperBoundViolated3() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/typealias/upperBoundViolated3.kt");
+      }
     }
 
     @Nested
