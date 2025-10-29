@@ -16,15 +16,23 @@ internal fun generateJvmTarget(
 ) {
     val jvmTargetFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JvmTarget")
     filePrinter(fileFromFqName(apiDir, jvmTargetFqName)) {
-        generateDeclaration("enum class", jvmTargetFqName, afterType = "(val target: String)") {
+        generateDeclaration(
+            modifiers = "enum class",
+            type = jvmTargetFqName,
+            afterType = "(val target: String)",
+            declarationKDoc = "@param target",
+        ) {
             for (jvmTarget in JvmTarget.supportedValues()) {
+                println("/***/")
                 println("${jvmTarget.name}(\"${jvmTarget.description}\"),")
             }
             println(";")
 
             println()
+            println("/***/")
             println("companion object {")
             withIndent {
+                println("/***/")
                 println("@JvmStatic")
                 println("fun fromTarget(target: String): JvmTarget =")
                 println("    JvmTarget.values().firstOrNull { it.target == target }")
@@ -33,6 +41,7 @@ internal fun generateJvmTarget(
                 println("                    \"Prefer configuring 'jvmTarget' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl\"")
                 println("        )")
                 println()
+                println("/***/")
                 println("@JvmStatic")
                 println("val DEFAULT = ${JvmTarget.DEFAULT.name}")
             }

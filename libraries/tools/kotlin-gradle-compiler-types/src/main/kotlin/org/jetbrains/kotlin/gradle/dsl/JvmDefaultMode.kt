@@ -5,9 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+/**
+ * @param compilerArgument
+ */
 @Suppress("unused")
 enum class JvmDefaultMode(val compilerArgument: String) {
+    /***/
     DISABLE("disable"),
+
+    /***/
     ENABLE("enable"),
+
+    /***/
     NO_COMPATIBILITY("no-compatibility"),
 }

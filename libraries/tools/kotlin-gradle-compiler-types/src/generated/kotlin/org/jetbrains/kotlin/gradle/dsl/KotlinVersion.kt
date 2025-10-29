@@ -5,26 +5,47 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+/**
+ * @param version
+ */
 enum class KotlinVersion(val version: String) {
+    /***/
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_0("1.0"),
+    /***/
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_1("1.1"),
+    /***/
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_2("1.2"),
+    /***/
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_3("1.3"),
+    /***/
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_4("1.4"),
+    /***/
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_5("1.5"),
+    /***/
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_6("1.6"),
+    /***/
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_7("1.7"),
+    /***/
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_8("1.8"),
+    /***/
     @Deprecated("JVM only, will be removed soon") KOTLIN_1_9("1.9"),
+    /***/
     @Deprecated("Will be removed soon") KOTLIN_2_0("2.0"),
+    /***/
     KOTLIN_2_1("2.1"),
+    /***/
     KOTLIN_2_2("2.2"),
+    /***/
     KOTLIN_2_3("2.3"),
+    /***/
     KOTLIN_2_4("2.4"),
+    /***/
     KOTLIN_2_5("2.5"),
     ;
 
+    /***/
     companion object {
+        /***/
         @JvmStatic
         fun fromVersion(version: String): KotlinVersion =
             KotlinVersion.values().firstOrNull { it.version == version }
@@ -33,6 +54,7 @@ enum class KotlinVersion(val version: String) {
                             "Prefer configuring 'apiVersion' or 'languageVersion' values via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl"
                 )
 
+        /***/
         @JvmStatic
         val DEFAULT = KOTLIN_2_3
     }
