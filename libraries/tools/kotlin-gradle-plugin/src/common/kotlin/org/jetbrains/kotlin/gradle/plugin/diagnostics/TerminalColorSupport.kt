@@ -5,46 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
-import org.jetbrains.kotlin.konan.target.HostManager
-
 internal object TerminalColorSupport {
-    /**
-     * Enum representing various types of terminal environments.
-     *
-     * This enum class is used to differentiate between terminal environments
-     * typically encountered across different operating systems.
-     *
-     * - `WINDOWS_CMD`: Represents the Windows Command Prompt environment.
-     * - `WINDOWS_POWERSHELL`: Represents the Windows PowerShell environment.
-     * - `UNIX_LIKE`: Represents Unix-like terminal environments including Linux, macOS, and other Unix-based systems.
-     * - `UNKNOWN`: Represents an unrecognized or unsupported terminal environment.
-     */
-    private enum class TerminalType {
-        WINDOWS_CMD,
-        WINDOWS_POWERSHELL,
-        UNIX_LIKE,
-        UNKNOWN
-    }
-
-    private fun detectTerminalType() = when {
-        HostManager.hostIsMingw -> {
-            when {
-                System.getenv("PROMPT") != null -> TerminalType.WINDOWS_CMD
-                System.getenv("PSModulePath") != null -> TerminalType.WINDOWS_POWERSHELL
-                else -> TerminalType.UNKNOWN
-            }
-        }
-        HostManager.hostIsLinux || HostManager.hostIsMac -> TerminalType.UNIX_LIKE
-        else -> TerminalType.UNKNOWN
-    }
-
-    // Single source of truth for color support
-    private val isColorSupported = when (detectTerminalType()) {
-        TerminalType.WINDOWS_CMD -> false
-        TerminalType.WINDOWS_POWERSHELL -> true
-        TerminalType.UNIX_LIKE -> true
-        TerminalType.UNKNOWN -> false
-    }
 
     /**
      * Provides ANSI escape codes for applying various styles and colors to terminal text.
@@ -57,8 +18,7 @@ internal object TerminalColorSupport {
     internal object TerminalStyle {
         // Style definitions
         sealed class Style(private val code: String) {
-            operator fun invoke(text: String): String =
-                if (isColorSupported) "$code$text$RESET" else text
+            operator fun invoke(text: String): String = "$code$text$RESET"
 
             companion object {
                 private const val RESET = "\u001B[0m"

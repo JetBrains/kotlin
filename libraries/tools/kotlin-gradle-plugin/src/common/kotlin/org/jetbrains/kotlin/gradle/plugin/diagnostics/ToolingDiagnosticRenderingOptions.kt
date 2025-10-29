@@ -103,8 +103,8 @@ private abstract class IsAttachedToTerminalValueSource : ConfigurationCacheOpaqu
     override fun obtainValue(): Boolean {
         // Unix/Linux/macOS terminal detection
         val term = System.getenv("TERM")              // Standard UNIX environment variable
-        val colorTerm = System.getenv("COLORTERM")    // Explicit color support flag
-        val termProgram = System.getenv("TERM_PROGRAM") // Terminal emulator program
+        val colorTerm = System.getenv("COLORTERM")    // Explicit color support flag, e.g., "truecolor"
+        val termProgram = System.getenv("TERM_PROGRAM") // Terminal emulator program, e.g., "vscode", "iTerm.app"
 
         // Common terminal types:
         // - "dumb": Basic terminal with minimal features (often in CI environments or redirected output)
@@ -114,18 +114,22 @@ private abstract class IsAttachedToTerminalValueSource : ConfigurationCacheOpaqu
         // Windows-specific terminal detection
         val ansicon = System.getenv("ANSICON")        // Set by ANSICON and similar Windows terminal enhancers
         val conEmuANSI = System.getenv("ConEmuANSI")  // Set by ConEmu terminal
-        val wtSession = System.getenv("WT_SESSION")    // Set by Windows Terminal
+        val wtSession = System.getenv("WT_SESSION")   // Set by Windows Terminal
 
-        // Check for PowerShell
-        val psVersion = System.getenv("PSModulePath") // Typically set in PowerShell environment
+        // Check for modern terminals that explicitly support color
+        if (colorTerm != null || termProgram != null || wtSession != null || conEmuANSI == "ON" || ansicon != null) {
+            return true
+        }
 
-        return (term != null && term != "dumb") ||    // Unix terminal check
-                colorTerm != null ||                  // Color support check
-                termProgram != null ||                // Modern terminal emulator check
-                ansicon != null ||                    // Windows ANSI support
-                "ON" == conEmuANSI ||                 // ConEmu with ANSI
-                wtSession != null ||                  // Windows Terminal
-                (psVersion != null && System.console() != null) // Interactive PowerShell session
+        // Fallback for standard UNIX terminals
+        // This should be last, as TERM on Windows is not reliable.
+        if (term != null && term != "dumb") {
+            return true
+        }
+
+        // If none of the above, we are likely in an unsupported terminal
+        // (like plain conhost.exe), so we must return false.
+        return false
     }
 }
 
