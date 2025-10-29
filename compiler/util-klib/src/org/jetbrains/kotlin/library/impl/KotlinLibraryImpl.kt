@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.components.KlibIrComponent
-import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
@@ -62,21 +60,14 @@ class KotlinLibraryImpl(
 ) : KotlinLibrary,
     BaseKotlinLibrary by base {
 
-    private val components: Map<KlibComponent.Kind<*, *>, KlibComponent> = KlibComponentsBuilder(
+    private val components = KlibComponentsCache(
         layoutReaderFactory = KlibLayoutReaderFactory(
             klibFile = location,
             zipFileSystemAccessor = zipFileSystemAccessor
         )
     )
-        .withComponent(KlibMetadataComponent.Kind)
-        .withComponent(KlibIrComponent.Kind.Main)
-        .withComponent(KlibIrComponent.Kind.InlinableFunctions)
-        .build()
 
-    override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>): KC? {
-        @Suppress("UNCHECKED_CAST")
-        return components[kind] as KC?
-    }
+    override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>) = components.getComponent(kind)
 
     override fun toString(): String = buildString {
         append("name ")
