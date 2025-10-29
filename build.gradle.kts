@@ -72,7 +72,7 @@ plugins {
     alias(libs.plugins.gradle.node) apply false
     id("nodejs-cache-redirector-configuration")
     id("gradle-plugins-documentation") apply false
-    id("com.autonomousapps.dependency-analysis") version "2.19.0"
+    id("com.autonomousapps.dependency-analysis") version "3.4.0"
     id("project-tests-convention") apply false
 }
 
