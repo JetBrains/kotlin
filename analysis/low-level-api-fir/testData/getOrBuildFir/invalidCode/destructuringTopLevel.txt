@@ -13,7 +13,6 @@ public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : R|kotlin/Any| {
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructuringTopLevel.kt
     public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
-
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()

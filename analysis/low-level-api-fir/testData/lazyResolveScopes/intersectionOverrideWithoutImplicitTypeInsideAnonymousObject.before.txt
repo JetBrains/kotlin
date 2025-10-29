@@ -16,11 +16,7 @@ public open [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] x: R|F|): R|kotlin
 
 public abstract override [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: R|@R|second/Anno|(str = <strcat>(String(super ), R|second/constant|))  kotlin/String|
 
-
-
 public abstract override [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T|
-
-
 
 public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T|
     public [ResolvedTo(STATUS)] [ContainingClassKey=B] get(): R|T|

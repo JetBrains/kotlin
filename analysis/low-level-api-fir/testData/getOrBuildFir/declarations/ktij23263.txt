@@ -14,5 +14,4 @@ FILE: [ResolvedTo(IMPORTS)] ktij23263.kt
 
         public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
 
-
     }

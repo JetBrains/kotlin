@@ -16,11 +16,7 @@ public open [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] x: R|F| = LAZY_EXP
 
 public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String}, baseSymbol=FirIntersectionOverridePropertySymbol second/B.bar), IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: <implicit>
 
-
-
 public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=CallableCopyIntersection(mostSpecific=[FirRegularPropertySymbol second/B.bar, FirRegularPropertySymbol second/B.bar]), IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/C.bar] var bar: <implicit>
-
-
 
 public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> T}, baseSymbol=FirRegularPropertySymbol second/C.bar), SubstitutedOverrideOriginalKey=second/C.bar] var bar: <implicit>
     public [ResolvedTo(STATUS)] [ContainingClassKey=B] get(): <implicit>

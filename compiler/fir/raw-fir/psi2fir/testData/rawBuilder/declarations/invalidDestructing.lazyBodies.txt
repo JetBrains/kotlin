@@ -6,5 +6,4 @@ FILE: invalidDestructing.kt
 
         public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
 
-
     }
