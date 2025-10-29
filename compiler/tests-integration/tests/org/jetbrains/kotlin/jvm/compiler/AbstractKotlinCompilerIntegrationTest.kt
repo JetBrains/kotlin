@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.JavaCompilationResult
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.compileJavaFiles
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.jar.JarOutputStream
@@ -115,7 +116,12 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
     ): File {
         val destination = File(tmpdir, libraryName)
         val output = compileKotlin(
-            libraryName, destination, compiler = KotlinMetadataCompiler(), additionalOptions = additionalOptions, expectedFileName = null
+            libraryName,
+            destination,
+            compiler = KotlinMetadataCompiler(),
+            additionalOptions = additionalOptions + "-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native",
+            expectedFileName = null,
+            classpath = listOf(StandardLibrariesPathProviderForKotlinProject.commonStdlibForTests()),
         )
         checkKotlinOutput(normalizeOutput(output))
         return destination

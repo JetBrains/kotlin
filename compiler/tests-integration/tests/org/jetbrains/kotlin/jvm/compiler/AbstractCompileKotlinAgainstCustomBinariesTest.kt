@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -532,8 +533,13 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     fun testInternalFromFriendModuleCommon() = muteForK1 {
         val library = compileCommonLibrary("library")
         compileKotlin(
-            "source.kt", tmpdir, listOf(library), KotlinMetadataCompiler(), listOf(
-                K2MetadataCompilerArguments::friendPaths.cliArgument(library.path)
+            fileName = "source.kt",
+            output = tmpdir,
+            classpath = listOf(library, StandardLibrariesPathProviderForKotlinProject.commonStdlibForTests()),
+            compiler = KotlinMetadataCompiler(),
+            additionalOptions = listOf(
+                K2MetadataCompilerArguments::friendPaths.cliArgument(library.path),
+                "-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native",
             )
         )
     }
@@ -700,11 +706,11 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
 
         compileKotlin(
-            "anonymousObjectTypeMetadata.kt",
-            tmpdir,
-            listOf(library),
-            KotlinMetadataCompiler(),
-            additionalOptions = extraCommandLineArguments
+            fileName = "anonymousObjectTypeMetadata.kt",
+            output = tmpdir,
+            classpath = listOf(library, StandardLibrariesPathProviderForKotlinProject.commonStdlibForTests()),
+            compiler = KotlinMetadataCompiler(),
+            additionalOptions = extraCommandLineArguments + "-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native",
         )
     }
 
