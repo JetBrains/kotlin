@@ -178,6 +178,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReducePredicate
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByXs
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InnerJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InsertAfter0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InsertBefore0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Last0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Last1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Last2
@@ -406,6 +407,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "Under1" -> Under1()
         "Under4" -> Under4()
         "InsertAfter0" -> InsertAfter0()
+        "InsertBefore0" -> InsertBefore0()
         "InsertAt" -> InsertAt()
         "Join0" -> Join0()
         "LeftJoin" -> LeftJoin()

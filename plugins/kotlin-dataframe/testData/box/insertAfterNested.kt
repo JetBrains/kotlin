@@ -6,6 +6,7 @@ fun box(): String {
     val grouped = df.group { a and b and c }.into("g")
 
     val dfWithD = grouped.insert("d") { g.b  * g.c }.after { g.b }
+    dfWithD.checkCompileTimeSchemaEqualsRuntime()
 
     val dCol: DataColumn<Int> = dfWithD.g.d
 
