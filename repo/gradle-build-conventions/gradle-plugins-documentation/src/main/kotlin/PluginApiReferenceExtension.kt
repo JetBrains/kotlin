@@ -1,6 +1,7 @@
 import gradle.GradlePluginVariant
 import gradle.publishGradlePluginsJavadoc
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
 import org.gradle.kotlin.dsl.withType
@@ -41,6 +42,12 @@ abstract class PluginApiReferenceExtension @Inject constructor(
         project.tasks.named<DokkaTaskPartial>("dokkaHtmlPartial").configure {
             moduleName.set(name)
         }
+    }
+
+    fun embeddedProject(embedProject: ProjectDependency) {
+        if (!project.kotlinBuildProperties.publishGradlePluginsJavadoc) return
+
+        project.consumeEmbeddedSources(embedProject)
     }
 
     private var _failOnWarning: Boolean = false
