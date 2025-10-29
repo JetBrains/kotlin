@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.apply
 
 /**
  * Constructs `KProperty` instances returned by expressions such as `A::x` and `A()::x`.
