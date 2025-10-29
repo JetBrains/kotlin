@@ -72,9 +72,11 @@ class KotlinDeclarationInCompiledFileSearcher {
                 val names = SmartList(memberName)
                 val setter = if (JvmAbi.isGetterName(memberName) && PsiTypes.voidType() != member.returnType) {
                     propertyNameByGetMethodName(Name.identifier(memberName))?.let { names.add(it.identifier) }
+                    memberName.removePrefix("get").takeIf { it != memberName }?.let { names.add(it) }
                     false
                 } else if (JvmAbi.isSetterName(memberName) && PsiTypes.voidType() == member.returnType) {
                     propertyNamesBySetMethodName(Name.identifier(memberName)).forEach { names.add(it.identifier) }
+                    memberName.removePrefix("set").takeIf { it != memberName }?.let { names.add(it) }
                     true
                 } else null
                 declarations
