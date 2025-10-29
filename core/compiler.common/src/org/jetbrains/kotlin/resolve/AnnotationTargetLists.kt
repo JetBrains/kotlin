@@ -23,6 +23,10 @@ object AnnotationTargetLists {
 
     val T_DESTRUCTURING_DECLARATION = targetList(DESTRUCTURING_DECLARATION)
 
+    val T_DESTRUCTURING_DECLARATION_NEW = targetList(DESTRUCTURING_DECLARATION) {
+        extraTargets(LOCAL_VARIABLE)
+    }
+
     private fun TargetListBuilder.propertyTargets(backingField: Boolean, delegate: Boolean) {
         if (backingField) extraTargets(FIELD)
         if (delegate) {

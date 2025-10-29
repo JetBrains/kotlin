@@ -1,7 +1,8 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
+// LANGUAGE: +LocalVariableTargetedAnnotationOnDestructuring
 fun test(): Any? {
-    <!WRONG_ANNOTATION_TARGET!>@ann<!> val (a, b) = P(1, 1)
+    @ann val (a, b) = P(1, 1)
     return a + b
 }
 

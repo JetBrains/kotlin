@@ -655,11 +655,17 @@ fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
 private val FirCallableDeclaration.isMember get() = dispatchReceiverType != null
 
 @OptIn(SymbolInternals::class)
+context(sessionHolder: SessionHolder)
 fun getActualTargetList(container: FirBasedSymbol<*>): AnnotationTargetList {
-    return getActualTargetList(container.fir)
+    return getActualTargetList(container.fir, sessionHolder.session)
 }
 
+context(sessionHolder: SessionHolder)
 fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList {
+    return getActualTargetList(container, sessionHolder.session)
+}
+
+fun getActualTargetList(container: FirAnnotationContainer, session: FirSession): AnnotationTargetList {
     val annotated =
         if (container is FirBackingField) {
             when {
@@ -688,7 +694,11 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
             when {
                 annotated.symbol is FirLocalPropertySymbol ->
                     when {
-                        annotated.name == SpecialNames.DESTRUCT -> TargetLists.T_DESTRUCTURING_DECLARATION
+                        annotated.name == SpecialNames.DESTRUCT -> if (session.languageVersionSettings.supportsFeature(LanguageFeature.LocalVariableTargetedAnnotationOnDestructuring)) {
+                            TargetLists.T_DESTRUCTURING_DECLARATION_NEW
+                        } else {
+                            TargetLists.T_DESTRUCTURING_DECLARATION
+                        }
                         annotated.isCatchParameter == true -> TargetLists.T_CATCH_PARAMETER
                         annotated.isForLoopParameter == true -> TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
                         else -> TargetLists.T_LOCAL_VARIABLE

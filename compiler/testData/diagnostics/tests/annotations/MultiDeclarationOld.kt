@@ -1,4 +1,4 @@
-// LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
+// LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm -LocalVariableTargetedAnnotationOnDestructuring
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 annotation class Ann

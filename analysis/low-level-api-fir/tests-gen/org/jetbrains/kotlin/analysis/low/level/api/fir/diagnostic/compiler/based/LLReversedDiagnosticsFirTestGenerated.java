@@ -4044,6 +4044,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("localVariableTargetOnDestructuringAfter.kt")
+      public void testLocalVariableTargetOnDestructuringAfter() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/localVariableTargetOnDestructuringAfter.kt");
+      }
+
+      @Test
       @TestMetadata("nameBasedDestructuringAnnotationErrorShortFrom.kt")
       public void testNameBasedDestructuringAnnotationErrorShortFrom() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringAnnotationErrorShortFrom.kt");

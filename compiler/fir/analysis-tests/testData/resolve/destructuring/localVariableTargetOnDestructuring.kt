@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +NameBasedDestructuring
+// LANGUAGE: +NameBasedDestructuring -LocalVariableTargetedAnnotationOnDestructuring
 
 @Target(AnnotationTarget.LOCAL_VARIABLE)
 annotation class Ann

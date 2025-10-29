@@ -461,6 +461,7 @@ enum class LanguageFeature(
     ForbidInitializationBeforeDeclarationInAnonymous(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-290"),
     ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-358"),
     AllowReifiedTypeInCatchClause(KOTLIN_2_4, issue = "KT-54363"),
+    LocalVariableTargetedAnnotationOnDestructuring(KOTLIN_2_4, "KT-81408"),
     ForbidGetSetValueWithTooManyParameters(KOTLIN_2_4, enabledInProgressiveMode = true, issue = "KTLC-289"),
     ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-288"),
     ForbidInlineEnumEntries(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-361"),
