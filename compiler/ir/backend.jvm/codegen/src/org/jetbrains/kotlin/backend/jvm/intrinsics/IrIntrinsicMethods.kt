@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.org.objectweb.asm.Opcodes.*
@@ -36,6 +37,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
 
     private val anyFqn = StandardNames.FqNames.any.toSafe()
     private val arrayFqn = StandardNames.FqNames.array.toSafe()
+    private val arrayCompanionFqn = StandardNames.FqNames.array.child(Name.identifier("Companion")).toSafe()
     private val cloneableFqn = StandardNames.FqNames.cloneable.toSafe()
     private val intFqn = StandardNames.FqNames._int.toSafe()
     private val longFqn = StandardNames.FqNames._long.toSafe()
@@ -137,14 +139,27 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     }
 
     private fun intrinsicsThatShouldHaveBeenLowered() =
-        (symbols.primitiveTypesToPrimitiveArrays.map { (_, primitiveClassSymbol) ->
-            val name = primitiveClassSymbol.owner.name.asString()
-            // IntArray -> intArrayOf
+        (symbols.primitiveTypesToPrimitiveArrays.flatMap { (_, primitiveArraySymbol) ->
+            val name = primitiveArraySymbol.owner.name.asString()
+            val primitiveArrayFqName = primitiveArraySymbol.owner.fqNameWhenAvailable!!
+            val primitiveArrayCompanionFqn = primitiveArrayFqName.child(Name.identifier("Companion"))
             val arrayOfFunName = name.decapitalizeAsciiOnly() + "Of"
-            Key(kotlinFqn, null, arrayOfFunName, listOf(primitiveClassSymbol.owner.fqNameWhenAvailable))
+
+            // IntArray -> intArrayOf & IntArray.Companion.of
+            listOf(
+                Key(kotlinFqn, null, arrayOfFunName, listOf(primitiveArrayFqName)),
+                Key(primitiveArrayCompanionFqn, null, "of", listOf(primitiveArrayFqName)),
+            )
+        } + (symbols.unsignedTypesToUnsignedArrays).map { (_, unsignedArraySymbol) ->
+            val unsignedArrayFqName = unsignedArraySymbol.owner.fqNameWhenAvailable!!
+            val primitiveArrayCompanionFqn = unsignedArrayFqName.child(Name.identifier("Companion"))
+
+            // UIntArray -> UIntArray.Companion.of
+            Key(primitiveArrayCompanionFqn, null, "of", listOf(unsignedArrayFqName))
         } + listOf(
             Key(kotlinFqn, anyFqn, "toString", emptyList()),
             Key(kotlinFqn, null, "arrayOf", listOf(arrayFqn)),
+            Key(arrayCompanionFqn, null, "of", listOf(arrayFqn)),
             Key(stringFqn, null, "plus", listOf(anyFqn)),
         )).map { it to IntrinsicShouldHaveBeenLowered }
 
