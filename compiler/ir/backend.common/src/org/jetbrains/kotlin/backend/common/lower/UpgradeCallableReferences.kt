@@ -268,18 +268,24 @@ open class UpgradeCallableReferences(
             if (getter != null) {
                 if (generateFakeAccessorsForReflectionProperty && expression.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
                     getterFun = getter.let {
-                        expression.buildUnsupportedForReflectionPropertyAccessor(emptyList(), data, it.name, it.isSuspend, isPropertySetter = false)
+                        expression.buildUnsupportedForReflectionPropertyAccessor(
+                            emptyList(), data, it.name, it.isSuspend, isPropertySetter = false
+                        )
                     }
                     setterFun = expression.setter?.owner?.let {
-                        expression.buildUnsupportedForReflectionPropertyAccessor(emptyList(), data, it.name, it.isSuspend, isPropertySetter = true)
+                        expression.buildUnsupportedForReflectionPropertyAccessor(
+                            emptyList(), data, it.name, it.isSuspend, isPropertySetter = true
+                        )
                     }
                 } else {
                     val getterMissingObjectDispatchReceiver = getter.isMissingObjectDispatchReceiver()
-                    getterFun = expression.wrapFunction(arguments.drop(if (getterMissingObjectDispatchReceiver) 1 else 0), data, getter, isPropertySetter = false)
+                    val getterArgsWithoutObjectReceiver = if (getterMissingObjectDispatchReceiver) arguments.drop(1) else arguments
+                    getterFun = expression.wrapFunction(getterArgsWithoutObjectReceiver, data, getter, isPropertySetter = false)
                     setterFun = runIf(expression.type.isKMutableProperty()) {
                         expression.setter?.owner?.let { setter ->
                             val setterMissingObjectDispatchReceiver = setter.isMissingObjectDispatchReceiver()
-                            expression.wrapFunction(arguments.drop(if (setterMissingObjectDispatchReceiver) 1 else 0), data, setter, isPropertySetter = true)
+                            val setterArgsWithoutObjectReceiver = if (setterMissingObjectDispatchReceiver) arguments.drop(1) else arguments
+                            expression.wrapFunction(setterArgsWithoutObjectReceiver, data, setter, isPropertySetter = true)
                         }
                     }
                 }
