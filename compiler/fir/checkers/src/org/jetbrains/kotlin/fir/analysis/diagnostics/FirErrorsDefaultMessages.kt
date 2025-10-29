@@ -1072,8 +1072,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ROOT_IDE_PACKAGE_DEPRECATED,
-            "'_root_ide_package_' is not supposed to be used in source code. It's been likely introduced accidentally by IDE, " +
-                    "thus consider reporting an issue to https://youtrack.jetbrains.com/issues/KTIJ once it happens again."
+            "'root_ide_package' cannot be used in source code. It's an implementation detail of IntelliJ IDEA's Kotlin language support. " +
+                    "If you notice IntelliJ IDEA adding 'root_ide_package' to source code, please report an issue to https://kotl.in/plugin-issue."
         )
 
         // Super
