@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : UpgradeCallableReferences(
@@ -62,4 +64,7 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
     }
 
     override fun IrDeclaration.isMissingObjectDispatchReceiver(): Boolean = isJvmStaticInObject()
+
+    override fun IrCallableReference<*>.castFirstParameterToAny(): Boolean =
+        this is IrPropertyReference && getter?.owner?.kotlinFqName?.asString() == "kotlin.jvm.<get-javaClass>"
 }

@@ -399,7 +399,7 @@ open class UpgradeCallableReferences(
             val referenceType = this@buildWrapperFunction.type as IrSimpleType
             val referenceTypeArgs = referenceType.arguments.map { it.typeOrNull ?: context.irBuiltIns.anyNType }
             val unboundArgTypes = if (isPropertySetter) referenceTypeArgs else referenceTypeArgs.dropLast(1)
-            // normally, it can't be empty. This is a workaround for plugin bugs , possibly already serialized in klibs
+            // normally, it can't be empty. This is a workaround for plugin bugs, possibly already serialized in klibs
             val returnType = if (isPropertySetter) context.irBuiltIns.unitType else referenceTypeArgs.lastOrNull() ?: context.irBuiltIns.anyNType
             val func = context.irFactory.buildFun {
                 setSourceRange(this@buildWrapperFunction)
@@ -410,17 +410,18 @@ open class UpgradeCallableReferences(
                 this.isSuspend = isSuspend
             }.apply {
                 this.parent = parent
+                val anyType = context.irBuiltIns.anyType
                 for (arg in captured) {
                     addValueParameter {
                         this.name = arg.first.name
-                        this.type = arg.second.type
+                        this.type = if (castFirstParameterToAny()) anyType else arg.second.type
                     }
                 }
                 var index = 0
                 for (type in unboundArgTypes) {
                     addValueParameter {
                         this.name = Name.identifier("p${index++}")
-                        this.type = type
+                        this.type = if (captured.isEmpty() && castFirstParameterToAny()) anyType else type
                     }
                 }
                 if (body != null) {
@@ -532,4 +533,9 @@ open class UpgradeCallableReferences(
     protected open fun copyNecessaryAttributes(oldReference: IrPropertyReference, newReference: IrRichPropertyReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrLocalDelegatedPropertyReference, newReference: IrRichPropertyReference) {}
     protected open fun IrDeclaration.isMissingObjectDispatchReceiver(): Boolean = false
+
+    /**
+     * Workaround to support currently existing incorrect behaviour of KT-81931
+     */
+    protected open fun IrCallableReference<*>.castFirstParameterToAny(): Boolean = false
 }
