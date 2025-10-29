@@ -416,18 +416,17 @@ open class UpgradeCallableReferences(
                 this.isSuspend = isSuspend
             }.apply {
                 this.parent = parent
-                val anyType = context.irBuiltIns.anyType
                 for (arg in captured) {
                     addValueParameter {
                         this.name = arg.first.name
-                        this.type = if (shouldCastFirstParameterToAny()) anyType else arg.second.type
+                        this.type = arg.second.type
                     }
                 }
                 var index = 0
                 for (type in unboundArgTypes) {
                     addValueParameter {
                         this.name = Name.identifier("p${index++}")
-                        this.type = if (captured.isEmpty() && shouldCastFirstParameterToAny()) anyType else type
+                        this.type = type
                     }
                 }
                 if (body != null) {
@@ -539,9 +538,4 @@ open class UpgradeCallableReferences(
     protected open fun copyNecessaryAttributes(oldReference: IrPropertyReference, newReference: IrRichPropertyReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrLocalDelegatedPropertyReference, newReference: IrRichPropertyReference) {}
     protected open fun IrDeclaration.isMissingObjectDispatchReceiver(): Boolean = false
-
-    /**
-     * Workaround to support currently existing incorrect behaviour of KT-81931
-     */
-    protected open fun IrCallableReference<*>.shouldCastFirstParameterToAny(): Boolean = false
 }
