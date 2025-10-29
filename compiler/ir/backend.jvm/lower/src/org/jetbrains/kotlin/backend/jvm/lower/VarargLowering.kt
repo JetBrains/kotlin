@@ -71,13 +71,12 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
                 is IrExpression -> +element.transform(this@VarargLowering, null)
                 is IrSpreadElement -> {
                     val spread = element.expression
-                    if (spread is IrFunctionAccessExpression && spread.symbol.owner.isArrayOf()) {
-                        // Skip empty arrays and don't copy immediately created arrays
-                        val argument = spread.arguments[0] ?: continue@loop
-                        if (argument is IrVararg) {
-                            addVararg(argument)
-                            continue@loop
-                        }
+                    // Don't copy immediately created arrays
+                    // TODO: what about `emptyArray`?
+                    val arrayOfArgumentOfSpread = (spread as? IrFunctionAccessExpression)?.arrayOfVarargArgument
+                    if (arrayOfArgumentOfSpread is IrVararg) {
+                        addVararg(arrayOfArgumentOfSpread)
+                        continue@loop
                     }
                     addSpread(spread.transform(this@VarargLowering, null))
                 }
@@ -96,6 +95,7 @@ internal val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
         .map { name -> name.toLowerCaseAsciiOnly() + "ArrayOf" }.toSet()
 
 internal const val ARRAY_OF_NAME = "arrayOf"
+internal const val ARRAY_COMPANION_OF_NAME = "of"
 
 internal fun IrFunction.isArrayOf(): Boolean {
     val parent = when (val directParent = parent) {
@@ -108,5 +108,36 @@ internal fun IrFunction.isArrayOf(): Boolean {
             hasShape(regularParameters = 1) &&
             parameters[0].isVararg
 }
+
+internal fun IrFunction.isArrayCompanionOf(): Boolean {
+    if (name.asString() != ARRAY_COMPANION_OF_NAME) return false
+    val companion = (parent as? IrClass)?.takeIf { it.isCompanion } ?: return false
+    val companionOwner = companion.parent as? IrClass ?: return false
+
+    // We don't consider `uintArrayOf` an intrinsic and rely on @InlineOnly annotation only.
+    // However, that doesn't work with `UIntArray.of` because the instance of `UIntArray.Companion`
+    // must be additionally obtained in that case. Therefore, `UIntArray.of` is considered an intrinsic.
+    return companionOwner.defaultType.run { isBoxedArray || isPrimitiveArray() || isUnsignedArray() }
+            && hasShape(dispatchReceiver = true, regularParameters = 1)
+            && parameters[1].isVararg
+}
+
+/**
+ * @return If this call is to `(type)ArrayOf` or `(Type)Array.Companion.of` intrinsic, its vararg argument. Otherwise, `null`.
+ */
+internal val IrFunctionAccessExpression.arrayOfVarargArgument: IrExpression?
+    get() {
+        val callee = symbol.owner
+
+        fun argument(idx: Int): IrExpression =
+            arguments[idx] ?: throw AssertionError("Argument #$idx expected: ${dump()}")
+
+        return when {
+            callee.isArrayOf() -> argument(0)
+            // the first parameter is `(Type)Array.Companion`
+            callee.isArrayCompanionOf() -> argument(1)
+            else -> null
+        }
+    }
 
 internal fun IrFunction.isEmptyArray(): Boolean = isTopLevelInPackage("emptyArray", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
