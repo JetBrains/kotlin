@@ -183,6 +183,8 @@ fun createCompilerConfiguration(
     val messageCollector = MessageCollectorForCompilerTests(System.err, CompilerTestMessageRenderer(module))
     configuration.messageCollector = messageCollector
     configuration.languageVersionSettings = module.languageVersionSettings
+    configuration.klibAbiCompatibilityLevel = KlibAbiCompatibilityLevel.fromLanguageVersion(module.languageVersionSettings.languageVersion)
+        ?: error("Unsupported language version: ${module.languageVersionSettings.languageVersion}")
 
     for (configurator in configurators) {
         if (compilationStage == configurator.compilationStage) {

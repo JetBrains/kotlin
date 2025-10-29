@@ -1,6 +1,7 @@
 // ISSUE: KT-80243
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +NameBasedDestructuring, +EnableNameBasedDestructuringShortForm
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
 // WITH_STDLIB
 
 import kotlin.test.assertEquals
