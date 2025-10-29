@@ -331,6 +331,7 @@ enum class WasmOp(
     BR_TABLE("br_table", 0x0E, listOf(LABEL_IDX_VECTOR, LABEL_IDX)),
     RETURN("return", 0x0F),
     CALL("call", 0x10, FUNC_IDX),
+    CALL_PURE("call", 0x10, FUNC_IDX),
     CALL_INDIRECT("call_indirect", 0x11, listOf(TYPE_IDX, TABLE_IDX)),
     TRY("try", 0x06, BLOCK_TYPE),
     CATCH("catch", 0x07, TAG_IDX),

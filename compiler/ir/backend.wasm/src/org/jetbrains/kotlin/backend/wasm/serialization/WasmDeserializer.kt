@@ -225,6 +225,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 0xFFFF - 0 -> WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR
                 0xFFFF - 1 -> WasmOp.PSEUDO_COMMENT_GROUP_START
                 0xFFFF - 2 -> WasmOp.PSEUDO_COMMENT_GROUP_END
+                0xFFFF - 3 -> WasmOp.CALL_PURE
+                WasmOp.CALL.opcode -> WasmOp.CALL
                 else -> OPCODE_TO_WASM_OP.getOrElse(opcode) { error("Unknown opcode $opcode") }
             }
             val immediates = deserializeList(::deserializeImmediate)

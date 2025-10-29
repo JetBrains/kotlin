@@ -330,7 +330,6 @@ fun compileWasmLoweredFragmentsForSingleModule(
         signatureRetriever,
         allowIncompleteImplementations = false,
         skipCommentInstructions = !generateWat,
-        inlineUnitGetter = stdlibIsMainModule,
     )
 
     val wasmCompiledFileFragments = mutableListOf<WasmCompiledFileFragment>()
