@@ -65,6 +65,6 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
 
     override fun IrDeclaration.isMissingObjectDispatchReceiver(): Boolean = isJvmStaticInObject()
 
-    override fun IrCallableReference<*>.castFirstParameterToAny(): Boolean =
+    override fun IrCallableReference<*>.shouldCastFirstParameterToAny(): Boolean =
         this is IrPropertyReference && getter?.owner?.kotlinFqName?.asString() == "kotlin.jvm.<get-javaClass>"
 }

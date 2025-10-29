@@ -414,14 +414,14 @@ open class UpgradeCallableReferences(
                 for (arg in captured) {
                     addValueParameter {
                         this.name = arg.first.name
-                        this.type = if (castFirstParameterToAny()) anyType else arg.second.type
+                        this.type = if (shouldCastFirstParameterToAny()) anyType else arg.second.type
                     }
                 }
                 var index = 0
                 for (type in unboundArgTypes) {
                     addValueParameter {
                         this.name = Name.identifier("p${index++}")
-                        this.type = if (captured.isEmpty() && castFirstParameterToAny()) anyType else type
+                        this.type = if (captured.isEmpty() && shouldCastFirstParameterToAny()) anyType else type
                     }
                 }
                 if (body != null) {
@@ -537,5 +537,5 @@ open class UpgradeCallableReferences(
     /**
      * Workaround to support currently existing incorrect behaviour of KT-81931
      */
-    protected open fun IrCallableReference<*>.castFirstParameterToAny(): Boolean = false
+    protected open fun IrCallableReference<*>.shouldCastFirstParameterToAny(): Boolean = false
 }
