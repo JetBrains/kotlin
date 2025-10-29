@@ -292,19 +292,6 @@ fun Project.configureArtifacts() {
 }
 
 fun Project.configureTests() {
-    val projectsUsingTcMutes = listOf(
-        ":native",
-        ":kotlin-native",
-    )
-    if (projectsUsingTcMutes.any { project.path.startsWith(it) }) {
-        val ignoreTestFailures: Boolean by rootProject.extra
-        tasks.configureEach {
-            if (this is VerificationTask) {
-                ignoreFailures = ignoreTestFailures
-            }
-        }
-    }
-
     val concurrencyLimitService = project.gradle.sharedServices.registerIfAbsent(
         "concurrencyLimitService",
         ConcurrencyLimitService::class
