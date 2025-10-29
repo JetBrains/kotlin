@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
-import org.jetbrains.kotlin.utils.addToStdlib.butIf
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 @NoMutableState
 class FirQualifierResolverImpl(override val session: FirSession) : FirQualifierResolver(), SessionHolder {
@@ -38,7 +38,7 @@ class FirQualifierResolverImpl(override val session: FirSession) : FirQualifierR
     override fun resolveFullyQualifiedSymbol(parts: List<FirQualifierPart>): Pair<FirClassifierSymbol<*>, FirResolvedSymbolOrigin>? {
         if (isRootIdePackageAllowed() && parts.firstOrNull()?.name?.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
             return resolveFullyQualifiedSymbol(parts.drop(1))
-                ?.butIf(isRootIdePackageDeprecated()) { it.copy(second = FirResolvedSymbolOrigin.QualifiedWithDeprecatedRootIdePackage) }
+                ?.applyIf(isRootIdePackageDeprecated()) { copy(second = FirResolvedSymbolOrigin.QualifiedWithDeprecatedRootIdePackage) }
         }
 
         val firProvider = session.symbolProvider
