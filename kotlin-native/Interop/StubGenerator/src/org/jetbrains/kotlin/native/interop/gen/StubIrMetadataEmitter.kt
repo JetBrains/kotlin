@@ -406,6 +406,10 @@ private class MappingExtensions(
             is AnnotationStub.CCall.Direct -> mapOfNotNull(
                     ("name" to name).asOptionalAnnotationArgument()
             )
+            is AnnotationStub.CGlobalAccess.Symbol -> mapOfNotNull(
+                    ("name" to name).asOptionalAnnotationArgument()
+            )
+            is AnnotationStub.CGlobalAccess.Pointer -> emptyMap()
             is AnnotationStub.CStruct -> mapOfNotNull(
                     ("spelling" to struct).asOptionalAnnotationArgument()
             )

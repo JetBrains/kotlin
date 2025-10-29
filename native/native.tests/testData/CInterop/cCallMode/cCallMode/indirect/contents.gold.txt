@@ -63,6 +63,10 @@ library {
       public final val globalWithAsm: kotlin/Int
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod18_globalWithAsm_getter")
         public final /* non-default */ external get
+
+      public final val wrappedMacro: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod19_wrappedMacro_getter")
+        public final /* non-default */ external get
     }
   }
 }

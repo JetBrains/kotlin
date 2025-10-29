@@ -41,29 +41,44 @@ library {
       public final external /* non-stable parameter names */ fun functionWithAsm(arg0: kotlin/Int): kotlin/Int
 
       public final var global: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "global")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_global_getter")
         public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "global")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_global_setter")
         public final /* non-default */ external set(value: kotlin/Int)
 
       public final val globalArray: kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalArray")
+        @kotlinx/cinterop/internal/CGlobalAccess.Pointer
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_globalArray_getter")
         public final /* non-default */ external get
 
       public final val globalArrayWithAsm: kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalArray2")
+        @kotlinx/cinterop/internal/CGlobalAccess.Pointer
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_globalArrayWithAsm_getter")
         public final /* non-default */ external get
 
       public final val globalStruct: pod1/S
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalStruct")
+        @kotlinx/cinterop/internal/CGlobalAccess.Pointer
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod16_globalStruct_getter")
         public final /* non-default */ external get
 
       public final val globalStructWithAsm: pod1/S
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalStruct2")
+        @kotlinx/cinterop/internal/CGlobalAccess.Pointer
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod17_globalStructWithAsm_getter")
         public final /* non-default */ external get
 
       public final val globalWithAsm: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "global2")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod18_globalWithAsm_getter")
+        public final /* non-default */ external get
+
+      public final val wrappedMacro: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod19_wrappedMacro_getter")
         public final /* non-default */ external get
     }
   }

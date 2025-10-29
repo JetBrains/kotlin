@@ -967,6 +967,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                                 name = entityName!!,
                                 type = convertCursorType(cursor),
                                 isConst = clang_isConstQualifiedType(clang_getCursorType(cursor)) != 0,
+                                binaryName = clang_Cursor_getMangling(cursor).convertAndDispose(),
                                 parentName = null
                         )
                     }

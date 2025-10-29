@@ -7,20 +7,26 @@ library {
     package {
 
       public final var podImportsQuoteAngle: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "podImportsQuoteAngle")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_podImportsQuoteAngle_getter")
         public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "podImportsQuoteAngle")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_podImportsQuoteAngle_setter")
         public final /* non-default */ external set(value: kotlin/Int)
 
       public final var podImportsQuoteAngleA: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "podImportsQuoteAngleA")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_podImportsQuoteAngleA_getter")
         public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "podImportsQuoteAngleA")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_podImportsQuoteAngleA_setter")
         public final /* non-default */ external set(value: kotlin/Int)
 
       public final var podImportsQuoteAngle_umbrella: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "podImportsQuoteAngle_umbrella")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_podImportsQuoteAngle_umbrella_getter")
         public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "podImportsQuoteAngle_umbrella")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_podImportsQuoteAngle_umbrella_setter")
         public final /* non-default */ external set(value: kotlin/Int)
     }

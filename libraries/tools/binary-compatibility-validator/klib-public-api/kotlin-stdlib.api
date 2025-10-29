@@ -9972,6 +9972,18 @@ open annotation class kotlinx.cinterop.internal/CEnumVarTypeSize : kotlin/Annota
 }
 
 // Targets: [native]
+open annotation class kotlinx.cinterop.internal/CGlobalAccess : kotlin/Annotation { // kotlinx.cinterop.internal/CGlobalAccess|null[0]
+    constructor <init>(kotlin/String) // kotlinx.cinterop.internal/CGlobalAccess.<init>|<init>(kotlin.String){}[0]
+
+    final val name // kotlinx.cinterop.internal/CGlobalAccess.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlinx.cinterop.internal/CGlobalAccess.name.<get-name>|<get-name>(){}[0]
+
+    open annotation class Pointer : kotlin/Annotation { // kotlinx.cinterop.internal/CGlobalAccess.Pointer|null[0]
+        constructor <init>() // kotlinx.cinterop.internal/CGlobalAccess.Pointer.<init>|<init>(){}[0]
+    }
+}
+
+// Targets: [native]
 open annotation class kotlinx.cinterop.internal/CStruct : kotlin/Annotation { // kotlinx.cinterop.internal/CStruct|null[0]
     constructor <init>(kotlin/String) // kotlinx.cinterop.internal/CStruct.<init>|<init>(kotlin.String){}[0]
 

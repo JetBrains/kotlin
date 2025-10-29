@@ -11,14 +11,18 @@ library {
       public final external fun AAA(): kotlin/Int
 
       public final var A: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "A")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_A_getter")
         public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "A")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_A_setter")
         public final /* non-default */ external set(value: kotlin/Int)
 
       public final var B: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "B")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_B_getter")
         public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "B")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_B_setter")
         public final /* non-default */ external set(value: kotlin/Int)
     }

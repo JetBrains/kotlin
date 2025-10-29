@@ -10,3 +10,5 @@ extern char globalArrayWithAsm[10] __asm("globalArray2");
 struct S { int x; };
 extern struct S globalStruct;
 extern struct S globalStructWithAsm __asm("globalStruct2");
+
+#define wrappedMacro function(0)

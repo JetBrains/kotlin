@@ -29,6 +29,23 @@ public annotation class CStruct(val spelling: String) {
     public annotation class VarType(val size: Long, val align: Int)
 }
 
+/**
+ * Indicates that the annotated property getter or setter accesses a C global with the provided linkage name.
+ */
+@InternalForKotlinNative
+@Target(AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.BINARY)
+public annotation class CGlobalAccess(val name: String) {
+
+    /**
+     * For a @[CGlobalAccess] property getter, indicates that it returns not a value of that global,
+     * but a pointer to the global.
+     */
+    @Target(AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+    @Retention(AnnotationRetention.BINARY)
+    public annotation class Pointer
+}
+
 @Target(
         AnnotationTarget.FUNCTION,
         AnnotationTarget.PROPERTY_GETTER,
