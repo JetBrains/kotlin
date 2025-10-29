@@ -1,7 +1,3 @@
-plugins {
-    kotlin("jvm")
-}
-
 tasks.register("analysisAllTests") {
     dependsOn(
         ":analysis:decompiled:decompiler-to-file-stubs:test",
