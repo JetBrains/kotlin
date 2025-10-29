@@ -28,13 +28,15 @@ FILE: annotationOnFullNameBasedDestructuringScript.kts
         public? final? val x: <implicit> = LAZY_EXPRESSION
             public? get(): <implicit>
 
-        init { LAZY_BLOCK }
+        @Ann() lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final var first: <implicit> = LAZY_EXPRESSION
+            public get(): <implicit>
+            public set(value: <implicit>): R|kotlin/Unit|
 
-        init { LAZY_BLOCK }
-
-        init { LAZY_BLOCK }
-
-        init { LAZY_BLOCK }
+        @Ann() lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final var a: <implicit> = LAZY_EXPRESSION
+            public get(): <implicit>
+            public set(value: <implicit>): R|kotlin/Unit|
 
         @Ann() lval <destruct>: <implicit> = LAZY_EXPRESSION
         public final var b: <implicit> = LAZY_EXPRESSION
@@ -46,9 +48,9 @@ FILE: annotationOnFullNameBasedDestructuringScript.kts
             public get(): <implicit>
             public set(value: <implicit>): R|kotlin/Unit|
 
-        init { LAZY_BLOCK }
-
-        init { LAZY_BLOCK }
+        @Ann() lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final val d: <implicit> = LAZY_EXPRESSION
+            public get(): <implicit>
 
         @Ann() lval <destruct>: <implicit> = LAZY_EXPRESSION
         public final val e: <implicit> = LAZY_EXPRESSION

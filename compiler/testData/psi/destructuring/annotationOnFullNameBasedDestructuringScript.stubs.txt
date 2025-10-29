@@ -19,12 +19,3 @@ FILE[kind=Script[packageFqName=<root>]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY[fqName=AnnotationOnFullNameBasedDestructuringScript.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
-    SCRIPT_INITIALIZER
-    SCRIPT_INITIALIZER
-      REFERENCE_EXPRESSION[referencedName=x]
-    SCRIPT_INITIALIZER
-    SCRIPT_INITIALIZER
-      REFERENCE_EXPRESSION[referencedName=x]
-    SCRIPT_INITIALIZER
-    SCRIPT_INITIALIZER
-      REFERENCE_EXPRESSION[referencedName=x]

@@ -1,10 +1,10 @@
-@Ann(ERROR_EXPR(Argument is absent))
-owner -> FirAnonymousInitializerSymbol <init>
-context -> FirAnonymousInitializerSymbol <init> from FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts> from FirFileSymbol annotationOnFullNameBasedDestructuringScript.kts
+@Ann()
+owner -> FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts>
+context -> FirLocalPropertySymbol <local>/<destruct> from FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts> from FirFileSymbol annotationOnFullNameBasedDestructuringScript.kts
 
-@Ann(ERROR_EXPR(Argument is absent))
-owner -> FirAnonymousInitializerSymbol <init>
-context -> FirAnonymousInitializerSymbol <init> from FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts> from FirFileSymbol annotationOnFullNameBasedDestructuringScript.kts
+@Ann()
+owner -> FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts>
+context -> FirLocalPropertySymbol <local>/<destruct> from FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts> from FirFileSymbol annotationOnFullNameBasedDestructuringScript.kts
 
 @Ann()
 owner -> FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts>
@@ -14,9 +14,9 @@ context -> FirLocalPropertySymbol <local>/<destruct> from FirScriptSymbol <scrip
 owner -> FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts>
 context -> FirLocalPropertySymbol <local>/<destruct> from FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts> from FirFileSymbol annotationOnFullNameBasedDestructuringScript.kts
 
-@Ann(ERROR_EXPR(Argument is absent))
-owner -> FirAnonymousInitializerSymbol <init>
-context -> FirAnonymousInitializerSymbol <init> from FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts> from FirFileSymbol annotationOnFullNameBasedDestructuringScript.kts
+@Ann()
+owner -> FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts>
+context -> FirLocalPropertySymbol <local>/<destruct> from FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts> from FirFileSymbol annotationOnFullNameBasedDestructuringScript.kts
 
 @Ann()
 owner -> FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts>

@@ -73,8 +73,8 @@ KtFile: annotationOnFullNameBasedDestructuringScript.kts
                 PsiElement(CLOSING_QUOTE)('"')
             PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n')
-      SCRIPT_INITIALIZER
-        ANNOTATED_EXPRESSION
+      DESTRUCTURING_DECLARATION
+        MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE
@@ -82,60 +82,42 @@ KtFile: annotationOnFullNameBasedDestructuringScript.kts
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Ann')
-            PsiWhiteSpace(' ')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                PsiErrorElement:Expecting an argument
-                  <empty list>
-              PsiErrorElement:Expecting ')'
-                PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(var)('var')
           PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('first')
-      PsiErrorElement:Expecting an element
+          PsiElement(IDENTIFIER)('first')
         PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting an element
+        PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      SCRIPT_INITIALIZER
+        PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n')
-      SCRIPT_INITIALIZER
-        BINARY_EXPRESSION
-          ANNOTATED_EXPRESSION
-            ANNOTATION_ENTRY
-              PsiElement(AT)('@')
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Ann')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  PsiErrorElement:Expecting an argument
-                    <empty list>
-                PsiErrorElement:Expecting ')'
-                  PsiElement(var)('var')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
+      DESTRUCTURING_DECLARATION
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(var)('var')
           PsiWhiteSpace(' ')
-          OPERATION_REFERENCE
-            PsiElement(EQ)('=')
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('first')
-      PsiErrorElement:Expecting an element
         PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting an element
+        PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      SCRIPT_INITIALIZER
+        PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n')
@@ -203,39 +185,29 @@ KtFile: annotationOnFullNameBasedDestructuringScript.kts
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n')
-      SCRIPT_INITIALIZER
-        BINARY_EXPRESSION
-          ANNOTATED_EXPRESSION
-            ANNOTATION_ENTRY
-              PsiElement(AT)('@')
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Ann')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  PsiErrorElement:Expecting an argument
-                    <empty list>
-                PsiErrorElement:Expecting ')'
-                  PsiElement(val)('val')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('d')
+      DESTRUCTURING_DECLARATION
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(val)('val')
           PsiWhiteSpace(' ')
-          OPERATION_REFERENCE
-            PsiElement(EQ)('=')
+          PsiElement(IDENTIFIER)('d')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('first')
-      PsiErrorElement:Expecting an element
         PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting an element
+        PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      SCRIPT_INITIALIZER
+        PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n')

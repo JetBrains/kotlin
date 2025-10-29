@@ -12,37 +12,33 @@ KtFile: danglingAnnotation.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Ann')
-  PsiWhiteSpace('\n\n')
-  MODIFIER_LIST
-    ANNOTATION_ENTRY
-      PsiElement(AT)('@')
-      CONSTRUCTOR_CALLEE
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Ann')
-      VALUE_ARGUMENT_LIST
+    PsiWhiteSpace('\n\n')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Ann')
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiWhiteSpace('\n    ')
-        VALUE_ARGUMENT
-          PsiErrorElement:Expecting an argument
-            <empty list>
-        PsiErrorElement:Expecting ')'
+        VALUE_PARAMETER
           PsiElement(val)('val')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(IDENTIFIER)('x')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(COLON)(':')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(IDENTIFIER)('Int')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(EQ)('=')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(INTEGER_LITERAL)('42')
-  PsiWhiteSpace('\n')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('42')
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')

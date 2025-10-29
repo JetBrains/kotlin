@@ -10,5 +10,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationOnMemberProperty.kt
             super<R|kotlin/Any|>()
         }
 
-        [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=C] @R|Ann|[Types](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
     }

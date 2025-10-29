@@ -13,7 +13,7 @@ object KotlinStubVersions {
      * if you are not 100% sure it can be avoided.
      * Increasing this version will lead to reindexing of all kotlin source files on the first IDE startup with the new version.
      * */
-    const val SOURCE_STUB_VERSION = 208
+    const val SOURCE_STUB_VERSION = 209
 
     /**
      * Binary stub version should be increased if stub format (org.jetbrains.kotlin.psi.stubs.impl) is changed

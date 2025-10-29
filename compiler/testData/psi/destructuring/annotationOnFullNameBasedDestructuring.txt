@@ -16,56 +16,48 @@ KtFile: annotationOnFullNameBasedDestructuring.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      ANNOTATED_EXPRESSION
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
+      DESTRUCTURING_DECLARATION
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(var)('var')
           PsiWhiteSpace(' ')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              PsiErrorElement:Expecting an argument
-                <empty list>
-            PsiErrorElement:Expecting ')'
-              PsiElement(var)('var')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('first')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n    ')
-      ANNOTATED_EXPRESSION
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              PsiErrorElement:Expecting an argument
-                <empty list>
-            PsiErrorElement:Expecting ')'
-              PsiElement(var)('var')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
+      DESTRUCTURING_DECLARATION
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(var)('var')
+          PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('first')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n    ')
       DESTRUCTURING_DECLARATION
         MODIFIER_LIST
@@ -121,30 +113,26 @@ KtFile: annotationOnFullNameBasedDestructuring.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n    ')
-      ANNOTATED_EXPRESSION
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              PsiErrorElement:Expecting an argument
-                <empty list>
-            PsiErrorElement:Expecting ')'
-              PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
+      DESTRUCTURING_DECLARATION
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('first')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n    ')
       DESTRUCTURING_DECLARATION
         MODIFIER_LIST

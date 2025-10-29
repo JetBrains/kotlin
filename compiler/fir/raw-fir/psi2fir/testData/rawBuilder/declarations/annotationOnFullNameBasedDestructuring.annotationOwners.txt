@@ -1,10 +1,10 @@
-@Ann(ERROR_EXPR(Argument is absent))
+@Ann()
 owner -> FirNamedFunctionSymbol /test1
-context -> FirNamedFunctionSymbol /test1
+context -> FirLocalPropertySymbol <local>/<destruct> from FirNamedFunctionSymbol /test1
 
-@Ann(ERROR_EXPR(Argument is absent))
+@Ann()
 owner -> FirNamedFunctionSymbol /test1
-context -> FirNamedFunctionSymbol /test1
+context -> FirLocalPropertySymbol <local>/<destruct> from FirNamedFunctionSymbol /test1
 
 @Ann()
 owner -> FirNamedFunctionSymbol /test1
@@ -14,9 +14,9 @@ context -> FirLocalPropertySymbol <local>/<destruct> from FirNamedFunctionSymbol
 owner -> FirNamedFunctionSymbol /test1
 context -> FirLocalPropertySymbol <local>/<destruct> from FirNamedFunctionSymbol /test1
 
-@Ann(ERROR_EXPR(Argument is absent))
+@Ann()
 owner -> FirNamedFunctionSymbol /test1
-context -> FirNamedFunctionSymbol /test1
+context -> FirLocalPropertySymbol <local>/<destruct> from FirNamedFunctionSymbol /test1
 
 @Ann()
 owner -> FirNamedFunctionSymbol /test1
