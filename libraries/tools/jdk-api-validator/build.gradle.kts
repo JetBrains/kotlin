@@ -32,7 +32,7 @@ val collectSignatures by tasks.registering(Sync::class) {
     into(signaturesDirectory)
 }
 
-tasks.getByName<Test>("test") {
+tasks.named<Test>("test") {
     dependsOn(collectSignatures)
     dependsOn(testArtifacts)
 
