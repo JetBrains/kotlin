@@ -15,7 +15,7 @@ import java.util.ServiceLoader.load
  */
 public interface AbiTools {
     /**
-     * Print ABI dump for JVM from [inputFiles] into specified [appendable].
+     * Prints an ABI dump for JVM from [inputFiles] into the specified [appendable].
      * It is possible to pass class-files or jar files in [inputFiles].
      *
      * To control which declarations are passed to the dump, [filters] could be used. By default, no filters will be applied.
@@ -23,7 +23,7 @@ public interface AbiTools {
     public fun <T : Appendable> printJvmDump(appendable: T, inputFiles: Iterable<File>, filters: AbiFilters)
 
     /**
-     * Create an empty KLib dump without any declarations and targets.
+     * Creates an empty KLib dump without any declarations and targets.
      */
     public fun createKlibDump(): KlibDump
 
