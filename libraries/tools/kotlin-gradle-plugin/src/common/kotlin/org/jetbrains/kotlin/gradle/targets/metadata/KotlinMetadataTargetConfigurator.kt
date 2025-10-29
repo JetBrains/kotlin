@@ -167,6 +167,7 @@ class KotlinMetadataTargetConfigurator :
         }
     }
 
+    @Suppress("warnings")
     private suspend fun createMetadataCompilation(
         target: KotlinMetadataTarget,
         sourceSet: KotlinSourceSet,
@@ -192,6 +193,24 @@ class KotlinMetadataTargetConfigurator :
 
         return compilationFactory.create(compilationName).apply {
             target.compilations.add(this@apply)
+            this.compileTaskProvider.configure { taskProvider ->
+                val targetsArgument = platformCompilations.mapNotNull {
+                    when (it.platformType) {
+                        KotlinPlatformType.androidJvm, KotlinPlatformType.jvm -> "JVM"
+                        KotlinPlatformType.js -> "JS"
+                        KotlinPlatformType.wasm -> {
+                            if (it.target.targetName.contains("wasi", ignoreCase = true)) {
+                                "WASM_WASI"
+                            } else {
+                                "WASM_JS"
+                            }
+                        }
+                        KotlinPlatformType.native -> "Native"
+                        else -> null
+                    }
+                }.joinToString(prefix = "-Xtarget-platform=", separator = ",")
+                taskProvider.compilerOptions.freeCompilerArgs.add(targetsArgument)
+            }
 
             configureMetadataDependenciesForCompilation(this@apply)
 
