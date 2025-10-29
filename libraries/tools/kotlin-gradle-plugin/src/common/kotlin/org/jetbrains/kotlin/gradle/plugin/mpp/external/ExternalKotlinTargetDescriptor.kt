@@ -132,7 +132,7 @@ class ExternalKotlinTargetDescriptorBuilder<T : DecoratedExternalKotlinTarget> i
 
     internal fun build(): ExternalKotlinTargetDescriptor<T> = ExternalKotlinTargetDescriptorImpl(
         targetName = targetName,
-        platformType = platformType,
+        platformType = KotlinPlatformType.androidJvm, //platformType,
         targetFactory = targetFactory,
         apiElements = apiElements.build(),
         runtimeElements = runtimeElements.build(),
