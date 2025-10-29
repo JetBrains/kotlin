@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.TerminalColorSupport.Termi
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.plain
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.styled
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class ToolingDiagnosticOutputTest {
 
@@ -56,8 +58,8 @@ class ToolingDiagnosticOutputTest {
         assertEquals(
             buildString {
                 appendLine("Solutions:".bold().green())
-                appendLine(" • ${"First solution".italic()}".green())
-                append(" • ${"Second solution".italic()}".green())
+                appendLine(" * ${"First solution".italic()}".green())
+                append(" * ${"Second solution".italic()}".green())
             },
             styledOutput.solution
         )
