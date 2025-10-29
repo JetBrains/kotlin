@@ -85,8 +85,8 @@ private fun Project.showColoredDiagnostics(): Boolean {
         ConsoleOutput.Auto -> isAttachedToTerminal.get()
         // Plain mode explicitly disables colors
         ConsoleOutput.Plain -> false
-        // Rich and Verbose modes force colors on regardless of terminal
-        ConsoleOutput.Rich, ConsoleOutput.Verbose -> true
+        // Colored, Rich and Verbose modes force colors on regardless of terminal
+        ConsoleOutput.Colored, ConsoleOutput.Rich, ConsoleOutput.Verbose -> true
         // Enum argument can be null in Java
         else -> false
     }
