@@ -29,19 +29,19 @@ internal class BoxedLongCallsTransformer(context: JsIrBackendContext) : CallsTra
     private val irBuiltIns = context.irBuiltIns
     private val symbols = context.symbols
     private val longAsBigInt = context.configuration.compileLongAsBigint
-    private val longLowGetter = symbols.longClassSymbol.getPropertyGetter("low")
-    private val longHighGetter = symbols.longClassSymbol.getPropertyGetter("high")
-    private val longLowField = symbols.longClassSymbol.fields.single { it.owner.name.asString() == "low" }
-    private val longHighField = symbols.longClassSymbol.fields.single { it.owner.name.asString() == "high" }
+    private val longLowGetter = irBuiltIns.longClass.getPropertyGetter("low")
+    private val longHighGetter = irBuiltIns.longClass.getPropertyGetter("high")
+    private val longLowField = irBuiltIns.longClass.fields.single { it.owner.name.asString() == "low" }
+    private val longHighField = irBuiltIns.longClass.fields.single { it.owner.name.asString() == "high" }
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
         if (call.symbol == symbols.jsLongToString) {
             return irCall(call, symbols.longToStringImpl)
         }
-        if (longAsBigInt && call.symbol == symbols.longClassSymbol.owner.primaryConstructor?.symbol) {
+        if (longAsBigInt && call.symbol == irBuiltIns.longClass.owner.primaryConstructor?.symbol) {
             return irCall(call, symbols.longFromTwoInts!!)
         }
-        if (longAsBigInt && call.symbol == symbols.longClassSymbol.owner.primaryConstructorReplacement?.symbol) {
+        if (longAsBigInt && call.symbol == irBuiltIns.longClass.owner.primaryConstructorReplacement?.symbol) {
             return irCall(call, symbols.longFromTwoInts!!).apply {
                 // The first parameter of the primary constructor replacement function is actually `this`.
                 arguments.assignFrom(call.arguments.drop(1))
