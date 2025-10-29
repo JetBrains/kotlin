@@ -67,14 +67,19 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
     private val IrRichPropertyReference.property: IrProperty
         get() = (symbol.owner as IrProperty)
+
     private val IrRichPropertyReference.localDelegatedProperty: IrLocalDelegatedProperty
         get() = symbol.owner as IrLocalDelegatedProperty
+
     private val IrRichPropertyReference.originalGetter: IrSimpleFunction?
-        get() = if (isLocalDelegatedPropertyReference) localDelegatedProperty.getter else property.getter?.let { it.resolveFakeOverride() ?: it }
+        get() =
+            if (isLocalDelegatedPropertyReference) localDelegatedProperty.getter
+            else property.getter?.let { it.resolveFakeOverride() ?: it }
+
     private val IrRichPropertyReference.originalSetter: IrSimpleFunction?
-        get() = if (isLocalDelegatedPropertyReference) localDelegatedProperty.setter else property.setter?.let { it.resolveFakeOverride() ?: it }
-    private val IrRichPropertyReference.originalField: IrField?
-        get() = property.backingField
+        get() =
+            if (isLocalDelegatedPropertyReference) localDelegatedProperty.setter
+            else property.setter?.let { it.resolveFakeOverride() ?: it }
 
     private val arrayItemGetter =
         context.symbols.array.owner.functions.single { it.name.asString() == "get" }
