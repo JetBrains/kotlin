@@ -43,7 +43,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             reporter.reportOn(jvmName.source, FirJvmErrors.ILLEGAL_JVM_NAME)
         }
 
-        if (declaration is FirFunction && !context.isRenamableFunction(declaration)) {
+        if (declaration is FirFunction && !isRenamableFunction(declaration)) {
             reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME)
         } else if (declaration is FirCallableDeclaration) {
             val containingClass = declaration.getContainingClass()
@@ -58,9 +58,13 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
     }
 
-    private fun CheckerContext.isRenamableFunction(function: FirFunction): Boolean {
+    private fun isRenamableFunction(function: FirFunction): Boolean {
         val containingClass = function.getContainingClassSymbol()
-        return containingClass != null || !function.symbol.callableId.isLocal
+        return containingClass != null || !function.isLocal ||
+                // An additional check is needed for scripts (currently all properties there have isLocal = true, as well as their accessors)
+                // It's valid, because once declared, a property accessor is always renamable.
+                // Local variables can neither declare an accessor nor use @get:JvmName
+                function is FirPropertyAccessor
     }
 
     private fun FirRegularClass.isValueClassThatRequiresMangling(): Boolean {

@@ -21,10 +21,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUp
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildMultiDelegatedConstructorCall
@@ -311,11 +310,7 @@ private class FirPartialBodyExpressionResolveTransformer(
         private fun shouldBeHandled(element: FirElement): Boolean {
             /** Accepts elements handled by [org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer] */
             val isElementKindHandled = when (element) {
-                is FirDeclaration -> {
-                    // 'isNonLocal' checks whether a declaration parent is also non-local.
-                    // However, 'isNonLocal' doesn't work for anonymous functions, as 'CallableId's for them are non-local, ooh.
-                    element.isLocalMember || !element.isNonLocal
-                }
+                is FirDeclaration -> element.isLocal
                 is FirLoop -> true
                 else -> false
             }

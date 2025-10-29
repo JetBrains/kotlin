@@ -19,8 +19,6 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 8
         Scope: FirLocalScope
-    Element 9
-        Scope: FirLocalScope
             Properties:
                 FirLocalPropertySymbol lval localProperty: R|kotlin/Int|
 

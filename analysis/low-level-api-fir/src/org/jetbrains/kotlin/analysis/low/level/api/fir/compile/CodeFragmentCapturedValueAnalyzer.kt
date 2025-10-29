@@ -297,7 +297,7 @@ private class CodeFragmentCapturedValueVisitor(
         val needsRegistration = when (symbol) {
             is FirRegularClassSymbol -> symbol.isLocal
             is FirAnonymousObjectSymbol -> true
-            is FirNamedFunctionSymbol -> symbol.callableId.isLocal || symbol.hasAnnotationArgumentShouldBeEvaluated
+            is FirNamedFunctionSymbol -> symbol.isLocal || symbol.hasAnnotationArgumentShouldBeEvaluated
             is FirPropertySymbol ->
                 symbol.getterSymbol?.hasAnnotationArgumentShouldBeEvaluated == true
                         || symbol.setterSymbol?.hasAnnotationArgumentShouldBeEvaluated == true

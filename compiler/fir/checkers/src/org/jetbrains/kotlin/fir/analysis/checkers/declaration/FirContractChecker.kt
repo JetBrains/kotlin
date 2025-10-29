@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.*
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
@@ -168,7 +167,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             allowedOnSomeOperators && declaration.isOperator && declaration.isContractOnOperatorForbidden() -> {
                 contractNotAllowed("Contracts are not allowed for operator ${declaration.nameOrSpecialName}.")
             }
-            declaration.symbol.callableId.isLocal || declaration.visibility == Visibilities.Local -> {
+            declaration.symbol.isLocal -> {
                 contractNotAllowed("Contracts are not allowed for local functions.")
             }
             else -> return false

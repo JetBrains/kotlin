@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
-import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isEnabled
@@ -140,7 +139,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
         //   }
         val containingDeclarationForAccess = context.containingDeclarations.lastOrNull {
             when (it) {
-                is FirCallableSymbol -> it.callableId?.isLocal == false || it.dispatchReceiverType != null
+                is FirCallableSymbol -> !it.isLocal || it.dispatchReceiverType != null
                 else -> false
             }
         }

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
@@ -298,7 +298,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
             }
 
             private fun FirDeclaration.shouldAddParentContext(): Boolean =
-                symbol is FirFunctionWithoutNameSymbol || symbol is FirBackingFieldSymbol || !isNonLocal
+                symbol is FirFunctionWithoutNameSymbol || symbol is FirBackingFieldSymbol || isLocal
         }
     }
 }

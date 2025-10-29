@@ -117,6 +117,7 @@ fun FirLookupTrackerComponent.recordCallableCandidateAsLookup(
     callableSymbol: FirCallableSymbol<*>, source: KtSourceElement?, fileSource: KtSourceElement?
 ) {
     val callableId = callableSymbol.callableId
+    @OptIn(ClassIdBasedLocality::class)
     if (callableId?.isLocal == false && callableSymbol !is FirConstructorSymbol) {
         recordTypeResolveAsLookup(callableSymbol.fir.returnTypeRef, source, fileSource)
         recordFqNameLookup(callableId.asSingleFqName(), source, fileSource)

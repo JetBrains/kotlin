@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.typeAnnotations
 object FirImplicitReturnTypeAnnotationMissingDependencyChecker : FirCallableDeclarationChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirCallableDeclaration) {
-        if (declaration.isLocalMember) return
+        if (declaration.isLocalDeclaredInBlock) return
         val returnTypeRef = declaration.returnTypeRef
         val source = returnTypeRef.source
         if (source?.kind != KtFakeSourceElementKind.ImplicitTypeRef) return
