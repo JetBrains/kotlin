@@ -425,8 +425,10 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         val set = superClass.functions.find { it.name.asString() == "set" }
         val invoke = superClass.functions.find { it.name.asString() == "invoke" }
 
-        fun getBackingField(index: Int) =
-            with(FunctionReferenceLowering) { referenceClass.getReceiverField(this@PropertyReferenceLowering.context, index) }
+        fun getBackingField(index: Int) = with(FunctionReferenceLowering) {
+            require(index == 0) { "Indices but 0 are not currently generated and supported, it is done only as a stub now." }
+            referenceClass.getReceiverField(this@PropertyReferenceLowering.context)
+        }
 
         fun IrBuilder.getArguments(boundParameters: List<PropertyReferenceBoundValue>, function: IrSimpleFunction): List<(IrType) -> IrExpression> {
             val boundExpressions = boundParameters.map { { type: IrType -> it.toExpression(this, function.dispatchReceiverParameter!!, type, ::getBackingField) } }

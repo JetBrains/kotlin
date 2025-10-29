@@ -775,7 +775,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                                     irImplicitCast(
                                         irGetField(
                                             irGet(dispatchReceiverParameter!!),
-                                            functionReferenceClass.getReceiverField(backendContext, 0)
+                                            functionReferenceClass.getReceiverField(backendContext)
                                         ),
                                         boundReceiver.second.type
                                     )
@@ -911,10 +911,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // k.j.i.CallableReference, or k.j.i.FunctionReferenceImpl, because then AddSuperQualifierToJavaFieldAccess lowering would add
         // superQualifierSymbol, which would break inlining of bound function references, since inliner will not understand how to transform
         // this getfield instruction in the bytecode.
-        // Indices but 0 are not currently generated and supported, it is done only as a stub now.
-        internal fun IrClass.getReceiverField(context: JvmBackendContext, index: Int): IrField =
+        internal fun IrClass.getReceiverField(context: JvmBackendContext): IrField =
             context.irFactory.buildField {
-                require(index == 0) { "Indices but 0 are not currently generated and supported, it is done only as a stub now." }
                 name = Name.identifier("receiver")
                 type = context.irBuiltIns.anyNType
                 visibility = DescriptorVisibilities.PROTECTED
