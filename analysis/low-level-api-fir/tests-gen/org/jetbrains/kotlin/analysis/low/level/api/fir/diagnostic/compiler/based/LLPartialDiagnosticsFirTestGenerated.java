@@ -4038,6 +4038,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("localVariableTargetOnDestructuring.kt")
+      public void testLocalVariableTargetOnDestructuring() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/localVariableTargetOnDestructuring.kt");
+      }
+
+      @Test
       @TestMetadata("nameBasedDestructuringAnnotationErrorShortFrom.kt")
       public void testNameBasedDestructuringAnnotationErrorShortFrom() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringAnnotationErrorShortFrom.kt");
@@ -4398,6 +4404,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("optInOnDestructuring.kt")
+      public void testOptInOnDestructuring() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/optInOnDestructuring.kt");
+      }
+
+      @Test
       @TestMetadata("parensShortFormWithInitializerWithoutLf.kt")
       public void testParensShortFormWithInitializerWithoutLf() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/parensShortFormWithInitializerWithoutLf.kt");
@@ -4425,6 +4437,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       @TestMetadata("positionalDestructuringShortFormErrors.kt")
       public void testPositionalDestructuringShortFormErrors() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/positionalDestructuringShortFormErrors.kt");
+      }
+
+      @Test
+      @TestMetadata("suppressOnNameBasedDestructuring.kt")
+      public void testSuppressOnNameBasedDestructuring() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/suppressOnNameBasedDestructuring.kt");
       }
     }
 
