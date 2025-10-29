@@ -62,3 +62,5 @@ kotlin-ide/
 .teamcity/
 .npmrc
 /.idea/AndroidProjectSystem.xml
+/.idea/runConfigurations.xml
+/.idea/caches/deviceStreaming.xml
