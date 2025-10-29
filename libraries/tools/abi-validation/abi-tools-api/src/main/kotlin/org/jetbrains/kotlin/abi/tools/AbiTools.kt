@@ -45,23 +45,23 @@ public interface AbiTools {
     public fun loadKlibDump(dump: CharSequence): KlibDump
 
     /**
-     * Get an ABI from a zipped or unpacked KLib specified in [klib].
+     * Gets an ABI from a zipped or an unpacked KLib specified in the [klib].
      *
-     * Original target will be overridden by [target] if it's not `null`.
+     * Original target will be overridden by the [target] if it's not `null`.
      *
      * To control which declarations are passed to the dump, [filters] could be used. By default, no filters will be applied.
      *
-     * @throws IllegalStateException if a KLib could not be loaded from [klib].
+     * @throws IllegalStateException if a KLib could not be loaded from the [klib].
      * @throws java.io.FileNotFoundException if file or directory [klib] does not exist.
      */
     public fun extractKlibAbi(klib: File, target: KlibTarget? = null, filters: AbiFilters = AbiFilters.EMPTY): KlibDump
 
     /**
-     * Compare two files line-by-line.
+     * Compares two files line-by-line.
      *
      * @return `null` if there are no differences, diff string otherwise.
      *
-     * @throws java.io.FileNotFoundException if [expectedFile] and/or [actualFile] does not exist.
+     * @throws java.io.FileNotFoundException if the [expectedFile] and/or the [actualFile] does not exist.
      */
     public fun filesDiff(expectedFile: File, actualFile: File): String?
 
