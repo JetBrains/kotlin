@@ -40,7 +40,7 @@ object FirExpectActualResolver {
                     var actualContainingClass: FirRegularClassSymbol? = null
                     var expectContainingClass: FirRegularClassSymbol? = null
                     val candidates = when {
-                        callableId.isLocal -> return emptyMap()
+                        actualSymbol.isLocal -> return emptyMap()
                         classId != null -> {
                             actualContainingClass = useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)
                                 ?.fullyExpandedClass(useSiteSession)

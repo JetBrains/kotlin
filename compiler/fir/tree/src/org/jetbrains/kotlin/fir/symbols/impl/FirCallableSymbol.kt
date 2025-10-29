@@ -70,6 +70,9 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
     val rawStatus: FirDeclarationStatus
         get() = fir.status
 
+    val isLocal: Boolean
+        get() = fir.isLocal
+
     val typeParameterSymbols: List<FirTypeParameterSymbol>
         get() = fir.typeParameters.map { it.symbol }
 

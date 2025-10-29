@@ -117,18 +117,20 @@ internal fun FirCallableSymbol<*>.isEffectivelyExternal(
 
 internal val FirClass.canHaveOpenMembers: Boolean get() = modality() != Modality.FINAL || classKind == ClassKind.ENUM_CLASS
 
-// contract: returns(true) implies (this is FirMemberDeclaration<*>)
-val FirDeclaration.isLocalMember: Boolean
-    get() = symbol.isLocalMember
-
-internal val FirBasedSymbol<*>.isLocalMember: Boolean
-    get() = when (this) {
+/**
+ * Similar to [FirMemberDeclaration.isLocal], but returns false for callable members of local classes.
+ *
+ * @return true for local classes, including nested ones, and for local callables declared inside a block
+ * (e.g., inside a function / accessor / initializer body), excluding callable members of local classes
+ */
+val FirDeclaration.isLocalDeclaredInBlock: Boolean
+    // contract: returns(true) implies (this is FirMemberDeclaration<*>)
+    get() = if (this is FirClassLikeDeclaration) isLocal else when (val symbol = symbol) {
         is FirLocalPropertySymbol -> true
-        is FirClassLikeSymbol -> this.isLocal
-        is FirNamedFunctionSymbol -> this.rawStatus.visibility == Visibilities.Local
+        is FirNamedFunctionSymbol -> symbol.rawStatus.visibility == Visibilities.Local
         // Anonymous functions and lambdas use DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS which has visibility public.
         is FirAnonymousFunctionSymbol -> true
-        is FirBackingFieldSymbol -> this.propertySymbol is FirLocalPropertySymbol
+        is FirBackingFieldSymbol -> symbol.propertySymbol is FirLocalPropertySymbol
         else -> false
     }
 

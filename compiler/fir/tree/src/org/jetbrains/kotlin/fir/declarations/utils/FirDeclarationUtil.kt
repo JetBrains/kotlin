@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.isLocal
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -52,17 +49,16 @@ inline val FirDeclaration.isPrecompiled: Boolean
 inline val FirDeclaration.isSynthetic: Boolean
     get() = origin is FirDeclarationOrigin.Synthetic
 
-// NB: This function checks transitive localness. That is,
-// if a declaration `isNonLocal`, then its parent also `isNonLocal`.
-val FirDeclaration.isNonLocal: Boolean
-    get() = symbol.isNonLocal
-
-private val FirBasedSymbol<*>.isNonLocal: Boolean
+/**
+ * An extension to determine locality for a general [FirDeclaration].
+ *
+ * A FIR declaration is non-local iff all its parents are non-local, or it's a [FirFile].
+ */
+val FirDeclaration.isLocal: Boolean
     get() = when (this) {
-        is FirFileSymbol -> true
-        is FirCallableSymbol -> !callableId.isLocal
-        is FirClassLikeSymbol -> !isLocal
-        else -> false
+        is FirFile -> false
+        is FirMemberDeclaration -> isLocal
+        else -> true
     }
 
 val FirCallableDeclaration.isExtension: Boolean get() = receiverParameter != null

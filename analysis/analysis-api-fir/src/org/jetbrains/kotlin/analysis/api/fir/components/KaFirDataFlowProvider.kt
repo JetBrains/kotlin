@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalDeclaredInBlock
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
@@ -582,7 +582,7 @@ internal class KaFirDataFlowProvider(
             val firVariableSymbol = variableAssignment.lValue.toResolvedCallableSymbol(analysisSession.firSession)
             val expression = variableAssignment.psi as? KtExpression
 
-            if (firVariableSymbol is FirVariableSymbol<*> && firVariableSymbol.fir.isLocalMember && expression != null) {
+            if (firVariableSymbol is FirVariableSymbol<*> && firVariableSymbol.fir.isLocalDeclaredInBlock && expression != null) {
                 val variableSymbol = analysisSession.firSymbolBuilder.variableBuilder.buildVariableSymbol(firVariableSymbol)
                 val reassignment = VariableReassignment(expression, variableSymbol, variableAssignment.isAugmented())
                 variableReassignments.add(reassignment)

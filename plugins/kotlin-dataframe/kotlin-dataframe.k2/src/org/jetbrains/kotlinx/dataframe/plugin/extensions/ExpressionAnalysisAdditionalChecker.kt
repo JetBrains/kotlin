@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableReference
@@ -248,7 +247,7 @@ private data object DataFramePropertyChecker : FirPropertyChecker(mppKind = MppC
             (declaration.symbol.resolvedReturnType.typeArguments.getOrNull(0) as? ConeClassLikeType)?.toRegularClassSymbol() ?: return
         val origin = typeArgument.origin
         if (context.findClosest<FirScriptSymbol>() != null) return
-        if (declaration.isNonLocal && typeArgument.isLocal && origin.isDataFrame) {
+        if (!declaration.isLocal && typeArgument.isLocal && origin.isDataFrame) {
             reporter.reportOn(
                 declaration.source,
                 DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE,

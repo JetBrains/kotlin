@@ -10,8 +10,8 @@ import bar.*
         get() = /*p:foo.A*/b
 
     var d: /*p:bar p:foo p:foo.A*/String = "ddd"
-        get() = field
-        set(v) { field = v }
+        get() = /*p:<local>*/field
+        set(v) { /*p:<local>*/field = v }
 
     fun foo() {
         /*p:foo.A*/a

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.isLocal
 
 internal fun FirFunctionSymbol<*>.createKtValueParameters(builder: KaSymbolByFirBuilder): List<KaValueParameterSymbol> {
     return fir.valueParameters.map { valueParameter ->
@@ -87,7 +86,7 @@ private fun createContextReceiver(
 internal fun FirCallableSymbol<*>.getCallableId(): CallableId? {
     return when {
         origin == FirDeclarationOrigin.DynamicScope -> null
-        callableId.isLocal -> null
+        isLocal -> null
         else -> callableId
     }
 }

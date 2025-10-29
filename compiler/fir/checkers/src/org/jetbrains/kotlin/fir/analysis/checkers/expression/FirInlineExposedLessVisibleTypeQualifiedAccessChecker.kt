@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.checkers.resolvedSymbolOrCompanionSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
@@ -40,8 +39,6 @@ object FirInlineExposedLessVisibleTypeQualifiedAccessChecker : FirQualifiedAcces
         if (symbol.effectiveVisibility is EffectiveVisibility.Local) return
 
         // Calls to local callables are allowed to contain local/anonymous types in their signatures
-        val ignoreLocal = symbol.isLocalMember
-
         fun ConeKotlinType.reportIfLessVisible(ignoreLocal: Boolean) {
             fullyExpandedType().forEachType { type ->
                 val classLikeSymbol = type.toClassLikeSymbol() ?: return@forEachType
@@ -60,15 +57,15 @@ object FirInlineExposedLessVisibleTypeQualifiedAccessChecker : FirQualifiedAcces
             }
         }
 
-        symbol.contextParameterSymbols.forEach { it.resolvedReturnType.reportIfLessVisible(ignoreLocal) }
-        symbol.receiverParameterSymbol?.resolvedType?.reportIfLessVisible(ignoreLocal)
+        symbol.contextParameterSymbols.forEach { it.resolvedReturnType.reportIfLessVisible(ignoreLocal = false) }
+        symbol.receiverParameterSymbol?.resolvedType?.reportIfLessVisible(ignoreLocal = false)
         if (symbol is FirFunctionSymbol) {
-            symbol.valueParameterSymbols.forEach { it.resolvedReturnType.reportIfLessVisible(ignoreLocal) }
+            symbol.valueParameterSymbols.forEach { it.resolvedReturnType.reportIfLessVisible(ignoreLocal = false) }
         }
         symbol.typeParameterSymbols.forEach { typeParameterSymbol ->
-            typeParameterSymbol.resolvedBounds.forEach { it.coneType.reportIfLessVisible(ignoreLocal) }
+            typeParameterSymbol.resolvedBounds.forEach { it.coneType.reportIfLessVisible(ignoreLocal = false) }
         }
-        symbol.resolvedReturnType.reportIfLessVisible(ignoreLocal)
+        symbol.resolvedReturnType.reportIfLessVisible(ignoreLocal = false)
 
         expression.dispatchReceiver?.let {
             if (it is FirResolvedQualifier) {
