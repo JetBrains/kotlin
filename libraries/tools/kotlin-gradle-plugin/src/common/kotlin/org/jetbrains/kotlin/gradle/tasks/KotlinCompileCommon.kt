@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
@@ -103,6 +104,8 @@ abstract class KotlinCompileCommon @Inject constructor(
             if (localExecutionTimeFreeCompilerArgs != null) {
                 args.freeArgs = localExecutionTimeFreeCompilerArgs
             }
+
+            args.targetPlatform = targetPlatformArg.get().toTypedArray()
         }
 
         pluginClasspath { args ->
@@ -133,6 +136,9 @@ abstract class KotlinCompileCommon @Inject constructor(
 
     @get:Internal
     internal val produceMetadataKlib = objectFactory.property(Boolean::class.java)
+
+    @get:Input
+    internal val targetPlatformArg: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
     override fun callCompilerAsync(
         args: K2MetadataCompilerArguments,

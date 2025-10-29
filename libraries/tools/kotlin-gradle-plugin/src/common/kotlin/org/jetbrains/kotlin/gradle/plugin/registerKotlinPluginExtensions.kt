@@ -117,6 +117,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, NativeToolchainProjectSetupAction)
             register(project, UklibPublicationSetupAction)
             register(project, UklibConsumptionSetupAction)
+            register(project, KotlinMetadataCompilationTargetPlatformConfiguration)
         }
 
     }
