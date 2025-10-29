@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_MODULE
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
+import org.jetbrains.kotlin.library.impl.KlibMetadataComponentImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 
@@ -33,7 +34,12 @@ interface KlibMetadataComponent : KlibComponent {
     fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray
 
     companion object Kind : KlibComponent.Kind<KlibMetadataComponent, KlibMetadataComponentLayout> {
+        override fun createLayout(root: KlibFile) = KlibMetadataComponentLayout(root)
+
         override fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<KlibMetadataComponentLayout>) = true
+
+        override fun createComponent(layoutReader: KlibLayoutReader<KlibMetadataComponentLayout>): KlibMetadataComponent =
+            KlibMetadataComponentImpl(layoutReader)
     }
 }
 

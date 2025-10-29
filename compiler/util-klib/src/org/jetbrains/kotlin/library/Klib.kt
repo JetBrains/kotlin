@@ -49,6 +49,16 @@ interface KlibComponent {
      */
     interface Kind<KC : KlibComponent, KCL : KlibComponentLayout> {
         /**
+         * Create an instance [KlibComponentLayout] for the current component.
+         */
+        fun createLayout(root: KlibFile): KCL
+
+        /**
+         * Create an instance of the component.
+         */
+        fun createComponent(layoutReader: KlibLayoutReader<KCL>): KC
+
+        /**
          * Whether there is any data to be read by the component.
          * And whether the optional component should be registered in the library.
          */

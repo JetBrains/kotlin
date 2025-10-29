@@ -7,22 +7,16 @@ package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
-import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.KlibLayoutReaderFactory
-import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 // TODO (KT-81411): This class is an implementation detail. It should be made internal after dropping `KonanLibraryImpl`.
 class KlibComponentsBuilder(private val layoutReaderFactory: KlibLayoutReaderFactory) {
     private val components: MutableMap<KlibComponent.Kind<*, *>, KlibComponent> = mutableMapOf()
 
-    fun <KC, KCL> withComponent(
-        kind: KlibComponent.Kind<KC, KCL>,
-        createLayout: (KlibFile) -> KCL,
-        createComponent: (KlibLayoutReader<KCL>) -> KC,
-    ): KlibComponentsBuilder where KC : KlibComponent, KCL : KlibComponentLayout {
-        val layoutReader = layoutReaderFactory.createLayoutReader(createLayout)
+    fun <KC : KlibComponent, KCL : KlibComponentLayout> withComponent(kind: KlibComponent.Kind<KC, KCL>): KlibComponentsBuilder {
+        val layoutReader = layoutReaderFactory.createLayoutReader(kind::createLayout)
         if (kind.shouldComponentBeRegistered(layoutReader)) {
-            this.components[kind] = createComponent(layoutReader)
+            this.components[kind] = kind.createComponent(layoutReader)
         }
         return this
     }

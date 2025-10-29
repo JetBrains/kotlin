@@ -149,8 +149,8 @@ private class TestLib(val location: KlibFile) {
     private val layoutReaderFactory = KlibLayoutReaderFactory(location, ZipFileSystemInPlaceAccessor)
 
     private val components: Map<KlibComponent.Kind<*, *>, KlibComponent> = KlibComponentsBuilder(layoutReaderFactory = layoutReaderFactory)
-        .withComponent(TestMandatoryComponent.Kind, ::TestMandatoryComponentLayout, ::TestMandatoryComponentImpl)
-        .withComponent(TestOptionalComponent.Kind, ::TestOptionalComponentLayout, ::TestOptionalComponentImpl)
+        .withComponent(TestMandatoryComponent.Kind)
+        .withComponent(TestOptionalComponent.Kind)
         .build()
 
     val mandatoryComponent: TestMandatoryComponent
@@ -168,8 +168,13 @@ private interface TestOptionalComponent : KlibComponent {
     val pathsOfExtractedFiles: Collection<String>
 
     companion object Kind : KlibComponent.Kind<TestOptionalComponent, TestOptionalComponentLayout> {
+        override fun createLayout(root: KlibFile) = TestOptionalComponentLayout(root)
+
         override fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<TestOptionalComponentLayout>) =
             layoutReader.readInPlaceOrFallback(false) { it.baseDir.exists }
+
+        override fun createComponent(layoutReader: KlibLayoutReader<TestOptionalComponentLayout>) =
+            TestOptionalComponentImpl(layoutReader)
     }
 }
 
@@ -193,7 +198,12 @@ private interface TestMandatoryComponent : KlibComponent {
     val intValue: Int
 
     companion object Kind : KlibComponent.Kind<TestMandatoryComponent, TestMandatoryComponentLayout> {
+        override fun createLayout(root: KlibFile) = TestMandatoryComponentLayout(root)
+
         override fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<TestMandatoryComponentLayout>) = true
+
+        override fun createComponent(layoutReader: KlibLayoutReader<TestMandatoryComponentLayout>) =
+            TestMandatoryComponentImpl(layoutReader)
     }
 }
 

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_STRINGS_F
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILES_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILE_ENTRIES_FILE_NAME
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
+import org.jetbrains.kotlin.library.impl.KlibIrComponentImpl
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 /**
@@ -47,10 +48,18 @@ interface KlibIrComponent : KlibComponent {
     fun stringLiterals(fileIndex: Int): ByteArray
 
     enum class Kind : KlibComponent.Kind<KlibIrComponent, KlibIrComponentLayout> {
-        Main, InlinableFunctions;
+        Main {
+            override fun createLayout(root: KlibFile) = KlibIrComponentLayout.createForMainIr(root)
+        },
+        InlinableFunctions {
+            override fun createLayout(root: KlibFile) = KlibIrComponentLayout.createForInlinableFunctionsIr(root)
+        };
 
         override fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<KlibIrComponentLayout>) =
             layoutReader.readInPlaceOrFallback(false) { it.irDir.exists }
+
+        override fun createComponent(layoutReader: KlibLayoutReader<KlibIrComponentLayout>): KlibIrComponent =
+            KlibIrComponentImpl(layoutReader)
     }
 }
 
