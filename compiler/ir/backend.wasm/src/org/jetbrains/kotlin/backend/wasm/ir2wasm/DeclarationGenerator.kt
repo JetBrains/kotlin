@@ -39,7 +39,6 @@ class DeclarationGenerator(
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
-    private val inlineUnitGetter: Boolean = true,
 ) : IrVisitorVoid() {
     // Shortcuts
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
@@ -172,7 +171,6 @@ class DeclarationGenerator(
             functionCodegenContext,
             wasmModuleMetadataCache,
             wasmModuleTypeTransformer,
-            inlineUnitGetter,
         )
 
         val declarationBody = declaration.body
