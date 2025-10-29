@@ -240,6 +240,126 @@ internal fun KotlinStubs.generateCCall(
     return result
 }
 
+internal fun KotlinStubs.generateCGlobalDirectAccess(
+        expression: IrCall, builder: IrBuilderWithScope,
+        foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default
+): IrExpression {
+    val callBuilder = KotlinToCCallBuilder(builder, this, isObjCMethod = false, foreignExceptionMode)
+
+    val callee = expression.symbol.owner
+    check(callee.isAccessor) { callee.render() }
+
+    // Indicates that this getter returns not a value of the global, but a pointer to the global.
+    val isPointer = callee.hasAnnotation(RuntimeNames.cGlobalAccessPointer)
+
+    // Describes how to pass the getter result or the setter argument between C and Kotlin.
+    val valuePassing = if (isPointer) {
+        check(callee.isGetter) { callee.render() }
+        // The generated stub body is going to declare the global type as `char`,
+        // so we need to return `char*` to Kotlin.
+        val cType = CTypes.pointer(CTypes.char)
+        TrivialValuePassing(callee.returnType, cType)
+    } else {
+        // Extract the Kotlin property type:
+        val type = callee.correspondingPropertySymbol?.owner?.getter?.returnType ?: error(callee.render())
+
+        callBuilder.state.mapType(
+                type,
+                retained = false,
+                variadic = false,
+                location = expression,
+        )
+    }
+
+    // Now we declare the C global and generate the access.
+
+    val globalCType = if (isPointer) {
+        // We are going to use only the pointer to the global, so we can declare the global with any type,
+        // not necessarily matching its original type as parsed in cinterop.
+        // `char` is fine and simple:
+        CTypes.char
+    } else {
+        valuePassing.cType
+    }
+
+    // Now we declare the actual global using a generated unique name and specifying the real binary name with the
+    // `__asm` attribute.
+    // The reasoning and consequences are basically the same as in `generateCCall(direct = true)`.
+    val globalName = this.getUniqueCName("targetGlobal")
+    val globalSymbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cGlobalAccess, "name")!!
+    val globalSymbolNameLiteral = quoteAsCStringLiteral(globalSymbolName)
+    callBuilder.state.addC(listOf("extern ${globalCType.render(globalName)} __asm($globalSymbolNameLiteral);"))
+
+    // And now generate the actual access and pass the value between C and Kotlin:
+    val result: IrExpression = when {
+        isPointer -> with(valuePassing) {
+            check(expression.arguments.isEmpty()) { expression.dump() }
+            callBuilder.returnValue("&$globalName")
+        }
+        callee.isGetter -> with(valuePassing) {
+            check(expression.arguments.isEmpty()) { expression.dump() }
+            callBuilder.returnValue(globalName)
+            // A great hack is hidden here.
+            // For Objective-C references, `valuePassing` is an `ObjCReferenceValuePassing`.
+            // It uses `void*` as its `cType`, and not an `id`.
+            // It means that the stub has a read of a `void*` global and the Obj-C compiler doesn't involve any ARC.
+            // Luckily, we don't need it here: the Kotlin code calling the C stub is going to immediately do proper
+            // retaining (see `ObjCReferenceValuePassing.bridgedToKotlin`).
+            //
+            // We could theoretically rework ObjCReferenceValuePassing instead and make it use `id`.
+            // But that's undesirable, because:
+            // 1. The change would affect other (non-experimental) usages of it, prompting additional verification.
+            // 2. For all usages no ARC is actually needed, so we would need to rely on Clang optimizations to keep
+            //    the compiled stubs ARC-free.
+            //
+            // TODO: KT-82011 a global with Objective-C reference type may have a non-strong ownership,
+            //  which requires different handling here.
+        }
+        callee.isSetter -> {
+            val kotlinValue = expression.arguments.singleOrNull() ?: error(expression.dump())
+            val cValue = with(valuePassing) {
+                callBuilder.passValue(kotlinValue) ?: error(expression.dump())
+            }
+            val assignment = if (valuePassing is ObjCReferenceValuePassing) {
+                // Now things are getting tricky.
+                // For handling Obj-C reference getters above, we didn't need any ARC,
+                // so we could continue using `void*` as is.
+                // But the setter writes the value into the global, which does require ARC:
+                // we need to release the old value and retain the new value.
+                //
+                // Of all different ways to achieve that, this one seems the easiest:
+                // cast the global pointer to `__strong id*`, cast the value to `id`, do the store.
+                // That way we delegate all the necessary ARC to Clang without affecting other usages of
+                // `ObjCReferenceValuePassing`.
+                //
+                // When casting the global pointer, we need to cast it to `void*` first,
+                // since Clang prohibits casting `void**` to `id*`.
+                check(globalCType == CTypes.voidPtr && cValue.type == CTypes.voidPtr) { callee.render() }
+                " *(__strong id *)(void*)&$globalName = (__bridge id)(${cValue.expression});"
+                // TODO: KT-82011 a global with Objective-C reference type may have a non-strong ownership,
+                //  which requires different handling here.
+            } else {
+                "$globalName = ${cValue.expression};"
+            }
+            with(VoidReturning) {
+                callBuilder.returnValue(assignment)
+            }
+        }
+        else -> {
+            error(callee.render())
+        }
+    }
+
+    val libraryName = callee.getPackageFragment().konanLibrary.let {
+        require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${callee.render()}" }
+        it.uniqueName
+    }
+
+    callBuilder.finishBuilding(libraryName)
+
+    return result
+}
+
 private fun KotlinToCCallBuilder.addArguments(arguments: List<IrExpression?>, callee: IrFunction) {
     val parameters = callee.parameters.filter { it.kind == IrParameterKind.Regular }
     arguments.forEachIndexed { index, argument ->

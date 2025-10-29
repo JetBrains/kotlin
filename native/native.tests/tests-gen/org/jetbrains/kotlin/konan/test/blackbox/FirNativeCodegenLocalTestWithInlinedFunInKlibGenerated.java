@@ -453,9 +453,21 @@ public class FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated extends Abst
       }
 
       @Test
+      @TestMetadata("constGlobal.kt")
+      public void testConstGlobal() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/constGlobal.kt");
+      }
+
+      @Test
       @TestMetadata("differentFunctions.kt")
       public void testDifferentFunctions() {
         runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/differentFunctions.kt");
+      }
+
+      @Test
+      @TestMetadata("differentGlobals.kt")
+      public void testDifferentGlobals() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/differentGlobals.kt");
       }
 
       @Test
@@ -477,9 +489,39 @@ public class FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated extends Abst
       }
 
       @Test
+      @TestMetadata("globalWithAsmAttribute.kt")
+      public void testGlobalWithAsmAttribute() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/globalWithAsmAttribute.kt");
+      }
+
+      @Test
+      @TestMetadata("globalWithAsmAttributeWithSpecialChars.kt")
+      public void testGlobalWithAsmAttributeWithSpecialChars() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/globalWithAsmAttributeWithSpecialChars.kt");
+      }
+
+      @Test
+      @TestMetadata("globalsByPointer.kt")
+      public void testGlobalsByPointer() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/globalsByPointer.kt");
+      }
+
+      @Test
+      @TestMetadata("objCReferenceGlobals.kt")
+      public void testObjCReferenceGlobals() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/objCReferenceGlobals.kt");
+      }
+
+      @Test
       @TestMetadata("sameFunctionWithDifferentSignatures.kt")
       public void testSameFunctionWithDifferentSignatures() {
         runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/sameFunctionWithDifferentSignatures.kt");
+      }
+
+      @Test
+      @TestMetadata("sameGlobalWithDifferentSignatures.kt")
+      public void testSameGlobalWithDifferentSignatures() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/sameGlobalWithDifferentSignatures.kt");
       }
 
       @Test

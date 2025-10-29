@@ -16,6 +16,9 @@ package org.jetbrains.kotlin.config.nativeBinaryOptions
  * which is controlled by this enum, [CCallMode].
  *
  * See [KT-79751](https://youtrack.jetbrains.com/issue/KT-79751) for more details.
+ *
+ * The same flags are used for other similar concepts.
+ * For example, C global access (indirect with `@CCall`, direct with `@CGlobalAccess`).
  */
 enum class CCallMode {
     /**
