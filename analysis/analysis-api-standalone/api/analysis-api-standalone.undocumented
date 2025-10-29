@@ -1,0 +1,56 @@
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession.application
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession.coreApplicationEnvironment
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession.modulesWithFiles
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession.project
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.application
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.build()
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.buildKtModuleProvider(KtModuleProviderBuilder.() -> Unit)
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.buildKtModuleProviderByCompilerConfiguration(CompilerConfiguration)
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.project
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerApplicationService(Class<T>)
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerApplicationService(Class<T>, T)
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerProjectExtensionPoint(ProjectExtensionDescriptor<T>)
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerProjectService(Class<T>)
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerProjectService(Class<T>, T)
+org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession(Disposable, Boolean, StandaloneAnalysisAPISessionBuilder.() -> Unit)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder
+org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.addBinaryVirtualFile(VirtualFile)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.addBinaryVirtualFiles(Collection<VirtualFile>)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.contentScope
+org.jetbrains.kotlin.analysis.project.structure.builder.KtLibraryModuleBuilder
+org.jetbrains.kotlin.analysis.project.structure.builder.KtLibraryModuleBuilder.libraryName
+org.jetbrains.kotlin.analysis.project.structure.builder.KtLibraryModuleBuilder.librarySources
+org.jetbrains.kotlin.analysis.project.structure.builder.KtLibrarySourceModuleBuilder
+org.jetbrains.kotlin.analysis.project.structure.builder.KtLibrarySourceModuleBuilder.binaryLibrary
+org.jetbrains.kotlin.analysis.project.structure.builder.KtLibrarySourceModuleBuilder.contentScope
+org.jetbrains.kotlin.analysis.project.structure.builder.KtLibrarySourceModuleBuilder.libraryName
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.addDependsOnDependency(KaModule)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.addFriendDependency(KaModule)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.addRegularDependency(KaModule)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.build()
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.platform
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder.addModule(M)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder.build()
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder.platform
+org.jetbrains.kotlin.analysis.project.structure.builder.KtScriptModuleBuilder
+org.jetbrains.kotlin.analysis.project.structure.builder.KtScriptModuleBuilder.file
+org.jetbrains.kotlin.analysis.project.structure.builder.KtScriptModuleBuilder.languageVersionSettings
+org.jetbrains.kotlin.analysis.project.structure.builder.KtSdkModuleBuilder
+org.jetbrains.kotlin.analysis.project.structure.builder.KtSdkModuleBuilder.addBinaryRootsFromJdkHome(Path, Boolean)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtSourceModuleBuilder
+org.jetbrains.kotlin.analysis.project.structure.builder.KtSourceModuleBuilder.addSourceRoot(Path)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtSourceModuleBuilder.addSourceRoots(Collection<Path>)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtSourceModuleBuilder.addSourceVirtualFile(VirtualFile)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtSourceModuleBuilder.addSourceVirtualFiles(Collection<VirtualFile>)
+org.jetbrains.kotlin.analysis.project.structure.builder.KtSourceModuleBuilder.contentScope
+org.jetbrains.kotlin.analysis.project.structure.builder.KtSourceModuleBuilder.languageVersionSettings
+org.jetbrains.kotlin.analysis.project.structure.builder.KtSourceModuleBuilder.moduleName
+org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule(KtLibraryModuleBuilder.() -> Unit)
+org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibrarySourceModule(KtLibrarySourceModuleBuilder.() -> Unit)
+org.jetbrains.kotlin.analysis.project.structure.builder.buildKtScriptModule(KtScriptModuleBuilder.() -> Unit)
+org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule(KtSdkModuleBuilder.() -> Unit)
+org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule(KtSourceModuleBuilder.() -> Unit)
