@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 import org.jetbrains.kotlin.konan.util.substitute
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.components.KlibIrComponent
-import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.impl.*
 import java.nio.file.Paths
 
@@ -77,21 +75,14 @@ class KonanLibraryImpl(
     BaseKotlinLibrary by targeted,
     BitcodeLibrary by bitcode {
 
-    private val components: Map<KlibComponent.Kind<*, *>, KlibComponent> = KlibComponentsBuilder(
+    private val components = KlibComponentsCache(
         layoutReaderFactory = KlibLayoutReaderFactory(
             klibFile = location,
             zipFileSystemAccessor = zipFileSystemAccessor
         )
     )
-        .withComponent(KlibMetadataComponent.Kind)
-        .withComponent(KlibIrComponent.Kind.Main)
-        .withComponent(KlibIrComponent.Kind.InlinableFunctions)
-        .build()
 
-    override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>): KC? {
-        @Suppress("UNCHECKED_CAST")
-        return components[kind] as KC?
-    }
+    override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>) = components.getComponent(kind)
 
     override val linkerOpts: List<String>
         get() = manifestProperties.propertyList(KLIB_PROPERTY_LINKED_OPTS, escapeInQuotes = true)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library
 
+import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
@@ -14,15 +15,15 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
  * In the future, this interface is supposed to replace [KotlinLibrary].
  *
  * The [Klib] consists of multiple components, each responsible for a certain aspect of the library.
- * There are the following components that are always present:
+ * There are the following components that are supported out-of-the-box:
  * - [KlibMetadataComponent], which provides read access to the metadata stored inside the library.
- * - TODO(KT-81411): add more
+ * - [KlibIrComponent], which provides read access to the IR stored inside the library.
  *
  * The component can be obtained by calling [getComponent]. For some components there exist
  * extension properties to ease the access and provide a good DSL-like experience. For example:
  * ```
  * val klib: Klib = ...
- * val metadata: KlibMetadataComponent = klib.metadata // Shortcut for `klib.getComponent(KlibMetadataComponent.ID)!!`
+ * val metadata: KlibMetadataComponent = klib.metadata // A shortcut for `klib.getComponent(KlibMetadataComponent.ID)!!`
  * ```
  */
 interface Klib {
