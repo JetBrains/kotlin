@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -56,6 +57,11 @@ open class AbstractCustomJsCompilerSecondPhaseTest : AbstractKotlinCompilerWithT
             // Suppress all tests that failed on the first phase if they are anyway marked as "IGNORE_BACKEND*".
             ::CustomKlibCompilerTestSuppressor,
         )
+        forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
+            defaultDirectives {
+                LANGUAGE with "+ExplicitBackingFields"
+            }
+        }
     }
 }
 
