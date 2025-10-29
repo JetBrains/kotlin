@@ -169,6 +169,45 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
                     children counts 0
                     with(getter.assertNotNull("Getter")) {
                         type.name equals "Int"
+                        extra[InheritedMember]?.inheritedFrom?.values?.single()?.run {
+                            classNames equals "Foo"
+                            callable equals null
+                        }
+                    }
+                    extra[InheritedMember]?.inheritedFrom?.values?.single()?.run {
+                        classNames equals "Foo"
+                        callable equals null
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `accessors of inherited property should have correct extra`() {
+        inlineModelTest(
+            """
+            |open class Foo() {
+            |    var property = 0
+            |}
+            |class Bar(): Foo()
+            """
+        ) {
+            with((this / "property").cast<DPackage>()) {
+                with((this / "Bar" / "property").cast<DProperty>()) {
+                    with(getter.assertNotNull("Getter")) {
+                        type.name equals "Int"
+                        extra[InheritedMember]?.inheritedFrom?.values?.single()?.run {
+                            classNames equals "Foo"
+                            callable equals null
+                        }
+                    }
+                    with(setter.assertNotNull("Setter")) {
+                        type.name equals "Unit"
+                        extra[InheritedMember]?.inheritedFrom?.values?.single()?.run {
+                            classNames equals "Foo"
+                            callable equals null
+                        }
                     }
                     extra[InheritedMember]?.inheritedFrom?.values?.single()?.run {
                         classNames equals "Foo"
