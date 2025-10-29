@@ -1,0 +1,26 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:operatorOfFromArray.kt
+    FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
+      annotations:
+        OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      BLOCK_BODY
+        VAR name:it type:kotlin.Array<kotlin.Long> [val]
+          CALL 'public final fun of <T> (vararg elements: T of kotlin.Array.Companion.of): kotlin.Array<T of kotlin.Array.Companion.of> [inline,operator] declared in kotlin.Array.Companion' type=kotlin.Array<kotlin.Long> origin=null
+            TYPE_ARG T: kotlin.Long
+            ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.Array.Companion
+            ARG elements: VARARG type=kotlin.Array<out kotlin.Long> varargElementType=kotlin.Long
+              CONST Long type=kotlin.Long value=1
+              CONST Long type=kotlin.Long value=2
+              CONST Long type=kotlin.Long value=3
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
+            TYPE_ARG T: kotlin.Int
+            ARG elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
+              SPREAD_ELEMENT
+                CALL 'public final fun of <T> (vararg elements: T of kotlin.Array.Companion.of): kotlin.Array<T of kotlin.Array.Companion.of> [inline,operator] declared in kotlin.Array.Companion' type=kotlin.Array<kotlin.Int> origin=null
+                  TYPE_ARG T: kotlin.Int
+                  ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.Array.Companion
+                  ARG elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
+                    CONST Int type=kotlin.Int value=1
+                    CONST Int type=kotlin.Int value=2
+                    CONST Int type=kotlin.Int value=3
