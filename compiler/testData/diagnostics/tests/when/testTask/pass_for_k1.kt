@@ -1,19 +1,20 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// WITH_STDLIB
 
 fun statementWhenWithElse() {
     val testParam = "testValue"
     when (testParam) {
-        "testValue" -> <!UNRESOLVED_REFERENCE!>print<!>("Found")
-        "anotherValue" -> <!UNRESOLVED_REFERENCE!>print<!>("Found another value")
-        else -> <!UNRESOLVED_REFERENCE!>print<!>("Not Found")
+        "testValue" -> print("Found")
+        "anotherValue" -> print("Found another value")
+        else -> print("Not Found")
     }
 }
 
 fun statementWhenWithoutElse() {
     val testParam = "testValue"
     when (testParam) {
-        "testValue" -> <!UNRESOLVED_REFERENCE!>print<!>("Found")
-        "anotherValue" -> <!UNRESOLVED_REFERENCE!>print<!>("Found another value")
+        "testValue" -> print("Found")
+        "anotherValue" -> print("Found another value")
     }
 }
 
@@ -187,7 +188,7 @@ fun expressionWhenWithoutParameterAndOptionsWithoutElse() {
 fun statementWhenWithMulltipleCheckWithoutElse() {
     val searchFor = "Money"
     when (searchFor) {
-        "Car", "Wathces", "House" -> <!UNRESOLVED_REFERENCE!>print<!> ("Not Money")
+        "Car", "Wathces", "House" -> print ("Not Money")
         "Money", "Dinnero" -> "Money!"
     }
 }
@@ -195,7 +196,7 @@ fun statementWhenWithMulltipleCheckWithoutElse() {
 fun statementWhenWithMulltipleCheckWithElse() {
     val searchFor = "Money"
     when (searchFor) {
-        "Car", "Wathces", "House" -> <!UNRESOLVED_REFERENCE!>print<!> ("Not Money")
+        "Car", "Wathces", "House" -> print ("Not Money")
         "Money", "Dinnero" -> "Money!"
         else -> "Happy"
     }
@@ -204,17 +205,17 @@ fun statementWhenWithMulltipleCheckWithElse() {
 fun expressionWhenWithMulltipleCheckWithElse() {
     val searchFor = "Money"
     val result = when (searchFor) {
-        "Car", "Wathces", "House" -> <!UNRESOLVED_REFERENCE!>print<!> ("Not Money")
-        "Money", "Dinnero" -> "Money!"
-        else -> "Happy"
+        "Car", "Wathces", "House" -> <!IMPLICIT_CAST_TO_ANY!>print ("Not Money")<!>
+            "Money", "Dinnero" -> <!IMPLICIT_CAST_TO_ANY!>"Money!"<!>
+        else -> <!IMPLICIT_CAST_TO_ANY!>"Happy"<!>
     }
 }
 
 fun expressionWhenWithMulltipleCheckWithoutElse() {
     val searchFor = "Money"
     val result = <!NO_ELSE_IN_WHEN!>when<!> (searchFor) {
-        "Car", "Wathces", "House" -> <!UNRESOLVED_REFERENCE!>print<!> ("Not Money")
-        "Money", "Dinnero" -> "Money!"
+        "Car", "Wathces", "House" -> <!IMPLICIT_CAST_TO_ANY!>print ("Not Money")<!>
+        "Money", "Dinnero" -> <!IMPLICIT_CAST_TO_ANY!>"Money!"<!>
     }
 }
 
@@ -246,11 +247,11 @@ fun expressionWhenWithInvalidCast() {
 
 fun expressionWhenWithRangeCheck() {
     val testValue = 1
-    val testValues = <!UNRESOLVED_REFERENCE!>setOf<!>(11, 12, 13)
+    val testValues = setOf(11, 12, 13)
 
     val result = when(testValue) {
         in 1..10 -> "In 1 to 10"
-        in <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>testValues<!> -> "From 11 to 13"
+        in testValues -> "From 11 to 13"
         !in 10..20 -> "Not between 10 and 20"
         else -> "Who knows"
     }
@@ -285,7 +286,7 @@ fun expressionWhenWithTypeCheckWithoutElse() {
 
 fun expressionWhenWithTypeCheckSmartCast(testValue: Any) {
     val result = when(testValue) {
-        is String -> testValue.<!UNRESOLVED_REFERENCE!>startsWith<!>("test")
+        is String -> <!DEBUG_INFO_SMARTCAST!>testValue<!>.startsWith("test")
         else -> false
     }
 }
@@ -303,9 +304,9 @@ fun guardExpression() {
     val secondTestValue = true
 
     when(firstTestValue) {
-        is <!INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> -> <!UNRESOLVED_REFERENCE!>print<!>("First value is Integer")
-        is <!DUPLICATE_LABEL_IN_WHEN, INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> <!UNSUPPORTED_FEATURE!>if secondTestValue<!> -> <!UNRESOLVED_REFERENCE!>print<!>("Condition Failed")
-            <!USELESS_IS_CHECK!>is String<!> <!UNSUPPORTED_FEATURE!>if secondTestValue<!> -> <!UNRESOLVED_REFERENCE!>print<!>("Condition Passed")
+        is <!INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> -> print("First value is Integer")
+        is <!DUPLICATE_LABEL_IN_WHEN, INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> <!UNSUPPORTED_FEATURE!>if secondTestValue<!> -> print("Condition Failed")
+            <!USELESS_IS_CHECK!>is String<!> <!UNSUPPORTED_FEATURE!>if secondTestValue<!> -> print("Condition Passed")
         else -> "What are we?"
     }
 }
@@ -316,9 +317,9 @@ fun guardExpressionWithDoubleCheck() {
     val thirdTestValue = false
 
     when(firstTestValue) {
-        is <!INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> -> <!UNRESOLVED_REFERENCE!>print<!>("First value is Integer")
-        is <!DUPLICATE_LABEL_IN_WHEN, INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> <!UNSUPPORTED_FEATURE!>if secondTestValue<!> -> <!UNRESOLVED_REFERENCE!>print<!>("Condition Failed")
-            <!USELESS_IS_CHECK!>is String<!> <!UNSUPPORTED_FEATURE!>if (secondTestValue && !thirdTestValue)<!> -> <!UNRESOLVED_REFERENCE!>print<!>("Condition Passed")
+        is <!INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> -> print("First value is Integer")
+        is <!DUPLICATE_LABEL_IN_WHEN, INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> <!UNSUPPORTED_FEATURE!>if secondTestValue<!> -> print("Condition Failed")
+            <!USELESS_IS_CHECK!>is String<!> <!UNSUPPORTED_FEATURE!>if (secondTestValue && !thirdTestValue)<!> -> print("Condition Passed")
         else -> "What are we?"
     }
 }
@@ -329,9 +330,9 @@ fun guardExpressionWithTwoOptionsCheck() {
     val thirdTestValue = true
 
     when(firstTestValue) {
-        is <!INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> -> <!UNRESOLVED_REFERENCE!>print<!>("First value is Integer")
-        is <!DUPLICATE_LABEL_IN_WHEN, INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> <!UNSUPPORTED_FEATURE!>if secondTestValue<!> -> <!UNRESOLVED_REFERENCE!>print<!>("Condition Failed")
-            <!USELESS_IS_CHECK!>is String<!> <!UNSUPPORTED_FEATURE!>if secondTestValue || thirdTestValue<!> -> <!UNRESOLVED_REFERENCE!>print<!>("Condition Passed")
+        is <!INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> -> print("First value is Integer")
+        is <!DUPLICATE_LABEL_IN_WHEN, INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> <!UNSUPPORTED_FEATURE!>if secondTestValue<!> -> print("Condition Failed")
+            <!USELESS_IS_CHECK!>is String<!> <!UNSUPPORTED_FEATURE!>if secondTestValue || thirdTestValue<!> -> print("Condition Passed")
         else -> "What are we?"
     }
 }
@@ -343,10 +344,10 @@ fun guardExpressionWithTwoOptionsCheckAndIfElse() {
     val fallbackValue = false
 
     when(firstTestValue) {
-        is <!INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> -> <!UNRESOLVED_REFERENCE!>print<!>("First value is Integer")
-        is <!DUPLICATE_LABEL_IN_WHEN, INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> <!UNSUPPORTED_FEATURE!>if secondTestValue<!> -> <!UNRESOLVED_REFERENCE!>print<!>("Condition Failed")
-            <!USELESS_IS_CHECK!>is String<!> <!UNSUPPORTED_FEATURE!>if secondTestValue || thirdTestValue<!> -> <!UNRESOLVED_REFERENCE!>print<!>("Condition Failed")
-        else <!UNSUPPORTED_FEATURE!>if (fallbackValue)<!> -> <!UNRESOLVED_REFERENCE!>print<!>("Condition Passed")
+        is <!INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> -> print("First value is Integer")
+        is <!DUPLICATE_LABEL_IN_WHEN, INCOMPATIBLE_TYPES, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!> <!UNSUPPORTED_FEATURE!>if secondTestValue<!> -> print("Condition Failed")
+            <!USELESS_IS_CHECK!>is String<!> <!UNSUPPORTED_FEATURE!>if secondTestValue || thirdTestValue<!> -> print("Condition Failed")
+        else <!UNSUPPORTED_FEATURE!>if (fallbackValue)<!> -> print("Condition Passed")
         else -> "What are we?"
     }
 }
@@ -354,8 +355,8 @@ fun guardExpressionWithTwoOptionsCheckAndIfElse() {
 fun statementWhenWithNullAsValue() {
     val nullValue = null
     when(<!DEBUG_INFO_CONSTANT!>nullValue<!>) {
-        <!USELESS_IS_CHECK!>is String<!> -> <!UNRESOLVED_REFERENCE!>print<!>("First value is String")
-        else -> <!UNRESOLVED_REFERENCE!>print<!>("Else")
+        <!USELESS_IS_CHECK!>is String<!> -> print("First value is String")
+        else -> print("Else")
     }
 }
 
@@ -370,16 +371,16 @@ fun expressionWhenWithBooleanAndCheckForNull(fruite: Fruite): String {
 fun statementWhenWithNothingAsValue() {
     val nullValue = <!NO_COMPANION_OBJECT!>Nothing<!>
     when(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>nullValue<!>) {
-        is String -> <!UNRESOLVED_REFERENCE!>print<!>("First value is String")
-        else -> <!UNRESOLVED_REFERENCE!>print<!>("Else")
+        is String -> print("First value is String")
+        else -> print("Else")
     }
 }
 
 fun statementWhenWithVoidAsValue() {
     val nullValue = <!NO_COMPANION_OBJECT!>Void<!>
     when(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>nullValue<!>) {
-        is String -> <!UNRESOLVED_REFERENCE!>print<!>("First value is String")
-        else -> <!UNRESOLVED_REFERENCE!>print<!>("Else")
+        is String -> print("First value is String")
+        else -> print("Else")
     }
 }
 

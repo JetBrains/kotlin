@@ -48725,12 +48725,6 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         }
 
         @Test
-        @TestMetadata("backup.kt")
-        public void testBackup() {
-          runTest("compiler/testData/diagnostics/tests/when/testTask/backup.kt");
-        }
-
-        @Test
         @TestMetadata("pass_for_k1.kt")
         public void testPass_for_k1() {
           runTest("compiler/testData/diagnostics/tests/when/testTask/pass_for_k1.kt");
@@ -48740,6 +48734,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         @TestMetadata("pass_for_k2.kt")
         public void testPass_for_k2() {
           runTest("compiler/testData/diagnostics/tests/when/testTask/pass_for_k2.kt");
+        }
+
+        @Test
+        @TestMetadata("raw_code.kt")
+        public void testRaw_code() {
+          runTest("compiler/testData/diagnostics/tests/when/testTask/raw_code.kt");
         }
       }
 
