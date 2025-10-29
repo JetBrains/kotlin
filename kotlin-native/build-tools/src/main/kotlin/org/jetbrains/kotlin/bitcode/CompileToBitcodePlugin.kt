@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.konan.target.enabledTargets
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 import org.jetbrains.kotlin.testing.native.GoogleTestExtension
 import org.jetbrains.kotlin.utils.capitalized
+import org.jetbrains.kotlin.utils.reproduciblySortedFilePaths
+import java.io.File
 import java.time.Duration
 import javax.inject.Inject
 
@@ -228,12 +230,27 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         private val execClang = ExecClang.create(project.objects, platformManager)
         private val nativeDependencies = project.extensions.getByType<NativeDependenciesExtension>()
 
+        private val reproducibilityRootsMap: Map<File, String>
+            get() = mapOf(
+                    // This is the common root for native dependencies: sysroots, llvm, ...
+                    nativeDependencies.nativeDependenciesRoot to "NATIVE_DEPS",
+            )
+
+        /**
+         * Use these flags for `clang` invocations, so that the generated binaries do not contain
+         * absolute paths.
+         */
+        val reproducibilityCompilerFlags: Array<String>
+            get() = reproducibilityRootsMap.map {
+                "-ffile-prefix-map=${it.key}=${it.value}"
+            }.toTypedArray()
+
         private val allCompilerArgs = module.compilerArgs.map {
             it + when (sanitizer) {
                 null -> emptyList()
                 SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
                 SanitizerKind.THREAD -> listOf("-fsanitize=thread")
-            }
+            } + reproducibilityCompilerFlags
         }
 
         /**

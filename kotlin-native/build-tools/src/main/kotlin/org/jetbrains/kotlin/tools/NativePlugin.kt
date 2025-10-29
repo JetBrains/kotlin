@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMingw
+import org.jetbrains.kotlin.utils.reproduciblySortedFilePaths
 import java.io.File
 import javax.inject.Inject
 import kotlin.collections.List
@@ -232,17 +233,8 @@ open class NativeToolsExtension(val project: Project) {
     /**
      * Whenever a `FileCollection` is passed as arguments, it's order must be stable sorted for reproducibility.
      */
-    fun reproduciblySortedFilePaths(fileCollection: FileCollection): List<File> = fileCollection.files.map { file ->
-        // We cannot just sort absolute paths: they may change from machine to machine.
-        // So, apply `reproducbilityCompilerFlags` to the list of files manually and use the resulting paths as keys.
-        reproducibilityRootsMap.firstNotNullOfOrNull { (root, name) ->
-            if (file.startsWith(root)) {
-                "$name${File.separator}${file.toRelativeString(root)}" to file
-            } else {
-                null
-            }
-        } ?: (file.absolutePath to file) // TODO: consider erroring out instead
-    }.sortedBy { it.first }.map { it.second }
+    fun reproduciblySortedFilePaths(fileCollection: FileCollection): List<File> =
+            fileCollection.reproduciblySortedFilePaths(reproducibilityRootsMap)
 
     val sourceSets = SourceSets(project, this, mutableMapOf<String, SourceSet>())
     val toolPatterns = ToolConfigurationPatterns(this, mutableMapOf<Pair<String, String>, ToolPatternConfiguration>())

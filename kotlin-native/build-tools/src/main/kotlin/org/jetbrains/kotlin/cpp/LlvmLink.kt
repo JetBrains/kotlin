@@ -26,6 +26,7 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.execLlvmUtility
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.platformManagerProvider
+import org.jetbrains.kotlin.utils.reproduciblySortedFilePaths
 import javax.inject.Inject
 
 private abstract class LlvmLinkJob : WorkAction<LlvmLinkJob.Parameters> {
@@ -42,7 +43,8 @@ private abstract class LlvmLinkJob : WorkAction<LlvmLinkJob.Parameters> {
     override fun execute() {
         with(parameters) {
             execOperations.execLlvmUtility(platformManager.get(), "llvm-link") {
-                args = listOf("-o", outputFile.asFile.get().absolutePath) + arguments.get() + inputFiles.map { it.absolutePath }
+                val sortedInputs = inputFiles.reproduciblySortedFilePaths(emptyMap()).map { it.absolutePath }
+                args = listOf("-o", outputFile.asFile.get().absolutePath) + arguments.get() + sortedInputs
             }
         }
     }
