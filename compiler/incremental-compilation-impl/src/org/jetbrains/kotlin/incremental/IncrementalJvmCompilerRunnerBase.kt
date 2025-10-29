@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Com
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.incremental.javaInterop.JavaInteropCoordinator
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
@@ -67,8 +68,15 @@ abstract class IncrementalJvmCompilerRunnerBase(
         messageCollector,
     )
 
+    private val subtypeTracker = if (generateCompilerRefIndex) SubtypeTrackerImpl() else null
+
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
-        IncrementalJvmCachesManager(icContext, args.destination?.let { File(it) }, cacheDirectory)
+        IncrementalJvmCachesManager(
+            icContext = icContext,
+            outputDir = args.destination?.let { File(it) },
+            cachesRootDir = cacheDirectory,
+            subtypeTracker = subtypeTracker ?: SubtypeTracker.DoNothing,
+        )
 
     override fun updateCaches(
         services: Services,
@@ -205,8 +213,12 @@ abstract class IncrementalJvmCompilerRunnerBase(
         val fileIdsToPathsFile = File(criDir, FILE_IDS_TO_PATHS_FILENAME)
         fileIdsToPathsFile.appendBytes(lookupData.fileIdsToPaths)
 
-        reporter.info { "Compiler Reference Index data saved to ${lookupsFile.path}, ${fileIdsToPathsFile.path}" }
-        reporter.debug { "${lookupTracker.lookups.size()} lookups stored" }
+        val subtypesFile = File(criDir, SUBTYPES_FILENAME)
+        val subtypes = subtypeTracker?.subtypeMap ?: emptyMap()
+        subtypesFile.appendBytes(serializer.serializeSubtypes(subtypes))
+
+        reporter.info { "Compiler Reference Index data saved to ${lookupsFile.path}, ${fileIdsToPathsFile.path}, ${subtypesFile.path}" }
+        reporter.debug { "Lookups stored: ${lookupTracker.lookups.size()}, subtypes stored: ${subtypes.size}" }
     }
 
     companion object {
@@ -216,5 +228,6 @@ abstract class IncrementalJvmCompilerRunnerBase(
         // TODO KT-81912 Add the CRI generation filename overrides for JvmCompilationOperation
         private const val LOOKUPS_FILENAME = "lookups.table"
         private const val FILE_IDS_TO_PATHS_FILENAME = "fileIdsToPaths.table"
+        private const val SUBTYPES_FILENAME = "subtypes.table"
     }
 }

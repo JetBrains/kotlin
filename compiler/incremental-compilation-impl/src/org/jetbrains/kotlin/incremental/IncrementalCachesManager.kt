@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental
 
 import com.google.common.io.Closer
+import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import java.io.Closeable
@@ -65,9 +66,15 @@ open class IncrementalJvmCachesManager(
     icContext: IncrementalCompilationContext,
     outputDir: File?,
     cachesRootDir: File,
+    subtypeTracker: SubtypeTracker = SubtypeTracker.DoNothing,
 ) : IncrementalCachesManager<IncrementalJvmCache>(icContext, cachesRootDir) {
     private val jvmCacheDir = File(cachesRootDir, "jvm").apply { mkdirs() }
-    override val platformCache = IncrementalJvmCache(jvmCacheDir, icContext, outputDir).apply { registerCache() }
+    override val platformCache = IncrementalJvmCache(
+        targetDataRoot = jvmCacheDir,
+        icContext = icContext,
+        targetOutputDir = outputDir,
+        subtypeTracker = subtypeTracker,
+    ).apply { registerCache() }
 }
 
 class IncrementalJsCachesManager(

@@ -21,6 +21,7 @@ import com.intellij.util.io.BooleanDataDescriptor
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getVisibleTypeAliasFqNames
+import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunction
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
@@ -45,9 +46,11 @@ open class IncrementalJvmCache(
     targetDataRoot: File,
     icContext: IncrementalCompilationContext,
     targetOutputDir: File?,
+    subtypeTracker: SubtypeTracker = SubtypeTracker.DoNothing,
 ) : AbstractIncrementalCache<JvmClassName>(
     workingDir = File(targetDataRoot, KOTLIN_CACHE_DIRECTORY_NAME),
     icContext,
+    subtypeTracker,
 ), IncrementalCache {
     companion object {
         private const val PROTO_MAP = "proto"
