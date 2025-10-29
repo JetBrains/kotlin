@@ -39,29 +39,37 @@ library {
       public final external /* non-stable parameter names */ fun functionWithAsm(arg0: kotlin/Int): kotlin/Int
 
       public final var global: kotlin/Int
-        @kotlinx/cinterop/internal/CCall.Direct(name = "global unsupported: https://youtrack.jetbrains.com/issue/KT-79742")
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "global")
         public final /* non-default */ external get
-        @kotlinx/cinterop/internal/CCall.Direct(name = "global unsupported: https://youtrack.jetbrains.com/issue/KT-79742")
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "global")
         public final /* non-default */ external set(value: kotlin/Int)
 
       public final val globalArray: kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
-        @kotlinx/cinterop/internal/CCall.Direct(name = "globalArray unsupported: https://youtrack.jetbrains.com/issue/KT-79742")
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalArray")
+        @kotlinx/cinterop/internal/CGlobalAccess.Pointer
         public final /* non-default */ external get
 
       public final val globalArrayWithAsm: kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
-        @kotlinx/cinterop/internal/CCall.Direct(name = "globalArrayWithAsm unsupported: https://youtrack.jetbrains.com/issue/KT-79742")
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalArray2")
+        @kotlinx/cinterop/internal/CGlobalAccess.Pointer
         public final /* non-default */ external get
 
       public final val globalStruct: pod1/S
-        @kotlinx/cinterop/internal/CCall.Direct(name = "globalStruct unsupported: https://youtrack.jetbrains.com/issue/KT-79742")
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalStruct")
+        @kotlinx/cinterop/internal/CGlobalAccess.Pointer
         public final /* non-default */ external get
 
       public final val globalStructWithAsm: pod1/S
-        @kotlinx/cinterop/internal/CCall.Direct(name = "globalStructWithAsm unsupported: https://youtrack.jetbrains.com/issue/KT-79742")
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalStruct2")
+        @kotlinx/cinterop/internal/CGlobalAccess.Pointer
         public final /* non-default */ external get
 
       public final val globalWithAsm: kotlin/Int
-        @kotlinx/cinterop/internal/CCall.Direct(name = "globalWithAsm unsupported: https://youtrack.jetbrains.com/issue/KT-79742")
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "global2")
+        public final /* non-default */ external get
+
+      public final val wrappedMacro: kotlin/Int
+        @kotlinx/cinterop/internal/CCall.Direct(name = "wrappedMacro unsupported: https://youtrack.jetbrains.com/issue/KT-82031")
         public final /* non-default */ external get
     }
   }

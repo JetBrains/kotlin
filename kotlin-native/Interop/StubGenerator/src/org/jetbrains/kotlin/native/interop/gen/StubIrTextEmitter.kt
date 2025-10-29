@@ -491,6 +491,10 @@ class StubIrTextEmitter(
             "@CCall(${annotationStub.symbolName.quoteAsKotlinLiteral()})"
         is AnnotationStub.CCall.Direct ->
             "@CCall.Direct(${annotationStub.name.quoteAsKotlinLiteral()})"
+        is AnnotationStub.CGlobalAccess.Symbol ->
+            "@CGlobalAccess(${annotationStub.name.quoteAsKotlinLiteral()})"
+        AnnotationStub.CGlobalAccess.Pointer ->
+            "@CGlobalAccess.Pointer"
         is AnnotationStub.CStruct ->
             "@CStruct(${annotationStub.struct.quoteAsKotlinLiteral()})"
         is AnnotationStub.CNaturalStruct ->

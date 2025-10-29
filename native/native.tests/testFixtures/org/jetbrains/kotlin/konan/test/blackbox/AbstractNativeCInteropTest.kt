@@ -116,13 +116,16 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             val metadata = testCompilationResult.assertSuccess().resultingArtifact
                 .dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
                 .let {
-                    // Remove '_' prefix from @CCall.Direct name value on Apple targets.
+                    // Remove '_' prefix from @CCall.Direct and @CGlobalAccess name values on Apple targets.
                     // It is added to symbol names there by default, unlike all other targets.
                     // This little hack allows us to keep using the same "golden file" for all targets.
                     if (targets.testTarget.family.isAppleFamily)
                         it.replace(
                             "@kotlinx/cinterop/internal/CCall.Direct(name = \"_",
                             "@kotlinx/cinterop/internal/CCall.Direct(name = \""
+                        ).replace(
+                            "@kotlinx/cinterop/internal/CGlobalAccess(name = \"_",
+                            "@kotlinx/cinterop/internal/CGlobalAccess(name = \""
                         )
                     else
                         it
