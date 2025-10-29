@@ -914,7 +914,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // Indices but 0 are not currently generated and supported, it is done only as a stub now.
         internal fun IrClass.getReceiverField(context: JvmBackendContext, index: Int): IrField =
             context.irFactory.buildField {
-                name = Name.identifier("receiver${if (index == 0) "" else index}")
+                require(index == 0) { "Indices but 0 are not currently generated and supported, it is done only as a stub now." }
+                name = Name.identifier("receiver")
                 type = context.irBuiltIns.anyNType
                 visibility = DescriptorVisibilities.PROTECTED
             }.apply {
