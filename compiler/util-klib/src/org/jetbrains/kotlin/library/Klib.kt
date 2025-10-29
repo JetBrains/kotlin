@@ -40,8 +40,8 @@ interface Klib {
 /**
  * A representation of a certain slice of the Klib library that can be read.
  *
- * Note: This component is not available in the library if there is
- * no data that it can read according to [KlibComponent.Kind.shouldComponentBeRegistered].
+ * Note: The component is not available in the library if there is no data that it can read. The creation of the component and
+ * the corresponding data presence check are performed in the [KlibComponent.Kind.createComponentIfDataInKlibIsAvailable].
  */
 interface KlibComponent {
     /**
@@ -49,10 +49,16 @@ interface KlibComponent {
      */
     interface Kind<KC : KlibComponent, KCL : KlibComponentLayout> {
         /**
-         * Whether there is any data to be read by the component.
-         * And whether the optional component should be registered in the library.
+         * Create an instance [KlibComponentLayout] for the current component.
          */
-        fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<KCL>): Boolean
+        fun createLayout(root: KlibFile): KCL
+
+        /**
+         * Create an instance of the component.
+         *
+         * Note: If there is no data to be read by the component, no component instance is created and `null` is returned.
+         */
+        fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<KCL>): KC?
     }
 }
 

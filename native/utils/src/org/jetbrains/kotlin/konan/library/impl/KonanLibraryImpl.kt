@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 import org.jetbrains.kotlin.konan.util.substitute
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.components.KlibIrComponent
-import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
-import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.impl.*
 import java.nio.file.Paths
 
@@ -85,9 +83,9 @@ class KonanLibraryImpl(
             zipFileSystemAccessor = zipFileSystemAccessor
         )
     )
-        .withComponent(KlibMetadataComponent.Kind, ::KlibMetadataComponentLayout, ::KlibMetadataComponentImpl)
-        .withComponent(KlibIrComponent.Kind.Main, KlibIrComponentLayout::createForMainIr, ::KlibIrComponentImpl)
-        .withComponent(KlibIrComponent.Kind.InlinableFunctions, KlibIrComponentLayout::createForInlinableFunctionsIr, ::KlibIrComponentImpl)
+        .withComponent(KlibMetadataComponent.Kind)
+        .withComponent(KlibIrComponent.Kind.Main)
+        .withComponent(KlibIrComponent.Kind.InlinableFunctions)
         .build()
 
     override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>): KC? {

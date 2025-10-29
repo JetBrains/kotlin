@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_MODULE
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
+import org.jetbrains.kotlin.library.impl.KlibMetadataComponentImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 
@@ -33,7 +34,14 @@ interface KlibMetadataComponent : KlibComponent {
     fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray
 
     companion object Kind : KlibComponent.Kind<KlibMetadataComponent, KlibMetadataComponentLayout> {
-        override fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<KlibMetadataComponentLayout>) = true
+        override fun createLayout(root: KlibFile) = KlibMetadataComponentLayout(root)
+
+        /**
+         * Note: It is expected that every correct Klib has metadata files.
+         * Therefore, no data availability check is performed in this method and the component is always created unconditionally.
+         */
+        override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<KlibMetadataComponentLayout>): KlibMetadataComponent =
+            KlibMetadataComponentImpl(layoutReader)
     }
 }
 
@@ -44,7 +52,7 @@ interface KlibMetadataComponent : KlibComponent {
  * a non-null component instance that can be used to read the Klib's metadata.
  */
 inline val Klib.metadata: KlibMetadataComponent
-    get() = getComponent(KlibMetadataComponent.Kind) ?: error("Metadata component is not registered for library $this")
+    get() = getComponent(KlibMetadataComponent.Kind)!!
 
 class KlibMetadataComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
     constructor(root: String) : this(KlibFile(root))
