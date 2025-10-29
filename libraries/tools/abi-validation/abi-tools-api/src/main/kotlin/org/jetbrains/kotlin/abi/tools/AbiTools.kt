@@ -72,7 +72,7 @@ public interface AbiTools {
          * Searching of implementation takes place in the context of the specified [classLoader].
          * If [classLoader] is not specified or null then class loader of [AbiTools] class will be used.
          *
-         * There is no guarantee that for the same [classLoader] only a same implementation of [AbiTools] will be returned.
+         * There is no guarantee that for the same [classLoader] only the same implementation of [AbiTools] will be returned.
          *
          * @throws IllegalStateException if no implementation found.
          * @throws IllegalStateException if there are more than one implementation found.
