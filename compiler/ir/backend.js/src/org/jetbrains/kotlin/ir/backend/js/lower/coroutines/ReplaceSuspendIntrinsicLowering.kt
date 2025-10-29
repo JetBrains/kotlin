@@ -88,7 +88,7 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
             name = SpecialNames.NO_NAME_PROVIDED
             visibility = DescriptorVisibilities.LOCAL
             isSuspend = false
-            returnType = context.irBuiltIns.anyNType
+            returnType = this@toGeneratorSuspensionExpression.type
             origin = YIELDED_WRAPPER_FUNCTION
         }.also {
             it.parent = container as IrDeclarationParent
