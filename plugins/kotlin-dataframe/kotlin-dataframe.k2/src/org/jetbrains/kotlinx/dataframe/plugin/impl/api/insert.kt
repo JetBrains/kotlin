@@ -75,6 +75,17 @@ internal class InsertAfter0 : AbstractInterpreter<PluginDataFrameSchema>() {
     }
 }
 
+internal class InsertBefore0 : AbstractInterpreter<PluginDataFrameSchema>() {
+    val Arguments.column: SingleColumnApproximation by arg()
+    val Arguments.receiver: InsertClauseApproximation by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return receiver.df.asDataFrame()
+            .insert(receiver.column.asDataColumn()).before { column.col.path }
+            .toPluginDataFrameSchema()
+    }
+}
+
 internal class InsertAt : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by arg()
     val Arguments.position: Int by arg()
