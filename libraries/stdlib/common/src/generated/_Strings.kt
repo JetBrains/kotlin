@@ -1082,7 +1082,7 @@ public fun CharSequence.withIndex(): Iterable<IndexedValue<Char>> {
  * because there are no characters in it that _do not_ match the predicate.
  * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
  * 
- * @sample samples.collections.Collections.Aggregates.all
+ * @sample samples.text.Strings.allWithPredicate
  */
 public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -1092,7 +1092,7 @@ public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
 /**
  * Returns `true` if char sequence has at least one character.
  * 
- * @sample samples.collections.Collections.Aggregates.any
+ * @sample samples.text.Strings.any
  */
 public fun CharSequence.any(): Boolean {
     return !isEmpty()
@@ -1101,7 +1101,7 @@ public fun CharSequence.any(): Boolean {
 /**
  * Returns `true` if at least one character matches the given [predicate].
  * 
- * @sample samples.collections.Collections.Aggregates.anyWithPredicate
+ * @sample samples.text.Strings.anyWithPredicate
  */
 public inline fun CharSequence.any(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -1859,7 +1859,7 @@ public fun CharSequence.minWithOrNull(comparator: Comparator<in Char>): Char? {
 /**
  * Returns `true` if the char sequence has no characters.
  * 
- * @sample samples.collections.Collections.Aggregates.none
+ * @sample samples.text.Strings.none
  */
 public fun CharSequence.none(): Boolean {
     return isEmpty()
@@ -1868,7 +1868,7 @@ public fun CharSequence.none(): Boolean {
 /**
  * Returns `true` if no characters match the given [predicate].
  * 
- * @sample samples.collections.Collections.Aggregates.noneWithPredicate
+ * @sample samples.text.Strings.noneWithPredicate
  */
 public inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
