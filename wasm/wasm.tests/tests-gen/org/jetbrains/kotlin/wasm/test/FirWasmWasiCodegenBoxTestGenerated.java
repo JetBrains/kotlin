@@ -9381,6 +9381,30 @@ public class FirWasmWasiCodegenBoxTestGenerated extends AbstractFirWasmWasiCodeg
       }
 
       @Test
+      @TestMetadata("array.kt")
+      public void testArray() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/array.kt");
+      }
+
+      @Test
+      @TestMetadata("callableReferencesToStdlibOperatorOfAsArguments.kt")
+      public void testCallableReferencesToStdlibOperatorOfAsArguments() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/callableReferencesToStdlibOperatorOfAsArguments.kt");
+      }
+
+      @Test
+      @TestMetadata("callableReferencesToStdlibOperatorOfInAssignments.kt")
+      public void testCallableReferencesToStdlibOperatorOfInAssignments() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/callableReferencesToStdlibOperatorOfInAssignments.kt");
+      }
+
+      @Test
+      @TestMetadata("collectionCompanions.kt")
+      public void testCollectionCompanions() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/collectionCompanions.kt");
+      }
+
+      @Test
       @TestMetadata("genericCollection.kt")
       public void testGenericCollection() {
         runTest("compiler/testData/codegen/box/collectionLiterals/genericCollection.kt");
@@ -9396,6 +9420,30 @@ public class FirWasmWasiCodegenBoxTestGenerated extends AbstractFirWasmWasiCodeg
       @TestMetadata("nonGenericCollection.kt")
       public void testNonGenericCollection() {
         runTest("compiler/testData/codegen/box/collectionLiterals/nonGenericCollection.kt");
+      }
+
+      @Test
+      @TestMetadata("primitiveArrays.kt")
+      public void testPrimitiveArrays() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/primitiveArrays.kt");
+      }
+
+      @Test
+      @TestMetadata("stdlibCollections.kt")
+      public void testStdlibCollections() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/stdlibCollections.kt");
+      }
+
+      @Test
+      @TestMetadata("stdlibSequence.kt")
+      public void testStdlibSequence() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/stdlibSequence.kt");
+      }
+
+      @Test
+      @TestMetadata("unsignedArrays.kt")
+      public void testUnsignedArrays() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/unsignedArrays.kt");
       }
     }
 

@@ -1,0 +1,27 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:operatorOfFromUnsignedArray.kt
+    FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
+      annotations:
+        OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>, CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalUnsignedTypes modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalUnsignedTypes>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      BLOCK_BODY
+        VAR name:it type:kotlin.ULongArray [val]
+          CALL 'public final fun of (vararg elements: kotlin.ULong): kotlin.ULongArray [inline,operator] declared in kotlin.ULongArray.Companion' type=kotlin.ULongArray origin=null
+            ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.ULongArray.Companion
+            ARG elements: VARARG type=kotlin.ULongArray varargElementType=kotlin.ULong
+              CONST Long type=kotlin.ULong value=1
+              CONST Long type=kotlin.ULong value=2
+              CONST Long type=kotlin.ULong value=3
+        CALL 'public final fun takeULongs (vararg ulong: kotlin.ULong): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          ARG ulong: VARARG type=kotlin.ULongArray varargElementType=kotlin.ULong
+            SPREAD_ELEMENT
+              CALL 'public final fun of (vararg elements: kotlin.ULong): kotlin.ULongArray [inline,operator] declared in kotlin.ULongArray.Companion' type=kotlin.ULongArray origin=null
+                ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.ULongArray.Companion
+                ARG elements: VARARG type=kotlin.ULongArray varargElementType=kotlin.ULong
+                  CONST Long type=kotlin.ULong value=1
+                  CONST Long type=kotlin.ULong value=2
+                  CONST Long type=kotlin.ULong value=3
+    FUN name:takeULongs visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:Regular name:ulong index:0 type:kotlin.ULongArray varargElementType:kotlin.ULong [vararg]
+      annotations:
+        OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalUnsignedTypes modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalUnsignedTypes>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      BLOCK_BODY
