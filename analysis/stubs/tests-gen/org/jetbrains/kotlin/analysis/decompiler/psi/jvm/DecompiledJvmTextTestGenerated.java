@@ -2420,6 +2420,12 @@ public class DecompiledJvmTextTestGenerated extends AbstractDecompiledJvmTextTes
     }
 
     @Test
+    @TestMetadata("annotationOnFullNameBasedDestructuring.kt")
+    public void testAnnotationOnFullNameBasedDestructuring() {
+      runTest("compiler/testData/psi/destructuring/annotationOnFullNameBasedDestructuring.kt");
+    }
+
+    @Test
     @TestMetadata("freezeKt79951.kt")
     public void testFreezeKt79951() {
       runTest("compiler/testData/psi/destructuring/freezeKt79951.kt");
