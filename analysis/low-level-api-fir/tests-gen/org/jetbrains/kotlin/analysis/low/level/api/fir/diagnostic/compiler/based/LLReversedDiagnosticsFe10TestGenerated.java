@@ -48735,12 +48735,6 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         public void testPass_for_k2() {
           runTest("compiler/testData/diagnostics/tests/when/testTask/pass_for_k2.kt");
         }
-
-        @Test
-        @TestMetadata("raw_code.kt")
-        public void testRaw_code() {
-          runTest("compiler/testData/diagnostics/tests/when/testTask/raw_code.kt");
-        }
       }
 
       @Nested
