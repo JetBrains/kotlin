@@ -256,7 +256,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             isSuspend = false
             isInline = false
             origin =
-                if (targetFun.isInline || targetFun.isArrayOf())
+                if (targetFun.isInline || targetFun.isArrayOf() || targetFun.isArrayCompanionOf())
                     JvmLoweredDeclarationOrigin.PROXY_FUN_FOR_METAFACTORY
                 else
                     JvmLoweredDeclarationOrigin.SYNTHETIC_PROXY_FUN_FOR_METAFACTORY
