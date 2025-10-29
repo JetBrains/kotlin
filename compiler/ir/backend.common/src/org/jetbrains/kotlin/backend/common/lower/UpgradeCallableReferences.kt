@@ -268,12 +268,12 @@ open class UpgradeCallableReferences(
             if (getter != null) {
                 if (generateFakeAccessorsForReflectionProperty && expression.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
                     getterFun = getter.let {
-                        expression.buildUnsupportedForReflectionPropertyAccessor(
+                        expression.buildReflectionPropertyAccessorWithoutBody(
                             emptyList(), data, it.name, it.isSuspend, isPropertySetter = false
                         )
                     }
                     setterFun = expression.setter?.owner?.let {
-                        expression.buildUnsupportedForReflectionPropertyAccessor(
+                        expression.buildReflectionPropertyAccessorWithoutBody(
                             emptyList(), data, it.name, it.isSuspend, isPropertySetter = true
                         )
                     }
@@ -384,7 +384,7 @@ open class UpgradeCallableReferences(
             returnType = context.irBuiltIns.nothingType
         }
 
-        private fun IrCallableReference<*>.buildUnsupportedForReflectionPropertyAccessor(
+        private fun IrCallableReference<*>.buildReflectionPropertyAccessorWithoutBody(
             captured: List<Pair<IrValueParameter, IrExpression>>,
             parent: IrDeclarationParent,
             name: Name,
