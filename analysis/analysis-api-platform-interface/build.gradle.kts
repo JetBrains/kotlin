@@ -37,7 +37,6 @@ kotlin {
         variants.create("unstable").apply {
             filters.excluded.annotatedWith.addAll(
                 "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
-                "org.jetbrains.kotlin.analysis.api.KaContextParameterApi"
             )
         }
     }
