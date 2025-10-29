@@ -1132,7 +1132,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         val shouldBeParsedNextAsFunctionalType =
             at(KtTokens.LPAR) && whitespaceAfterAnnotation && mode.withSignificantWhitespaceBeforeArguments
 
-        if (at(KtTokens.LPAR) && !shouldBeParsedNextAsFunctionalType) {
+        if (at(KtTokens.LPAR) && lookahead(1) !in KtTokens.VAL_VAR && !shouldBeParsedNextAsFunctionalType) {
             expressionParsing.parseValueArgumentList()
 
             /*

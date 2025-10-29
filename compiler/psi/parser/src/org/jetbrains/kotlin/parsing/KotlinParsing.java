@@ -977,7 +977,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         boolean whitespaceAfterAnnotation = WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1));
         boolean shouldBeParsedNextAsFunctionalType = at(LPAR) && whitespaceAfterAnnotation && mode.withSignificantWhitespaceBeforeArguments;
 
-        if (at(LPAR) && !shouldBeParsedNextAsFunctionalType) {
+        if (at(LPAR) && !VAL_VAR.contains(lookahead(1)) && !shouldBeParsedNextAsFunctionalType) {
             myExpressionParsing.parseValueArgumentList();
 
             /*
