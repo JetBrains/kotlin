@@ -1,5 +1,4 @@
 import gradle.GradlePluginVariant
-import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
     id("gradle-plugin-dependency-configuration")
@@ -19,6 +18,8 @@ pluginApiReference {
         reportUndocumented.set(true)
         includes.from("api-reference-description.md")
     }
+
+    embeddedProject(project.dependencies.project(":kotlin-gradle-compiler-types"))
 }
 
 dependencies {

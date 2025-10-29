@@ -34,6 +34,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     implementation(libs.dokka.gradlePlugin)
     implementation(libs.downloadTask.gradlePlugin)
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api")
 
     constraints {
         api(libs.apache.commons.lang)
