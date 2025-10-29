@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Assertions
 import java.io.InputStream
@@ -67,6 +68,8 @@ internal fun compileCommonKlib(kLibSourcesRoot: Path): Path {
         ktFiles.mapTo(this) { it.absolutePathString() }
         add("-d")
         add(testKlib.absolutePathString())
+        add("-cp")
+        add(StandardLibrariesPathProviderForKotlinProject.commonStdlibForTests().absolutePath)
     }
     MockLibraryUtil.runMetadataCompiler(arguments)
 

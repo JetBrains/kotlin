@@ -229,6 +229,8 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
             addAll(sourceFiles.mapTo(this) { it.absolutePath })
             add(K2MetadataCompilerArguments::destination.cliArgument); add(libraryOutputPath.absolutePathString())
             add(K2MetadataCompilerArguments::moduleName.cliArgument); add(libraryOutputPath.nameWithoutExtension)
+            // JS and Wasm platforms is excluded to allow inheritance from functional types and initializers in external declarations
+            add("${K2MetadataCompilerArguments::targetPlatform.cliArgument}=JVM,Native")
             add(K2MetadataCompilerArguments::classpath.cliArgument)
             addAll(listOf(ForTestCompileRuntime.stdlibCommonForTests().absolutePath) + extraClasspath)
             addAll(options)
