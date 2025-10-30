@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
  * - [scopeProvider] — a provider used to get different kind of scopes, like a use-site scope, a static scope, or a nested classifier scope
  * (see [FirScopeProvider], [org.jetbrains.kotlin.fir.scopes.FirScope]) for names resolution. There are two main providers used (Kotlin and Java ones).
  * - [isLocal] — the class-like is non-local (isLocal = false) iff all its ancestors (containing declarations) are
- * either files (see [FirFile]) or classes. With any function-like among ancestors, the class-like is local (isLocal = true).
+ * either files (see [FirFile]) or classes. With any callable or anonymous initializer among ancestors, the class-like is local (isLocal = true).
  * In particular, it means that any class-like declared inside a local class is also local. 
  *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.classLikeDeclaration]

@@ -20,6 +20,24 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
+ * Represents a common base for all callable declarations in FIR.
+ * This includes all function-like declarations (see [FirFunction] and all variable-like declarations (see [FirVariable]).
+ *
+ * Notable properties:
+ * - [symbol] — the symbol which serves as a pointer to this càllable declaration.
+ * - [typeParameters] — type parameter references declared for this callable declaration, if any.
+ * In certain situations, references to type parameters of its outer classes may also be present in the list. 
+ * - [dispatchReceiverType] — dispatch receiver type for non-static member callables, or null for top-level or static callables.
+ * Dispatch receiver type is a type of `this` based on the member callable's owner class and used to determine accessible scopes.
+ * - [contextParameters] — context parameters of the callable declaration, if any.
+ * - [receiverParameter] — the extension receiver parameter if present, otherwise null.
+ * - [returnTypeRef] — the declared return type of the function-like declaration, or the type of the variable-like declaration.
+ * - [annotations] — annotations present on the declaration, if any.
+ * - [isLocal] — the callable is non-local (isLocal = false) iff all its ancestors (containing declarations) are
+ * either files (see [FirFile]) or classes.  A property accessor or a backing field inherits isLocal from its owner property, 
+ * otherwise with any callable or anonymous initializer among ancestors, the declaration is local (isLocal = true).
+ * In particular, it means that any callable member of a local class is also local. 
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.callableDeclaration]
  */
 sealed class FirCallableDeclaration : FirMemberDeclaration() {

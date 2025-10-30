@@ -24,6 +24,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
+ * Represents a backing field for a property.
+ *
+ * Notable properties:
+ * - [symbol] — the symbol which serves as a pointer to this backing field.
+ * - [propertySymbol] — the symbol of the property this backing field belongs to.
+ * - [returnTypeRef] — the type of the backing field.
+ * - [annotations] — annotations present on the backing field, if any.
+ * - [isLocal] — the backing field is considered local iff its owner property is local.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.backingField]
  */
 abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirStatement {

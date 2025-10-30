@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  * - [body] — the body of the accessor, if present, otherwise null.
  * - [contractDescription] — contract description for the accessor, if present (see [FirContractDescription] and its inheritors).
  * - [annotations] — annotations present on the accessor, if any.
+ * - [isLocal] — the property accessor is considered local iff its owner property is local.
  *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.propertyAccessor]
  */

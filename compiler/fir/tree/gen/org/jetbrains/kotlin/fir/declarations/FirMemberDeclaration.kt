@@ -17,6 +17,19 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
+ * Represents a common base for all declarations in FIR, that can be class member declarations (though in fact can be
+ * declared e.g. at top-level). This includes all class-like declarations (see [FirClassLikeDeclaration] and
+ * all callable declarations (see [FirCallableDeclaration]).
+ *
+ * Notable properties:
+ * - [symbol] — the symbol which serves as a pointer to this declaration.
+ * - [typeParameters] — type parameter references declared for this declaration, if any.
+ * In certain situations, references to type parameters of its outer classes may also be present in the list. 
+ * - [isLocal] — the declaration is non-local (isLocal = false) iff all its ancestors (containing declarations) are
+ * either files (see [FirFile]) or classes. A property accessor or a backing field inherits isLocal from its owner property, 
+ * otherwise with any callable or anonymous initializer among ancestors, the declaration is local (isLocal = true).
+ * In particular, it means that any member declaration of a local class is also local. 
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.memberDeclaration]
  */
 sealed class FirMemberDeclaration : FirDeclaration(), FirTypeParameterRefsOwner {
