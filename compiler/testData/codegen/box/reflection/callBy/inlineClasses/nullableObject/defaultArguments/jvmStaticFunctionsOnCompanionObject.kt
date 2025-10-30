@@ -6,7 +6,7 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.instanceParameter
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+
 
 @JvmInline
 value class S(val value: String?) {
@@ -102,9 +102,7 @@ fun box(): String {
     val cMembers = I.Companion::class.members.associateBy { it.name }
     assertEquals(S("124"), cMembers.getValue("bar").callBy(I, one, "2", four))
     assertEquals(four, cMembers.getValue("staticDefault1_1").callBy(I, four))
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(default, cMembers.getValue("staticDefault1_1").callByEmpty(I))
-    }
+    assertEquals(default, cMembers.getValue("staticDefault1_1").callByEmpty(I))
     assertEquals(four, cMembers.getValue("staticDefault1_2").callBy(I, four))
     assertEquals(default, cMembers.getValue("staticDefault1_2").callByEmpty(I))
     assertEquals(
@@ -117,9 +115,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(I.staticDefault32_1(), cMembers.getValue("staticDefault32_1").callByEmpty(I))
-    }
+    assertEquals(I.staticDefault32_1(), cMembers.getValue("staticDefault32_1").callByEmpty(I))
     assertEquals(
         S("00"),
         cMembers.getValue("staticDefault32_2").callBy(
@@ -141,9 +137,7 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(I.staticDefault33_1(), cMembers.getValue("staticDefault33_1").callByEmpty(I))
-    }
+    assertEquals(I.staticDefault33_1(), cMembers.getValue("staticDefault33_1").callByEmpty(I))
     assertEquals(
         S("00"),
         cMembers.getValue("staticDefault33_2").callBy(
@@ -158,9 +152,7 @@ fun box(): String {
 
     assertEquals(S("124"), I.Companion::bar.callBy(one, "2", four))
     assertEquals(four, I.Companion::staticDefault1_1.callBy(four))
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(default, I.Companion::staticDefault1_1.callBy(emptyMap()))
-    }
+    assertEquals(default, I.Companion::staticDefault1_1.callBy(emptyMap()))
     assertEquals(four, I.Companion::staticDefault1_2.callBy(four))
     assertEquals(default, I.Companion::staticDefault1_2.callBy(emptyMap()))
     assertEquals(
@@ -172,9 +164,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(I.staticDefault32_1(), I.Companion::staticDefault32_1.callBy(emptyMap()))
-    }
+    assertEquals(I.staticDefault32_1(), I.Companion::staticDefault32_1.callBy(emptyMap()))
     assertEquals(
         S("00"),
         I.Companion::staticDefault32_2.callBy(
@@ -194,9 +184,7 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(I.staticDefault33_1(), I.Companion::staticDefault33_1.callBy(emptyMap()))
-    }
+    assertEquals(I.staticDefault33_1(), I.Companion::staticDefault33_1.callBy(emptyMap()))
     assertEquals(
         S("00"),
         I.Companion::staticDefault33_2.callBy(

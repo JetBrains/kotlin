@@ -6,7 +6,6 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.instanceParameter
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 @JvmInline
 value class S(val value: Int) {

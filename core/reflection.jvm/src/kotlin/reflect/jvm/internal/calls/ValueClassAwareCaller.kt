@@ -25,6 +25,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
     callable: ReflectKCallable<*>,
     private val caller: Caller<M>,
     private val isDefault: Boolean,
+    forbidUnboxingForIndices: List<Int>,
 ) : Caller<M> {
     override val member: M
         get() = caller.member
@@ -41,7 +42,6 @@ internal class ValueClassAwareCaller<out M : Member?>(
     private class BoxUnboxData(
         val argumentRange: IntRange,
         val unboxParameters: Array<Method?>,
-        val disableUnboxingParameterIndices: Set<Int>,
         val box: Method?,
     )
 
@@ -59,7 +59,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
         if (callable.isGetterOfUnderlyingPropertyOfValueClass()) {
             // Getter of the underlying val of a value class is always called on a boxed receiver,
             // no argument unboxing is required.
-            return@run BoxUnboxData(IntRange.EMPTY, emptyArray(), emptySet(), box)
+            return@run BoxUnboxData(IntRange.EMPTY, emptyArray(), box)
         }
 
         val shift = when {
@@ -110,16 +110,16 @@ internal class ValueClassAwareCaller<out M : Member?>(
             else null
         }
 
-        val disableUnboxingParameterIndices = buildSet {
-            // If the actual called member lies in the interface/DefaultImpls class, it accepts a boxed parameter as ex-dispatch receiver.
-            // Forbid unboxing dispatchReceiver in this case.
-            val container = callable.container
-            if (!callable.isConstructor && container is KClass<*> && container.isValue && member?.acceptsBoxedReceiverParameter() == true) {
-                add(0)
-            }
+        forbidUnboxingForIndices.forEach { index -> unbox[index] = null }
+
+        // If the actual called member lies in the interface/DefaultImpls class, it accepts a boxed parameter as ex-dispatch receiver.
+        // Forbid unboxing dispatchReceiver in this case.
+        val container = callable.container
+        if (!callable.isConstructor && container is KClass<*> && container.isValue && member?.acceptsBoxedReceiverParameter() == true) {
+            unbox[0] = null
         }
 
-        BoxUnboxData(argumentRange, unbox, disableUnboxingParameterIndices, box)
+        BoxUnboxData(argumentRange, unbox, box)
     }
 
     override fun call(args: Array<*>): Any? {
@@ -129,7 +129,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         val unboxedArguments = Array(args.size) { index ->
             val arg = args[index]
-            if (index in range && index !in data.disableUnboxingParameterIndices) {
+            if (index in range) {
                 // Note that arg may be null in case we're calling a $default method, and it's an optional parameter of an inline class type
                 val method = unbox[index]
                 when {
@@ -187,9 +187,13 @@ private fun Member.acceptsBoxedReceiverParameter(): Boolean {
     return !clazz.kotlin.isValue
 }
 
-internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(callable: ReflectKCallable<*>, isDefault: Boolean): Caller<M> =
+internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(
+    callable: ReflectKCallable<*>,
+    isDefault: Boolean,
+    forbidUnboxingForIndices: List<Int>,
+): Caller<M> =
     if (callable.parameters.any { it.type.isInlineClassType } || callable.returnType.isInlineClassType)
-        ValueClassAwareCaller(callable, this, isDefault)
+        ValueClassAwareCaller(callable, this, isDefault, forbidUnboxingForIndices)
     else this
 
 internal fun Class<*>.getInlineClassUnboxMethod(callable: ReflectKCallable<*>): Method =
@@ -230,6 +234,3 @@ private fun KType.isPrimitiveType(): Boolean {
     val klass = (classifier as? KClass<*>)?.javaPrimitiveType
     return klass != null && klass != Void.TYPE
 }
-
-private fun KType.unsubstitutedUnderlyingType(): KType? =
-    (classifier as? KClassImpl<*>)?.inlineClassUnderlyingType

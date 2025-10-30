@@ -55,6 +55,8 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     abstract fun getLocalPropertyMetadata(index: Int): KmProperty?
 
+    private val classLoader: ClassLoader get() = jClass.safeClassLoader
+
     fun createLocalProperty(index: Int, signature: String): KProperty0<*>? {
         val kmProperty = getLocalPropertyMetadata(index) ?: return null
         if (kmProperty.receiverParameterType != null) {
@@ -136,7 +138,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     private fun Class<*>.lookupMethod(
-        name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>, isStaticDefault: Boolean
+        name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>, isStaticDefault: Boolean,
     ): Method? {
         // Static "$default" method in any class takes an instance of that class as the first parameter.
         if (isStaticDefault) {
@@ -192,7 +194,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     fun findMethodBySignature(name: String, desc: String): Method? {
         if (name == "<init>") return null
 
-        val functionJvmDescriptor = parseJvmDescriptor(desc, parseReturnType = true)
+        val functionJvmDescriptor = classLoader.parseAndLoadDescriptor(desc, loadReturnType = true)
         val parameterTypes = functionJvmDescriptor.parameters.toTypedArray()
         val returnType = functionJvmDescriptor.returnType!!
         methodOwner.lookupMethod(name, parameterTypes, returnType, false)?.let { return it }
@@ -214,7 +216,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             // Note that this value is replaced inside the lookupMethod call below, for each class/interface in the hierarchy.
             parameterTypes.add(jClass)
         }
-        val jvmDescriptor = parseJvmDescriptor(desc, parseReturnType = true)
+        val jvmDescriptor = classLoader.parseAndLoadDescriptor(desc, loadReturnType = true)
         addParametersAndMasks(parameterTypes, jvmDescriptor.parameters, isConstructor = false, hasExtensionParameter)
 
         return methodOwner.lookupMethod(
@@ -223,11 +225,11 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     fun findConstructorBySignature(desc: String): Constructor<*>? =
-        jClass.tryGetConstructor(parseJvmDescriptor(desc, parseReturnType = false).parameters)
+        jClass.tryGetConstructor(classLoader.parseAndLoadDescriptor(desc, loadReturnType = false).parameters)
 
     fun findDefaultConstructor(desc: String): Constructor<*>? =
         jClass.tryGetConstructor(arrayListOf<Class<*>>().also { parameterTypes ->
-            val parsedParameters = parseJvmDescriptor(desc, parseReturnType = false).parameters
+            val parsedParameters = classLoader.parseAndLoadDescriptor(desc, loadReturnType = false).parameters
             addParametersAndMasks(parameterTypes, parsedParameters, isConstructor = true, hasExtensionParameter = false)
         })
 
@@ -252,47 +254,6 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
         result.add(if (isConstructor) DEFAULT_CONSTRUCTOR_MARKER else Any::class.java)
     }
-
-    private class FunctionJvmDescriptor(val parameters: List<Class<*>>, val returnType: Class<*>?)
-
-    private fun parseJvmDescriptor(desc: String, parseReturnType: Boolean): FunctionJvmDescriptor {
-        val result = arrayListOf<Class<*>>()
-
-        var begin = 1
-        while (desc[begin] != ')') {
-            var end = begin
-            while (desc[end] == '[') end++
-            @Suppress("SpellCheckingInspection")
-            when (desc[end]) {
-                in "VZCBSIFJD" -> end++
-                'L' -> end = desc.indexOf(';', begin) + 1
-                else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
-            }
-
-            result.add(parseType(desc, begin, end))
-            begin = end
-        }
-
-        val returnType = if (parseReturnType) parseType(desc, begin = begin + 1, end = desc.length) else null
-
-        return FunctionJvmDescriptor(result, returnType)
-    }
-
-    private fun parseType(desc: String, begin: Int, end: Int): Class<*> =
-        when (desc[begin]) {
-            'L' -> jClass.safeClassLoader.loadClass(desc.substring(begin + 1, end - 1).replace('/', '.'))
-            '[' -> parseType(desc, begin + 1, end).createArrayType()
-            'V' -> Void.TYPE
-            'Z' -> Boolean::class.java
-            'C' -> Char::class.java
-            'B' -> Byte::class.java
-            'S' -> Short::class.java
-            'I' -> Int::class.java
-            'F' -> Float::class.java
-            'J' -> Long::class.java
-            'D' -> Double::class.java
-            else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
-        }
 
     companion object {
         private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")

@@ -286,7 +286,7 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
             return if (isBound) CallerImpl.Method.BoundInstance(accessor, boundReceiver)
             else CallerImpl.Method.Instance(accessor)
         }
-    }.createValueClassAwareCallerIfNeeded(this, isDefault = false)
+    }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptyList())
 }
 
 private fun PropertyDescriptor.isJvmFieldPropertyInCompanionObject(): Boolean {

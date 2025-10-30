@@ -10,6 +10,8 @@ import kotlin.reflect.KParameter
 internal abstract class ReflectKParameter : KParameter {
     abstract val callable: ReflectKCallable<*>
 
+    abstract val declaresDefaultValue: Boolean
+
     final override fun equals(other: Any?): Boolean =
         other is ReflectKParameter && callable == other.callable && index == other.index
 

@@ -64,4 +64,7 @@ internal class DescriptorKParameter(
 
     override val isVararg: Boolean
         get() = descriptor.let { it is ValueParameterDescriptor && it.varargElementType != null }
+
+    override val declaresDefaultValue: Boolean
+        get() = (descriptor as? ValueParameterDescriptor)?.declaresDefaultValue() == true
 }

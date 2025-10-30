@@ -5,7 +5,7 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.instanceParameter
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+
 
 @JvmInline
 value class S(val value: String?) {
@@ -91,9 +91,7 @@ fun box(): String {
 
     assertEquals(S("abc"), C::member.callBy(instance, S("a"), "b", S("c")))
     assertEquals(zero, C::memberDefault1_1.callBy(instance, zero))
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(default, C::memberDefault1_1.callByEmpty(instance))
-    }
+    assertEquals(default, C::memberDefault1_1.callByEmpty(instance))
     assertEquals(zero, C::memberDefault1_2.callBy(instance, zero))
     assertEquals(default, C::memberDefault1_2.callByEmpty(instance))
     assertEquals(
@@ -106,9 +104,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(instance.memberDefault32_1(), C::memberDefault32_1.callByEmpty(instance))
-    }
+    assertEquals(instance.memberDefault32_1(), C::memberDefault32_1.callByEmpty(instance))
     assertEquals(
         S("00"),
         C::memberDefault32_2.callBy(
@@ -130,9 +126,7 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(instance.memberDefault33_1(), C::memberDefault33_1.callByEmpty(instance))
-    }
+    assertEquals(instance.memberDefault33_1(), C::memberDefault33_1.callByEmpty(instance))
     assertEquals(
         S("00"),
         C::memberDefault33_2.callBy(
@@ -147,9 +141,7 @@ fun box(): String {
 
     assertEquals(S("abc"), instance::member.callBy(S("a"), "b", S("c")))
     assertEquals(zero, instance::memberDefault1_1.callBy(zero))
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(default, instance::memberDefault1_1.callBy(emptyMap()))
-    }
+    assertEquals(default, instance::memberDefault1_1.callBy(emptyMap()))
     assertEquals(zero, instance::memberDefault1_2.callBy(zero))
     assertEquals(default, instance::memberDefault1_2.callBy(emptyMap()))
     assertEquals(
@@ -161,9 +153,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(instance.memberDefault32_1(), instance::memberDefault32_1.callBy(emptyMap()))
-    }
+    assertEquals(instance.memberDefault32_1(), instance::memberDefault32_1.callBy(emptyMap()))
     assertEquals(
         S("00"),
         instance::memberDefault32_2.callBy(
@@ -183,9 +173,7 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(instance.memberDefault33_1(), instance::memberDefault33_1.callBy(emptyMap()))
-    }
+    assertEquals(instance.memberDefault33_1(), instance::memberDefault33_1.callBy(emptyMap()))
     assertEquals(
         S("00"),
         instance::memberDefault33_2.callBy(

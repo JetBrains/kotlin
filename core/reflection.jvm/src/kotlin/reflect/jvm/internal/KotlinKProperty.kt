@@ -155,6 +155,7 @@ internal abstract class KotlinKProperty<out V>(
             override val kind: KParameter.Kind get() = KParameter.Kind.VALUE
             override val isOptional: Boolean get() = false
             override val isVararg: Boolean get() = false
+            override val declaresDefaultValue: Boolean get() = false
 
             override val annotations: List<Annotation>
                 // As long as there's at least one annotation, the setter would no longer be default.

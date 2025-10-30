@@ -18,9 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
 import org.jetbrains.kotlin.resolve.isInlineClassType
-import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
@@ -29,6 +27,9 @@ import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
+import kotlin.jvm.internal.Reflection
+import kotlin.reflect.KClass
+import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
 import kotlin.reflect.jvm.internal.calls.*
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.CALL_BY_NAME
@@ -89,26 +90,33 @@ internal class DescriptorKFunction private constructor(
                     createStaticMethodCaller(member, isCallByToValueClassMangledMethod = false)
             }
             else -> throw KotlinReflectionInternalError("Could not compute caller for function: $descriptor (member = $member)")
-        }.createValueClassAwareCallerIfNeeded(this, isDefault = false)
+        }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptyList())
     }
 
     override val defaultCaller: Caller<*>? by lazy(PUBLICATION) defaultCaller@{
         @Suppress("USELESS_CAST")
+        val preventUnboxingForIndices = mutableListOf<Int>()
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinFunction -> run {
-                getFunctionWithDefaultParametersForValueClassOverride(descriptor)?.let { defaultImplsFunction ->
-                    val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultImplsFunction) as KotlinFunction
+                getFunctionWithDefaultParametersForValueClassOverride(this)?.let { defaultImplsFunction ->
+                    val defaultImplsFunctionName = defaultImplsFunction.signature.substringBefore('(')
+                    val defaultImplsFunctionDesc = defaultImplsFunction.signature.substring(defaultImplsFunctionName.length)
+                    val patchingResult =
+                        patchJvmDescriptorByExtraBoxing(defaultImplsFunction, defaultImplsFunctionDesc)
+                    preventUnboxingForIndices.addAll(patchingResult.boxedIndices)
                     return@run container.findDefaultMethod(
-                        replacingJvmSignature.methodName,
-                        replacingJvmSignature.methodDesc,
+                        defaultImplsFunctionName,
+                        patchingResult.newDescriptor,
                         true,
                         descriptor.extensionReceiverParameter != null
                     )
                 }
 
+                val patchingResult = patchJvmDescriptorByExtraBoxing(this, jvmSignature.methodDesc)
+                preventUnboxingForIndices.addAll(patchingResult.boxedIndices)
                 container.findDefaultMethod(
                     jvmSignature.methodName,
-                    jvmSignature.methodDesc,
+                    patchingResult.newDescriptor,
                     !Modifier.isStatic(caller.member!!.modifiers),
                     descriptor.extensionReceiverParameter != null
                 ) as Member?
@@ -116,7 +124,9 @@ internal class DescriptorKFunction private constructor(
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
                     return@defaultCaller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, CALL_BY_NAME, KOTLIN)
-                container.findDefaultConstructor(jvmSignature.constructorDesc) as Member?
+                val patchingResult = patchJvmDescriptorByExtraBoxing(this, jvmSignature.constructorDesc)
+                preventUnboxingForIndices.addAll(patchingResult.boxedIndices)
+                container.findDefaultConstructor(patchingResult.newDescriptor) as Member?
             }
             is FakeJavaAnnotationConstructor -> {
                 val methods = jvmSignature.methods
@@ -144,19 +154,26 @@ internal class DescriptorKFunction private constructor(
                 }
             }
             else -> null
-        }?.createValueClassAwareCallerIfNeeded(this, isDefault = true)
+        }?.createValueClassAwareCallerIfNeeded(this, isDefault = true, preventUnboxingForIndices)
     }
 
-    private fun getFunctionWithDefaultParametersForValueClassOverride(descriptor: FunctionDescriptor): FunctionDescriptor? {
+    override val overridden: Collection<ReflectKFunction>
+        get() = descriptor.overriddenDescriptors.map {
+            val containerClass = (it.containingDeclaration as ClassDescriptor).toJavaClass()
+                ?: throw KotlinReflectionInternalError("Unknown container class for overridden function: $this")
+            DescriptorKFunction(containerClass.kotlin as KClassImpl<*>, it)
+        }
+
+    private fun getFunctionWithDefaultParametersForValueClassOverride(function: ReflectKFunction): ReflectKFunction? {
         if (
-            descriptor.valueParameters.none { it.declaresDefaultValue() } &&
-            descriptor.containingDeclaration.isValueClass() &&
+            function.valueParameters.none { (it as? ReflectKParameter)?.declaresDefaultValue == true } &&
+            (function.container as? KClass<*>)?.isValue == true &&
             Modifier.isStatic(caller.member!!.modifiers)
         ) {
             // firstOrNull is used to mimic the wrong behaviour of regular class reflection as KT-40327 is not fixed.
             // The behaviours equality is currently backed by codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt. 
-            return descriptor.overriddenTreeAsSequence(useOriginal = false)
-                .firstOrNull { function -> function.valueParameters.any { it.declaresDefaultValue() } } as? FunctionDescriptor
+            return function.overridden
+                .firstOrNull { function -> function.valueParameters.any { (it as? ReflectKParameter)?.declaresDefaultValue == true } }
         }
         return null
     }
