@@ -22,7 +22,9 @@ FILE: classDeclaration.kt
         public final fun funD(): R|kotlin/Int|
 
         public final inline fun funE(): R|kotlin/String| {
-            local final fun funF(): R|kotlin/String|
+            local final fun funF(): R|kotlin/String| {
+                ^funF String(funF body)
+            }
 
             ^funE R|<local>/funF|()
         }

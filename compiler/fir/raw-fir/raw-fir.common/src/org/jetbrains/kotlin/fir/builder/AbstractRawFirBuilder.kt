@@ -126,7 +126,9 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         }
     }
 
-    inline fun <R> withForcedLocalContext(block: () -> R): R {
+    inline fun <R> withForcedLocalContext(forceKeepingTheBodyInHeaderMode: Boolean = false, block: () -> R): R {
+        val oldForceKeepingTheBodyInHeaderMode = context.forceKeepingTheBodyInHeaderMode
+        context.forceKeepingTheBodyInHeaderMode = oldForceKeepingTheBodyInHeaderMode || forceKeepingTheBodyInHeaderMode
         val oldForcedLocalContext = context.inLocalContext
         context.inLocalContext = true
         val oldClassNameBeforeLocalContext = context.classNameBeforeLocalContext
@@ -141,6 +143,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
             context.classNameBeforeLocalContext = oldClassNameBeforeLocalContext
             context.inLocalContext = oldForcedLocalContext
             context.className = oldClassName
+            context.forceKeepingTheBodyInHeaderMode = oldForceKeepingTheBodyInHeaderMode
         }
     }
 

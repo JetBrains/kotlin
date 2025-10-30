@@ -59,6 +59,8 @@ class Context<T> {
     val dispatchReceiverTypesStack: MutableList<ConeClassLikeType> = mutableListOf()
     var containerIsExpect: Boolean = false
 
+    var forceKeepingTheBodyInHeaderMode: Boolean = false
+
     var containingScriptSymbol: FirScriptSymbol? = null
     var containingReplSymbol: FirReplSnippetSymbol? = null
 
