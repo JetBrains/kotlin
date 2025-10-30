@@ -49,11 +49,6 @@ open class TargetedLibraryImpl(
         target?.let { substitute(properties, defaultTargetSubstitutions(it)) }
         properties
     }
-
-    override val includedPaths: List<String>
-        get() = access.realFiles {
-            it.includedDir.listFilesOrEmpty.map { it.absolutePath }
-        }
 }
 
 class KonanLibraryImpl(
