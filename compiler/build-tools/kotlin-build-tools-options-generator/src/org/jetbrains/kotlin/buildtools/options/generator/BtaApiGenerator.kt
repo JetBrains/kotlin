@@ -76,6 +76,7 @@ internal class BtaApiGenerator(
             if (skipXX && name.startsWith("XX_")) return@forEach
             val experimental = name.startsWith("XX_") || name.startsWith("X_")
 
+
             // argument is newer than current version
             if (argument.releaseVersionsMetadata.introducedVersion > kotlinVersion) {
                 return@forEach
