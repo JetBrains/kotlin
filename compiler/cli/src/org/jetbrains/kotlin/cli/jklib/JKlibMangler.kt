@@ -93,8 +93,9 @@ object JKlibIrMangler : IrBasedKotlinManglerImpl() {
         return getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(this)
     }
 
-    private class JKlibIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean) : IrMangleComputer(builder, mode, compatibleMode) {
-        override fun copy(newMode: MangleMode): IrMangleComputer =
+    private class JKlibIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean) :
+        JKlibIrMangleComputerBase(builder, mode, compatibleMode) {
+        override fun copy(newMode: MangleMode): JKlibIrMangleComputerBase =
             JKlibIrManglerComputer(builder, newMode, compatibleMode)
 
         override fun addReturnTypeSpecialCase(function: IrFunction): Boolean = false
@@ -132,10 +133,10 @@ class JKlibDescriptorMangler(private val mainDetector: MainFunctionDetector?) : 
         builder: StringBuilder,
         private val mainDetector: MainFunctionDetector?,
         mode: MangleMode
-    ) : DescriptorMangleComputer(builder, mode) {
+    ) : JKlibDescriptorMangleComputerBase(builder, mode) {
         override fun addReturnTypeSpecialCase(function: FunctionDescriptor): Boolean = false
 
-        override fun copy(newMode: MangleMode): DescriptorMangleComputer = JKlibDescriptorManglerComputer(builder, mainDetector, newMode)
+        override fun copy(newMode: MangleMode): JKlibDescriptorMangleComputerBase = JKlibDescriptorManglerComputer(builder, mainDetector, newMode)
 
         private fun isMainFunction(descriptor: FunctionDescriptor): Boolean =
             mainDetector != null && mainDetector.isMain(descriptor)
