@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryPro
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.*
@@ -254,6 +255,14 @@ private fun compileImpl(
         getScriptKtFile(snippet, initialScriptCompilationConfiguration, project, messageCollector).valueOr {
             return it
         }
+
+    // TODO: ensure that currentLineId passing is only used for single snippet compilation
+    val priority = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.repl.currentLineId]?.no
+        ?: state.hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.getSnippetCount()
+    if (priority != null) {
+        val script = snippetKtFile.script!!
+        script.putUserData(ScriptPriorities.PRIORITY_KEY, priority)
+    }
 
     // configuration refinement with the additional sources collection
     val allSourceFiles = mutableListOf(snippetKtFile)

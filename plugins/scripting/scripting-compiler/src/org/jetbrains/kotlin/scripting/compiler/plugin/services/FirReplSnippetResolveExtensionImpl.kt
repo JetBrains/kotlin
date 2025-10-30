@@ -49,6 +49,8 @@ class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
     }
 
     override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean = history.firstOrNull() == symbol
+
+    override fun getSnippetCount(): Int = history.size
 }
 
 class FirReplSnippetResolveExtensionImpl(

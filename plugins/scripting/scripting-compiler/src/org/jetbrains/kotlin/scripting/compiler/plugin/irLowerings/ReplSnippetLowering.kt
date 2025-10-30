@@ -64,8 +64,9 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
             context, irSnippetClassThisReceiver, implicitReceiversFieldsWithParameters, irSnippetClass, irSnippet.stateObject!!
         )
 
-        // TODO find function without hardcoded name
-        val evalFun = irSnippetClass.declarations.single { it is IrFunction && it.name == REPL_SNIPPET_EVAL_FUN_NAME } as IrFunction
+        val evalFun = irSnippetClass.declarations
+            .filterIsInstance<IrFunction>()
+            .single { it.origin == IrDeclarationOrigin.REPL_EVAL_FUNCTION }
         evalFun.parameters = buildList {
             add(
                 evalFun.buildReceiverParameter {
@@ -86,8 +87,9 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
             )
         )
 
-        // TODO find property without hardcoded name
-        val resultProp = irSnippetClass.declarations.singleOrNull { it is IrProperty && it.name == REPL_SNIPPET_RESULT_PROP_NAME } as? IrProperty
+        val resultProp = irSnippetClass.declarations
+            .filterIsInstance<IrProperty>()
+            .singleOrNull { it.origin == IrDeclarationOrigin.SCRIPT_RESULT_PROPERTY }
         resultProp?.let { irResultProperty ->
             val backingField = irResultProperty.backingField ?: return@let
             backingField.visibility = DescriptorVisibilities.PUBLIC

@@ -41,7 +41,6 @@ sealed class FirDeclarationOrigin(
         object ScriptTopLevelDestructuringDeclarationContainer : Synthetic()
         object FakeHiddenInPreparationForNewJdk : Synthetic()
         object ImplicitWhenSubject : Synthetic()
-        object ReplContainer : Synthetic()
     }
 
     object DynamicScope : FirDeclarationOrigin()
@@ -62,6 +61,11 @@ sealed class FirDeclarationOrigin(
         object ResultProperty : ScriptCustomization(FirScriptCustomizationKind.RESULT_PROPERTY)
         object Parameter : ScriptCustomization(FirScriptCustomizationKind.PARAMETER)
         object ParameterFromBaseClass : ScriptCustomization(FirScriptCustomizationKind.PARAMETER_FROM_BASE_CLASS)
+    }
+
+    sealed class ReplCustomization : FirDeclarationOrigin() {
+        object ContainerClass : ReplCustomization()
+        object EvalFunction : ReplCustomization()
     }
 
     object FromOtherReplSnippet : FirDeclarationOrigin(fromSource = false)

@@ -51,6 +51,7 @@ interface IrDeclarationOrigin {
         val SCRIPT_PROVIDED_PROPERTY by IrDeclarationOriginImpl
         val SCRIPT_RESULT_PROPERTY by IrDeclarationOriginImpl
         val REPL_SNIPPET_CLASS by IrDeclarationOriginImpl
+        val REPL_EVAL_FUNCTION by IrDeclarationOriginImpl
         val REPL_FROM_OTHER_SNIPPET by IrDeclarationOriginImpl
         val GENERATED_DATA_CLASS_MEMBER by IrDeclarationOriginImpl
         val GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl
