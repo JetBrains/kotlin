@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.buildtools.internal.compat.arguments.JvmCompilerArgu
 import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.nio.file.Path
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.io.path.absolutePathString
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
@@ -93,7 +95,7 @@ private class JvmClasspathSnapshottingOperationV1Adapter(
         options[key] = value
     }
 
-    override fun execute(
+    override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicyV1Adapter,
         logger: KotlinLogger?,
@@ -148,7 +150,7 @@ private class JvmCompilationOperationV1Adapter(
         val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS", null)
     }
 
-    override fun execute(
+    override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicyV1Adapter,
         logger: KotlinLogger?,
@@ -373,8 +375,10 @@ private class BuildSessionV1Adapter(
 @Suppress("DEPRECATION")
 public fun CompilationService.asKotlinToolchains(): KotlinToolchains = KotlinToolchainsV1Adapter(this)
 
+@OptIn(ExperimentalAtomicApi::class)
 private abstract class BuildOperationImpl<R> : BuildOperation<R> {
     private val options: Options = Options(BuildOperation::class)
+    private val executionStarted = AtomicBoolean(false)
 
     override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
 
@@ -382,7 +386,14 @@ private abstract class BuildOperationImpl<R> : BuildOperation<R> {
         options[key] = value
     }
 
-    abstract fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicyV1Adapter, logger: KotlinLogger? = null): R
+    fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicyV1Adapter, logger: KotlinLogger? = null): R {
+        check(executionStarted.compareAndSet(expectedValue = false, newValue = true)) {
+            "Build operation $this already started execution."
+        }
+        return executeImpl(projectId, executionPolicy, logger)
+    }
+
+    abstract fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicyV1Adapter, logger: KotlinLogger? = null): R
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
