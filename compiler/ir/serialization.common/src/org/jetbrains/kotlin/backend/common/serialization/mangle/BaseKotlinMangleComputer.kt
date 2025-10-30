@@ -274,10 +274,7 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
                         // FIXME: Use effective variance here according to the klib spec: `org.jetbrains.kotlin.types.AbstractTypeChecker.effectiveVariance(typeParameter.getVariance(), typeArgument.getVariance())`
                         // NOTE: If we start using effective variance instead of declared variance, we must take into account
                         // binary compatibility implications.
-                        val variance = org.jetbrains.kotlin.types.AbstractTypeChecker.effectiveVariance(
-                            typeParameter.getVariance(), typeArgument.getVariance()
-                        ) ?: typeArgument.getVariance()
-//                        val variance = typeArgument.getVariance()
+                        val variance = typeArgument.getVariance()
                         if (variance != TypeVariance.INV) {
                             appendSignature(variance.presentation)
                             appendSignature(MangleConstant.VARIANCE_SEPARATOR)
