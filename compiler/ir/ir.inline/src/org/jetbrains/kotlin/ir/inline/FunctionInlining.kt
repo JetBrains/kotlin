@@ -364,7 +364,7 @@ private class CallInlining(
 
     private fun evaluateArguments(
         callSiteBuilder: IrStatementsBuilder<*>,
-        inlinedBlockBuilder: IrStatementsBuilder<*>,
+        inlinedBlockBuilder: IrInlinedFunctionBlockBuilder,
         callSite: IrFunctionAccessExpression,
         callee: IrFunction,
         parameterToTempVariable: MutableMap<IrValueParameterSymbol, IrValueSymbol>,
@@ -426,16 +426,18 @@ private class CallInlining(
                     .irGet(tempVarOutsideInlineBlock)
             }
 
-            val tempVarInsideInlineBlock = inlinedBlockBuilder.irTemporary(
-                value = valueForTmpVar,
-                origin = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
-                    IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
-                } else {
-                    IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
+            val tempVarInsideInlineBlock = inlinedBlockBuilder
+                .at(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                .irTemporary(
+                    value = valueForTmpVar,
+                    origin = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
+                        IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
+                    } else {
+                        IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
+                    }
+                ).apply {
+                    name = identifier(parameter.name.asStringStripSpecialMarkers())
                 }
-            ).apply {
-                name = identifier(parameter.name.asStringStripSpecialMarkers())
-            }
 
             parameterToTempVariable[parameter.symbol] = tempVarInsideInlineBlock.symbol
         }

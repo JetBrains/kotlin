@@ -325,7 +325,7 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
           INLINED_BLOCK[73, 78]->[186, 213] type=kotlin.Int origin=null
             inlinedFunctionSymbol: public final fun foo (a: kotlin.Int): kotlin.Int declared in <root>
             inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
-            VAR[73, 78] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:a type:kotlin.Int [val]
+            VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:a type:kotlin.Int [val]
               CONST[203, 204] Int type=kotlin.Int value=1
             RETURN[213, 213] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
               TYPE_OP[208, 213] type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
