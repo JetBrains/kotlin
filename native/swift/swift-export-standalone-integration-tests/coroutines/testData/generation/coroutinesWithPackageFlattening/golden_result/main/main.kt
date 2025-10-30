@@ -11,7 +11,7 @@ public fun flattened_testSuspendFunction(continuation: kotlin.native.internal.Na
         val kotlinFun = convertBlockPtrToKotlinFunction<(Int)->Unit>(continuation);
         { arg0: Int ->
             val _result = kotlinFun(arg0)
-            Unit
+            _result
         }
     }
     GlobalScope.launch(start = CoroutineStart.UNDISPATCHED) {

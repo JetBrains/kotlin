@@ -66,12 +66,12 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         BridgeFunctionDescriptor(
             baseBridgeName = baseBridgeName,
             parameters = explicitParameters.mapIndexed { index, value -> bridgeParameter(value, index) },
-            returnType = bridgeType(returnType),
+            returnType = bridgeReturnType(returnType),
             kotlinFqName = kotlinFqName,
             selfParameter = selfParameter?.let { bridgeParameter(it, 0) },
             extensionReceiverParameter = extensionReceiverParameter?.let { bridgeParameter(it, 0) },
             errorParameter = errorParameter?.let {
-                BridgeParameter(
+                BridgeParameter.InOut(
                     name = it.name!!.let(::createBridgeParameterName),
                     bridge = Bridge.AsOutError
                 )
@@ -124,11 +124,11 @@ public interface BridgeFunctionProxy {
 private class BridgeFunctionDescriptor(
     override val baseBridgeName: String,
     override val parameters: List<BridgeParameter>,
-    override val returnType: Bridge,
+    override val returnType: KotlinToSwiftBridge,
     override val kotlinFqName: List<String>,
     override val selfParameter: BridgeParameter?,
     override val extensionReceiverParameter: BridgeParameter?,
-    override val errorParameter: BridgeParameter?,
+    override val errorParameter: BridgeParameter.InOut?,
     override val isAsync: Boolean,
     override val typeNamer: SirTypeNamer,
 ) : BridgeFunctionBuilder, BridgeFunctionProxy {
@@ -139,7 +139,8 @@ private class BridgeFunctionDescriptor(
         get() = listOfNotNull(selfParameter) + parameters + listOfNotNull(errorParameter) + listOfNotNull(asyncContinuationParameter)
 
     val asyncContinuationParameter: BridgeParameter? = isAsync.ifTrue {
-        BridgeParameter(name = "continuation", bridge = Bridge.AsBlock(parameters = listOf(returnType), returnType = Bridge.AsVoid))
+        require(returnType is Bridge)
+        BridgeParameter.In(name = "continuation", bridge = Bridge.AsBlock(parameters = listOf(returnType), returnType = Bridge.AsOutVoid))
     }
 
     override val name

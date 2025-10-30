@@ -3,6 +3,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-void flattened_testSuspendFunction(void (^continuation)(int32_t));
+void flattened_testSuspendFunction(int32_t (^continuation)(int32_t));
 
 NS_ASSUME_NONNULL_END
