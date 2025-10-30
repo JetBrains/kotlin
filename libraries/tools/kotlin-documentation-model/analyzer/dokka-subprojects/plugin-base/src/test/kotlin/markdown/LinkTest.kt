@@ -1182,7 +1182,7 @@ class LinkTest : BaseAbstractTest() {
             |/src/main/kotlin/Testing.kt
             |/**
             |* Text
-            |* [some 
+            |* [some
             |* link](https://www.google.com/)
             |*
             |* Text:
