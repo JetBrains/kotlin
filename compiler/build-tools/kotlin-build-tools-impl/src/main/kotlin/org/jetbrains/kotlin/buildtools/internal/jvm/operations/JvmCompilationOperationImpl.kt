@@ -62,13 +62,25 @@ import java.nio.file.Path
 import java.rmi.RemoteException
 import kotlin.io.path.absolutePathString
 
-internal class JvmCompilationOperationImpl(
+internal class JvmCompilationOperationImpl private constructor(
+    override val options: Options = Options(JvmCompilationOperation::class),
     private val kotlinSources: List<Path>,
     private val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
 ) : CancellableBuildOperationImpl<CompilationResult>(), JvmCompilationOperation {
-    private val options: Options = Options(JvmCompilationOperation::class)
+    constructor(
+        kotlinSources: List<Path>,
+        destinationDirectory: Path,
+        compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
+        buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+    ) : this(
+        options = Options(JvmCompilationOperation::class),
+        kotlinSources = kotlinSources,
+        destinationDirectory = destinationDirectory,
+        compilerArguments = compilerArguments,
+        buildIdToSessionFlagFile = buildIdToSessionFlagFile
+    )
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmCompilationOperation.Option<V>): V = options[key]
