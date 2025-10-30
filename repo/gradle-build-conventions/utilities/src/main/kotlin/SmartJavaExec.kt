@@ -5,21 +5,33 @@
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 
-
+/**
+ * @param name is the name of the task to be created.
+ * @param classpath determines the runtime classpath of the exec task.
+ * @param classpathInput determines the Gradle input of the task. By default, it's a [classpath], but it could be configured.
+ * @param mainClass is the FQN of the main class to be executed.
+ */
 fun Project.smartJavaExec(
     name: String,
     classpath: FileCollection,
+    classpathInput: Provider<FileCollection>? = null,
     mainClass: String,
     configure: JavaExec.() -> Unit
 ): TaskProvider<JavaExec> {
     val javaExecTaskProvider = tasks.register(name, JavaExec::class.java, configure)
-    registerJarTaskForJavaExec(javaExecTaskProvider, classpath, mainClass)
+    registerJarTaskForJavaExec(
+        javaExecTaskProvider,
+        classpath,
+        classpathInput ?: project.provider { classpath },
+        mainClass
+    )
 
     return javaExecTaskProvider
 }
@@ -28,12 +40,12 @@ fun Project.smartJavaExec(
 private fun Project.registerJarTaskForJavaExec(
     javaExec: TaskProvider<JavaExec>,
     classpath: FileCollection,
+    classpathInput: Provider<FileCollection>,
     mainClass: String,
 ) {
     val jarTask = project.tasks.register("${javaExec.name}WriteClassPath", Jar::class.java) {
-        val classpathToConvert = classpath
-        dependsOn(classpathToConvert)
-        inputs.files(classpathToConvert)
+        dependsOn(classpathInput)
+        inputs.files(classpathInput).withPropertyName("classpathInput")
         val main = mainClass
         inputs.property("main", main)
 
@@ -41,7 +53,7 @@ private fun Project.registerJarTaskForJavaExec(
         destinationDirectory.set(temporaryDir)
 
         doFirst {
-            val classPathString = classpathToConvert.joinToString(" ") {
+            val classPathString = classpath.joinToString(" ") {
                 it.toURI().toString()
             }
             manifest {
@@ -60,7 +72,7 @@ private fun Project.registerJarTaskForJavaExec(
             .withPropertyName("jarTaskOutput")
             .withPathSensitivity(PathSensitivity.RELATIVE)
 
-        inputs.files(classpath)
+        inputs.files(classpathInput)
             .withPropertyName("classpathToExecute")
             .withNormalizer(ClasspathNormalizer::class.java)
 
