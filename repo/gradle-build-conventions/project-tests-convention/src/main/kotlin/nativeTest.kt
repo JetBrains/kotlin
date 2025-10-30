@@ -366,6 +366,11 @@ fun ProjectTestsExtension.nativeTestTask(
         // Pass the current Gradle task name so test can use it in logging.
         environment("GRADLE_TASK_NAME", path)
 
+        val excludesFile = project.providers.gradleProperty("teamcity.build.parallelTests.excludesFile").orNull
+        if (excludesFile != null && File(excludesFile).exists()) {
+            systemProperty("teamcity.build.parallelTests.excludesFile", excludesFile)
+        }
+
         useJUnitPlatform {
             // Note: arbitrary JUnit tag expressions can be used in this property.
             // See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
