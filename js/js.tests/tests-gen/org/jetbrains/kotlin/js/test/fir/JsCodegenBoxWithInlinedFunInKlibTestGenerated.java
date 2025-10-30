@@ -53630,6 +53630,18 @@ public class JsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractJsCod
         }
 
         @Test
+        @TestMetadata("inlineClassInterfaceJvmDefaultOverReferenceType.kt")
+        public void testInlineClassInterfaceJvmDefaultOverReferenceType() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassInterfaceJvmDefaultOverReferenceType.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineClassInterfaceOverReferenceType.kt")
+        public void testInlineClassInterfaceOverReferenceType() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassInterfaceOverReferenceType.kt");
+        }
+
+        @Test
         @TestMetadata("inlineClassMembers.kt")
         public void testInlineClassMembers() {
           runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassMembers.kt");
