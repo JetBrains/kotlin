@@ -936,7 +936,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
                 }
             }
 
-            [ResolvedTo(BODY_RESOLVE)] lval typeString: R|kotlin/String| = (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type| as? R|kotlin/jvm/internal/TypeReference|)?.{ $subj$.R|kotlin/jvm/internal/TypeReference.asString|(Boolean(true)) } ?: this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type|.R|kotlin/toString|()
+            [ResolvedTo(BODY_RESOLVE)] lval typeString: R|kotlin/String| = (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type| as? R|kotlin/jvm/internal/TypeReference|)?.{ $subj$.R|kotlin/jvm/internal/TypeReference.asString|(Boolean(true)) } ?: this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type|.<Ambiguity: toString, [kotlin/toString, kotlin/toString]>#()
             ^asString when ([ResolvedTo(BODY_RESOLVE)] lval <when-subject>: R|kotlin/reflect/KVariance?| = this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.variance|) {
                 ==($subj$, Q|kotlin/reflect/KVariance|.R|kotlin/reflect/KVariance.INVARIANT|) ->  {
                     R|<local>/typeString|
