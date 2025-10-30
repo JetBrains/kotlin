@@ -361,7 +361,7 @@ object FirOptInUsageBaseChecker {
         symbol: FirCallableSymbol<*>,
     ) {
         for ((annotationClassId, severity, markerMessage, supertypeName) in experimentalities) {
-            if (!symbol.isExperimentalityAcceptable(context.session, annotationClassId, fromSupertype = false) &&
+            if (!symbol.isExperimentalityAcceptable(annotationClassId, fromSupertype = false) &&
                 !isExperimentalityAcceptableInContext(annotationClassId, fromSupertype = false)
             ) {
                 val (diagnostic, verb) = when (severity) {
@@ -396,14 +396,14 @@ object FirOptInUsageBaseChecker {
         }
         for (annotationContainer in context.annotationContainers) {
             if (annotationContainer is FirDeclaration &&
-                annotationContainer.symbol.isExperimentalityAcceptable(context.session, annotationClassId, fromSupertype)
+                annotationContainer.symbol.isExperimentalityAcceptable(annotationClassId, fromSupertype)
             ) {
                 return true
             }
             if (annotationContainer is FirStatement) {
                 with(annotationContainer) {
                     if (getAnnotationByClassId(annotationClassId, context.session) != null ||
-                        annotations.isAnnotatedWithOptIn(annotationClassId, context.session)
+                        annotations.isAnnotatedWithOptIn(annotationClassId)
                     ) {
                         return true
                     }
@@ -413,16 +413,16 @@ object FirOptInUsageBaseChecker {
         return false
     }
 
+    context(context: CheckerContext)
     private fun FirBasedSymbol<*>.isExperimentalityAcceptable(
-        session: FirSession,
         annotationClassId: ClassId,
         fromSupertype: Boolean,
     ): Boolean {
-        return hasAnnotationWithClassId(annotationClassId, session) ||
-                isAnnotatedWithOptIn(annotationClassId, session) ||
-                fromSupertype && isAnnotatedWithSubclassOptInRequired(session, annotationClassId) ||
+        return hasAnnotationWithClassId(annotationClassId, context.session) ||
+                isAnnotatedWithOptIn(annotationClassId) ||
+                fromSupertype && isAnnotatedWithSubclassOptInRequired(annotationClassId) ||
                 // Technically wrong but required for K1 compatibility
-                primaryConstructorParameterIsExperimentalityAcceptable(session, annotationClassId) ||
+                primaryConstructorParameterIsExperimentalityAcceptable(annotationClassId) ||
                 isImplicitDeclaration()
     }
 
@@ -430,36 +430,38 @@ object FirOptInUsageBaseChecker {
         return this.origin != FirDeclarationOrigin.Source
     }
 
+    context(context: CheckerContext)
     private fun FirBasedSymbol<*>.primaryConstructorParameterIsExperimentalityAcceptable(
-        session: FirSession,
         annotationClassId: ClassId,
     ): Boolean {
         if (this !is FirPropertySymbol) return false
         val parameterSymbol = correspondingValueParameterFromPrimaryConstructor ?: return false
 
-        return parameterSymbol.isExperimentalityAcceptable(session, annotationClassId, fromSupertype = false)
+        return parameterSymbol.isExperimentalityAcceptable(annotationClassId, fromSupertype = false)
     }
 
-    private fun FirBasedSymbol<*>.isAnnotatedWithOptIn(annotationClassId: ClassId, session: FirSession): Boolean {
-        return resolvedAnnotationsWithArguments.isAnnotatedWithOptIn(annotationClassId, session)
+    context(context: CheckerContext)
+    private fun FirBasedSymbol<*>.isAnnotatedWithOptIn(annotationClassId: ClassId): Boolean {
+        return resolvedAnnotationsWithArguments.isAnnotatedWithOptIn(annotationClassId)
     }
 
-    private fun List<FirAnnotation>.isAnnotatedWithOptIn(annotationClassId: ClassId, session: FirSession): Boolean {
+    context(context: CheckerContext)
+    private fun List<FirAnnotation>.isAnnotatedWithOptIn(annotationClassId: ClassId): Boolean {
         for (annotation in this) {
             val coneType = annotation.annotationTypeRef.coneType as? ConeClassLikeType
             if (coneType?.lookupTag?.classId != OptInNames.OPT_IN_CLASS_ID) {
                 continue
             }
             val annotationClasses = annotation.findArgumentByName(OPT_IN_ANNOTATION_CLASS) ?: continue
-            if (annotationClasses.extractClassesFromArgument(session).any { it.classId == annotationClassId }) {
+            if (annotationClasses.extractClassesFromArgument(context.session).any { it.classId == annotationClassId }) {
                 return true
             }
         }
         return false
     }
 
+    context(context: CheckerContext)
     private fun FirBasedSymbol<*>.isAnnotatedWithSubclassOptInRequired(
-        session: FirSession,
         annotationClassId: ClassId,
     ): Boolean {
         for (annotation in resolvedAnnotationsWithArguments) {
@@ -468,7 +470,7 @@ object FirOptInUsageBaseChecker {
                 continue
             }
             val annotationClass = annotation.findArgumentByName(OPT_IN_ANNOTATION_CLASS) ?: continue
-            if (annotationClass.extractClassesFromArgument(session).any { it.classId == annotationClassId }) {
+            if (annotationClass.extractClassesFromArgument(context.session).any { it.classId == annotationClassId }) {
                 return true
             }
         }
