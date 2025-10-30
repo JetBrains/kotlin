@@ -159,7 +159,7 @@ internal fun Annotated.computeAnnotations(): List<Annotation> =
 internal fun Annotation.hasInherited(): Boolean = annotationClass.hasInherited()
 
 private fun KClass<out Annotation>.hasInherited(): Boolean =
-    null != this.java.declaredAnnotations.find { it.annotationClass.java.name == JvmAnnotationNames.INHERITED_ANNOTATION.asString() }
+    java.getDeclaredAnnotation(Inherited::class.java) != null
 
 @Suppress("UNCHECKED_CAST")
 private fun getRepeatableContainerComponentType(containerClass: KClass<out Annotation>) =
