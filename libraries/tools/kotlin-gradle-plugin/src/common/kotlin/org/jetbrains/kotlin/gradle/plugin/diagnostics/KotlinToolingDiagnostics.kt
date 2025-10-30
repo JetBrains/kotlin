@@ -258,47 +258,83 @@ internal object KotlinToolingDiagnostics {
             }
     }
 
-    object IncompatibleBinaryConfiguration : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(binaryName: String, debuggable: Boolean, optimized: Boolean) =
-            build {
-                title("Incompatible Binary Configuration")
-                    .description {
-                        when {
-                            debuggable && optimized -> {
-                                """
-                            Binary '$binaryName' has incompatible configuration: debuggable=true and optimized=true.
-                            Debug binaries should not be optimized as this defeats the purpose of fast compilation and debugging.
-                            Optimization significantly increases compile time while making debugging more difficult.
-                            """.trimIndent()
-                            }
-                            else -> { // !debuggable && !optimized
-                                """
-                            Binary '$binaryName' has incompatible configuration: debuggable=false and optimized=false.
-                            Release binaries should be optimized to ensure good runtime performance.
-                            Without optimization, you get slow compilation (no debug build optimizations) and poor runtime performance.
-                            """.trimIndent()
-                            }
+    internal abstract class BaseIncompatibleBinaryConfiguration : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+
+        /**
+         * Builds the common diagnostic message using context-specific phrases.
+         *
+         * @param binaryName The name of the binary.
+         * @param debuggable The 'debuggable' status.
+         * @param optimized The 'optimized' status.
+         * @param contextDescription A phrase describing the context (e.g., "in project '...'").
+         * @param contextSolution A phrase for the solution (e.g., "in project '...'" or "(... affecting task '...')").
+         */
+        protected fun buildDiagnostic(
+            binaryName: String,
+            debuggable: Boolean,
+            optimized: Boolean,
+            contextDescription: String,
+            contextSolution: String
+        ): ToolingDiagnostic = build {
+            title("Incompatible Binary Configuration")
+                .description {
+                    when {
+                        debuggable && optimized -> {
+                            """
+                        Binary '$binaryName' $contextDescription has incompatible configuration: debuggable=true and optimized=true.
+                        This configuration is not recommended. Optimization significantly increases compile time
+                        and makes debugging difficult, which defeats the purpose of a debuggable build.
+                        """.trimIndent()
+                        }
+                        else -> { // !debuggable && !optimized
+                            """
+                        Binary '$binaryName' $contextDescription has incompatible configuration: debuggable=false and optimized=false.
+                        This build is not optimized, which will result in poor runtime performance (like a debug build),
+                        but it also lacks debug symbols, making it unsuitable for debugging.
+                        This configuration is not recommended for either development or production use.
+                        """.trimIndent()
                         }
                     }
-                    .solutions {
-                        when {
-                            debuggable && optimized -> {
-                                listOf(
-                                    "Set 'optimized = false' for binary '$binaryName' to enable fast debug compilation",
-                                    "Use a release build type if you need optimization",
-                                    "Consider creating separate debug and release configurations"
-                                )
-                            }
-                            else -> { // !debuggable && !optimized
-                                listOf(
-                                    "Set 'optimized = true' for binary '$binaryName' to improve runtime performance",
-                                    "Use a debug build type if you need fast compilation and debugging capabilities",
-                                    "Verify that your build type configuration matches your intended use case"
-                                )
-                            }
+                }
+                .solutions {
+                    when {
+                        debuggable && optimized -> {
+                            listOf(
+                                "Set 'optimized = false' for binary '$binaryName' $contextSolution to create a standard debug build.",
+                                "If optimization is required, use a release build (debuggable=false, optimized=true)."
+                            )
+                        }
+                        else -> { // !debuggable && !optimized
+                            listOf(
+                                "Set 'optimized = true' for binary '$binaryName' $contextSolution to create a standard release build.",
+                                "Set 'debuggable = true' for binary '$binaryName' $contextSolution to create a standard debug build."
+                            )
                         }
                     }
-            }
+                }
+        }
+    }
+
+    internal object IncompatibleBinaryConfiguration : BaseIncompatibleBinaryConfiguration() {
+        operator fun invoke(projectPath: String, binaryName: String, debuggable: Boolean, optimized: Boolean) =
+            buildDiagnostic(
+                binaryName = binaryName,
+                debuggable = debuggable,
+                optimized = optimized,
+                contextDescription = "in project '$projectPath'",
+                contextSolution = "in project '$projectPath'"
+            )
+    }
+
+    internal object IncompatibleBinaryTaskConfiguration : BaseIncompatibleBinaryConfiguration() {
+        operator fun invoke(taskPath: String, binaryName: String, debuggable: Boolean, optimized: Boolean) =
+            buildDiagnostic(
+                binaryName = binaryName,
+                debuggable = debuggable,
+                optimized = optimized,
+                contextDescription = "built by task '$taskPath'",
+                contextSolution = "(in the build script affecting '$taskPath')"
+            )
     }
 
     object NoApplicationTargetFoundDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {

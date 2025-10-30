@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
@@ -66,6 +68,7 @@ constructor(
     UsesClassLoadersCachingBuildService,
     KotlinToolTask<KotlinCommonCompilerToolOptions>,
     UsesKotlinNativeBundleBuildService,
+    UsesKotlinToolingDiagnostics,
     UsesBuildFusService {
 
     init {
@@ -347,6 +350,19 @@ constructor(
         }
     }
 
+    private fun validateBinaryConfiguration() {
+        if (hasIncompatibleConfiguration) {
+            reportDiagnostic(
+                KotlinToolingDiagnostics.IncompatibleBinaryTaskConfiguration(
+                    path,
+                    binaryName,
+                    debuggable,
+                    optimized
+                )
+            )
+        }
+    }
+
     @Suppress("DEPRECATION_ERROR")
     @get:Classpath
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
@@ -436,6 +452,7 @@ constructor(
         val metricsReporter = metrics.get()
 
         addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = null) {
+            validateBinaryConfiguration()
             validatedExportedLibraries()
 
             val output = outputFile.get()
@@ -496,3 +513,5 @@ constructor(
 }
 
 internal val String.asValidFrameworkName get() = replace('-', '_')
+
+private val KotlinNativeLink.hasIncompatibleConfiguration get() = (debuggable && optimized) || (!debuggable && !optimized)

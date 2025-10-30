@@ -6162,7 +6162,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : or
 	public fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments;ZZ)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileTool, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/plugin/statistics/UsesBuildFusService, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService, org/jetbrains/kotlin/gradle/tasks/KotlinToolTask {
+public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileTool, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics, org/jetbrains/kotlin/gradle/plugin/statistics/UsesBuildFusService, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService, org/jetbrains/kotlin/gradle/tasks/KotlinToolTask {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary;Lorg/gradle/api/model/ObjectFactory;)V
 	public final fun compile ()V
 	public synthetic fun createCompilerArguments (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerArgumentsProducer$CreateCompilerArgumentsContext;)Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;
@@ -6197,6 +6197,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/j
 	public final fun isStaticFramework ()Z
 	public final fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public final fun kotlinOptions (Lorg/gradle/api/Action;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
 	public fun setCompilerPluginClasspath (Lorg/gradle/api/file/FileCollection;)V
 	public final fun setKotlinPluginData (Lorg/gradle/api/provider/Provider;)V
 	public fun toolOptions (Lkotlin/jvm/functions/Function1;)V

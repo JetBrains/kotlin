@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
+import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportOncePerGradleProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 
@@ -23,22 +25,24 @@ internal object NativeBinaryConfigurationChecker : KotlinGradleProjectChecker {
         multiplatformExtension.targets
             .withType(KotlinNativeTarget::class.java)
             .configureEach { target ->
-                target.binaries.configureEach { binary ->
-                    if (hasIncompatibleConfiguration(binary)) {
-                        collector.report(
-                            project,
-                            KotlinToolingDiagnostics.IncompatibleBinaryConfiguration(
-                                binary.name,
-                                binary.debuggable,
-                                binary.optimized
-                            )
-                        )
-                    }
-                }
+                project.checkTarget(target, collector)
             }
     }
 
-    private fun hasIncompatibleConfiguration(binary: NativeBinary): Boolean {
-        return (binary.debuggable && binary.optimized) || (!binary.debuggable && !binary.optimized)
+    private fun Project.checkTarget(target: KotlinNativeTarget, collector: KotlinToolingDiagnosticsCollector) {
+        target.binaries.configureEach { binary ->
+            if (!binary.hasIncompatibleConfiguration) return@configureEach
+            collector.reportOncePerGradleProject(
+                project,
+                KotlinToolingDiagnostics.IncompatibleBinaryConfiguration(
+                    path,
+                    binary.name,
+                    binary.debuggable,
+                    binary.optimized
+                )
+            )
+        }
     }
 }
+
+private val NativeBinary.hasIncompatibleConfiguration: Boolean get() = (debuggable && optimized) || (!debuggable && !optimized)
