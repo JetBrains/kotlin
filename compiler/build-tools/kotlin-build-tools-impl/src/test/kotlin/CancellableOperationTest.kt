@@ -20,7 +20,7 @@ import kotlin.test.assertTrue
 
 private class ExampleCancellableOperation(override val options: Options = Options(ExampleCancellableOperation::class)) :
     CancellableBuildOperationImpl<Unit>() {
-    override fun executeImpl(
+    override fun executeCancellableImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
