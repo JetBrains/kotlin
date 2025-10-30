@@ -81,7 +81,7 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
     context(dsl: KlibMockDSL)
     override fun customizeMockKlib(parameters: P) {
         super.customizeMockKlib(parameters)
-        dsl.targets(parameters.target) {
+        dsl.target(parameters.target) {
             included(parameters.includedFiles)
             native(parameters.bitCodeFiles)
         }
@@ -107,7 +107,7 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
     }
 }
 
-fun KlibMockDSL.targets(target: KonanTarget, init: KlibMockDSL.() -> Unit = {}) {
+fun KlibMockDSL.target(target: KonanTarget, init: KlibMockDSL.() -> Unit = {}) {
     dir(KLIB_TARGETS_FOLDER_NAME) {
         dir(target.name, init)
     }
