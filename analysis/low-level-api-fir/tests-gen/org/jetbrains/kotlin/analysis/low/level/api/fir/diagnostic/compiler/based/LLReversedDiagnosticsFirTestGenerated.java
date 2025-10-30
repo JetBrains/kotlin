@@ -7380,6 +7380,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       public void testNoRootIdePackageInCli() {
         runTest("compiler/fir/analysis-tests/testData/resolve/qualifiers/noRootIdePackageInCli.kt");
       }
+
+      @Test
+      @TestMetadata("noRootIdePackageInCliDisabled.kt")
+      public void testNoRootIdePackageInCliDisabled() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/qualifiers/noRootIdePackageInCliDisabled.kt");
+      }
     }
 
     @Nested
