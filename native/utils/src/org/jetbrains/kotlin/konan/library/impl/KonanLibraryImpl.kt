@@ -36,14 +36,6 @@ open class TargetedLibraryImpl(
 
     private val target: KonanTarget? get() = access.target
 
-    override val targetList: List<String>
-        get() = commonizerNativeTargets?.takeIf { it.isNotEmpty() }
-                ?: nativeTargets.takeIf { it.isNotEmpty() }
-                ?: // TODO: We have a choice: either assume it is the CURRENT TARGET
-                //  or a list of ALL KNOWN targets.
-                listOfNotNull(access.target?.visibleName)
-
-
     override val manifestProperties: Properties by lazy {
         val properties = base.manifestProperties
         target?.let { substitute(properties, defaultTargetSubstitutions(it)) }
