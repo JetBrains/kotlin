@@ -51,6 +51,9 @@ import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
+import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.idea.MainFunctionDetector
@@ -77,6 +80,7 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -92,6 +96,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
@@ -915,5 +920,71 @@ private class SourceOrBinaryModuleClassResolver(private val sourceScope: GlobalS
         else
             compiledCodeResolver
         return resolver.resolveClass(javaClass)
+    }
+}
+
+/**
+ * Creates library session and sources session for klib compilation
+ * Number of created session depends on mode of MPP:
+ *   - disabled
+ *   - legacy (one platform and one common module)
+ *   - HMPP (multiple number of modules)
+ */
+fun <F> prepareJKlibSessions(
+    projectEnvironment: VfsBasedProjectEnvironment,
+    files: List<F>,
+    configuration: CompilerConfiguration,
+    rootModuleName: Name,
+    resolvedLibraries: List<KotlinResolvedLibrary>,
+    libraryList: DependencyListForCliModule,
+    extensionRegistrars: List<FirExtensionRegistrar>,
+    metadataCompilationMode: Boolean,
+    librariesScope: AbstractProjectFileSearchScope,
+    isCommonSource: (F) -> Boolean,
+    fileBelongsToModule: (F, String) -> Boolean,
+): List<SessionWithSources<F>> {
+    val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
+    val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesScope)
+
+    return SessionConstructionUtils.prepareSessions(
+        files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform,
+        metadataCompilationMode, libraryList, extensionRegistrars, isCommonSource, isScript = { false }, fileBelongsToModule,
+        createSharedLibrarySession = {
+            FirJKlibSessionFactory.createSharedLibrarySession(
+                rootModuleName,
+                projectEnvironment,
+                extensionRegistrars,
+                packagePartProviderForLibraries,
+                configuration.languageVersionSettings,
+                predefinedJavaComponents = predefinedJavaComponents,
+            )
+        },
+        createLibrarySession = { sharedLibrarySession ->
+            FirJKlibSessionFactory.createLibrarySession(
+                resolvedLibraries.map { it.library },
+                sharedLibrarySession,
+                libraryList.moduleDataProvider,
+                projectEnvironment,
+                extensionRegistrars,
+                librariesScope,
+                packagePartProviderForLibraries,
+                configuration.languageVersionSettings,
+                predefinedJavaComponents = predefinedJavaComponents,
+            )
+        }
+    ) { _, moduleData, isForLeafHmppModule, sessionConfigurator ->
+        FirJKlibSessionFactory.createSourceSession(
+            moduleData = moduleData,
+            javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources(),
+            projectEnvironment = projectEnvironment,
+            createIncrementalCompilationSymbolProviders = { null },
+            extensionRegistrars = extensionRegistrars,
+            configuration = configuration,
+            predefinedJavaComponents = predefinedJavaComponents,
+            needRegisterJavaElementFinder = true,
+            packagePartProvider = packagePartProviderForLibraries,
+            init = sessionConfigurator,
+            isForLeafHmppModule = isForLeafHmppModule
+        )
     }
 }
