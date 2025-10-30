@@ -24,7 +24,9 @@ FILE: enumClassDeclaration.kt
                 super<R|B|>()
             }
 
-            public open override fun getString(): R|kotlin/String|
+            public open override fun getString(): R|kotlin/String| {
+                ^getString String(north)
+            }
 
         }
 
@@ -33,7 +35,9 @@ FILE: enumClassDeclaration.kt
                 super<R|B|>()
             }
 
-            public open override fun getString(): R|kotlin/String|
+            public open override fun getString(): R|kotlin/String| {
+                ^getString String(south)
+            }
 
         }
 
