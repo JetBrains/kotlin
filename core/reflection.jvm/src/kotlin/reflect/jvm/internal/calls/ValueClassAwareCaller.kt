@@ -15,7 +15,6 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.full.createDefaultType
-import kotlin.reflect.full.withNullability
 import kotlin.reflect.jvm.internal.*
 
 /**
@@ -39,7 +38,12 @@ internal class ValueClassAwareCaller<out M : Member?>(
     override val isBoundInstanceCallWithValueClasses: Boolean
         get() = caller is CallerImpl.Method.BoundInstance
 
-    private class BoxUnboxData(val argumentRange: IntRange, val unboxParameters: Array<Method?>, val box: Method?)
+    private class BoxUnboxData(
+        val argumentRange: IntRange,
+        val unboxParameters: Array<Method?>,
+        val disableUnboxingParameterIndices: Set<Int>,
+        val box: Method?,
+    )
 
     private val data: BoxUnboxData = run {
         val returnType = callable.returnType
@@ -55,7 +59,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
         if (callable.isGetterOfUnderlyingPropertyOfValueClass()) {
             // Getter of the underlying val of a value class is always called on a boxed receiver,
             // no argument unboxing is required.
-            return@run BoxUnboxData(IntRange.EMPTY, emptyArray(), box)
+            return@run BoxUnboxData(IntRange.EMPTY, emptyArray(), emptySet(), box)
         }
 
         val shift = when {
@@ -106,7 +110,16 @@ internal class ValueClassAwareCaller<out M : Member?>(
             else null
         }
 
-        BoxUnboxData(argumentRange, unbox, box)
+        val disableUnboxingParameterIndices = buildSet {
+            // If the actual called member lies in the interface/DefaultImpls class, it accepts a boxed parameter as ex-dispatch receiver.
+            // Forbid unboxing dispatchReceiver in this case.
+            val container = callable.container
+            if (!callable.isConstructor && container is KClass<*> && container.isValue && member?.acceptsBoxedReceiverParameter() == true) {
+                add(0)
+            }
+        }
+
+        BoxUnboxData(argumentRange, unbox, disableUnboxingParameterIndices, box)
     }
 
     override fun call(args: Array<*>): Any? {
@@ -116,7 +129,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         val unboxedArguments = Array(args.size) { index ->
             val arg = args[index]
-            if (index in range) {
+            if (index in range && index !in data.disableUnboxingParameterIndices) {
                 // Note that arg may be null in case we're calling a $default method, and it's an optional parameter of an inline class type
                 val method = unbox[index]
                 when {
@@ -151,20 +164,9 @@ private fun makeKotlinParameterTypes(callable: ReflectKCallable<*>, member: Memb
     val result = mutableListOf<KType>()
     val container = callable.container
     if (!callable.isConstructor && container is KClass<*> && container.isValue) {
-        val containerType = container.createDefaultType()
-        if (member?.acceptsBoxedReceiverParameter() == true) {
-            // Hack to forbid unboxing dispatchReceiver if it is used upcasted.
-            // `kotlinParameterTypes` are used to determine shifts and calls according to whether type is an inline class or not.
-            // If it is an inline class, boxes are unboxed. If the actual called member lies in the interface/DefaultImpls class,
-            // it accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
-            result.add(containerType.withNullability(nullable = true))
-        } else {
-            result.add(containerType)
-        }
+        result.add(container.createDefaultType())
     }
-
     val isInnerClassConstructor = callable.isConstructor && (container as? KClass<*>)?.isInner == true
-
     for (parameter in callable.allParameters) {
         if (parameter.kind != KParameter.Kind.INSTANCE || isInnerClassConstructor) {
             result.add(parameter.type)
