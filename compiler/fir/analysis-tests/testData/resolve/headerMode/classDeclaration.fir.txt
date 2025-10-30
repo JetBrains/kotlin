@@ -21,6 +21,12 @@ FILE: classDeclaration.kt
 
         public final fun funD(): R|kotlin/Int|
 
+        public final inline fun funE(): R|kotlin/String| {
+            local final fun funF(): R|kotlin/String|
+
+            ^funE R|<local>/funF|()
+        }
+
     }
     public abstract interface B : R|kotlin/Any| {
         public open fun funA(): R|kotlin/String|
