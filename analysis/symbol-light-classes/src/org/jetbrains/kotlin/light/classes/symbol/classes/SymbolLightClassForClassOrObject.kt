@@ -550,20 +550,15 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                     }
 
                     val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
+                    val isErasedSignature = javaMethod.name in erasedCollectionParameterNames ||
+                            // TODO recursively visit the parameter types?
+                            callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }
 
-                    when {
-                        javaMethod.name !in erasedCollectionParameterNames -> {
-                            if (callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }) {
-                                result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = false))
-                            } else {
-                                createDelegateMethod(functionSymbol = callableSymbol)
-                                result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = true))
-                            }
-                        }
-
-                        else -> {
-                            result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = false))
-                        }
+                    if (isErasedSignature) {
+                        result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = false))
+                    } else {
+                        createDelegateMethod(functionSymbol = callableSymbol)
+                        result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = true))
                     }
                 }
 
