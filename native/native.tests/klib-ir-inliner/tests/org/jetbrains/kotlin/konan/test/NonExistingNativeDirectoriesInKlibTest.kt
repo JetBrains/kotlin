@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.konan.library.KLIB_TARGETS_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.components.bitcode
+import org.jetbrains.kotlin.konan.library.components.nativeIncludedBinaries
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -36,14 +37,14 @@ class NonExistingNativeDirectoriesInKlibTest {
         val klibDir = writeLibrary(includedFileNames = includedFileNames)
         val klibFile = klibDir.compressKlib()
 
-        assertTrue(klibDir.readLibrary().includedPaths.mapToSet { KFile(it).name } == includedFileNames)
-        assertTrue(klibFile.readLibrary().includedPaths.mapToSet { KFile(it).name } == includedFileNames)
+        assertTrue(klibDir.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { KFile(it).name } == includedFileNames)
+        assertTrue(klibFile.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { KFile(it).name } == includedFileNames)
 
         klibDir.deleteNativeTargetSubdirectory("included")
         klibDir.compressKlib()
 
-        assertTrue(klibDir.readLibrary().includedPaths.isEmpty())
-        assertTrue(klibFile.readLibrary().includedPaths.isEmpty())
+        assertTrue(klibDir.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths.isNullOrEmpty())
+        assertTrue(klibFile.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths.isNullOrEmpty())
     }
 
     @Test
