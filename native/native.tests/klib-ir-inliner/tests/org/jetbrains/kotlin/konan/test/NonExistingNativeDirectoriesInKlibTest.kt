@@ -33,14 +33,14 @@ class NonExistingNativeDirectoriesInKlibTest {
     lateinit var tmpDir: Path
 
     @Test
-    fun `no included dir`() {
-        val includedFileNames = setOf("included1.txt", "included2.kt")
+    fun `no included objects dir`() {
+        val nativeObjectFileNames = setOf("included1.txt", "included2.kt")
 
-        val klibDir = writeLibrary(includedFileNames = includedFileNames)
+        val klibDir = writeLibrary(includedFileNames = nativeObjectFileNames)
         val klibFile = klibDir.compressKlib()
 
-        assertTrue(klibDir.readLibrary().nativeObjects(TEST_TARGET)?.nativeObjectFilePaths?.mapToSet { KFile(it).name } == includedFileNames)
-        assertTrue(klibFile.readLibrary().nativeObjects(TEST_TARGET)?.nativeObjectFilePaths?.mapToSet { KFile(it).name } == includedFileNames)
+        assertTrue(klibDir.readLibrary().nativeObjects(TEST_TARGET)?.nativeObjectFilePaths?.mapToSet { KFile(it).name } == nativeObjectFileNames)
+        assertTrue(klibFile.readLibrary().nativeObjects(TEST_TARGET)?.nativeObjectFilePaths?.mapToSet { KFile(it).name } == nativeObjectFileNames)
 
         klibDir.deleteNativeTargetSubdirectory(KLIB_NATIVE_OBJECTS_FOLDER_NAME)
         klibDir.compressKlib()
@@ -50,7 +50,7 @@ class NonExistingNativeDirectoriesInKlibTest {
     }
 
     @Test
-    fun `no native dir`() {
+    fun `no bitcode dir`() {
         val bitcodeFileNames = setOf("bitc0de.000", "btc.123")
 
         val klibDir = writeLibrary(bitcodeFileNames = bitcodeFileNames)
