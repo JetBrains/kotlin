@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.zipDirAs
-import org.jetbrains.kotlin.konan.library.KLIB_TARGETS_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_BITCODE_FOLDER_NAME
+import org.jetbrains.kotlin.konan.library.components.KlibNativeConstants.KLIB_TARGETS_FOLDER_NAME
+import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesConstants.KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.library.components.nativeIncludedBinaries
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
@@ -40,7 +42,7 @@ class NonExistingNativeDirectoriesInKlibTest {
         assertTrue(klibDir.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { KFile(it).name } == includedFileNames)
         assertTrue(klibFile.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { KFile(it).name } == includedFileNames)
 
-        klibDir.deleteNativeTargetSubdirectory("included")
+        klibDir.deleteNativeTargetSubdirectory(KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME)
         klibDir.compressKlib()
 
         assertTrue(klibDir.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths.isNullOrEmpty())
@@ -57,7 +59,7 @@ class NonExistingNativeDirectoriesInKlibTest {
         assertTrue(klibDir.readLibrary().bitcode(TEST_TARGET)?.bitcodeFilePaths?.mapToSet { KFile(it).name } == bitcodeFileNames)
         assertTrue(klibFile.readLibrary().bitcode(TEST_TARGET)?.bitcodeFilePaths?.mapToSet { KFile(it).name } == bitcodeFileNames)
 
-        klibDir.deleteNativeTargetSubdirectory("native")
+        klibDir.deleteNativeTargetSubdirectory(KLIB_BITCODE_FOLDER_NAME)
         klibDir.compressKlib()
 
         assertTrue(klibDir.readLibrary().bitcode(TEST_TARGET)?.bitcodeFilePaths.isNullOrEmpty())

@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.library.AbstractNativeKlibWriterTest.NativeParameters
 import org.jetbrains.kotlin.konan.library.AbstractNativeKlibWriterTest.NativeParameters.BinaryFile
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_BITCODE_FOLDER_NAME
+import org.jetbrains.kotlin.konan.library.components.KlibNativeConstants.KLIB_TARGETS_FOLDER_NAME
+import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesConstants.KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.AbstractKlibWriterTest
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
@@ -111,13 +114,13 @@ fun KlibMockDSL.targets(target: KonanTarget, init: KlibMockDSL.() -> Unit = {}) 
 }
 
 fun KlibMockDSL.included(binaryFiles: List<BinaryFile> = emptyList()) {
-    dir("included") {
+    dir(KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME) {
         binaryFiles.forEach { binaryFile -> file(binaryFile.file.name, binaryFile.content) }
     }
 }
 
 fun KlibMockDSL.native(binaryFiles: List<BinaryFile> = emptyList()) {
-    dir("native") {
+    dir(KLIB_BITCODE_FOLDER_NAME) {
         binaryFiles.forEach { binaryFile -> file(binaryFile.file.name, binaryFile.content) }
     }
 }

@@ -39,6 +39,7 @@ class KlibNativeIncludedBinariesComponentLayout(val target: KonanTarget, root: K
             .child(KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME)
 }
 
+/** Constants for included Native binary files stored in Klibs. */
 object KlibNativeIncludedBinariesConstants {
     const val KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME = "included"
 }

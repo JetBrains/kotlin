@@ -38,6 +38,7 @@ class KlibBitcodeComponentLayout(val target: KonanTarget, root: KlibFile) : Klib
             .child(KLIB_BITCODE_FOLDER_NAME)
 }
 
+/** Constants for bitcode files stored in Native Klibs. */
 object KlibBitcodeConstants {
     const val KLIB_BITCODE_FOLDER_NAME = "native"
 }

@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_BITCODE_FOLDER_NAME
+import org.jetbrains.kotlin.konan.library.components.KlibNativeConstants.KLIB_TARGETS_FOLDER_NAME
+import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesConstants.KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibraryLayout
-
-const val KLIB_TARGETS_FOLDER_NAME = "targets"
 
 interface TargetedKotlinLibraryLayout : KotlinLibraryLayout {
     val target: KonanTarget?
@@ -31,12 +32,12 @@ interface TargetedKotlinLibraryLayout : KotlinLibraryLayout {
     val targetDir
         get() = File(targetsDir, target!!.visibleName)
     val includedDir
-        get() = File(targetDir, "included")
+        get() = File(targetDir, KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME)
 }
 
 interface BitcodeKotlinLibraryLayout : TargetedKotlinLibraryLayout, KotlinLibraryLayout {
     val nativeDir
-        get() = File(targetDir, "native")
+        get() = File(targetDir, KLIB_BITCODE_FOLDER_NAME)
 }
 
 interface KonanLibraryLayout : BitcodeKotlinLibraryLayout
