@@ -64,6 +64,12 @@ fun FirDeclaration?.computeIrOrigin(
     val computed = when {
         firOrigin is FirDeclarationOrigin.Plugin -> GeneratedByPlugin(firOrigin.key)
 
+        firOrigin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> IrDeclarationOrigin.SCRIPT_RESULT_PROPERTY
+        firOrigin is FirDeclarationOrigin.ReplCustomization -> when (firOrigin) {
+            FirDeclarationOrigin.ReplCustomization.ContainerClass -> IrDeclarationOrigin.SCRIPT_CLASS
+            FirDeclarationOrigin.ReplCustomization.EvalFunction -> IrDeclarationOrigin.REPL_EVAL_FUNCTION
+        }
+
         this is FirValueParameter -> when (name) {
             SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> IrDeclarationOrigin.UNDERSCORE_PARAMETER
             SpecialNames.DESTRUCT -> IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER

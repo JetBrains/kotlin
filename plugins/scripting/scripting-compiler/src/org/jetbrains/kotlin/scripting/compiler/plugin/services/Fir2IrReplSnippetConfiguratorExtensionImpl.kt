@@ -149,7 +149,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
         symbol: FirBasedSymbol<*>, parentClassOrSnippet: IrClass, irSnippet: IrReplSnippet
     ): IrClass =
         symbol.getContainingClassSymbol()?.let {
-            if (it is FirRegularClassSymbol && it.origin != FirDeclarationOrigin.Synthetic.ReplContainer)
+            if (it is FirRegularClassSymbol && it.origin != FirDeclarationOrigin.ReplCustomization.ContainerClass)
                 createClassFromOtherSnippet(it, parentClassOrSnippet, irSnippet)
             else null
         } ?: parentClassOrSnippet
