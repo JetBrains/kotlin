@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.appendText
@@ -85,6 +89,36 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
                 extractNativeTasksCommandLineArgumentsFromOutput(":linkDebugTestHost") {
                     assertCommandLineArgumentsContain("-Xpartial-linkage=ENABLE")
                 }
+            }
+        }
+    }
+
+    @DisplayName("KT-81359 IncompatibleBinaryConfiguration diagnostic is not triggered for tasks configuration")
+    @GradleTest
+    fun testIncompatibleBinaryConfigurationDiagnostic(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxX64 {
+                        binaries.staticLib()
+                    }
+
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+
+                project.tasks.withType<KotlinNativeLink>().configureEach { link ->
+                    link.binary.debuggable = true
+                    link.binary.optimized = true
+                }
+            }
+
+            build(":linkDebugStaticLinuxX64") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.IncompatibleBinaryTaskConfiguration)
+                assertNoDiagnostic(KotlinToolingDiagnostics.IncompatibleBinaryConfiguration)
+                assertOutputContains("w: Unsupported combination of flags: -opt and -g. Please pick one.")
             }
         }
     }
