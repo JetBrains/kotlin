@@ -11,11 +11,7 @@ interface TargetedLibrary {
     val includedPaths: List<String>
 }
 
-interface BitcodeLibrary : TargetedLibrary {
-    val bitcodePaths: List<String>
-}
-
-interface KonanLibrary : BitcodeLibrary, KotlinLibrary {
+interface KonanLibrary : KotlinLibrary, TargetedLibrary {
     val linkerOpts: List<String>
 }
 
