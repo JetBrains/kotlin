@@ -70,7 +70,7 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
                 dependencies = KlibLoader { libraryPaths(parameters.dependencies.map { it.path }) }.load().librariesStdlibFirst,
                 nopack = parameters.nopack,
                 shortName = parameters.shortName,
-                staticLibraries = parameters.includedFiles.map { it.file.path },
+                staticLibraries = parameters.nativeObjectFiles.map { it.file.path },
                 klibAbiCompatibilityLevel = parameters.abiLevel,
         )
 

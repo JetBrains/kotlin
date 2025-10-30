@@ -28,7 +28,7 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
         var shortName: String? = null
         var target: KonanTarget = KonanTarget.IOS_ARM64
         var bitCodeFiles: List<BinaryFile> = emptyList()
-        var includedFiles: List<BinaryFile> = emptyList()
+        var nativeObjectFiles: List<BinaryFile> = emptyList()
 
         final override var builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.NATIVE
             set(_) = abort<Nothing>("only NATIVE built-ins platform is supported")
@@ -61,10 +61,10 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
     }
 
     @Test
-    fun `Writing a klib with custom included files`() {
+    fun `Writing a klib with custom native objects`() {
         repeat(3) { index ->
             runTestWithParameters {
-                includedFiles = mockBinaryFiles(count = index + 1, prefix = index.toString(), extension = "o")
+                nativeObjectFiles = mockBinaryFiles(count = index + 1, prefix = index.toString(), extension = "o")
             }
         }
     }
@@ -82,7 +82,7 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
     override fun customizeMockKlib(parameters: P) {
         super.customizeMockKlib(parameters)
         dsl.target(parameters.target) {
-            included(parameters.includedFiles)
+            nativeObjects(parameters.nativeObjectFiles)
             native(parameters.bitCodeFiles)
         }
     }
@@ -113,7 +113,7 @@ fun KlibMockDSL.target(target: KonanTarget, init: KlibMockDSL.() -> Unit = {}) {
     }
 }
 
-fun KlibMockDSL.included(binaryFiles: List<BinaryFile> = emptyList()) {
+fun KlibMockDSL.nativeObjects(binaryFiles: List<BinaryFile> = emptyList()) {
     dir(KLIB_NATIVE_OBJECTS_FOLDER_NAME) {
         binaryFiles.forEach { binaryFile -> file(binaryFile.file.name, binaryFile.content) }
     }
