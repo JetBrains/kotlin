@@ -206,7 +206,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         return null
     }
 
-    fun findDefaultMethod(name: String, desc: String, isMember: Boolean): Method? {
+    fun findDefaultMethod(name: String, desc: String, isMember: Boolean, hasExtensionParameter: Boolean): Method? {
         if (name == "<init>") return null
 
         val parameterTypes = arrayListOf<Class<*>>()
@@ -215,7 +215,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             parameterTypes.add(jClass)
         }
         val jvmDescriptor = parseJvmDescriptor(desc, parseReturnType = true)
-        addParametersAndMasks(parameterTypes, jvmDescriptor.parameters, isConstructor = false)
+        addParametersAndMasks(parameterTypes, jvmDescriptor.parameters, isConstructor = false, hasExtensionParameter)
 
         return methodOwner.lookupMethod(
             name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes.toTypedArray(), jvmDescriptor.returnType!!, isStaticDefault = isMember
@@ -228,18 +228,25 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     fun findDefaultConstructor(desc: String): Constructor<*>? =
         jClass.tryGetConstructor(arrayListOf<Class<*>>().also { parameterTypes ->
             val parsedParameters = parseJvmDescriptor(desc, parseReturnType = false).parameters
-            addParametersAndMasks(parameterTypes, parsedParameters, isConstructor = true)
+            addParametersAndMasks(parameterTypes, parsedParameters, isConstructor = true, hasExtensionParameter = false)
         })
 
-    private fun addParametersAndMasks(result: MutableList<Class<*>>, valueParameters: List<Class<*>>, isConstructor: Boolean) {
+    private fun addParametersAndMasks(
+        result: MutableList<Class<*>>,
+        parameters: List<Class<*>>,
+        isConstructor: Boolean,
+        hasExtensionParameter: Boolean,
+    ) {
         // Constructors that include parameters of inline class types contain an extra trailing DEFAULT_CONSTRUCTOR_MARKER parameter,
         // which should be excluded when calculating mask size.
         val withoutMarker =
-            if (valueParameters.lastOrNull() == DEFAULT_CONSTRUCTOR_MARKER) valueParameters.subList(0, valueParameters.size - 1)
-            else valueParameters
+            if (parameters.lastOrNull() == DEFAULT_CONSTRUCTOR_MARKER) parameters.subList(0, parameters.size - 1)
+            else parameters
+
+        val allocatedBitsForDefaultMask = if (hasExtensionParameter) withoutMarker.size - 1 else withoutMarker.size
 
         result.addAll(withoutMarker)
-        repeat((withoutMarker.size + Integer.SIZE - 1) / Integer.SIZE) {
+        repeat((allocatedBitsForDefaultMask + Integer.SIZE - 1) / Integer.SIZE) {
             result.add(Integer.TYPE)
         }
 
