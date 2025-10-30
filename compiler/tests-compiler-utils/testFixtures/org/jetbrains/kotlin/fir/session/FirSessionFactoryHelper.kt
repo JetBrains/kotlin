@@ -108,7 +108,7 @@ object FirSessionFactoryHelper {
 
                     override fun isPreRelease(): Boolean = stub()
 
-                    override fun <T> getFlag(flag: AnalysisFlag<T>): T = stub()
+                    override fun <T> getFlag(flag: AnalysisFlag<T>): T = flag.defaultValue
 
                     override val apiVersion: ApiVersion
                         get() = stub()

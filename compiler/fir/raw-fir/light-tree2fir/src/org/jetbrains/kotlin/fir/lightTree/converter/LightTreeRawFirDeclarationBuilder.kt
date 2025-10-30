@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.config.AnalysisFlags
 
 class LightTreeRawFirDeclarationBuilder(
     session: FirSession,
@@ -66,6 +67,7 @@ class LightTreeRawFirDeclarationBuilder(
 ) : AbstractLightTreeRawFirBuilder(session, tree, context) {
 
     private val expressionConverter = LightTreeRawFirExpressionBuilder(session, tree, this, context)
+    private val headerMode = session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -134,21 +136,23 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlockExpression
      */
-    fun convertBlockExpression(block: LighterASTNode): FirBlock {
-        return convertBlockExpressionWithoutBuilding(block).build()
+    fun convertBlockExpression(block: LighterASTNode, generateHeader: Boolean = false): FirBlock {
+        return convertBlockExpressionWithoutBuilding(block, generateHeader = generateHeader).build()
     }
 
-    fun convertBlockExpressionWithoutBuilding(block: LighterASTNode, kind: KtFakeSourceElementKind? = null): FirBlockBuilder {
+    fun convertBlockExpressionWithoutBuilding(block: LighterASTNode, kind: KtFakeSourceElementKind? = null, generateHeader: Boolean = false): FirBlockBuilder {
         val firStatements = block.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
-                FUN -> container += convertFunctionDeclaration(node)
-                KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
-                DESTRUCTURING_DECLARATION -> container +=
-                    convertDestructingDeclaration(node).toFirDestructingDeclaration(this, baseModuleData)
-                TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
-                CLASS_INITIALIZER -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
-                else -> if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
+            if (!generateHeader || container.isEmpty()) { // Take only the first statement which could be a contract for header generation.
+                when (node.tokenType) {
+                    CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
+                    FUN -> container += convertFunctionDeclaration(node)
+                    KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
+                    DESTRUCTURING_DECLARATION -> container +=
+                        convertDestructingDeclaration(node).toFirDestructingDeclaration(this, baseModuleData)
+                    TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
+                    CLASS_INITIALIZER -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
+                    else -> if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
+                }
             }
         }
         return FirBlockBuilder().apply {
@@ -688,7 +692,9 @@ class LightTreeRawFirDeclarationBuilder(
                 }
             }
         }.also {
-            it.isFromInlineFunction = context.containedWithinInlineFunction
+            if (context.containedWithinInlineFunction) {
+                it.isFromInlineFunction = true
+            }
             if (classNode.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
                 it.initContainingClassForLocalAttr()
             }
@@ -2061,8 +2067,9 @@ class LightTreeRawFirDeclarationBuilder(
 
                     val allowLegacyContractDescription = outerContractDescription == null
                     val containedWithinInlineFunction = context.containedWithinInlineFunction || functionBuilder.status.isInline
+                    val generateHeaders = headerMode && !containedWithinInlineFunction && (returnTypeRef !is FirImplicitTypeRef)
                     val bodyWithContractDescription = withForcedLocalContext(containedWithinInlineFunction) {
-                        convertFunctionBody(block, expression, allowLegacyContractDescription)
+                        convertFunctionBody(block, expression, allowLegacyContractDescription, generateHeaders)
                     }
                     this.body = bodyWithContractDescription.first
                     val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
@@ -2076,7 +2083,9 @@ class LightTreeRawFirDeclarationBuilder(
                 }
                 context.firFunctionTargets.removeLast()
             }.build().also {
-                it.isFromInlineFunction = context.containedWithinInlineFunction
+                if (context.containedWithinInlineFunction) {
+                    it.isFromInlineFunction = true
+                }
                 target.bind(it)
                 fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
             }
@@ -2100,11 +2109,12 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertFunctionBody(
         blockNode: LighterASTNode?,
         expression: LighterASTNode?,
-        allowLegacyContractDescription: Boolean
+        allowLegacyContractDescription: Boolean,
+        generateHeader: Boolean = false,
     ): Pair<FirBlock?, FirContractDescription?> {
         return when {
             blockNode != null -> {
-                val block = convertBlock(blockNode)
+                val block = convertBlock(blockNode, generateHeader)
                 val contractDescription = runIf(allowLegacyContractDescription) {
                     val blockSource = block.source
                     val diagnostic = when {
@@ -2114,7 +2124,11 @@ class LightTreeRawFirDeclarationBuilder(
                     }
                     processLegacyContractDescription(block, diagnostic)
                 }
-                block to contractDescription
+                if (generateHeader) {
+                    return buildEmptyExpressionBlock() to contractDescription
+                } else {
+                    block to contractDescription
+                }
             }
             expression != null -> FirSingleExpressionBlock(
                 expressionConverter.getAsFirExpression<FirExpression>(expression, "Function has no body (but should)").toReturn()
@@ -2136,7 +2150,7 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlock
      */
-    fun convertBlock(block: LighterASTNode?): FirBlock {
+    fun convertBlock(block: LighterASTNode?, generateHeader: Boolean = false): FirBlock {
         if (block == null) return buildEmptyExpressionBlock()
         if (block.tokenType != BLOCK) {
             return FirSingleExpressionBlock(
@@ -2144,7 +2158,7 @@ class LightTreeRawFirDeclarationBuilder(
             )
         }
 
-        return convertBlockExpression(block)
+        return convertBlockExpression(block, generateHeader)
     }
 
     /**
