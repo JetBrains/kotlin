@@ -1,0 +1,30 @@
+public abstract class CCollection /* test.CCollection*/<Elem>  implements test.ICollection<Elem> {
+  public  CCollection();//  .ctor()
+
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public abstract int getSize();//  getSize()
+
+  public boolean add(Elem);//  add(Elem)
+
+  public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
+
+  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  public final int size();//  size()
+
+  public java.lang.Object[] toArray();//  toArray()
+
+  public void clear();//  clear()
+}
+
+public abstract class CCollection2 /* test.CCollection2*/<Elem>  extends test.CCollection<Elem> {
+  public  CCollection2();//  .ctor()
+}
+
+public abstract interface ICollection /* test.ICollection*/<Elem>  extends java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+}
