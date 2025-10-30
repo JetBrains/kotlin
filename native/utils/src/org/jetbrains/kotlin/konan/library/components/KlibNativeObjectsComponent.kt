@@ -39,6 +39,7 @@ class KlibNativeObjectsComponentLayout(val target: KonanTarget, root: KlibFile) 
             .child(KLIB_NATIVE_OBJECTS_FOLDER_NAME)
 }
 
+/** Constants for included object files stored in Native Klibs. */
 object KlibNativeObjectConstants {
     const val KLIB_NATIVE_OBJECTS_FOLDER_NAME = "included"
 }

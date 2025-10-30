@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.library.components
 
+/** Common constants for Native Klib extensions. */
 object KlibNativeConstants {
     const val KLIB_TARGETS_FOLDER_NAME = "targets"
 }
