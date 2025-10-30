@@ -167,39 +167,43 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
             addDelegatesToInterfaceMethods(result, classSymbol, allSupertypes)
 
-            addMethodsFromCollectionsIfNeeded(result, classSymbol)
+            addJavaCollectionMethodStubsIfNeeded(result, classSymbol)
 
             result
         }
     }
 
-    private fun KaSession.addMethodsFromCollectionsIfNeeded(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
-        if (classSymbol.classKind == KaClassKind.INTERFACE) {
-            // TODO?
+    private fun KaSession.addJavaCollectionMethodStubsIfNeeded(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
+        if (classSymbol.classKind != KaClassKind.CLASS) {
             return
         }
-        //val allSupertypes = classSymbol.defaultType.allSupertypes.filterIsInstance<KaClassType>()
-        for (supertype in classSymbol.superTypes.filterIsInstance<KaClassType>()) {
-            val classId = supertype.classId
-            val javaClassId = mapKotlinClassToJava(classId) ?: continue
 
-            val kotlinCollectionSymbol = supertype.symbol as? KaClassSymbol ?: continue
-            val javaCollectionSymbol = findClass(javaClassId) ?: continue
+        val allSupertypes = classSymbol.defaultType.allSupertypes
+            .filterIsInstance<KaClassType>()
+            .filter { it.classId != StandardClassIds.Any }
+            .toList()
 
-            val javaBaseClass = javaCollectionSymbol.psi as? PsiClass ?: continue
+        if (allSupertypes.any { (it.symbol as? KaClassSymbol)?.classKind != KaClassKind.INTERFACE }) {
+            // Collection method stubs should be created only inside the first non-interface subtype of the Kotlin mapped class
+            return
+        }
 
-            val typeParameterMapping = mutableMapOf<PsiTypeParameter, PsiType>()
+        val closestMappedSupertype = allSupertypes.find { mapKotlinClassToJava(it.classId) != null } ?: return
+        val javaClassId = mapKotlinClassToJava(closestMappedSupertype.classId) ?: return
+        val kotlinCollectionSymbol = closestMappedSupertype.symbol as? KaClassSymbol ?: return
+        val javaCollectionSymbol = findClass(javaClassId) ?: return
+        val javaBaseClass = javaCollectionSymbol.psi as? PsiClass ?: return
 
-            javaBaseClass.typeParameters.zip(supertype.typeArguments).forEach { (javaParam, kotlinArg) ->
+        val typeParameterMapping = buildMap<PsiTypeParameter, PsiType> {
+            javaBaseClass.typeParameters.zip(closestMappedSupertype.typeArguments).forEach { (javaParam, kotlinArg) ->
                 val psiType = kotlinArg.type?.asPsiType(useSitePosition = this@SymbolLightClassForClassOrObject, allowErrorTypes = true)
                     ?: return@forEach
-                typeParameterMapping[javaParam] = psiType
+                put(javaParam, psiType)
             }
-
-            val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
-
-            calcMethods(javaBaseClass, javaCollectionSymbol, kotlinCollectionSymbol, substitutor, result)
         }
+
+        val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
+        calcMethods(javaBaseClass, javaCollectionSymbol, kotlinCollectionSymbol, substitutor, result)
     }
 
     private fun mapKotlinClassToJava(classId: ClassId): ClassId? {
@@ -235,10 +239,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
     }
 
-    private val javaGetterNameToKotlinGetterName: Map<String, String> =
-        BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.map { (propertyFqName, javaGetterShortName) ->
-            Pair(javaGetterShortName.asString(), JvmAbi.getterName(propertyFqName.shortName().asString()))
-        }.toMap()
+    private val javaGetterNameToKotlinGetterName: Map<String, String> = buildMap {
+        BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.forEach { (propertyFqName, javaGetterShortName) ->
+            put(javaGetterShortName.asString(), JvmAbi.getterName(propertyFqName.shortName().asString()))
+        }
+    }
 
     private val membersWithSpecializedSignature: Set<String> =
         SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SIGNATURES.mapTo(LinkedHashSet()) {
@@ -333,23 +338,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     private fun PsiType.isTypeParameter(): Boolean =
         this is PsiClassType && this.resolve() is PsiTypeParameter
-
-//    private fun collectTypeParameters(type: PsiType, mapping: MutableMap<PsiTypeParameter, PsiType>) {
-//        when (type) {
-//            is PsiClassType -> {
-//                val resolved = type.resolve()
-//                if (resolved is PsiTypeParameter) {
-//                    mapping[resolved] = PsiType.getJavaLangObject(manager, resolveScope)
-//                } else {
-//                    // Recursively collect from type arguments
-//                    type.parameters.forEach { collectTypeParameters(it, mapping) }
-//                }
-//            }
-//            is PsiArrayType -> {
-//                collectTypeParameters(type.componentType, mapping)
-//            }
-//        }
-//    }
 
     private fun javaUtilMapMethodWithSpecialSignature(method: PsiMethod, substitutor: PsiSubstitutor): KtLightMethodWrapper? {
         val typeParameters = substitutor.substitutionMap.keys

@@ -465,6 +465,12 @@ public class SymbolLightClassesEqualityByPsiForLibraryTestGenerated extends Abst
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/collections"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
+    @Test
+    @TestMetadata("indirectInheritanceStubs.kt")
+    public void testIndirectInheritanceStubs() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/indirectInheritanceStubs.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable")
     @TestDataPath("$PROJECT_ROOT")
