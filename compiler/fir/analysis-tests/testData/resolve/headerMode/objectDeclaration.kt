@@ -25,6 +25,11 @@ object A {
     }
 
     fun funD() = 1 + 2
+
+    inline fun funE(): String {
+        fun funF() = "funF body"
+        return funF()
+    }
 }
 
 /* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, functionDeclaration, inline, nullableType,
