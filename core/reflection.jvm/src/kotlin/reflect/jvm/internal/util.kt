@@ -55,6 +55,7 @@ import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.jvm.internal.RepeatableContainer
+import kotlin.jvm.java
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -155,15 +156,23 @@ internal fun Annotated.computeAnnotations(): List<Annotation> =
         }
     }.unwrapKotlinRepeatableAnnotations()
 
-internal fun Annotation.hasInherited(): Boolean =
-    null != annotationClass.java.declaredAnnotations.find { it.annotationClass.java.name == JvmAnnotationNames.INHERITED_ANNOTATION.asString() }
+internal fun Annotation.hasInherited(): Boolean = annotationClass.hasInherited()
+
+private fun KClass<out Annotation>.hasInherited(): Boolean =
+    null != this.java.declaredAnnotations.find { it.annotationClass.java.name == JvmAnnotationNames.INHERITED_ANNOTATION.asString() }
+
+@Suppress("UNCHECKED_CAST")
+private fun getRepeatableContainerComponentType(containerClass: KClass<out Annotation>) =
+    containerClass.java.getDeclaredMethod("value").returnType.componentType!!.kotlin as KClass<out Annotation>
+
+internal fun Annotation.isRepeatableContainerForNonInheritedAnnotation(): Boolean =
+    isJavaRepeatableContainer(annotationClass) && !getRepeatableContainerComponentType(annotationClass).hasInherited()
 
 internal val Annotation.unwrappedAnnotationClass: KClass<out Annotation>
     get() {
         val annotationOrContainerClass = annotationClass
         if (isKotlinRepeatableContainer(annotationOrContainerClass) || isJavaRepeatableContainer(annotationOrContainerClass))
-            @Suppress("UNCHECKED_CAST")
-            return annotationOrContainerClass.java.getDeclaredMethod("value").returnType.componentType!!.kotlin as KClass<out Annotation>
+            return getRepeatableContainerComponentType(annotationOrContainerClass)
         else
             return annotationOrContainerClass
     }
