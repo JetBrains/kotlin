@@ -75,6 +75,6 @@ projectTests {
     withJvmStdlibAndReflect()
 }
 
-val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt")
+val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt", testSourceSet)
 
 testsJar()

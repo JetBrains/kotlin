@@ -9,7 +9,6 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -276,7 +275,15 @@ abstract class ProjectTestsExtension(val project: Project) {
             false -> project.layout.projectDirectory.dir("tests-gen")
             true -> project.layout.buildDirectory.dir("tests-gen").get()
         }
-        val generatorTask = project.generator(taskName, fqName, fixturesSourceSet) {
+        val generatorTask = project.generator(
+            taskName = taskName,
+            fqName = fqName,
+            sourceSet = fixturesSourceSet ?: project.testSourceSet,
+            inputKind = when (doNotSetFixturesSourceSetDependency) {
+                true -> GeneratorInputKind.RuntimeClasspath
+                false -> GeneratorInputKind.SourceSetJar
+            }
+        ) {
             this.args = buildList {
                 add(generationPath.asFile.absolutePath)
                 if (generateTestsInBuildDirectory) {

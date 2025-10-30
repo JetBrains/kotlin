@@ -102,22 +102,22 @@ projectTests {
     }
 }
 
-val generateCompilerArgumentsCopy by generator("org.jetbrains.kotlin.generators.arguments.GenerateCompilerArgumentsCopyKt")
+val generateCompilerArgumentsCopy by generator("org.jetbrains.kotlin.generators.arguments.GenerateCompilerArgumentsCopyKt", testSourceSet)
 
 val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt", protobufSourceSet)
 val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare", protobufCompareSourceSet)
 
-val generateGradleCompilerTypes by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleCompilerTypesKt") {
+val generateGradleCompilerTypes by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleCompilerTypesKt", testSourceSet) {
     description = "Generate Kotlin compiler arguments types Gradle representation"
 }
-val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt") {
+val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt", testSourceSet) {
     dependsOn(generateGradleCompilerTypes)
     description = "Generate Gradle plugin compiler options"
 }
-val generateUnsupportedGradleLanguageVersionsMetadata by generator("org.jetbrains.kotlin.generators.arguments.GenerateUnsupportedGradleLanguageVersionsMetadataKt") {
+val generateUnsupportedGradleLanguageVersionsMetadata by generator("org.jetbrains.kotlin.generators.arguments.GenerateUnsupportedGradleLanguageVersionsMetadataKt", testSourceSet) {
     description = "Generate Gradle plugin unsupported Kotlin language versions lifecycle metadata"
 }
-val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings")
+val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings", testSourceSet)
 
 val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)
 val generateOperationsMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt", evaluateSourceSet)

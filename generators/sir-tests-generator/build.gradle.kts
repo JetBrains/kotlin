@@ -19,4 +19,4 @@ dependencies {
     runtimeOnly(libs.junit.jupiter.api)
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.native.swift.sir.GenerateSirTestsKt")
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.native.swift.sir.GenerateSirTestsKt", mainSourceSet)

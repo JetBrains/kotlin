@@ -27,7 +27,7 @@ dependencies {
 }
 
 
-val generateAnalysisApiNativeTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.konan.GenNativeTestsKt")
+val generateAnalysisApiNativeTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.konan.GenNativeTestsKt", testSourceSet)
 
 testsJar()
 
