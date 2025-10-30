@@ -16,7 +16,9 @@ pluginApiReference {
 
     additionalDokkaConfiguration {
         reportUndocumented.set(true)
-        includes.from("api-reference-description.md")
+        if (name == "jvm") {
+            includes.setFrom("api-reference-description.md")
+        }
     }
 
     embeddedProject(project.dependencies.project(":kotlin-gradle-compiler-types"))
