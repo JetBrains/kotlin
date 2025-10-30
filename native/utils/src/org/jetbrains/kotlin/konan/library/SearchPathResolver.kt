@@ -53,9 +53,13 @@ class KonanLibraryProperResolver(
         val resolverTarget = this.target
         val candidatePath = candidate.libraryFile.absolutePath
 
-        if (!candidate.targetList.contains(resolverTarget.visibleName)) {
-            logger.strongWarning("KLIB resolver: Skipping '$candidatePath'. The target doesn't match. Expected '$resolverTarget', found ${candidate.targetList}.")
-            return false
+        val supportedTargets = candidate.supportedTargetList
+        if (supportedTargets.isNotEmpty()) {
+            // TODO: We have a choice: either assume it is the CURRENT TARGET or a list of ALL KNOWN targets.
+            if (resolverTarget.visibleName !in supportedTargets) {
+                logger.strongWarning("KLIB resolver: Skipping '$candidatePath'. The target doesn't match. Expected '$resolverTarget', found $supportedTargets.")
+                return false
+            }
         }
 
         return super.libraryMatch(candidate, unresolved)
