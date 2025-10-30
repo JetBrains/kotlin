@@ -47,13 +47,14 @@ interface KlibIrComponent : KlibComponent {
     fun signatures(fileIndex: Int): ByteArray
     fun stringLiterals(fileIndex: Int): ByteArray
 
-    enum class Kind : KlibComponent.Kind<KlibIrComponent, KlibIrComponentLayout> {
-        Main {
+    sealed class Kind : KlibComponent.Kind<KlibIrComponent, KlibIrComponentLayout> {
+        object Main : Kind() {
             override fun createLayout(root: KlibFile) = KlibIrComponentLayout.createForMainIr(root)
-        },
-        InlinableFunctions {
+        }
+
+        object InlinableFunctions : Kind() {
             override fun createLayout(root: KlibFile) = KlibIrComponentLayout.createForInlinableFunctionsIr(root)
-        };
+        }
 
         override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<KlibIrComponentLayout>): KlibIrComponent? =
             if (layoutReader.readInPlaceOrFallback(false) { it.irDir.exists }) KlibIrComponentImpl(layoutReader) else null
