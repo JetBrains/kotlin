@@ -27,7 +27,7 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
     open class NativeParameters : Parameters() {
         var shortName: String? = null
         var target: KonanTarget = KonanTarget.IOS_ARM64
-        var bitCodeFiles: List<BinaryFile> = emptyList()
+        var bitcodeFiles: List<BinaryFile> = emptyList()
         var nativeIncludedBinaryFiles: List<BinaryFile> = emptyList()
 
         final override var builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.NATIVE
@@ -73,7 +73,7 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
     fun `Writing a klib with custom bitcode files`() {
         repeat(3) { index ->
             runTestWithParameters {
-                bitCodeFiles = mockBinaryFiles(count = index + 1, prefix = index.toString(), extension = "bc")
+                bitcodeFiles = mockBinaryFiles(count = index + 1, prefix = index.toString(), extension = "bc")
             }
         }
     }
@@ -83,7 +83,7 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
         super.customizeMockKlib(parameters)
         dsl.target(parameters.target) {
             nativeIncludedBinaries(parameters.nativeIncludedBinaryFiles)
-            native(parameters.bitCodeFiles)
+            bitcode(parameters.bitcodeFiles)
         }
     }
 
@@ -119,7 +119,7 @@ fun KlibMockDSL.nativeIncludedBinaries(binaryFiles: List<BinaryFile> = emptyList
     }
 }
 
-fun KlibMockDSL.native(binaryFiles: List<BinaryFile> = emptyList()) {
+fun KlibMockDSL.bitcode(binaryFiles: List<BinaryFile> = emptyList()) {
     dir(KLIB_BITCODE_FOLDER_NAME) {
         binaryFiles.forEach { binaryFile -> file(binaryFile.file.name, binaryFile.content) }
     }
