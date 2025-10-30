@@ -1254,7 +1254,7 @@ class ParserTest : KDocTest() {
         val kdoc = """
         | [I'm an inline-style link](https://www.google.com)
         | 
-        | [I'm an inline-style link with 
+        | [I'm an inline-style link with
         | a newline](https://www.google.com)
         |
         | [I'm an inline-style link with title](https://www.google.com "Google's Homepage")
