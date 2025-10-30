@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessEx
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -37,6 +38,10 @@ object FirJavaClassOnCompanionChecker : FirPropertyAccessExpressionChecker(MppCh
         if (projectionClassSymbol?.isCompanion != true) return
 
         val containingClassSymbol = projectionClassSymbol.getContainingClassSymbol() ?: return
+
+        val receiver = expression.extensionReceiver as? FirResolvedQualifier ?: return
+        if (receiver.symbol != containingClassSymbol) return
+
         val expectedType = actualType.lookupTag.constructClassType(
             arrayOf(containingClassSymbol.defaultType()), isMarkedNullable = actualType.isMarkedNullable
         )

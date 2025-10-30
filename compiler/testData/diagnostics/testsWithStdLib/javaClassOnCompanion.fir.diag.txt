@@ -1,11 +1,9 @@
-/javaClassOnCompanion.kt:(178,187): warning: The resulting type of this 'javaClass' call is 'Class<A.Companion>' and not 'Class<A>'. Use '::class.java' to access type 'Class<A>'.
+/javaClassOnCompanion.fir.kt:(161,170): warning: The resulting type of this 'javaClass' call is 'Class<A.Companion>' and not 'Class<A>'. Use '::class.java' to access type 'Class<A>'.
 
-/javaClassOnCompanion.kt:(204,213): warning: The resulting type of this 'javaClass' call is 'Class<A.Companion>' and not 'Class<A>'. Use '::class.java' to access type 'Class<A>'.
+/javaClassOnCompanion.fir.kt:(187,196): warning: The resulting type of this 'javaClass' call is 'Class<A.Companion>' and not 'Class<A>'. Use '::class.java' to access type 'Class<A>'.
 
-/javaClassOnCompanion.kt:(235,244): warning: The resulting type of this 'javaClass' call is 'Class<A.Companion>' and not 'Class<A>'. Use '::class.java' to access type 'Class<A>'.
+/javaClassOnCompanion.fir.kt:(452,461): error: Unresolved reference 'javaClass'.
 
-/javaClassOnCompanion.kt:(386,395): error: Unresolved reference 'javaClass'.
+/javaClassOnCompanion.fir.kt:(528,537): warning: The resulting type of this 'javaClass' call is 'Class<Int.Companion>' and not 'Class<Int>'. Use '::class.java' to access type 'Class<Int>'.
 
-/javaClassOnCompanion.kt:(462,471): warning: The resulting type of this 'javaClass' call is 'Class<Int.Companion>' and not 'Class<Int>'. Use '::class.java' to access type 'Class<Int>'.
-
-/javaClassOnCompanion.kt:(521,530): warning: The resulting type of this 'javaClass' call is 'Class<String.Companion>' and not 'Class<String>'. Use '::class.java' to access type 'Class<String>'.
+/javaClassOnCompanion.fir.kt:(587,596): warning: The resulting type of this 'javaClass' call is 'Class<String.Companion>' and not 'Class<String>'. Use '::class.java' to access type 'Class<String>'.
