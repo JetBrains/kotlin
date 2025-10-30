@@ -154,10 +154,15 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                     }
                 }
 
-            val allSupertypes = classSymbol.defaultType.allSupertypes.filterIsInstance<KaClassType>().toList()
+            val allSupertypes = classSymbol.defaultType.allSupertypes
+                .filterIsInstance<KaClassType>()
+                .filter { it.classId != StandardClassIds.Any }
+                .toList()
+
+            val filteredDeclarations = processMemberScopeMappedSpecialSignatures(visibleDeclarations, classSymbol, allSupertypes, result)
 
             val suppressStatic = classKind() == KaClassKind.COMPANION_OBJECT
-            createMethods(this@SymbolLightClassForClassOrObject, visibleDeclarations, result, suppressStatic = suppressStatic)
+            createMethods(this@SymbolLightClassForClassOrObject, filteredDeclarations, result, suppressStatic = suppressStatic)
             createConstructors(this@SymbolLightClassForClassOrObject, declaredMemberScope.constructors, result)
 
             addMethodsFromCompanionIfNeeded(result, classSymbol)
@@ -171,6 +176,66 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
             result
         }
+    }
+
+    private fun KaSession.processMemberScopeMappedSpecialSignatures(
+        visibleDeclarations: Sequence<KaCallableSymbol>,
+        classSymbol: KaNamedClassSymbol,
+        allSupertypes: List<KaClassType>,
+        result: MutableList<PsiMethod>
+    ): Sequence<KaCallableSymbol> {
+        val filteredDeclarations = mutableListOf<KaCallableSymbol>()
+
+        for (callableSymbol in visibleDeclarations) {
+            when (callableSymbol) {
+                is KaNamedFunctionSymbol -> {
+                    val javaMethod = getJavaMethodForMappedMethodWithSpecialSignature(callableSymbol, allSupertypes)
+                    if (javaMethod == null) {
+                        // Default case: method is not mapped to Java collections method - just create the delegate
+                        filteredDeclarations += callableSymbol
+                        continue
+                    }
+
+                    //val javaReturnType = (javaMethod.returnType as? PsiClassReferenceType)?.resolve()
+                    //val defaultType = classSymbol.defaultType
+                    //supertype.symbol.typeParameters
+                    //val supertypeDefaultType = supertype.symbol?.defaultType
+                    //val allOverriddenSymbols = callableSymbol.allOverriddenSymbols
+
+                    // TODO what about indirect inheritance?
+                    val supertype = classSymbol.superTypes.firstOrNull() as? KaClassType
+                    val typeParameters = javaMethod.containingClass?.typeParameters.orEmpty()
+                    val typeArguments = supertype?.typeArguments.orEmpty()
+                    val typeParameterMapping = buildMap<PsiTypeParameter, PsiType> {
+                        typeParameters.zip(typeArguments).forEach { (typeParameter, typeArgument) ->
+                            val type = typeArgument.type?.asPsiType(
+                                useSitePosition = this@SymbolLightClassForClassOrObject,
+                                allowErrorTypes = true
+                            )
+                            if (type != null) put(typeParameter, type)
+                        }
+                    }
+
+                    val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
+                    val isErasedSignature = javaMethod.name in erasedCollectionParameterNames ||
+                            // TODO recursively visit the parameter types?
+                            callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }
+
+                    if (isErasedSignature) {
+                        result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = false))
+                    } else {
+                        filteredDeclarations += callableSymbol
+                        result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = true))
+                    }
+                }
+
+                else -> {
+                    filteredDeclarations += callableSymbol
+                }
+            }
+        }
+
+        return filteredDeclarations.asSequence()
     }
 
     private fun KaSession.addJavaCollectionMethodStubsIfNeeded(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
