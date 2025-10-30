@@ -54,17 +54,11 @@ import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -88,9 +82,9 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
-import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
+import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -151,7 +145,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         irBuiltIns: IrBuiltIns,
         symbolTable: SymbolTable,
         val stubGenerator: DeclarationStubGeneratorImpl,
-        val mangler: JvmDescriptorMangler,
+        val mangler: JKlibDescriptorMangler,
     ) : KotlinIrLinker(module, messageCollector, irBuiltIns, symbolTable, emptyList()) {
         override val returnUnboundSymbolsIfSignatureNotFound
             get() = false
@@ -191,7 +185,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             IrLinkerFakeOverrideProvider(
                 linker = this,
                 symbolTable = symbolTable,
-                mangler = JvmIrMangler,
+                mangler = JKlibIrMangler,
                 typeSystem = IrTypeSystemContextImpl(builtIns),
                 friendModules = emptyMap(), // TODO: provide friend modules?
                 partialLinkageSupport = partialLinkageSupport,
@@ -535,7 +529,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 
         val mainModule = getModuleDescriptor(mainModuleLib!!)
 
-        val mangler = JvmDescriptorMangler(
+        val mangler = JKlibDescriptorMangler(
             MainFunctionDetector(trace.bindingContext, configuration.languageVersionSettings)
         )
         val symbolTable = SymbolTable(IdSignatureDescriptor(mangler), IrFactoryImpl)
