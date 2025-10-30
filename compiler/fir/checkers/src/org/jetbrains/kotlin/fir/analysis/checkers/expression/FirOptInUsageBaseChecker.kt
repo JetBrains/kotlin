@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDestructuringDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInAnnotationCallChecker.getSubclassOptInApplicabilityAndMessage
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -410,6 +412,17 @@ object FirOptInUsageBaseChecker {
                 }
             }
         }
+
+        val containingDeclaration = context.containingDeclarations.lastOrNull()
+        if (containingDeclaration is FirPropertySymbol) {
+            @OptIn(SymbolInternals::class)
+            FirDestructuringDeclarationChecker.getDestructuringVariableIfEntry(containingDeclaration.fir)?.let {
+                if (it.isExperimentalityAcceptable(annotationClassId, fromSupertype)) {
+                    return true
+                }
+            }
+        }
+
         return false
     }
 

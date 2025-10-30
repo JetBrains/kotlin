@@ -7,10 +7,10 @@ data class D(val x: String)
 
 fun baz(foo: HasDeprecation) {
     @Suppress("DEPRECATION")
-    val (<!DEPRECATION!>x<!>) = foo
+    val (x) = foo
 
     @Suppress("DEPRECATION")
-    (val y = <!DEPRECATION!>x<!>) = foo
+    (val y = x) = foo
 
     @Suppress("UNCHECKED_CAST")
     val (z = x) = Any() as D
