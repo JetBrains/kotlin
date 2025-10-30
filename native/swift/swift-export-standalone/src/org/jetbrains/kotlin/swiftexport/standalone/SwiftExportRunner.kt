@@ -146,11 +146,7 @@ private fun translateModules(
     config: SwiftExportConfig,
 ): List<TranslationResult> {
     val allModules = inputModules + config.stdlibInputModule
-    val kaModules = createKaModulesForStandaloneAnalysis(
-        allModules,
-        config.targetPlatform,
-        config.platformLibsInputModule
-    )
+    val kaModules = createKaModulesForStandaloneAnalysis(allModules, config.targetPlatform, config.platformLibsInputModule)
     val explicitModulesTranslationResults = allModules
         .filter { it.config.shouldBeFullyExported }
         .map { translateModulePublicApi(it, kaModules, config) }
