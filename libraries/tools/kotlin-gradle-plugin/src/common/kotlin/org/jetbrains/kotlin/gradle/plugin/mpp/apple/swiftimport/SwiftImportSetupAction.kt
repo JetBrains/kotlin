@@ -326,6 +326,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
         generatePackageManifest(
             identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
             packageRoot = packageRoot,
+            syntheticProductType = syntheticProductType.get(),
             directlyImportedSwiftPMDependencies = directlyImportedSpmModules.get(),
             localPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().keys,
         )
@@ -333,6 +334,10 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
             generatePackageManifest(
                 identifier = dependencyIdentifier,
                 packageRoot = packageRoot.resolve("${SUBPACKAGES}/${dependencyIdentifier}"),
+                /**
+                 * FIXME: We probably always want inferred here, but figure out what is wrong with SwiftPM's linkage when 2 .dynamic products are involved
+                 */
+                syntheticProductType = SyntheticProductType.INFERRED,
                 directlyImportedSwiftPMDependencies = swiftPMDependencies,
                 localPackages = setOf(),
             )
@@ -342,6 +347,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
     private fun generatePackageManifest(
         identifier: String,
         packageRoot: File,
+        syntheticProductType: SyntheticProductType,
         directlyImportedSwiftPMDependencies: Set<SwiftPMDependency>,
         // FIXME: Implicitly, this is the directory, package and product name
         localPackages: Set<String>,
@@ -370,7 +376,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
             }
         }
 
-        val productType = when (syntheticProductType.get()) {
+        val productType = when (syntheticProductType) {
             SyntheticProductType.DYNAMIC -> ".dynamic"
             SyntheticProductType.INFERRED -> ".none"
         }
@@ -583,8 +589,8 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 "ARCHS=${targetArchitectures.joinToString(" ")}",
                 // FIXME: Check how truly necessary this is
                 "CODE_SIGN_IDENTITY=",
-                // FIXME: This will force the .dylib to be created instead of the framework
-                "-IDEPackageSupportCreateDylibsForDynamicProducts=YES"
+                // FIXME: This will force the .dylib to be created instead of the framework. We actually want to account for this?
+                // "-IDEPackageSupportCreateDylibsForDynamicProducts=YES"
             )
             exec.environment(KOTLIN_CLANG_ARGS_DUMP_FILE_ENV, clangArgsDump)
             exec.environment(KOTLIN_LD_ARGS_DUMP_FILE_ENV, ldArgsDump)
@@ -638,14 +644,14 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
             }.filter {
                 // This will actually be a clang call
                 val ldArgs = it.readLines().single()
-                "@rpath/lib${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.dylib" in ldArgs
+                ("@rpath/lib${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.dylib" in ldArgs || "@rpath/${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.framework" in ldArgs)
                         && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in ldArgs
             }
             val architectureSpecificProductLdCall = architectureSpecificProductLdCalls.single()
             val ldArgs = mutableListOf<String>()
             val resplitLdCall = architectureSpecificProductLdCall.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR)
             resplitLdCall.forEachIndexed { index, arg ->
-                if (arg == "-framework" || (arg.startsWith("-") && arg.endsWith("_framework"))) {
+                if (arg == "-filelist" || arg == "-framework" || (arg.startsWith("-") && arg.endsWith("_framework"))) {
                     ldArgs.addAll(listOf(arg, resplitLdCall[index + 1]))
                 }
                 // FIXME: match all the other flavors of library linkage
@@ -657,7 +663,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                     ldArgs.add(arg)
                 }
                 // FIXME: This is the branch that is necessary to link against other targets. Do this properly
-                if (arg.startsWith("/") && arg.endsWith(".dylib")) {
+                if (arg.startsWith("/") && (arg.endsWith(".dylib") || ".framework/" in arg)) {
                     ldArgs.add(arg)
                 }
             }
@@ -743,7 +749,33 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
         val rootProjectId = projectJson.property<String>("rootObject")
 
         val objects = projectJson.property<Map<String, Any>>("objects").toMutableMap()
-        val rootProject = objects.entries.single { it.key == rootProjectId }
+        val rootProject = objects[rootProjectId] ?: error("Couldn't find root project")
+
+        val embedAndSignShellScriptPhaseReference = objects.entries.firstOrNull { (_, pbxObject) ->
+            if (pbxObject is Map<*, *>) {
+                pbxObject as Map<String, Any>
+                val shellContent = pbxObject["shellScript"]
+                if (shellContent is String) {
+                    "gradle" in shellContent
+                } else if (shellContent is List<*>) {
+                    shellContent as List<String>
+                    shellContent.any {
+                        "gradle" in it
+                    }
+                } else false
+            } else false
+        }?.key ?: error("embedAndSign integration wasn't found")
+
+        val embedAndSignTargets = objects.entries.filter { (_, pbxObject) ->
+            if (pbxObject is Map<*, *>) {
+                pbxObject as Map<String, Any>
+                val phases = pbxObject["buildPhases"]
+                if (phases is List<*>) {
+                    phases as List<String>
+                    embedAndSignShellScriptPhaseReference in phases
+                } else false
+            } else false
+        }
 
         val productDependencyReference = generateRandomPBXObjectReference()
         objects[productDependencyReference] = mapOf(
@@ -763,31 +795,11 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
             "relativePath" to SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
         )
 
-        val embedAndSignShellScriptPhaseReference = objects.entries.first { (_, pbxObject) ->
-            if (pbxObject is Map<*, *>) {
-                pbxObject as Map<String, Any>
-                val shellContent = pbxObject["shellScript"]
-                if (shellContent is String) {
-                    "gradle" in shellContent
-                } else false
-            } else false
-        }.key
 
-        val embedAndSignTargets = objects.entries.filter { (_, pbxObject) ->
-            if (pbxObject is Map<*, *>) {
-                pbxObject as Map<String, Any>
-                val phases = pbxObject["buildPhases"]
-                if (phases is List<*>) {
-                    phases as List<String>
-                    embedAndSignShellScriptPhaseReference in phases
-                } else false
-            } else false
-        }
-
-        val updatedProject = (rootProject.value as Map<String, Any>).toMutableMap()
+        val updatedProject = (rootProject as Map<String, Any>).toMutableMap()
         val existingPackages = updatedProject["packageReferences"] as? List<String> ?: listOf()
         updatedProject["packageReferences"] = existingPackages + localPackageReference
-        objects[rootProject.key] = updatedProject
+        objects[rootProjectId] = updatedProject
 
         embedAndSignTargets.forEach { (uuid, target) ->
             val updatedTarget = (target as Map<String, Any>).toMutableMap()
