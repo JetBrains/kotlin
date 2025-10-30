@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.DanglingTypeConstraint
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.utils.danglingTypeConstraints
+import org.jetbrains.kotlin.fir.declarations.utils.isFromInlineFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -687,6 +688,7 @@ class LightTreeRawFirDeclarationBuilder(
                 }
             }
         }.also {
+            it.isFromInlineFunction = context.containedWithinInlineFunction
             if (classNode.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
                 it.initContainingClassForLocalAttr()
             }
@@ -2058,7 +2060,8 @@ class LightTreeRawFirDeclarationBuilder(
                     }
 
                     val allowLegacyContractDescription = outerContractDescription == null
-                    val bodyWithContractDescription = withForcedLocalContext {
+                    val containedWithinInlineFunction = context.containedWithinInlineFunction || functionBuilder.status.isInline
+                    val bodyWithContractDescription = withForcedLocalContext(containedWithinInlineFunction) {
                         convertFunctionBody(block, expression, allowLegacyContractDescription)
                     }
                     this.body = bodyWithContractDescription.first
@@ -2073,6 +2076,7 @@ class LightTreeRawFirDeclarationBuilder(
                 }
                 context.firFunctionTargets.removeLast()
             }.build().also {
+                it.isFromInlineFunction = context.containedWithinInlineFunction
                 target.bind(it)
                 fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
             }

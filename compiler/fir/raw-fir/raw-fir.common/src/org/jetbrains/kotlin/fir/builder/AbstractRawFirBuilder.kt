@@ -91,21 +91,27 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         name: Name,
         isExpect: Boolean,
         forceLocalContext: Boolean = false,
+        containedWithinInlineFunction: Boolean? = null,
         l: () -> T,
     ): T = when {
         forceLocalContext -> withForcedLocalContext {
-            withChildClassNameRegardlessLocalContext(name, isExpect, l)
+            withChildClassNameRegardlessLocalContext(name, isExpect, containedWithinInlineFunction, l)
         }
         else -> {
-            withChildClassNameRegardlessLocalContext(name, isExpect, l)
+            withChildClassNameRegardlessLocalContext(name, isExpect, containedWithinInlineFunction, l)
         }
     }
 
     inline fun <T> withChildClassNameRegardlessLocalContext(
         name: Name,
         isExpect: Boolean,
+        containedWithinInlineFunction: Boolean? = null,
         l: () -> T,
     ): T {
+        val oldContainedWithinInlineFunction = context.containedWithinInlineFunction
+        if (containedWithinInlineFunction != null) {
+            context.containedWithinInlineFunction = containedWithinInlineFunction
+        }
         context.className = context.className.child(name)
         val previousIsExpect = context.containerIsExpect
         context.containerIsExpect = previousIsExpect || isExpect
@@ -123,10 +129,15 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
 
             context.className = context.className.parent()
             context.containerIsExpect = previousIsExpect
+            context.containedWithinInlineFunction = oldContainedWithinInlineFunction
         }
     }
 
-    inline fun <R> withForcedLocalContext(block: () -> R): R {
+    inline fun <R> withForcedLocalContext(containedWithinInlineFunction: Boolean? = null, block: () -> R): R {
+        val oldContainedWithinInlineFunction = context.containedWithinInlineFunction
+        if (containedWithinInlineFunction != null) {
+            context.containedWithinInlineFunction = containedWithinInlineFunction
+        }
         val oldForcedLocalContext = context.inLocalContext
         context.inLocalContext = true
         val oldClassNameBeforeLocalContext = context.classNameBeforeLocalContext
@@ -141,6 +152,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
             context.classNameBeforeLocalContext = oldClassNameBeforeLocalContext
             context.inLocalContext = oldForcedLocalContext
             context.className = oldClassName
+            context.containedWithinInlineFunction = oldContainedWithinInlineFunction
         }
     }
 

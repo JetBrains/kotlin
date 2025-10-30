@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.declarations.utils.isFromInlineFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
@@ -1039,7 +1040,7 @@ open class FirDeclarationsResolveTransformer(
                 }
             result.transformReturnTypeRef(transformer, ResolutionMode.UpdateImplicitTypeRef(returnTypeRef))
         }
-        if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) && !function.isInline) {
+        if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) && !function.isInline && function.isFromInlineFunction != true) {
             // Header mode: once the return type for non-inline function is known, the body can be removed.
             result.replaceBody(null)
         }
