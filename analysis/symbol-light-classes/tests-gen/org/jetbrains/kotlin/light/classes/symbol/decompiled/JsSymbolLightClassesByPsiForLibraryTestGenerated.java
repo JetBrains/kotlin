@@ -466,6 +466,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
     }
 
     @Test
+    @TestMetadata("explicitOverrides.kt")
+    public void testExplicitOverrides() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/explicitOverrides.kt");
+    }
+
+    @Test
     @TestMetadata("indirectInheritanceStubs.kt")
     public void testIndirectInheritanceStubs() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/indirectInheritanceStubs.kt");
