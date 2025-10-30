@@ -1,0 +1,49 @@
+FILE: enumClassDeclaration.kt
+    public final enum class A : R|kotlin/Enum<A>| {
+        private constructor(): R|A| {
+            super<R|kotlin/Enum<A>|>()
+        }
+
+        public final static enum entry EAST: R|A|
+        public final static enum entry WEST: R|A|
+        public final static fun values(): R|kotlin/Array<A>|
+
+        public final static fun valueOf(value: R|kotlin/String|): R|A|
+
+        public final static val entries: R|kotlin/enums/EnumEntries<A>|
+            public get(): R|kotlin/enums/EnumEntries<A>|
+
+    }
+    public final enum class B : R|kotlin/Enum<B>| {
+        private constructor(): R|B| {
+            super<R|kotlin/Enum<B>|>()
+        }
+
+        public final static enum entry NORTH: R|B| = object : R|B| {
+            private constructor(): R|<anonymous>| {
+                super<R|B|>()
+            }
+
+            public open override fun getString(): R|kotlin/String|
+
+        }
+
+        public final static enum entry SOUTH: R|B| = object : R|B| {
+            private constructor(): R|<anonymous>| {
+                super<R|B|>()
+            }
+
+            public open override fun getString(): R|kotlin/String|
+
+        }
+
+        public abstract fun getString(): R|kotlin/String|
+
+        public final static fun values(): R|kotlin/Array<B>|
+
+        public final static fun valueOf(value: R|kotlin/String|): R|B|
+
+        public final static val entries: R|kotlin/enums/EnumEntries<B>|
+            public get(): R|kotlin/enums/EnumEntries<B>|
+
+    }

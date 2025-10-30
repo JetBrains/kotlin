@@ -1,0 +1,45 @@
+FILE: constructorDeclaration.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(a: R|kotlin/String|, b: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = R|<local>/a|
+            public get(): R|kotlin/String|
+
+        public final val b: R|kotlin/Int| = R|<local>/b|
+            public get(): R|kotlin/Int|
+
+        public constructor(e: R|kotlin/String|): R|A| {
+            this<R|A|>(R|<local>/e|, Int(0))
+            lval message: R|kotlin/String| = String(Secondary constructor body)
+        }
+
+        public constructor(): R|A| {
+            this<R|A|>(String())
+            lval message: R|kotlin/String| = String(Secondary constructor body with delegated constructor call)
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        private constructor(a: R|kotlin/String|, b: R|kotlin/Int|): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = R|<local>/a|
+            public get(): R|kotlin/String|
+
+        public final val b: R|kotlin/Int| = R|<local>/b|
+            public get(): R|kotlin/Int|
+
+        public constructor(e: R|kotlin/String|): R|B| {
+            this<R|B|>(R|<local>/e|, Int(0))
+            lval message: R|kotlin/String| = String(Secondary constructor body)
+        }
+
+        public constructor(): R|B| {
+            this<R|B|>(String())
+            lval message: R|kotlin/String| = String(Secondary constructor body with delegated constructor call)
+        }
+
+    }

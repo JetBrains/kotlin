@@ -11,3 +11,23 @@ FILE: functionDeclaration.kt
 
     private final fun funC(): R|kotlin/String|
     public final fun funD(): R|kotlin/Int|
+    public final inline fun funE(): R|kotlin/String| {
+        local final fun funF(): R|kotlin/String|
+
+        ^funE R|<local>/funF|()
+    }
+    public final inline fun funG(): R|kotlin/String| {
+        local final class classA : R|kotlin/Any| {
+            public constructor(): R|<local>/classA| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun funH(): R|kotlin/String|
+
+        }
+
+        lval a: R|<local>/classA| = R|<local>/classA.classA|()
+        ^funG R|<local>/a|.R|<local>/funH|()
+    }
+    public final fun funI(): R|kotlin/Int|
+    public final fun funJ(): R|kotlin/String|

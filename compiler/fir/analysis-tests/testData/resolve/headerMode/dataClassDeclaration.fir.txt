@@ -1,0 +1,19 @@
+FILE: dataClassDeclaration.kt
+    public final data class User : R|kotlin/Any| {
+        public constructor(name: R|kotlin/String|, age: R|kotlin/Int|): R|User| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public final val age: R|kotlin/Int| = R|<local>/age|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final operator fun component2(): R|kotlin/Int|
+
+        public final fun copy(name: R|kotlin/String| = this@R|/User|.R|/User.name|, age: R|kotlin/Int| = this@R|/User|.R|/User.age|): R|User|
+
+    }
