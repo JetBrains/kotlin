@@ -301,22 +301,23 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         buildInstr(WasmOp.NOP, location)
     }
 
-    fun createNewContHandleSwitch(tagIdx: WasmSymbol<Int>) =
-        createNewContHandleImmediate(WasmImmediate.ContHandle.ContHandleType.ON_SWITCH, tagIdx)
+    fun createNewContHandleSwitch(tagIdx: WasmSymbol<Int>, absoluteBlockLevel: Int) =
+        createNewContHandleImmediate(WasmImmediate.ContHandle.ContHandleType.ON_SWITCH, tagIdx, absoluteBlockLevel)
 
-    fun createNewContHandle(tagIdx: WasmSymbol<Int>, relativeLevel: Int) =
-        createNewContHandleImmediate(WasmImmediate.ContHandle.ContHandleType.ON, tagIdx, relativeLevel)
+    fun createNewContHandle(tagIdx: WasmSymbol<Int>, absoluteBlockLevel: Int) =
+        createNewContHandleImmediate(WasmImmediate.ContHandle.ContHandleType.ON, tagIdx, absoluteBlockLevel)
 
     private fun createNewContHandleImmediate(
         handleType: WasmImmediate.ContHandle.ContHandleType,
         tagIdx: WasmSymbol<Int>,
-        relativeLevel: Int? = null,
+        absolutBlockLevel: Int,
     ): WasmImmediate.ContHandle {
+        val relativeLevel = numberOfNestedBlocks - absolutBlockLevel
         return WasmImmediate.ContHandle(
             handleType,
             listOfNotNull(
                 WasmImmediate.TagIdx(tagIdx),
-                relativeLevel?.let(WasmImmediate::LabelIdx)
+                WasmImmediate.LabelIdx(relativeLevel)
             )
         )
     }
