@@ -12,12 +12,10 @@ FILE: constructorDeclaration.kt
 
         public constructor(e: R|kotlin/String|): R|A| {
             this<R|A|>(R|<local>/e|, Int(0))
-            lval message: R|kotlin/String| = String(Secondary constructor body)
         }
 
         public constructor(): R|A| {
             this<R|A|>(String())
-            lval message: R|kotlin/String| = String(Secondary constructor body with delegated constructor call)
         }
 
     }
@@ -34,12 +32,10 @@ FILE: constructorDeclaration.kt
 
         public constructor(e: R|kotlin/String|): R|B| {
             this<R|B|>(R|<local>/e|, Int(0))
-            lval message: R|kotlin/String| = String(Secondary constructor body)
         }
 
         public constructor(): R|B| {
             this<R|B|>(String())
-            lval message: R|kotlin/String| = String(Secondary constructor body with delegated constructor call)
         }
 
     }

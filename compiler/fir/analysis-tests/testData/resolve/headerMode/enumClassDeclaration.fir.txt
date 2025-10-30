@@ -36,7 +36,6 @@ FILE: enumClassDeclaration.kt
             }
 
             public open override fun getString(): R|kotlin/String| {
-                ^getString String(south)
             }
 
         }
