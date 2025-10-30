@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 
 internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
-    private val options: Options = Options(BuildOperation::class)
+    protected abstract val options: Options
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]

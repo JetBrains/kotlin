@@ -16,11 +16,15 @@ import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import java.nio.file.Path
 
-internal class JvmClasspathSnapshottingOperationImpl(
+internal class JvmClasspathSnapshottingOperationImpl private constructor(
+    override val options: Options = Options(JvmClasspathSnapshottingOperation::class),
     private val classpathEntry: Path,
 ) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
 
-    private val options: Options = Options(JvmClasspathSnapshottingOperation::class)
+    constructor(classpathEntry: Path) : this(
+        options = Options(JvmClasspathSnapshottingOperation::class),
+        classpathEntry = classpathEntry
+    )
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = options[key]
