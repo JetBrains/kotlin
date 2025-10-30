@@ -48,7 +48,7 @@ class LegacyNativeKlibWriterTest : AbstractNativeKlibWriterTest<LegacyNativeKlib
 
         buildLibrary(
             natives = parameters.bitCodeFiles.map { it.file.path },
-            included = parameters.includedFiles.map { it.file.path },
+            included = parameters.nativeIncludedBinaryFiles.map { it.file.path },
             linkDependencies = KlibLoader { libraryPaths(parameters.dependencies.map { it.path }) }.load().librariesStdlibFirst,
             metadata = parameters.metadata,
             ir = if (parameters.ir != null || parameters.irOfInlinableFunctions != null) {
