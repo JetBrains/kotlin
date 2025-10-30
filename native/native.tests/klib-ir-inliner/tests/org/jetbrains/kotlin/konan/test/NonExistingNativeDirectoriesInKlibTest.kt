@@ -33,14 +33,14 @@ class NonExistingNativeDirectoriesInKlibTest {
     lateinit var tmpDir: Path
 
     @Test
-    fun `no included dir`() {
-        val includedFileNames = setOf("included1.txt", "included2.kt")
+    fun `no Native included binaries dir`() {
+        val nativeIncludedBinaryFileNames = setOf("included1.txt", "included2.kt")
 
-        val klibDir = writeLibrary(includedFileNames = includedFileNames)
+        val klibDir = writeLibrary(includedBinaryFileNames = nativeIncludedBinaryFileNames)
         val klibFile = klibDir.compressKlib()
 
-        assertTrue(klibDir.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { KFile(it).name } == includedFileNames)
-        assertTrue(klibFile.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { KFile(it).name } == includedFileNames)
+        assertTrue(klibDir.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { KFile(it).name } == nativeIncludedBinaryFileNames)
+        assertTrue(klibFile.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { KFile(it).name } == nativeIncludedBinaryFileNames)
 
         klibDir.deleteNativeTargetSubdirectory(KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME)
         klibDir.compressKlib()
@@ -50,7 +50,7 @@ class NonExistingNativeDirectoriesInKlibTest {
     }
 
     @Test
-    fun `no native dir`() {
+    fun `no bitcode dir`() {
         val bitcodeFileNames = setOf("bitc0de.000", "btc.123")
 
         val klibDir = writeLibrary(bitcodeFileNames = bitcodeFileNames)
@@ -73,7 +73,7 @@ class NonExistingNativeDirectoriesInKlibTest {
 
     private fun writeLibrary(
         bitcodeFileNames: Collection<String> = emptyList(),
-        includedFileNames: Collection<String> = emptyList(),
+        includedBinaryFileNames: Collection<String> = emptyList(),
     ): KFile {
         fun createEmptyFile(name: String): String {
             val file = KFile(tmpDir.resolve(name))
@@ -85,7 +85,7 @@ class NonExistingNativeDirectoriesInKlibTest {
 
         buildLibrary(
             natives = bitcodeFileNames.map(::createEmptyFile),
-            included = includedFileNames.map(::createEmptyFile),
+            included = includedBinaryFileNames.map(::createEmptyFile),
             linkDependencies = emptyList(),
             metadata = SerializedMetadata(byteArrayOf(), emptyList(), emptyList()),
             ir = null,
