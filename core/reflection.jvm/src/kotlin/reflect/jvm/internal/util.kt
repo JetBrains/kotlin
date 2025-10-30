@@ -38,14 +38,18 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import org.jetbrains.kotlin.types.isNullable
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Type
@@ -59,6 +63,7 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
 import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.jvmErasure
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
@@ -369,3 +374,37 @@ internal fun KType.isNullableType(): Boolean {
     val classifier = classifier
     return classifier is KTypeParameter && classifier.upperBounds.any { it.isNullableType() }
 }
+
+internal class FunctionJvmDescriptor(val parameters: List<String>, val returnType: String)
+
+internal fun parseJvmDescriptor(desc: String): FunctionJvmDescriptor {
+    val parameterTypes = arrayListOf<String>()
+
+    var begin = 1
+    while (desc[begin] != ')') {
+        var end = begin
+        while (desc[end] == '[') end++
+        @Suppress("SpellCheckingInspection")
+        when (desc[end]) {
+            in "VZCBSIFJD" -> end++
+            'L' -> end = desc.indexOf(';', begin) + 1
+            else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
+        }
+
+        parameterTypes.add(desc.substring(begin, end))
+        begin = end
+    }
+
+    val returnType = desc.substring(begin + 1)
+
+    return FunctionJvmDescriptor(parameterTypes, returnType)
+}
+
+internal fun ClassifierDescriptor.toJvmDescriptor(): String = ClassMapperLite.mapClass(classId!!.asString())
+
+internal val ParameterDescriptor.isAlwaysBoxedByCompiler: Boolean
+    get() {
+        if (this !is ValueParameterDescriptor) return false
+        return declaresDefaultValue() && type.isInlineClassType() &&
+                generateSequence(type) { it.unsubstitutedUnderlyingType() }.drop(1).any { it.isNullable() }
+    }

@@ -54298,6 +54298,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
               }
 
               @Test
+              @TestMetadata("constructorManyDefaultParameters.kt")
+              public void testConstructorManyDefaultParameters() {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments/constructorManyDefaultParameters.kt");
+              }
+
+              @Test
               @TestMetadata("constructorWithInlineClassParameters.kt")
               public void testConstructorWithInlineClassParameters() {
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments/constructorWithInlineClassParameters.kt");
@@ -54307,6 +54313,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
               @TestMetadata("extensionFunctionsWithInlineClassParameters.kt")
               public void testExtensionFunctionsWithInlineClassParameters() {
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments/extensionFunctionsWithInlineClassParameters.kt");
+              }
+
+              @Test
+              @TestMetadata("extensionFunctionsWithManyDefaultParameters.kt")
+              public void testExtensionFunctionsWithManyDefaultParameters() {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments/extensionFunctionsWithManyDefaultParameters.kt");
               }
 
               @Test
@@ -54368,6 +54380,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
               }
 
               @Test
+              @TestMetadata("constructorManyDefaultParameters.kt")
+              public void testConstructorManyDefaultParameters() {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/constructorManyDefaultParameters.kt");
+              }
+
+              @Test
               @TestMetadata("constructorWithInlineClassParameters.kt")
               public void testConstructorWithInlineClassParameters() {
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/constructorWithInlineClassParameters.kt");
@@ -54377,6 +54395,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
               @TestMetadata("extensionFunctionsWithInlineClassParameters.kt")
               public void testExtensionFunctionsWithInlineClassParameters() {
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/extensionFunctionsWithInlineClassParameters.kt");
+              }
+
+              @Test
+              @TestMetadata("extensionFunctionsWithManyDefaultParameters.kt")
+              public void testExtensionFunctionsWithManyDefaultParameters() {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/extensionFunctionsWithManyDefaultParameters.kt");
               }
 
               @Test
@@ -54438,6 +54462,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
               }
 
               @Test
+              @TestMetadata("constructorManyDefaultParameters.kt")
+              public void testConstructorManyDefaultParameters() {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments/constructorManyDefaultParameters.kt");
+              }
+
+              @Test
               @TestMetadata("constructorWithInlineClassParameters.kt")
               public void testConstructorWithInlineClassParameters() {
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments/constructorWithInlineClassParameters.kt");
@@ -54447,6 +54477,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
               @TestMetadata("extensionFunctionsWithInlineClassParameters.kt")
               public void testExtensionFunctionsWithInlineClassParameters() {
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments/extensionFunctionsWithInlineClassParameters.kt");
+              }
+
+              @Test
+              @TestMetadata("extensionFunctionsWithManyDefaultParameters.kt")
+              public void testExtensionFunctionsWithManyDefaultParameters() {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments/extensionFunctionsWithManyDefaultParameters.kt");
               }
 
               @Test

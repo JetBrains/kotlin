@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
 import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
 import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 import java.lang.reflect.Constructor
@@ -35,6 +36,8 @@ import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.CA
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.POSITIONAL_CALL
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.Origin.JAVA
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.Origin.KOTLIN
+
+private const val DefaultConstructorMarkerDescriptor = "Lkotlin/jvm/internal/DefaultConstructorMarker;"
 
 internal class DescriptorKFunction private constructor(
     override val container: KDeclarationContainerImpl,
@@ -89,26 +92,71 @@ internal class DescriptorKFunction private constructor(
                     createStaticMethodCaller(member, isCallByToValueClassMangledMethod = false)
             }
             else -> throw KotlinReflectionInternalError("Could not compute caller for function: $descriptor (member = $member)")
-        }.createValueClassAwareCallerIfNeeded(this, isDefault = false)
+        }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptySet())
     }
 
     override val defaultCaller: Caller<*>? by lazy(PUBLICATION) defaultCaller@{
+
+        class DescriptorPatchingResult(val newDescriptor: String, val boxedIndices: Set<Int>)
+
+        // The compiler excessively boxes type of parameter, such that it has inline type and its underlying type is nullable
+        // Fixing it would break binary backward compatibility, so we mimic compiler behavior here
+        // See KT-57357
+        fun patchJvmDescriptorByExtraBoxing(descriptor: FunctionDescriptor, jvmDescriptor: String): DescriptorPatchingResult {
+
+            val parsedDescriptor = parseJvmDescriptor(jvmDescriptor)
+            val hasDefaultMarker = parsedDescriptor.parameters.lastOrNull() == DefaultConstructorMarkerDescriptor
+            val valueParamCount = descriptor.valueParameters.size + if (hasDefaultMarker) 1 else 0
+
+            if (descriptor.valueParameters.any { it.isMultiFieldValueClass() }) {
+                return DescriptorPatchingResult(jvmDescriptor, emptySet())
+            }
+
+            val boxedIndices = mutableSetOf<Int>()
+            val newParameters = mutableListOf<String>()
+
+            newParameters.addAll(parsedDescriptor.parameters.take(parsedDescriptor.parameters.size - valueParamCount))
+            descriptor.valueParameters.zip(parsedDescriptor.parameters.takeLast(valueParamCount))
+                .forEach { (paramDescriptor, paramJvmDescriptor) ->
+                    if (paramDescriptor.isAlwaysBoxedByCompiler) {
+                        boxedIndices.add(newParameters.size)
+                        newParameters.add(paramDescriptor.type.constructor.declarationDescriptor!!.toJvmDescriptor())
+                    } else {
+                        newParameters.add(paramJvmDescriptor)
+                    }
+                }
+
+            if (hasDefaultMarker) {
+                newParameters.add(DefaultConstructorMarkerDescriptor)
+            }
+
+            if (boxedIndices.isEmpty()) return DescriptorPatchingResult(jvmDescriptor, emptySet())
+            val patchedDescriptor = newParameters.joinToString("", "(", ")") + parsedDescriptor.returnType
+            return DescriptorPatchingResult(patchedDescriptor, boxedIndices)
+        }
+
         @Suppress("USELESS_CAST")
+        val preventUnboxingForIndices = mutableSetOf<Int>()
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinFunction -> run {
                 getFunctionWithDefaultParametersForValueClassOverride(descriptor)?.let { defaultImplsFunction ->
                     val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultImplsFunction) as KotlinFunction
+                    val patchingResult =
+                        patchJvmDescriptorByExtraBoxing(defaultImplsFunction, replacingJvmSignature.methodDesc)
+                    preventUnboxingForIndices.addAll(patchingResult.boxedIndices)
                     return@run container.findDefaultMethod(
                         replacingJvmSignature.methodName,
-                        replacingJvmSignature.methodDesc,
+                        patchingResult.newDescriptor,
                         true,
                         descriptor.extensionReceiverParameter != null
                     )
                 }
 
+                val patchingResult = patchJvmDescriptorByExtraBoxing(descriptor, jvmSignature.methodDesc)
+                preventUnboxingForIndices.addAll(patchingResult.boxedIndices)
                 container.findDefaultMethod(
                     jvmSignature.methodName,
-                    jvmSignature.methodDesc,
+                    patchingResult.newDescriptor,
                     !Modifier.isStatic(caller.member!!.modifiers),
                     descriptor.extensionReceiverParameter != null
                 ) as Member?
@@ -116,7 +164,9 @@ internal class DescriptorKFunction private constructor(
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
                     return@defaultCaller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, CALL_BY_NAME, KOTLIN)
-                container.findDefaultConstructor(jvmSignature.constructorDesc) as Member?
+                val patchingResult = patchJvmDescriptorByExtraBoxing(descriptor, jvmSignature.constructorDesc)
+                preventUnboxingForIndices.addAll(patchingResult.boxedIndices)
+                container.findDefaultConstructor(patchingResult.newDescriptor) as Member?
             }
             is FakeJavaAnnotationConstructor -> {
                 val methods = jvmSignature.methods
@@ -144,7 +194,7 @@ internal class DescriptorKFunction private constructor(
                 }
             }
             else -> null
-        }?.createValueClassAwareCallerIfNeeded(this, isDefault = true)
+        }?.createValueClassAwareCallerIfNeeded(this, isDefault = true, preventUnboxingForIndices)
     }
 
     private fun getFunctionWithDefaultParametersForValueClassOverride(descriptor: FunctionDescriptor): FunctionDescriptor? {

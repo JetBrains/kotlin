@@ -25,6 +25,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
     callable: ReflectKCallable<*>,
     private val caller: Caller<M>,
     private val isDefault: Boolean,
+    forbidUnboxingForIndices: Set<Int>,
 ) : Caller<M> {
     override val member: M
         get() = caller.member
@@ -117,6 +118,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
             if (!callable.isConstructor && container is KClass<*> && container.isValue && member?.acceptsBoxedReceiverParameter() == true) {
                 add(0)
             }
+            addAll(forbidUnboxingForIndices)
         }
 
         BoxUnboxData(argumentRange, unbox, disableUnboxingParameterIndices, box)
@@ -187,9 +189,13 @@ private fun Member.acceptsBoxedReceiverParameter(): Boolean {
     return !clazz.kotlin.isValue
 }
 
-internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(callable: ReflectKCallable<*>, isDefault: Boolean): Caller<M> =
+internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(
+    callable: ReflectKCallable<*>,
+    isDefault: Boolean,
+    forbidUnboxingForIndices: Set<Int>,
+): Caller<M> =
     if (callable.parameters.any { it.type.isInlineClassType } || callable.returnType.isInlineClassType)
-        ValueClassAwareCaller(callable, this, isDefault)
+        ValueClassAwareCaller(callable, this, isDefault, forbidUnboxingForIndices)
     else this
 
 internal fun Class<*>.getInlineClassUnboxMethod(callable: ReflectKCallable<*>): Method =
