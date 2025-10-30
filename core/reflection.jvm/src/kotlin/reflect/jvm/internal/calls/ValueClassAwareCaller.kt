@@ -82,10 +82,16 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         val kotlinParameterTypes = makeKotlinParameterTypes(callable, caller.member)
 
+        val paramsWithAllocatedDefaultMaskBitsCount = if (callable.allParameters.any { it.kind == KParameter.Kind.EXTENSION_RECEIVER }) {
+            kotlinParameterTypes.size - 1
+        } else {
+            kotlinParameterTypes.size
+        }
+
         // If the default argument is set,
-        // (kotlinParameterTypes.size + Int.SIZE_BITS - 1) / Int.SIZE_BITS masks and one marker are added to the end of the argument.
+        // (paramsWithAllocatedDefaultMaskBitsCount + Int.SIZE_BITS - 1) / Int.SIZE_BITS masks and one marker are added to the end of the argument.
         val extraArgumentsTail =
-            (if (isDefault) ((kotlinParameterTypes.size + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
+            (if (isDefault) ((paramsWithAllocatedDefaultMaskBitsCount + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
                     (if (callable is ReflectKFunction && callable.isSuspend) 1 else 0)
         val expectedArgsSize = kotlinParameterTypes.size + shift + extraArgumentsTail
         checkParametersSize(expectedArgsSize, callable, isDefault)

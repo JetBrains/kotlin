@@ -5,7 +5,7 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.extensionReceiverParameter
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+
 
 @JvmInline
 value class S(val value: String) {
@@ -237,9 +237,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(c.extensionDefault32_1(), C::extensionDefault32_1.callByEmpty(c))
-    }
+    assertEquals(c.extensionDefault32_1(), C::extensionDefault32_1.callByEmpty(c))
     assertEquals(
         S("00"),
         C::extensionDefault32_2.callBy(
@@ -250,9 +248,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(c.extensionDefault32_2(), C::extensionDefault32_2.callByEmpty(c))
-    }
+    assertEquals(c.extensionDefault32_2(), C::extensionDefault32_2.callByEmpty(c))
     assertEquals(
         S("000"),
         S::extensionDefault1_32_1.callBy(
@@ -263,9 +259,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(zero.extensionDefault1_32_1(), S::extensionDefault1_32_1.callByEmpty(zero))
-    }
+    assertEquals(zero.extensionDefault1_32_1(), S::extensionDefault1_32_1.callByEmpty(zero))
     assertEquals(
         S("000"),
         S::extensionDefault1_32_2.callBy(
@@ -276,9 +270,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(zero.extensionDefault1_32_2(), S::extensionDefault1_32_2.callByEmpty(zero))
-    }
+    assertEquals(zero.extensionDefault1_32_2(), S::extensionDefault1_32_2.callByEmpty(zero))
     assertEquals(
         S("000"),
         S::extensionDefault2_32_1.callBy(
@@ -289,9 +281,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(zero.extensionDefault2_32_1(), S::extensionDefault2_32_1.callByEmpty(zero))
-    }
+    assertEquals(zero.extensionDefault2_32_1(), S::extensionDefault2_32_1.callByEmpty(zero))
     assertEquals(
         S("000"),
         S::extensionDefault2_32_2.callBy(
@@ -302,9 +292,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(zero.extensionDefault2_32_2(), S::extensionDefault2_32_2.callByEmpty(zero))
-    }
+    assertEquals(zero.extensionDefault2_32_2(), S::extensionDefault2_32_2.callByEmpty(zero))
     assertEquals(
         S("00"),
         C::extensionDefault33_1.callBy(
@@ -395,9 +383,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(c.extensionDefault32_1(), c::extensionDefault32_1.callBy(emptyMap()))
-    }
+    assertEquals(c.extensionDefault32_1(), c::extensionDefault32_1.callBy(emptyMap()))
     assertEquals(
         S("00"),
         c::extensionDefault32_2.callBy(
@@ -407,9 +393,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(c.extensionDefault32_2(), c::extensionDefault32_2.callBy(emptyMap()))
-    }
+    assertEquals(c.extensionDefault32_2(), c::extensionDefault32_2.callBy(emptyMap()))
     assertEquals(
         S("000"),
         zero::extensionDefault1_32_1.callBy(
@@ -419,9 +403,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(zero.extensionDefault1_32_1(), zero::extensionDefault1_32_1.callBy(emptyMap()))
-    }
+    assertEquals(zero.extensionDefault1_32_1(), zero::extensionDefault1_32_1.callBy(emptyMap()))
     assertEquals(
         S("000"),
         zero::extensionDefault1_32_2.callBy(
@@ -431,9 +413,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(zero.extensionDefault1_32_2(), zero::extensionDefault1_32_2.callBy(emptyMap()))
-    }
+    assertEquals(zero.extensionDefault1_32_2(), zero::extensionDefault1_32_2.callBy(emptyMap()))
     assertEquals(
         S("000"),
         zero::extensionDefault2_32_1.callBy(
@@ -443,9 +423,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(zero.extensionDefault2_32_1(), zero::extensionDefault2_32_1.callBy(emptyMap()))
-    }
+    assertEquals(zero.extensionDefault2_32_1(), zero::extensionDefault2_32_1.callBy(emptyMap()))
     assertEquals(
         S("000"),
         zero::extensionDefault2_32_2.callBy(
@@ -455,9 +433,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(zero.extensionDefault2_32_2(), zero::extensionDefault2_32_2.callBy(emptyMap()))
-    }
+    assertEquals(zero.extensionDefault2_32_2(), zero::extensionDefault2_32_2.callBy(emptyMap()))
     assertEquals(
         S("00"),
         c::extensionDefault33_1.callBy(

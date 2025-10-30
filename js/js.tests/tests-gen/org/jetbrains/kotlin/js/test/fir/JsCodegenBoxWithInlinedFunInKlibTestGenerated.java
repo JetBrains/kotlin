@@ -53884,6 +53884,18 @@ public class JsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractJsCod
         }
 
         @Test
+        @TestMetadata("memberExtensionFunWithDefaultAndContextParams.kt")
+        public void testMemberExtensionFunWithDefaultAndContextParams() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/memberExtensionFunWithDefaultAndContextParams.kt");
+        }
+
+        @Test
+        @TestMetadata("memberExtensionFunWithDefaultParams.kt")
+        public void testMemberExtensionFunWithDefaultParams() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/memberExtensionFunWithDefaultParams.kt");
+        }
+
+        @Test
         @TestMetadata("membersWithDefaultValuesAndContextParams.kt")
         public void testMembersWithDefaultValuesAndContextParams() {
           runTest("compiler/testData/codegen/box/reflection/callBy/membersWithDefaultValuesAndContextParams.kt");
@@ -53935,6 +53947,18 @@ public class JsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractJsCod
         @TestMetadata("simpleTopLevelFunction.kt")
         public void testSimpleTopLevelFunction() {
           runTest("compiler/testData/codegen/box/reflection/callBy/simpleTopLevelFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevelExtensionFunWithDefaultAndContextParams.kt")
+        public void testTopLevelExtensionFunWithDefaultAndContextParams() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/topLevelExtensionFunWithDefaultAndContextParams.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevelExtensionFunWithDefaultParams.kt")
+        public void testTopLevelExtensionFunWithDefaultParams() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/topLevelExtensionFunWithDefaultParams.kt");
         }
 
         @Test
