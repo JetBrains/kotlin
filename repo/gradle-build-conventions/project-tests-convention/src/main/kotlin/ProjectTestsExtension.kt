@@ -275,7 +275,21 @@ abstract class ProjectTestsExtension(val project: Project) {
             false -> project.layout.projectDirectory.dir("tests-gen")
             true -> project.layout.buildDirectory.dir("tests-gen").get()
         }
-        val generatorTask = project.generator(taskName, fqName, fixturesSourceSet) {
+
+        val generatorTaskInput = if (fixturesSourceSet != null) {
+            project.provider {
+                val generatorProject = project.rootProject.project(":generators:test-generator")
+                fixturesSourceSet.allSource + generatorProject.testFixturesSourceSet.runtimeClasspath
+            }
+        } else {
+            null
+        }
+        val generatorTask = project.generator(
+            taskName,
+            fqName,
+            fixturesSourceSet,
+            classpathInput = generatorTaskInput
+        ) {
             this.args = buildList {
                 add(generationPath.asFile.absolutePath)
                 if (generateTestsInBuildDirectory) {
