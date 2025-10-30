@@ -245,11 +245,17 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
     }
 
-    private val membersWithSpecializedSignature: Set<String> =
-        SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SIGNATURES.mapTo(LinkedHashSet()) {
-            val fqNameString = it.substringBefore('(').replace('/', '.')
-            FqName(fqNameString).shortName().asString()
-        }
+    private val membersWithSpecializedSignature: Set<String> = buildSet {
+        addAll(SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SHORT_NAMES.map { it.asString() })
+        add("addAll")
+        add("putAll")
+    }
+
+    private val erasedCollectionParameterNames: Set<String> = buildSet {
+        addAll(SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES)
+        add("addAll")
+        add("putAll")
+    }
 
     // TODO check "go to base method", "go to declaration" in IDE
     private fun methodWrappers(
@@ -305,17 +311,14 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     private fun methodsWithSpecializedSignature(method: PsiMethod, javaBaseClass: PsiClass, substitutor: PsiSubstitutor): List<PsiMethod> {
         val methodName = method.name
-
-        if (methodName !in membersWithSpecializedSignature) return emptyList()
+        if (methodName in erasedCollectionParameterNames || methodName !in membersWithSpecializedSignature) {
+            return emptyList()
+        }
 
         if (javaBaseClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP) {
             val abstractKotlinVariantWithGeneric = javaUtilMapMethodWithSpecialSignature(method, substitutor) ?: return emptyList()
             val finalBridgeWithObject = method.finalBridge(substitutor)
             return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
-        }
-
-        if (methodName in SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES) {
-            return emptyList()
         }
 
         if (methodName == "remove") {
@@ -519,7 +522,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbol.delegatedMemberScope.callables.forEach { callableSymbol ->
             when (callableSymbol) {
                 is KaNamedFunctionSymbol -> {
-                    val javaMethod = getJavaMethodForCollectionMethodWithSpecialSignature(callableSymbol, allSupertypes)
+                    val javaMethod = getJavaMethodForMappedMethodWithSpecialSignature(callableSymbol, allSupertypes)
                     if (javaMethod == null) {
                         // Default case: method is not mapped to Java collections method - just create the delegate
                         createDelegateMethod(functionSymbol = callableSymbol)
@@ -549,8 +552,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                     val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
 
                     when {
-                        // TODO integrate addAll/putAll into a custom map
-                        javaMethod.name !in SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES + listOf("addAll", "putAll") -> {
+                        javaMethod.name !in erasedCollectionParameterNames -> {
                             if (callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }) {
                                 result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = false))
                             } else {
@@ -579,7 +581,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
     }
 
-    private fun KaSession.getJavaMethodForCollectionMethodWithSpecialSignature(
+    private fun KaSession.getJavaMethodForMappedMethodWithSpecialSignature(
         symbol: KaFunctionSymbol,
         allSupertypes: List<KaClassType>,
     ): PsiMethod? {
