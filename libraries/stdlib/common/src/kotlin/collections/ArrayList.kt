@@ -5,6 +5,21 @@
 
 package kotlin.collections
 
+/**
+ * A resizable-array implementation of the mutable list.
+ *
+ * This class is backed by a dynamically resizable array that grows as elements are added.
+ * It provides constant-time positional access and amortized constant-time addition of elements.
+ *
+ * ArrayList allows duplicate elements. The iteration order of elements is the order
+ * in which they were added to the list. As an implementation of [RandomAccess], it provides fast
+ * indexed access to elements.
+ *
+ * Note that this implementation is not synchronized. If multiple threads access an ArrayList concurrently,
+ * and at least one of the threads modifies the list structurally, it must be synchronized externally.
+ *
+ * @param E the type of elements contained in the list.
+ */
 public expect class ArrayList<E> : MutableList<E>, RandomAccess {
 
     /**
@@ -33,7 +48,26 @@ public expect class ArrayList<E> : MutableList<E>, RandomAccess {
      */
     public constructor(elements: Collection<E>)
 
+    /**
+     * Attempts to reduce the storage used for this list.
+     *
+     * If the backing storage of this list is larger than necessary to hold its current elements,
+     * then it may be resized to become more space efficient.
+     * This operation can help reduce memory consumption when the list is not expected to grow further.
+     */
     public fun trimToSize()
+
+    /**
+     * Ensures that the capacity of this list is at least equal to the specified [minCapacity].
+     *
+     * If the current capacity is less than the [minCapacity], a new backing storage is allocated with greater capacity.
+     * Otherwise, this method takes no action and simply returns.
+     *
+     * This operation can be used to minimize the number of incremental reallocations when the eventual size
+     * of the list is known in advance, improving performance when adding many elements.
+     *
+     * @param minCapacity the desired minimum capacity.
+     */
     public fun ensureCapacity(minCapacity: Int)
 
     // From List
