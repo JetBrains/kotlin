@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
-internal class Options(private val optionsName: String) {
-    constructor(typeForName: KClass<*>) : this(typeForName::class.qualifiedName ?: typeForName::class.jvmName)
+internal class Options private constructor(private val optionsName: String) {
+    constructor(typeForName: KClass<*>) : this(typeForName.qualifiedName ?: typeForName.jvmName)
 
     private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
