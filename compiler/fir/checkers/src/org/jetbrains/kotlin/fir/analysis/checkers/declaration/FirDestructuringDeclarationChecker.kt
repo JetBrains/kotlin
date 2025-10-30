@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Common) {
     private enum class DestructuringSyntax {
@@ -72,8 +74,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         if (source.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) return
 
         val initializer = declaration.initializer as? FirQualifiedAccessExpression ?: return
-        val originalExpression = initializer.explicitReceiverOfQualifiedAccess ?: return
-        val originalDestructuringDeclaration = originalExpression.resolvedVariable ?: return
+        val originalDestructuringDeclaration = getDestructuringVariableOfEntry(declaration) ?: return
         val originalDestructuringDeclarationOrInitializer =
             when (originalDestructuringDeclaration) {
                 is FirProperty -> {
@@ -142,6 +143,16 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         if (syntax == DestructuringSyntax.ParensShort) {
             checkChangingMeaningOfShortSyntax(declaration, originalDestructuringDeclarationType, initializer.componentIndex, source)
         }
+    }
+
+    fun getDestructuringVariableIfEntry(declaration: FirProperty): FirVariableSymbol<*>? {
+        return runIf(declaration.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
+            getDestructuringVariableOfEntry(declaration)?.symbol
+        }
+    }
+
+    private fun getDestructuringVariableOfEntry(declaration: FirProperty): FirVariable? {
+        return declaration.initializer?.explicitReceiverOfQualifiedAccess?.resolvedVariable
     }
 
     private fun KtSourceElement.syntaxKind(originalDestructuringDeclaration: FirVariable): DestructuringSyntax {

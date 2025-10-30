@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +NameBasedDestructuring +EnableNameBasedDestructuringShortForm +LocalVariableTargetedAnnotationOnDestructuring
 
 @RequiresOptIn
@@ -8,10 +8,10 @@ class Foo(@property:A val bar: String)
 
 fun test(foo: Foo) {
     @OptIn(A::class)
-    val (<!OPT_IN_USAGE_ERROR!>bar<!>) = foo
+    val (bar) = foo
 
     @OptIn(A::class)
-    (val baz = <!OPT_IN_USAGE_ERROR!>bar<!>) = foo
+    (val baz = bar) = foo
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, destructuringDeclaration,
