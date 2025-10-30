@@ -423,12 +423,12 @@ fun Project.configureTests() {
             ":wasm:wasm.ir",
         )
         val projectPath = project.path
-        val hasTestInputCheckPlugin = !plugins.hasPlugin("test-inputs-check")
+        val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check")
         if (!hasTestInputCheckPlugin) {
             outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
         }
         doFirst {
-            if (hasTestInputCheckPlugin) {
+            if (!hasTestInputCheckPlugin) {
                 if (projectPath !in notCacheableTestProjects) {
                     throw GradleException(
                         """
