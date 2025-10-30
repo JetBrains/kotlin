@@ -102,15 +102,15 @@ internal class KClassImpl<T : Any>(
             descriptor ?: createSyntheticClassOrFail(classId, moduleData)
         }
 
-        // FIXME potential inconsistency #2 - if someone manually has added Java container (explicitly annotated with it), it is
-        //    indistinguishable from multiple annos. Currently it is ok, as Java containers are not unwrapped automatically, only by getAnnotationsByType
-        //    But it may affect "inheritance" shadowing! I guess it is OK, but need to add a test with description about "gray area"
         val annotations: List<Annotation> by ReflectProperties.lazySoft {
             val allAnnotations = jClass.annotations
             val declaredAnnotations = jClass.declaredAnnotations
+            val hasInheritedAnnotations = allAnnotations.size != declaredAnnotations.size
 
-            fun hasShadowingClashes(): Boolean {
-                // for inherited annotations, the annotations declared on subclasses override ones on the base classes, and such "shadowed"
+            val filteredAnnotations = if (!hasInheritedAnnotations) {
+                allAnnotations.filterNot { it.annotationClass.java.name in SPECIAL_JVM_ANNOTATION_NAMES }
+            } else {
+                // For inherited annotations, the annotations declared on subclasses override ones on the base classes, and such "shadowed"
                 // annotations are usually not present in Java's getAnnotations().
                 // But if
                 // - an inherited annotation is also repeatable (either by Java's or Kotlin's @Repeatable),
@@ -118,36 +118,26 @@ internal class KClassImpl<T : Any>(
                 // - some other classes contain single annotation instance (thus stored as is),
                 // then both container and single annotation may present in Java's getAnnotations() result, as this method does not
                 // unwrap containers for shadowing purposes.
+                // So, we need to collect declared annotations from the class and all superclasses, with filtering by "shadowing" rules.
 
-                if (allAnnotations.size == declaredAnnotations.size) return false // no inherited annotations
-
-                // Check if some annotation is represented both as a container and as a single instance.
-                // Note that a mix of Java/Kotlin containers for a single repeatable annotation is not expected - only Java
-                // containers will be present of an annotation is both Kotlin and Java Repeatable.
-                val unwrappedAnnotationClasses = allAnnotations.map { it.unwrappedAnnotationClass }
-                return unwrappedAnnotationClasses.size != unwrappedAnnotationClasses.toSet().size
-            }
-
-            val filteredAnnotations = if (!hasShadowingClashes()) {
-                allAnnotations.filterNot { it.annotationClass.java.name in SPECIAL_JVM_ANNOTATION_NAMES }
-            } else {
                 // although there is no requirement to keep any order, it is still better to keep a logical order of Parent->...->Child
                 // as we iterate in reverse order (child to parents), the temporary result order is "reversed"
                 val resultReversed = mutableListOf<Annotation>()
-                val visitedUnwrappedClasses = mutableSetOf<KClass<out Annotation>>()
-                var currentClass: Class<out Any>? = jClass
-                while (currentClass != null) {
+                val unwrappedAnnotationClassesHosts = mutableMapOf<KClass<out Annotation>, Class<out Any>>()
+                var currentClass: Class<out Any> = jClass
+                while (true) {
                     currentClass.declaredAnnotations
                         .filterNot { it.annotationClass.java.name in SPECIAL_JVM_ANNOTATION_NAMES }
-                        .filter { currentClass === jClass || it.hasInherited() }
+                        .filter { currentClass === jClass || (it.hasInherited() && !it.isRepeatableContainerForNonInheritedAnnotation()) }
                         .reversed()
                         .forEach {
                             val unwrappedAnnotationClass: KClass<out Annotation> = it.unwrappedAnnotationClass
-                            if (visitedUnwrappedClasses.add(unwrappedAnnotationClass)) {
+                            val prevHost = unwrappedAnnotationClassesHosts.putIfAbsent(unwrappedAnnotationClass, currentClass)
+                            if (prevHost == null || prevHost == currentClass) {
                                 resultReversed.add(it)
                             }
                         }
-                    currentClass = currentClass.superclass
+                    currentClass = currentClass.superclass ?: break
                 }
 
                 resultReversed.reversed()
