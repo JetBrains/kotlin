@@ -457,6 +457,45 @@ class Collections {
             assertEquals(1, list.lastIndexOf('b'))
             assertEquals(-1, list.lastIndexOf('e'))
         }
+
+        class ArrayList {
+
+            @Sample
+            fun trimToSize() {
+                val list = ArrayList<Int>(1000)
+                // Add only a few elements
+                list.addAll(listOf(1, 2, 3))
+                assertPrints(list, "[1, 2, 3]")
+
+                // The list has capacity for 1000 elements, but only 3 are used.
+                // trimToSize() can help reduce memory usage by resizing the backing storage
+                // to fit the actual number of elements.
+                list.trimToSize()
+
+                // The list content remains the same
+                assertPrints(list, "[1, 2, 3]")
+                assertEquals(3, list.size)
+            }
+
+            @Sample
+            fun ensureCapacity() {
+                val list = ArrayList<Int>()
+
+                // When we know in advance that we'll add many elements,
+                // we can pre-allocate capacity to avoid multiple reallocations
+                list.ensureCapacity(1000)
+
+                // Now adding elements won't trigger internal array resizing
+                // until we exceed the ensured capacity
+                for (i in 1..1000) {
+                    list.add(i)
+                }
+
+                assertEquals(1000, list.size)
+                assertEquals(1, list.first())
+                assertEquals(1000, list.last())
+            }
+        }
     }
 
     class Sets {

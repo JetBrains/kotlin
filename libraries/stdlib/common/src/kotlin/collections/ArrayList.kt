@@ -54,6 +54,10 @@ public expect class ArrayList<E> : MutableList<E>, RandomAccess {
      * If the backing storage of this list is larger than necessary to hold its current elements,
      * then it may be resized to become more space efficient.
      * This operation can help reduce memory consumption when the list is not expected to grow further.
+     *
+     * The implementation may choose to ignore this request.
+     *
+     * @sample samples.collections.Collections.Lists.ArrayList.trimToSize
      */
     public fun trimToSize()
 
@@ -67,6 +71,8 @@ public expect class ArrayList<E> : MutableList<E>, RandomAccess {
      * of the list is known in advance, improving performance when adding many elements.
      *
      * @param minCapacity the desired minimum capacity.
+     *
+     * @sample samples.collections.Collections.Lists.ArrayList.ensureCapacity
      */
     public fun ensureCapacity(minCapacity: Int)
 
