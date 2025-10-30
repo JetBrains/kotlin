@@ -19,7 +19,7 @@ internal class CriLookupDataDeserializationOperationImpl(
 ) : BuildOperationImpl<Iterable<LookupEntry>>(), CriLookupDataDeserializationOperation {
     override val options: Options = Options(CriLookupDataDeserializationOperation::class)
 
-    override fun execute(
+    override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,

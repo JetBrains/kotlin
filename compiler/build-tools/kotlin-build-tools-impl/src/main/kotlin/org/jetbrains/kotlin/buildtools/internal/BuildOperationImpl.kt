@@ -10,9 +10,13 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
+@OptIn(ExperimentalAtomicApi::class)
 internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
     protected abstract val options: Options
+    private val executionStarted = AtomicBoolean(false)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
@@ -22,7 +26,14 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
         options[key] = value
     }
 
-    abstract fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R
+    fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R {
+        check(executionStarted.compareAndSet(expectedValue = false, newValue = true)) {
+            "Build operation $this already started execution."
+        }
+        return executeImpl(projectId, executionPolicy, logger)
+    }
+
+    abstract fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R
 
     operator fun <V> get(key: Option<V>): V = options[key]
 

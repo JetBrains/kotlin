@@ -19,7 +19,7 @@ internal class CriFileIdToPathDataDeserializationOperationImpl(
 ) : BuildOperationImpl<Iterable<FileIdToPathEntry>>(), CriFileIdToPathDataDeserializationOperation {
     override val options: Options = Options(CriFileIdToPathDataDeserializationOperation::class)
 
-    override fun execute(
+    override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
