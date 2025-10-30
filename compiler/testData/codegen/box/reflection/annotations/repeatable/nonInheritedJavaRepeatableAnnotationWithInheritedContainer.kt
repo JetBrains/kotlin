@@ -85,7 +85,7 @@ private fun testAnnotationsJavaDifference() {
         setOf(Anno("3")),
         kotlinAnnotations(ChildClass1::class))
 
-    // Kotlin implementation does not inherit non=-inherited annotations with inherited containers
+    // Kotlin implementation does not inherit non-inherited annotations with inherited containers
     assertEquals(
         setOf(JAnnoContainer(arrayOf(Anno("1"), Anno("2")))),
         javaAnnotations(ChildClass2::class))
