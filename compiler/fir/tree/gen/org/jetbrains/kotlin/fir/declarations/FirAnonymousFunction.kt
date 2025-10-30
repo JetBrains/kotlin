@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  * - [body] — the function body, if present, otherwise null.
  * - [contractDescription] — contract description for the function, if present (see [FirContractDescription] and its inheritors).
  * - [annotations] — annotations present on the function, if any.
+ * - [isLocal] — always true for anonymous functions. 
  *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.anonymousFunction]
  */

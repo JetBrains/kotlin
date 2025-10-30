@@ -89,6 +89,24 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val callableDeclaration: Element by sealedElement(Declaration) {
+        kDoc = """
+            Represents a common base for all callable declarations in FIR.
+            This includes all function-like declarations (see [FirFunction] and all variable-like declarations (see [FirVariable]).
+
+            Notable properties:
+            - [symbol] — the symbol which serves as a pointer to this càllable declaration.
+            - [typeParameters] — type parameter references declared for this callable declaration, if any.
+            In certain situations, references to type parameters of its outer classes may also be present in the list. 
+            - [dispatchReceiverType] — dispatch receiver type for non-static member callables, or null for top-level or static callables.
+            Dispatch receiver type is a type of `this` based on the member callable's owner class and used to determine accessible scopes.
+            - [contextParameters] — context parameters of the callable declaration, if any.
+            - [receiverParameter] — the extension receiver parameter if present, otherwise null.
+            - [returnTypeRef] — the declared return type of the function-like declaration, or the type of the variable-like declaration.
+            - [annotations] — annotations present on the declaration, if any.
+            - [isLocal] — the callable is non-local (isLocal = false) iff all its ancestors (containing declarations) are
+            either files (see [FirFile]) or classes. With any function-like among ancestors, the callable is local (isLocal = true).
+            In particular, it means that any callable member of a local class is also local. 
+                """.trimIndent()
         parent(memberDeclaration)
 
         +field("returnTypeRef", typeRef, withReplace = true, withTransform = true)
@@ -118,6 +136,9 @@ object FirTree : AbstractFirTreeBuilder() {
             - [returnTypeRef] — the declared return type of the function-like declaration.
             - [body] — the function body, if present, otherwise null.
             - [annotations] — annotations present on the declaration, if any.
+            - [isLocal] — the function is non-local (isLocal = false) iff all its ancestors (containing declarations) are
+            either files (see [FirFile]) or classes. With any function-like among ancestors, the function is local (isLocal = true).
+            In particular, it means that any member function of a local class is also local. 
                 """.trimIndent()
         parent(callableDeclaration)
         parent(targetElement)
@@ -145,6 +166,19 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val memberDeclaration: Element by sealedElement(Declaration) {
+        kDoc = """
+            Represents a common base for all declarations in FIR, that can be class member declarations (though in fact can be
+            declared e.g. at top-level). This includes all class-like declarations (see [FirClassLikeDeclaration] and
+            all callable declarations (see [FirCallableDeclaration]).
+
+            Notable properties:
+            - [symbol] — the symbol which serves as a pointer to this declaration.
+            - [typeParameters] — type parameter references declared for this declaration, if any.
+            In certain situations, references to type parameters of its outer classes may also be present in the list. 
+            - [isLocal] — the declaration is non-local (isLocal = false) iff all its ancestors (containing declarations) are
+            either files (see [FirFile]) or classes. With any function-like among ancestors, the declaration is local (isLocal = true).
+            In particular, it means that any member declaration of a local class is also local. 
+                """.trimIndent()
         parent(declaration)
         parent(typeParameterRefsOwner)
 
@@ -559,6 +593,7 @@ object FirTree : AbstractFirTreeBuilder() {
             - [body] — the function body, if present, otherwise null.
             - [contractDescription] — contract description for the function, if present (see [FirContractDescription] and its inheritors).
             - [annotations] — annotations present on the function, if any.
+            - [isLocal] — always true for anonymous functions. 
                 """.trimIndent()
         parent(function)
         parent(typeParametersOwner)
