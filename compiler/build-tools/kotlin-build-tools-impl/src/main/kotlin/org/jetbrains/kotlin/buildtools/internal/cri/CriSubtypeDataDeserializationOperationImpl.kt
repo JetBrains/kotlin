@@ -19,7 +19,7 @@ internal class CriSubtypeDataDeserializationOperationImpl(
 ) : BuildOperationImpl<Collection<SubtypeEntry>>(), CriSubtypeDataDeserializationOperation {
     override val options: Options = Options(CriSubtypeDataDeserializationOperation::class)
 
-    override fun execute(
+    override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
