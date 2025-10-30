@@ -171,7 +171,7 @@ internal fun Annotation.isRepeatableContainerForNonInheritedAnnotation(): Boolea
 internal val Annotation.unwrappedAnnotationClass: KClass<out Annotation>
     get() {
         val annotationOrContainerClass = annotationClass
-        if (isKotlinRepeatableContainer(annotationOrContainerClass) || isJavaRepeatableContainer(annotationOrContainerClass))
+        if (isJavaRepeatableContainer(annotationOrContainerClass))
             return getRepeatableContainerComponentType(annotationOrContainerClass)
         else
             return annotationOrContainerClass
