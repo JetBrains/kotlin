@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 
 /**
- * Compiles Kotlin code targeting JVM platform and using specified options.
+ * Compiles Kotlin code targeting JS platform and using specified options.
  *
  * This interface is not intended to be implemented by the API consumers.
  *
@@ -23,10 +23,9 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
  *
  * An example of the basic usage is:
  *  ```
- *   val toolchain = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
- *   val operation = toolchain.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
- *   operation.compilerArguments[CommonCompilerArguments.LANGUAGE_VERSION] = KotlinVersion.V2_0
- *   toolchain.createBuildSession().use { it.executeOperation(operation, toolchain.createDaemonExecutionPolicy()) }
+ *   val toolchains = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
+ *   val operation = toolchains.js.createJsCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
+ *   toolchains.createBuildSession().use { it.executeOperation(operation) }
  *  ```
  *
  * @since 2.3.0
@@ -55,7 +54,7 @@ public interface JsCompilationOperation : BuildOperation<CompilationResult> {
     public operator fun <V> set(key: Option<V>, value: V)
 
     /**
-     * Kotlin compiler configurable options for JVM platform.
+     * Kotlin compiler configurable options for JS platform.
      */
     @OptIn(ExperimentalCompilerArgument::class)
     public val compilerArguments: JsArguments

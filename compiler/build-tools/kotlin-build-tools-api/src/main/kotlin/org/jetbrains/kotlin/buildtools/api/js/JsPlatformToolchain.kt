@@ -12,17 +12,17 @@ import org.jetbrains.kotlin.buildtools.api.js.operations.JsCompilationOperation
 import java.nio.file.Path
 
 /**
- * Allows creating operations that can be used for performing Kotlin/JVM compilations.
+ * Allows creating operations that can be used for performing Kotlin/JS compilations.
  *
  * This interface is not intended to be implemented by the API consumers.
  *
- * Obtain an instance of this interface from [org.jetbrains.kotlin.buildtools.api.KotlinToolchains.jvm].
+ * Obtain an instance of this interface from [org.jetbrains.kotlin.buildtools.api.KotlinToolchains.js].
  *
  * An example of the basic usage is:
  *  ```
- *   val toolchain = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
- *   val operation = toolchain.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
- *   toolchain.createBuildSession().use { it.executeOperation(operation) }
+ *   val toolchains = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
+ *   val operation = toolchains.js.createJsCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
+ *   toolchains.createBuildSession().use { it.executeOperation(operation) }
  *  ```
  *
  * @since 2.3.0
@@ -30,13 +30,9 @@ import java.nio.file.Path
 @ExperimentalBuildToolsApi
 public interface JsPlatformToolchain : KotlinToolchains.Toolchain {
     /**
-     * Creates a build operation for compiling Kotlin sources into class files.
+     * Creates a build operation for compiling Kotlin sources.
      *
-     * Note that [sources] should include .java files from the same module (as defined in https://kotl.in/spec-modules),
-     * so that Kotlin compiler can properly resolve references to Java code and track changes in them.
-     * However, Kotlin compiler will not compile the .java files.
-     *
-     * @param sources all sources of the compilation unit. This includes Java source files.
+     * @param sources all sources of the compilation unit.
      * @param destinationDirectory where to put the output of the compilation
      * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchains.BuildSession.executeOperation
      */
