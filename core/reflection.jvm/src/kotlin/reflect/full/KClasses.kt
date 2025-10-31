@@ -28,6 +28,7 @@ import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
+import kotlin.reflect.jvm.internal.types.allTypeParameters
 
 /**
  * Returns the primary constructor of this class, or `null` if this class has no primary constructor.
@@ -73,7 +74,7 @@ val KClass<*>.defaultType: KType
     get() = createDefaultType()
 
 internal fun KClass<*>.createDefaultType(): KType =
-    createType(typeParameters.map { typeParameter ->
+    createType(allTypeParameters().map { typeParameter ->
         KTypeProjection(KVariance.INVARIANT, typeParameter.createType())
     })
 
