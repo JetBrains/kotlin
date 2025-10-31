@@ -357,7 +357,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             )
             default("returnTypeRef", "FirErrorTypeRefImpl(source, MutableOrEmptyList.empty(), null, null, diagnostic)")
             default("isLocal") {
-                value = "true"
+                value = "false"
                 withGetter = true
             }
             additionalImports(errorTypeRefImplType)
@@ -629,7 +629,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultNull("receiverParameter", "body", withGetter = true)
             default("returnTypeRef", "FirErrorTypeRefImpl(null, MutableOrEmptyList.empty(), null, null, diagnostic)")
             default("isLocal") {
-                value = "true"
+                value = "false"
                 withGetter = true
             }
             additionalImports(errorTypeRefImplType)
