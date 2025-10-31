@@ -454,6 +454,7 @@ include ":kotlin-scripting-ide-services-unshaded",
 
 include ":compiler:test-infrastructure",
         ":compiler:test-infrastructure-utils",
+        ":compiler:test-infrastructure-utils.common",
         ":compiler:tests-common-new"
 
 include ":plugins:parcelize:parcelize-compiler",

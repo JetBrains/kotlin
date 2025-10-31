@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.runner.RunWith
 import java.io.File
@@ -113,7 +112,7 @@ private class TestGeneratorForJUnit4Instance(
         p.println("import com.intellij.testFramework.TestDataPath;")
         p.println("import ", JUNIT3_RUNNER.canonicalName, ";")
         p.println("import org.jetbrains.kotlin.test.KotlinTestUtils;")
-        p.println("import " + KtTestUtil::class.java.canonicalName + ";")
+        p.println("import org.jetbrains.kotlin.test.util.KtTestUtil;")
 
         for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
             p.println("import ${clazz.canonicalName};")

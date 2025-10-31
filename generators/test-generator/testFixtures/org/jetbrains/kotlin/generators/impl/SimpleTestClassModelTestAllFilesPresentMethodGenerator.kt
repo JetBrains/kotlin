@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.generators.impl
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.model.SimpleTestClassModel
+import org.jetbrains.kotlin.generators.util.getFilePath
 
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
 import java.util.regex.Pattern
 
@@ -29,7 +29,7 @@ object SimpleTestClassModelTestAllFilesPresentMethodGenerator : MethodGenerator<
             val excludePattern = classModel.excludePattern
             p.print(
                 "KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"",
-                KtTestUtil.getFilePath(classModel.rootFile),
+                classModel.rootFile.getFilePath(),
                 "\"), Pattern.compile(\"",
                 StringUtil.escapeStringCharacters(classModel.filenamePattern.pattern()),
                 "\"), ",

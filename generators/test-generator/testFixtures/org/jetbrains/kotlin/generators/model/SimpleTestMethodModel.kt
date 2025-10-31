@@ -8,8 +8,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.impl.SimpleTestMethodGenerator
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.escapeForJavaIdentifier
-import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.generators.util.getFilePath
 import java.io.File
 import java.util.regex.Pattern
 
@@ -28,7 +27,7 @@ class SimpleTestMethodModel(
     override val dataString: String
         get() {
             val path = FileUtil.getRelativePath(rootDir, file)!!
-            return KtTestUtil.getFilePath(File(path))
+            return File(path).getFilePath()
         }
 
     override val name: String

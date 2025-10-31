@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.generators.util
 
+import com.intellij.openapi.util.io.FileUtil
 import org.intellij.lang.annotations.Language
 import java.io.File
 import java.lang.StringBuilder
@@ -60,4 +61,8 @@ private val defaultPackages = listOf(
 fun Class<*>.isDefaultImportedClass(): Boolean {
     val outerName = canonicalName.removeSuffix(".$simpleName")
     return outerName in defaultPackages
+}
+
+internal fun File.getFilePath(): String {
+    return FileUtil.toSystemIndependentName(path)
 }
