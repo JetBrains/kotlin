@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.js.test.handlers
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.common.safeModuleName
 import org.jetbrains.kotlin.js.test.utils.LineCollector
 import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
 import org.jetbrains.kotlin.js.util.TextOutputImpl

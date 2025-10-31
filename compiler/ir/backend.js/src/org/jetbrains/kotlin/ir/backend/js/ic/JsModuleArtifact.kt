@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrModule
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.deserializeJsIrProgramFragment
+import org.jetbrains.kotlin.js.common.safeModuleName
 import java.io.File
 
 abstract class SrcFileArtifact {

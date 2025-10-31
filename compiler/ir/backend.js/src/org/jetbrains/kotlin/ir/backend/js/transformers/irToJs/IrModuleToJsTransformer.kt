@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.ast.JsCompositeBlock
 import org.jetbrains.kotlin.js.backend.ast.JsSingleLineComment
-import org.jetbrains.kotlin.js.common.makeValidES5Identifier
+import org.jetbrains.kotlin.js.common.safeModuleName
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -47,16 +47,6 @@ import java.io.File
 import java.util.*
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportModelGenerator as JsExportModelGenerator
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelGenerator as TsExportModelGenerator
-
-val String.safeModuleName: String
-    get() {
-        var result = this
-
-        if (result.startsWith('<')) result = result.substring(1)
-        if (result.endsWith('>')) result = result.substring(0, result.length - 1)
-
-        return makeValidES5Identifier("kotlin_$result", false)
-    }
 
 val IrModuleFragment.safeName: String
     get() = name.asString().safeModuleName

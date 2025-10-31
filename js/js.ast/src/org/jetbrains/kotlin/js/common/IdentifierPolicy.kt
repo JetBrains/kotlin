@@ -98,3 +98,13 @@ fun makeValidES5Identifier(name: String, withHash: Boolean = true): String {
 
 private inline fun Char.mangleIfNot(predicate: Char.() -> Boolean) =
     if (predicate()) this else '_'
+
+val String.safeModuleName: String
+    get() {
+        var result = this
+
+        if (result.startsWith('<')) result = result.substring(1)
+        if (result.endsWith('>')) result = result.substring(0, result.length - 1)
+
+        return makeValidES5Identifier("kotlin_$result", false)
+    }

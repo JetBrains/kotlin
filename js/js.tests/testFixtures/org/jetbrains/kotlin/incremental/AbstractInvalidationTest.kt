@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinLibraryFile
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFileMap
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
+import org.jetbrains.kotlin.js.common.safeModuleName
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
