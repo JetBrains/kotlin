@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DependencyScenarioDslCacheKey
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
@@ -21,7 +21,7 @@ import kotlin.io.path.walk
 private data class GlobalCompiledProjectsCacheKey(
     val moduleKey: DependencyScenarioDslCacheKey,
     val snapshotConfig: SnapshotConfig,
-    val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)?,
+    val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit)?,
     val icSourceTracking: Boolean,
 )
 
@@ -35,7 +35,7 @@ internal object GlobalCompiledProjectsCache {
         module: Module,
         strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit),
+        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit),
         icSourceTracking: Boolean,
     ): BaseScenarioModule? {
         val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
@@ -56,7 +56,7 @@ internal object GlobalCompiledProjectsCache {
         module: Module,
         strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit),
+        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit),
         icSourceTracking: Boolean,
     ): BaseScenarioModule {
         module.compileIncrementally(

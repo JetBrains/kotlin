@@ -4,6 +4,7 @@
  */
 
 @file:OptIn(ExperimentalBuildToolsApi::class)
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.buildtools.internal.compat
 
@@ -29,8 +30,6 @@ import java.nio.file.Path
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.io.path.absolutePathString
-import kotlin.time.Duration
-import kotlin.time.toJavaDuration
 
 public class KotlinToolchainsV1Adapter(
     @Suppress("DEPRECATION") private val compilationService: CompilationService,
@@ -131,6 +130,19 @@ private class JvmCompilationOperationV1Adapter(
         options[key] = value
     }
 
+    override fun snapshotBasedIcConfigurationBuilder(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        shrunkClasspathSnapshot: Path,
+    ): JvmSnapshotBasedIncrementalCompilationConfiguration {
+        @Suppress("DEPRECATION")
+        return JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter(
+            workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot,
+            JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter()
+        )
+    }
+
     private operator fun <V> get(key: Option<V>): V = options[key]
 
     private operator fun <V> set(key: Option<V>, value: V) {
@@ -150,6 +162,7 @@ private class JvmCompilationOperationV1Adapter(
         val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS", null)
     }
 
+    @Suppress("DEPRECATION")
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicyV1Adapter,
@@ -213,8 +226,45 @@ private class JvmCompilationOperationV1Adapter(
         false
     }
 
+    private class JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        shrunkClasspathSnapshot: Path,
+        @Deprecated("Use `get` and `set` directly instead.")
+        override val options: JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter = JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(),
+    ) : JvmSnapshotBasedIncrementalCompilationConfiguration(
+        workingDirectory,
+        sourcesChanges,
+        dependenciesSnapshotFiles,
+        shrunkClasspathSnapshot,
+        options
+    ) {
+
+        override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V {
+            return options.options[key]
+        }
+
+        override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>, value: V) {
+            options.options[key] = value
+        }
+
+        operator fun <V> get(key: Option<V>): V {
+            return options.options[key]
+        }
+
+        operator fun <V> set(key: Option<V>, value: V) {
+            options.options[key] = value
+        }
+
+        class Option<V> : BaseOptionWithDefault<V> {
+            constructor(id: String) : super(id)
+            constructor(id: String, default: V) : super(id, default = default)
+        }
+    }
+
     private class JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter : JvmSnapshotBasedIncrementalCompilationOptions {
-        private val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class)
+        internal val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class)
 
         operator fun <V> get(key: Option<V>): V = options[key]
 
@@ -257,6 +307,7 @@ private class JvmCompilationOperationV1Adapter(
         }
     }
 
+    @Deprecated("Use `snapshotBasedIcConfigurationBuilder` instead.")
     override fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions {
         return JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter()
     }
