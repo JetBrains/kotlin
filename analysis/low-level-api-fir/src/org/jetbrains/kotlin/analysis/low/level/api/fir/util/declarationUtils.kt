@@ -293,7 +293,7 @@ internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
         // Script parameters should be treated as non-locals as they are visible from FirScript
         FirDeclarationOrigin.ScriptCustomization.Parameter, FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass -> false
 
-        else -> isLocal && fir !is FirErrorProperty
+        else -> isLocal
     }
 
 val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
