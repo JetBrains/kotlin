@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.library.shortName
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -97,6 +98,13 @@ interface ObjCExportNamer {
     fun getObjectPropertySelector(descriptor: ClassDescriptor): String
     fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String
     fun needsExplicitMethodFamily(name: String): Boolean
+
+    // Null means no NSEnum function.
+    fun getNSEnumFunctionTypeName(descriptor: ClassDescriptor): String? =
+        descriptor.annotations.findAnnotation(FqName("kotlin.native.ObjCEnum"))?.let {
+            val name = it.allValueArguments.entries.find { it.key.asString() == "name" }?.value?.value?.toString()
+            name ?: "${getClassOrProtocolName(descriptor).objCName}_Enum"
+        }
 
     companion object {
         @InternalKotlinNativeApi

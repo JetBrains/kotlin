@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdap
 import org.jetbrains.kotlin.backend.konan.lower.getLoweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethodSpec.BaseMethod
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -1375,6 +1376,15 @@ private fun ObjCExportCodeGenerator.createArrayConstructorAdapter(
     return objCToKotlinMethodAdapter(selectorName, methodBridge, imp)
 }
 
+private fun ObjCExportCodeGenerator.createNSEnumAdapter(
+        symbol: IrSimpleFunctionSymbol,
+        methodBridge: MethodBridge,
+        selectorName: String
+): ObjCToKotlinMethodAdapter {
+    val imp = generateObjCImp(symbol.owner, symbol.owner.getLowered<IrSimpleFunction>(), methodBridge)
+    return objCToKotlinMethodAdapter(selectorName, methodBridge, imp)
+}
+
 private fun ObjCExportCodeGenerator.vtableIndex(irFunction: IrSimpleFunction): Int? {
     assert(irFunction.isOverridable)
     val irClass = irFunction.parentAsClass
@@ -1429,6 +1439,9 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         when (it) {
             is ObjCInitMethodForKotlinConstructor -> {
                 adapters += createConstructorAdapter(it.baseMethod)
+            }
+            is ObjCGetterForNSEnumType -> {
+                adapters += createNSEnumAdapter(it.symbol, it.bridge, it. selector)
             }
             is ObjCFactoryMethodForKotlinArrayConstructor -> {
                 classAdapters += createArrayConstructorAdapter(it.baseMethod)

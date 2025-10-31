@@ -202,6 +202,7 @@ private class KtObjCExportHeaderGenerator(
                     is ObjCProperty -> listOf(childStub.type)
                     is ObjCInterface -> childStub.superClassGenerics
                     is ObjCTopLevel -> emptyList()
+                    is ObjCNSEnum -> emptyList()
                 }
             }.map { type ->
                 /**

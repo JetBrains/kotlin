@@ -32,11 +32,17 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.*
 
+
+class TranslatedClass(
+    val auxiliaryDeclarations: List<ObjCExportStub> = emptyList(),
+    val objCInterface: ObjCInterface,
+)
+
 interface ObjCExportTranslator {
     fun generateBaseDeclarations(): List<ObjCTopLevel>
     fun getClassIfExtension(receiverType: KotlinType): ClassDescriptor?
     fun translateFile(file: SourceFile, declarations: List<CallableMemberDescriptor>): ObjCInterface
-    fun translateClass(descriptor: ClassDescriptor): ObjCInterface
+    fun translateClass(descriptor: ClassDescriptor): TranslatedClass
     fun translateInterface(descriptor: ClassDescriptor): ObjCProtocol
     fun translateExtensions(classDescriptor: ClassDescriptor, declarations: List<CallableMemberDescriptor>): ObjCInterface
 }
@@ -172,12 +178,13 @@ class ObjCExportTranslatorImpl(
         )
     }
 
-    override fun translateClass(descriptor: ClassDescriptor): ObjCInterface {
+    override fun translateClass(descriptor: ClassDescriptor): TranslatedClass {
         require(!descriptor.isInterface)
         if (!mapper.shouldBeExposed(descriptor)) {
-            return translateUnexposedClassAsUnavailableStub(descriptor)
+            return TranslatedClass(objCInterface = translateUnexposedClassAsUnavailableStub(descriptor))
         }
 
+        val auxiliaryDeclarations = mutableListOf<ObjCExportStub>()
         val genericExportScope = createGenericExportScope(descriptor)
 
         fun superClassGenerics(genericExportScope: ObjCExportScope): List<ObjCNonNullReferenceType> {
@@ -284,6 +291,27 @@ class ObjCExportTranslatorImpl(
                 ClassKind.ENUM_CLASS -> {
                     val type = mapType(descriptor.defaultType, ReferenceBridge, ObjCRootExportScope)
 
+                    namer.getNSEnumFunctionTypeName(descriptor)?.let { nsEnumTypeName ->
+                        auxiliaryDeclarations.add(
+                            ObjCNSEnum(nsEnumTypeName, descriptor.enumEntries.map {
+                                ObjcExportNativeEnumEntryName(
+                                    objCName = namer.getEnumEntrySelector(it).replaceFirstChar { it.uppercaseChar() },
+                                    swiftName = namer.getEnumEntrySwiftName(it))
+                            } ))
+
+                        add {
+                            ObjCMethod(
+                                null,
+                                null,
+                                true,
+                                ObjCRawType(nsEnumTypeName),
+                                listOf("toNSEnum"),
+                                emptyList<ObjCParameter>(),
+                                emptyList()
+                            )
+                        }
+                    }
+
                     descriptor.enumEntries.forEach {
                         val entryName = namer.getEnumEntrySelector(it)
                         val swiftName = namer.getEnumEntrySwiftName(it)
@@ -337,17 +365,18 @@ class ObjCExportTranslatorImpl(
         val generics = mapTypeConstructorParameters(descriptor)
         val superClassGenerics = superClassGenerics(genericExportScope)
 
-        return objCInterface(
-            name,
-            generics = generics,
-            descriptor = descriptor,
-            superClass = superName.objCName,
-            superClassGenerics = superClassGenerics,
-            superProtocols = superProtocols,
-            members = members,
-            attributes = attributes,
-            comment = objCCommentOrNull(mustBeDocumentedAttributeList(descriptor.annotations))
-        )
+        return TranslatedClass(
+            auxiliaryDeclarations = auxiliaryDeclarations.toList(),
+            objCInterface = objCInterface(
+                name,
+                generics = generics,
+                descriptor = descriptor,
+                superClass = superName.objCName,
+                superClassGenerics = superClassGenerics,
+                superProtocols = superProtocols,
+                members = members,
+                attributes = attributes,
+                comment = objCCommentOrNull(mustBeDocumentedAttributeList(descriptor.annotations))))
     }
 
     internal fun createGenericExportScope(descriptor: ClassDescriptor): ObjCExportScope = if (objcGenerics) {
@@ -772,7 +801,8 @@ class ObjCExportTranslatorImpl(
     }
 
     private val mustBeDocumentedAnnotationsStopList =
-        setOf(StandardNames.FqNames.deprecated, KonanFqNames.objCName, KonanFqNames.shouldRefineInSwift)
+        setOf(StandardNames.FqNames.deprecated, KonanFqNames.objCName, KonanFqNames.shouldRefineInSwift,
+            KonanFqNames.objCEnum)
 
     private fun mustBeDocumentedAnnotations(annotations: Annotations): List<String> {
         return annotations.mapNotNull { it ->

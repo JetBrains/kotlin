@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import java.io.PrintStream
@@ -89,6 +88,15 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
             }
 
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
+                if (namer.getNSEnumFunctionTypeName(descriptor) != null) {
+                    val superClass = descriptor.getSuperClassNotAny()!!  // ordinal is declared in KotlinEnum
+                    val ordinalDescriptor = superClass.contributedMethods.first { it.name.asString() == "<get-ordinal>" }
+                    val symbol = symbolTable.descriptorExtension.referenceSimpleFunction(ordinalDescriptor)
+                    val bridge = mapper.bridgeMethod(ordinalDescriptor)
+                    val method = ObjCMethodSpec.BaseMethod(symbol, bridge, "toNSEnum")
+                    methods += ObjCGetterForNSEnumType(symbol, bridge, "toNSEnum", method)
+                }
+
                 descriptor.enumEntries.mapTo(methods) {
                     ObjCGetterForKotlinEnumEntry(symbolTable.descriptorExtension.referenceEnumEntry(it), namer.getEnumEntrySelector(it))
                 }
@@ -160,6 +168,7 @@ internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String) {
             is ObjCClassMethodForKotlinEnumValuesOrEntries -> false
             is ObjCGetterForKotlinEnumEntry -> false
             is ObjCGetterForObjectInstance -> false
+            is ObjCGetterForNSEnumType -> true
         }
 
         fun ObjCMethodSpec.getMapping(objcClass: String): String? = when (this) {
@@ -170,6 +179,7 @@ internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String) {
             is ObjCInitMethodForKotlinConstructor -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
             is ObjCKotlinThrowableAsErrorMethod -> null
             is ObjCMethodForKotlinMethod -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
+            is ObjCGetterForNSEnumType -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
         }
         out.println("\n# Instance methods mapping")
         for (type in types) {
@@ -223,6 +233,18 @@ internal class ObjCGetterForKotlinEnumEntry(
     override fun toString(): String =
             "ObjC spec of getter `$selector` for `$irEnumEntrySymbol`"
 }
+
+
+internal class ObjCGetterForNSEnumType(
+        val symbol: IrSimpleFunctionSymbol,
+        val bridge: MethodBridge,
+        val selector: String,
+        val baseMethod: BaseMethod<IrSimpleFunctionSymbol>
+) : ObjCMethodSpec() {
+    override fun toString(): String =
+            "ObjC spec of ${baseMethod.selector} for ${baseMethod.symbol}"
+}
+
 
 internal class ObjCClassMethodForKotlinEnumValuesOrEntries(
         val valuesFunctionSymbol: IrFunctionSymbol,

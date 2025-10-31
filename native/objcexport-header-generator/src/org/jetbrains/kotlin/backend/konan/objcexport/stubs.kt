@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.HasExtras
 import org.jetbrains.kotlin.tooling.core.emptyExtras
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 @Deprecated("Use 'ObjCExportStub' instead", replaceWith = ReplaceWith("ObjCExportStub"))
 @Suppress("unused")
@@ -44,6 +45,17 @@ val ObjCExportStub.psiOrNull
 
 
 abstract class ObjCTopLevel : ObjCExportStub
+
+class ObjCNSEnum(
+    override val name: String,
+    val literals: List<ObjcExportNativeEnumEntryName>,
+) : ObjCExportStub {
+    override val comment: ObjCComment?
+        get() = null
+    override val origin: ObjCExportStubOrigin?
+        get() = null
+    override val extras: Extras = emptyExtras()
+}
 
 sealed class ObjCClass : ObjCTopLevel() {
     abstract val attributes: List<String>
