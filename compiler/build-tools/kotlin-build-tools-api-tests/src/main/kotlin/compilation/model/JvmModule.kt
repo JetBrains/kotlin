@@ -16,10 +16,9 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.FORCE_RECOMPILATION
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.MODULE_BUILD_DIR
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.ROOT_PROJECT_DIR
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.FORCE_RECOMPILATION
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.MODULE_BUILD_DIR
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.PARSE_INLINED_LOCAL_CLASSES
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -27,7 +26,6 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.pathString
-import kotlin.io.path.toPath
 import kotlin.io.path.walk
 
 class JvmModule(
@@ -107,7 +105,7 @@ class JvmModule(
         forceOutput: LogLevel?,
         forceNonIncrementalCompilation: Boolean,
         compilationConfigAction: (JvmCompilationOperation) -> Unit,
-        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationOptions) -> Unit,
+        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit,
         assertions: context(Module) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         return compile(strategyConfig, forceOutput, { compilationOperation ->
@@ -115,22 +113,19 @@ class JvmModule(
                 generateClasspathSnapshot(it).toFile()
             }
 
-            val snapshotIcOptions = compilationOperation.createSnapshotBasedIcOptions()
-            snapshotIcOptions[MODULE_BUILD_DIR] = buildDirectory
-            snapshotIcOptions[ROOT_PROJECT_DIR] = project.projectDirectory
-            snapshotIcOptions[FORCE_RECOMPILATION] = forceNonIncrementalCompilation
-
-            val incrementalConfiguration = JvmSnapshotBasedIncrementalCompilationConfiguration(
+            val snapshotIcConfig = compilationOperation.snapshotBasedIcConfigurationBuilder(
                 icCachesDir,
                 sourcesChanges,
                 snapshots.map { it.toPath() },
                 icWorkingDir.resolve("shrunk-classpath-snapshot.bin"),
-                snapshotIcOptions
             )
+            snapshotIcConfig[MODULE_BUILD_DIR] = buildDirectory
+            snapshotIcConfig[ROOT_PROJECT_DIR] = project.projectDirectory
+            snapshotIcConfig[FORCE_RECOMPILATION] = forceNonIncrementalCompilation
 
-            icOptionsConfigAction(incrementalConfiguration.options)
+            icOptionsConfigAction(snapshotIcConfig)
 
-            compilationOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = incrementalConfiguration
+            compilationOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = snapshotIcConfig
             compilationConfigAction(compilationOperation)
         }, assertions)
     }

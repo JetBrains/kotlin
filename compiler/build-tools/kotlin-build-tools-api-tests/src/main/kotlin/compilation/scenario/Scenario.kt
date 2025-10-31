@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 
@@ -30,7 +30,7 @@ interface Scenario {
         dependencies: List<ScenarioModule> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit) = {},
+        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit) = {},
     ): ScenarioModule
 
     /**
@@ -54,6 +54,6 @@ interface Scenario {
         dependencies: List<ScenarioModule> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit) = {},
+        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit) = {},
     ): ScenarioModule
 }

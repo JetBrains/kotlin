@@ -12,14 +12,10 @@ import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
@@ -31,12 +27,14 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
+import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.MODULE_BUILD_DIR
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.OUTPUT_DIRS
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
+import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
@@ -102,8 +100,24 @@ internal class JvmCompilationOperationImpl private constructor(
         constructor(id: String, default: V) : super(id, default = default)
     }
 
-    override fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions {
-        return JvmSnapshotBasedIncrementalCompilationOptionsImpl()
+    @Deprecated("Use `snapshotBasedIcConfigurationBuilder` instead.")
+    @Suppress("DEPRECATION")
+    override fun createSnapshotBasedIcOptions(): org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions {
+        return org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl()
+    }
+
+    override fun snapshotBasedIcConfigurationBuilder(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        shrunkClasspathSnapshot: Path,
+    ): JvmSnapshotBasedIncrementalCompilationConfiguration {
+        return JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
+            workingDirectory,
+            sourcesChanges,
+            dependenciesSnapshotFiles,
+            shrunkClasspathSnapshot
+        )
     }
 
     override fun executeCancellableImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
@@ -135,11 +149,9 @@ internal class JvmCompilationOperationImpl private constructor(
             ReportSeverity.INFO.code
         }
         val generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX)
-        val aggregatedIcConfiguration: JvmIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)
-        return when (aggregatedIcConfiguration) {
+        return when (val aggregatedIcConfiguration: JvmIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)) {
             is JvmSnapshotBasedIncrementalCompilationConfiguration -> {
-                val aggregatedIcConfigurationOptions =
-                    aggregatedIcConfiguration.options as JvmSnapshotBasedIncrementalCompilationOptionsImpl
+                val aggregatedIcConfigurationOptions = aggregatedIcConfiguration.toOptions()
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
                 val requestedCompilationResults = listOfNotNull(
                     CompilationResultCategory.IC_COMPILE_ITERATION.code,
@@ -244,7 +256,7 @@ internal class JvmCompilationOperationImpl private constructor(
         arguments.freeArgs += kotlinSources.map { it.absolutePathString() } // TODO: pass the sources explicitly KT-62759
         arguments.destination = destinationDirectory.absolutePathString()
         val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION) as? JvmSnapshotBasedIncrementalCompilationConfiguration
-        val aggregatedIcConfigurationOptions = aggregatedIcConfiguration?.options as? JvmSnapshotBasedIncrementalCompilationOptionsImpl
+        val aggregatedIcConfigurationOptions = aggregatedIcConfiguration?.toOptions()
         val rootProjectDir = aggregatedIcConfigurationOptions?.get(ROOT_PROJECT_DIR)
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
         val metricsReporter = getMetricsReporter()
@@ -325,7 +337,7 @@ internal class JvmCompilationOperationImpl private constructor(
     ): CompilationResult {
         arguments.freeArgs += kotlinSources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
 
-        val aggregatedIcConfigurationOptions = options as JvmSnapshotBasedIncrementalCompilationOptionsImpl
+        val aggregatedIcConfigurationOptions = toOptions()
         val projectDir = aggregatedIcConfigurationOptions[ROOT_PROJECT_DIR]?.toFile()
         val buildDir = aggregatedIcConfigurationOptions[MODULE_BUILD_DIR]?.toFile()
 
@@ -375,7 +387,7 @@ internal class JvmCompilationOperationImpl private constructor(
     private fun JvmCompilationOperationImpl.getNonFirRunner(
         workingDirectory: Path,
         buildReporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
-        aggregatedIcConfigurationOptions: JvmSnapshotBasedIncrementalCompilationOptionsImpl,
+        aggregatedIcConfigurationOptions: HasSnapshotBasedIcOptionsAccessor,
         classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
         kotlinFilenameExtensions: Set<String>,
         icFeatures: IncrementalCompilationFeatures,
@@ -400,7 +412,7 @@ internal class JvmCompilationOperationImpl private constructor(
     private fun JvmCompilationOperationImpl.getFirRunner(
         workingDirectory: Path,
         buildReporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
-        aggregatedIcConfigurationOptions: JvmSnapshotBasedIncrementalCompilationOptionsImpl,
+        aggregatedIcConfigurationOptions: HasSnapshotBasedIcOptionsAccessor,
         classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
         kotlinFilenameExtensions: Set<String>,
         icFeatures: IncrementalCompilationFeatures,
