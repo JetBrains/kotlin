@@ -104,6 +104,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.useK2 = from.useK2
     to.verbosePhases = from.verbosePhases?.copyOf()
     to.verifyIr = from.verifyIr
+    to.verifyIrNestedOffsets = from.verifyIrNestedOffsets
     to.verifyIrVisibility = from.verifyIrVisibility
     to.warningLevels = from.warningLevels?.copyOf()
     to.whenGuards = from.whenGuards

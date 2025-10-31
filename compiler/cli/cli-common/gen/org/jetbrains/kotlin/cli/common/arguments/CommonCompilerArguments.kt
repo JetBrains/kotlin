@@ -977,6 +977,16 @@ Warning: This feature is not yet production-ready.""",
         }
 
     @Argument(
+        value = "-Xverify-ir-nested-offsets",
+        description = "Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.",
+    )
+    var verifyIrNestedOffsets: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xverify-ir-visibility",
         description = "Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.",
     )

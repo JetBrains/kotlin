@@ -63,6 +63,16 @@ fun CompilerConfiguration.setupCommonArguments(
         }
     }
 
+    if (arguments.verifyIrNestedOffsets) {
+        put(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS, true)
+        if (irVerificationMode == IrVerificationMode.NONE) {
+            messageCollector.report(
+                CompilerMessageSeverity.WARNING,
+                "'-Xverify-ir-nested-offsets' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
+            )
+        }
+    }
+
     @Suppress("DEPRECATION")
     if (arguments.useFirExperimentalCheckers) {
         put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, true)

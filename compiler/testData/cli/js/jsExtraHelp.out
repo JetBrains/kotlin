@@ -221,6 +221,7 @@ where advanced options include:
   -Xverbose-phases           Be verbose while performing the given backend phases.
   -Xverify-ir={none|warning|error}
                              IR verification mode (no verification by default).
+  -Xverify-ir-nested-offsets Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.
   -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
   -Xwarning-level=<WARNING_NAME>:(error|warning|disabled)
                              Set the severity of the given warning.

@@ -512,6 +512,18 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
 
 
     compilerArgument {
+        name = "Xverify-ir-nested-offsets"
+        description =
+            "Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_20,
+        )
+    }
+
+
+    compilerArgument {
         name = "Xprofile-phases"
         description = "Profile backend phases.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

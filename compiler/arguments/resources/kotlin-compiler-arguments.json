@@ -3673,6 +3673,37 @@
                         }
                     },
                     {
+                        "name": "Xverify-ir-nested-offsets",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.3.20",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
                         "name": "Xverify-ir-visibility",
                         "shortName": null,
                         "deprecatedName": null,

@@ -702,6 +702,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_VERIFY_IR", KotlinReleaseVersion(2, 0, 20))
 
     /**
+     * Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_VERIFY_IR_NESTED_OFFSETS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_VERIFY_IR_NESTED_OFFSETS", KotlinReleaseVersion(2, 3, 20))
+
+    /**
      * Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

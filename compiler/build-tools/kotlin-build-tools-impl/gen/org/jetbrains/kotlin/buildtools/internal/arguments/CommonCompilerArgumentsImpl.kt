@@ -108,6 +108,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_K2
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_VERBOSE_PHASES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_VERIFY_IR
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_VERIFY_IR_NESTED_OFFSETS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_VERIFY_IR_VISIBILITY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_WARNING_LEVEL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_WHEN_GUARDS
@@ -241,6 +242,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     try { if (X_USE_K2 in this) { arguments.setUsingReflection("useK2", get(X_USE_K2))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_K2. Current compiler version is: $KC_VERSION, but the argument was removed in 2.2.0""").initCause(e) }
     if (X_VERBOSE_PHASES in this) { arguments.verbosePhases = get(X_VERBOSE_PHASES)}
     if (X_VERIFY_IR in this) { arguments.verifyIr = get(X_VERIFY_IR)}
+    if (X_VERIFY_IR_NESTED_OFFSETS in this) { arguments.verifyIrNestedOffsets = get(X_VERIFY_IR_NESTED_OFFSETS)}
     if (X_VERIFY_IR_VISIBILITY in this) { arguments.verifyIrVisibility = get(X_VERIFY_IR_VISIBILITY)}
     if (X_WARNING_LEVEL in this) { arguments.warningLevels = get(X_WARNING_LEVEL)}
     if (X_WHEN_GUARDS in this) { arguments.whenGuards = get(X_WHEN_GUARDS)}
@@ -341,6 +343,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     try { this[X_USE_K2] = arguments.getUsingReflection("useK2") } catch (_: NoSuchMethodError) {  }
     try { this[X_VERBOSE_PHASES] = arguments.verbosePhases } catch (_: NoSuchMethodError) {  }
     try { this[X_VERIFY_IR] = arguments.verifyIr } catch (_: NoSuchMethodError) {  }
+    try { this[X_VERIFY_IR_NESTED_OFFSETS] = arguments.verifyIrNestedOffsets } catch (_: NoSuchMethodError) {  }
     try { this[X_VERIFY_IR_VISIBILITY] = arguments.verifyIrVisibility } catch (_: NoSuchMethodError) {  }
     try { this[X_WARNING_LEVEL] = arguments.warningLevels } catch (_: NoSuchMethodError) {  }
     try { this[X_WHEN_GUARDS] = arguments.whenGuards } catch (_: NoSuchMethodError) {  }
@@ -611,6 +614,9 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
         CommonCompilerArgument("X_VERBOSE_PHASES")
 
     public val X_VERIFY_IR: CommonCompilerArgument<String?> = CommonCompilerArgument("X_VERIFY_IR")
+
+    public val X_VERIFY_IR_NESTED_OFFSETS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_VERIFY_IR_NESTED_OFFSETS")
 
     public val X_VERIFY_IR_VISIBILITY: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_VERIFY_IR_VISIBILITY")
