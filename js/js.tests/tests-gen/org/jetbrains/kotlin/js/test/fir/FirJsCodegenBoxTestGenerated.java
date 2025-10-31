@@ -36483,6 +36483,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("usingNullableValueAsLowerBoundLeadsToNullableResult.kt")
+    public void testUsingNullableValueAsLowerBoundLeadsToNullableResult() {
+      runTest("compiler/testData/codegen/box/javaInterop/usingNullableValueAsLowerBoundLeadsToNullableResult.kt");
+    }
+
+    @Test
     @TestMetadata("varargCall1.kt")
     public void testVarargCall1() {
       runTest("compiler/testData/codegen/box/javaInterop/varargCall1.kt");
