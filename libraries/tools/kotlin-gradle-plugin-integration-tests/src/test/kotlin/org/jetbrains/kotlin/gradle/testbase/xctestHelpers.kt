@@ -25,7 +25,16 @@ internal class XCTestHelpers : Closeable {
     private val uuid = UUID.randomUUID()
     private val testSimulatorName = "NativeXcodeSimulatorTestsIT_${uuid}_simulator"
 
+    // https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes#Known-Issues
+    // KTI-2756 Timeout in 🍏ᵐ Gradle Integration Tests Native Mac arm64 (Macos)
+    private fun updateCache() {
+        processOutput(
+            listOf("/usr/bin/xcrun", "simctl", "runtime", "dyld_shared_cache", "update", "--all")
+        )
+    }
+
     fun createSimulator(): Device {
+        updateCache()
         return Device(
             testSimulatorName,
             processOutput(
