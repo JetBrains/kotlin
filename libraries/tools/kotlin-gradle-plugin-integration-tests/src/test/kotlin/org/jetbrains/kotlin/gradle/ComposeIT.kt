@@ -12,6 +12,7 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
@@ -752,6 +753,90 @@ class ComposeIT : KGPBaseTest() {
                     ":produceReleaseComposeMapping",
                     ":mergeReleaseComposeMapping"
                 )
+            }
+        }
+    }
+
+    @DisplayName("CMP-9167 verification")
+    @GradleTest
+    @OtherGradlePluginTests
+    fun testComposeDefaultValueParamStubs(
+        gradleVersion: GradleVersion,
+    ) {
+        project(
+            projectName = "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                    version = TestVersions.Kotlin.CURRENT
+                ),
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
+            ),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://maven.pkg.jetbrains.space/public/p/compose/dev")),
+            enableGradleDaemonMemoryLimitInMb = 2048,
+            enableKotlinDaemonMemoryLimitInMb = 2048,
+        ) {
+            plugins {
+                id("org.jetbrains.kotlin.plugin.compose")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    listOf(
+                        iosArm64(),
+                        iosSimulatorArm64()
+                    ).forEach { iosTarget ->
+                        iosTarget.binaries.framework {
+                            baseName = "ComposeApp"
+                            isStatic = true
+                        }
+                    }
+                    jvm()
+
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs {
+                        browser()
+                        binaries.library()
+                    }
+
+                    js {
+                        browser()
+                        binaries.library()
+                    }
+                    sourceSets.commonMain {
+                        compileSource(
+                            //language=kotlin
+                            """
+                            package com.example
+                            
+                            import androidx.compose.runtime.Composable
+                            import kotlin.jvm.JvmInline
+                            
+                            @JvmInline
+                            value class ImeAction private constructor(val value: Int) {
+                                companion object {
+                                    val Default = ImeAction(0)
+                                }
+                            }
+                            
+                            @Composable
+                            fun <T> TextCompose(genericText: (T) -> String, imeAction: ImeAction = ImeAction.Default) {}
+                            """.trimIndent()
+                        )
+                        dependencies {
+                            implementation("org.jetbrains.compose.runtime:runtime:1.9.1")
+                        }
+                    }
+                }
+            }
+
+            build(":compileKotlinIosSimulatorArm64") {
+                assertTasksExecuted(":compileKotlinIosSimulatorArm64")
+            }
+            build(":compileKotlinWasmJs") {
+                assertTasksExecuted(":compileKotlinWasmJs")
+            }
+            build(":compileKotlinJs") {
+                assertTasksExecuted(":compileKotlinJs")
             }
         }
     }
