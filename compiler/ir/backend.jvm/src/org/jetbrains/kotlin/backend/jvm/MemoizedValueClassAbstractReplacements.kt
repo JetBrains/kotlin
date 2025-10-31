@@ -175,7 +175,7 @@ fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclarat
         if (jvmExposeBoxedAnnotation?.arguments[0] == null) {
             val jvmName = declaration.getAnnotation(JVM_NAME_ANNOTATION_FQ_NAME)?.arguments[0]
             if (jvmName != null) {
-                jvmExposeBoxedAnnotation?.arguments[0] = jvmName
+                jvmExposeBoxedAnnotation?.arguments[0] = jvmName.deepCopyWithSymbols()
             }
         }
         return this
@@ -187,7 +187,9 @@ fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclarat
         constructor.owner.returnType,
         constructor
     ).apply {
-        arguments.add(null)
+        // Copy the name from @JvmName if it is present
+        val jvmName = declaration.getAnnotation(JVM_NAME_ANNOTATION_FQ_NAME)?.arguments[0]
+        arguments[0] = jvmName?.deepCopyWithSymbols()
     }
 }
 
