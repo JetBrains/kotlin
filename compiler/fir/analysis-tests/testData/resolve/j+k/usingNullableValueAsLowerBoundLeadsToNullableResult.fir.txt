@@ -4,13 +4,13 @@ FILE: main.kt
             ^ String()
         }
     public final fun box(x: R|kotlin/collections/List<kotlin/String?>|): R|kotlin/Unit| {
-        Q|A|.R|/A.foo*s|<R|kotlin/String!|>(R|<local>/x|)
-        Q|A|.R|/A.foo*s|<R|kotlin/String!|>(R|<local>/x|).R|kotlin/String.length|.R|/length<None of the following candidates is applicable because of receiver type mismatch: [/length]>#|
-        Q|A|.R|/A.foo*s|<R|kotlin/String!|>(R|<local>/x|).R|kotlin/String.length|.R|kotlin/Int.times|(Int(1))
-        Q|A|.R|/A.foo*s|<R|kotlin/String!|>(R|<local>/x|)?.{ $subj$.R|kotlin/String.length| }?.{ $subj$.R|kotlin/Int.times|(Int(1)) }
-        Q|A|.R|/A.bar*s|<R|kotlin/String!|>(R|<local>/x|)
-        Q|A|.R|/A.bar*s|<R|kotlin/String!|>(R|<local>/x|).R|SubstitutionOverride</A.getValue: R|kotlin/String!|>|()
-        Q|A|.R|/A.bar*s|<R|kotlin/String!|>(R|<local>/x|).R|SubstitutionOverride</A.getValue: R|kotlin/String!|>|().R|kotlin/String.length|.R|/length<None of the following candidates is applicable because of receiver type mismatch: [/length]>#|
-        Q|A|.R|/A.bar*s|<R|kotlin/String!|>(R|<local>/x|).R|SubstitutionOverride</A.getValue: R|kotlin/String!|>|().R|kotlin/String.length|.R|kotlin/Int.times|(Int(1))
-        Q|A|.R|/A.bar*s|<R|kotlin/String!|>(R|<local>/x|).R|SubstitutionOverride</A.getValue: R|kotlin/String!|>|()?.{ $subj$.R|kotlin/String.length| }?.{ $subj$.R|kotlin/Int.times|(Int(1)) }
+        Q|A|.R|/A.foo*s|<R|kotlin/String?|>(R|<local>/x|)
+        Q|A|.R|/A.foo*s|<R|kotlin/String?|>(R|<local>/x|).R|/length|.R|kotlin/String.length|
+        Q|A|.R|/A.foo*s|<R|kotlin/String?|>(R|<local>/x|).R|/length|.<Unresolved name: times>#(Int(1))
+        Q|A|.R|/A.foo*s|<R|kotlin/String?|>(R|<local>/x|)?.{ $subj$.R|kotlin/String.length| }?.{ $subj$.R|kotlin/Int.times|(Int(1)) }
+        Q|A|.R|/A.bar*s|<R|kotlin/String?|>(R|<local>/x|)
+        Q|A|.R|/A.bar*s|<R|kotlin/String?|>(R|<local>/x|).R|SubstitutionOverride</A.getValue: R|kotlin/String?|>|()
+        Q|A|.R|/A.bar*s|<R|kotlin/String?|>(R|<local>/x|).R|SubstitutionOverride</A.getValue: R|kotlin/String?|>|().R|/length|.R|kotlin/String.length|
+        Q|A|.R|/A.bar*s|<R|kotlin/String?|>(R|<local>/x|).R|SubstitutionOverride</A.getValue: R|kotlin/String?|>|().R|/length|.<Unresolved name: times>#(Int(1))
+        Q|A|.R|/A.bar*s|<R|kotlin/String?|>(R|<local>/x|).R|SubstitutionOverride</A.getValue: R|kotlin/String?|>|()?.{ $subj$.R|kotlin/String.length| }?.{ $subj$.R|kotlin/Int.times|(Int(1)) }
     }
