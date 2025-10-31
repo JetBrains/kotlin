@@ -22,7 +22,7 @@ private typealias Extension = TypedThis
 
 class TypedThis {
     fun TypedThis.baz() {
-        this<!AMBIGUOUS_LABEL!>@TypedThis<!>
+        this@TypedThis
     }
 
     fun Extension.bar() {

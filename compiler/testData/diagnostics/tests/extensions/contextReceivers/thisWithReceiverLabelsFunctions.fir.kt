@@ -7,7 +7,7 @@ class B(val b: Any)
 class C(val c: Any)
 
 context(A<String>) fun A<Int>.f() {
-    this@A.a.<!UNRESOLVED_REFERENCE!>length<!>
+    this<!UNRESOLVED_LABEL!>@A<!>.a.length
 }
 
 context(A<String>, B) fun f() {
@@ -25,7 +25,7 @@ context(A<Int>, A<String>, B) fun f() {
 context(A<Int>, A<String>, B) fun C.f() {
     this<!UNRESOLVED_LABEL!>@A<!>.a.length
     this<!UNRESOLVED_LABEL!>@B<!>.b
-    this@C.c
+    this<!UNRESOLVED_LABEL!>@C<!>.c
     this@f.c
     this.c
 }

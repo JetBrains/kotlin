@@ -2,9 +2,9 @@
 // LANGUAGE: +ContextReceivers
 // WITH_STDLIB
 
-fun List<Int>.decimateEveryEvenThird() = sequence {
+fun List<Int>.decimateEveryEvenThird() = <!CANNOT_INFER_PARAMETER_TYPE!>sequence<!> {
     var counter = 1
-    for (e in this@List) {
+    for (e in <!ITERATOR_AMBIGUITY!>this<!UNRESOLVED_LABEL!>@List<!><!>) {
         if (e % 2 == 0 && counter % 3 == 0) {
             yield(e)
         }

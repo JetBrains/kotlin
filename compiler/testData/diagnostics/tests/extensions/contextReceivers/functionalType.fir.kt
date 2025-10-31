@@ -15,12 +15,12 @@ annotation class MyAnnotation
 
 context(C)
 fun R.f1(g: context(C) R.(Param) -> Unit) {
-    g(this<!UNRESOLVED_LABEL!>@C<!>, this@R, Param())
+    g(this<!UNRESOLVED_LABEL!>@C<!>, this<!UNRESOLVED_LABEL!>@R<!>, Param())
 }
 
 context(C)
 fun R.f2(g: @MyAnnotation context(C) R.(Param) -> Unit) {
-    g(this<!UNRESOLVED_LABEL!>@C<!>, this@R, Param())
+    g(this<!UNRESOLVED_LABEL!>@C<!>, this<!UNRESOLVED_LABEL!>@R<!>, Param())
 }
 
 context(C)
@@ -30,7 +30,7 @@ fun f3(g: context(C) (Param) -> Unit) {
 
 context(C)
 fun R.f4(g: context(C) R.() -> Unit) {
-    g(this<!UNRESOLVED_LABEL!>@C<!>, this@R)
+    g(this<!UNRESOLVED_LABEL!>@C<!>, this<!UNRESOLVED_LABEL!>@R<!>)
 }
 
 context(C)

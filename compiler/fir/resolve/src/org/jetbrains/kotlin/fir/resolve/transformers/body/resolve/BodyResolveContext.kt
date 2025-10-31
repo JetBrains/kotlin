@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -271,8 +270,8 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
-    fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>, additionalLabelName: Name? = null) {
-        replaceTowerDataContext(towerDataContext.addReceiver(name, implicitReceiverValue, additionalLabelName))
+    fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>) {
+        replaceTowerDataContext(towerDataContext.addReceiver(name, implicitReceiverValue))
     }
 
     @PrivateForInline
@@ -297,7 +296,6 @@ class BodyResolveContext(
         owner: FirCallableDeclaration,
         type: ConeKotlinType?,
         holder: SessionAndScopeSessionHolder,
-        additionalLabelName: Name? = null,
         f: () -> T
     ): T = withTowerDataCleanup {
         val contextParameters = owner.contextParameters.mapNotNull { receiver ->
@@ -315,7 +313,7 @@ class BodyResolveContext(
                 holder.session,
                 holder.scopeSession
             )
-            addReceiver(labelName, receiver, additionalLabelName)
+            addReceiver(labelName, receiver)
         }
 
         f()
@@ -716,8 +714,7 @@ class BodyResolveContext(
                         holder.scopeSession,
                     )
                 }.asReversed().forEach {
-                    val additionalLabelName = it.type.abbreviatedTypeOrSelf.labelName(holder.session)
-                    addReceiver(null, it, additionalLabelName)
+                    addReceiver(null, it)
                 }
 
                 // TODO: robuster matching and error reporting on no extension (KT-72969)
@@ -814,8 +811,7 @@ class BodyResolveContext(
 
         val receiverTypeRef = callable.receiverParameter?.typeRef
         val type = receiverTypeRef?.coneType
-        val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
-        withLabelAndReceiverType(callable.symbol.name, callable, type, holder, additionalLabelName, f)
+        withLabelAndReceiverType(callable.symbol.name, callable, type, holder, f)
     }
 
     @OptIn(PrivateForInline::class)
@@ -829,13 +825,6 @@ class BodyResolveContext(
         } else {
             addLocalScope(FirLocalScope(holder.session))
             f()
-        }
-    }
-
-    private fun ConeKotlinType.labelName(session: FirSession): Name? {
-        return when {
-            !session.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers) -> null
-            else -> (this as? ConeLookupTagBasedType)?.lookupTag?.name
         }
     }
 
@@ -1016,10 +1005,9 @@ class BodyResolveContext(
 
             withContainer(accessor) {
                 val type = receiverTypeRef?.coneType
-                val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
 
                 withInlineFunctionIfApplicable(accessor) {
-                    withLabelAndReceiverType(property.name, property, type, holder, additionalLabelName, f)
+                    withLabelAndReceiverType(property.name, property, type, holder, f)
                 }
             }
         }
