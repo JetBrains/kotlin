@@ -253,7 +253,7 @@ open class UpgradeCallableReferences(
             fixCallableReferenceComingFromKlib(expression)
             if (!upgradePropertyReferences) return expression
             val getter = expression.getter?.owner
-            val arguments = if (getter?.isMissingObjectDispatchReceiver() == true) {
+            val arguments = if (getter?.hasMissingObjectDispatchReceiver() == true) {
                 val objectClass = expression.symbol.owner.parentAsClass
                 val dispatchReceiver = IrGetObjectValueImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.typeWith(), objectClass.symbol
@@ -278,13 +278,13 @@ open class UpgradeCallableReferences(
                         )
                     }
                 } else {
-                    val getterMissingObjectDispatchReceiver = getter.isMissingObjectDispatchReceiver()
-                    val getterArgsWithoutObjectReceiver = if (getterMissingObjectDispatchReceiver) arguments.drop(1) else arguments
+                    val getterHasMissingObjectDispatchReceiver = getter.hasMissingObjectDispatchReceiver()
+                    val getterArgsWithoutObjectReceiver = if (getterHasMissingObjectDispatchReceiver) arguments.drop(1) else arguments
                     getterFun = expression.wrapFunction(getterArgsWithoutObjectReceiver, data, getter, isPropertySetter = false)
                     setterFun = runIf(expression.type.isKMutableProperty()) {
                         expression.setter?.owner?.let { setter ->
-                            val setterMissingObjectDispatchReceiver = setter.isMissingObjectDispatchReceiver()
-                            val setterArgsWithoutObjectReceiver = if (setterMissingObjectDispatchReceiver) arguments.drop(1) else arguments
+                            val setterHasMissingObjectDispatchReceiver = setter.hasMissingObjectDispatchReceiver()
+                            val setterArgsWithoutObjectReceiver = if (setterHasMissingObjectDispatchReceiver) arguments.drop(1) else arguments
                             expression.wrapFunction(setterArgsWithoutObjectReceiver, data, setter, isPropertySetter = true)
                         }
                     }
@@ -537,5 +537,5 @@ open class UpgradeCallableReferences(
     protected open fun copyNecessaryAttributes(oldReference: IrFunctionReference, newReference: IrRichFunctionReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrPropertyReference, newReference: IrRichPropertyReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrLocalDelegatedPropertyReference, newReference: IrRichPropertyReference) {}
-    protected open fun IrDeclaration.isMissingObjectDispatchReceiver(): Boolean = false
+    protected open fun IrDeclaration.hasMissingObjectDispatchReceiver(): Boolean = false
 }

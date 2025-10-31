@@ -63,5 +63,5 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
         newReference.localClassType = oldReference.localClassType
     }
 
-    override fun IrDeclaration.isMissingObjectDispatchReceiver(): Boolean = isJvmStaticInObject()
+    override fun IrDeclaration.hasMissingObjectDispatchReceiver(): Boolean = isJvmStaticInObject()
 }
