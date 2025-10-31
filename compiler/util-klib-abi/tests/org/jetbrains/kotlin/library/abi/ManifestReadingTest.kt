@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil.createTempDirectory
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -72,7 +73,7 @@ class ManifestReadingTest {
 
         buildKotlinLibrary(
             linkDependencies = emptyList(),
-            metadata = SerializedMetadata(byteArrayOf(), emptyList(), emptyList()), // empty
+            metadata = SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray()), // empty
             ir = SerializedIrModule(files = emptyList(), fileWithPreparedInlinableFunctions = null), // empty
             versions = KotlinLibraryVersioning(
                 compilerVersion = libraryManifest.compilerVersion,

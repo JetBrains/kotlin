@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.commonizer.tree.defaultCirTreeRootDeserializer
 import org.jetbrains.kotlin.commonizer.tree.mergeCirTree
 import org.jetbrains.kotlin.commonizer.utils.progress
 import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 
 fun runCommonization(parameters: CommonizerParameters) {
     if (!parameters.containsCommonModuleNames()) {
@@ -89,7 +90,8 @@ internal fun serializeTarget(
     CirTreeSerializer.serializeSingleTarget(commonized, commonized.indexOfCommon, parameters.statsCollector) { metadataModule ->
         val libraryName = metadataModule.name
         val serializedMetadata = with(metadataModule.write(ChunkedKlibModuleFragmentWriteStrategy())) {
-            SerializedMetadata(header, fragments, fragmentNames)
+            // TODO(KT-81409): replace MetadataVersion.INSTANCE.toArray() with metadataVersion.toArray() after adding metadataVersion SerializedKlibMetadata
+            SerializedMetadata(header, fragments, fragmentNames, MetadataVersion.INSTANCE.toArray())
         }
         val manifestData = parameters.manifestProvider[outputTarget].buildManifest(libraryName)
         parameters.resultsConsumer.consume(
