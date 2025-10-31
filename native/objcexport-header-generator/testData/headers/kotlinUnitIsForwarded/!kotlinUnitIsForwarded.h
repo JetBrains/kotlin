@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) KotlinUnit *(^(^foo)(NSString *))(Boolean *) __attribute__((swift_name("foo")));
+@property (class, readonly) KotlinUnit *(^(^foo)(NSString *))(Boolean *);
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -30,8 +30,8 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)unit __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinUnit *shared __attribute__((swift_name("shared")));
-- (NSString *)description __attribute__((swift_name("description()")));
+@property (class, readonly, getter=shared) KotlinUnit *shared;
+- (NSString *)description;
 @end
 
 #pragma pop_macro("_Nullable_result")

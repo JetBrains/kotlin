@@ -37,14 +37,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol KotlinCoroutineContextElement <KotlinCoroutineContext>
 @required
-@property (readonly) id<KotlinCoroutineContextKey> key __attribute__((swift_name("key")));
+@property (readonly) id<KotlinCoroutineContextKey> key;
 @end
 
 @protocol Job <KotlinCoroutineContextElement>
 @required
 - (id<ChildHandle>)attachChildChild:(id<ChildJob>)child __attribute__((swift_name("attachChild(child:)")));
 - (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
-- (KotlinCancellationException *)getCancellationException __attribute__((swift_name("getCancellationException()")));
+- (KotlinCancellationException *)getCancellationException;
 - (id<DisposableHandle>)invokeOnCompletionHandler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCompletion(handler:)")));
 - (id<DisposableHandle>)invokeOnCompletionOnCancelling:(BOOL)onCancelling invokeImmediately:(BOOL)invokeImmediately handler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCompletion(onCancelling:invokeImmediately:handler:)")));
 
@@ -54,18 +54,18 @@ NS_ASSUME_NONNULL_BEGIN
 */
 - (void)joinWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("join(completionHandler:)")));
 - (id<Job>)plusOther:(id<Job>)other __attribute__((swift_name("plus(other:)"))) __attribute__((unavailable("Operator '+' on two Job objects is meaningless. Job is a coroutine context element and `+` is a set-sum operator for coroutine contexts. The job to the right of `+` just replaces the job the left of `+`.")));
-- (BOOL)start __attribute__((swift_name("start()")));
-@property (readonly) id<KotlinSequence> children __attribute__((swift_name("children")));
-@property (readonly) BOOL isActive __attribute__((swift_name("isActive")));
-@property (readonly) BOOL isCancelled __attribute__((swift_name("isCancelled")));
-@property (readonly) BOOL isCompleted __attribute__((swift_name("isCompleted")));
-@property (readonly) id<SelectClause0> onJoin __attribute__((swift_name("onJoin")));
+- (BOOL)start;
+@property (readonly) id<KotlinSequence> children;
+@property (readonly) BOOL isActive;
+@property (readonly) BOOL isCancelled;
+@property (readonly) BOOL isCompleted;
+@property (readonly) id<SelectClause0> onJoin;
 
 /**
  * @note annotations
  *   kotlinx.coroutines.ExperimentalCoroutinesApi
 */
-@property (readonly) id<Job> _Nullable parent __attribute__((swift_name("parent")));
+@property (readonly) id<Job> _Nullable parent;
 @end
 
 @protocol ChildJob <Job>
@@ -75,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ParentJob <Job>
 @required
-- (KotlinCancellationException *)getChildJobCancellationCause __attribute__((swift_name("getChildJobCancellationCause()")));
+- (KotlinCancellationException *)getChildJobCancellationCause;
 @end
 
 @interface JobSupport : Base <Job, ChildJob, ParentJob>
@@ -100,11 +100,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-- (NSString *)cancellationExceptionMessage __attribute__((swift_name("cancellationExceptionMessage()")));
+- (NSString *)cancellationExceptionMessage;
 - (BOOL)childCancelledCause:(KotlinThrowable *)cause __attribute__((swift_name("childCancelled(cause:)")));
-- (KotlinCancellationException *)getCancellationException __attribute__((swift_name("getCancellationException()")));
-- (KotlinCancellationException *)getChildJobCancellationCause __attribute__((swift_name("getChildJobCancellationCause()")));
-- (KotlinThrowable * _Nullable)getCompletionExceptionOrNull __attribute__((swift_name("getCompletionExceptionOrNull()")));
+- (KotlinCancellationException *)getCancellationException;
+- (KotlinCancellationException *)getChildJobCancellationCause;
+- (KotlinThrowable * _Nullable)getCompletionExceptionOrNull;
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
@@ -137,44 +137,44 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-- (void)onStart __attribute__((swift_name("onStart()")));
+- (void)onStart;
 - (void)parentCancelledParentJob:(id<ParentJob>)parentJob __attribute__((swift_name("parentCancelled(parentJob:)")));
-- (BOOL)start __attribute__((swift_name("start()")));
+- (BOOL)start;
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
 - (KotlinCancellationException *)toCancellationException:(KotlinThrowable *)receiver message:(NSString * _Nullable)message __attribute__((swift_name("toCancellationException(_:message:)")));
-- (NSString *)toDebugString __attribute__((swift_name("toDebugString()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) id<KotlinSequence> children __attribute__((swift_name("children")));
+- (NSString *)toDebugString;
+- (NSString *)description;
+@property (readonly) id<KotlinSequence> children;
 
 /**
  * @note This property has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-@property (readonly) KotlinThrowable * _Nullable completionCause __attribute__((swift_name("completionCause")));
+@property (readonly) KotlinThrowable * _Nullable completionCause;
 
 /**
  * @note This property has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-@property (readonly) BOOL completionCauseHandled __attribute__((swift_name("completionCauseHandled")));
-@property (readonly) BOOL isActive __attribute__((swift_name("isActive")));
-@property (readonly) BOOL isCancelled __attribute__((swift_name("isCancelled")));
-@property (readonly) BOOL isCompleted __attribute__((swift_name("isCompleted")));
-@property (readonly) BOOL isCompletedExceptionally __attribute__((swift_name("isCompletedExceptionally")));
+@property (readonly) BOOL completionCauseHandled;
+@property (readonly) BOOL isActive;
+@property (readonly) BOOL isCancelled;
+@property (readonly) BOOL isCompleted;
+@property (readonly) BOOL isCompletedExceptionally;
 
 /**
  * @note This property has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-@property (readonly) BOOL isScopedCoroutine __attribute__((swift_name("isScopedCoroutine")));
-@property (readonly) id<KotlinCoroutineContextKey> key __attribute__((swift_name("key")));
+@property (readonly) BOOL isScopedCoroutine;
+@property (readonly) id<KotlinCoroutineContextKey> key;
 
 /**
  * @note This property has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-@property (readonly) id<SelectClause1> onAwaitInternal __attribute__((swift_name("onAwaitInternal")));
-@property (readonly) id<SelectClause0> onJoin __attribute__((swift_name("onJoin")));
-@property (readonly) id<Job> _Nullable parent __attribute__((swift_name("parent")));
+@property (readonly) id<SelectClause1> onAwaitInternal;
+@property (readonly) id<SelectClause0> onJoin;
+@property (readonly) id<Job> _Nullable parent;
 @end
 
 
@@ -185,12 +185,12 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol KotlinContinuation
 @required
 - (void)resumeWithResult:(id _Nullable)result __attribute__((swift_name("resumeWith(result:)")));
-@property (readonly) id<KotlinCoroutineContext> context __attribute__((swift_name("context")));
+@property (readonly) id<KotlinCoroutineContext> context;
 @end
 
 @protocol CoroutineScope
 @required
-@property (readonly) id<KotlinCoroutineContext> coroutineContext __attribute__((swift_name("coroutineContext")));
+@property (readonly) id<KotlinCoroutineContext> coroutineContext;
 @end
 
 @interface AbstractCoroutine<__contravariant T> : JobSupport <Job, KotlinContinuation, CoroutineScope>
@@ -205,7 +205,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-- (NSString *)cancellationExceptionMessage __attribute__((swift_name("cancellationExceptionMessage()")));
+- (NSString *)cancellationExceptionMessage;
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
@@ -223,16 +223,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onCompletionInternalState:(id _Nullable)state __attribute__((swift_name("onCompletionInternal(state:)")));
 - (void)resumeWithResult:(id _Nullable)result __attribute__((swift_name("resumeWith(result:)")));
 - (void)startStart:(CoroutineStart *)start receiver:(id _Nullable)receiver block:(id<KotlinSuspendFunction1>)block __attribute__((swift_name("start(start:receiver:block:)")));
-@property (readonly) id<KotlinCoroutineContext> context __attribute__((swift_name("context")));
-@property (readonly) id<KotlinCoroutineContext> coroutineContext __attribute__((swift_name("coroutineContext")));
-@property (readonly) BOOL isActive __attribute__((swift_name("isActive")));
+@property (readonly) id<KotlinCoroutineContext> context;
+@property (readonly) id<KotlinCoroutineContext> coroutineContext;
+@property (readonly) BOOL isActive;
 @end
 
 @protocol CancellableContinuation <KotlinContinuation>
 @required
 - (BOOL)cancelCause_:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(cause_:)")));
 - (void)completeResumeToken:(id)token __attribute__((swift_name("completeResume(token:)")));
-- (void)doInitCancellability __attribute__((swift_name("doInitCancellability()")));
+- (void)doInitCancellability;
 - (void)invokeOnCancellationHandler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCancellation(handler:)")));
 
 /**
@@ -255,20 +255,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (id _Nullable)tryResumeValue:(id _Nullable)value idempotent:(id _Nullable)idempotent __attribute__((swift_name("tryResume(value:idempotent:)")));
 - (id _Nullable)tryResumeValue:(id _Nullable)value idempotent:(id _Nullable)idempotent onCancellation:(void (^ _Nullable)(KotlinThrowable *cause))onCancellation __attribute__((swift_name("tryResume(value:idempotent:onCancellation:)")));
 - (id _Nullable)tryResumeWithExceptionException:(KotlinThrowable *)exception __attribute__((swift_name("tryResumeWithException(exception:)")));
-@property (readonly) BOOL isActive __attribute__((swift_name("isActive")));
-@property (readonly) BOOL isCancelled __attribute__((swift_name("isCancelled")));
-@property (readonly) BOOL isCompleted __attribute__((swift_name("isCompleted")));
+@property (readonly) BOOL isActive;
+@property (readonly) BOOL isCancelled;
+@property (readonly) BOOL isCompleted;
 @end
 
 @protocol DisposableHandle
 @required
-- (void)dispose __attribute__((swift_name("dispose()")));
+- (void)dispose;
 @end
 
 @protocol ChildHandle <DisposableHandle>
 @required
 - (BOOL)childCancelledCause:(KotlinThrowable *)cause __attribute__((swift_name("childCancelled(cause:)")));
-@property (readonly) id<Job> _Nullable parent __attribute__((swift_name("parent")));
+@property (readonly) id<Job> _Nullable parent;
 @end
 
 
@@ -278,7 +278,7 @@ NS_ASSUME_NONNULL_BEGIN
 */
 @interface KotlinAbstractCoroutineContextElement : Base <KotlinCoroutineContextElement>
 - (instancetype)initWithKey:(id<KotlinCoroutineContextKey>)key __attribute__((swift_name("init(key:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) id<KotlinCoroutineContextKey> key __attribute__((swift_name("key")));
+@property (readonly) id<KotlinCoroutineContextKey> key;
 @end
 
 
@@ -293,10 +293,10 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface CoroutineDispatcher : KotlinAbstractCoroutineContextElement <KotlinContinuationInterceptor>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithKey:(id<KotlinCoroutineContextKey>)key __attribute__((swift_name("init(key:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly, getter=companion) CoroutineDispatcherKey *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) CoroutineDispatcherKey *companion;
 - (void)dispatchContext:(id<KotlinCoroutineContext>)context block:(id<Runnable>)block __attribute__((swift_name("dispatch(context:block:)")));
 - (void)dispatchYieldContext:(id<KotlinCoroutineContext>)context block:(id<Runnable>)block __attribute__((swift_name("dispatchYield(context:block:)")));
 - (id<KotlinContinuation>)interceptContinuationContinuation:(id<KotlinContinuation>)continuation __attribute__((swift_name("interceptContinuation(continuation:)")));
@@ -309,13 +309,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (CoroutineDispatcher *)limitedParallelismParallelism:(int32_t)parallelism __attribute__((swift_name("limitedParallelism(parallelism:)")));
 - (CoroutineDispatcher *)plusOther_:(CoroutineDispatcher *)other __attribute__((swift_name("plus(other_:)"))) __attribute__((unavailable("Operator '+' on two CoroutineDispatcher objects is meaningless. CoroutineDispatcher is a coroutine context element and `+` is a set-sum operator for coroutine contexts. The dispatcher to the right of `+` just replaces the dispatcher to the left.")));
 - (void)releaseInterceptedContinuationContinuation:(id<KotlinContinuation>)continuation __attribute__((swift_name("releaseInterceptedContinuation(continuation:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
+- (NSString *)description;
 @end
 
 @interface CloseableCoroutineDispatcher : CoroutineDispatcher
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)close __attribute__((swift_name("close()")));
+- (void)close;
 @end
 
 @protocol Deferred <Job>
@@ -331,14 +331,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @note annotations
  *   kotlinx.coroutines.ExperimentalCoroutinesApi
 */
-- (id _Nullable)getCompleted __attribute__((swift_name("getCompleted()")));
+- (id _Nullable)getCompleted;
 
 /**
  * @note annotations
  *   kotlinx.coroutines.ExperimentalCoroutinesApi
 */
-- (KotlinThrowable * _Nullable)getCompletionExceptionOrNull __attribute__((swift_name("getCompletionExceptionOrNull()")));
-@property (readonly) id<SelectClause1> onAwait __attribute__((swift_name("onAwait")));
+- (KotlinThrowable * _Nullable)getCompletionExceptionOrNull;
+@property (readonly) id<SelectClause1> onAwait;
 @end
 
 @protocol CompletableDeferred <Deferred>
@@ -349,12 +349,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol CompletableJob <Job>
 @required
-- (BOOL)complete __attribute__((swift_name("complete()")));
+- (BOOL)complete;
 - (BOOL)completeExceptionallyException:(KotlinThrowable *)exception __attribute__((swift_name("completeExceptionally(exception:)")));
 @end
 
 @interface KotlinThrowable : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -364,16 +364,16 @@ NS_ASSUME_NONNULL_BEGIN
  * @note annotations
  *   kotlin.experimental.ExperimentalNativeApi
 */
-- (KotlinArray<NSString *> *)getStackTrace __attribute__((swift_name("getStackTrace()")));
-- (void)printStackTrace __attribute__((swift_name("printStackTrace()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) KotlinThrowable * _Nullable cause __attribute__((swift_name("cause")));
-@property (readonly) NSString * _Nullable message __attribute__((swift_name("message")));
-- (NSError *)asError __attribute__((swift_name("asError()")));
+- (KotlinArray<NSString *> *)getStackTrace;
+- (void)printStackTrace;
+- (NSString *)description;
+@property (readonly) KotlinThrowable * _Nullable cause;
+@property (readonly) NSString * _Nullable message;
+- (NSError *)asError;
 @end
 
 @interface KotlinException : KotlinThrowable
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -381,7 +381,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface KotlinRuntimeException : KotlinException
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -391,7 +391,7 @@ NS_ASSUME_NONNULL_BEGIN
 __attribute__((objc_subclassing_restricted))
 @interface CompletionHandlerException : KotlinRuntimeException
 - (instancetype)initWithMessage:(NSString *)message cause:(KotlinThrowable *)cause __attribute__((swift_name("init(message:cause:)"))) __attribute__((objc_designated_initializer));
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)init __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)new __attribute__((unavailable));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
@@ -404,7 +404,7 @@ __attribute__((objc_subclassing_restricted))
 */
 @protocol CopyableThrowable
 @required
-- (KotlinThrowable * _Nullable)createCopy __attribute__((swift_name("createCopy()")));
+- (KotlinThrowable * _Nullable)createCopy;
 @end
 
 @protocol KotlinCoroutineContextKey
@@ -433,7 +433,7 @@ __attribute__((swift_name("CoroutineDispatcher.Key")))
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithBaseKey:(id<KotlinCoroutineContextKey>)baseKey safeCast:(id<KotlinCoroutineContextElement> _Nullable (^)(id<KotlinCoroutineContextElement> element))safeCast __attribute__((swift_name("init(baseKey:safeCast:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)key __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) CoroutineDispatcherKey *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) CoroutineDispatcherKey *shared;
 @end
 
 @protocol CoroutineExceptionHandler <KotlinCoroutineContextElement>
@@ -446,19 +446,19 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)key __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) CoroutineExceptionHandlerKey *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) CoroutineExceptionHandlerKey *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface CoroutineName : KotlinAbstractCoroutineContextElement
 - (instancetype)initWithName:(NSString *)name __attribute__((swift_name("init(name:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithKey:(id<KotlinCoroutineContextKey>)key __attribute__((swift_name("init(key:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly, getter=companion) CoroutineNameKey *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) CoroutineNameKey *companion;
 - (CoroutineName *)doCopyName:(NSString *)name __attribute__((swift_name("doCopy(name:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) NSString *name __attribute__((swift_name("name")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) NSString *name;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -467,7 +467,7 @@ __attribute__((swift_name("CoroutineName.Key")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)key __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) CoroutineNameKey *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) CoroutineNameKey *shared;
 @end
 
 @protocol KotlinComparable
@@ -477,13 +477,13 @@ __attribute__((swift_name("CoroutineName.Key")))
 
 @interface KotlinEnum<E> : Base <KotlinComparable>
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) KotlinEnumCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) KotlinEnumCompanion *companion;
 - (int32_t)compareToOther:(E)other __attribute__((swift_name("compareTo(other:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) NSString *name __attribute__((swift_name("name")));
-@property (readonly) int32_t ordinal __attribute__((swift_name("ordinal")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) NSString *name;
+@property (readonly) int32_t ordinal;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -491,14 +491,14 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) CoroutineStart *default_ __attribute__((swift_name("default_")));
-@property (class, readonly) CoroutineStart *lazy __attribute__((swift_name("lazy")));
-@property (class, readonly) CoroutineStart *atomic __attribute__((swift_name("atomic")));
-@property (class, readonly) CoroutineStart *undispatched __attribute__((swift_name("undispatched")));
-+ (KotlinArray<CoroutineStart *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<CoroutineStart *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) CoroutineStart *default_;
+@property (class, readonly) CoroutineStart *lazy;
+@property (class, readonly) CoroutineStart *atomic;
+@property (class, readonly) CoroutineStart *undispatched;
++ (KotlinArray<CoroutineStart *> *)values;
+@property (class, readonly) NSArray<CoroutineStart *> *entries;
 - (void)invokeBlock:(id<KotlinSuspendFunction1>)block receiver:(id _Nullable)receiver completion:(id<KotlinContinuation>)completion __attribute__((swift_name("invoke(block:receiver:completion:)")));
-@property (readonly) BOOL isLazy __attribute__((swift_name("isLazy")));
+@property (readonly) BOOL isLazy;
 @end
 
 @protocol Delay
@@ -518,7 +518,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)dispatchers __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) Dispatchers *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) Dispatchers *shared;
 @property (readonly) CoroutineDispatcher *Default __attribute__((swift_name("Default")));
 @property (readonly) MainCoroutineDispatcher *Main __attribute__((swift_name("Main")));
 @property (readonly) CoroutineDispatcher *Unconfined __attribute__((swift_name("Unconfined")));
@@ -534,8 +534,8 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)globalScope __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) GlobalScope *shared __attribute__((swift_name("shared")));
-@property (readonly) id<KotlinCoroutineContext> coroutineContext __attribute__((swift_name("coroutineContext")));
+@property (class, readonly, getter=shared) GlobalScope *shared;
+@property (readonly) id<KotlinCoroutineContext> coroutineContext;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -543,20 +543,20 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)key __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) JobKey *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) JobKey *shared;
 @end
 
 @interface MainCoroutineDispatcher : CoroutineDispatcher
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (CoroutineDispatcher *)limitedParallelismParallelism:(int32_t)parallelism __attribute__((swift_name("limitedParallelism(parallelism:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
+- (NSString *)description;
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-- (NSString * _Nullable)toStringInternalImpl __attribute__((swift_name("toStringInternalImpl()")));
-@property (readonly) MainCoroutineDispatcher *immediate __attribute__((swift_name("immediate")));
+- (NSString * _Nullable)toStringInternalImpl;
+@property (readonly) MainCoroutineDispatcher *immediate;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -565,10 +565,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithKey:(id<KotlinCoroutineContextKey>)key __attribute__((swift_name("init(key:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)nonCancellable __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) NonCancellable *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) NonCancellable *shared;
 - (id<ChildHandle>)attachChildChild:(id<ChildJob>)child __attribute__((swift_name("attachChild(child:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
 - (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
-- (KotlinCancellationException *)getCancellationException __attribute__((swift_name("getCancellationException()"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+- (KotlinCancellationException *)getCancellationException __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
 - (id<DisposableHandle>)invokeOnCompletionHandler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCompletion(handler:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
 - (id<DisposableHandle>)invokeOnCompletionOnCancelling:(BOOL)onCancelling invokeImmediately:(BOOL)invokeImmediately handler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCompletion(onCancelling:invokeImmediately:handler:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
 
@@ -577,14 +577,14 @@ __attribute__((objc_subclassing_restricted))
  * Other uncaught Kotlin exceptions are fatal.
 */
 - (void)joinWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("join(completionHandler:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
-- (BOOL)start __attribute__((swift_name("start()"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) id<KotlinSequence> children __attribute__((swift_name("children"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
-@property (readonly) BOOL isActive __attribute__((swift_name("isActive"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
-@property (readonly) BOOL isCancelled __attribute__((swift_name("isCancelled"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
-@property (readonly) BOOL isCompleted __attribute__((swift_name("isCompleted"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
-@property (readonly) id<SelectClause0> onJoin __attribute__((swift_name("onJoin"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
-@property (readonly) id<Job> _Nullable parent __attribute__((swift_name("parent"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+- (BOOL)start __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+- (NSString *)description;
+@property (readonly) id<KotlinSequence> children __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+@property (readonly) BOOL isActive __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+@property (readonly) BOOL isCancelled __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+@property (readonly) BOOL isCompleted __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+@property (readonly) id<SelectClause0> onJoin __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+@property (readonly) id<Job> _Nullable parent __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -592,20 +592,20 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)nonDisposableHandle __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) NonDisposableHandle *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) NonDisposableHandle *shared;
 - (BOOL)childCancelledCause:(KotlinThrowable *)cause __attribute__((swift_name("childCancelled(cause:)")));
-- (void)dispose __attribute__((swift_name("dispose()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) id<Job> _Nullable parent __attribute__((swift_name("parent")));
+- (void)dispose;
+- (NSString *)description;
+@property (readonly) id<Job> _Nullable parent;
 @end
 
 @protocol Runnable
 @required
-- (void)run __attribute__((swift_name("run()")));
+- (void)run;
 @end
 
 @interface KotlinIllegalStateException : KotlinRuntimeException
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -618,7 +618,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.SinceKotlin(version="1.4")
 */
 @interface KotlinCancellationException : KotlinIllegalStateException
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -627,12 +627,12 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface TimeoutCancellationException : KotlinCancellationException <CopyableThrowable>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)init __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)new __attribute__((unavailable));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 - (instancetype)initWithMessage:(NSString * _Nullable)message cause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(message:cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-- (TimeoutCancellationException *)createCopy __attribute__((swift_name("createCopy()")));
+- (TimeoutCancellationException *)createCopy;
 @end
 
 @protocol SendChannel
@@ -652,8 +652,8 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.coroutines.DelicateCoroutinesApi
 */
-@property (readonly) BOOL isClosedForSend __attribute__((swift_name("isClosedForSend")));
-@property (readonly) id<SelectClause2> onSend __attribute__((swift_name("onSend")));
+@property (readonly) BOOL isClosedForSend;
+@property (readonly) id<SelectClause2> onSend;
 @end
 
 
@@ -664,7 +664,7 @@ __attribute__((objc_subclassing_restricted))
 @protocol BroadcastChannel <SendChannel>
 @required
 - (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
-- (id<ReceiveChannel>)openSubscription __attribute__((swift_name("openSubscription()")));
+- (id<ReceiveChannel>)openSubscription;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -672,18 +672,18 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) BufferOverflow *suspend __attribute__((swift_name("suspend")));
-@property (class, readonly) BufferOverflow *dropOldest __attribute__((swift_name("dropOldest")));
-@property (class, readonly) BufferOverflow *dropLatest __attribute__((swift_name("dropLatest")));
-+ (KotlinArray<BufferOverflow *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<BufferOverflow *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) BufferOverflow *suspend;
+@property (class, readonly) BufferOverflow *dropOldest;
+@property (class, readonly) BufferOverflow *dropLatest;
++ (KotlinArray<BufferOverflow *> *)values;
+@property (class, readonly) NSArray<BufferOverflow *> *entries;
 @end
 
 @protocol ReceiveChannel
 @required
 - (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
-- (id<ChannelIterator>)iterator __attribute__((swift_name("iterator()")));
-- (id _Nullable)poll __attribute__((swift_name("poll()"))) __attribute__((unavailable("Deprecated in the favour of 'tryReceive'. Please note that the provided replacement does not rethrow channel's close cause as 'poll' did, for the precise replacement please refer to the 'poll' documentation")));
+- (id<ChannelIterator>)iterator;
+- (id _Nullable)poll __attribute__((unavailable("Deprecated in the favour of 'tryReceive'. Please note that the provided replacement does not rethrow channel's close cause as 'poll' did, for the precise replacement please refer to the 'poll' documentation")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -702,22 +702,22 @@ __attribute__((objc_subclassing_restricted))
  * Other uncaught Kotlin exceptions are fatal.
 */
 - (void)receiveOrNullWithCompletionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("receiveOrNull(completionHandler:)"))) __attribute__((unavailable("Deprecated in favor of 'receiveCatching'. Please note that the provided replacement does not rethrow channel's close cause as 'receiveOrNull' did, for the detailed replacement please refer to the 'receiveOrNull' documentation")));
-- (id _Nullable)tryReceive __attribute__((swift_name("tryReceive()")));
+- (id _Nullable)tryReceive;
 
 /**
  * @note annotations
  *   kotlinx.coroutines.DelicateCoroutinesApi
 */
-@property (readonly) BOOL isClosedForReceive __attribute__((swift_name("isClosedForReceive")));
+@property (readonly) BOOL isClosedForReceive;
 
 /**
  * @note annotations
  *   kotlinx.coroutines.ExperimentalCoroutinesApi
 */
-@property (readonly) BOOL isEmpty __attribute__((swift_name("isEmpty")));
-@property (readonly) id<SelectClause1> onReceive __attribute__((swift_name("onReceive")));
-@property (readonly) id<SelectClause1> onReceiveCatching __attribute__((swift_name("onReceiveCatching")));
-@property (readonly) id<SelectClause1> onReceiveOrNull __attribute__((swift_name("onReceiveOrNull"))) __attribute__((unavailable("Deprecated in favor of onReceiveCatching extension")));
+@property (readonly) BOOL isEmpty;
+@property (readonly) id<SelectClause1> onReceive;
+@property (readonly) id<SelectClause1> onReceiveCatching;
+@property (readonly) id<SelectClause1> onReceiveOrNull __attribute__((unavailable("Deprecated in favor of onReceiveCatching extension")));
 @end
 
 @protocol Channel <SendChannel, ReceiveChannel>
@@ -729,7 +729,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)factory __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) ChannelFactory *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) ChannelFactory *shared;
 @property (readonly) int32_t BUFFERED __attribute__((swift_name("BUFFERED")));
 @property (readonly) int32_t CONFLATED __attribute__((swift_name("CONFLATED")));
 @property (readonly) NSString *DEFAULT_BUFFER_PROPERTY_NAME __attribute__((swift_name("DEFAULT_BUFFER_PROPERTY_NAME")));
@@ -745,11 +745,11 @@ __attribute__((objc_subclassing_restricted))
  * Other uncaught Kotlin exceptions are fatal.
 */
 - (void)hasNextWithCompletionHandler:(void (^)(Boolean * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("hasNext(completionHandler:)")));
-- (id _Nullable)next __attribute__((swift_name("next()")));
+- (id _Nullable)next;
 @end
 
 @interface KotlinNoSuchElementException : KotlinRuntimeException
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
@@ -759,14 +759,14 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((objc_subclassing_restricted))
 @interface ClosedReceiveChannelException : KotlinNoSuchElementException
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)init __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)new __attribute__((unavailable));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface ClosedSendChannelException : KotlinIllegalStateException
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)init __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)new __attribute__((unavailable));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 - (instancetype)initWithMessage:(NSString * _Nullable)message cause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(message:cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
@@ -779,14 +779,14 @@ __attribute__((objc_subclassing_restricted))
 */
 __attribute__((objc_subclassing_restricted))
 @interface ConflatedBroadcastChannel<E> : Base <BroadcastChannel>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("ConflatedBroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
+- (instancetype)init __attribute__((objc_designated_initializer)) __attribute__((deprecated("ConflatedBroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithValue:(E _Nullable)value __attribute__((swift_name("init(value:)"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("ConflatedBroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
 - (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
 - (BOOL)closeCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("close(cause:)")));
 - (void)invokeOnCloseHandler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnClose(handler:)")));
 - (BOOL)offerElement:(E _Nullable)element __attribute__((swift_name("offer(element:)"))) __attribute__((unavailable("Deprecated in the favour of 'trySend' method")));
-- (id<ReceiveChannel>)openSubscription __attribute__((swift_name("openSubscription()")));
+- (id<ReceiveChannel>)openSubscription;
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -799,15 +799,15 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.coroutines.DelicateCoroutinesApi
 */
-@property (readonly) BOOL isClosedForSend __attribute__((swift_name("isClosedForSend")));
-@property (readonly) id<SelectClause2> onSend __attribute__((swift_name("onSend")));
-@property (readonly) E _Nullable value __attribute__((swift_name("value")));
-@property (readonly) E _Nullable valueOrNull __attribute__((swift_name("valueOrNull")));
+@property (readonly) BOOL isClosedForSend;
+@property (readonly) id<SelectClause2> onSend;
+@property (readonly) E _Nullable value;
+@property (readonly) E _Nullable valueOrNull;
 @end
 
 @protocol ProducerScope <CoroutineScope, SendChannel>
 @required
-@property (readonly) id<SendChannel> channel __attribute__((swift_name("channel")));
+@property (readonly) id<SendChannel> channel;
 @end
 
 @protocol Flow
@@ -826,7 +826,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlinx.coroutines.ExperimentalCoroutinesApi
 */
 @interface AbstractFlow<T> : Base <Flow>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 
 /**
@@ -854,7 +854,7 @@ __attribute__((objc_subclassing_restricted))
 
 @protocol SharedFlow <Flow>
 @required
-@property (readonly) NSArray<id> *replayCache __attribute__((swift_name("replayCache")));
+@property (readonly) NSArray<id> *replayCache;
 @end
 
 @protocol MutableSharedFlow <SharedFlow, FlowCollector>
@@ -864,14 +864,14 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.coroutines.ExperimentalCoroutinesApi
 */
-- (void)resetReplayCache __attribute__((swift_name("resetReplayCache()")));
+- (void)resetReplayCache;
 - (BOOL)tryEmitValue:(id _Nullable)value __attribute__((swift_name("tryEmit(value:)")));
-@property (readonly) id<StateFlow> subscriptionCount __attribute__((swift_name("subscriptionCount")));
+@property (readonly) id<StateFlow> subscriptionCount;
 @end
 
 @protocol StateFlow <SharedFlow>
 @required
-@property (readonly) id _Nullable value __attribute__((swift_name("value")));
+@property (readonly) id _Nullable value;
 @end
 
 @protocol MutableStateFlow <StateFlow, MutableSharedFlow>
@@ -885,11 +885,11 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) SharingCommand *start __attribute__((swift_name("start")));
-@property (class, readonly) SharingCommand *stop __attribute__((swift_name("stop")));
-@property (class, readonly) SharingCommand *stopAndResetReplayCache __attribute__((swift_name("stopAndResetReplayCache")));
-+ (KotlinArray<SharingCommand *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<SharingCommand *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) SharingCommand *start;
+@property (class, readonly) SharingCommand *stop;
+@property (class, readonly) SharingCommand *stopAndResetReplayCache;
++ (KotlinArray<SharingCommand *> *)values;
+@property (class, readonly) NSArray<SharingCommand *> *entries;
 @end
 
 @protocol SharingStarted
@@ -902,7 +902,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) SharingStartedCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) SharingStartedCompanion *shared;
 - (id<SharingStarted>)WhileSubscribedStopTimeoutMillis:(int64_t)stopTimeoutMillis replayExpirationMillis:(int64_t)replayExpirationMillis __attribute__((swift_name("WhileSubscribed(stopTimeoutMillis:replayExpirationMillis:)")));
 @property (readonly) id<SharingStarted> Eagerly __attribute__((swift_name("Eagerly")));
 @property (readonly) id<SharingStarted> Lazily __attribute__((swift_name("Lazily")));
@@ -919,7 +919,7 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-- (NSString * _Nullable)additionalToStringProps __attribute__((swift_name("additionalToStringProps()")));
+- (NSString * _Nullable)additionalToStringProps;
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -938,13 +938,13 @@ __attribute__((objc_subclassing_restricted))
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
 - (ChannelFlow<T> *)createContext:(id<KotlinCoroutineContext>)context capacity:(int32_t)capacity onBufferOverflow:(BufferOverflow *)onBufferOverflow __attribute__((swift_name("create(context:capacity:onBufferOverflow:)")));
-- (id<Flow> _Nullable)dropChannelOperators __attribute__((swift_name("dropChannelOperators()")));
+- (id<Flow> _Nullable)dropChannelOperators;
 - (id<Flow>)fuseContext:(id<KotlinCoroutineContext>)context capacity:(int32_t)capacity onBufferOverflow:(BufferOverflow *)onBufferOverflow __attribute__((swift_name("fuse(context:capacity:onBufferOverflow:)")));
 - (id<ReceiveChannel>)produceImplScope:(id<CoroutineScope>)scope __attribute__((swift_name("produceImpl(scope:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int32_t capacity __attribute__((swift_name("capacity")));
-@property (readonly) id<KotlinCoroutineContext> context __attribute__((swift_name("context")));
-@property (readonly) BufferOverflow *onBufferOverflow __attribute__((swift_name("onBufferOverflow")));
+- (NSString *)description;
+@property (readonly) int32_t capacity;
+@property (readonly) id<KotlinCoroutineContext> context;
+@property (readonly) BufferOverflow *onBufferOverflow;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -959,24 +959,24 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface OpDescriptor : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (id _Nullable)performAffected:(id _Nullable)affected __attribute__((swift_name("perform(affected:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) AtomicOp<id> * _Nullable atomicOp __attribute__((swift_name("atomicOp")));
+- (NSString *)description;
+@property (readonly) AtomicOp<id> * _Nullable atomicOp;
 @end
 
 @interface AtomicOp<__contravariant T> : OpDescriptor
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)completeAffected:(T _Nullable)affected failure:(id _Nullable)failure __attribute__((swift_name("complete(affected:failure:)")));
 - (id _Nullable)performAffected:(id _Nullable)affected __attribute__((swift_name("perform(affected:)")));
 - (id _Nullable)prepareAffected:(T _Nullable)affected __attribute__((swift_name("prepare(affected:)")));
-@property (readonly) AtomicOp<id> *atomicOp __attribute__((swift_name("atomicOp")));
+@property (readonly) AtomicOp<id> *atomicOp;
 @end
 
 @interface LockFreeLinkedListNode : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)addLastNode:(LockFreeLinkedListNode *)node __attribute__((swift_name("addLast(node:)")));
 - (BOOL)addLastIfNode:(LockFreeLinkedListNode *)node condition:(Boolean *(^)(void))condition __attribute__((swift_name("addLastIf(node:condition:)")));
@@ -985,67 +985,67 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-- (LockFreeLinkedListNode * _Nullable)nextIfRemoved __attribute__((swift_name("nextIfRemoved()")));
-- (BOOL)remove __attribute__((swift_name("remove()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) BOOL isRemoved __attribute__((swift_name("isRemoved")));
-@property (readonly, getter=next_) id next __attribute__((swift_name("next")));
-@property (readonly) LockFreeLinkedListNode *nextNode __attribute__((swift_name("nextNode")));
-@property (readonly) LockFreeLinkedListNode *prevNode __attribute__((swift_name("prevNode")));
+- (LockFreeLinkedListNode * _Nullable)nextIfRemoved;
+- (BOOL)remove;
+- (NSString *)description;
+@property (readonly) BOOL isRemoved;
+@property (readonly, getter=next_) id next;
+@property (readonly) LockFreeLinkedListNode *nextNode;
+@property (readonly) LockFreeLinkedListNode *prevNode;
 @end
 
 @interface LockFreeLinkedListHead : LockFreeLinkedListNode
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)forEachBlock:(void (^)(LockFreeLinkedListNode *))block __attribute__((swift_name("forEach(block:)")));
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-- (LockFreeLinkedListNode * _Nullable)nextIfRemoved __attribute__((swift_name("nextIfRemoved()")));
-- (BOOL)remove __attribute__((swift_name("remove()")));
-@property (readonly) BOOL isEmpty __attribute__((swift_name("isEmpty")));
-@property (readonly) BOOL isRemoved __attribute__((swift_name("isRemoved")));
+- (LockFreeLinkedListNode * _Nullable)nextIfRemoved;
+- (BOOL)remove;
+@property (readonly) BOOL isEmpty;
+@property (readonly) BOOL isRemoved;
 @end
 
 @protocol MainDispatcherFactory
 @required
 - (MainCoroutineDispatcher *)createDispatcherAllFactories:(NSArray<id<MainDispatcherFactory>> *)allFactories __attribute__((swift_name("createDispatcher(allFactories:)")));
-- (NSString * _Nullable)hintOnError __attribute__((swift_name("hintOnError()")));
-@property (readonly) int32_t loadPriority __attribute__((swift_name("loadPriority")));
+- (NSString * _Nullable)hintOnError;
+@property (readonly) int32_t loadPriority;
 @end
 
 @interface AtomicfuSynchronizedObject : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)lock __attribute__((swift_name("lock()")));
-- (BOOL)tryLock __attribute__((swift_name("tryLock()")));
-- (void)unlock __attribute__((swift_name("unlock()")));
+- (void)lock;
+- (BOOL)tryLock;
+- (void)unlock;
 
 /**
  * @note This property has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-@property (readonly, getter=lock_) KotlinAtomicReference<AtomicfuSynchronizedObjectLockState *> *lock __attribute__((swift_name("lock")));
+@property (readonly, getter=lock_) KotlinAtomicReference<AtomicfuSynchronizedObjectLockState *> *lock;
 @end
 
 @interface ThreadSafeHeap<T> : AtomicfuSynchronizedObject
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)addLastNode:(T)node __attribute__((swift_name("addLast(node:)")));
 - (BOOL)addLastIfNode:(T)node cond:(Boolean *(^)(T _Nullable))cond __attribute__((swift_name("addLastIf(node:cond:)")));
 - (T _Nullable)findPredicate:(Boolean *(^)(T value))predicate __attribute__((swift_name("find(predicate:)")));
-- (T _Nullable)peek __attribute__((swift_name("peek()")));
+- (T _Nullable)peek;
 - (BOOL)removeNode:(T)node __attribute__((swift_name("remove(node:)")));
 - (T _Nullable)removeFirstIfPredicate:(Boolean *(^)(T))predicate __attribute__((swift_name("removeFirstIf(predicate:)")));
-- (T _Nullable)removeFirstOrNull __attribute__((swift_name("removeFirstOrNull()")));
-@property (readonly) BOOL isEmpty __attribute__((swift_name("isEmpty")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+- (T _Nullable)removeFirstOrNull;
+@property (readonly) BOOL isEmpty;
+@property (readonly) int32_t size;
 @end
 
 @protocol ThreadSafeHeapNode
 @required
-@property ThreadSafeHeap<id> * _Nullable heap __attribute__((swift_name("heap")));
-@property int32_t index __attribute__((swift_name("index")));
+@property ThreadSafeHeap<id> * _Nullable heap;
+@property int32_t index;
 @end
 
 @protocol SelectBuilder
@@ -1064,10 +1064,10 @@ __attribute__((objc_subclassing_restricted))
 
 @protocol SelectClause
 @required
-@property (readonly) id clauseObject __attribute__((swift_name("clauseObject")));
-@property (readonly) KotlinUnit *(^(^ _Nullable onCancellationConstructor)(id<SelectInstance> select, id _Nullable param, id _Nullable internalResult))(KotlinThrowable *) __attribute__((swift_name("onCancellationConstructor")));
-@property (readonly) id _Nullable (^processResFunc)(id clauseObject, id _Nullable param, id _Nullable clauseResult) __attribute__((swift_name("processResFunc")));
-@property (readonly) void (^regFunc)(id clauseObject, id<SelectInstance> select, id _Nullable param) __attribute__((swift_name("regFunc")));
+@property (readonly) id clauseObject;
+@property (readonly) KotlinUnit *(^(^ _Nullable onCancellationConstructor)(id<SelectInstance> select, id _Nullable param, id _Nullable internalResult))(KotlinThrowable *);
+@property (readonly) id _Nullable (^processResFunc)(id clauseObject, id _Nullable param, id _Nullable clauseResult);
+@property (readonly) void (^regFunc)(id clauseObject, id<SelectInstance> select, id _Nullable param);
 @end
 
 @protocol SelectClause0 <SelectClause>
@@ -1087,7 +1087,7 @@ __attribute__((objc_subclassing_restricted))
 - (void)disposeOnCompletionDisposableHandle:(id<DisposableHandle>)disposableHandle __attribute__((swift_name("disposeOnCompletion(disposableHandle:)")));
 - (void)selectInRegistrationPhaseInternalResult:(id _Nullable)internalResult __attribute__((swift_name("selectInRegistrationPhase(internalResult:)")));
 - (BOOL)trySelectClauseObject:(id)clauseObject result:(id _Nullable)result __attribute__((swift_name("trySelect(clauseObject:result:)")));
-@property (readonly) id<KotlinCoroutineContext> context __attribute__((swift_name("context")));
+@property (readonly) id<KotlinCoroutineContext> context;
 @end
 
 @protocol Mutex
@@ -1101,8 +1101,8 @@ __attribute__((objc_subclassing_restricted))
 - (void)lockOwner:(id _Nullable)owner completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("lock(owner:completionHandler:)")));
 - (BOOL)tryLockOwner:(id _Nullable)owner __attribute__((swift_name("tryLock(owner:)")));
 - (void)unlockOwner:(id _Nullable)owner __attribute__((swift_name("unlock(owner:)")));
-@property (readonly) BOOL isLocked __attribute__((swift_name("isLocked")));
-@property (readonly) id<SelectClause2> onLock __attribute__((swift_name("onLock"))) __attribute__((deprecated("Mutex.onLock deprecated without replacement. For additional details please refer to #2794")));
+@property (readonly) BOOL isLocked;
+@property (readonly) id<SelectClause2> onLock __attribute__((deprecated("Mutex.onLock deprecated without replacement. For additional details please refer to #2794")));
 @end
 
 @protocol Semaphore
@@ -1114,8 +1114,8 @@ __attribute__((objc_subclassing_restricted))
 */
 - (void)acquireWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("acquire(completionHandler:)")));
 - (void)release_ __attribute__((swift_name("release()")));
-- (BOOL)tryAcquire __attribute__((swift_name("tryAcquire()")));
-@property (readonly) int32_t availablePermits __attribute__((swift_name("availablePermits")));
+- (BOOL)tryAcquire;
+@property (readonly) int32_t availablePermits;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1124,9 +1124,9 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (T _Nullable)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
+- (id<KotlinIterator>)iterator;
 - (void)setIndex:(int32_t)index value:(T _Nullable)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1136,9 +1136,9 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (int32_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (KotlinIntIterator *)iterator __attribute__((swift_name("iterator()")));
+- (KotlinIntIterator *)iterator;
 - (void)setIndex:(int32_t)index value:(int32_t)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1148,34 +1148,34 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (int64_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (KotlinLongIterator *)iterator __attribute__((swift_name("iterator()")));
+- (KotlinLongIterator *)iterator;
 - (void)setIndex:(int32_t)index value:(int64_t)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 @protocol KotlinIterable
 @required
-- (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
+- (id<KotlinIterator>)iterator;
 @end
 
 @interface KotlinIntProgression : Base <KotlinIterable>
-@property (class, readonly, getter=companion) KotlinIntProgressionCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) KotlinIntProgressionCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (BOOL)isEmpty_ __attribute__((swift_name("isEmpty()")));
-- (KotlinIntIterator *)iterator __attribute__((swift_name("iterator()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int32_t first __attribute__((swift_name("first")));
-@property (readonly) int32_t last __attribute__((swift_name("last")));
-@property (readonly) int32_t step __attribute__((swift_name("step")));
+- (NSUInteger)hash;
+- (BOOL)isEmpty_;
+- (KotlinIntIterator *)iterator;
+- (NSString *)description;
+@property (readonly) int32_t first;
+@property (readonly) int32_t last;
+@property (readonly) int32_t step;
 @end
 
 @protocol KotlinClosedRange
 @required
 - (BOOL)containsValue:(id)value __attribute__((swift_name("contains(value:)")));
-- (BOOL)isEmpty_ __attribute__((swift_name("isEmpty()")));
-@property (readonly) id endInclusive __attribute__((swift_name("endInclusive")));
-@property (readonly, getter=start_) id start __attribute__((swift_name("start")));
+- (BOOL)isEmpty_;
+@property (readonly) id endInclusive;
+@property (readonly, getter=start_) id start;
 @end
 
 
@@ -1186,61 +1186,61 @@ __attribute__((objc_subclassing_restricted))
 @protocol KotlinOpenEndRange
 @required
 - (BOOL)containsValue_:(id)value __attribute__((swift_name("contains(value_:)")));
-- (BOOL)isEmpty_ __attribute__((swift_name("isEmpty()")));
-@property (readonly) id endExclusive __attribute__((swift_name("endExclusive")));
-@property (readonly, getter=start_) id start __attribute__((swift_name("start")));
+- (BOOL)isEmpty_;
+@property (readonly) id endExclusive;
+@property (readonly, getter=start_) id start;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface KotlinIntRange : KotlinIntProgression <KotlinClosedRange, KotlinOpenEndRange>
 - (instancetype)initWithStart:(int32_t)start endInclusive:(int32_t)endInclusive __attribute__((swift_name("init(start:endInclusive:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) KotlinIntRangeCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) KotlinIntRangeCompanion *companion;
 - (BOOL)containsValue:(Int *)value __attribute__((swift_name("contains(value:)")));
 - (BOOL)containsValue_:(Int *)value __attribute__((swift_name("contains(value_:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (BOOL)isEmpty_ __attribute__((swift_name("isEmpty()")));
-- (NSString *)description __attribute__((swift_name("description()")));
+- (NSUInteger)hash;
+- (BOOL)isEmpty_;
+- (NSString *)description;
 
 /**
  * @note annotations
  *   kotlin.SinceKotlin(version="1.9")
 */
-@property (readonly) Int *endExclusive __attribute__((swift_name("endExclusive"))) __attribute__((deprecated("Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")));
-@property (readonly) Int *endInclusive __attribute__((swift_name("endInclusive")));
-@property (readonly, getter=start_) Int *start __attribute__((swift_name("start")));
+@property (readonly) Int *endExclusive __attribute__((deprecated("Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")));
+@property (readonly) Int *endInclusive;
+@property (readonly, getter=start_) Int *start;
 @end
 
 @interface KotlinLongProgression : Base <KotlinIterable>
-@property (class, readonly, getter=companion) KotlinLongProgressionCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) KotlinLongProgressionCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (BOOL)isEmpty_ __attribute__((swift_name("isEmpty()")));
-- (KotlinLongIterator *)iterator __attribute__((swift_name("iterator()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int64_t first __attribute__((swift_name("first")));
-@property (readonly) int64_t last __attribute__((swift_name("last")));
-@property (readonly) int64_t step __attribute__((swift_name("step")));
+- (NSUInteger)hash;
+- (BOOL)isEmpty_;
+- (KotlinLongIterator *)iterator;
+- (NSString *)description;
+@property (readonly) int64_t first;
+@property (readonly) int64_t last;
+@property (readonly) int64_t step;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface KotlinLongRange : KotlinLongProgression <KotlinClosedRange, KotlinOpenEndRange>
 - (instancetype)initWithStart:(int64_t)start endInclusive:(int64_t)endInclusive __attribute__((swift_name("init(start:endInclusive:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) KotlinLongRangeCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) KotlinLongRangeCompanion *companion;
 - (BOOL)containsValue:(Long *)value __attribute__((swift_name("contains(value:)")));
 - (BOOL)containsValue_:(Long *)value __attribute__((swift_name("contains(value_:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (BOOL)isEmpty_ __attribute__((swift_name("isEmpty()")));
-- (NSString *)description __attribute__((swift_name("description()")));
+- (NSUInteger)hash;
+- (BOOL)isEmpty_;
+- (NSString *)description;
 
 /**
  * @note annotations
  *   kotlin.SinceKotlin(version="1.9")
 */
-@property (readonly) Long *endExclusive __attribute__((swift_name("endExclusive"))) __attribute__((deprecated("Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")));
-@property (readonly) Long *endInclusive __attribute__((swift_name("endInclusive")));
-@property (readonly, getter=start_) Long *start __attribute__((swift_name("start")));
+@property (readonly) Long *endExclusive __attribute__((deprecated("Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")));
+@property (readonly) Long *endInclusive;
+@property (readonly, getter=start_) Long *start;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1318,7 +1318,7 @@ __attribute__((objc_subclassing_restricted))
 + (id<Flow>)asFlow____:(id<KotlinSequence>)receiver __attribute__((swift_name("asFlow(_____:)")));
 + (id<Flow>)callbackFlowBlock:(id<KotlinSuspendFunction1>)block __attribute__((swift_name("callbackFlow(block:)")));
 + (id<Flow>)channelFlowBlock:(id<KotlinSuspendFunction1>)block __attribute__((swift_name("channelFlow(block:)")));
-+ (id<Flow>)emptyFlow __attribute__((swift_name("emptyFlow()")));
++ (id<Flow>)emptyFlow;
 + (id<Flow>)flowBlock:(id<KotlinSuspendFunction1>)block __attribute__((swift_name("flow(block:)")));
 + (id<Flow>)flowOfValue:(id _Nullable)value __attribute__((swift_name("flowOf(value:)")));
 + (id<Flow>)flowOfElements:(KotlinArray<id> *)elements __attribute__((swift_name("flowOf(elements:)")));
@@ -2089,7 +2089,7 @@ __attribute__((objc_subclassing_restricted))
 
 @protocol KotlinSequence
 @required
-- (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
+- (id<KotlinIterator>)iterator;
 @end
 
 @protocol KotlinFunction
@@ -2111,18 +2111,18 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinEnumCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinEnumCompanion *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("AtomicfuSynchronizedObject.LockState")))
 @interface AtomicfuSynchronizedObjectLockState : Base
 - (instancetype)initWithStatus:(AtomicfuSynchronizedObjectStatus *)status nestedLocks:(int32_t)nestedLocks waiters:(int32_t)waiters ownerThreadId:(void * _Nullable)ownerThreadId mutex:(void * _Nullable)mutex __attribute__((swift_name("init(status:nestedLocks:waiters:ownerThreadId:mutex:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) void * _Nullable mutex __attribute__((swift_name("mutex")));
-@property (readonly) int32_t nestedLocks __attribute__((swift_name("nestedLocks")));
-@property (readonly) void * _Nullable ownerThreadId __attribute__((swift_name("ownerThreadId")));
-@property (readonly) AtomicfuSynchronizedObjectStatus *status __attribute__((swift_name("status")));
-@property (readonly) int32_t waiters __attribute__((swift_name("waiters")));
+@property (readonly) void * _Nullable mutex;
+@property (readonly) int32_t nestedLocks;
+@property (readonly) void * _Nullable ownerThreadId;
+@property (readonly) AtomicfuSynchronizedObjectStatus *status;
+@property (readonly) int32_t waiters;
 @end
 
 
@@ -2136,8 +2136,8 @@ __attribute__((objc_subclassing_restricted))
 - (T _Nullable)compareAndExchangeExpected:(T _Nullable)expected newValue:(T _Nullable)newValue __attribute__((swift_name("compareAndExchange(expected:newValue:)")));
 - (BOOL)compareAndSetExpected:(T _Nullable)expected newValue:(T _Nullable)newValue __attribute__((swift_name("compareAndSet(expected:newValue:)")));
 - (T _Nullable)getAndSetNewValue:(T _Nullable)newValue __attribute__((swift_name("getAndSet(newValue:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property T _Nullable value __attribute__((swift_name("value")));
+- (NSString *)description;
+@property T _Nullable value;
 @end
 
 @protocol KotlinSuspendFunction0 <KotlinFunction>
@@ -2155,28 +2155,28 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)unit __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinUnit *shared __attribute__((swift_name("shared")));
-- (NSString *)description __attribute__((swift_name("description()")));
+@property (class, readonly, getter=shared) KotlinUnit *shared;
+- (NSString *)description;
 @end
 
 @protocol KotlinIterator
 @required
-- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
-- (id _Nullable)next __attribute__((swift_name("next()")));
+- (BOOL)hasNext;
+- (id _Nullable)next;
 @end
 
 @interface KotlinIntIterator : Base <KotlinIterator>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (Int *)next __attribute__((swift_name("next()")));
-- (int32_t)nextInt __attribute__((swift_name("nextInt()")));
+- (Int *)next;
+- (int32_t)nextInt;
 @end
 
 @interface KotlinLongIterator : Base <KotlinIterator>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (Long *)next __attribute__((swift_name("next()")));
-- (int64_t)nextLong __attribute__((swift_name("nextLong()")));
+- (Long *)next;
+- (int64_t)nextLong;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -2185,7 +2185,7 @@ __attribute__((swift_name("KotlinIntProgression.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinIntProgressionCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinIntProgressionCompanion *shared;
 - (KotlinIntProgression *)fromClosedRangeRangeStart:(int32_t)rangeStart rangeEnd:(int32_t)rangeEnd step:(int32_t)step __attribute__((swift_name("fromClosedRange(rangeStart:rangeEnd:step:)")));
 @end
 
@@ -2195,7 +2195,7 @@ __attribute__((swift_name("KotlinIntRange.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinIntRangeCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinIntRangeCompanion *shared;
 @property (readonly) KotlinIntRange *EMPTY __attribute__((swift_name("EMPTY")));
 @end
 
@@ -2205,7 +2205,7 @@ __attribute__((swift_name("KotlinLongProgression.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinLongProgressionCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinLongProgressionCompanion *shared;
 - (KotlinLongProgression *)fromClosedRangeRangeStart:(int64_t)rangeStart rangeEnd:(int64_t)rangeEnd step:(int64_t)step __attribute__((swift_name("fromClosedRange(rangeStart:rangeEnd:step:)")));
 @end
 
@@ -2215,7 +2215,7 @@ __attribute__((swift_name("KotlinLongRange.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinLongRangeCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinLongRangeCompanion *shared;
 @property (readonly) KotlinLongRange *EMPTY __attribute__((swift_name("EMPTY")));
 @end
 
@@ -2288,8 +2288,8 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.SinceKotlin(version="1.1")
 */
 - (BOOL)isInstanceValue:(id _Nullable)value __attribute__((swift_name("isInstance(value:)")));
-@property (readonly) NSString * _Nullable qualifiedName __attribute__((swift_name("qualifiedName")));
-@property (readonly) NSString * _Nullable simpleName __attribute__((swift_name("simpleName")));
+@property (readonly) NSString * _Nullable qualifiedName;
+@property (readonly) NSString * _Nullable simpleName;
 @end
 
 @protocol KotlinSuspendFunction6 <KotlinFunction>
@@ -2308,11 +2308,11 @@ __attribute__((swift_name("AtomicfuSynchronizedObject.Status")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) AtomicfuSynchronizedObjectStatus *unlocked __attribute__((swift_name("unlocked")));
-@property (class, readonly) AtomicfuSynchronizedObjectStatus *thin __attribute__((swift_name("thin")));
-@property (class, readonly) AtomicfuSynchronizedObjectStatus *fat __attribute__((swift_name("fat")));
-+ (KotlinArray<AtomicfuSynchronizedObjectStatus *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<AtomicfuSynchronizedObjectStatus *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) AtomicfuSynchronizedObjectStatus *unlocked;
+@property (class, readonly) AtomicfuSynchronizedObjectStatus *thin;
+@property (class, readonly) AtomicfuSynchronizedObjectStatus *fat;
++ (KotlinArray<AtomicfuSynchronizedObjectStatus *> *)values;
+@property (class, readonly) NSArray<AtomicfuSynchronizedObjectStatus *> *entries;
 @end
 
 @interface CoroutineDispatcher (Extensions)
@@ -2329,23 +2329,23 @@ __attribute__((swift_name("AtomicfuSynchronizedObject.Status")))
 @end
 
 @interface KotlinArray (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+- (id<Flow>)asFlow;
 @end
 
 @interface KotlinIntArray (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+- (id<Flow>)asFlow;
 @end
 
 @interface KotlinIntRange (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+- (id<Flow>)asFlow;
 @end
 
 @interface KotlinLongArray (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+- (id<Flow>)asFlow;
 @end
 
 @interface KotlinLongRange (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+- (id<Flow>)asFlow;
 @end
 
 @interface SharingStartedCompanion (Extensions)

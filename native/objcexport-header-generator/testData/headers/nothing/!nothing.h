@@ -23,15 +23,15 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol NothingCases
 @required
 - (void)nonNullExtension:(KotlinNothing *)receiver __attribute__((swift_name("nonNullExtension(_:)")));
-- (void)nonNullMethod __attribute__((swift_name("nonNullMethod()")));
+- (void)nonNullMethod;
 - (void)nonNullParamNothing:(KotlinNothing *)nothing __attribute__((swift_name("nonNullParam(nothing:)")));
 - (void)nullExtension:(KotlinNothing *)receiver __attribute__((swift_name("nullExtension(_:)")));
-- (KotlinNothing * _Nullable)nullMethod __attribute__((swift_name("nullMethod()")));
+- (KotlinNothing * _Nullable)nullMethod;
 - (void)nullParamNothing:(KotlinNothing * _Nullable)nothing __attribute__((swift_name("nullParam(nothing:)")));
-@property (readonly) KotlinNothing *nonNullVal __attribute__((swift_name("nonNullVal")));
-@property KotlinNothing *nonNullVar __attribute__((swift_name("nonNullVar")));
-@property (readonly) KotlinNothing * _Nullable nullVal __attribute__((swift_name("nullVal")));
-@property KotlinNothing * _Nullable nullVar __attribute__((swift_name("nullVar")));
+@property (readonly) KotlinNothing *nonNullVal;
+@property KotlinNothing *nonNullVar;
+@property (readonly) KotlinNothing * _Nullable nullVal;
+@property KotlinNothing * _Nullable nullVar;
 @end
 
 __attribute__((objc_subclassing_restricted))

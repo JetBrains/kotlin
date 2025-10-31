@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) int32_t publicVal __attribute__((swift_name("publicVal")));
+@property (class, readonly) int32_t publicVal;
 @end
 
 #pragma pop_macro("_Nullable_result")

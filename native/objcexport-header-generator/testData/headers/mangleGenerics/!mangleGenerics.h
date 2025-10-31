@@ -31,48 +31,48 @@ __attribute__((objc_subclassing_restricted))
 - (Base_ _Nullable)propertyExtension:(Base_ _Nullable)receiver __attribute__((swift_name("propertyExtension(_:)")));
 - (Base_ _Nullable)methodBase1:(Base_ _Nullable)base1 base2:(Base_ _Nullable)base2 base3:(Base_ _Nullable)base3 __attribute__((swift_name("method(base1:base2:base3:)")));
 - (void)methodExtension:(Base_ _Nullable)receiver __attribute__((swift_name("methodExtension(_:)")));
-@property (readonly) Base_ _Nullable property __attribute__((swift_name("property")));
+@property (readonly) Base_ _Nullable property;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface BooleanType<Boolean> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface MutableSetType<MutableSet_> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface NSCopyingType<NSCopying_> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface NSErrorType<NSError> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface NSObjectType<NSObject_> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface TType<T> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface doubleType<double_> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 

@@ -14,7 +14,7 @@ internal fun buildThrowableAsErrorMethod(): ObjCMethod {
         returnType = ObjCClassType("NSError"),
         selectors = listOf("asError"),
         parameters = emptyList(),
-        attributes = listOf(swiftNameAttribute("asError()")),
+        attributes = emptyList(),
         origin = null
     )
 }
