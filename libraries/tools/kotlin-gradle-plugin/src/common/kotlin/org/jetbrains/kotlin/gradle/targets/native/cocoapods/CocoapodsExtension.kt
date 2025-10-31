@@ -132,7 +132,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
     internal val specRepos = SpecRepos()
 
-    private val _pods = project.container(CocoapodsDependency::class.java)
+    private val _pods = project.objects.domainObjectContainer(CocoapodsDependency::class.java)
 
     val podsAsTaskInput: List<CocoapodsDependency>
         get() = _pods.toList()
