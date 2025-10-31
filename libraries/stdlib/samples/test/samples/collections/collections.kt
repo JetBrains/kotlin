@@ -479,7 +479,7 @@ class Collections {
 
             @Sample
             fun ensureCapacity() {
-                val list = ArrayList<Int>()
+                val list = arrayListOf<Int>()
 
                 // When we know in advance that we'll add many elements,
                 // we can pre-allocate capacity to avoid multiple reallocations
