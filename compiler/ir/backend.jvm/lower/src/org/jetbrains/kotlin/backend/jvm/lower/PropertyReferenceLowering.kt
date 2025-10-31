@@ -471,25 +471,17 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             override fun visitGetValue(expression: IrGetValue, data: Nothing?): IrExpression =
                 mapping[expression.symbol.owner]?.invoke(expression.type) ?: expression
 
-            override fun visitReturn(expression: IrReturn, data: Nothing?): IrExpression = super.visitReturn(
-                if (expression.returnTargetSymbol == source.symbol)
-                    IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, targetSymbol, expression.value)
-                else
-                    expression,
-                data
-            )
-
-            override fun visitBlock(expression: IrBlock, data: Nothing?): IrExpression {
-                // Might be an inline lambda argument; if the function has already been moved out, visit it explicitly.
-                if (expression.origin == IrStatementOrigin.LAMBDA || expression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
-                    if (expression.statements.lastOrNull() is IrFunctionReference && expression.statements.none { it is IrFunction })
-                        (expression.statements.last() as IrFunctionReference).symbol.owner.transformChildrenVoid()
-                return super.visitBlock(expression, data)
+            override fun visitReturn(expression: IrReturn, data: Nothing?): IrExpression {
+                if (expression.returnTargetSymbol == source.symbol) {
+                    expression.returnTargetSymbol = targetSymbol
+                }
+                return super.visitReturn(expression, data)
             }
 
             override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): IrStatement {
-                if (declaration.parent == source)
+                if (declaration.parent == source) {
                     declaration.parent = target
+                }
                 return super.visitDeclaration(declaration, data)
             }
         }, null)
