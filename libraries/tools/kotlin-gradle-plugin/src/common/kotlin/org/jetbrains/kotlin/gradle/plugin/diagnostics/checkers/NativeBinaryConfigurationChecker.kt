@@ -24,10 +24,12 @@ internal object NativeBinaryConfigurationChecker : KotlinGradleProjectChecker {
         multiplatformExtension.targets
             .withType(KotlinNativeTarget::class.java)
             .configureEach { target ->
-                target.binaries.matching { it.hasIncompatibleConfiguration }.configureEach { binary ->
+                target.binaries.configureEach { binary ->
+                    if (!binary.hasIncompatibleConfiguration) return@configureEach
                     collector.reportOncePerGradleProject(
                         project,
                         KotlinToolingDiagnostics.IncompatibleBinaryConfiguration(
+                            project.path,
                             binary.name,
                             binary.debuggable,
                             binary.optimized

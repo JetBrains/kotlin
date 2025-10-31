@@ -353,7 +353,8 @@ constructor(
     private fun validateBinaryConfiguration() {
         if (hasIncompatibleConfiguration) {
             reportDiagnostic(
-                KotlinToolingDiagnostics.IncompatibleBinaryConfiguration(
+                KotlinToolingDiagnostics.IncompatibleBinaryTaskConfiguration(
+                    path,
                     binaryName,
                     debuggable,
                     optimized
