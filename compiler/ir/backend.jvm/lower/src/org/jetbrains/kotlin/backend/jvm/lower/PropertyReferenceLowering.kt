@@ -30,11 +30,8 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PROPERTY_
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -148,7 +145,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         return irCall(signatureStringIntrinsic).apply { arguments[0] = reference }
     }
 
-    private fun IrClass.addOverride(method: IrSimpleFunction, buildBody: IrBlockBodyBuilder.(IrSimpleFunction) -> Unit) =
+    private fun IrClass.addOverride(method: IrSimpleFunction, buildBody: JvmIrBuilder.(IrSimpleFunction) -> IrBody) =
         addFunction {
             setSourceRange(this@addOverride)
             name = method.name
@@ -159,9 +156,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         }.apply {
             overriddenSymbols += method.symbol
             parameters = listOf(thisReceiver!!.copyTo(this)) + method.nonDispatchParameters.map { it.copyTo(this) }
-            body = context.createJvmIrBuilder(symbol, startOffset, endOffset).irBlockBody {
-                buildBody(this@apply)
-            }
+            body = context.createJvmIrBuilder(symbol, startOffset, endOffset).buildBody(this@apply)
         }
 
     private fun IrClass.addFakeOverride(method: IrSimpleFunction) =
@@ -438,9 +433,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
         expression.getterFunction.let { getter ->
             referenceClass.addOverride(get!!) { function ->
-                expression.constInitializer?.let { +irReturn(it); return@addOverride }
+                expression.constInitializer?.let { return@addOverride irExprBody(it) }
                 val arguments = getArguments(getterBoundValues, function)
-                +irReturn(getter.inlineWithoutTemporaryVariables(function, arguments))
+                getter.inlineWithoutTemporaryVariables(function, arguments)
             }
             referenceClass.addFakeOverride(invoke!!)
         }
@@ -448,17 +443,15 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         expression.setterFunction?.let { setter ->
             referenceClass.addOverride(set!!) { function ->
                 val arguments = getArguments(setterBoundValues, function)
-                +irReturn(setter.inlineWithoutTemporaryVariables(function, arguments))
+                setter.inlineWithoutTemporaryVariables(function, arguments)
             }
         }
 
         return referenceClass
     }
 
-    private fun IrFunction.inlineWithoutTemporaryVariables(target: IrDeclarationParent, arguments: List<(IrType) -> IrExpression> = listOf()): IrReturnableBlock =
-        IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(), null).apply {
-            statements += body!!.moveWithoutTemporaryVariables(this@inlineWithoutTemporaryVariables, target, symbol, arguments).statements
-        }
+    private fun IrFunction.inlineWithoutTemporaryVariables(target: IrFunction, arguments: List<(IrType) -> IrExpression> = listOf()): IrBody =
+        body!!.moveWithoutTemporaryVariables(this, target, target.symbol, arguments)
 
     private fun IrBody.moveWithoutTemporaryVariables(
         source: IrFunction,
