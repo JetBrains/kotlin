@@ -110,7 +110,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         get() = if (isLocalDelegatedPropertyReference) {
             val containingClasses = localDelegatedProperty.parentsWithSelf.filterIsInstance<IrClass>()
             // Prefer to attach metadata to non-synthetic classes, similarly to how it's done in rememberLocalProperty.
-            containingClasses.firstOrNull<IrClass> { !it.isSynthetic } ?: containingClasses.first<IrClass>()
+            containingClasses.firstOrNull { !it.isSynthetic } ?: containingClasses.first()
         } else {
             property.parent
         }
