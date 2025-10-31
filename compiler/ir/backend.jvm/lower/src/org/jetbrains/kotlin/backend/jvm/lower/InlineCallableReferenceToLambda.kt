@@ -169,10 +169,6 @@ class JvmInlineCallableReferenceToLambdaPhase(
                                                 "Reference: ${this@wrapFunction.render()}\n" +
                                                 "Referenced function: ${referencedFunction.render()}\n"
                                     )
-                                parameter.isVararg && parameter.type == argumentTypes[next] ->
-                                    irGet(addValueParameter("p$next", argumentTypes[next]))
-                                parameter.isVararg && !parameter.hasDefaultValue() ->
-                                    error("Callable reference with vararg should not appear at this stage.\n${this@wrapFunction.render()}")
                                 else -> irGet(addValueParameter("p$next", argumentTypes[next]))
                             }
                             arguments[parameter] = getOnNewParameter
