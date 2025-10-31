@@ -5,14 +5,14 @@ class A(
         n: Nested = foo(),
         n2: Nested = Nested(),
         inn: Inner = null!!,
-        inn2: Inner = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>(),
+        inn2: Inner = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>Inner()<!>,
         i: Interface = null!!,
         c: Int = CONST,
         cc: Int = Companion.CONST,
         cn: Int = Nested.CONST,
         ci: Int = Interface.CONST,
-        t1: Int = <!UNRESOLVED_REFERENCE!>a<!>,
-        t2: Int = <!UNRESOLVED_REFERENCE!>b<!>()
+        t1: Int = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>a<!>,
+        t2: Int = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b()<!>
 ) {
 
     constructor(

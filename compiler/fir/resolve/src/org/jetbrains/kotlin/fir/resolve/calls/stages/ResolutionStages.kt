@@ -241,11 +241,11 @@ object CheckContextArguments : ResolutionStage() {
         // meaning that extension receivers and context parameters from the same declaration are in one group.
         // See KT-74081.
         val implicitsGroupedByScope: List<List<FirExpression>> =
-            context.bodyResolveContext.towerDataContext.implicitValueStorage.implicitValues
+            context.bodyResolveContext.implicitValueStorage.implicitValues
                 .groupBy(
                     keySelector = { it.boundSymbol.containingDeclarationIfParameter() },
                     valueTransform = { it.computeExpression() })
-                .values.map { it.filterNot(FirExpression::isInaccessibleFromStaticNestedClass) }
+                .values.map { it.filterNot(FirExpression::isInaccessibleAndInapplicable) }
                 .reversed()
 
         val resultingContextArguments = mutableListOf<ConeResolutionAtom>()
@@ -441,6 +441,7 @@ object CheckShadowedImplicits : ResolutionStage() {
             receiverValueToCheck.expression.unwrapSmartcastExpression().implicitlyReferencedSymbolOrNull() ?: return
         // Values are sorted in a quite reversed order, so the first element is the furthest in the scope tower
         val implicitValues = context.bodyResolveContext.implicitValueStorage.implicitValues
+            .filterNot { it is InaccessibleImplicitReceiverValue }
         val memberOwnerOfReceiverToCheck = boundSymbolOfReceiverToCheck.containingDeclarationIfParameter()
 
         // Drop all the receivers/values that in the scope tower stay after ones introduced with `boundSymbolOfReceiverToCheck`.

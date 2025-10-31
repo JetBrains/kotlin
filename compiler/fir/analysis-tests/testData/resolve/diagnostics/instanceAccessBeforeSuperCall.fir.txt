@@ -14,7 +14,7 @@ FILE: instanceAccessBeforeSuperCall.kt
 
     }
     public final class B : R|kotlin/Any| {
-        public constructor(other: R|B| = this#): R|B| {
+        public constructor(other: R|B| = this@R|/B|): R|B| {
             super<R|kotlin/Any|>()
         }
 
@@ -97,7 +97,7 @@ FILE: instanceAccessBeforeSuperCall.kt
     }
     public final class Derived : R|Base| {
         public constructor(): R|Derived| {
-            super<R|Base|>(this#.<Unresolved name: y>#)
+            super<R|Base|>(this@R|/Derived|.<Unresolved name: y>#)
         }
 
         public final val y: R|kotlin/Int| = Int(42)

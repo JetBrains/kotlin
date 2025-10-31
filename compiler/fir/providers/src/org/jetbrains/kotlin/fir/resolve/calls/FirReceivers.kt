@@ -274,3 +274,7 @@ val ImplicitReceiverValue<*>.referencedMemberSymbol: FirBasedSymbol<*>
         is FirReceiverParameterSymbol -> boundSymbol.containingDeclarationSymbol
         else -> boundSymbol as FirBasedSymbol<*>
     }
+
+fun ImplicitReceiverValue<*>.producesInapplicableCandidate(): Boolean {
+    return this is InaccessibleImplicitReceiverValue && !this.kind.producesApplicableCandidate
+}

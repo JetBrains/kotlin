@@ -24,8 +24,8 @@ class A
         Companion.CONST,
         Nested.CONST,
         Interface.CONST,
-        <!UNRESOLVED_REFERENCE!>a<!>,
-        <!UNRESOLVED_REFERENCE!>b<!>()
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a<!>,
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b()<!>
 )
 constructor() {
 
@@ -37,8 +37,8 @@ constructor() {
             Companion.CONST,
             Nested.CONST,
             Interface.CONST,
-            <!UNRESOLVED_REFERENCE!>a<!>,
-            <!UNRESOLVED_REFERENCE!>b<!>()
+            <!INSTANCE_ACCESS_BEFORE_SUPER_CALL, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a<!>,
+            <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b()<!>
     )
     constructor(dummy: Int) : this()
 

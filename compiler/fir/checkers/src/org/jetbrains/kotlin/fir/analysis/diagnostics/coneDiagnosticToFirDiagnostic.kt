@@ -317,6 +317,12 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                 session
             )
 
+            is InaccessibleFromClassHeader -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(
+                qualifiedAccessSource ?: source,
+                "<this>",
+                session,
+            )
+
             else -> genericDiagnostic
         }
     }.distinct()

@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-enum class InaccessibleReceiverKind {
-    SecondaryConstructor, OuterClassOfNonInner,
+enum class InaccessibleReceiverKind(
+    val producesApplicableCandidate: Boolean
+) {
+    SecondaryConstructor(true),
+    OuterClassOfNonInner(false),
+    ClassHeader(false),
 }

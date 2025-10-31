@@ -36,7 +36,7 @@ internal object CheckArguments : ResolutionStage() {
             if (index < contextArgumentsOfInvoke) continue
 
             val expression = argument.expression
-            if (expression.isInaccessibleFromStaticNestedClass()) {
+            if (expression.isInaccessibleAndInapplicable()) {
                 sink.reportDiagnostic(expression.toInaccessibleReceiverDiagnostic())
             }
 

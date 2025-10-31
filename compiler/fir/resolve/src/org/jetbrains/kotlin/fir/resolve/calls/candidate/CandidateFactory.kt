@@ -172,11 +172,11 @@ class CandidateFactory private constructor(
             }
         }
 
-        if (dispatchReceiver.isInaccessibleFromStaticNestedClass()) {
+        if (dispatchReceiver.isInaccessibleAndInapplicable()) {
             result.addDiagnostic(dispatchReceiver.toInaccessibleReceiverDiagnostic())
         }
 
-        if (givenExtensionReceiver.isInaccessibleFromStaticNestedClass()) {
+        if (givenExtensionReceiver.isInaccessibleAndInapplicable()) {
             result.addDiagnostic(givenExtensionReceiver.toInaccessibleReceiverDiagnostic())
         }
 

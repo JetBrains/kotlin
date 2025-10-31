@@ -15,7 +15,7 @@ fun A.test_2() {
     object : B by b {}
 }
 
-class D(val x: String, val y: String = <!NO_THIS!>this<!>.<!UNRESOLVED_REFERENCE!>x<!>) {}
+class D(val x: String, val y: String = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.x) {}
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
 inheritanceDelegation, interfaceDeclaration, primaryConstructor, propertyDeclaration, thisExpression */

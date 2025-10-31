@@ -144,6 +144,11 @@ class FirTowerDataContext private constructor(
         )
     }
 
+    fun addReceiverIfNotNull(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>?): FirTowerDataContext {
+        if (implicitReceiverValue == null) return this
+        return addReceiver(name, implicitReceiverValue)
+    }
+
     fun addContextGroups(
         contextParameterGroup: ContextParameterGroup,
     ): FirTowerDataContext {

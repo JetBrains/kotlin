@@ -88,9 +88,29 @@ class ImplicitValueStorage private constructor(
         else
             this
 
+    /**
+     * Returns a set of [ImplicitReceiverValue]s associated with the given [name].
+     * If [name] is `null`, returns a set containing the last [ImplicitReceiverValue] or empty set if none is present.
+     *
+     * Similar to tower resolution, inapplicable candidates (according to [ImplicitReceiverValue.producesInapplicableCandidate]) are
+     * filtered out if some applicable ones are associated with the given [name].
+     *
+     * If no applicable ones are present, inapplicable ones are returned.
+     */
     operator fun get(name: String?): Set<ImplicitReceiverValue<*>> {
-        if (name == null) return implicitReceiverStack.lastOrNull()?.let(::setOf).orEmpty()
-        return implicitReceiversByLabel[Name.identifier(name)]
+        if (name == null) {
+            return (implicitReceiverStack.lastOrNull { !it.producesInapplicableCandidate() } ?: implicitReceiverStack.lastOrNull())
+                ?.let(::setOf)
+                .orEmpty()
+        }
+
+        val receivers = implicitReceiversByLabel[Name.identifier(name)]
+
+        return if (receivers.count { it.producesInapplicableCandidate() } != receivers.size) {
+            receivers.filterNotTo(mutableSetOf()) { it.producesInapplicableCandidate() }
+        } else {
+            receivers
+        }
     }
 
     fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {

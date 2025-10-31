@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.expressions.FirInaccessibleReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind
-import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind.OuterClassOfNonInner
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -116,15 +115,19 @@ private fun ConeKotlinType.hasSupertypeWithGivenClassId(classId: ClassId, contex
 }
 
 /**
- * [InaccessibleReceiverKind.SecondaryConstructor] should produce a successful candidate, but INSTANCE_ACCESS_BEFORE_SUPER_CALL
- * will be reported in a checker, whereas [InaccessibleReceiverKind.OuterClassOfNonInner] should produce an inapplicable candidate.
+ * [InaccessibleReceiverKind.SecondaryConstructor] should produce a successful candidate, but `INSTANCE_ACCESS_BEFORE_SUPER_CALL`
+ * will be reported in a checker, whereas other kinds should produce an inapplicable candidate.
  */
 @OptIn(ExperimentalContracts::class)
-internal fun FirExpression?.isInaccessibleFromStaticNestedClass(): Boolean {
-    contract { returns(true) implies (this@isInaccessibleFromStaticNestedClass is FirInaccessibleReceiverExpression) }
-    return this is FirInaccessibleReceiverExpression && this.kind == OuterClassOfNonInner
+internal fun FirExpression?.isInaccessibleAndInapplicable(): Boolean {
+    contract { returns(true) implies (this@isInaccessibleAndInapplicable is FirInaccessibleReceiverExpression) }
+    return this is FirInaccessibleReceiverExpression && !kind.producesApplicableCandidate
 }
 
-internal fun FirInaccessibleReceiverExpression.toInaccessibleReceiverDiagnostic(): InaccessibleOuterClassReceiver {
-    return InaccessibleOuterClassReceiver(calleeReference.boundSymbol as FirClassSymbol)
+internal fun FirInaccessibleReceiverExpression.toInaccessibleReceiverDiagnostic(): ResolutionDiagnostic {
+    return when (kind) {
+        InaccessibleReceiverKind.OuterClassOfNonInner -> InaccessibleOuterClassReceiver(calleeReference.boundSymbol as FirClassSymbol)
+        InaccessibleReceiverKind.ClassHeader -> InaccessibleFromClassHeader
+        InaccessibleReceiverKind.SecondaryConstructor -> error("Should not be called for $kind")
+    }
 }

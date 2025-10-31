@@ -5,7 +5,7 @@ class A {
     var keker = "test"
 }
 
-class B(other: B = <!NO_THIS!>this<!>)
+class B(other: B = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>)
 
 class C() {
     constructor(x: Int) : this(<!ARGUMENT_TYPE_MISMATCH!>{
@@ -46,7 +46,7 @@ class F(var a: Int, b: Int, closure: () -> Unit, instance: F?) {
 
 open class Base(val x: Int)
 
-class Derived : Base(<!NO_THIS!>this<!>.<!UNRESOLVED_REFERENCE!>y<!>) { // FE 1.0 reports NO_THIS here
+class Derived : Base(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.y) { // FE 1.0 reports NO_THIS here
     val y = 42
 }
 
