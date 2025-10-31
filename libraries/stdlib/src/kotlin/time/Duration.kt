@@ -31,7 +31,11 @@ import kotlin.math.*
  */
 @SinceKotlin("1.6")
 @JvmInline
-public value class Duration private constructor(private val rawValue: Long) : Comparable<Duration> {
+public value class Duration
+// A temporary workaround for KT-81995, the constructor has to be private once the issue is resolved.
+@Deprecated("Don't call this constructor directly.", level = DeprecationLevel.ERROR)
+internal constructor(private val rawValue: Long) :
+    Comparable<Duration> {
 
     private val value: Long get() = rawValue shr 1
     private inline val unitDiscriminator: Int get() = rawValue.toInt() and 1
@@ -40,6 +44,7 @@ public value class Duration private constructor(private val rawValue: Long) : Co
     private val storageUnit get() = if (isInNanos()) DurationUnit.NANOSECONDS else DurationUnit.MILLISECONDS
 
     public companion object {
+        @Suppress("DEPRECATION_ERROR") // A temporary workaround for KT-81995.
         internal fun fromRawValue(rawValue: Long): Duration = Duration(rawValue).apply {
             if (durationAssertionsEnabled) {
                 if (isInNanos()) {
@@ -52,6 +57,7 @@ public value class Duration private constructor(private val rawValue: Long) : Co
         }
 
         /** The duration equal to exactly 0 seconds. */
+        @Suppress("DEPRECATION_ERROR") // A temporary workaround for KT-81995.
         public val ZERO: Duration = Duration(0L)
 
         /** The duration whose value is positive infinity. It is useful for representing timeouts that should never expire. */
@@ -59,6 +65,7 @@ public value class Duration private constructor(private val rawValue: Long) : Co
         internal val NEG_INFINITE: Duration = durationOfMillis(-MAX_MILLIS)
 
         internal const val INVALID_RAW_VALUE = 0x7FFFFFFFFFFFC0DE
+        @Suppress("DEPRECATION_ERROR") // A temporary workaround for KT-81995.
         internal val INVALID = Duration(INVALID_RAW_VALUE)
 
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
