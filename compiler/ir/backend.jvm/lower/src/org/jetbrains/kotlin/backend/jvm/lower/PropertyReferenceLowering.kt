@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.*
@@ -32,12 +34,12 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.implicitCastIfNeededTo
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -425,9 +427,11 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             referenceClass.getReceiverField(this@PropertyReferenceLowering.context)
         }
 
-        fun IrBuilder.getArguments(boundParameters: List<PropertyReferenceBoundValue>, function: IrSimpleFunction): List<(IrType) -> IrExpression> {
-            val boundExpressions = boundParameters.map { { type: IrType -> it.toExpression(this, function.dispatchReceiverParameter!!, type, ::getBackingField) } }
-            val unboundExpressions = function.nonDispatchParameters.map { { type: IrType -> irGet(it).implicitCastIfNeededTo(type) } }
+        fun IrBuilder.getArguments(boundParameters: List<PropertyReferenceBoundValue>, function: IrSimpleFunction): List<() -> IrExpression> {
+            val boundExpressions = boundParameters.map {
+                { irGetField(irGet(function.dispatchReceiverParameter!!), getBackingField(it.index)) }
+            }
+            val unboundExpressions = function.nonDispatchParameters.map { { irGet(it) } }
             return boundExpressions + unboundExpressions
         }
 
@@ -450,19 +454,19 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         return referenceClass
     }
 
-    private fun IrFunction.inlineWithoutTemporaryVariables(target: IrFunction, arguments: List<(IrType) -> IrExpression> = listOf()): IrBody =
+    private fun IrFunction.inlineWithoutTemporaryVariables(target: IrFunction, arguments: List<() -> IrExpression> = listOf()): IrBody =
         body!!.moveWithoutTemporaryVariables(this, target, target.symbol, arguments)
 
     private fun IrBody.moveWithoutTemporaryVariables(
         source: IrFunction,
         target: IrDeclarationParent,
         targetSymbol: IrReturnTargetSymbol,
-        arguments: List<(IrType) -> IrExpression>,
+        arguments: List<() -> IrExpression>,
     ): IrBody {
         val mapping = source.parameters.zip(arguments).toMap()
         return transform(object : IrTransformer<Nothing?>() {
             override fun visitGetValue(expression: IrGetValue, data: Nothing?): IrExpression =
-                mapping[expression.symbol.owner]?.invoke(expression.type) ?: expression
+                mapping[expression.symbol.owner]?.invoke()?.implicitCastIfNeededTo(expression.type) ?: expression
 
             override fun visitReturn(expression: IrReturn, data: Nothing?): IrExpression {
                 if (expression.returnTargetSymbol == source.symbol) {
@@ -511,11 +515,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
      */
     private data class PropertyReferenceBoundValue(val index: Int) {
         fun toExpression(boundValues: List<IrExpression>): IrExpression = boundValues[index]
-        fun toExpression(builder: IrBuilder, receiver: IrValueDeclaration, type: IrType? = null, fields: (Int) -> IrField): IrExpression =
-            with(builder) {
-                val expr = irGetField(irGet(receiver), fields(index))
-                if (type == null) expr else expr.implicitCastIfNeededTo(type)
-            }
     }
 
     /**
