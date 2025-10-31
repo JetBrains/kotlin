@@ -356,6 +356,13 @@ fun compileWasmLoweredFragmentsForSingleModule(
     }
     wasmCompiledFileFragments.add(mainModuleFileFragment)
 
+    val stdlibModuleNameForImport =
+        loweredIrFragments.first().name.asString().takeIf { !stdlibIsMainModule }
+
+    val useDebuggerCustomFormatters =
+        configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS) &&
+                stdlibModuleNameForImport == null
+
     return compileWasm(
         wasmCompiledFileFragments = wasmCompiledFileFragments,
         moduleName = moduleName,
@@ -366,10 +373,9 @@ fun compileWasmLoweredFragmentsForSingleModule(
         generateWat = generateWat,
         generateSourceMaps = false,
         generateDwarf = false,
-        useDebuggerCustomFormatters = false,
-        stdlibModuleNameForImport = loweredIrFragments.first().name.asString().takeIf { !stdlibIsMainModule },
+        useDebuggerCustomFormatters = useDebuggerCustomFormatters,
+        stdlibModuleNameForImport = stdlibModuleNameForImport,
         dependencyModules = dependencyImports,
         initializeUnit = stdlibIsMainModule,
-        singleModulePreloadJs = singleModulePreloadJs,
     )
 }

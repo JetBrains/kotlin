@@ -69,6 +69,13 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         currentParent = declaration.parent
         currentFile = declaration.file
 
+        val declarationName = declaration.name
+        val jsInteropAdapters = jsRelatedSymbols.jsInteropAdapters
+
+        if (declarationName == jsInteropAdapters.getCachedJsObject.owner.name) {
+            return null
+        }
+
         val newDeclarations = context.irFactory.stageController.restrictTo(declaration) {
             if (isExternal)
                 transformExternalFunction(declaration)

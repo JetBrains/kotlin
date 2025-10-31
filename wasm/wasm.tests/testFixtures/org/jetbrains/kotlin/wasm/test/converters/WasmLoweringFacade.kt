@@ -153,13 +153,12 @@ class WasmLoweringFacade(
         val (newWasm, newWat) = supportedOptimizer.run(wasm, withText = wat != null)
         return WasmCompilerResult(
             wat = newWat,
-            jsUninstantiatedWrapper = jsUninstantiatedWrapper,
             jsWrapper = jsWrapper,
             wasm = newWasm,
             debugInformation = null,
             dts = dts,
             useDebuggerCustomFormatters = useDebuggerCustomFormatters,
-            jsBuiltinsPolyfillsWrapper = jsBuiltinsPolyfillsWrapper,
+            staticJsModules = staticJsModules,
             baseFileName = baseFileName,
         )
     }

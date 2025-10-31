@@ -279,6 +279,8 @@ class WasmSymbols(
         val kotlinUShortToJsNumber = CallableIds.kotlinUShortToJsNumber.functionSymbol()
         val kotlinUIntToJsNumber = CallableIds.kotlinUIntToJsNumber.functionSymbol()
         val kotlinULongToJsBigInt = CallableIds.kotlinULongToJsBigInt.functionSymbol()
+
+        val getCachedJsObject = CallableIds.getCachedJsObject.functionSymbol()
     }
 
     inner class JsRelatedSymbols {
@@ -500,6 +502,8 @@ private object CallableIds {
 
     val isNotFirstWasmExportCall = "isNotFirstWasmExportCall".wasmCallableId
     val EmptyContinuation = "EmptyContinuation".wasmCallableId
+
+    val getCachedJsObject = "getCachedJsObject".wasmCallableId
 
     // Collection functions
     private val String.collectionCallableId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
