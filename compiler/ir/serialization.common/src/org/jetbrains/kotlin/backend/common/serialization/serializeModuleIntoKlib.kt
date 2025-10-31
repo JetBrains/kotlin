@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.util.toKlibMetadataVersion
 import java.io.File
 
 /**
@@ -173,10 +174,13 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
         .sortedBy { it.first }
         .unzip()
 
+    val metadataVersion = configuration.languageVersionSettings.languageVersion.toKlibMetadataVersion().toArray()
+
     val serializedMetadata = SerializedMetadata(
         module = header,
         fragments = fragmentParts,
-        fragmentNames = fragmentNames
+        fragmentNames = fragmentNames,
+        metadataVersion = metadataVersion,
     )
 
     return SerializerOutput(

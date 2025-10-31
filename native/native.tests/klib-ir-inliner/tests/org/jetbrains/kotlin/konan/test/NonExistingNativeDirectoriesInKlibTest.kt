@@ -87,7 +87,7 @@ class NonExistingNativeDirectoriesInKlibTest {
             natives = bitcodeFileNames.map(::createEmptyFile),
             included = includedBinaryFileNames.map(::createEmptyFile),
             linkDependencies = emptyList(),
-            metadata = SerializedMetadata(byteArrayOf(), emptyList(), emptyList()),
+            metadata = SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray()),
             ir = null,
             versions = KotlinLibraryVersioning(
                 abiVersion = KotlinAbiVersion.CURRENT, // does not matter

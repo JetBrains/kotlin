@@ -69,7 +69,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
         }
 
         val module = header.build().toByteArray()
-        val serializedMetadata = SerializedMetadata(module, fragmentParts, fragmentNames)
+        val serializedMetadata = SerializedMetadata(module, fragmentParts, fragmentNames, metadataVersion.toArray())
         return MetadataInMemorySerializationArtifact(serializedMetadata, configuration)
     }
 }

@@ -20,7 +20,8 @@ interface KotlinLibraryWriter : BaseWriter
 class SerializedMetadata(
     val module: ByteArray,
     val fragments: List<List<ByteArray>>,
-    val fragmentNames: List<String>
+    val fragmentNames: List<String>,
+    val metadataVersion: IntArray,
 )
 
 class SerializedDeclaration(val id: Int, val bytes: ByteArray) {

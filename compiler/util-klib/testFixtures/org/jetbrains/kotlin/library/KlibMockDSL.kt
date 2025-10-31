@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.impl.KlibIrWriterImpl
 import org.jetbrains.kotlin.library.impl.KlibMetadataWriterImpl
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
 import kotlin.random.Random
 import org.jetbrains.kotlin.konan.file.File as KlibFile
@@ -76,6 +77,7 @@ class KlibMockDSL(val currentDir: File, val parent: KlibMockDSL?) {
                 module = random.nextBytes(100),
                 fragments = fragments,
                 fragmentNames = fragmentNames,
+                metadataVersion = MetadataVersion.INSTANCE.toArray(),
             )
         }
 

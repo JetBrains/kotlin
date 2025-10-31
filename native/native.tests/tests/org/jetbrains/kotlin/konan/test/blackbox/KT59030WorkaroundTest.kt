@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
@@ -144,7 +145,7 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
 
             // Write back the metadata.
             return with(moduleMetadata.write()) {
-                SerializedMetadata(module = header, fragments, fragmentNames)
+                SerializedMetadata(module = header, fragments, fragmentNames, MetadataVersion.INSTANCE.toArray())
             }
         }
 

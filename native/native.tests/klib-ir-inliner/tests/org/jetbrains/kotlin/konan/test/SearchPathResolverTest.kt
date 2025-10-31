@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.LenientUnresolvedLibrary
 import org.jetbrains.kotlin.library.RequiredUnresolvedLibrary
 import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.util.DummyLogger
 import org.junit.jupiter.api.Test
@@ -86,7 +87,7 @@ class SearchPathResolverTest {
 
     companion object {
         private val DUMMY_VERSIONS = KotlinLibraryVersioning(null, null, null)
-        private val DUMMY_METADATA = SerializedMetadata(byteArrayOf(), emptyList(), emptyList())
+        private val DUMMY_METADATA = SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray())
 
         private fun randomTargetsIncluding(number: Int, requiredTarget: KonanTarget): List<KonanTarget> {
             require(number >= 1)
