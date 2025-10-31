@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.buildtools.api.jvm
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.getToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Allows creating operations that can be used for performing Kotlin/JVM compilations.
@@ -28,8 +30,58 @@ import java.nio.file.Path
  *
  * @since 2.3.0
  */
+@Suppress("DEPRECATION")
 @ExperimentalBuildToolsApi
 public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
+    /**
+     * Creates an options set for snapshot-based incremental compilation (IC) in JVM projects.
+     * May be used to observe the defaults, adjust them, and configure incremental compilation as follows:
+     * ```
+     * val icOptions = kotlinToolchains.jvm.createSnapshotBasedIcOptions(
+     *     workingDirectory = Paths.get("build/kotlin"),
+     *     sourcesChanges = SourcesChanges.ToBeCalculated,
+     *     dependenciesSnapshotFiles = snapshots,
+     *     shrunkClasspathSnapshot = shrunkSnapshot
+     * )
+     *
+     * icOptions[JvmIncrementalCompilationOptions.BACKUP_CLASSES] = true
+     * ```
+     *
+     * @param workingDirectory the working directory for the IC operation to store internal objects.
+     * @param sourcesChanges changes in the source files, which can be unknown, to-be-calculated, or known.
+     * @param dependenciesSnapshotFiles a list of paths to dependency snapshot files produced by [org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation].
+     * @param shrunkClasspathSnapshot a path to a shrunk classpath snapshot file.
+     * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+     * @since 2.3.20
+     */
+    public fun createSnapshotBasedIcOptions(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        shrunkClasspathSnapshot: Path,
+    ): JvmSnapshotBasedIncrementalCompilationOptions {
+        // default implementation for Kotlin compiler version <= 2.3.0
+        val options = createJvmCompilationOperation(emptyList(), Paths.get("")).createSnapshotBasedIcOptions()
+        return object : JvmSnapshotBasedIncrementalCompilationConfiguration(
+            workingDirectory,
+            sourcesChanges,
+            dependenciesSnapshotFiles,
+            shrunkClasspathSnapshot,
+            options
+        ), JvmSnapshotBasedIncrementalCompilationOptions {
+            override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V {
+                return options[key]
+            }
+
+            override fun <V> set(
+                key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>,
+                value: V,
+            ) {
+                options[key] = value
+            }
+        }
+    }
+
     /**
      * Creates a build operation for compiling Kotlin sources into class files.
      *

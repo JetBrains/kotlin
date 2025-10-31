@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.buildtools.internal
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.BACKUP_CLASSES
@@ -54,31 +53,29 @@ internal val AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilat
     }
 
 
-internal fun JvmSnapshotBasedIncrementalCompilationConfiguration.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
-    val options = options as JvmSnapshotBasedIncrementalCompilationOptionsImpl
+internal fun JvmSnapshotBasedIncrementalCompilationOptionsImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
     return IncrementalCompilationFeatures(
-        usePreciseJavaTracking = options[PRECISE_JAVA_TRACKING],
+        usePreciseJavaTracking = this[PRECISE_JAVA_TRACKING],
         withAbiSnapshot = false,
-        preciseCompilationResultsBackup = options[BACKUP_CLASSES],
-        keepIncrementalCompilationCachesInMemory = options[KEEP_IC_CACHES_IN_MEMORY],
-        enableUnsafeIncrementalCompilationForMultiplatform = options[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
-        enableMonotonousIncrementalCompileSetExpansion = options[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
+        preciseCompilationResultsBackup = this[BACKUP_CLASSES],
+        keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
+        enableUnsafeIncrementalCompilationForMultiplatform = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
+        enableMonotonousIncrementalCompileSetExpansion = this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
     )
 }
 
-internal val JvmSnapshotBasedIncrementalCompilationConfiguration.classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled
+internal val JvmSnapshotBasedIncrementalCompilationOptionsImpl.classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled
     get() {
-        val options = options as JvmSnapshotBasedIncrementalCompilationOptionsImpl
         val snapshotFiles =
             ClasspathSnapshotFiles(dependenciesSnapshotFiles.map { it.toFile() }, shrunkClasspathSnapshot.toFile().parentFile)
         return when {
             !shrunkClasspathSnapshot.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
                 snapshotFiles
             )
-            options[FORCE_RECOMPILATION] -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(
+            this[FORCE_RECOMPILATION] -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(
                 snapshotFiles
             )
-            options[ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] -> ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges(
+            this[ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] -> ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges(
                 snapshotFiles
             )
             else -> {

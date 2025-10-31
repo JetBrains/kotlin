@@ -28,13 +28,19 @@ public interface JvmIncrementalCompilationConfiguration
 /**
  * A configuration for incremental compilation based on snapshots.
  *
+ * This class will be removed in a future version of BTA.
+ * Use [JvmPlatformToolchain.createSnapshotBasedIcOptions] instead.
+ *
  * @property workingDirectory the working directory for the IC operation to store internal objects.
  * @property sourcesChanges changes in the source files, which can be unknown, to-be-calculated, or known.
  * @property dependenciesSnapshotFiles a list of paths to dependency snapshot files produced by [org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation].
  * @property options an option set produced by [JvmCompilationOperation.createSnapshotBasedIcOptions]
+ *
+ * @see JvmPlatformToolchain.createSnapshotBasedIcOptions
  */
+@Deprecated("Use `JvmSnapshotBasedIncrementalCompilationOptions` and `JvmPlatformToolchain.createSnapshotBasedIcOptions`.")
 @ExperimentalBuildToolsApi
-public class JvmSnapshotBasedIncrementalCompilationConfiguration(
+public open class JvmSnapshotBasedIncrementalCompilationConfiguration(
     public val workingDirectory: Path,
     public val sourcesChanges: SourcesChanges,
     public val dependenciesSnapshotFiles: List<Path>,
@@ -42,13 +48,42 @@ public class JvmSnapshotBasedIncrementalCompilationConfiguration(
     public val options: JvmSnapshotBasedIncrementalCompilationOptions,
 ) : JvmIncrementalCompilationConfiguration
 
+// TODO: make this work with older impls where JvmSnapshotBasedIncrementalCompilationOptionsImpl doesn't implement JvmIncrementalCompilationConfiguration
 /**
  * Options for [JvmSnapshotBasedIncrementalCompilationConfiguration].
  *
  * @since 2.3.0
  */
 @ExperimentalBuildToolsApi
-public interface JvmSnapshotBasedIncrementalCompilationOptions {
+public interface JvmSnapshotBasedIncrementalCompilationOptions : JvmIncrementalCompilationConfiguration {
+    /**
+     * The working directory for the IC operation to store internal objects
+     *
+     * @since 2.3.20
+     */
+    public val workingDirectory: Path
+
+    /**
+     * Changes in the source files, which can be unknown, to-be-calculated, or known
+     *
+     * @since 2.3.20
+     */
+    public val sourcesChanges: SourcesChanges
+
+    /**
+     * A list of paths to dependency snapshot files produced by [org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation].
+     *
+     * @since 2.3.20
+     */
+    public val dependenciesSnapshotFiles: List<Path>
+
+    /**
+     * The path to the shrunk classpath snapshot file from a previous compilation.
+     *
+     * @since 2.3.20
+     */
+    public val shrunkClasspathSnapshot: Path
+
     /**
      * Base class for [JvmSnapshotBasedIncrementalCompilationOptions] options.
      *

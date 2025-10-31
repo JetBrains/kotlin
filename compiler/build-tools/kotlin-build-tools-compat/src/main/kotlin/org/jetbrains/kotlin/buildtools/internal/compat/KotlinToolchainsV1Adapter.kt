@@ -14,27 +14,38 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
-import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.BACKUP_CLASSES
-import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.FORCE_RECOMPILATION
-import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.KEEP_IC_CACHES_IN_MEMORY
-import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.MODULE_BUILD_DIR
-import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.OUTPUT_DIRS
-import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.PRECISE_JAVA_TRACKING
-import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.ROOT_PROJECT_DIR
-import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.USE_FIR_RUNNER
+import org.jetbrains.kotlin.buildtools.internal.compat.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.BACKUP_CLASSES
+import org.jetbrains.kotlin.buildtools.internal.compat.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.FORCE_RECOMPILATION
+import org.jetbrains.kotlin.buildtools.internal.compat.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.KEEP_IC_CACHES_IN_MEMORY
+import org.jetbrains.kotlin.buildtools.internal.compat.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.MODULE_BUILD_DIR
+import org.jetbrains.kotlin.buildtools.internal.compat.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.OUTPUT_DIRS
+import org.jetbrains.kotlin.buildtools.internal.compat.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.PRECISE_JAVA_TRACKING
+import org.jetbrains.kotlin.buildtools.internal.compat.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.ROOT_PROJECT_DIR
+import org.jetbrains.kotlin.buildtools.internal.compat.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.compat.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.io.path.absolutePathString
-import kotlin.time.Duration
-import kotlin.time.toJavaDuration
 
 public class KotlinToolchainsV1Adapter(
     @Suppress("DEPRECATION") private val compilationService: CompilationService,
 ) : KotlinToolchains {
     private val jvm: JvmPlatformToolchain by lazy {
         object : JvmPlatformToolchain {
+            override fun createSnapshotBasedIcOptions(
+                workingDirectory: Path,
+                sourcesChanges: SourcesChanges,
+                dependenciesSnapshotFiles: List<Path>,
+                shrunkClasspathSnapshot: Path,
+            ): JvmSnapshotBasedIncrementalCompilationOptions = JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(
+                workingDirectory,
+                sourcesChanges,
+                dependenciesSnapshotFiles,
+                shrunkClasspathSnapshot
+            )
+
             override fun createJvmCompilationOperation(
                 sources: List<Path>,
                 destinationDirectory: Path,
@@ -156,30 +167,38 @@ private class JvmCompilationOperationV1Adapter(
         val config = compilationService.makeJvmCompilationConfiguration()
         logger?.let { config.useLogger(it) }
         this[INCREMENTAL_COMPILATION]?.let { icConfig ->
-            if (icConfig !is JvmSnapshotBasedIncrementalCompilationConfiguration) return@let
-            val options = icConfig.options as JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter
+            @Suppress("DEPRECATION")
+            val icOptions = when (icConfig) {
+                is JvmSnapshotBasedIncrementalCompilationConfiguration -> {
+                    icConfig.toOptions()
+                }
+                is JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter -> {
+                    icConfig
+                }
+                else -> return@let
+            }
             val snapshotBasedConfigV1 = config.makeClasspathSnapshotBasedIncrementalCompilationConfiguration()
                 .apply {
-                    options[ROOT_PROJECT_DIR]?.let { setRootProjectDir(it.toFile()) }
-                    options[MODULE_BUILD_DIR]?.let { setBuildDir(it.toFile()) }
+                    icOptions[ROOT_PROJECT_DIR]?.let { setRootProjectDir(it.toFile()) }
+                    icOptions[MODULE_BUILD_DIR]?.let { setBuildDir(it.toFile()) }
                 }
-                .usePreciseJavaTracking(options[PRECISE_JAVA_TRACKING])
-                .usePreciseCompilationResultsBackup(options[BACKUP_CLASSES])
-                .keepIncrementalCompilationCachesInMemory(options[KEEP_IC_CACHES_IN_MEMORY])
+                .usePreciseJavaTracking(icOptions[PRECISE_JAVA_TRACKING])
+                .usePreciseCompilationResultsBackup(icOptions[BACKUP_CLASSES])
+                .keepIncrementalCompilationCachesInMemory(icOptions[KEEP_IC_CACHES_IN_MEMORY])
                 .useOutputDirs(
-                    options[OUTPUT_DIRS]?.map(Path::toFile) ?: listOf(
+                    icOptions[OUTPUT_DIRS]?.map(Path::toFile) ?: listOf(
                         destinationDirectory.toFile(),
-                        icConfig.workingDirectory.toFile()
+                        icOptions.workingDirectory.toFile()
                     )
                 )
-                .forceNonIncrementalMode(options[FORCE_RECOMPILATION])
-                .useFirRunner(options[USE_FIR_RUNNER])
+                .forceNonIncrementalMode(icOptions[FORCE_RECOMPILATION])
+                .useFirRunner(icOptions[USE_FIR_RUNNER])
             config.useIncrementalCompilation(
-                icConfig.workingDirectory.toFile(),
-                icConfig.sourcesChanges,
+                icOptions.workingDirectory.toFile(),
+                icOptions.sourcesChanges,
                 ClasspathSnapshotBasedIncrementalCompilationApproachParameters(
-                    icConfig.dependenciesSnapshotFiles.map(Path::toFile),
-                    icConfig.shrunkClasspathSnapshot.toFile()
+                    icOptions.dependenciesSnapshotFiles.map(Path::toFile),
+                    icOptions.shrunkClasspathSnapshot.toFile()
                 ),
                 snapshotBasedConfigV1
             )
@@ -211,52 +230,58 @@ private class JvmCompilationOperationV1Adapter(
         false
     }
 
-    private class JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter : JvmSnapshotBasedIncrementalCompilationOptions {
-        private val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class)
+    @Deprecated("Use `JvmPlatformToolchain.createSnapshotBasedIcOptions` instead.")
+    override fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions {
+        return JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(Paths.get(""), SourcesChanges.Unknown, emptyList(), Paths.get(""))
+    }
+}
 
-        operator fun <V> get(key: Option<V>): V = options[key]
+private class JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(
+    override val workingDirectory: Path,
+    override val sourcesChanges: SourcesChanges,
+    override val dependenciesSnapshotFiles: List<Path>,
+    override val shrunkClasspathSnapshot: Path,
+) : JvmSnapshotBasedIncrementalCompilationOptions {
+    private val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class)
 
-        private operator fun <V> set(key: Option<V>, value: V) {
-            options[key] = value
-        }
+    operator fun <V> get(key: Option<V>): V = options[key]
 
-        override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V = options[key]
-
-        override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>, value: V) {
-            options[key] = value
-        }
-
-        class Option<V> : BaseOptionWithDefault<V> {
-            constructor(id: String) : super(id)
-            constructor(id: String, default: V) : super(id, default = default)
-        }
-
-        companion object {
-            val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR", null)
-
-            val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR", null)
-
-            val PRECISE_JAVA_TRACKING: Option<Boolean> = Option("PRECISE_JAVA_TRACKING", false)
-
-            val BACKUP_CLASSES: Option<Boolean> = Option("BACKUP_CLASSES", false)
-
-            val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY", false)
-
-            val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION", false)
-
-            val RECOMPILATION_CLEANUP_DIRS: Option<Path> = Option("REBUILD_CLEANUP_DIRS")
-
-            val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", null)
-
-            val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> =
-                Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
-
-            val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
-        }
+    private operator fun <V> set(key: Option<V>, value: V) {
+        options[key] = value
     }
 
-    override fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions {
-        return JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter()
+    override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V = options[key]
+
+    override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>, value: V) {
+        options[key] = value
+    }
+
+    class Option<V> : BaseOptionWithDefault<V> {
+        constructor(id: String) : super(id)
+        constructor(id: String, default: V) : super(id, default = default)
+    }
+
+    companion object {
+        val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR", null)
+
+        val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR", null)
+
+        val PRECISE_JAVA_TRACKING: Option<Boolean> = Option("PRECISE_JAVA_TRACKING", false)
+
+        val BACKUP_CLASSES: Option<Boolean> = Option("BACKUP_CLASSES", false)
+
+        val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY", false)
+
+        val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION", false)
+
+        val RECOMPILATION_CLEANUP_DIRS: Option<Path> = Option("REBUILD_CLEANUP_DIRS")
+
+        val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", null)
+
+        val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> =
+            Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
+
+        val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
     }
 }
 
@@ -398,4 +423,29 @@ private abstract class BuildOperationImpl<R> : BuildOperation<R> {
     companion object {
         val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", default = null)
     }
+}
+
+@Suppress("DEPRECATION")
+private fun JvmSnapshotBasedIncrementalCompilationConfiguration.toOptions(): JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter {
+    val oldOptions = this.options
+    val newOptions = JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(
+        workingDirectory,
+        sourcesChanges,
+        dependenciesSnapshotFiles,
+        shrunkClasspathSnapshot
+    )
+    JvmSnapshotBasedIncrementalCompilationOptions::class.java.declaredFields.filter {
+        it.type.isAssignableFrom(
+            JvmSnapshotBasedIncrementalCompilationOptions.Option::class.java
+        )
+    }.forEach { field ->
+        try {
+            @Suppress("UNCHECKED_CAST")
+            newOptions[field.get(JvmSnapshotBasedIncrementalCompilationOptions.Companion) as JvmSnapshotBasedIncrementalCompilationOptions.Option<Any?>] =
+                oldOptions[field.get(JvmSnapshotBasedIncrementalCompilationOptions.Companion) as JvmSnapshotBasedIncrementalCompilationOptions.Option<Any?>]
+        } catch (_: IllegalStateException) {
+            // this field was not set and has no default
+        }
+    }
+    return newOptions
 }

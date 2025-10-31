@@ -77,7 +77,9 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
      * )
      * ```
      * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+     * @see JvmPlatformToolchain.createSnapshotBasedIcOptions
      */
+    @Deprecated("Use `JvmPlatformToolchain.createSnapshotBasedIcOptions` instead.")
     public fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions
 
     public companion object {

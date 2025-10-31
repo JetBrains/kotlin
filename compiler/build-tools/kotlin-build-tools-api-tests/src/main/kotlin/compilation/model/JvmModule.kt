@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_STDLIB
 import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.FORCE_RECOMPILATION
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.MODULE_BUILD_DIR
@@ -27,7 +26,6 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.pathString
-import kotlin.io.path.toPath
 import kotlin.io.path.walk
 
 class JvmModule(
@@ -115,22 +113,19 @@ class JvmModule(
                 generateClasspathSnapshot(it).toFile()
             }
 
-            val snapshotIcOptions = compilationOperation.createSnapshotBasedIcOptions()
-            snapshotIcOptions[MODULE_BUILD_DIR] = buildDirectory
-            snapshotIcOptions[ROOT_PROJECT_DIR] = project.projectDirectory
-            snapshotIcOptions[FORCE_RECOMPILATION] = forceNonIncrementalCompilation
-
-            val incrementalConfiguration = JvmSnapshotBasedIncrementalCompilationConfiguration(
+            val snapshotIcOptions = kotlinToolchain.jvm.createSnapshotBasedIcOptions(
                 icCachesDir,
                 sourcesChanges,
                 snapshots.map { it.toPath() },
                 icWorkingDir.resolve("shrunk-classpath-snapshot.bin"),
-                snapshotIcOptions
             )
+            snapshotIcOptions[MODULE_BUILD_DIR] = buildDirectory
+            snapshotIcOptions[ROOT_PROJECT_DIR] = project.projectDirectory
+            snapshotIcOptions[FORCE_RECOMPILATION] = forceNonIncrementalCompilation
 
-            icOptionsConfigAction(incrementalConfiguration.options)
+            icOptionsConfigAction(snapshotIcOptions)
 
-            compilationOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = incrementalConfiguration
+            compilationOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = snapshotIcOptions
             compilationConfigAction(compilationOperation)
         }, assertions)
     }

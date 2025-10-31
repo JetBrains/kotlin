@@ -5,19 +5,25 @@
 
 package org.jetbrains.kotlin.buildtools.internal.jvm
 
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import java.nio.file.Path
 
-internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl() : JvmSnapshotBasedIncrementalCompilationOptions {
+internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl(
+    override val workingDirectory: Path,
+    override val sourcesChanges: SourcesChanges,
+    override val dependenciesSnapshotFiles: List<Path>,
+    override val shrunkClasspathSnapshot: Path,
+) : JvmSnapshotBasedIncrementalCompilationOptions {
     private val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class)
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
     @OptIn(UseFromImplModuleRestricted::class)
-    private operator fun <V> set(key: Option<V>, value: V) {
+    operator fun <V> set(key: Option<V>, value: V) {
         options[key] = value
     }
 
