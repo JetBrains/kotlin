@@ -45,6 +45,11 @@ internal fun getAllMembers_newKotlinReflectImpl(kClass: KClassImpl<*>): Collecti
         // private members are not inherited, but immediate private members must appear in the 'members' list
         if (declaredMember.visibility == KVisibility.PRIVATE) membersMutable.value[signature] = declaredMember
     }
+    // val foo = membersReadOnly.allMembers.values.first { it.name == "bar" }
+    // foo.shallowCopy().apply {
+    //     kTypeSubstitutor = foo.kTypeSubstitutor
+    //     forceInstanceReceiverParameter = foo.forceInstanceReceiverParameter
+    // }.toString()
     return (if (membersMutable.isInitialized()) membersMutable.value else membersReadOnly.allMembers)
         .map { it.value }
 }
@@ -74,12 +79,12 @@ private object CovariantOverrideComparator : Comparator<DescriptorKCallable<*>> 
             }
             aIsSubtypeOfB -> -1
             bIsSubtypeOfA -> 1
-            else -> 0 //error("RETURN_TYPE_MISMATCH_ON_INHERITANCE") // todo
+            else -> 0
         }
     }
 }
 
-private val collectionKType = typeOf<Collection<*>>()
+// private val collectionKType = typeOf<Collection<*>>()
 
 internal data class AllMembersPreservingTransitivity(
     val allMembers: Map<EquatableCallableSignature, DescriptorKCallable<*>>,
@@ -96,18 +101,8 @@ internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMemb
     var containsInheritedStatics = false
     var containsPackagePrivate = false
     for (rawSupertype in kClass.supertypes) {
-        val supertype = (rawSupertype as? AbstractKType)?.let {
-            // It's a hack for Flexible Collection types.
-            // They don't have proper KClasses KT-11754
-            // which leads to type substitution quirks (because we have proper KTypes for them)
-            when (it.isSubtypeOf(collectionKType)) {
-                true ->
-                    it.upperBoundIfFlexible()
-                false ->
-                    it//.lowerBoundIfFlexible() // todo formatting
-            }
-        } ?: rawSupertype
-        val supertypeKClass = (supertype as AbstractKType).correctClassifier as? KClass<*>
+        val supertype = rawSupertype // (rawSupertype as AbstractKType).lowerBoundIfFlexible() ?: rawSupertype
+        val supertypeKClass = supertype.classifier as? KClass<*> //supertype.correctClassifier as? KClass<*>
             ?: nonDenotableSupertypesAreNotPossible()
         val substitutor = KTypeSubstitutor.create(supertype)
         val supertypeMembers = supertypeKClass.allMembersPreservingTransitivity
@@ -125,6 +120,7 @@ internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMemb
         }
     }
     for (member in kClass.declaredDescriptorKCallableMembers) {
+        // if (member.name != "contains") continue
         if (member.visibility == KVisibility.PRIVATE) continue
         val isStaticMember = member.isStatic
         // static methods (but not fields) in interfaces are never inherited (not in Java, not in Kotlin enums)
@@ -205,6 +201,7 @@ internal data class EquatableCallableSignature(
         if (name != other.name) return false
         if (isStatic != other.isStatic) return false
         if (typeParameters.size != other.typeParameters.size) return false
+        typeParameters.first().upperBounds
         if (parameterTypes.size != other.parameterTypes.size) return false
         val functionTypeParametersEliminator = other.typeParameters.substituteTypeParametersInto(typeParameters)
         for (i in parameterTypes.indices) {

@@ -2,6 +2,9 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
+
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 // FILE: Java1.java
 public class Java1 {
     public <T> void foo(T a) { }
