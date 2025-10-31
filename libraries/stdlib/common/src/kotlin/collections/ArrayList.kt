@@ -11,11 +11,11 @@ package kotlin.collections
  * This class is backed by a dynamically resizable array that grows as elements are added.
  * It provides constant-time positional access and amortized constant-time addition of elements.
  *
- * ArrayList allows duplicate elements. The iteration order of elements is the order
+ * [ArrayList] allows duplicate elements. The iteration order of elements is the order
  * in which they were added to the list. As an implementation of [RandomAccess], it provides fast
  * indexed access to elements.
  *
- * Note that this implementation is not synchronized. If multiple threads access an ArrayList concurrently,
+ * Note that this implementation is not synchronized. If multiple threads access an [ArrayList] concurrently,
  * and at least one of the threads modifies the list structurally, it must be synchronized externally.
  *
  * @param E the type of elements contained in the list.
