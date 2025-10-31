@@ -111,6 +111,9 @@ object CommonConfigurationKeys {
     val ENABLE_IR_VARARG_TYPES_CHECKS = CompilerConfigurationKey.create<Boolean>("Check IR for vararg types mismatches")
 
     @JvmField
+    val ENABLE_IR_NESTED_OFFSETS_CHECKS = CompilerConfigurationKey.create<Boolean>("Check that offsets of nested IR elements conform to offsets of their containers")
+
+    @JvmField
     val PHASE_CONFIG = CompilerConfigurationKey.create<PhaseConfig>("phase configuration")
 
     // Should be used only in tests, impossible to set via compiler arguments
@@ -248,6 +251,10 @@ var CompilerConfiguration.enableIrVisibilityChecks: Boolean
 var CompilerConfiguration.enableIrVarargTypesChecks: Boolean
     get() = getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS)
     set(value) { put(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS, value) }
+
+var CompilerConfiguration.enableIrNestedOffsetsChecks: Boolean
+    get() = getBoolean(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS)
+    set(value) { put(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS, value) }
 
 var CompilerConfiguration.phaseConfig: PhaseConfig?
     get() = get(CommonConfigurationKeys.PHASE_CONFIG)
