@@ -6,7 +6,7 @@
 package kotlin.collections
 
 /**
- * A resizable-array implementation of the mutable list.
+ * A resizable-array implementation of the [MutableList].
  *
  * This class is backed by a dynamically resizable array that grows as elements are added.
  * It provides constant-time positional access and amortized constant-time addition of elements.
