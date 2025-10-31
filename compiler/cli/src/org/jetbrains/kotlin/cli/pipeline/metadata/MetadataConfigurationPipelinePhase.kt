@@ -120,8 +120,7 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
             }
         }
         if (platforms.isEmpty()) {
-//            The warning is temporarily commented out till the `-Xtarget-platform` argument is properly supported in KGP.
-//            collector.report(WARNING, "No target platform specified, using default")
+            collector.report(WARNING, "No target platform specified, using default")
             return CommonPlatforms.defaultCommonPlatform
         }
         return TargetPlatform(platforms)
