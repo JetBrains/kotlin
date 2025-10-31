@@ -35,6 +35,7 @@ internal fun getAllMembers_newKotlinReflectImpl(kClass: KClassImpl<*>): Collecti
         )
         false -> lazy(LazyThreadSafetyMode.NONE) { HashMap(membersReadOnly.allMembers) }
     }
+    // Populating the 'members' list with things which are not inherited but appear in the 'members' list
     for (declaredMember in kClass.declaredDescriptorKCallableMembers) {
         val signature = declaredMember.toEquatableCallableSignature()
         // static members are not inherited, but the immediate statics in interfaces must appear in the 'members' list
@@ -116,8 +117,7 @@ internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMemb
             val isStaticMember = notSubstitutedMember.instanceReceiverParameter == null
             val member = notSubstitutedMember.shallowCopy().apply {
                 forceInstanceReceiverParameter = if (isStaticMember) null else thisReceiver
-                kTypeSubstitutor =
-                    (notSubstitutedMember.kTypeSubstitutor ?: KTypeSubstitutor.EMPTY).combinedWith(substitutor)
+                kTypeSubstitutor = notSubstitutedMember.kTypeSubstitutor.combinedWith(substitutor)
             }
             result.merge(member.toEquatableCallableSignature(), member) { a, b ->
                 minOf(a, b, CovariantOverrideComparator)
@@ -126,9 +126,9 @@ internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMemb
     }
     for (member in kClass.declaredDescriptorKCallableMembers) {
         if (member.visibility == KVisibility.PRIVATE) continue
-        val isStaticMember = member.instanceReceiverParameter == null
-        // static members in interfaces are never inherited (not in Java, not in Kotlin enums)
-        if (isStaticMember && kClass.classKind == ClassKind.INTERFACE) continue
+        val isStaticMember = member.isStatic
+        // static methods (but not fields) in interfaces are never inherited (not in Java, not in Kotlin enums)
+        if (isStaticMember && kClass.classKind == ClassKind.INTERFACE && !member.isJavaField) continue
         containsInheritedStatics = containsInheritedStatics || isStaticMember
         containsPackagePrivate = containsPackagePrivate || member.isPackagePrivate
         result[member.toEquatableCallableSignature()] = member
@@ -138,6 +138,9 @@ internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMemb
 
 private val DescriptorKCallable<*>.isStatic: Boolean
     get() = instanceReceiverParameter == null
+
+private val DescriptorKCallable<*>.isJavaField: Boolean
+    get() = this is KProperty<*> && this.javaField?.declaringClass?.isKotlin == false
 
 private val KClass<*>.allMembersPreservingTransitivity: AllMembersPreservingTransitivity
     get() = when (this) {

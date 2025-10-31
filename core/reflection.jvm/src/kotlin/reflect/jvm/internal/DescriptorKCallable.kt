@@ -25,7 +25,7 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
 
     // todo make immutable propagating parameters
     internal var forceInstanceReceiverParameter: ReceiverParameterDescriptor? = null
-    internal var kTypeSubstitutor: KTypeSubstitutor? = null
+    internal var kTypeSubstitutor: KTypeSubstitutor = KTypeSubstitutor.EMPTY
 
     private val _annotations = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
@@ -109,10 +109,7 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
         val type = DescriptorKType(descriptor.returnType!!) {
             extractContinuationArgument() ?: caller.returnType
         }
-        kTypeSubstitutor?.let {
-            it.substitute(type).type
-                ?: error("fuck you Nikita")
-        } ?: type
+        kTypeSubstitutor.substitute(type).type ?: error("fuck you Nikita")
     }
 
     override val returnType: KType
