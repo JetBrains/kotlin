@@ -29,6 +29,10 @@ internal class Options(private val optionsName: String) {
         key.defaultValue
     }
 
+    operator fun <V> set(key: BaseOptionWithDefault<V>, value: Any?) {
+        optionsMap[key.id] = value
+    }
+
     operator fun set(key: String, value: Any?) {
         optionsMap[key] = value
     }

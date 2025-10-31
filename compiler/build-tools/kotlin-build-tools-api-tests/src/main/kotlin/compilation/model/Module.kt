@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module.Companion.EXECUTION_TIMEOUT_SECONDS
 import java.nio.file.Path
@@ -69,7 +69,7 @@ interface Module : Dependency {
         forceOutput: LogLevel? = null,
         forceNonIncrementalCompilation: Boolean = false,
         compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
-        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationOptions) -> Unit = {},
+        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit = {},
         assertions: context(Module) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 

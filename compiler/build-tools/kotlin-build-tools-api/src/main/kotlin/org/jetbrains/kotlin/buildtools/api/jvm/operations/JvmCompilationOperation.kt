@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.buildtools.api.jvm.operations
 import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import java.nio.file.Path
 
 /**
  * Compiles Kotlin code targeting JVM platform and using specified options.
@@ -78,7 +80,33 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
      * ```
      * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
      */
-    public fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions
+    @Suppress("DEPRECATION")
+    @Deprecated("Use `snapshotBasedIcConfigurationBuilder` instead.")
+    public fun createSnapshotBasedIcOptions(): org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+
+    /**
+     * Creates the configuration object for snapshot-based incremental compilation (IC) in JVM projects.
+     * May be used to observe the defaults, adjust them, and configure incremental compilation as follows:
+     * ```
+     * val icConfig = compilation.snapshotBasedIcConfigurationBuilder(workingDirectory = Paths.get("build/kotlin"),
+     *     sourcesChanges = SourcesChanges.ToBeCalculated,
+     *     dependenciesSnapshotFiles = snapshots,
+     *     shrunkClasspathSnapshot = shrunkSnapshot,
+     * )
+     *
+     * icConfig[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = true
+     *
+     * compilation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = icConfig
+     * ```
+     *
+     * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+     */
+    public fun snapshotBasedIcConfigurationBuilder(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        shrunkClasspathSnapshot: Path,
+    ): JvmSnapshotBasedIncrementalCompilationConfiguration
 
     public companion object {
 
