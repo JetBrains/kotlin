@@ -46,7 +46,7 @@ val ObjCExportStub.psiOrNull
 
 abstract class ObjCTopLevel : ObjCExportStub
 
-class ObjCNativeEnum(
+class ObjCNSEnum(
     override val name: String,
     val literals: List<ObjcExportNativeEnumEntryName>,
 ) : ObjCExportStub {
@@ -54,7 +54,7 @@ class ObjCNativeEnum(
         get() = null
     override val origin: ObjCExportStubOrigin?
         get() = null
-    override val extras = mutableExtrasOf()
+    override val extras: Extras = emptyExtras()
 }
 
 sealed class ObjCClass : ObjCTopLevel() {

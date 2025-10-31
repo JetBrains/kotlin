@@ -91,10 +91,10 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 if (namer.getNSEnumFunctionTypeName(descriptor) != null) {
                     val superClass = descriptor.getSuperClassNotAny()!!  // ordinal is declared in KotlinEnum
                     val ordinalDescriptor = superClass.contributedMethods.first { it.name.asString() == "<get-ordinal>" }
-                    val bridge = mapper.bridgeMethod(ordinalDescriptor)
                     val symbol = symbolTable.descriptorExtension.referenceSimpleFunction(ordinalDescriptor)
+                    val bridge = mapper.bridgeMethod(ordinalDescriptor)
                     val method = ObjCMethodSpec.BaseMethod(symbol, bridge, "toNSEnum")
-                    methods += ObjCGetterForNSEnumType(symbol, method)
+                    methods += ObjCGetterForNSEnumType(symbol, bridge, "toNSEnum", method)
                 }
 
                 descriptor.enumEntries.mapTo(methods) {
@@ -237,6 +237,8 @@ internal class ObjCGetterForKotlinEnumEntry(
 
 internal class ObjCGetterForNSEnumType(
         val symbol: IrSimpleFunctionSymbol,
+        val bridge: MethodBridge,
+        val selector: String,
         val baseMethod: BaseMethod<IrSimpleFunctionSymbol>
 ) : ObjCMethodSpec() {
     override fun toString(): String =

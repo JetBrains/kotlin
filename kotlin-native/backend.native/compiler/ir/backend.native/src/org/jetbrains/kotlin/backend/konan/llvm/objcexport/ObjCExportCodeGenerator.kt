@@ -1377,10 +1377,12 @@ private fun ObjCExportCodeGenerator.createArrayConstructorAdapter(
 }
 
 private fun ObjCExportCodeGenerator.createNSEnumAdapter(
-        implementation: IrFunction,
-        baseMethod: BaseMethod<IrSimpleFunctionSymbol>
+        symbol: IrSimpleFunctionSymbol,
+        methodBridge: MethodBridge,
+        selectorName: String
 ): ObjCToKotlinMethodAdapter {
-    return createMethodAdapter(implementation, baseMethod)
+    val imp = generateObjCImp(symbol.owner, symbol.owner.getLowered<IrSimpleFunction>(), methodBridge)
+    return objCToKotlinMethodAdapter(selectorName, methodBridge, imp)
 }
 
 private fun ObjCExportCodeGenerator.vtableIndex(irFunction: IrSimpleFunction): Int? {
@@ -1439,7 +1441,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
                 adapters += createConstructorAdapter(it.baseMethod)
             }
             is ObjCGetterForNSEnumType -> {
-                adapters += createNSEnumAdapter(it.symbol.owner, it.baseMethod)
+                adapters += createNSEnumAdapter(it.symbol, it.bridge, it. selector)
             }
             is ObjCFactoryMethodForKotlinArrayConstructor -> {
                 classAdapters += createArrayConstructorAdapter(it.baseMethod)

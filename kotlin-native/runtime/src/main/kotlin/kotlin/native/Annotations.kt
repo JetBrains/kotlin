@@ -127,7 +127,7 @@ public actual annotation class ObjCName(actual val name: String = "", actual val
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCEnum
-@SinceKotlin("2.2.21")
+@SinceKotlin("2.3")
 public actual annotation class ObjCEnum(actual val name: String = "")
 
 /**
