@@ -260,12 +260,27 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         }
     }
 
+    private fun parseDependencyResolutionMap(configuration: CompilerConfiguration)
+            : Map<String, String> {
+
+        val rawResolutionMap = configuration[WasmConfigurationKeys.WASM_DEPENDENCY_RESOLUTION_MAP] ?: return emptyMap()
+
+        val parsedResolutionMap = rawResolutionMap.split(",")
+            .map { it.split(":") }
+            .associate { it[0] to it[1] }
+
+        return parsedResolutionMap
+    }
+
     private fun compileSingleModule(
         configuration: CompilerConfiguration,
         module: ModulesStructure,
         outputDir: File,
         wasmDebug: Boolean,
     ): WasmCompilerResult {
+
+        val dependencyResolutionMap = parseDependencyResolutionMap(configuration)
+
         val performanceManager = configuration.perfManager
 
         val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
@@ -296,6 +311,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 stdlibIsMainModule = module.klibs.included?.isWasmStdlib == true,
                 generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
                 wasmDebug = wasmDebug,
+                dependencyResolutionMap = dependencyResolutionMap,
             )
 
             writeCompilationResult(
@@ -318,7 +334,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
     generateWat: Boolean,
     wasmDebug: Boolean,
     outputFileNameBase: String? = null,
-    singleModulePreloadJs: String? = null,
+    dependencyResolutionMap: Map<String, String>,
 ): WasmCompilerResult {
     val mainModuleFragment = backendContext.irModuleFragment
     val moduleName = mainModuleFragment.name.asString()
@@ -351,7 +367,15 @@ fun compileWasmLoweredFragmentsForSingleModule(
     val dependencyModules = loweredIrFragments.filterNot { it == mainModuleFragment }
     dependencyModules.mapTo(wasmCompiledFileFragments) {
         val dependencyName = it.name.asString()
-        dependencyImports.add(WasmModuleDependencyImport(dependencyName, it.outputFileName))
+        val initialOutputFileName = it.outputFileName
+
+        dependencyImports.add(
+            WasmModuleDependencyImport(
+                dependencyName,
+                dependencyResolutionMap[dependencyName]
+                    ?: initialOutputFileName
+            )
+        )
         codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(it, dependencyName, importedDeclarations)
     }
     wasmCompiledFileFragments.add(mainModuleFileFragment)
