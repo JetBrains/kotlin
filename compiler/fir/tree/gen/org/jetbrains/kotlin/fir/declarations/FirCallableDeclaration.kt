@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  * - [returnTypeRef] — the declared return type of the function-like declaration, or the type of the variable-like declaration.
  * - [annotations] — annotations present on the declaration, if any.
  * - [isLocal] — the callable is non-local (isLocal = false) iff all its ancestors (containing declarations) are
- * either files (see [FirFile]) or classes. With any function-like among ancestors, the callable is local (isLocal = true).
+ * either files (see [FirFile]) or classes.  A property accessor or a backing field inherits isLocal from its owner property, 
+ * otherwise with any callable or anonymous initializer among ancestors, the declaration is local (isLocal = true).
  * In particular, it means that any callable member of a local class is also local. 
  *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.callableDeclaration]

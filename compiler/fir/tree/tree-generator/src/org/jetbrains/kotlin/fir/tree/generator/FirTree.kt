@@ -104,7 +104,8 @@ object FirTree : AbstractFirTreeBuilder() {
             - [returnTypeRef] — the declared return type of the function-like declaration, or the type of the variable-like declaration.
             - [annotations] — annotations present on the declaration, if any.
             - [isLocal] — the callable is non-local (isLocal = false) iff all its ancestors (containing declarations) are
-            either files (see [FirFile]) or classes. With any function-like among ancestors, the callable is local (isLocal = true).
+            either files (see [FirFile]) or classes.  A property accessor or a backing field inherits isLocal from its owner property, 
+            otherwise with any callable or anonymous initializer among ancestors, the declaration is local (isLocal = true).
             In particular, it means that any callable member of a local class is also local. 
                 """.trimIndent()
         parent(memberDeclaration)
@@ -137,7 +138,8 @@ object FirTree : AbstractFirTreeBuilder() {
             - [body] — the function body, if present, otherwise null.
             - [annotations] — annotations present on the declaration, if any.
             - [isLocal] — the function is non-local (isLocal = false) iff all its ancestors (containing declarations) are
-            either files (see [FirFile]) or classes. With any function-like among ancestors, the function is local (isLocal = true).
+            either files (see [FirFile]) or classes. A property accessor inherits isLocal from its owner property, 
+            otherwise with any callable or anonymous initializer among ancestors, the declaration is local (isLocal = true).
             In particular, it means that any member function of a local class is also local. 
                 """.trimIndent()
         parent(callableDeclaration)
@@ -176,7 +178,8 @@ object FirTree : AbstractFirTreeBuilder() {
             - [typeParameters] — type parameter references declared for this declaration, if any.
             In certain situations, references to type parameters of its outer classes may also be present in the list. 
             - [isLocal] — the declaration is non-local (isLocal = false) iff all its ancestors (containing declarations) are
-            either files (see [FirFile]) or classes. With any function-like among ancestors, the declaration is local (isLocal = true).
+            either files (see [FirFile]) or classes. A property accessor or a backing field inherits isLocal from its owner property, 
+            otherwise with any callable or anonymous initializer among ancestors, the declaration is local (isLocal = true).
             In particular, it means that any member declaration of a local class is also local. 
                 """.trimIndent()
         parent(declaration)
@@ -454,7 +457,7 @@ object FirTree : AbstractFirTreeBuilder() {
             - [scopeProvider] — a provider used to get different kind of scopes, like a use-site scope, a static scope, or a nested classifier scope
             (see [FirScopeProvider], [org.jetbrains.kotlin.fir.scopes.FirScope]) for names resolution. There are two main providers used (Kotlin and Java ones).
             - [isLocal] — the class-like is non-local (isLocal = false) iff all its ancestors (containing declarations) are
-            either files (see [FirFile]) or classes. With any function-like among ancestors, the class-like is local (isLocal = true).
+            either files (see [FirFile]) or classes. With any callable or anonymous initializer among ancestors, the class-like is local (isLocal = true).
             In particular, it means that any class-like declared inside a local class is also local. 
                 """.trimIndent()
         parent(memberDeclaration)
@@ -713,6 +716,7 @@ object FirTree : AbstractFirTreeBuilder() {
             - [body] — the body of the accessor, if present, otherwise null.
             - [contractDescription] — contract description for the accessor, if present (see [FirContractDescription] and its inheritors).
             - [annotations] — annotations present on the accessor, if any.
+            - [isLocal] — the property accessor is considered local iff its owner property is local.
                 """.trimIndent()
         parent(function)
         parent(contractDescriptionOwner)
@@ -729,6 +733,16 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val backingField: Element by element(Declaration) {
+        kDoc = """
+            Represents a backing field for a property.
+
+            Notable properties:
+            - [symbol] — the symbol which serves as a pointer to this backing field.
+            - [propertySymbol] — the symbol of the property this backing field belongs to.
+            - [returnTypeRef] — the type of the backing field.
+            - [annotations] — annotations present on the backing field, if any.
+            - [isLocal] — the backing field is considered local iff its owner property is local.
+               """.trimIndent()
         parent(variable)
         parent(typeParametersOwner)
         parent(statement)
