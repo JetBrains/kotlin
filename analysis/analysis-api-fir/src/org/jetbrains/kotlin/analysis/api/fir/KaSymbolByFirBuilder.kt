@@ -272,7 +272,7 @@ internal class KaSymbolByFirBuilder(
         }
 
         fun buildVariableLikeSignature(firSymbol: FirVariableSymbol<*>): KaVariableSignature<KaVariableSymbol> {
-            if (firSymbol is FirPropertySymbol && firSymbol is FirRegularPropertySymbol && firSymbol !is FirSyntheticPropertySymbol) {
+            if (firSymbol is FirRegularPropertySymbol && firSymbol !is FirSyntheticPropertySymbol) {
                 return buildPropertySignature(firSymbol)
             }
 

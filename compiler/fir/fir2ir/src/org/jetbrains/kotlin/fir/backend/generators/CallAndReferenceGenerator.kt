@@ -212,9 +212,7 @@ class CallAndReferenceGenerator(
                     firSymbol.hasDelegate -> convertReferenceToLocalDelegatedProperty(firSymbol)
                     else -> null
                 }
-                is FirRegularPropertySymbol -> {
-                    convertReferenceToRegularProperty(firSymbol)
-                }
+                is FirRegularPropertySymbol -> convertReferenceToRegularProperty(firSymbol)
                 is FirFunctionSymbol<*> -> convertReferenceToFunction(firSymbol)
                 is FirFieldSymbol -> convertReferenceToField(firSymbol)
                 else -> null
