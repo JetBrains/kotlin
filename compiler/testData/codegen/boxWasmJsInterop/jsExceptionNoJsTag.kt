@@ -1,6 +1,5 @@
 // TARGET_BACKEND: WASM
 // WASM_NO_JS_TAG
-// WASM_FAILS_IN_SINGLE_MODULE_MODE
 
 fun throwSomeJsException(): Int = js("{ throw new TypeError('Test'); }")
 fun throwSomeJsPrimitive(): Int = js("{ throw 'Test'; }")
