@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/main.kt
     BLOCK_BODY
       VAR name:test2 type:<root>.MyMap<kotlin.String> [val]
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.MyMap' type=<root>.MyMap<kotlin.String> origin=null
-          TYPE_ARG (of class) V: kotlin.String
+          TYPE_ARG (of class) V: @[FlexibleNullability] kotlin.String?
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         TRY type=kotlin.String
           try: BLOCK type=kotlin.String origin=null

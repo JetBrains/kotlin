@@ -1,5 +1,5 @@
 val key: Key<Boolean>
-  field = Key<Boolean>()
+  field = Key<@FlexibleNullability Boolean?>()
   get
 
 val x: Boolean /* by */
@@ -20,4 +20,3 @@ val x: Boolean /* by */
 fun main() {
   println(message = <get-x>())
 }
-
