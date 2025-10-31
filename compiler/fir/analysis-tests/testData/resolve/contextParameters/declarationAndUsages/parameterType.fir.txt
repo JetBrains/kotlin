@@ -92,7 +92,7 @@ FILE: test.kt
             context(this@R|special/anonymous|) R|/test9|()
         }
         )
-        R|kotlin/with|<R|JavaClass<kotlin/String>|, R|kotlin/Unit|>(R|/JavaClass.JavaClass|<R|kotlin/String|>(), <L> = with@fun R|JavaClass<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|kotlin/with|<R|JavaClass<kotlin/String>|, R|kotlin/Unit|>(R|/JavaClass.JavaClass|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=null) kotlin/String!|>(), <L> = with@fun R|JavaClass<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             context(this@R|special/anonymous|) R|/test10|()
         }
         )

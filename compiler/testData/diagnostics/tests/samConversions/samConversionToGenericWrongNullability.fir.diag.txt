@@ -41,21 +41,21 @@
 /test.kt:(2216,2223): error: Return type of 'fun get(): String?' is not a subtype of the return type of the overridden member 'fun get(): String' defined in '<anonymous>'.
 
 /test.kt:(2309,2312): error: Return type of 'fun get(): String?' is not a subtype of the return type of the overridden member 'fun get(): String' defined in '<anonymous>'.
-/edge-cases.kt:(279,329): error: Return type mismatch: expected 'String', actual 'Unit'.
+/edge-cases.kt:(279,329): error: Return type mismatch: expected 'String!', actual 'Unit'.
 
-/edge-cases.kt:(368,429): error: Return type mismatch: expected 'String', actual 'Unit'.
-
-/edge-cases.kt:(397,419): error: Return type mismatch: expected 'Unit', actual 'String?'.
+/edge-cases.kt:(368,429): error: Return type mismatch: expected 'String!', actual 'Unit'.
 
 /edge-cases.kt:(397,419): error: Return type mismatch: expected 'Unit', actual 'String?'.
 
-/edge-cases.kt:(468,534): error: Return type mismatch: expected 'String', actual 'Unit'.
+/edge-cases.kt:(397,419): error: Return type mismatch: expected 'Unit', actual 'String?'.
+
+/edge-cases.kt:(468,534): error: Return type mismatch: expected 'String!', actual 'Unit'.
 
 /edge-cases.kt:(502,524): error: Return type mismatch: expected 'Unit', actual 'String?'.
 
 /edge-cases.kt:(502,524): error: Return type mismatch: expected 'Unit', actual 'String?'.
 
-/edge-cases.kt:(581,645): error: Return type mismatch: expected 'String', actual 'Unit'.
+/edge-cases.kt:(581,645): error: Return type mismatch: expected 'String!', actual 'Unit'.
 
 /edge-cases.kt:(711,718): warning: Argument type mismatch: actual type is 'T? (of fun <T : Number> test1)', but 'T (of fun <T : Number> test1)' was expected. This will become an error in language version 2.1. See https://youtrack.jetbrains.com/issue/KT-57014.
 
