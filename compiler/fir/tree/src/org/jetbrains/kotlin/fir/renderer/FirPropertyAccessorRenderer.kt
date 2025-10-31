@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 
 class FirPropertyAccessorRenderer {
 
@@ -16,7 +18,9 @@ class FirPropertyAccessorRenderer {
     private val visitor get() = components.visitor
 
     fun render(property: FirProperty) {
-        if (property.hasExplicitBackingField || property.getter != null || property.isVar && property.setter != null) {
+        if (property.origin !is FirDeclarationOrigin.ScriptCustomization || property.hasExplicitBackingField ||
+            property.getter != null || property.isVar && property.setter != null
+        ) {
             printer.println()
         }
         printer.pushIndent()

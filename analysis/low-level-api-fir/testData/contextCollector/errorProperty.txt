@@ -35,6 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
             ^ R|/MyPair.MyPair|(R|<local>/localProperty|, String(str))
         }
         )
+
     }
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> transformation([ResolvedTo(CONTRACTS)] body: R|() -> T|): R|T| { LAZY_BLOCK }
     public final data [ResolvedTo(STATUS)] class MyPair : R|kotlin/Any| {
