@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -716,10 +718,34 @@ class ComposerParamTransformer(
 
             val parent = fn.parent
             if (parent is IrClass || parent is IrFile) {
+
+                fun IrSimpleFunction.toComparableParams(): List<Pair<IrClassifierSymbol, SimpleTypeNullability>?> =
+                    parameters.map {
+                        when (val paramType = it.type) {
+                            is IrSimpleType ->
+                                if (paramType.classifier is IrTypeParameterSymbol) {
+                                    val typeParam = paramType.classifier.owner as IrTypeParameter
+                                    // if a type parameter is defined on a stub,
+                                    // it should be compared with matching original function's type parameter
+                                    // instead of comparing each stub's type parameters
+                                    val classifier = if (typeParam.parent == this) {
+                                        fn.typeParameters[typeParam.index].symbol
+                                    } else {
+                                        paramType.classifier
+                                    }
+                                    Pair(classifier, paramType.nullability)
+
+                                } else {
+                                    Pair(paramType.classifier, paramType.nullability)
+                                }
+                            else -> null
+                        }
+                    }
+
                 // checking if any stubs have all same-type parameters and discarding them
-                val addedParamTypes = mutableSetOf(fn.parameters.map { it.type })
+                val addedParamTypes = mutableSetOf(fn.toComparableParams())
                 stubs.forEach { stub ->
-                    val stubParamTypes = stub.parameters.map { it.type }
+                    val stubParamTypes = stub.toComparableParams()
                     if (addedParamTypes.add(stubParamTypes)) {
                         parent.addChild(stub)
                     }
