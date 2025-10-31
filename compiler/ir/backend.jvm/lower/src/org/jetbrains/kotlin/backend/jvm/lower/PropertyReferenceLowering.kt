@@ -454,7 +454,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         return referenceClass
     }
 
-    private fun IrFunction.inlineWithoutTemporaryVariables(target: IrFunction, arguments: List<() -> IrExpression> = listOf()): IrBody =
+    private fun IrFunction.inlineWithoutTemporaryVariables(target: IrFunction, arguments: List<() -> IrExpression>): IrBody =
         body!!.moveWithoutTemporaryVariables(this, target, target.symbol, arguments)
 
     private fun IrBody.moveWithoutTemporaryVariables(
