@@ -4636,6 +4636,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("outerClassArgumentsRequiredFromSuper.kt")
+      public void testOuterClassArgumentsRequiredFromSuper() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/outerClassArgumentsRequiredFromSuper.kt");
+      }
+
+      @Test
       @TestMetadata("primaryConstructorParametersInSecondaryConstructor.kt")
       public void testPrimaryConstructorParametersInSecondaryConstructor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/primaryConstructorParametersInSecondaryConstructor.kt");

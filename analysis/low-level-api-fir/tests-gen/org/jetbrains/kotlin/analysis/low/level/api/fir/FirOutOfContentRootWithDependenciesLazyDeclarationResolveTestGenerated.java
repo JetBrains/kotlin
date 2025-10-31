@@ -1102,6 +1102,18 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
+    @TestMetadata("outerTypeParameterDirectly.kt")
+    public void testOuterTypeParameterDirectly() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/outerTypeParameterDirectly.kt");
+    }
+
+    @Test
+    @TestMetadata("outerTypeParameterIndirectly.kt")
+    public void testOuterTypeParameterIndirectly() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/outerTypeParameterIndirectly.kt");
+    }
+
+    @Test
     @TestMetadata("recursiveValueClass.kt")
     public void testRecursiveValueClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/recursiveValueClass.kt");
