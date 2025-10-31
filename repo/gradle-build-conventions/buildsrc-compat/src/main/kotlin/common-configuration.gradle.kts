@@ -412,6 +412,7 @@ fun Project.configureTests() {
             ":plugins:js-plain-objects:compiler-plugin",
             ":plugins:jvm-abi-gen",
             ":plugins:parcelize:parcelize-compiler",
+            ":plugins:plugins-interactions-testing",
             ":plugins:plugin-sandbox",
             ":plugins:plugin-sandbox:plugin-sandbox-ic-test",
             ":plugins:scripting:scripting-tests",
