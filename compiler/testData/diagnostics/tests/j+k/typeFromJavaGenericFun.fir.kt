@@ -46,10 +46,10 @@ fun geneticFunTest() {
 
     takeString(JavaWithGenericFun.foo4(JavaBox(JavaBox(""))).a.a)
     takeString(JavaWithGenericFun.foo4<String>(JavaBox(JavaBox(""))).a.a)
-    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(""))).a.a<!>)
+    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in a future release. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(""))).a.a<!>)
     takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo4(JavaBox(JavaBox(null))).a.a<!>)
     takeString(JavaWithGenericFun.foo4<String>(JavaBox(JavaBox(null))).a.a)
-    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(null))).a.a<!>)
+    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in a future release. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(null))).a.a<!>)
 
     takeAny(JavaWithGenericFun.foo5(JavaBox(JavaBox(""))).a)
     takeAny(JavaWithGenericFun.foo5<String>(JavaBox(JavaBox(""))).a)
@@ -60,10 +60,10 @@ fun geneticFunTest() {
 
     takeString(JavaWithGenericFun.foo6(JavaBox("")).a)
     takeString(JavaWithGenericFun.foo6<String>(JavaBox("")).a)
-    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo6<String?>(JavaBox("")).a<!>)
+    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in a future release. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo6<String?>(JavaBox("")).a<!>)
     takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo6(JavaBox(null)).a<!>)
     takeString(JavaWithGenericFun.foo6<String>(JavaBox(null)).a)
-    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo6<String?>(JavaBox(null)).a<!>)
+    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in a future release. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo6<String?>(JavaBox(null)).a<!>)
 }
 
 fun takeString(a: String){}
