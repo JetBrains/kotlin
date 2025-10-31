@@ -395,8 +395,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] outerTypeParameterIndirectly.kt
             super<R|X<kotlin/String>|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class D<[ResolvedTo(BODY_RESOLVE)] U : R|X.Y<kotlin/String>|> : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor<[ResolvedTo(BODY_RESOLVE)] U : R|X.Y<kotlin/String>|>(): R|A.D<U>| {
+        public final [ResolvedTo(BODY_RESOLVE)] class D<[ResolvedTo(BODY_RESOLVE)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor<[ResolvedTo(BODY_RESOLVE)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>>(): R|A.D<U>| {
                 super<R|kotlin/Any|>()
             }
 

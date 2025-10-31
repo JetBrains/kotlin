@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -125,7 +125,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
             }
 
             is FirFile -> transformer.withFileScope(target) { target.transformAnnotations(transformer, null) }
-            is FirRegularClass -> resolveClassTypes(target)
+            is FirRegularClass -> transformer.withClassDeclarationCleanup(target) { resolveClassTypes(target) }
             else -> errorWithAttachment("Unknown declaration ${target::class.simpleName}") {
                 withFirEntry("declaration", target)
             }
