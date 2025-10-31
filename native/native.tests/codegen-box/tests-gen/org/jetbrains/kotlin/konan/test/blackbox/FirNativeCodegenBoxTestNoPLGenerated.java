@@ -69783,6 +69783,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         }
 
         @Test
+        @TestMetadata("genericVararg.kt")
+        public void testGenericVararg() {
+          runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/genericVararg.kt");
+        }
+
+        @Test
         @TestMetadata("inlineBound.kt")
         public void testInlineBound() {
           runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineBound.kt");
