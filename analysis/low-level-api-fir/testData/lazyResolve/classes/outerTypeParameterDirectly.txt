@@ -163,8 +163,8 @@ FILE: [ResolvedTo(IMPORTS)] outerTypeParameterDirectly.kt
             LAZY_super<X<R|kotlin/String|>>
         }
 
-        public final? [ResolvedTo(TYPES)] class D<[ResolvedTo(TYPES)] U : R|X.Y<kotlin/String>|> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(TYPES)] U : R|X.Y<kotlin/String>|>(): R|A.D<U>| {
+        public final? [ResolvedTo(TYPES)] class D<[ResolvedTo(TYPES)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(TYPES)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>>(): R|A.D<U>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -192,8 +192,8 @@ FILE: [ResolvedTo(IMPORTS)] outerTypeParameterDirectly.kt
             LAZY_super<X<R|kotlin/String|>>
         }
 
-        public final [ResolvedTo(STATUS)] class D<[ResolvedTo(STATUS)] U : R|X.Y<kotlin/String>|> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(STATUS)] U : R|X.Y<kotlin/String>|>(): R|A.D<U>| {
+        public final [ResolvedTo(STATUS)] class D<[ResolvedTo(STATUS)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(STATUS)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>>(): R|A.D<U>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -221,8 +221,8 @@ FILE: [ResolvedTo(IMPORTS)] outerTypeParameterDirectly.kt
             LAZY_super<X<R|kotlin/String|>>
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class D<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] U : R|X.Y<kotlin/String>|> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] U : R|X.Y<kotlin/String>|>(): R|A.D<U>| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class D<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>>(): R|A.D<U>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -250,8 +250,8 @@ FILE: [ResolvedTo(IMPORTS)] outerTypeParameterDirectly.kt
             LAZY_super<X<R|kotlin/String|>>
         }
 
-        public final [ResolvedTo(CONTRACTS)] class D<[ResolvedTo(CONTRACTS)] U : R|X.Y<kotlin/String>|> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(CONTRACTS)] U : R|X.Y<kotlin/String>|>(): R|A.D<U>| {
+        public final [ResolvedTo(CONTRACTS)] class D<[ResolvedTo(CONTRACTS)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(CONTRACTS)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>>(): R|A.D<U>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -279,8 +279,8 @@ FILE: [ResolvedTo(IMPORTS)] outerTypeParameterDirectly.kt
             LAZY_super<X<R|kotlin/String|>>
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class D<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] U : R|X.Y<kotlin/String>|> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] U : R|X.Y<kotlin/String>|>(): R|A.D<U>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class D<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>>(): R|A.D<U>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -308,8 +308,8 @@ FILE: [ResolvedTo(IMPORTS)] outerTypeParameterDirectly.kt
             LAZY_super<X<R|kotlin/String|>>
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] class D<[ResolvedTo(CONSTANT_EVALUATION)] U : R|X.Y<kotlin/String>|> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(CONSTANT_EVALUATION)] U : R|X.Y<kotlin/String>|>(): R|A.D<U>| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] class D<[ResolvedTo(CONSTANT_EVALUATION)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(CONSTANT_EVALUATION)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>>(): R|A.D<U>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -337,8 +337,8 @@ FILE: [ResolvedTo(IMPORTS)] outerTypeParameterDirectly.kt
             LAZY_super<X<R|kotlin/String|>>
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class D<[ResolvedTo(ANNOTATION_ARGUMENTS)] U : R|X.Y<kotlin/String>|> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] U : R|X.Y<kotlin/String>|>(): R|A.D<U>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class D<[ResolvedTo(ANNOTATION_ARGUMENTS)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>>(): R|A.D<U>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -366,8 +366,8 @@ FILE: [ResolvedTo(IMPORTS)] outerTypeParameterDirectly.kt
             LAZY_super<R|X<kotlin/String>|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class D<[ResolvedTo(BODY_RESOLVE)] U : R|X.Y<kotlin/String>|> : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor<[ResolvedTo(BODY_RESOLVE)] U : R|X.Y<kotlin/String>|>(): R|A.D<U>| {
+        public final [ResolvedTo(BODY_RESOLVE)] class D<[ResolvedTo(BODY_RESOLVE)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor<[ResolvedTo(BODY_RESOLVE)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>>(): R|A.D<U>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -395,8 +395,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] outerTypeParameterDirectly.kt
             super<R|X<kotlin/String>|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class D<[ResolvedTo(BODY_RESOLVE)] U : R|X.Y<kotlin/String>|> : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor<[ResolvedTo(BODY_RESOLVE)] U : R|X.Y<kotlin/String>|>(): R|A.D<U>| {
+        public final [ResolvedTo(BODY_RESOLVE)] class D<[ResolvedTo(BODY_RESOLVE)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor<[ResolvedTo(BODY_RESOLVE)] U : <ERROR TYPE REF: Type arguments should be specified for an outer class>>(): R|A.D<U>| {
                 super<R|kotlin/Any|>()
             }
 
