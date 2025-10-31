@@ -47,9 +47,9 @@ class ImplicitValueStorage private constructor(
         return receivers.fold(this) { acc, value -> acc.addImplicitReceiver(name = null, value) }
     }
 
-    fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>, aliasLabel: Name? = null): ImplicitValueStorage {
+    fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): ImplicitValueStorage {
         val stack = implicitReceiverStack.add(value)
-        val receiversPerLabel = implicitReceiversByLabel.putIfNameIsNotNull(name, value).putIfNameIsNotNull(aliasLabel, value)
+        val receiversPerLabel = implicitReceiversByLabel.putIfNameIsNotNull(name, value)
         val implicitValuesBySymbol = implicitValuesBySymbol.put(value.boundSymbol, value)
 
         return ImplicitValueStorage(

@@ -9,5 +9,3 @@ See the context parameters proposal for more details: https://kotl.in/context-pa
 Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
-
-/labelClashesWithContextReceivers.fir.kt:(464,474): error: Ambiguous label.
