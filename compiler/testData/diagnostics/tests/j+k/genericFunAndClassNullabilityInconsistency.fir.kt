@@ -1,10 +1,10 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-67825
 
 // FILE: Test.kt
 fun test(k: K<String>) {
     k.foo(JavaBox(null))
-    foo2<String>(JavaBox(null))
+    foo2<String>(<!ARGUMENT_TYPE_MISMATCH!>JavaBox(null)<!>)
     foo3(JavaBox(null))
 }
 

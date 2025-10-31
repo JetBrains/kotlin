@@ -12,7 +12,7 @@ FILE: main.kt
             ^ String()
         }
         ))
-        Q|A|.R|/A.bar*s|(R|/Function|<R|kotlin/CharSequence|, R|kotlin/collections/Map<kotlin/String, kotlin/CharSequence>|>(<L> = Function@fun <anonymous>(x: R|kotlin/collections/Map<kotlin/String, kotlin/CharSequence>!|): R|kotlin/CharSequence!| <inline=NoInline>  {
+        Q|A|.R|/A.bar*s|(R|/Function|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/CharSequence, relevantFeature=null) kotlin/CharSequence!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/collections/Map<kotlin/String, kotlin/CharSequence>, relevantFeature=null) kotlin/collections/Map<kotlin/String, kotlin/CharSequence>!|>(<L> = Function@fun <anonymous>(x: R|kotlin/collections/Map<kotlin/String, kotlin/CharSequence>!|): R|kotlin/CharSequence!| <inline=NoInline>  {
             ^ R|<local>/x|.R|SubstitutionOverride<kotlin/collections/Map.get: R|kotlin/CharSequence?|>|(String())
         }
         ))
