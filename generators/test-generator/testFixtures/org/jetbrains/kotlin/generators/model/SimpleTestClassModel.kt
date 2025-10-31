@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.generators.impl.SimpleTestClassModelTestAllFilesPres
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.fileNameToJavaIdentifier
 import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.generators.util.extractTagsFromTestFile
+import org.jetbrains.kotlin.generators.util.getFilePath
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.regex.Pattern
 
@@ -154,7 +154,7 @@ class SimpleTestClassModel(
         }
 
     override val dataString: String
-        get() = KtTestUtil.getFilePath(rootFile)
+        get() = rootFile.getFilePath()
 
     override val dataPathRoot: String
         get() = "\$PROJECT_ROOT"

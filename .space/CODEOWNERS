@@ -127,6 +127,7 @@
 /compiler/serialization/ "Kotlin Frontend"
 /compiler/test-infrastructure/ "Kotlin Frontend"
 /compiler/test-infrastructure-utils/ "Kotlin Frontend"
+/compiler/test-infrastructure-utils.common/ "Kotlin Frontend"
 
 /compiler/testData/asJava/findClasses/ "Kotlin Frontend"
 /compiler/testData/asJava/lightClasses/ "Kotlin Analysis API"

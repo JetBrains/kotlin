@@ -96,6 +96,7 @@
 /compiler/serialization/ @JetBrains/kotlin-frontend
 /compiler/test-infrastructure/ @JetBrains/kotlin-frontend
 /compiler/test-infrastructure-utils/ @JetBrains/kotlin-frontend
+/compiler/test-infrastructure-utils.common/ @JetBrains/kotlin-frontend
 
 /compiler/testData/asJava/findClasses/ @JetBrains/kotlin-frontend
 /compiler/testData/asJava/lightClasses/ @JetBrains/kotlin-analysis-api

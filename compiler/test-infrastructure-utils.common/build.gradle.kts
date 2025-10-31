@@ -7,11 +7,7 @@ plugins {
 }
 
 dependencies {
-    testFixturesImplementation(libs.opentest4j)
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils.common")))
-    testFixturesImplementation(project(":compiler:fir:entrypoint"))
-    testFixturesImplementation(project(":compiler:cli"))
-    testFixturesImplementation(intellijCore())
+    testFixturesImplementation(kotlinStdlib())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(kotlin("test"))
 }

@@ -6,12 +6,14 @@ plugins {
 
 dependencies {
     testFixturesApi(project(":core:util.runtime"))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testFixturesApi(kotlinStdlib())
-    testFixturesImplementation(libs.junit4)
-    testFixturesApi(platform(libs.junit.bom))
-    testFixturesImplementation(libs.junit.jupiter.api)
     testFixturesApi(project(":generators"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils.common")))
+
+    testFixturesApi(kotlinStdlib())
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesImplementation(libs.junit4)
+    testFixturesImplementation(libs.junit.jupiter.api)
+    testFixturesImplementation(intellijCore())
 
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }

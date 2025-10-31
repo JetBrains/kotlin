@@ -29,6 +29,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(libs.junit.platform.launcher)
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils.common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(project(":libraries:tools:abi-comparator"))
