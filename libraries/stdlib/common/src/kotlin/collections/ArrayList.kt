@@ -6,17 +6,42 @@
 package kotlin.collections
 
 /**
- * A resizable-array implementation of the [MutableList].
+ * A dynamic array implementation of [MutableList].
  *
- * This class is backed by a dynamically resizable array that grows as elements are added.
- * It provides constant-time positional access and amortized constant-time addition of elements.
+ * This class stores elements contiguously in memory using an internal array that automatically
+ * grows as needed. It fully implements the [MutableList] contract, providing all standard list
+ * operations including indexed access, iteration, and modification. As an implementation of
+ * [RandomAccess], it provides fast indexed access to elements.
  *
- * [ArrayList] allows duplicate elements. The iteration order of elements is the order
- * in which they were added to the list. As an implementation of [RandomAccess], it provides fast
- * indexed access to elements.
+ * ## Performance characteristics
  *
- * Note that this implementation is not synchronized. If multiple threads access an [ArrayList] concurrently,
- * and at least one of the threads modifies the list structurally, it must be synchronized externally.
+ * [ArrayList] provides efficient performance for common operations:
+ *
+ * - **Indexed access** ([get], [set]): O(1) constant time
+ * - **Appending to the end** ([add]): O(1) [amortized](https://en.wikipedia.org/wiki/Amortized_analysis)
+ *   constant time. When the internal array is full, it must be resized, which takes O(n) time to copy
+ *   all existing elements to a new, larger array. However, these resize operations become less frequent
+ *   as the list grows, making the average cost per appending constant over many operations.
+ * - **Inserting or removing at a position** ([add] with index, [removeAt]): O(n) linear time,
+ *   as elements after the position must be shifted
+ * - **Search operations** ([contains], [indexOf], [lastIndexOf]): O(n) linear time
+ * - **Iteration**: O(n) linear time
+ *
+ * ## Usage guidelines
+ *
+ * To optimize performance and memory usage:
+ *
+ * - If the number of elements is known in advance, use the constructor with initial capacity
+ *   to avoid multiple reallocations as the list grows.
+ * - Use [ensureCapacity] before adding many elements to pre-allocate sufficient storage.
+ * - Prefer [addAll] over multiple individual [add] calls when adding multiple elements.
+ * - Call [trimToSize] after all elements have been added to reduce memory consumption if no further
+ *   growth is expected.
+ *
+ * ## Thread safety
+ *
+ * [ArrayList] is not thread-safe. If multiple threads access an instance concurrently and at least
+ * one thread modifies it, external synchronization is required.
  *
  * @param E the type of elements contained in the list.
  */
