@@ -420,8 +420,6 @@ enum class LanguageFeature(
     ForbidJvmSerializableLambdaOnInlinedFunctionLiterals(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-71906"),
     ReportExposedTypeForInternalTypeParameterBounds(KOTLIN_2_3, enabledInProgressiveMode = true, "KTLC-275"),
     EnableDfaWarningsInK2(KOTLIN_2_3, "KT-50965"),
-    DontMakeExplicitJavaTypeArgumentsFlexible(KOTLIN_2_3, "KTLC-284"),
-    PreciseSimplificationToFlexibleLowerConstraint(KOTLIN_2_3, "KT-78621"),
     DontIgnoreUpperBoundViolatedOnImplicitArguments(KOTLIN_2_3, "KT-67146"),
     ResolveTopLevelLambdasAsSyntheticCallArgument(KOTLIN_2_3, "KT-67869"),
     DataFlowBasedExhaustiveness(sinceVersion = KOTLIN_2_3, issue = "KT-76635"),
@@ -522,6 +520,9 @@ enum class LanguageFeature(
     // Just a safety mechanism to revert the change in inference behavior that was required for a performance problem fix.
     // If no problems are reported about it, can be removed after a couple of releases.
     RevertSimplificationOfFlexibleUpperConstraintWithDnnLowerBound(sinceVersion = null, "KT-52283"),
+
+    DontMakeExplicitJavaTypeArgumentsFlexible(sinceVersion = null, "KTLC-284"),
+    PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621"),
 
     // Experimental features
 

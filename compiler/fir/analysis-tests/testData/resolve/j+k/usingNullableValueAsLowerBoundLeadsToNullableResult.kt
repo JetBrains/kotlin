@@ -14,15 +14,15 @@ public class A<T> {
 val String?.length: String get() = ""
 
 fun box(x: List<String?>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>A.foo(x)<!>
-    A.foo(x).length.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>length<!>
-    A.foo(x).length.times(1)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>A.foo(x)<!>
+    A.foo(x).length.length
+    A.foo(x).length.<!UNRESOLVED_REFERENCE!>times<!>(1)
     A.foo(x)?.length?.times(1)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("(A<(kotlin.String..kotlin.String?)>..A<(kotlin.String..kotlin.String?)>?)")!>A.bar(x)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>A.bar(x).getValue()<!>
-    A.bar(x).getValue().length.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>length<!>
-    A.bar(x).getValue().length.times(1)
+    <!DEBUG_INFO_EXPRESSION_TYPE("(A<kotlin.String?>..A<kotlin.String?>?)")!>A.bar(x)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>A.bar(x).getValue()<!>
+    A.bar(x).getValue().length.length
+    A.bar(x).getValue().length.<!UNRESOLVED_REFERENCE!>times<!>(1)
     A.bar(x).getValue()?.length?.times(1)
 }
 
