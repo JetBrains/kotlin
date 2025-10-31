@@ -157,6 +157,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
     val DISABLE_GENERATED_FIR_TAGS by directive(
         description = "Disables generating and checking for GENERATED_FIR_TAGS"
     )
+
+    val DISABLE_WITH_PARSER by enumDirective<FirParser>(
+        description = "Disables the test if it's analyzed with specified parser"
+    )
 }
 
 object DumpCfgOption {
