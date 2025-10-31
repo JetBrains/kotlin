@@ -8,7 +8,9 @@ import kotlin.reflect.full.defaultType
 import kotlin.reflect.jvm.javaType
 import java.lang.reflect.ParameterizedType
 
-class C<X, Y, Z : X>
+class C<X, Y, Z : X> {
+    inner class Inner<W>
+}
 
 fun box(): String {
     val type = C::class.defaultType
@@ -25,6 +27,9 @@ fun box(): String {
         javaType.rawType != C::class.java ||
         javaType.toString() != "test.C<X, Y, Z>"
     ) return "Fail javaType: $javaType (${javaType::class.java})"
+
+    val inner = C.Inner::class.defaultType
+    if (inner.toString() != "test.C<X, Y, Z>.Inner<W>") return "Fail inner: $inner"
 
     return "OK"
 }
