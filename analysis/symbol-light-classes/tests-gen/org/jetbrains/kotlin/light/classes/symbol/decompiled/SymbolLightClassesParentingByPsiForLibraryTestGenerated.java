@@ -746,6 +746,12 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
     }
 
     @Test
+    @TestMetadata("propagatedWithJvmName.kt")
+    public void testPropagatedWithJvmName() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/propagatedWithJvmName.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/simple.kt");

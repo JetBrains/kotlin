@@ -32984,6 +32984,12 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
       }
 
       @Test
+      @TestMetadata("propagatedWithJvmName.kt")
+      public void testPropagatedWithJvmName() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/propagatedWithJvmName.kt");
+      }
+
+      @Test
       @TestMetadata("secondaryConstructor.kt")
       public void testSecondaryConstructor() {
         runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/secondaryConstructor.kt");

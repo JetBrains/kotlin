@@ -478,8 +478,12 @@ class JvmSymbols(
     }
 
     val jvmExposeBoxedAnnotation: IrClassSymbol = createClass(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME, ClassKind.ANNOTATION_CLASS).apply {
-        owner.addConstructor {
+        val constructor = owner.addConstructor {
             isPrimary = true
+        }
+        constructor.addValueParameter {
+            name = Name.identifier("jvmName")
+            type = irBuiltIns.stringType
         }
     }
 
