@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.calculateOwnerKClass
-import org.jetbrains.kotlin.backend.jvm.lower.PropertyReferenceLowering.PropertyReferenceTarget.GETTER
-import org.jetbrains.kotlin.backend.jvm.lower.PropertyReferenceLowering.PropertyReferenceTarget.REFLECTED_PROPERTY
-import org.jetbrains.kotlin.backend.jvm.lower.PropertyReferenceLowering.PropertyReferenceTarget.SETTER
+import org.jetbrains.kotlin.backend.jvm.lower.PropertyReferenceLowering.PropertyReferenceTarget.*
 import org.jetbrains.kotlin.codegen.inline.loadCompiledInlineFunction
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.usesLocalExceptParameterNullCheck
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -23,10 +21,7 @@ import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PROPERTY_REFERENCE_FOR_DELEGATE
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -38,9 +33,6 @@ import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.implicitCastIfNeededTo
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -427,11 +419,11 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             referenceClass.getReceiverField(this@PropertyReferenceLowering.context)
         }
 
-        fun IrBuilder.getArguments(boundParameters: List<PropertyReferenceBoundValue>, function: IrSimpleFunction): List<() -> IrExpression> {
+        fun IrBuilder.getArguments(boundParameters: List<PropertyReferenceBoundValue>, function: IrSimpleFunction): List<IrExpression> {
             val boundExpressions = boundParameters.map {
-                { irGetField(irGet(function.dispatchReceiverParameter!!), getBackingField(it.index)) }
+                irGetField(irGet(function.dispatchReceiverParameter!!), getBackingField(it.index))
             }
-            val unboundExpressions = function.nonDispatchParameters.map { { irGet(it) } }
+            val unboundExpressions = function.nonDispatchParameters.map { irGet(it) }
             return boundExpressions + unboundExpressions
         }
 
@@ -454,19 +446,19 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         return referenceClass
     }
 
-    private fun IrFunction.inlineWithoutTemporaryVariables(target: IrFunction, arguments: List<() -> IrExpression>): IrBody =
+    private fun IrFunction.inlineWithoutTemporaryVariables(target: IrFunction, arguments: List<IrExpression>): IrBody =
         body!!.moveWithoutTemporaryVariables(this, target, target.symbol, arguments)
 
     private fun IrBody.moveWithoutTemporaryVariables(
         source: IrFunction,
         target: IrDeclarationParent,
         targetSymbol: IrReturnTargetSymbol,
-        arguments: List<() -> IrExpression>,
+        arguments: List<IrExpression>,
     ): IrBody {
         val mapping = source.parameters.zip(arguments).toMap()
         return transform(object : IrTransformer<Nothing?>() {
             override fun visitGetValue(expression: IrGetValue, data: Nothing?): IrExpression =
-                mapping[expression.symbol.owner]?.invoke()?.implicitCastIfNeededTo(expression.type) ?: expression
+                mapping[expression.symbol.owner]?.implicitCastIfNeededTo(expression.type) ?: expression
 
             override fun visitReturn(expression: IrReturn, data: Nothing?): IrExpression {
                 if (expression.returnTargetSymbol == source.symbol) {
