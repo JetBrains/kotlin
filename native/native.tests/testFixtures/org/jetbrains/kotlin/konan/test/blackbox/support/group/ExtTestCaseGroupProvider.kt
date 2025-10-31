@@ -48,11 +48,9 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicUnstableAndK2LanguageFeaturesSkipConfigurator
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.test.util.parseLanguageFeature
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
@@ -196,6 +194,15 @@ private class ExtTestDataFile(
         ) {
             args.add("-Xverify-ir-visibility")
         }
+
+        if ((structure.directives.contains(CodegenTestDirectives.ENABLE_IR_NESTED_OFFSETS_CHECKS) ||
+                    defaultDirectives.contains(CodegenTestDirectives.ENABLE_IR_NESTED_OFFSETS_CHECKS)) &&
+            !structure.directives[CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS].containsNativeOrAny &&
+            !defaultDirectives[CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS].containsNativeOrAny
+        ) {
+            args.add("-Xverify-ir-nested-offsets")
+        }
+
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isStack()`
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         if (!settings.withPlatformLibs && !structure.directives.contains(WITH_PLATFORM_LIBS))
