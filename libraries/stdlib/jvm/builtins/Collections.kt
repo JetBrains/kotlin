@@ -274,7 +274,7 @@ public actual interface List<out E> : Collection<E> {
     /**
      * Returns a list iterator over the elements in this list (in proper sequence), starting at the specified [index].
      *
-     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than or equal to [size] of this list.
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than [size] of this list.
      */
     public actual fun listIterator(index: Int): ListIterator<E>
 
