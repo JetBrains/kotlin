@@ -993,11 +993,6 @@ class BodyGenerator(
                 body.buildStructGet(wasmFileCodegenContext.rttiType, fieldId, location)
 
                 body.buildInstr(
-                    op = WasmOp.REF_CAST,
-                    location = location,
-                    WasmImmediate.HeapType(WasmHeapType.Type(wasmFileCodegenContext.wasmStringsElements.createStringLiteralType))
-                )
-                body.buildInstr(
                     op = WasmOp.CALL_REF,
                     location = location,
                     WasmImmediate.TypeIdx(wasmFileCodegenContext.wasmStringsElements.createStringLiteralType),
