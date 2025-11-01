@@ -17,7 +17,6 @@ class WasmBinaryToIR(val b: MyByteReader) {
 
     val functionTypes: MutableList<WasmFunctionType> = mutableListOf()
     val gcTypes: MutableList<WasmTypeDeclaration> = mutableListOf()
-    val contTypes: MutableList<WasmContType> = mutableListOf()
 
     val importsInOrder: MutableList<WasmNamedModuleField> = mutableListOf()
     val importedFunctions: MutableList<WasmFunction.Imported> = mutableListOf()
@@ -86,9 +85,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                 is WasmStructDeclaration ->
                                     gcTypes += type
                                 is WasmArrayDeclaration -> {}
-                                is WasmContType -> {
-                                    contTypes += type
-                                }
+                                is WasmContType -> {}
                             }
                         }
                     }

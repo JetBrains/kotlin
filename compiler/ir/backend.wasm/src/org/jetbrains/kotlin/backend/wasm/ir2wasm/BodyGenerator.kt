@@ -1185,21 +1185,26 @@ class BodyGenerator(
                         val suspendFunctionInvoke = suspendFunctionClassType.classOrFail.functions.singleOrNull {
                             it.owner.name.asString() == "invoke"
                         } ?: error("No `invoke` function for suspend function type\n${suspendFunctionClassType.dumpKotlinLike()}")
-                        val contType = wasmFileCodegenContext.referenceContType(suspendFunctionInvoke)
+                        val contType = wasmFileCodegenContext.referenceContType(2)
                         val contVarType = WasmRefNullType(WasmHeapType.Type(contType))
                         val contLocalVarIdx = functionContext.defineVariable(contVarType, "continuation")
                         val contLocalVar = functionContext.referenceLocal(contLocalVarIdx)
                         val completionVarIdx = functionContext.defineVariable(WasmAnyRef, "completion")
                         val completionLocalVar = functionContext.referenceLocal(completionVarIdx)
                         val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
-                        val kotlinAnyType = WasmHeapType.Type(kotlinAny)
+                        val kotlinAnyRefType = WasmRefNullType(WasmHeapType.Type(kotlinAny))
+                        val zeroArgContType = WasmHeapType.Type(wasmFileCodegenContext.referenceContType(1))
                         body.buildSetLocal(completionLocalVar, location)
 
                         castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
 
                         body.buildContNew(contType, location)
                         body.buildSetLocal(contLocalVar, location)
-                        body.buildBlock("on_suspend", WasmRefNullType(kotlinAnyType)) { idx ->
+
+                        val blockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContType)))
+                        wasmFileCodegenContext.defineContBlockType(blockType)
+                        val blockTypeSymbol = wasmFileCodegenContext.referenceContBlockType(blockType)
+                        body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
                             body.buildGetLocal(functionContext.referenceLocal(0), location)
                             body.buildGetLocal(functionContext.referenceLocal(1), location)
                             body.buildGetLocal(contLocalVar, location)
@@ -1207,7 +1212,7 @@ class BodyGenerator(
                             body.buildResume(WasmHeapType.Type(contType), contHandle, location)
                             body.buildInstr(WasmOp.RETURN, location)
                         }
-
+                        body.buildDrop(location)
 //                        TODO("wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0]")
                     }
                     else -> TODO("startCoroutineUninterceptedOrReturnIntrinsicsStub 1-2")

@@ -90,10 +90,16 @@ class DeclarationGenerator(
                 resultTypes = listOfNotNull(resultType)
             )
         wasmFileCodegenContext.defineFunctionType(declaration.symbol, wasmFunctionType)
-        // TODO: there might be duplicates... fix
         val suspendFunctionNames = buildSet { repeat(3) { add(FqName("kotlin.coroutines.SuspendFunction$size.invoke")) } }
-        if (suspendFunctionNames.any { declaration.hasEqualFqName(it) }) {
-            wasmFileCodegenContext.defineContType(declaration.symbol, WasmContType(wasmFunctionType))
+        val suspendFunArity = suspendFunctionNames.indexOfFirst { declaration.hasEqualFqName(it) }.takeIf { it >= 0 }
+        if (suspendFunArity != null) {
+            wasmFileCodegenContext.defineContFunctionType(wasmFunctionType)
+            wasmFileCodegenContext.defineContType(WasmContType(wasmFunctionType))
+            val kotlinAny = wasmModuleTypeTransformer.transformType(irBuiltIns.anyType)
+            val suspendedContFunctionType = WasmFunctionType(listOf(kotlinAny), listOf(kotlinAny))
+            val suspendedContType = WasmContType(suspendedContFunctionType)
+            wasmFileCodegenContext.defineContFunctionType(suspendedContFunctionType)
+            wasmFileCodegenContext.defineContType(suspendedContType)
         }
 
         if (declaration is IrSimpleFunction && declaration.modality == Modality.ABSTRACT) {

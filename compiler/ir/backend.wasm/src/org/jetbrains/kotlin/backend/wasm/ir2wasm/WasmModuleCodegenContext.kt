@@ -55,8 +55,21 @@ class WasmFileCodegenContext(
         wasmFileFragment.gcTypes.define(irClass.getReferenceKey(), wasmType)
     }
 
-    fun defineContType(irFunction: IrFunctionSymbol, wasmType: WasmContType) {
-        wasmFileFragment.contTypes.define(irFunction.getReferenceKey(), wasmType)
+    fun defineContType(wasmType: WasmContType) {
+        val arity = wasmType.funType.parameterTypes.size
+        if (wasmFileFragment.contTypes.defined.containsKey(arity)) return
+        wasmFileFragment.contTypes.define(wasmType.funType.parameterTypes.size, wasmType)
+    }
+
+    fun defineContFunctionType(wasmFunctionType: WasmFunctionType) {
+        val arity = wasmFunctionType.parameterTypes.size
+        if (wasmFileFragment.contFunctionTypes.defined.containsKey(arity)) return
+        wasmFileFragment.contFunctionTypes.define(arity, wasmFunctionType)
+    }
+
+    fun defineContBlockType(wasmFunctionType: WasmFunctionType) {
+        if (wasmFileFragment.contBlockTypes.defined.containsKey(wasmFunctionType)) return
+        wasmFileFragment.contBlockTypes.define(wasmFunctionType, wasmFunctionType)
     }
 
     fun defineVTableGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
@@ -88,8 +101,14 @@ class WasmFileCodegenContext(
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
         wasmFileFragment.functionTypes.reference(irFunction.getReferenceKey())
 
-    fun referenceContType(irFunction: IrFunctionSymbol): WasmSymbol<WasmContType> =
-        wasmFileFragment.contTypes.reference(irFunction.getReferenceKey())
+    fun referenceContType(arity: Int): WasmSymbol<WasmContType> =
+        wasmFileFragment.contTypes.reference(arity)
+
+    fun referenceContFunctionType(arity: Int): WasmSymbol<WasmFunctionType> =
+        wasmFileFragment.contFunctionTypes.reference(arity)
+
+    fun referenceContBlockType(wasmFunctionType: WasmFunctionType): WasmSymbol<WasmFunctionType> =
+        wasmFileFragment.contBlockTypes.reference(wasmFunctionType)
 
     fun referenceTypeId(irClass: IrClassSymbol): Long =
         cityHash64(irClass.getSignature().toString().encodeToByteArray()).toLong()

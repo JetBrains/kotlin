@@ -64,7 +64,6 @@ class WasmCompiledFileFragment(
     val globalClassITables: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
     val functionTypes: ReferencableAndDefinable<IdSignature, WasmFunctionType> = ReferencableAndDefinable(),
     val gcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
-    val contTypes: ReferencableAndDefinable<IdSignature, WasmContType> = ReferencableAndDefinable(),
     val vTableGcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
     val stringLiteralId: ReferencableElements<String, Int> = ReferencableElements(),
     val constantArrayDataSegmentId: ReferencableElements<Pair<List<Long>, WasmType>, Int> = ReferencableElements(),
@@ -83,6 +82,9 @@ class WasmCompiledFileFragment(
     var rttiElements: RttiElements? = null,
     val objectInstanceFieldInitializers: MutableList<IdSignature> = mutableListOf(),
     val nonConstantFieldInitializers: MutableList<IdSignature> = mutableListOf(),
+    val contTypes: ReferencableAndDefinable<Int, WasmContType> = ReferencableAndDefinable(),
+    val contFunctionTypes: ReferencableAndDefinable<Int, WasmFunctionType> = ReferencableAndDefinable(),
+    val contBlockTypes: ReferencableAndDefinable<WasmFunctionType, WasmFunctionType> = ReferencableAndDefinable(),
 ) : IrICProgramFragment()
 
 class WasmCompiledModuleFragment(
@@ -93,13 +95,6 @@ class WasmCompiledModuleFragment(
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
     private val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
-//    private val kotlinAnyType = WasmRefNullType(WasmHeapType.Type(WasmSymbol(tryFindBuiltInType { it.kotlinAny }!!)))
-//    private val contFunctionType0 = WasmFunctionType(listOf(kotlinAnyType), listOf(kotlinAnyType))
-//    private val contFunctionType1 = WasmFunctionType(listOf(kotlinAnyType, kotlinAnyType), listOf(kotlinAnyType))
-//    private val contFunctionType2 = WasmFunctionType(listOf(kotlinAnyType, kotlinAnyType, kotlinAnyType), listOf(kotlinAnyType))
-//    private val contType0 = WasmContType(contFunctionType0)
-//    private val contType1 = WasmContType(contFunctionType1)
-//    private val contType2 = WasmContType(contFunctionType2)
 
     private val stringDataSectionIndex = WasmImmediate.DataIdx(0)
     private val stringAddressesAndLengthsIndex = WasmImmediate.DataIdx(1)
@@ -255,9 +250,9 @@ class WasmCompiledModuleFragment(
 
         val additionalTypes = mutableListOf<WasmTypeDeclaration>()
         additionalTypes.add(parameterlessNoReturnFunctionType)
-        val contTypes = wasmCompiledFileFragments.flatMap { it.contTypes.elements }
-        additionalTypes.addAll(contTypes.map { it.funType })
-        additionalTypes.addAll(contTypes)
+        additionalTypes.addAll(wasmCompiledFileFragments.flatMap { it.contFunctionTypes.elements })
+        additionalTypes.addAll(wasmCompiledFileFragments.flatMap { it.contTypes.elements })
+        additionalTypes.addAll(wasmCompiledFileFragments.flatMap { it.contBlockTypes.elements })
 
         val elements = mutableListOf<WasmElement>()
         createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, elements, exports, globals)
@@ -827,6 +822,8 @@ class WasmCompiledModuleFragment(
         bindFileFragments(wasmCompiledFileFragments, { it.globalClassITables.unbound }, { it.globalClassITables.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.functionTypes.unbound }, { it.functionTypes.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.contTypes.unbound }, { it.contTypes.defined })
+        bindFileFragments(wasmCompiledFileFragments, { it.contFunctionTypes.unbound }, { it.contFunctionTypes.defined })
+        bindFileFragments(wasmCompiledFileFragments, { it.contBlockTypes.unbound }, { it.contBlockTypes.defined })
         rebindEquivalentFunctions()
         bindUniqueJsFunNames()
     }
