@@ -78,6 +78,7 @@ class WasmCompiledFileFragment(
     val equivalentFunctions: MutableList<Pair<String, IdSignature>> = mutableListOf(),
     val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = mutableSetOf(),
     val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = mutableListOf(),
+    var classAssociatedObjectsGetterWrapper: WasmSymbol<WasmStructDeclaration>? = null,
     var builtinIdSignatures: BuiltinIdSignatures? = null,
     var specialITableTypes: SpecialITableTypes? = null,
     var rttiElements: RttiElements? = null,
@@ -179,12 +180,17 @@ class WasmCompiledModuleFragment(
             createFieldInitializerFunction(stringPoolSize, stringAddressesAndLengthsGlobal, wasmLongArrayDeclaration)
         definedFunctions.add(fieldInitializerFunction)
 
-        val associatedObjectGetter = createAssociatedObjectGetterFunction(wasmElements, additionalTypes)
-        if (associatedObjectGetter != null) {
-            definedFunctions.add(associatedObjectGetter)
+        val associatedObjectGetterAndWrapper = createAssociatedObjectGetterFunctionAndWrapper(wasmElements, additionalTypes)
+        if (associatedObjectGetterAndWrapper != null) {
+            definedFunctions.add(associatedObjectGetterAndWrapper.first)
+            additionalTypes.add(associatedObjectGetterAndWrapper.second)
         }
 
-        val masterInitFunction = createAndExportMasterInitFunction(fieldInitializerFunction, associatedObjectGetter, initializeUnit)
+        val masterInitFunction = createAndExportMasterInitFunction(
+            fieldInitializerFunction = fieldInitializerFunction,
+            tryGetAssociatedObjectAndWrapper = associatedObjectGetterAndWrapper,
+            initializeUnit = initializeUnit
+        )
         exports.add(WasmExport.Function("_initialize", masterInitFunction))
         definedFunctions.add(masterInitFunction)
 
@@ -450,7 +456,7 @@ class WasmCompiledModuleFragment(
         return recursiveGroups
     }
 
-    private fun createAndBindRttiTypeDeclaration(syntheticTypes: MutableList<WasmTypeDeclaration>, stringEntities: StringLiteralWasmEntities): WasmStructDeclaration {
+    private fun createAndBindRttiTypeDeclaration(syntheticTypes: MutableList<WasmTypeDeclaration>, stringEntities: StringLiteralWasmEntities) {
         val wasmLongArray = WasmArrayDeclaration("LongArray", WasmStructFieldDeclaration("Long", WasmI64, false))
         syntheticTypes.add(wasmLongArray)
 
@@ -478,8 +484,6 @@ class WasmCompiledModuleFragment(
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.rttiElements?.rttiType?.bind(rttiTypeDeclaration)
         }
-
-        return rttiTypeDeclaration
     }
 
     private fun getGlobals() = mutableListOf<WasmGlobal>().apply {
@@ -525,7 +529,7 @@ class WasmCompiledModuleFragment(
 
     private fun createAndExportMasterInitFunction(
         fieldInitializerFunction: WasmFunction,
-        tryGetAssociatedObject: WasmFunction?,
+        tryGetAssociatedObjectAndWrapper: Pair<WasmFunction.Defined, WasmStructDeclaration>?,
         initializeUnit: Boolean,
     ): WasmFunction.Defined {
         val masterInitFunction = WasmFunction.Defined("_initialize", WasmSymbol(parameterlessNoReturnFunctionType))
@@ -538,11 +542,12 @@ class WasmCompiledModuleFragment(
 
             buildCall(WasmSymbol(fieldInitializerFunction), serviceCodeLocation)
 
-            if (tryGetAssociatedObject != null) {
+            if (tryGetAssociatedObjectAndWrapper != null) {
                 // we do not register descriptor while no need in it
                 val registerModuleDescriptor = tryFindBuiltInFunction { it.registerModuleDescriptor }
                     ?: compilationException("kotlin.registerModuleDescriptor is not file in fragments", null)
-                buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(tryGetAssociatedObject)))
+                buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(tryGetAssociatedObjectAndWrapper.first)))
+                buildInstr(WasmOp.STRUCT_NEW, serviceCodeLocation, WasmImmediate.GcType(WasmSymbol(tryGetAssociatedObjectAndWrapper.second)))
                 buildInstr(WasmOp.CALL, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(registerModuleDescriptor)))
             }
 
@@ -558,10 +563,10 @@ class WasmCompiledModuleFragment(
         return masterInitFunction
     }
 
-    private fun createAssociatedObjectGetterFunction(
+    private fun createAssociatedObjectGetterFunctionAndWrapper(
         wasmElements: MutableList<WasmElement>,
         additionalTypes: MutableList<WasmTypeDeclaration>
-    ): WasmFunction.Defined? {
+    ): Pair<WasmFunction.Defined, WasmStructDeclaration>? {
         // If AO accessor removed by DCE - we do not need it then
         if (tryFindBuiltInFunction { it.tryGetAssociatedObject } == null) return null
 
@@ -619,7 +624,21 @@ class WasmCompiledModuleFragment(
             buildRefNull(WasmHeapType.Simple.None, serviceCodeLocation)
             buildInstr(WasmOp.RETURN, serviceCodeLocation)
         }
-        return associatedObjectGetter
+
+        val associatedObjectGetterTypeRef =
+            WasmRefType(WasmHeapType.Type(WasmSymbol(associatedObjectGetterType)))
+
+        val associatedObjectGetterWrapper = WasmStructDeclaration(
+            name = "AssociatedObjectGetterWrapper",
+            fields = listOf(WasmStructFieldDeclaration("getter", associatedObjectGetterTypeRef, false)),
+            superType = null,
+            isFinal = true
+        )
+        wasmCompiledFileFragments.forEach { fragment ->
+            fragment.classAssociatedObjectsGetterWrapper?.bind(associatedObjectGetterWrapper)
+        }
+
+        return associatedObjectGetter to associatedObjectGetterWrapper
     }
 
     private fun createStartUnitTestsFunction(): WasmFunction.Defined? {

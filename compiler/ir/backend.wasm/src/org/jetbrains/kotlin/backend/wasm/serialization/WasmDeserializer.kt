@@ -610,6 +610,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         equivalentFunctions = deserializeClosureCallExports(),
         jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
         classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
+        classAssociatedObjectsGetterWrapper = deserializeClassAssociatedObjectsGetterWrapper(),
         builtinIdSignatures = deserializeBuiltinIdSignatures(),
         specialITableTypes = deserializeInterfaceTableTypes(),
         rttiElements = deserializeRttiElements(),
@@ -635,6 +636,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeClosureCallExports() = deserializeList { deserializePair(::deserializeString, ::deserializeIdSignature) }
     private fun deserializeJsModuleAndQualifierReferences() = deserializeSet(::deserializeJsModuleAndQualifierReference)
     private fun deserializeClassAssociatedObjectInstanceGetters() = deserializeList(::deserializeClassAssociatedObjects)
+    private fun deserializeClassAssociatedObjectsGetterWrapper() = deserializeNullable { deserializeSymbol(::deserializeStructDeclaration) }
+
     private fun deserializeBuiltinIdSignatures() =
         deserializeNullable {
             BuiltinIdSignatures(

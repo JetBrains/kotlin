@@ -76,9 +76,15 @@ class WasmSymbols(
         "isNotFirstWasmExportCall"
     )
 
-    val tryGetAssociatedObject = getInternalWasmFunction("tryGetAssociatedObject")
+    val tryGetAssociatedObject =
+        maybeGetInternalWasmFunction("tryGetAssociatedObjectWithWrapper")
+            ?: getInternalWasmFunction("tryGetAssociatedObject")
+
     internal val callAssociatedObjectGetter = getInternalWasmFunction("callAssociatedObjectGetter")
-    val registerModuleDescriptor = getInternalWasmFunction("registerModuleDescriptor")
+
+    val registerModuleDescriptor =
+        maybeGetInternalWasmFunction("registerModuleDescriptorWithWrapper")
+            ?: getInternalWasmFunction("registerModuleDescriptor")
 
     internal val wasmLongImmutableArray = getInternalWasmClass("WasmLongImmutableArray")
 
@@ -392,6 +398,11 @@ class WasmSymbols(
 
     private fun maybeGetFunction(name: String, ownerPackage: FqName): IrSimpleFunctionSymbol? {
         val callableId = CallableId(ownerPackage, Name.identifier(name))
+        return callableId.functionSymbols().singleOrNull()
+    }
+
+    private fun maybeGetInternalWasmFunction(name: String): IrSimpleFunctionSymbol? {
+        val callableId = CallableId(PreSerializationWasmSymbols.Impl.wasmInternalFqName, Name.identifier(name))
         return callableId.functionSymbols().singleOrNull()
     }
 
