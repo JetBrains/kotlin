@@ -277,6 +277,9 @@ internal fun isSinglePlatformTypeSourceSet(sourceSet: KotlinSourceSet): Boolean 
 internal fun isSingleKotlinTargetSourceSet(sourceSet: KotlinSourceSet): Boolean =
     sourceSet.platformCompilations().map { it.target }.toSet().size == 1
 
+internal fun InternalKotlinSourceSet.singleKotlinCompilationOrNull(): KotlinCompilation<*>? =
+    platformCompilations().distinctBy { it.target }.singleOrNull()
+
 internal fun isMultipleKotlinTargetSourceSet(sourceSet: KotlinSourceSet): Boolean =
     sourceSet.platformCompilations().map { it.target }.toSet().size > 1
 

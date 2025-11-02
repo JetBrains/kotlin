@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.artifacts.*
+import org.jetbrains.kotlin.gradle.dependencies.KotlinProjectModelK2MultiplatformConfigurator
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.gradle.targets.native.SetupEmbedAndSignAppleFramewor
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeToolchainProjectSetupAction
+import org.jetbrains.kotlin.gradle.tasks.ConfigureK2MultiplatformStructureDumpTasks
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.RegisterIsAllGradleProjectsEvaluatedListener
 
@@ -104,6 +106,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction)
             register(project, SetUpSwiftExportAction)
             register(project, ConfigureKotlinTopLevelDependenciesDSL)
+            register(project, KotlinProjectModelK2MultiplatformConfigurator)
 
             if (isKmpProjectIsolationEnabled) {
                 register(project, ProjectStructureMetadataForKMPSetupAction)
@@ -149,6 +152,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinCreateNativeCInteropTasksSideEffect)
         register(project, KotlinCreateCompilationArchivesTask)
         register(project, KotlinJvmCompilationWireJavaSourcesSideEffect)
+//        register(project, ConfigureK2MultiplatformStructureDumpTasks)
     }
 
     KotlinTargetArtifact.extensionPoint.apply {

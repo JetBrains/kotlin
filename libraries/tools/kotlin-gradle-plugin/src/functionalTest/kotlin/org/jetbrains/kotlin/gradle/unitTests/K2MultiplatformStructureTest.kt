@@ -45,9 +45,24 @@ class K2MultiplatformStructureTest {
         structure.refinesEdges.set(listOf(RefinesEdge("a", "b"), RefinesEdge("b", "c")))
         structure.fragments.set(
             listOf(
-                Fragment("a", project.files("a.kt"), project.objects.fileCollection()),
-                Fragment("b", project.files("b.kt"), project.objects.fileCollection()),
-                Fragment("c", project.files(), project.objects.fileCollection())
+                Fragment(
+                    "a",
+                    project.files("a.kt"),
+                    project.objects.fileCollection(),
+                    project.objects.fileCollection()
+                ),
+                Fragment(
+                    "b",
+                    project.files("b.kt"),
+                    project.objects.fileCollection(),
+                    project.objects.fileCollection(),
+                ),
+                Fragment(
+                    "c",
+                    project.files(),
+                    project.objects.fileCollection(),
+                    project.objects.fileCollection(),
+                )
             )
         )
         structure.defaultFragmentName.set("a")

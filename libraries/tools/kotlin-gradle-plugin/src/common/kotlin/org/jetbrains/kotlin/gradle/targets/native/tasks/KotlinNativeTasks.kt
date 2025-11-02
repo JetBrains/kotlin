@@ -512,9 +512,13 @@ internal constructor(
             /* Shared native compilations in K2 still use -Xcommon-sources and klib dependencies */
             if (compilerOptions.usesK2.get() && sharedCompilationData == null) {
                 args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sources.files, sourceFileFilter)
-                args.fragmentDependencies = if (separateKmpCompilation.get()) {
-                    multiplatformStructure.fragmentDependenciesCompilerArgs
-                } else emptyArray()
+                if (separateKmpCompilation.get()) {
+                    args.fragmentDependencies = multiplatformStructure.fragmentDependenciesCompilerArgs
+                    args.fragmentFriendDependencies = multiplatformStructure.fragmentFriendsCompilerArgs
+                } else {
+                    args.fragmentDependencies = emptyArray()
+                    args.fragmentFriendDependencies = emptyArray()
+                }
             } else {
                 args.commonSources = commonSourcesTree.files.takeIf { it.isNotEmpty() }?.toPathsArray()
             }
