@@ -14,6 +14,7 @@ import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
 import java.io.File
 
 @InternalKotlinGradlePluginApi
@@ -47,6 +48,11 @@ abstract class K2MultiplatformStructure {
         @get:IgnoreEmptyDirectories
         @get:Incremental
         val dependencies: FileCollection,
+
+        @get:Classpath
+        @get:IgnoreEmptyDirectories
+        @get:Incremental
+        val friends: FileCollection,
     )
 
     @get:Nested
@@ -100,6 +106,13 @@ internal fun K2MultiplatformStructure.fragmentSourcesCompilerArgs(
 internal val K2MultiplatformStructure.fragmentDependenciesCompilerArgs: Array<String>
     get() = fragments.get().flatMap { fragment ->
         fragment.dependencies.files.map { dependencyFile ->
+            "${fragment.fragmentName}:${dependencyFile.absolutePath}"
+        }
+    }.toTypedArray()
+
+internal val K2MultiplatformStructure.fragmentFriendsCompilerArgs: Array<String>
+    get() = fragments.get().flatMap { fragment ->
+        fragment.friends.files.map { dependencyFile ->
             "${fragment.fragmentName}:${dependencyFile.absolutePath}"
         }
     }.toTypedArray()

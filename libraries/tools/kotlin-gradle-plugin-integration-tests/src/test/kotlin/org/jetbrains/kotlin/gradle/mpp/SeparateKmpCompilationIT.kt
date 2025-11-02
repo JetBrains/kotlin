@@ -336,6 +336,30 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         doTestSingleTargetMetadata(gradleVersion, localRepoDir, false)
     }
 
+    @DisplayName("KT-79073 - test compilation compiles with use of internals from main code")
+    @GradleTest
+    fun `KT-79073 - friend fragment dependencies`(gradleVersion: GradleVersion) {
+        defaultProject(
+            gradleVersion = gradleVersion,
+            sourceStubs = false,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            additionalProjectConfiguration = {
+                project.applyMultiplatform {
+                    jvm()
+                    linuxX64()
+                    sourceSets.commonMain.get().compileSource("internal fun commonMain() = 42")
+                    // commonTest sees commonMain's internal
+                    sourceSets.commonTest.get().compileSource("fun commonTest() = commonMain()")
+                    sourceSets.jvmMain.get().compileSource("internal fun jvmMain() = commonMain()")
+                    // jvmTest should see main and test, also internals
+                    sourceSets.jvmTest.get().compileSource("internal fun jvmTest() { commonMain(); commonTest(); jvmMain(); }")
+                }
+            }) {
+            build(":compileTestKotlinJvm")
+        }
+    }
+
     private fun doTestSingleTargetMetadata(gradleVersion: GradleVersion, localRepoDir: Path, enableSeparateCompilation: Boolean) {
         project("empty", gradleVersion, localRepoDir = localRepoDir) {
             plugins {
@@ -438,6 +462,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         additionalProjectConfiguration: Project.() -> Unit = {},
         autoEnableSeparateKmpCompilation: Boolean = true,
         buildOptions: BuildOptions = defaultBuildOptions,
+        sourceStubs: Boolean = true,
         test: TestProject.() -> Unit,
     ): GradleProject = project("empty", gradleVersion, buildOptions = buildOptions) {
         plugins {
@@ -454,8 +479,10 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     linuxX64()
                     linuxArm64()
                     macosArm64()
-                    with(sourceSets) {
-                        commonMain.get().compileStubSourceWithSourceSetName()
+                    if (sourceStubs) {
+                        with(sourceSets) {
+                            commonMain.get().compileStubSourceWithSourceSetName()
+                        }
                     }
                 }
                 additionalProjectConfiguration(this)
