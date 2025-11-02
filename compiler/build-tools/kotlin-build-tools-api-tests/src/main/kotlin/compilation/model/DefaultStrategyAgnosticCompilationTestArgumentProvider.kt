@@ -30,8 +30,14 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
             val kotlinToolchainV1Adapter =
                 CompilationService.loadImplementation(BaseCompilationTest::class.java.classLoader).asKotlinToolchains()
             val v1Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> = listOf(
-                named("[v1] in-process", kotlinToolchainV1Adapter to kotlinToolchainV1Adapter.createInProcessExecutionPolicy()),
-                named("[v1] within daemon", kotlinToolchainV1Adapter to kotlinToolchainV1Adapter.createDaemonExecutionPolicy())
+                named(
+                    "[v1][${kotlinToolchainV1Adapter.getCompilerVersion()}] in-process",
+                    kotlinToolchainV1Adapter to kotlinToolchainV1Adapter.createInProcessExecutionPolicy()
+                ),
+                named(
+                    "[v1][${kotlinToolchainV1Adapter.getCompilerVersion()}] within daemon",
+                    kotlinToolchainV1Adapter to kotlinToolchainV1Adapter.createDaemonExecutionPolicy()
+                )
             )
             val v2Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> =
                 if (kotlinToolchainV1Adapter::class == kotlinToolchains::class) {
@@ -40,8 +46,14 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
                     emptyList()
                 } else {
                     listOf(
-                        named("[v2] in-process", kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()),
-                        named("[v2] within daemon", kotlinToolchains to kotlinToolchains.createDaemonExecutionPolicy())
+                        named(
+                            "[v2][${kotlinToolchains.getCompilerVersion()}] in-process",
+                            kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()
+                        ),
+                        named(
+                            "[v2][${kotlinToolchains.getCompilerVersion()}] within daemon",
+                            kotlinToolchains to kotlinToolchains.createDaemonExecutionPolicy()
+                        )
                     )
                 }
 

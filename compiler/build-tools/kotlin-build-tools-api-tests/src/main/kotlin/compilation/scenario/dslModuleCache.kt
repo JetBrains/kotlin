@@ -21,7 +21,7 @@ import kotlin.io.path.walk
 private data class GlobalCompiledProjectsCacheKey(
     val moduleKey: DependencyScenarioDslCacheKey,
     val snapshotConfig: SnapshotConfig,
-    val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit)?,
+    val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit)?,
     val icSourceTracking: Boolean,
 )
 
@@ -35,7 +35,7 @@ internal object GlobalCompiledProjectsCache {
         module: Module,
         strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit),
+        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
         icSourceTracking: Boolean,
     ): BaseScenarioModule? {
         val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
@@ -56,7 +56,7 @@ internal object GlobalCompiledProjectsCache {
         module: Module,
         strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit),
+        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
         icSourceTracking: Boolean,
     ): BaseScenarioModule {
         module.compileIncrementally(

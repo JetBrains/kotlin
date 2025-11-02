@@ -15,13 +15,30 @@ import java.io.File
 import java.nio.file.Path
 
 internal class JvmPlatformToolchainImpl(private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>) : JvmPlatformToolchain {
+    @Deprecated(
+        "Use jvmCompilationOperationBuilder instead",
+        replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)")
+    )
     override fun createJvmCompilationOperation(
         sources: List<Path>,
         destinationDirectory: Path,
     ): JvmCompilationOperation =
         JvmCompilationOperationImpl(sources, destinationDirectory, buildIdToSessionFlagFile = buildIdToSessionFlagFile)
 
+    override fun jvmCompilationOperationBuilder(
+        sources: List<Path>,
+        destinationDirectory: Path,
+    ): JvmCompilationOperation.Builder =
+        JvmCompilationOperationImpl(sources, destinationDirectory, buildIdToSessionFlagFile = buildIdToSessionFlagFile)
+
+    @Deprecated(
+        "Use `classpathSnapshottingOperationBuilder` instead",
+        replaceWith = ReplaceWith("classpathSnapshottingOperationBuilder(classpathEntry)")
+    )
     override fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation {
         return JvmClasspathSnapshottingOperationImpl(classpathEntry)
     }
+
+    override fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperation.Builder =
+        JvmClasspathSnapshottingOperationImpl(classpathEntry)
 }

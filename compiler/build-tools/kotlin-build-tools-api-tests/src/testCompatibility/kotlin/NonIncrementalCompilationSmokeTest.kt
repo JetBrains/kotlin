@@ -59,7 +59,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @TestMetadata("jvm-module-1")
     fun removedArgument(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
-            val module1 = module("jvm-module-1") { it: JvmCompilationOperation ->
+            val module1 = module("jvm-module-1") {
                 it.compilerArguments[JvmCompilerArguments.X_USE_K2_KAPT] = true
             }
             if (kotlinToolchain.getCompilerVersion().startsWith("2.3") || kotlinToolchain.getCompilerVersion().startsWith("2.0")) {
@@ -79,7 +79,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @TestMetadata("jvm-module-1")
     fun addedArgument(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
-            val module1 = module("jvm-module-1") { it: JvmCompilationOperation ->
+            val module1 = module("jvm-module-1") {
                 it.compilerArguments[JvmCompilerArguments.X_ANNOTATIONS_IN_METADATA] = true
             }
             if (kotlinToolchain.getCompilerVersion().startsWith("2.0") || kotlinToolchain.getCompilerVersion().startsWith("2.1")) {
