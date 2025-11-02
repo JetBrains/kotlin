@@ -200,6 +200,12 @@ open class WasmFileCodegenContext(
 
     val rttiType: WasmSymbol<WasmStructDeclaration> get() = rttiElements.rttiType
 
+    val classAssociatedObjectsGetterWrapper: WasmSymbol<WasmStructDeclaration> by lazy {
+        WasmSymbol<WasmStructDeclaration>().also {
+            wasmFileFragment.classAssociatedObjectsGetterWrapper = it
+        }
+    }
+
     open fun defineRttiGlobal(global: WasmGlobal, irClass: IrClassSymbol, irSuperClass: IrClassSymbol?) {
         rttiElements.globals.add(
             RttiGlobal(
