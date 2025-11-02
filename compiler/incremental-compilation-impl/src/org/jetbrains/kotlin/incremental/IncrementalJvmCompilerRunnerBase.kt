@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.reportPerformanceData
+import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.DATA_PATH
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.FILE_IDS_TO_PATHS_FILENAME
@@ -200,8 +201,12 @@ abstract class IncrementalJvmCompilerRunnerBase(
     }
 
     @OptIn(ExperimentalBuildToolsApi::class)
-    override fun generateCompilerRefIndexIfNeeded(services: Services, sourceFilesPathConverter: FileToPathConverter) {
-        super.generateCompilerRefIndexIfNeeded(services, sourceFilesPathConverter)
+    override fun generateCompilerRefIndexIfNeeded(
+        services: Services,
+        sourceFilesPathConverter: FileToPathConverter,
+        compilationMode: CompilationMode,
+    ) {
+        super.generateCompilerRefIndexIfNeeded(services, sourceFilesPathConverter, compilationMode)
         if (!generateCompilerRefIndex) return
 
         reporter.info { "Generating Compiler Reference Index..." }
@@ -209,17 +214,23 @@ abstract class IncrementalJvmCompilerRunnerBase(
         val serializer = CriDataSerializerImpl()
         val criDir = File(workingDir, DATA_PATH).apply { mkdirs() }
 
+        val lookupsFile = File(criDir, LOOKUPS_FILENAME)
+        val fileIdsToPathsFile = File(criDir, FILE_IDS_TO_PATHS_FILENAME)
+        val subtypesFile = File(criDir, SUBTYPES_FILENAME)
+
+        if (compilationMode is CompilationMode.Rebuild) {
+            lookupsFile.delete()
+            fileIdsToPathsFile.delete()
+            subtypesFile.delete()
+        }
+
         val lookupTracker = services[LookupTracker::class.java] as LookupTrackerImpl
         val lookupData = serializer.serializeLookups(lookupTracker.lookups.toHashMap(), sourceFilesPathConverter)
-
         // TODO KT-82000 Find better approach for generating CRI data with IC instead of appending new data
         // TODO write better tests for this case
-        val lookupsFile = File(criDir, LOOKUPS_FILENAME)
         lookupsFile.appendBytes(lookupData.lookups)
-        val fileIdsToPathsFile = File(criDir, FILE_IDS_TO_PATHS_FILENAME)
         fileIdsToPathsFile.appendBytes(lookupData.fileIdsToPaths)
 
-        val subtypesFile = File(criDir, SUBTYPES_FILENAME)
         val subtypes = subtypeTracker?.subtypeMap ?: emptyMap()
         subtypesFile.appendBytes(serializer.serializeSubtypes(subtypes))
 

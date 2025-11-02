@@ -555,7 +555,8 @@ abstract class IncrementalCompilerRunner<
                 updateCaches(services, caches, generatedFiles, changesCollector)
             }
 
-            generateCompilerRefIndexIfNeeded(services, icContext.pathConverterForSourceFiles)
+            // TODO KT-82167 Add BuildTimeMetric for the CRI data generation
+            generateCompilerRefIndexIfNeeded(services, icContext.pathConverterForSourceFiles, compilationMode)
 
             if (compilationMode is CompilationMode.Rebuild) {
                 if (icFeatures.withAbiSnapshot) {
@@ -627,7 +628,11 @@ abstract class IncrementalCompilerRunner<
         return exitCode
     }
 
-    protected open fun generateCompilerRefIndexIfNeeded(services: Services, sourceFilesPathConverter: FileToPathConverter): Unit = Unit
+    protected open fun generateCompilerRefIndexIfNeeded(
+        services: Services,
+        sourceFilesPathConverter: FileToPathConverter,
+        compilationMode: CompilationMode,
+    ): Unit = Unit
 
     open fun getLookupTrackerDelegate(): LookupTracker = LookupTracker.DO_NOTHING
 
