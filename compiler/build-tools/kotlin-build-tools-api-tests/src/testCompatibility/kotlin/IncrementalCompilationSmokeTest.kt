@@ -61,7 +61,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
 
     private fun runMixedModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
         scenario(strategyConfig) {
-            val compilerArgumentsConf: (JvmCompilationOperation) -> Unit = {
+            val compilerArgumentsConf: (JvmCompilationOperation.Builder) -> Unit = {
                 it.compilerArguments[VERBOSE] = true
             }
             val module1 = if (useTrackedModules) {

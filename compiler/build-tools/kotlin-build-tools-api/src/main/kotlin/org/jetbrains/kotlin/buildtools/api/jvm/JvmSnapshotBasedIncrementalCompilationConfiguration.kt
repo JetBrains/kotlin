@@ -47,6 +47,72 @@ public open class JvmSnapshotBasedIncrementalCompilationConfiguration
     @Deprecated("Use `get` directly instead or a `Builder` instance to set options. This property will be removed in a future release.") // Hide in 2.4, remove in 2.7
     public open val options: JvmSnapshotBasedIncrementalCompilationOptions,
 ) : JvmIncrementalCompilationConfiguration {
+    /**
+     * A builder for [JvmIncrementalCompilationConfiguration].
+     *
+     * @since 2.3.20
+     */
+    public interface Builder {
+        /**
+         * The working directory for the IC operation to store internal objects
+         *
+         * @since 2.3.20
+         */
+        public val workingDirectory: Path
+
+        /**
+         * Changes in the source files, which can be unknown, to-be-calculated, or known
+         *
+         * @since 2.3.20
+         */
+        public val sourcesChanges: SourcesChanges
+
+        /**
+         * A list of paths to dependency snapshot files produced by [org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation].
+         *
+         * @since 2.3.20
+         */
+        public val dependenciesSnapshotFiles: List<Path>
+
+        /**
+         * The path to the shrunk classpath snapshot file from a previous compilation.
+         *
+         * @since 2.3.20
+         */
+        public val shrunkClasspathSnapshot: Path
+
+        /**
+         * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+         *
+         * @return the previously set value for an option
+         * @throws IllegalStateException if the option was not set and has no default value
+         * @since 2.3.20
+         */
+        public operator fun <V> get(key: Option<V>): V
+
+        /**
+         * Set the [value] for option specified by [key], overriding any previous value for that option.
+         *
+         * @since 2.3.20
+         */
+        public operator fun <V> set(key: Option<V>, value: V)
+
+        /**
+         * Creates an immutable instance of [JvmSnapshotBasedIncrementalCompilationConfiguration] based on the configuration of this builder.
+         *
+         * @since 2.3.20
+         */
+        public fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration
+    }
+
+    /**
+     * Creates a builder for [JvmSnapshotBasedIncrementalCompilationConfiguration] that contains a copy of this configuration.
+     *
+     * @since 2.3.20
+     */
+    public open fun toBuilder(): Builder {
+        error("To use `toBuilder` you must instantiate this object through a Builder obtained from `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder()`.")
+    }
 
     /**
      * Base class for [JvmSnapshotBasedIncrementalCompilationConfiguration] options.
@@ -69,6 +135,7 @@ public open class JvmSnapshotBasedIncrementalCompilationConfiguration
     /**
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
+    @Deprecated("Use `JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder` to create a `Builder` instead.")
     public open operator fun <V> set(key: Option<V>, value: V) {
         error("To use `get` and `set` you must instantiate this object through `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
     }

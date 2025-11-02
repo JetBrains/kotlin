@@ -41,7 +41,21 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
      * @param destinationDirectory where to put the output of the compilation
      * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchains.BuildSession.executeOperation
      */
+    @Deprecated("Use jvmCompilationOperationBuilder instead", ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)"))
     public fun createJvmCompilationOperation(sources: List<Path>, destinationDirectory: Path): JvmCompilationOperation
+
+    /**
+     * Creates a builder for an operation for compiling Kotlin sources into class files.
+     *
+     * Note that [sources] should include .java files from the same module (as defined in https://kotl.in/spec-modules),
+     * so that Kotlin compiler can properly resolve references to Java code and track changes in them.
+     * However, Kotlin compiler will not compile the .java files.
+     *
+     * @param sources all sources of the compilation unit. This includes Java source files.
+     * @param destinationDirectory where to put the output of the compilation
+     * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchains.BuildSession.executeOperation
+     */
+    public fun jvmCompilationOperationBuilder(sources: List<Path>, destinationDirectory: Path): JvmCompilationOperation.Builder
 
     /**
      * Creates a build operation for calculating classpath snapshots used for detecting changes in incremental compilation.
@@ -53,7 +67,20 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
      * @param classpathEntry path to existing classpath entry
      * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchains.BuildSession.executeOperation
      */
+    @Deprecated("Use `classpathSnapshottingOperationBuilder` instead", ReplaceWith("classpathSnapshottingOperationBuilder(classpathEntry)"))
     public fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation
+
+    /**
+     * Creates a build operation for calculating classpath snapshots used for detecting changes in incremental compilation.
+     *
+     * Creating classpath snapshots is only required in multi-module projects.
+     * Using classpath snapshots allows skipping unnecessary recompilation when ABI
+     * changes in dependent modules have no effect on the current module.
+     *
+     * @param classpathEntry path to existing classpath entry
+     * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchains.BuildSession.executeOperation
+     */
+    public fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperation.Builder
 
     public companion object {
         /**

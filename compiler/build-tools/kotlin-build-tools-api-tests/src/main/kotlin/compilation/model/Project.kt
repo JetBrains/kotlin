@@ -31,7 +31,7 @@ class Project(
         dependencies: List<Module> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         stdlibClasspath: List<Path>? = null,
-        moduleCompilationConfigAction: (JvmCompilationOperation) -> Unit = {},
+        moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
     ): Module {
         val moduleDirectory = projectDirectory.resolve(moduleName)
         val sanitizedModuleName = moduleName.replace(invalidModuleNameCharactersRegex, "_")

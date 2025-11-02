@@ -52,7 +52,7 @@ private class CompilationOutcomeImpl(
 data class AbstractModuleCacheKey(
     val moduleName: String,
     val dependencies: List<DependencyScenarioDslCacheKey>,
-    val compilationArguments: (JvmCompilationOperation) -> Unit,
+    val compilationArguments: (JvmCompilationOperation.Builder) -> Unit,
 ) : DependencyScenarioDslCacheKey
 
 abstract class AbstractModule(
@@ -61,7 +61,7 @@ abstract class AbstractModule(
     val moduleDirectory: Path,
     val dependencies: List<Dependency>,
     override val defaultStrategyConfig: ExecutionPolicy,
-    final override val moduleCompilationConfigAction: (JvmCompilationOperation) -> Unit,
+    final override val moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
 ) : Module {
     override val sourcesDirectory: Path
         get() = moduleDirectory.resolve("src")
@@ -87,12 +87,13 @@ abstract class AbstractModule(
     override fun compileAndThrow(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        compilationAction: (JvmCompilationOperation) -> Unit,
         assertions: context(Module) CompilationOutcome.(Throwable) -> Unit,
     ): Throwable {
         val kotlinLogger = TestKotlinLogger()
         try {
-            compileImpl(strategyConfig, compilationConfigAction, kotlinLogger)
+            compileImpl(strategyConfig, compilationConfigAction, compilationAction, kotlinLogger)
         } catch (e: Throwable) {
             processOutcome(kotlinLogger, null, {
                 expectCompilationResult(null)
@@ -106,11 +107,17 @@ abstract class AbstractModule(
     override fun compile(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        compilationAction: (JvmCompilationOperation) -> Unit,
         assertions: context(Module) CompilationOutcome.() -> Unit
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
-        val result = compileImpl(strategyConfig, compilationConfigAction, kotlinLogger)
+        val result = compileImpl(
+            strategyConfig = strategyConfig,
+            compilationConfigAction = compilationConfigAction,
+            compilationAction = compilationAction,
+            kotlinLogger = kotlinLogger
+        )
         processOutcome(kotlinLogger, result, assertions, forceOutput)
         return result
     }
@@ -143,7 +150,8 @@ abstract class AbstractModule(
 
     protected abstract fun compileImpl(
         strategyConfig: ExecutionPolicy,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        compilationAction: (JvmCompilationOperation) -> Unit,
         kotlinLogger: TestKotlinLogger,
     ): CompilationResult
 

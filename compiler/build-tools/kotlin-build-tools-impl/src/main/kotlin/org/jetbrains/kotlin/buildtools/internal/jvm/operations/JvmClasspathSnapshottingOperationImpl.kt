@@ -19,12 +19,20 @@ import java.nio.file.Path
 internal class JvmClasspathSnapshottingOperationImpl private constructor(
     override val options: Options = Options(JvmClasspathSnapshottingOperation::class),
     private val classpathEntry: Path,
-) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
+) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder,
+    DeepCopyable<JvmClasspathSnapshottingOperation> {
 
     constructor(classpathEntry: Path) : this(
         options = Options(JvmClasspathSnapshottingOperation::class),
         classpathEntry = classpathEntry
     )
+
+    override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder = deepCopy()
+
+    override fun build(): JvmClasspathSnapshottingOperation = deepCopy()
+
+    override fun deepCopy(): JvmClasspathSnapshottingOperationImpl =
+        JvmClasspathSnapshottingOperationImpl(options.deepCopy(), classpathEntry)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = options[key]

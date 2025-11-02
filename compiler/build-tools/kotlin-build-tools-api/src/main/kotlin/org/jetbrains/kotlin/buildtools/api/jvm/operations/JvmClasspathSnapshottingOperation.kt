@@ -37,6 +37,15 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
  */
 @ExperimentalBuildToolsApi
 public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEntrySnapshot> {
+
+    public interface Builder : BuildOperation.Builder {
+        public operator fun <V> get(key: Option<V>): V
+        public operator fun <V> set(key: Option<V>, value: V)
+        public fun build(): JvmClasspathSnapshottingOperation
+    }
+
+    public fun toBuilder(): Builder
+
     /**
      * Base class for [JvmClasspathSnapshottingOperation] options.
      *
@@ -56,6 +65,10 @@ public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEnt
     /**
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
+    @Deprecated(
+        "Build operations will become immutable in an upcoming release. " +
+                "Use `JvmPlatformToolchain.snapshotBasedIcOptionsBuilder` to create a mutable builder instead."
+    )
     public operator fun <V> set(key: Option<V>, value: V)
 
     public companion object {

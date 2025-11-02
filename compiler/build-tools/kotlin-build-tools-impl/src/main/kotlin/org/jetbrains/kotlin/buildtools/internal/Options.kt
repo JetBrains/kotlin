@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
-internal class Options(private val optionsName: String) {
+internal class Options(private val optionsName: String) : DeepCopyable<Options> {
     constructor(typeForName: KClass<*>) : this(typeForName.qualifiedName ?: typeForName.jvmName)
 
     private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -42,6 +42,17 @@ internal class Options(private val optionsName: String) {
         return if (key !in optionsMap) {
             error("$key was not set in $optionsName")
         } else optionsMap[key] as V
+    }
+
+    override fun deepCopy(): Options {
+        return Options(optionsName).also { newOptions ->
+            newOptions.optionsMap.putAll(optionsMap.entries.map {
+                it.key to when (val value = it.value) {
+                    is DeepCopyable<*> -> value.deepCopy()
+                    else -> value
+                }
+            })
+        }
     }
 }
 

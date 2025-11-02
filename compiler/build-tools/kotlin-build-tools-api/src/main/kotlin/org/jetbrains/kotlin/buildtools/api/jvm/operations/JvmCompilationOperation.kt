@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.jvm.operations
 
+import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
@@ -36,6 +37,39 @@ import java.nio.file.Path
  */
 @ExperimentalBuildToolsApi
 public interface JvmCompilationOperation : CancellableBuildOperation<CompilationResult> {
+
+    public interface Builder : BuildOperation.Builder {
+        public val compilerArguments: JvmCompilerArguments
+        public operator fun <V> get(key: Option<V>): V
+        public operator fun <V> set(key: Option<V>, value: V)
+        public fun build(): JvmCompilationOperation
+
+        /**
+         * Creates the configuration object for snapshot-based incremental compilation (IC) in JVM projects.
+         * May be used to observe the defaults, adjust them, and configure incremental compilation as follows:
+         * ```
+         * val icConfig = compilation.snapshotBasedIcConfigurationBuilder(workingDirectory = Paths.get("build/kotlin"),
+         *     sourcesChanges = SourcesChanges.ToBeCalculated,
+         *     dependenciesSnapshotFiles = snapshots,
+         *     shrunkClasspathSnapshot = shrunkSnapshot,
+         * )
+         *
+         * icConfig[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = true
+         *
+         * compilation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = icConfig
+         * ```
+         *
+         * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+         */
+        public fun snapshotBasedIcConfigurationBuilder(
+            workingDirectory: Path,
+            sourcesChanges: SourcesChanges,
+            dependenciesSnapshotFiles: List<Path>,
+            shrunkClasspathSnapshot: Path,
+        ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder
+    }
+
+    public fun toBuilder(): Builder
     /**
      * Base class for [JvmCompilationOperation] options.
      *
@@ -55,6 +89,10 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
     /**
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
+    @Deprecated(
+        "Build operations will become immutable in an upcoming release. " +
+                "Use `JvmPlatformToolchain.jvmCompilationOperationBuilder` to create a mutable builder instead."
+    )
     public operator fun <V> set(key: Option<V>, value: V)
 
     /**
@@ -83,30 +121,6 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
     @Suppress("DEPRECATION")
     @Deprecated("Use `snapshotBasedIcConfigurationBuilder` instead.")
     public fun createSnapshotBasedIcOptions(): org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
-
-    /**
-     * Creates the configuration object for snapshot-based incremental compilation (IC) in JVM projects.
-     * May be used to observe the defaults, adjust them, and configure incremental compilation as follows:
-     * ```
-     * val icConfig = compilation.snapshotBasedIcConfigurationBuilder(workingDirectory = Paths.get("build/kotlin"),
-     *     sourcesChanges = SourcesChanges.ToBeCalculated,
-     *     dependenciesSnapshotFiles = snapshots,
-     *     shrunkClasspathSnapshot = shrunkSnapshot,
-     * )
-     *
-     * icConfig[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = true
-     *
-     * compilation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = icConfig
-     * ```
-     *
-     * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-     */
-    public fun snapshotBasedIcConfigurationBuilder(
-        workingDirectory: Path,
-        sourcesChanges: SourcesChanges,
-        dependenciesSnapshotFiles: List<Path>,
-        shrunkClasspathSnapshot: Path,
-    ): JvmSnapshotBasedIncrementalCompilationConfiguration
 
     public companion object {
 
