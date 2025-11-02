@@ -633,6 +633,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeList(equivalentFunctions) { serializePair(it, ::serializeString, ::serializeIdSignature) }
             serializeSet(jsModuleAndQualifierReferences, ::serializeJsModuleAndQualifierReference)
             serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
+            serializeNullable(classAssociatedObjectsGetterWrapper, ::serializeClassAssociatedObjectsGetterWrapper)
             serializeNullable(builtinIdSignatures, ::serializeBuiltinIdSignatures)
             serializeNullable(specialITableTypes, ::serializeInterfaceTableTypes)
             serializeNullable(rttiElements, ::serializeRttiElements)
@@ -665,6 +666,10 @@ class WasmSerializer(outputStream: OutputStream) {
     private fun serializeInterfaceTableTypes(specialITableTypes: SpecialITableTypes) {
         serializeWasmSymbolReadOnly(specialITableTypes.wasmAnyArrayType, ::serializeWasmArrayDeclaration)
         serializeWasmSymbolReadOnly(specialITableTypes.specialSlotITableType, ::serializeWasmTypeDeclaration)
+    }
+
+    private fun serializeClassAssociatedObjectsGetterWrapper(wrapper: WasmSymbol<WasmStructDeclaration>) {
+        serializeWasmSymbolReadOnly(wrapper, ::serializeWasmStructDeclaration)
     }
 
     private fun serializeBuiltinIdSignatures(builtinIdSignatures: BuiltinIdSignatures) {
