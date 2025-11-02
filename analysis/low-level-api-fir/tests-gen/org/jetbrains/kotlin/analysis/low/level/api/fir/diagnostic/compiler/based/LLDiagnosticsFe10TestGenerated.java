@@ -45844,9 +45844,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("noSubjectNotABooleanCondition.kt")
+      public void testNoSubjectNotABooleanCondition() {
+        runTest("compiler/testData/diagnostics/tests/tkachev_when/noSubjectNotABooleanCondition.kt");
+      }
+
+      @Test
       @TestMetadata("orderOfBranches.kt")
       public void testOrderOfBranches() {
         runTest("compiler/testData/diagnostics/tests/tkachev_when/orderOfBranches.kt");
+      }
+
+      @Test
+      @TestMetadata("subjectIncompatibleType.kt")
+      public void testSubjectIncompatibleType() {
+        runTest("compiler/testData/diagnostics/tests/tkachev_when/subjectIncompatibleType.kt");
       }
     }
 

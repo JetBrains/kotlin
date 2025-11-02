@@ -61367,6 +61367,30 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("noSubjectAlwaysFalseBranch.kt")
+    public void testNoSubjectAlwaysFalseBranch() {
+      runTest("compiler/testData/codegen/box/tkachev_when/noSubjectAlwaysFalseBranch.kt");
+    }
+
+    @Test
+    @TestMetadata("noSubjectAlwaysTrueBranch.kt")
+    public void testNoSubjectAlwaysTrueBranch() {
+      runTest("compiler/testData/codegen/box/tkachev_when/noSubjectAlwaysTrueBranch.kt");
+    }
+
+    @Test
+    @TestMetadata("noSubjectOnlyFirstTrueExecutes.kt")
+    public void testNoSubjectOnlyFirstTrueExecutes() {
+      runTest("compiler/testData/codegen/box/tkachev_when/noSubjectOnlyFirstTrueExecutes.kt");
+    }
+
+    @Test
+    @TestMetadata("onlyDefaultBranch.kt")
+    public void testOnlyDefaultBranch() {
+      runTest("compiler/testData/codegen/box/tkachev_when/onlyDefaultBranch.kt");
+    }
+
+    @Test
     @TestMetadata("statementChangeSubject.kt")
     public void testStatementChangeSubject() {
       runTest("compiler/testData/codegen/box/tkachev_when/statementChangeSubject.kt");
@@ -61376,6 +61400,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     @TestMetadata("statementCombinedBranches.kt")
     public void testStatementCombinedBranches() {
       runTest("compiler/testData/codegen/box/tkachev_when/statementCombinedBranches.kt");
+    }
+
+    @Test
+    @TestMetadata("statementDefaultBranchExecution.kt")
+    public void testStatementDefaultBranchExecution() {
+      runTest("compiler/testData/codegen/box/tkachev_when/statementDefaultBranchExecution.kt");
     }
 
     @Test

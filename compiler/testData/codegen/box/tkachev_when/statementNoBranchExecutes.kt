@@ -1,3 +1,4 @@
+// doubles as statement can be non-exhaustive test
 fun box(): String {
     val x = 1
     var y = "OK"
