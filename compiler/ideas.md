@@ -31,6 +31,10 @@ Tests ideas, if not implemented yet, are added here
 
 Tests ideas, if not implemented yet, are added here
 
+### Should accept boolean functions as branch condition
+
+### Is function a valid subject?
+
 ## IDE Integration (hints&improvements)
 
 ### Recursion with no exit should be detected
@@ -102,5 +106,35 @@ If multiple branches conditions always are true, the first one should be left an
             e == E.A -> "A"
             false -> "Not A" //this should be suggested for removal 
             else -> "Not A"
+        }
+    }
+
+### Suggestion to replace series of if - else if - else with when
+
+    enum class E {
+        A, B, C
+    }
+    
+    fun foo(e: E) {
+        if (e == E.A) {
+            print("A")
+        } else if (e == E.B) {
+            print("B")
+        } else {
+            print("C")
+        }
+    }
+
+needs to be detected and replaced with
+
+    enum class E {
+        A, B, C
+    }
+
+    fun foo(e: E) {
+        when (e) {
+            E.A -> print("A")
+            E.B -> print("B")
+            else -> print("C")
         }
     }
