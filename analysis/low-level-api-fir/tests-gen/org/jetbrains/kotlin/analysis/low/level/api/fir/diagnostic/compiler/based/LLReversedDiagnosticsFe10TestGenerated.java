@@ -45823,6 +45823,34 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/tkachev_when")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Tkachev_when {
+      @Test
+      public void testAllFilesPresentInTkachev_when() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/tkachev_when"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("expressionNotExhaustiveEnum.kt")
+      public void testExpressionNotExhaustiveEnum() {
+        runTest("compiler/testData/diagnostics/tests/tkachev_when/expressionNotExhaustiveEnum.kt");
+      }
+
+      @Test
+      @TestMetadata("noDefaultBranch.kt")
+      public void testNoDefaultBranch() {
+        runTest("compiler/testData/diagnostics/tests/tkachev_when/noDefaultBranch.kt");
+      }
+
+      @Test
+      @TestMetadata("orderOfBranches.kt")
+      public void testOrderOfBranches() {
+        runTest("compiler/testData/diagnostics/tests/tkachev_when/orderOfBranches.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/traitWithRequired")
     @TestDataPath("$PROJECT_ROOT")
     public class TraitWithRequired {
