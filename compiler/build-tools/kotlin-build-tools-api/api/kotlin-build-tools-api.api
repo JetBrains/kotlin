@@ -444,6 +444,10 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriSubty
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/cri/CriToolchain$Companion;
+	public static final field DATA_PATH Ljava/lang/String;
+	public static final field FILE_IDS_TO_PATHS_FILENAME Ljava/lang/String;
+	public static final field LOOKUPS_FILENAME Ljava/lang/String;
+	public static final field SUBTYPES_FILENAME Ljava/lang/String;
 	public abstract fun createCriFileIdToPathDataDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/cri/CriFileIdToPathDataDeserializationOperation;
 	public abstract fun createCriLookupDataDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/cri/CriLookupDataDeserializationOperation;
 	public abstract fun createCriSubtypeDataDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/cri/CriSubtypeDataDeserializationOperation;
@@ -451,6 +455,10 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriToolc
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/cri/CriToolchain$Companion {
+	public static final field DATA_PATH Ljava/lang/String;
+	public static final field FILE_IDS_TO_PATHS_FILENAME Ljava/lang/String;
+	public static final field LOOKUPS_FILENAME Ljava/lang/String;
+	public static final field SUBTYPES_FILENAME Ljava/lang/String;
 	public final fun get (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/cri/CriToolchain;
 }
 

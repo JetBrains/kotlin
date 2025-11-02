@@ -13,6 +13,11 @@ import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.reportPerformanceData
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.DATA_PATH
+import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.FILE_IDS_TO_PATHS_FILENAME
+import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.LOOKUPS_FILENAME
+import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.SUBTYPES_FILENAME
 import org.jetbrains.kotlin.buildtools.internal.cri.CriDataSerializerImpl
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -194,6 +199,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         return exitCode to sourcesToCompile
     }
 
+    @OptIn(ExperimentalBuildToolsApi::class)
     override fun generateCompilerRefIndexIfNeeded(services: Services, sourceFilesPathConverter: FileToPathConverter) {
         super.generateCompilerRefIndexIfNeeded(services, sourceFilesPathConverter)
         if (!generateCompilerRefIndex) return
@@ -201,7 +207,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         reporter.info { "Generating Compiler Reference Index..." }
 
         val serializer = CriDataSerializerImpl()
-        val criDir = File(workingDir, COMPILER_REF_INDEX_DIR).apply { mkdirs() }
+        val criDir = File(workingDir, DATA_PATH).apply { mkdirs() }
 
         val lookupTracker = services[LookupTracker::class.java] as LookupTrackerImpl
         val lookupData = serializer.serializeLookups(lookupTracker.lookups.toHashMap(), sourceFilesPathConverter)
@@ -219,15 +225,5 @@ abstract class IncrementalJvmCompilerRunnerBase(
 
         reporter.info { "Compiler Reference Index data saved to ${lookupsFile.path}, ${fileIdsToPathsFile.path}, ${subtypesFile.path}" }
         reporter.debug { "Lookups stored: ${lookupTracker.lookups.size()}, subtypes stored: ${subtypes.size}" }
-    }
-
-    companion object {
-        // TODO KT-81783 Add the CRI generation path override for JvmCompilationOperation
-        private const val COMPILER_REF_INDEX_DIR = "cri"
-
-        // TODO KT-81912 Add the CRI generation filename overrides for JvmCompilationOperation
-        private const val LOOKUPS_FILENAME = "lookups.table"
-        private const val FILE_IDS_TO_PATHS_FILENAME = "fileIdsToPaths.table"
-        private const val SUBTYPES_FILENAME = "subtypes.table"
     }
 }
