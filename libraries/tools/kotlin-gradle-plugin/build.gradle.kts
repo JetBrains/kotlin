@@ -185,6 +185,7 @@ dependencies {
 
     commonImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     commonImplementation(project(":kotlin-util-klib-metadata")) // TODO: consider removing in KT-70247
+    commonCompileOnly(project(":kotlin-project-model"))
 
     commonImplementation(project(":libraries:tools:abi-validation:abi-tools-api"))
 
@@ -206,6 +207,7 @@ dependencies {
     embedded("com.github.gundy:semver4j:0.16.4:nodeps") {
         exclude(group = "*")
     }
+    embedded(project(":kotlin-project-model")) { isTransitive = false }
 
     commonCompileOnly(libs.apache.commons.compress)
     embedded(libs.apache.commons.compress)
@@ -229,6 +231,7 @@ dependencies {
 
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
+    testImplementation(project(":kotlin-project-model"))
     testImplementation(libs.lincheck)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }

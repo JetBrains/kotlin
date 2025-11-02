@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import java.io.File
@@ -53,13 +52,14 @@ internal fun Project.locateOrRegisterMetadataDependencyTransformationTask(
 ): TaskProvider<MetadataDependencyTransformationTask> {
     val transformationTask = project.locateOrRegisterTask<MetadataDependencyTransformationTask>(
         transformGranularMetadataTaskName(sourceSet.name),
-        listOf(sourceSet)
+        listOf(sourceSet),
+        invokeWhenRegistered = {
+            project.locateOrRegisterTask<Task>(TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA).dependsOn(this)
+        }
     ) {
         description =
             "Generates serialized dependencies metadata for compilation '${sourceSet.name}' (for tooling)"
     }
-
-    project.locateOrRegisterTask<Task>(TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA).dependsOn(transformationTask)
 
     return transformationTask
 }

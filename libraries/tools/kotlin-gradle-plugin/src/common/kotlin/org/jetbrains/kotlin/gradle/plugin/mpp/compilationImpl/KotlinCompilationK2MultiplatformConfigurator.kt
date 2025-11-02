@@ -106,7 +106,8 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                                 )
                             } else {
                                 project.files()
-                            }
+                            },
+                            friends = project.files()
                         )
                     }
             })

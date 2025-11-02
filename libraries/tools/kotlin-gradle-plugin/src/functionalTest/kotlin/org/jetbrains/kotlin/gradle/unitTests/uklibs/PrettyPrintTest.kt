@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.testing.prettyPrintedFileCollectionOf
+import org.jetbrains.kotlin.gradle.util.buildProject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -105,6 +107,35 @@ class PrettyPrintTest {
             mapOf(
                 A(1, "1") to B(mapOf("baz" to A(2, "2")))
             ).prettyPrinted.toString(),
+        )
+    }
+
+    @Test
+    fun testFileCollection() {
+        val project = buildProject {}
+        val fc = project.files("file1.txt", "dir/file2.txt")
+        assertEquals(
+            """
+                prettyPrintedFileCollectionOf(
+                  "${project.projectDir}/file1.txt",
+                  "${project.projectDir}/dir/file2.txt",
+                )
+            """.trimIndent(),
+            fc.prettyPrinted.toString(),
+        )
+    }
+
+    @Test
+    fun testPrettyPrintedFileCollectionOf() {
+        val project = buildProject {}
+        val fc = project.files("file1.txt", "dir/file2.txt")
+
+        assertEquals(
+            prettyPrintedFileCollectionOf(
+                "${project.projectDir}/file1.txt",
+                "${project.projectDir}/dir/file2.txt",
+            ).toString(),
+            fc.prettyPrinted.toString(),
         )
     }
 
