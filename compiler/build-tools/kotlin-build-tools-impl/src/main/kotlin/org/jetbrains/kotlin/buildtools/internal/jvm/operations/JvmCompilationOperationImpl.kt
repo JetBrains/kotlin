@@ -66,7 +66,8 @@ internal class JvmCompilationOperationImpl private constructor(
     private val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
-) : CancellableBuildOperationImpl<CompilationResult>(), JvmCompilationOperation {
+) : CancellableBuildOperationImpl<CompilationResult>(), JvmCompilationOperation, JvmCompilationOperation.Builder,
+    DeepCopyable<JvmCompilationOperationImpl> {
     constructor(
         kotlinSources: List<Path>,
         destinationDirectory: Path,
@@ -80,6 +81,18 @@ internal class JvmCompilationOperationImpl private constructor(
         buildIdToSessionFlagFile = buildIdToSessionFlagFile
     )
 
+    override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
+
+    override fun deepCopy(): JvmCompilationOperationImpl {
+        return JvmCompilationOperationImpl(
+            options.deepCopy(),
+            kotlinSources,
+            destinationDirectory,
+            JvmCompilerArgumentsImpl().also { newArgs -> newArgs.applyArgumentStrings(compilerArguments.toArgumentStrings()) },
+            buildIdToSessionFlagFile
+        )
+    }
+
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmCompilationOperation.Option<V>): V = options[key]
 
@@ -87,6 +100,8 @@ internal class JvmCompilationOperationImpl private constructor(
     override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
         options[key] = value
     }
+
+    override fun build(): JvmCompilationOperation = deepCopy()
 
     private operator fun <V> get(key: Option<V>): V = options[key]
 
@@ -111,7 +126,7 @@ internal class JvmCompilationOperationImpl private constructor(
         sourcesChanges: SourcesChanges,
         dependenciesSnapshotFiles: List<Path>,
         shrunkClasspathSnapshot: Path,
-    ): JvmSnapshotBasedIncrementalCompilationConfiguration {
+    ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
         return JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
             workingDirectory,
             sourcesChanges,

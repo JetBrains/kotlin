@@ -24,7 +24,7 @@ internal abstract class BaseScenarioModule(
     internal val module: Module,
     internal val outputs: MutableSet<String>,
     private val strategyConfig: ExecutionPolicy,
-    private val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit),
+    private val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
 ) : ScenarioModule {
     override fun changeFile(
         fileName: String,
@@ -92,7 +92,7 @@ internal class ExternallyTrackedScenarioModuleImpl(
     module: Module,
     outputs: MutableSet<String>,
     strategyConfig: ExecutionPolicy,
-    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit),
+    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
 ) : BaseScenarioModule(module, outputs, strategyConfig, icOptionsConfigAction) {
     private var sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
 
@@ -151,7 +151,7 @@ internal class AutoTrackedScenarioModuleImpl(
     module: Module,
     outputs: MutableSet<String>,
     strategyConfig: ExecutionPolicy,
-    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit),
+    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
 ) : BaseScenarioModule(module, outputs, strategyConfig, icOptionsConfigAction) {
     override fun getSourcesChanges() = SourcesChanges.ToBeCalculated
 }
@@ -165,8 +165,8 @@ private class ScenarioDsl(
         moduleName: String,
         dependencies: List<ScenarioModule>,
         snapshotConfig: SnapshotConfig,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit),
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
@@ -180,8 +180,8 @@ private class ScenarioDsl(
         moduleName: String,
         dependencies: List<ScenarioModule>,
         snapshotConfig: SnapshotConfig,
-        compilationConfigAction: ((JvmCompilationOperation) -> Unit),
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit),
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =

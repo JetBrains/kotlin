@@ -218,7 +218,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
 
     private fun smokeTest(
         strategyConfig: CompilerExecutionStrategyConfiguration,
-        pluginsConfiguration: (JvmCompilationOperation) -> Unit,
+        pluginsConfiguration: (JvmCompilationOperation.Builder) -> Unit,
     ) {
         project(strategyConfig) {
             val module = module("compiler-plugins")

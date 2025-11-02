@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.buildtools.api
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Companion.loadImplementation
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Toolchain
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
+import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.Kotlin230AndBelowWrapper
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 
 /**
@@ -140,14 +142,24 @@ public interface KotlinToolchains {
          * If executing operations using [ExecutionPolicy.WithDaemon], a [java.net.URLClassLoader] must be used here.
          */
         @JvmStatic
-        public fun loadImplementation(classLoader: ClassLoader): KotlinToolchains =
-            try {
-                loadImplementation(KotlinToolchains::class, classLoader)
-            } catch (_: NoImplementationFoundException) {
-                @Suppress("DEPRECATION")
-                classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1Adapter").constructors.first()
-                    .newInstance(CompilationService.loadImplementation(classLoader)) as KotlinToolchains
+        public fun loadImplementation(classLoader: ClassLoader): KotlinToolchains = try {
+            val baseImplementation = loadImplementation(KotlinToolchains::class, classLoader)
+            val kotlinCompilerVersion = KotlinCompilerVersion(baseImplementation.getCompilerVersion())
+            when {
+                kotlinCompilerVersion <= KotlinCompilerVersion(2, 3, 0, null) -> {
+                    Kotlin230AndBelowWrapper(baseImplementation)
+                }
+                else -> baseImplementation
             }
+        } catch (_: NoImplementationFoundException) {
+            try {
+                classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1Adapter")
+                    .constructors.first()
+                    .newInstance(@Suppress("DEPRECATION") CompilationService.loadImplementation(classLoader)) as KotlinToolchains
+            } catch (e: ClassNotFoundException) {
+                throw NoImplementationFoundException(KotlinToolchains::class).initCause(e)
+            }
+        }
     }
 }
 

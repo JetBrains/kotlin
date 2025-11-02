@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
+import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import java.nio.file.Path
@@ -32,7 +33,21 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
     dependenciesSnapshotFiles,
     shrunkClasspathSnapshot,
     options
-), HasSnapshotBasedIcOptionsAccessor {
+), JvmSnapshotBasedIncrementalCompilationConfiguration.Builder, DeepCopyable<JvmSnapshotBasedIncrementalCompilationConfigurationImpl>, HasSnapshotBasedIcOptionsAccessor {
+
+    override fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration = deepCopy()
+
+    override fun toBuilder(): Builder = deepCopy()
+
+    override fun deepCopy(): JvmSnapshotBasedIncrementalCompilationConfigurationImpl =
+        JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
+            workingDirectory,
+            sourcesChanges,
+            dependenciesSnapshotFiles,
+            shrunkClasspathSnapshot,
+            options.deepCopy()
+        )
+
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V {
@@ -59,9 +74,12 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl internal constr
     internal val options: Options = Options(
         JvmSnapshotBasedIncrementalCompilationOptions::class
     ),
-) : JvmSnapshotBasedIncrementalCompilationOptions, HasSnapshotBasedIcOptionsAccessor {
+) : JvmSnapshotBasedIncrementalCompilationOptions, DeepCopyable<JvmSnapshotBasedIncrementalCompilationOptionsImpl>, HasSnapshotBasedIcOptionsAccessor {
 
     constructor() : this(Options(JvmSnapshotBasedIncrementalCompilationOptions::class))
+
+    override fun deepCopy(): JvmSnapshotBasedIncrementalCompilationOptionsImpl =
+        JvmSnapshotBasedIncrementalCompilationOptionsImpl(options.deepCopy())
 
     override operator fun <V> get(key: Option<V>): V = options[key]
 
