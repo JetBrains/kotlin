@@ -48,3 +48,7 @@ class ScopeOwner<SOT>(value: SOT): BaseType {
 object TypeArgument
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, functionDeclaration, functionalType, inner,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration, primaryConstructor,
+propertyDeclaration, safeCall, typeParameter */
