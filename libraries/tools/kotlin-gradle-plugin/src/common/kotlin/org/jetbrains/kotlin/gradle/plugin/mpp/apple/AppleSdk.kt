@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.Serializable
 
 internal object AppleSdk {
     fun defineNativeTargets(platform: String, archs: List<String>): List<KonanTarget> {
@@ -93,7 +94,23 @@ internal object AppleSdk {
     )
 }
 
-internal val KonanTarget.appleArchitecture: String
+internal enum class AppleArchitecture : Serializable {
+    ARM64,
+    X86_64,
+    ARMV7K,
+    ARM64_32;
+
+    val xcodebuildArch get() = clangArch
+    val clangArch
+        get() = when (this) {
+            ARM64 -> "arm64"
+            X86_64 -> "x86_64"
+            ARMV7K -> "armv7k"
+            ARM64_32 -> "arm64_32"
+        }
+}
+
+internal val KonanTarget.appleArchitecture: AppleArchitecture
     get() = when (this) {
         KonanTarget.IOS_ARM64,
         KonanTarget.IOS_SIMULATOR_ARM64,
@@ -102,16 +119,16 @@ internal val KonanTarget.appleArchitecture: String
         KonanTarget.TVOS_SIMULATOR_ARM64,
         KonanTarget.WATCHOS_DEVICE_ARM64,
         KonanTarget.WATCHOS_SIMULATOR_ARM64,
-            -> "arm64"
+            -> AppleArchitecture.ARM64
 
         KonanTarget.IOS_X64,
         KonanTarget.MACOS_X64,
         KonanTarget.TVOS_X64,
         KonanTarget.WATCHOS_X64,
-            -> "x86_64"
+            -> AppleArchitecture.X86_64
 
-        KonanTarget.WATCHOS_ARM32 -> "armv7k"
-        KonanTarget.WATCHOS_ARM64 -> "arm64_32"
+        KonanTarget.WATCHOS_ARM32 -> AppleArchitecture.ARMV7K
+        KonanTarget.WATCHOS_ARM64 -> AppleArchitecture.ARM64_32
 
         else -> throw IllegalArgumentException("Target $this is not an Apple target or not supported yet")
     }
