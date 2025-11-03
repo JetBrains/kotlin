@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.components.nativeIncludedBinaries
+import org.jetbrains.kotlin.konan.library.linkerOpts
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName

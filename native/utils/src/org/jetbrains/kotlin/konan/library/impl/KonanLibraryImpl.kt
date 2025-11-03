@@ -59,9 +59,6 @@ class KonanLibraryImpl(
     )
 
     override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>) = components.getComponent(kind)
-
-    override val linkerOpts: List<String>
-        get() = manifestProperties.propertyList(KLIB_PROPERTY_LINKED_OPTS, escapeInQuotes = true)
 }
 
 
