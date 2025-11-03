@@ -20,7 +20,9 @@ open class KaLibraryModuleImpl(
     override val targetPlatform: TargetPlatform,
     override val baseContentScope: GlobalSearchScope,
     override val project: Project,
+    @Deprecated("Use `binaryVirtualFiles` instead. See KT-72676", replaceWith = ReplaceWith("binaryVirtualFiles"))
     override val binaryRoots: Collection<Path>,
+    override val binaryVirtualFiles: Collection<VirtualFile>,
     override var librarySources: KaLibrarySourceModule?,
     override val isSdk: Boolean,
 ) : KtModuleWithModifiableDependencies(), KaLibraryModule {
@@ -33,8 +35,6 @@ open class KaLibraryModuleImpl(
 
     private val hasFallbackDependencies: Boolean
         get() = directRegularDependencies.any { it is KaLibraryFallbackDependenciesModule }
-
-    override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
 
     override fun toString(): String = libraryName
 }

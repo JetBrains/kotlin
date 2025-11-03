@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.toNioPathOrNull
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.impl.KaLibraryModuleImpl
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -29,10 +30,16 @@ public open class KtLibraryModuleBuilder(
     @OptIn(KaExperimentalApi::class)
     override fun build(): KaLibraryModule {
         val binaryRoots = getBinaryRoots()
-        val binaryVirtualFiles = getBinaryVirtualFiles()
+
+        @OptIn(KaImplementationDetail::class)
+        val binaryRootsVirtualFiles = LibraryUtils.getVirtualFilesForLibraryRoots(binaryRoots, coreApplicationEnvironment)
+        val allBinaryVirtualFiles = getBinaryVirtualFiles() + binaryRootsVirtualFiles
 
         val contentScope = contentScope
-            ?: StandaloneProjectFactory.createLibraryModuleSearchScope(binaryRoots, binaryVirtualFiles, coreApplicationEnvironment, project)
+            ?: StandaloneProjectFactory.createLibraryModuleSearchScope(
+                allBinaryVirtualFiles,
+                project
+            )
 
         return KaLibraryModuleImpl(
             directRegularDependencies,
@@ -42,7 +49,7 @@ public open class KtLibraryModuleBuilder(
             platform,
             project,
             binaryRoots,
-            binaryVirtualFiles,
+            allBinaryVirtualFiles,
             libraryName,
             librarySources,
             isSdk,

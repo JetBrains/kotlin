@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
 import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
@@ -128,10 +127,7 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     private fun computeBinaryLibraryModulePackageSet(module: KaLibraryModule): Set<String>? {
         if (!shouldComputeBinaryLibraryPackageSets) return null
 
-        // The current situation is a bit awkward in Standalone because we have binary root paths and separate binary virtual files, while
-        // the IDE keeps them in sync. See KT-72676 for further information.
-        val binaryVirtualFiles =
-            StandaloneProjectFactory.getVirtualFilesForLibraryRoots(module.binaryRoots, environment) + module.binaryVirtualFiles
+        val binaryVirtualFiles = module.binaryVirtualFiles
 
         if (binaryVirtualFiles.any { it.fileSystem != environment.jarFileSystem }) {
             return null

@@ -13,24 +13,21 @@ import com.intellij.psi.PsiTypes
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getVirtualFilesForLibraryRoots
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.successfulFunctionCallOrNull
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
-import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AbstractStandaloneTest
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
@@ -352,8 +349,9 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
                     buildKtLibraryModule {
                         // addBinaryRoot(compiledJar)
                         // Instead, add [VirtualFile]
+                        @OptIn(KaImplementationDetail::class)
                         val virtualFiles =
-                            StandaloneProjectFactory.getVirtualFilesForLibraryRoots(listOf(compiledJar), coreApplicationEnvironment)
+                            getVirtualFilesForLibraryRoots(listOf(compiledJar), coreApplicationEnvironment)
                         addBinaryVirtualFiles(virtualFiles)
                         platform = JvmPlatforms.defaultJvmPlatform
                         libraryName = "dependent"
@@ -384,8 +382,9 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
                     buildKtLibraryModule {
                         // addBinaryRoot(compiledJar)
                         // Instead, add [VirtualFile]
+                        @OptIn(KaImplementationDetail::class)
                         val virtualFiles =
-                            StandaloneProjectFactory.getVirtualFilesForLibraryRoots(listOf(compiledJar), coreApplicationEnvironment)
+                            getVirtualFilesForLibraryRoots(listOf(compiledJar), coreApplicationEnvironment)
                         addBinaryVirtualFiles(virtualFiles)
                         platform = JvmPlatforms.defaultJvmPlatform
                         libraryName = "dependent"

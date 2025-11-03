@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factorie
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getLibraryPathsForVirtualFiles
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
@@ -165,7 +166,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
     private fun LLFirModuleData.getLibraryKLibs(): List<KotlinLibrary> {
         val ktLibraryModule = ktModule as? KaLibraryModule ?: return emptyList()
 
-        return ktLibraryModule.binaryRoots
+        return getLibraryPathsForVirtualFiles(ktLibraryModule.binaryVirtualFiles)
             .filter { it.isDirectory() || it.extension == KLIB_FILE_EXTENSION }
             .mapNotNull { it.tryResolveAsKLib() }
     }

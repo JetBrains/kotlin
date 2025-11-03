@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -54,7 +56,8 @@ internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
         This information is theoretically available already (as also used by the Analysis Api), but not yet accessible.
          */
         if (module !is KaLibraryModule) return null
-        val binaryRoot = module.binaryRoots.singleOrNull() ?: return null
+        @OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
+        val binaryRoot = LibraryUtils.getLibraryPathsForVirtualFiles(module.binaryVirtualFiles).singleOrNull() ?: return null
         if (!binaryRoot.isDirectory() && binaryRoot.extension != "klib") return null
         val library = runCatching { ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) }
             .getOrElse { error -> error.printStackTrace(); return null } ?: return null

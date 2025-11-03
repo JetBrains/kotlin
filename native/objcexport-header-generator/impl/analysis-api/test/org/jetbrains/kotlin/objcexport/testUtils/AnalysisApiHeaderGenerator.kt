@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.objcexport.testUtils
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
@@ -44,7 +47,11 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
             val kaSession = this
             val exportedLibraries = module.withClosure<KaModule> { currentModule -> currentModule.allDirectDependencies().toList() }
                 .filterIsInstance<KaLibraryModule>()
-                .filter { libraryModule -> libraryModule.binaryRoots.first() in configuration.exportedDependencies }
+                .filter { libraryModule ->
+                    @OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
+                    LibraryUtils.getLibraryPathsForVirtualFiles(libraryModule.binaryVirtualFiles)
+                        .first() in configuration.exportedDependencies
+                }
                 .toSet()
 
             val exportedLibraryFiles = exportedLibraries

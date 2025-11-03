@@ -16,9 +16,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.PackageIndex
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
@@ -27,8 +25,6 @@ import com.intellij.psi.impl.smartPointers.SmartPointerManagerImpl
 import com.intellij.psi.impl.smartPointers.SmartTypePointerManagerImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
-import com.intellij.util.io.URLUtil.JAR_PROTOCOL
-import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import com.intellij.util.messages.ListenerDescriptor
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -61,17 +57,14 @@ import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
-import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.picocontainer.PicoContainer
 import java.nio.file.Path
-import java.nio.file.Paths
 
 object StandaloneProjectFactory {
     fun createProjectEnvironment(
@@ -313,7 +306,8 @@ object StandaloneProjectFactory {
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val javaRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
-        return javaRoots.map { getBinaryPath(it.file) }
+        @OptIn(KaImplementationDetail::class)
+        return javaRoots.map { LibraryUtils.getLibraryPathsForVirtualFiles(listOf(it.file)).single() }
     }
 
     /**
@@ -361,13 +355,35 @@ object StandaloneProjectFactory {
         return buildList {
             for (module in withAllTransitiveDependencies(modules)) {
                 val roots = when (module) {
-                    is KaLibraryModule -> module.getJavaRoots(environment)
-                    is KaLibrarySourceModule -> module.binaryLibrary.getJavaRoots(environment)
+                    is KaLibraryModule -> module.getJavaRoots()
+                    is KaLibrarySourceModule -> module.binaryLibrary.getJavaRoots()
                     else -> emptyList()
                 }
 
                 addAll(roots)
             }
+        }
+    }
+
+    fun createLibraryModuleSearchScope(
+        binaryVirtualFilesAndRoots: Collection<VirtualFile>,
+        project: Project,
+    ): GlobalSearchScope {
+        return if (binaryVirtualFilesAndRoots.any { it.toNioPathOrNull() == null }) {
+            // I.e., in-memory file system
+            // Fall back: file-based search scope
+            @Suppress("DEPRECATION")
+            createSearchScopeByLibraryRoots(
+                binaryVirtualFilesAndRoots,
+                project,
+            )
+        } else {
+            // Optimization: Trie-based search scope
+            @Suppress("DEPRECATION")
+            createTrieBasedSearchScopeByLibraryRoots(
+                binaryVirtualFilesAndRoots,
+                project,
+            )
         }
     }
 
@@ -409,9 +425,17 @@ object StandaloneProjectFactory {
         environment: CoreApplicationEnvironment,
         project: Project,
     ): GlobalSearchScope {
+        val binaryVirtualFilesAndRoots = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
+        return createSearchScopeByLibraryRoots(binaryVirtualFilesAndRoots, project)
+    }
+
+    private fun createSearchScopeByLibraryRoots(
+        binaryVirtualFilesAndRoots: Collection<VirtualFile>,
+        project: Project,
+    ): GlobalSearchScope {
         @OptIn(KaImplementationDetail::class)
         val virtualFileUrls = buildSet {
-            for (root in getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles) {
+            for (root in binaryVirtualFilesAndRoots) {
                 LibraryUtils.getAllVirtualFilesFromRoot(root, includeRoot = true)
                     .mapTo(this) { it.url }
             }
@@ -439,7 +463,14 @@ object StandaloneProjectFactory {
         project: Project,
     ): GlobalSearchScope {
         val virtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
-        return LibraryRootsSearchScope(virtualFiles, project)
+        return createTrieBasedSearchScopeByLibraryRoots(virtualFiles, project)
+    }
+
+    private fun createTrieBasedSearchScopeByLibraryRoots(
+        binaryVirtualFilesAndRoots: Collection<VirtualFile>,
+        project: Project,
+    ): GlobalSearchScope {
+        return LibraryRootsSearchScope(binaryVirtualFilesAndRoots, project)
     }
 
     private class SimpleTrie(paths: List<String>) {
@@ -472,7 +503,7 @@ object StandaloneProjectFactory {
     }
 
     private class LibraryRootsSearchScope(
-        roots: List<VirtualFile>,
+        roots: Collection<VirtualFile>,
         project: Project,
     ) : GlobalSearchScope(project) {
         val trie: SimpleTrie = SimpleTrie(roots.map { it.path })
@@ -490,22 +521,8 @@ object StandaloneProjectFactory {
         roots: Collection<Path>,
         environment: CoreApplicationEnvironment,
     ): List<VirtualFile> {
-        return roots.mapNotNull { path ->
-            val pathString = FileUtil.toSystemIndependentName(path.toAbsolutePath().toString())
-            when {
-                pathString.endsWith(JAR_PROTOCOL) || pathString.endsWith(KLIB_FILE_EXTENSION) -> {
-                    environment.jarFileSystem.findFileByPath(pathString + JAR_SEPARATOR)
-                }
-
-                pathString.contains(JAR_SEPARATOR) -> {
-                    environment.jrtFileSystem?.findFileByPath(adjustModulePath(pathString))
-                }
-
-                else -> {
-                    VirtualFileManager.getInstance().findFileByNioPath(path)
-                }
-            }
-        }.distinct()
+        @OptIn(KaImplementationDetail::class)
+        return LibraryUtils.getVirtualFilesForLibraryRoots(roots, environment)
     }
 
     private fun withAllTransitiveDependencies(ktModules: List<KaModule>): List<KaModule> {
@@ -536,50 +553,9 @@ object StandaloneProjectFactory {
         }
     }
 
-    @OptIn(KaExperimentalApi::class)
-    private fun KaLibraryModule.getJavaRoots(environment: CoreApplicationEnvironment): List<JavaRoot> {
-        val binaryRootsAsVirtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
-        return binaryRootsAsVirtualFiles.map { root ->
+    private fun KaLibraryModule.getJavaRoots(): List<JavaRoot> {
+        return binaryVirtualFiles.map { root ->
             JavaRoot(root, JavaRoot.RootType.BINARY)
-        }
-    }
-
-    private fun adjustModulePath(pathString: String): String {
-        return if (pathString.contains(JAR_SEPARATOR)) {
-            // URLs loaded from JDK point to module names in a JRT protocol format,
-            // e.g., "jrt:///path/to/jdk/home!/java.base" (JRT protocol prefix + JDK home path + JAR separator + module name)
-            // After protocol erasure, we will see "/path/to/jdk/home!/java.base" as a binary root.
-            // CoreJrtFileSystem.CoreJrtHandler#findFile, which uses Path#resolve, finds a virtual file path to the file itself,
-            // e.g., "/path/to/jdk/home!/modules/java.base". (JDK home path + JAR separator + actual file path)
-            // To work with that JRT handler, a hacky workaround here is to add "modules" before the module name so that it can
-            // find the actual file path.
-            // See [LLFirJavaFacadeForBinaries#getBinaryPath] and [StandaloneProjectFactory#getBinaryPath] for a similar hack.
-            val (libHomePath, pathInImage) = CoreJrtFileSystem.splitPath(pathString)
-            libHomePath + JAR_SEPARATOR + "modules/$pathInImage"
-        } else
-            pathString
-    }
-
-    // From [LLFirJavaFacadeForBinaries#getBinaryPath]
-    private fun getBinaryPath(virtualFile: VirtualFile): Path {
-        val path = virtualFile.path
-        return when {
-            ".$JAR_PROTOCOL$JAR_SEPARATOR" in path ->
-                Paths.get(path.substringBefore(JAR_SEPARATOR))
-            JAR_SEPARATOR in path && "modules/" in path -> {
-                // CoreJrtFileSystem.CoreJrtHandler#findFile, which uses Path#resolve, finds a virtual file path to the file itself,
-                // e.g., "/path/to/jdk/home!/modules/java.base/java/lang/Object.class". (JDK home path + JAR separator + actual file path)
-                // URLs loaded from JDK, though, point to module names in a JRT protocol format,
-                // e.g., "jrt:///path/to/jdk/home!/java.base" (JRT protocol prefix + JDK home path + JAR separator + module name)
-                // After splitting at the JAR separator, it is regarded as a root directory "/java.base".
-                // To work with LibraryPathFilter, a hacky workaround here is to remove "modules/" from actual file path.
-                // e.g. "/path/to/jdk/home!/java.base/java/lang/Object.class", which, from Path viewpoint, belongs to "/java.base",
-                // after splitting at the JAR separator, in a similar way.
-                // See [StandaloneProjectFactory#getAllBinaryRoots] for a similar hack.
-                Paths.get(path.replace("modules/", ""))
-            }
-            else ->
-                Paths.get(path)
         }
     }
 

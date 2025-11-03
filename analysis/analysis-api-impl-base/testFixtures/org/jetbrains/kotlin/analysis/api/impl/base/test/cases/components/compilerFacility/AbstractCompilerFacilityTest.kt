@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getLibraryPathsForVirtualFiles
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -63,6 +64,7 @@ import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.jar.JarFile
+import kotlin.io.path.pathString
 import kotlin.reflect.jvm.jvmName
 
 abstract class AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest() {
@@ -99,7 +101,8 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
 
             val binaryMainModule = mainModule.ktModule as KaLibraryModule
             val binaryMainModuleAsFile =
-                binaryMainModule.binaryRoots.singleOrNull()?.toFile() ?: error("The binary main module must have a single Jar file")
+                getLibraryPathsForVirtualFiles(binaryMainModule.binaryVirtualFiles).singleOrNull()?.pathString
+                    ?: error("The binary main module must have a single Jar file")
             val actualText = dumpClassesFromJar(binaryMainModuleAsFile)
             testServices.assertions.assertEqualsToTestOutputFile(actualText)
             return
@@ -226,8 +229,8 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         return dumpClassFromClassReaders(classReaders, dumpCode)
     }
 
-    private fun dumpClassesFromJar(jar: File): String {
-        val jarFile = JarFile(jar)
+    private fun dumpClassesFromJar(path: String): String {
+        val jarFile = JarFile(path)
         val entries = jarFile.entries()
         val classInputStreamList = buildList {
             while (entries.hasMoreElements()) {

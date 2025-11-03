@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":kotlin-util-klib"))
     implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
     implementation(project(":native:analysis-api-based-export-common"))
+    implementation(project(":analysis:analysis-api-impl-base"))
 
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(projectTests(":native:objcexport-header-generator"))

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider
 
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getLibraryPathsForVirtualFiles
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -43,7 +44,8 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
 
         // We have to analyze the KLIB from a source use-site module because `KaLibraryModule`s aren't supported as use sites (KT-76042).
         analyze(mainModule.ktModule) {
-            val binaryRoot = libraryModule.binaryRoots.singleOrNull() ?: fail("Expected single binary root")
+            val binaryRoot = getLibraryPathsForVirtualFiles(libraryModule.binaryVirtualFiles).singleOrNull()
+                ?: fail("Expected single binary root")
             val library = ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) ?: fail("Failed loading klib")
 
             val metadata = library.metadata

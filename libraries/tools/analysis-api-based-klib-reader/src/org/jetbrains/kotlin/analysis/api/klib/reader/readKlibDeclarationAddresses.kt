@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.konan.file.File
@@ -51,7 +54,8 @@ import kotlin.io.path.isDirectory
  * @return The returned set has a stable order
  */
 public fun KaLibraryModule.readKlibDeclarationAddresses(): Set<KlibDeclarationAddress>? {
-    val binary = binaryRoots.singleOrNull() ?: return null
+    @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+    val binary = LibraryUtils.getLibraryPathsForVirtualFiles(binaryVirtualFiles).singleOrNull() ?: return null
     if (!(binary.extension == "klib" || binary.isDirectory())) return null
     return readKlibDeclarationAddresses(binary)
 }
