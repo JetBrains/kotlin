@@ -1,8 +1,4 @@
 public final class Foo /* Foo*/ {
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "foo")
-  @org.jetbrains.annotations.NotNull()
-  public final StringWrapper foo();//  foo()
-
   @kotlin.jvm.JvmName(name = "foo")
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String foo();//  foo()

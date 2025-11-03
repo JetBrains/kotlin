@@ -8,7 +8,6 @@ public final class BoxKt {
 public final class Foo {
     // source: 'IC.kt'
     public method <init>(): void
-    public final @kotlin.jvm.JvmExposeBoxed(jvmName="foo") @org.jetbrains.annotations.NotNull method foo(): StringWrapper
     public final @kotlin.jvm.JvmName(name="foo") @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 

@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -249,23 +250,30 @@ val IrDeclaration.isStaticMultiFieldValueClassReplacement: Boolean
             || origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
 
 fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(languageVersionSettings: LanguageVersionSettings): Boolean {
-    if (!isFunctionWhichCanBeExposed()) return false
+    val isPropagatedOrImplicit = propagatedOrImplicitJvmExposeBoxed(languageVersionSettings)
+    val isExplicit = hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+
+    if (!(isExplicit || isPropagatedOrImplicit)) return false
+    if (!isFunctionWhichCanBeExposed(isPropagatedOrImplicit && !isExplicit)) return false
     if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return false
 
-    return getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) != null ||
-            parentClassOrNull?.getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) != null ||
-            languageVersionSettings.supportsFeature(LanguageFeature.ImplicitJvmExposeBoxed)
+    return true
 }
 
+private fun IrDeclaration.propagatedOrImplicitJvmExposeBoxed(languageVersionSettings: LanguageVersionSettings): Boolean =
+    parentClassOrNull?.getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) != null ||
+            languageVersionSettings.supportsFeature(LanguageFeature.ImplicitJvmExposeBoxed)
+
 // Do not duplicate function without inline classes in parameters, since it would lead to CONFLICTING_JVM_DECLARATIONS
-private fun IrDeclaration.isFunctionWhichCanBeExposed(): Boolean {
+private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Boolean): Boolean {
     if (this !is IrFunction || origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER) return false
     // No sense in exposing suspend functions - they cannot be called from Java in normal way anyway
     if (isSuspend) return false
     // Cannot expose open or abstract - @JvmName problem
     if (isOverridable) return false
     if (parameters.any { it.type.isInlineClassType() }) return true
-    if (!returnType.isInlineClassType()) return false
+    // If the function is annotated with @JvmName, it is unmangled, so, we cannot implicitly expose it.
+    if (!returnType.isInlineClassType() || (isPropagatedOrImplicit && hasAnnotation(JVM_NAME_ANNOTATION_FQ_NAME))) return false
     // It is not explicitly annotated, global and returns inline class, do not expose it, since otherwise
     // it would lead to ambiguous call on Java side
     // WARNING: Do not use parentAsClass here, otherwise, it leads to ICE in some obscure cases, see KT-78551
