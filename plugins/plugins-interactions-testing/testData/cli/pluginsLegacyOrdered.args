@@ -1,0 +1,7 @@
+-d
+$TEMP_DIR$
+-Xplugin=$TEMP_DIR$/plugin-before.jar
+-Xplugin=$TEMP_DIR$/plugin-middle.jar
+-Xplugin=$TEMP_DIR$/plugin-after.jar
+
+$TESTDATA_DIR$/main.kt
