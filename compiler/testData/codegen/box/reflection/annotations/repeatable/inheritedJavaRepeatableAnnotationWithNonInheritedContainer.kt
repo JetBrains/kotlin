@@ -2,6 +2,8 @@
 // WITH_REFLECT
 // FULL_JDK
 
+package test
+
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.findAnnotations

@@ -2,6 +2,8 @@
 // WITH_REFLECT
 // FULL_JDK
 
+package test
+
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.findAnnotations
@@ -59,9 +61,9 @@ private fun testJavaGetAnnotationsByType() {
     fun <T: Any> getAnnoContent(klass: KClass<T>) =
         klass.java.getAnnotationsByType(Anno::class.java).contentToString()
 
-    assertEquals("[@Anno(value=myDefaultValue)]", getAnnoContent(BaseClass::class))
-    assertEquals("[@Anno(value=OK)]", getAnnoContent(MiddleClass::class))
-    assertEquals("[@Anno(value=OK)]", getAnnoContent(ChildClass::class))
+    assertEquals("[@test.Anno(value=myDefaultValue)]", getAnnoContent(BaseClass::class))
+    assertEquals("[@test.Anno(value=OK)]", getAnnoContent(MiddleClass::class))
+    assertEquals("[@test.Anno(value=OK)]", getAnnoContent(ChildClass::class))
 }
 
 private fun testNoInheritanceOnFunctions() {

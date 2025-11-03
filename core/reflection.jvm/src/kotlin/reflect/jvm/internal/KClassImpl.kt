@@ -126,17 +126,21 @@ internal class KClassImpl<T : Any>(
                 val unwrappedAnnotationClassesHosts = mutableMapOf<KClass<out Annotation>, Class<out Any>>()
                 var currentClass: Class<out Any> = jClass
                 while (true) {
-                    currentClass.declaredAnnotations
-                        .filterNot { it.annotationClass.java.name in SPECIAL_JVM_ANNOTATION_NAMES }
-                        .filter { currentClass === jClass || (it.hasInherited() && !it.isRepeatableContainerForNonInheritedAnnotation()) }
-                        .reversed()
-                        .forEach {
-                            val unwrappedAnnotationClass: KClass<out Annotation> = it.unwrappedAnnotationClass
+                    val currentClassAnnotations = currentClass.declaredAnnotations
+                    for (i in currentClassAnnotations.size - 1 downTo 0) {
+                        val annotation = currentClassAnnotations[i]
+
+                        if (annotation.annotationClass.java.name !in SPECIAL_JVM_ANNOTATION_NAMES &&
+                            (currentClass === jClass || annotation.inheritable)
+                        ) {
+                            val unwrappedAnnotationClass: KClass<out Annotation> = annotation.unwrappedAnnotationClass
                             val prevHost = unwrappedAnnotationClassesHosts.putIfAbsent(unwrappedAnnotationClass, currentClass)
                             if (prevHost == null || prevHost == currentClass) {
-                                resultReversed.add(it)
+                                resultReversed.add(annotation)
                             }
                         }
+                    }
+
                     currentClass = currentClass.superclass ?: break
                 }
 
@@ -167,6 +171,9 @@ internal class KClassImpl<T : Any>(
                 else -> classId.asSingleFqName().asString()
             }
         }
+
+        private val Annotation.inheritable: Boolean
+            get() = hasInherited() && !isRepeatableContainerForNonInheritedAnnotation()
 
         private fun calculateLocalClassName(jClass: Class<*>): String {
             val name = jClass.simpleName
