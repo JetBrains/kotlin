@@ -207,7 +207,7 @@ internal fun Project.registerEmbedSwiftExportTask(
     }
 
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
-    val syntheticImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated()
+    val syntheticLinkageImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated()
 
     val swiftExportTask = registerSwiftExportTask(
         swiftExportExtension,
@@ -217,7 +217,7 @@ internal fun Project.registerEmbedSwiftExportTask(
     )
 
     swiftExportTask.dependsOn(sandBoxTask)
-    swiftExportTask.dependsOn(syntheticImportProjectCheck)
+    swiftExportTask.dependsOn(syntheticLinkageImportProjectCheck)
 
     val embedAndSignTask = locateOrRegisterTask<DefaultTask>(binaryTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
@@ -244,10 +244,15 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     }
 
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
-    val regenerateSyntheticLinkageProject = regenerateLinkageImportProjectTask()
+    val regenerateSyntheticLinkageProject = regenerateLinkageImportProjectTask(swiftPMDependenciesMetadataClasspath())
+
+    val projectPath = project.providers.environmentVariable("PROJECT_FILE_PATH")
     regenerateSyntheticLinkageProject.configure {
+        it.onlyIf {
+            projectPath.isPresent
+        }
         it.syntheticImportProjectRoot.set(
-            project.providers.environmentVariable("PROJECT_FILE_PATH").flatMap {
+            projectPath.flatMap {
                 project.layout.dir(
                     project.provider { File(it).parentFile.resolve(SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) }
                 )
@@ -440,13 +445,16 @@ private fun Project.checkSandboxAndWriteProtectionTask(
     }
 
 // FIXME: Add a check that synthetic import project is up-to-date in respect to currently declared SwiftPM dependencies
-private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated() =
-    locateOrRegisterTask<DefaultTask>("checkSyntheticImportProjectIsCorrectlyIntegrated") { task ->
+private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(): TaskProvider<*> {
+    val swiftPMDependencies = swiftPMDependenciesMetadataClasspath()
+    val projectPathEnv = project.providers.environmentVariable("PROJECT_FILE_PATH")
+    return locateOrRegisterTask<DefaultTask>("checkSyntheticImportProjectIsCorrectlyIntegrated") { task ->
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Check linkage project for embedAndSign is integrated correctly into the project"
         val execOps = project.serviceOf<ExecOperations>()
         val projectPath = project.path
         val rootProjectDir = rootProject.projectDir
+        task.onlyIf { projectPathEnv.isPresent && swiftPMDependencies.get().isNotEmpty() }
         task.doFirst {
             checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
                 execOps,
@@ -455,6 +463,7 @@ private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated() =
             )
         }
     }
+}
 
 private fun Project.shouldRegisterEmbedTask(environment: XcodeEnvironment, frameworkTaskName: String): Boolean {
     val envBuildType = environment.buildType
