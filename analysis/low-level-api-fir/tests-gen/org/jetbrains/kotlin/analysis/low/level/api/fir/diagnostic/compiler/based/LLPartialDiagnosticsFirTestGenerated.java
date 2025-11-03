@@ -663,6 +663,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
     }
 
     @Test
+    @TestMetadata("renderingOfGenericInnerTypes.kt")
+    public void testRenderingOfGenericInnerTypes() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/renderingOfGenericInnerTypes.kt");
+    }
+
+    @Test
     @TestMetadata("returnFromDelegatedConstuctor.kt")
     public void testReturnFromDelegatedConstuctor() {
       runTest("compiler/fir/analysis-tests/testData/resolve/returnFromDelegatedConstuctor.kt");

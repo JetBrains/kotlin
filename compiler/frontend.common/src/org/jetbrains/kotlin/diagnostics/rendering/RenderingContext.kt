@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
 
-@RequiresOptIn
+@RequiresOptIn("Legacy API for K1 that doesn't pass a DiagnosticBaseContext. Mustn't be used with K2.")
 annotation class LegacyRenderingContextApi
 
 // holds data about the parameters of the diagnostic we're about to render

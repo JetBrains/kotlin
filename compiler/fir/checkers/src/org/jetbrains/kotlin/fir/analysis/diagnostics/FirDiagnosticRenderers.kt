@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.UnsafeExpressionUtility
 import org.jetbrains.kotlin.fir.expressions.toReferenceUnsafe
@@ -25,7 +23,6 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -35,7 +32,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import java.text.MessageFormat
 
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
@@ -255,7 +251,7 @@ object FirDiagnosticRenderers {
 
     val RENDER_TYPE = ContextDependentRenderer { t: ConeKotlinType, ctx ->
         // TODO, KT-59811: need a way to tune granuality, e.g., without parameter names in functional types.
-        ctx[ADAPTIVE_RENDERED_TYPES].getValue(t)
+        ctx[FirAdaptiveTypeRenderingKey].getValue(t)
     }
 
     val RENDER_FQ_NAME_WITH_PREFIX = Renderer { symbol: FirBasedSymbol<*> ->
@@ -265,89 +261,6 @@ object FirDiagnosticRenderers {
             else -> return@Renderer "???"
         }
     }
-
-    private val ADAPTIVE_RENDERED_TYPES: RenderingContext.Key<Map<ConeKotlinType, String>> =
-        object : RenderingContext.Key<Map<ConeKotlinType, String>>("ADAPTIVE_RENDERED_TYPES") {
-            override fun compute(objectsToRender: Collection<Any?>, diagnosticContext: DiagnosticBaseContext): Map<ConeKotlinType, String> {
-                val coneTypes = objectsToRender.filterIsInstance<ConeKotlinType>() +
-                        objectsToRender.filterIsInstance<Iterable<*>>().flatMap { it.filterIsInstance<ConeKotlinType>() }
-
-                val constructors = buildSet {
-                    coneTypes.forEach {
-                        it.forEachType { typeWithinIt ->
-                            val lowerBound = typeWithinIt.lowerBoundIfFlexible()
-
-                            if (lowerBound !is ConeIntersectionType) {
-                                add(lowerBound.getConstructor())
-                            }
-                        }
-                    }
-                }
-
-                val simpleRepresentationsByConstructor: Map<TypeConstructorMarker, String> = constructors.associateWith {
-                    buildString { ConeTypeRendererForReadability(this) { ConeIdShortRenderer() }.renderConstructor(it.delegatedConstructorOrSelf()) }
-                }
-
-                val constructorsByRepresentation: Map<String, List<TypeConstructorMarker>> =
-                    simpleRepresentationsByConstructor.entries.groupBy({ it.value }, { it.key })
-
-                val finalRepresentationsByConstructor: Map<TypeConstructorMarker, String> = constructors.associateWith {
-                    val representation = simpleRepresentationsByConstructor.getValue(it)
-
-                    val typesWithSameRepresentation = constructorsByRepresentation.getValue(representation)
-                    val isAmbiguous = typesWithSameRepresentation.size > 1
-                    val isError = it is ConeClassLikeErrorLookupTag
-                    val isTypeParameter = it !is ConeTypeParameterLookupTag && !isError
-                    val isClassLike = it is ConeClassLikeLookupTag && !isError
-
-                    if (!isAmbiguous && isTypeParameter) {
-                        return@associateWith "$representation^"
-                    }
-
-                    buildString {
-                        if (isError && it.diagnostic is ConeCannotInferTypeParameterType) {
-                            append("uninferred ")
-                        }
-
-                        if (isClassLike && isAmbiguous) {
-                            ConeTypeRendererForReadability(this) { ConeFullyQualifiedIdRenderer() }.renderConstructor(it)
-                        } else {
-                            append(representation)
-                        }
-
-                        if (!isClassLike && !isError && isAmbiguous) {
-                            append('#')
-                            append(typesWithSameRepresentation.indexOf(it) + 1)
-                        }
-                        // Special symbol to be replaced with a nullability marker, like "", "?", "!", or maybe something else in future
-                        append("^")
-
-                        val typeParameterSymbol =
-                            ((it as? ConeClassLikeErrorLookupTag)?.delegatedType?.lowerBoundIfFlexible()
-                                ?.getConstructor() as? ConeTypeParameterLookupTag)?.typeParameterSymbol
-                                ?: (it as? ConeTypeParameterLookupTag)?.typeParameterSymbol
-
-                        if (typeParameterSymbol != null) {
-                            append(" (of ")
-                            append(TYPE_PARAMETER_OWNER_SYMBOL.render(typeParameterSymbol.containingDeclarationSymbol))
-                            append(')')
-                        }
-                    }
-                }
-
-                return coneTypes.associateWith {
-                    it.renderReadableWithFqNames(finalRepresentationsByConstructor)
-                }
-            }
-
-            private fun TypeConstructorMarker.delegatedConstructorOrSelf(): TypeConstructorMarker {
-                return if (this is ConeClassLikeErrorLookupTag && this.diagnostic is ConeCannotInferTypeParameterType) {
-                    this.delegatedType?.lowerBoundIfFlexible()?.getConstructor() ?: this
-                } else {
-                    this
-                }
-            }
-        }
 
     // TODO: properly implement
     val RENDER_TYPE_WITH_ANNOTATIONS = RENDER_TYPE

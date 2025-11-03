@@ -123,12 +123,7 @@ open class ConeTypeRenderer(
                 }
 
                 else -> {
-                    val hasTypeArguments = type is ConeClassLikeType && type.typeArguments.isNotEmpty()
-                    renderConstructor(type.getConstructor(), nullabilityMarker = nullabilityMarker.takeIf { !hasTypeArguments } ?: "")
-                    if (hasTypeArguments) {
-                        type.renderTypeArguments()
-                        builder.append(nullabilityMarker)
-                    }
+                    renderSimpleType(type, nullabilityMarker)
                     return
                 }
             }
@@ -202,7 +197,17 @@ open class ConeTypeRenderer(
     private fun ClassId.isSuspendFunctionType(): Boolean =
         this.asString().removePrefix(StandardClassIds.SuspendFunction.asString()).toIntOrNull() != null
 
-    open fun renderConstructor(constructor: TypeConstructorMarker, nullabilityMarker: String = "") {
+    protected open fun renderSimpleType(type: ConeSimpleKotlinType, nullabilityMarker: String) {
+        val hasTypeArguments = type is ConeClassLikeType && type.typeArguments.isNotEmpty()
+        renderConstructor(type.getConstructor())
+        if (hasTypeArguments) {
+            type.renderTypeArguments()
+        }
+
+        builder.append(nullabilityMarker)
+    }
+
+    fun renderConstructor(constructor: TypeConstructorMarker) {
         require(constructor is ConeTypeConstructorMarker)
         when (constructor) {
             is ConeTypeVariableTypeConstructor -> {
@@ -240,7 +245,6 @@ open class ConeTypeRenderer(
                         "Call `render` to simply render the type or filter out intersection types on the call-site."
             )
         }
-        builder.append(nullabilityMarker)
     }
 
     open fun renderDiagnostic(diagnostic: ConeDiagnostic, prefix: String = "", suffix: String = ""): String {
@@ -302,7 +306,7 @@ open class ConeTypeRenderer(
             .ifNotEmpty { builder.append(attributeRenderer.render(this)) }
     }
 
-    private fun ConeTypeProjection.render() {
+    protected fun ConeTypeProjection.render() {
         when (this) {
             ConeStarProjection -> {
                 builder.append("*")

@@ -186,7 +186,7 @@ fun ConeKotlinType.renderReadable(): String {
     return builder.toString()
 }
 
-fun ConeKotlinType.renderReadableWithFqNames(preRenderedConstructors: Map<TypeConstructorMarker, String>? = null): String {
+fun ConeKotlinType.renderReadableWithFqNames(preRenderedConstructors: Map<TypeConstructorMarker, String?>? = null): String {
     val builder = StringBuilder()
     ConeTypeRendererForReadability(builder, preRenderedConstructors) { ConeFullyQualifiedIdRenderer() }.render(this)
     return builder.toString()
