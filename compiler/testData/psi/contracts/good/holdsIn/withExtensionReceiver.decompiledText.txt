@@ -1,0 +1,6 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public inline fun kotlin.Boolean.testConditionInExtension(block: () -> kotlin.Unit): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
+
+public inline fun (() -> kotlin.Int).testLambdaInExtension(condition: kotlin.Boolean): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }

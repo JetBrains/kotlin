@@ -1,0 +1,54 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithDestructuringDeclarationKt]]
+  facadeFqName: WithDestructuringDeclarationKt
+  partSimpleName: "WithDestructuringDeclarationKt"
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
+      ANNOTATION_TARGET[useSiteTarget=FILE]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=OptIn]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          CLASS_LITERAL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=ExperimentalContracts]
+        VALUE_ARGUMENT[isSpread=false]
+          CLASS_LITERAL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=ExperimentalExtendedContracts]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=kotlin.contracts, isAllUnder=true, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=contracts]
+  CLASS[classId=/PairList, fqName=PairList, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PairList, superNames=[]]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=T]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PairList]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=PairList.items, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=items]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=List]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=T]
+  FUN[fqName=component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=component1]
+    MODIFIER_LIST[operator]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=T]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=PairList]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=T]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=T]

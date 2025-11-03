@@ -1,0 +1,14 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public inline fun testConditionInDescription(condition: kotlin.Boolean?, block: () -> kotlin.Unit): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
+
+public inline fun testConditionInDescription2(condition: kotlin.Boolean?, block: () -> kotlin.Unit): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
+
+public inline fun testConditionInDescription3(condition: kotlin.Boolean, condition2: kotlin.Boolean, block: () -> kotlin.Unit): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
+
+public inline fun testConditionInDescription4(condition: kotlin.Boolean, block: () -> kotlin.Unit): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
+
+public inline fun testConditionInDescription6(condition: kotlin.Boolean, condition2: kotlin.Boolean, block: () -> kotlin.Unit): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
+
+public inline fun testConditionInDescription10(condition: kotlin.Boolean, block: () -> kotlin.Unit): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }

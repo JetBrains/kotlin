@@ -1,0 +1,4 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public inline fun <T> runIfIs(value: kotlin.Any, block: () -> kotlin.Unit): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }

@@ -2232,6 +2232,12 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
     @TestDataPath("$PROJECT_ROOT")
     public class Good {
       @Test
+      @TestMetadata("accessorsAllowed.kt")
+      public void testAccessorsAllowed() {
+        runTest("compiler/testData/psi/contracts/good/accessorsAllowed.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInGood() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
@@ -2313,12 +2319,100 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
       }
 
       @Nested
+      @TestMetadata("compiler/testData/psi/contracts/good/holdsIn")
+      @TestDataPath("$PROJECT_ROOT")
+      public class HoldsIn {
+        @Test
+        public void testAllFilesPresentInHoldsIn() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/holdsIn"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("combinedContractWithCallInPlace.kt")
+        public void testCombinedContractWithCallInPlace() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/combinedContractWithCallInPlace.kt");
+        }
+
+        @Test
+        @TestMetadata("combinedContractWithImpliesReturn.kt")
+        public void testCombinedContractWithImpliesReturn() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/combinedContractWithImpliesReturn.kt");
+        }
+
+        @Test
+        @TestMetadata("combinedContractWithReturnImplies.kt")
+        public void testCombinedContractWithReturnImplies() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/combinedContractWithReturnImplies.kt");
+        }
+
+        @Test
+        @TestMetadata("conditionWithDefaultValue.kt")
+        public void testConditionWithDefaultValue() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/conditionWithDefaultValue.kt");
+        }
+
+        @Test
+        @TestMetadata("differentConditions.kt")
+        public void testDifferentConditions() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/differentConditions.kt");
+        }
+
+        @Test
+        @TestMetadata("holdsInBaseCases.kt")
+        public void testHoldsInBaseCases() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/holdsInBaseCases.kt");
+        }
+
+        @Test
+        @TestMetadata("withContextParameters.kt")
+        public void testWithContextParameters() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/withContextParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("withErasedType.kt")
+        public void testWithErasedType() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/withErasedType.kt");
+        }
+
+        @Test
+        @TestMetadata("withExtensionReceiver.kt")
+        public void testWithExtensionReceiver() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/withExtensionReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("withInfixFunction.kt")
+        public void testWithInfixFunction() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/withInfixFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("withOperatorFunction.kt")
+        public void testWithOperatorFunction() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/withOperatorFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("withReturnsImplies.kt")
+        public void testWithReturnsImplies() {
+          runTest("compiler/testData/psi/contracts/good/holdsIn/withReturnsImplies.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/psi/contracts/good/returnsImplies")
       @TestDataPath("$PROJECT_ROOT")
       public class ReturnsImplies {
         @Test
         public void testAllFilesPresentInReturnsImplies() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("baseConditions.kt")
+        public void testBaseConditions() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/baseConditions.kt");
         }
 
         @Test
@@ -2340,6 +2434,18 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
         }
 
         @Test
+        @TestMetadata("impliesReturnsInArgumentPosition.kt")
+        public void testImpliesReturnsInArgumentPosition() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/impliesReturnsInArgumentPosition.kt");
+        }
+
+        @Test
+        @TestMetadata("impliesReturnsWithIncrement.kt")
+        public void testImpliesReturnsWithIncrement() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/impliesReturnsWithIncrement.kt");
+        }
+
+        @Test
         @TestMetadata("inapplicable.kt")
         public void testInapplicable() {
           runTest("compiler/testData/psi/contracts/good/returnsImplies/inapplicable.kt");
@@ -2349,6 +2455,12 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
         @TestMetadata("namedArguments.kt")
         public void testNamedArguments() {
           runTest("compiler/testData/psi/contracts/good/returnsImplies/namedArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedCallOfImpliesReturnsContract.kt")
+        public void testNestedCallOfImpliesReturnsContract() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/nestedCallOfImpliesReturnsContract.kt");
         }
 
         @Test
@@ -2385,6 +2497,36 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
         @TestMetadata("typePredicate.kt")
         public void testTypePredicate() {
           runTest("compiler/testData/psi/contracts/good/returnsImplies/typePredicate.kt");
+        }
+
+        @Test
+        @TestMetadata("withDataFlowBasedExhaustivenes.kt")
+        public void testWithDataFlowBasedExhaustivenes() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/withDataFlowBasedExhaustivenes.kt");
+        }
+
+        @Test
+        @TestMetadata("withDestructuringDeclaration.kt")
+        public void testWithDestructuringDeclaration() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/withDestructuringDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("withErasedType.kt")
+        public void testWithErasedType() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/withErasedType.kt");
+        }
+
+        @Test
+        @TestMetadata("withInfixFunction.kt")
+        public void testWithInfixFunction() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/withInfixFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("withOperatorFunction.kt")
+        public void testWithOperatorFunction() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/withOperatorFunction.kt");
         }
       }
 

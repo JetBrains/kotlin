@@ -1,0 +1,4 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public inline fun <R> holdsInAndImpliesReturn(condition: kotlin.Boolean, x: kotlin.Any?, block: () -> R): kotlin.String? { contract { /* compiled contract */ }; /* compiled code */ }

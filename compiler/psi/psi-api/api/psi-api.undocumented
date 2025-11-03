@@ -2239,8 +2239,10 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.BOOLEAN_LOGIC
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.BOOLEAN_PARAMETER_REFERENCE
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.CALLS
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.CONDITIONAL
+org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.CONDITIONAL_RETURNS
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.CONSTANT
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.Companion.IGNORE_REFERENCE_PARAMETER_NAME
+org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.HOLDS_IN
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.IS_INSTANCE
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.IS_NULL
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.NOT

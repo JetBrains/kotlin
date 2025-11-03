@@ -1,0 +1,32 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithErasedTypeKt]]
+  facadeFqName: WithErasedTypeKt
+  partSimpleName: "WithErasedTypeKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=runIfIs, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfIs]
+    contract: [ effect:param(0) is KotlinTypeParameterTypeBean(typeParameterName=T, nullable=false, definitelyNotNull=false) HoldsIn(param(1)) ]
+    origin: Facade(className=WithErasedTypeKt, jvmClassName=null)
+    MODIFIER_LIST[public inline]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=T]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Any]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Unit]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Unit]

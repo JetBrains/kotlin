@@ -1,0 +1,10 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public fun decode(encoded: kotlin.String?): kotlin.String? { contract { /* compiled contract */ }; /* compiled code */ }
+
+public fun decodeFake(encoded: kotlin.String?): kotlin.String? { contract { /* compiled contract */ }; /* compiled code */ }
+
+public fun decodeIfString(encoded: kotlin.Any): kotlin.String? { contract { /* compiled contract */ }; /* compiled code */ }
+
+public fun decodeNotNumber(encoded: kotlin.Any): kotlin.String? { contract { /* compiled contract */ }; /* compiled code */ }
