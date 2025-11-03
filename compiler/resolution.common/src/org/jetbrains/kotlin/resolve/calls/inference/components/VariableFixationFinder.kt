@@ -130,8 +130,12 @@ class VariableFixationFinder(
 
         override fun compareTo(other: TypeVariableFixationReadiness): Int = bitMask - other.bitMask
 
-//        override fun toString(): String =
-//            "Readiness(" + TypeVariableFixationReadinessQuality.entries.joinToString { it.name + " = " + get(it) } + ")"
+        override fun toString(): String {
+            // `asReversed()` - to keep high-priority qualities first.
+            val qualities = TypeVariableFixationReadinessQuality.entries.asReversed()
+                .joinToString(",\n\t") { it.name + " = " + get(it) }
+            return "Readiness(\n\t$qualities\n)"
+        }
     }
 
 //    enum class TypeVariableFixationReadiness2 {
