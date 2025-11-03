@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
 internal class Options private constructor(private val optionsName: String) : DeepCopyable<Options> {
-    constructor(typeForName: KClass<*>) : this(typeForName.qualifiedName ?: typeForName.jvmName) //TODO go back to the commit about options and delete ::class
+    constructor(typeForName: KClass<*>) : this(typeForName.qualifiedName ?: typeForName.jvmName)
 
     private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
