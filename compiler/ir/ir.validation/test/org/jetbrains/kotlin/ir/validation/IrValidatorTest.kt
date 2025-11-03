@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.validation.checkers.expression.IrTypeOperatorRedundancyChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -2228,6 +2229,62 @@ class IrValidatorTest {
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
             ),
+        )
+    }
+
+    @Test
+    fun `redundant IMPLICIT_CAST is reported`() {
+        val file = createIrFile("test.kt")
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        val body = IrFactoryImpl.createBlockBody(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+        )
+
+        // Redundant: result type equals argument type
+        val redundantImplicitCast = IrTypeOperatorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.booleanType,
+            operator = IrTypeOperator.IMPLICIT_CAST,
+            typeOperand = TestIrBuiltins.booleanType,
+            argument = createTrueConst()
+        )
+
+        // Non-redundant: argument type differs from result type
+        val nonRedundantImplicitCast = IrTypeOperatorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.anyType,
+            operator = IrTypeOperator.IMPLICIT_CAST,
+            typeOperand = TestIrBuiltins.anyType,
+            argument = createTrueConst() // Boolean is a subtype of Any
+        )
+
+        body.statements.addAll(listOf(redundantImplicitCast, nonRedundantImplicitCast))
+        function.body = body
+        file.addChild(function)
+
+        testValidation(
+            IrVerificationMode.ERROR,
+            file,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Redundant IMPLICIT_CAST: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
+                    TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                )
+            ),
+            config = defaultValidationConfig.withCheckers(IrTypeOperatorRedundancyChecker)
         )
     }
 
