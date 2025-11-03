@@ -25,6 +25,7 @@ internal class KaLibraryModuleImpl(
     override val baseContentScope: GlobalSearchScope,
     override val targetPlatform: TargetPlatform,
     override val project: Project,
+    @Deprecated("Use `binaryVirtualFiles` instead. See KT-72676", replaceWith = ReplaceWith("binaryVirtualFiles"))
     override val binaryRoots: Collection<Path>,
     override val binaryVirtualFiles: Collection<VirtualFile>,
     override val libraryName: String,

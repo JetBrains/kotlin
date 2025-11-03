@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getVirtualFilesForLibraryRoots
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.hasFallbackDependencies
@@ -61,17 +62,19 @@ fun createKtLibrarySourceModule(
     testServices: TestServices,
 ): KtTestModule {
     val targetPlatform = testModule.targetPlatform(testServices)
+    val binaryRootsVirtualFiles =
+        getVirtualFilesForLibraryRoots(libraryJars, testServices.environmentManager.getApplicationEnvironment())
+
     val libraryKtModule = object : KaLibraryModuleImpl(
         testModule.name,
         targetPlatform,
         StandaloneProjectFactory.createLibraryModuleSearchScope(
-            libraryJars,
-            emptyList(),
-            testServices.environmentManager.getApplicationEnvironment(),
+            binaryRootsVirtualFiles,
             project,
         ),
         project,
         binaryRoots = libraryJars,
+        binaryVirtualFiles = binaryRootsVirtualFiles,
         librarySources = null,
         isSdk = false,
     ) {

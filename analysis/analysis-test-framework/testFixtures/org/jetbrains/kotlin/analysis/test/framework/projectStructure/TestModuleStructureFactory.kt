@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getLibraryPathsForVirtualFiles
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getVirtualFilesForLibraryRoots
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
@@ -106,7 +109,7 @@ object TestModuleStructureFactory {
 
         return dependencyTestModules.flatMap { dependency ->
             val libraryModule = existingModules.getValue(dependency.name).ktModule as? KaLibraryModule
-            libraryModule?.binaryRoots.orEmpty()
+            getLibraryPathsForVirtualFiles(libraryModule?.binaryVirtualFiles.orEmpty())
         }
     }
 
@@ -188,7 +191,13 @@ object TestModuleStructureFactory {
                     else -> targetPlatform
                 }
 
-                val libraryModule = libraryCache.getOrCreateLibraryModule(libraryRoot) {
+                val libraryRootVirtualFile =
+                    getVirtualFilesForLibraryRoots(
+                        listOf(libraryRoot),
+                        testServices.environmentManager.getApplicationEnvironment()
+                    ).singleOrNull() ?: error("No virtual file found for library root: $libraryRoot")
+
+                val libraryModule = libraryCache.getOrCreateLibraryModule(libraryRootVirtualFile) {
                     createLibraryModule(project, libraryRoot, platform, testServices)
                 }
 
@@ -205,7 +214,13 @@ object TestModuleStructureFactory {
             val libraryRoot = Paths.get(libraryRootPath)
             check(libraryRoot.extension == KLIB_FILE_EXTENSION)
 
-            val libraryModule = libraryCache.getOrCreateLibraryModule(libraryRoot) {
+            val libraryRootVirtualFile =
+                getVirtualFilesForLibraryRoots(
+                    listOf(libraryRoot),
+                    testServices.environmentManager.getApplicationEnvironment()
+                ).singleOrNull() ?: error("No virtual file found for library root: $libraryRoot")
+
+            val libraryModule = libraryCache.getOrCreateLibraryModule(libraryRootVirtualFile) {
                 createLibraryModule(project, libraryRoot, JsPlatforms.defaultJsPlatform, testServices)
             }
 
@@ -222,15 +237,25 @@ object TestModuleStructureFactory {
         check(libraryFile.exists()) { "Library $libraryFile does not exist" }
 
         val libraryName = libraryFile.nameWithoutExtension.stripOutSnapshotVersion()
-        val libraryScope = getScopeForLibraryByRoots(project, listOf(libraryFile), testServices)
-        return KaLibraryModuleImpl(libraryName, platform, libraryScope, project, listOf(libraryFile), librarySources = null, isSdk = false)
+        val binaryRoots = listOf(libraryFile)
+        val binaryRootsVirtualFiles =
+            getVirtualFilesForLibraryRoots(binaryRoots, testServices.environmentManager.getApplicationEnvironment())
+        val libraryScope = getScopeForLibraryByRoots(project, binaryRootsVirtualFiles)
+        return KaLibraryModuleImpl(
+            libraryName,
+            platform,
+            libraryScope,
+            project,
+            binaryRoots,
+            binaryRootsVirtualFiles,
+            librarySources = null,
+            isSdk = false
+        )
     }
 
-    fun getScopeForLibraryByRoots(project: Project, roots: Collection<Path>, testServices: TestServices): GlobalSearchScope {
+    fun getScopeForLibraryByRoots(project: Project, roots: Collection<VirtualFile>): GlobalSearchScope {
         return StandaloneProjectFactory.createLibraryModuleSearchScope(
             roots,
-            emptyList(),
-            testServices.environmentManager.getApplicationEnvironment(),
             project,
         )
     }
@@ -284,7 +309,7 @@ private class LibraryCache(
     private val project: Project,
 ) {
     /**
-     * A mapping from a binary root [Path] to its [KaLibraryModule].
+     * A mapping from a binary root [VirtualFile] to its [KaLibraryModule].
      *
      * [binaryRootToLibraryModule] maps single binary roots to their [KaLibraryModule] even for multi-root libraries. In that case, the
      * mapping contains multiple entries for the [KaLibraryModule], and each binary root can individually resolve to its multi-root
@@ -294,7 +319,7 @@ private class LibraryCache(
      * of all binary root dependencies of the [TestModule], taken from its compiler configuration. From this flat list, we cannot associate
      * *sets of* binary roots with one another.
      */
-    private val binaryRootToLibraryModule: MutableMap<Path, KaLibraryModule> = mutableMapOf()
+    private val binaryRootToLibraryModule: MutableMap<VirtualFile, KaLibraryModule> = mutableMapOf()
 
     /**
      * Each test should have a single JDK configuration, so there should only be a need for a single JDK module.
@@ -318,17 +343,17 @@ private class LibraryCache(
     fun registerLibraryModuleIfNeeded(module: KaModule) {
         if (module !is KaLibraryModule) return
 
-        module.binaryRoots.forEach { binaryRoot ->
+        module.binaryVirtualFiles.forEach { binaryRoot ->
             check(binaryRoot !in binaryRootToLibraryModule) {
                 "Each binary root should be uniquely associated with a single library module.\n" +
                         "Binary root: $binaryRoot\n" +
                         "Library module: $module"
             }
-            binaryRootToLibraryModule.put(binaryRoot, module)
+            binaryRootToLibraryModule[binaryRoot] = module
         }
     }
 
-    inline fun getOrCreateLibraryModule(binaryRoot: Path, createLibraryModule: () -> KaLibraryModule): KaLibraryModule {
+    inline fun getOrCreateLibraryModule(binaryRoot: VirtualFile, createLibraryModule: () -> KaLibraryModule): KaLibraryModule {
         return binaryRootToLibraryModule.getOrPut(binaryRoot) { createLibraryModule() }
     }
 
@@ -337,13 +362,16 @@ private class LibraryCache(
 
         jdkModule?.let { return it }
 
-        val jdkScope = getScopeForLibraryByRoots(project, jdkRoots, testServices)
+        val binaryRootsVirtualFiles =
+            getVirtualFilesForLibraryRoots(jdkRoots, testServices.environmentManager.getApplicationEnvironment())
+        val jdkScope = getScopeForLibraryByRoots(project, binaryRootsVirtualFiles)
         val jdkModule = KaLibraryModuleImpl(
             "jdk",
             JvmPlatforms.defaultJvmPlatform,
             jdkScope,
             project,
             jdkRoots,
+            binaryRootsVirtualFiles,
             librarySources = null,
             isSdk = true,
         )

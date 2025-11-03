@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.getAllOverriddenSymbolsForParameter
 import org.jetbrains.kotlin.analysis.api.impl.base.components.getDirectlyOverriddenSymbolsForParameter
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -167,10 +168,16 @@ internal class KaFe10SymbolRelationProvider(
             override val libraryName: String = libraryPath.fileName.toString().substringBeforeLast(".")
             override val librarySources: KaLibrarySourceModule? = null
             override val isSdk: Boolean = false
+
+            @Deprecated("Use `binaryVirtualFiles` instead. See KT-72676", replaceWith = ReplaceWith("binaryVirtualFiles"))
             override val binaryRoots: Collection<Path> = listOf(libraryPath)
 
             @KaExperimentalApi
-            override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
+            override val binaryVirtualFiles: Collection<VirtualFile> = LibraryUtils.getVirtualFilesForLibraryRoots(
+                @Suppress("DEPRECATION")
+                binaryRoots,
+                null
+            )
             override val directRegularDependencies: List<KaModule> = emptyList()
             override val directDependsOnDependencies: List<KaModule> = emptyList()
             override val transitiveDependsOnDependencies: List<KaModule> = emptyList()

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getVirtualFilesForLibraryRoots
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.hasFallbackDependencies
 import org.jetbrains.kotlin.analysis.test.framework.isSdkLibrary
@@ -32,18 +33,18 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
     ): KtTestModule {
         val (binaryRoots, _) = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots)
         val decompiledFiles = binaryRoots.flatMap { decompileToPsiFiles(it, testServices, project) }
+        val binaryVirtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, testServices.environmentManager.getApplicationEnvironment())
 
         val libraryModule = KaLibraryModuleImpl(
             testModule.name,
             testModule.targetPlatform(testServices),
             StandaloneProjectFactory.createLibraryModuleSearchScope(
-                binaryRoots,
-                emptyList(),
-                testServices.environmentManager.getApplicationEnvironment(),
+                binaryVirtualFiles,
                 project,
             ),
             project,
             binaryRoots = binaryRoots,
+            binaryVirtualFiles = binaryVirtualFiles,
             librarySources = null,
             isSdk = testModule.isSdkLibrary,
         )

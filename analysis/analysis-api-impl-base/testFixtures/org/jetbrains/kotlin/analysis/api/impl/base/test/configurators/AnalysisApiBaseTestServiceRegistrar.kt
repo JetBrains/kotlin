@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStan
 import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderMerger
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
@@ -129,17 +128,7 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             sharedBinaryDependencies -= ktModule
         }
 
-        val mainBinaryRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
-            mainBinaryModules.flatMap { it.binaryRoots },
-            testServices.environmentManager.getApplicationEnvironment(),
-        ).distinct()
-
         val mainBinaryVirtualFiles = mainBinaryModules.flatMap { it.binaryVirtualFiles }.distinct()
-
-        val sharedBinaryRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
-            sharedBinaryDependencies.flatMap { binary -> binary.binaryRoots },
-            testServices.environmentManager.getApplicationEnvironment()
-        ).distinct()
 
         val sharedBinaryVirtualFiles = sharedBinaryDependencies.flatMap { it.binaryVirtualFiles }.distinct()
 
@@ -154,8 +143,8 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
                 project,
                 testServices.environmentManager.getApplicationEnvironment(),
                 testKtFiles,
-                binaryRoots = mainBinaryRoots + mainBinaryVirtualFiles,
-                sharedBinaryRoots = sharedBinaryRoots + sharedBinaryVirtualFiles,
+                binaryRoots = mainBinaryVirtualFiles,
+                sharedBinaryRoots = sharedBinaryVirtualFiles,
                 skipBuiltins = testServices.moduleStructure.allDirectives.contains(NO_RUNTIME),
                 shouldBuildStubsForBinaryLibraries = shouldBuildStubsForBinaryLibraries,
                 shouldComputeBinaryLibraryPackageSets = true,

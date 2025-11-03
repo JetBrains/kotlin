@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 
@@ -90,13 +93,13 @@ public fun KlibPropertyAddress.getPropertySymbols(): Sequence<KaPropertySymbol> 
 
 context(session: KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-@OptIn(KaNonPublicApi::class)
+@OptIn(KaNonPublicApi::class, KaExperimentalApi::class, KaImplementationDetail::class)
 private operator fun KlibDeclarationAddress.contains(symbol: KaDeclarationSymbol): Boolean {
     val symbolKlibSourceFileName = with(session) { symbol.klibSourceFileName }
     val symbolLibraryModule = with(session) { symbol.containingModule as? KaLibraryModule ?: return false }
 
     /* check if symbol comes from the same klib library: symbolKlibSourceFile not known -> checking library module */
-    if (libraryPath !in symbolLibraryModule.binaryRoots) {
+    if (libraryPath !in LibraryUtils.getLibraryPathsForVirtualFiles(symbolLibraryModule.binaryVirtualFiles)) {
         return false
     }
 

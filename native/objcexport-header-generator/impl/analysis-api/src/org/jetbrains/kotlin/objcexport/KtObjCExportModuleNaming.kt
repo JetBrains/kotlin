@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -46,6 +48,7 @@ fun KtObjCExportModuleNaming(implementations: List<KtObjCExportModuleNaming>): K
 }
 
 internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
+    @OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
     override fun KaSession.getModuleName(module: KaModule): String? {
         /*
         In this implementation, we're actually looking into the klib file, trying to resolve
@@ -54,7 +57,7 @@ internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
         This information is theoretically available already (as also used by the Analysis Api), but not yet accessible.
          */
         if (module !is KaLibraryModule) return null
-        val binaryRoot = module.binaryRoots.singleOrNull() ?: return null
+        val binaryRoot = LibraryUtils.getLibraryPathsForVirtualFiles(module.binaryVirtualFiles).singleOrNull() ?: return null
         if (!binaryRoot.isDirectory() && binaryRoot.extension != "klib") return null
         val library = runCatching { ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) }
             .getOrElse { error -> error.printStackTrace(); return null } ?: return null
