@@ -22,11 +22,13 @@ public class SirFunctionBridge(
 ) : SirBridge(name) {
     override fun equals(other: Any?): Boolean {
         return other is SirFunctionBridge && name == other.name &&
-                kotlinFunctionBridge.lines.firstOrNull() == other.kotlinFunctionBridge.lines.firstOrNull()
+                kotlinFunctionBridge.lines.firstOrNull() == other.kotlinFunctionBridge.lines.firstOrNull() &&
+                cDeclarationBridge.lines.firstOrNull() == other.cDeclarationBridge.lines.firstOrNull()
     }
 
     override fun hashCode(): Int {
-        var result = kotlinFunctionBridge.hashCode()
+        var result = name.hashCode()
+        result = 31 * result + kotlinFunctionBridge.hashCode()
         result = 31 * result + cDeclarationBridge.hashCode()
         return result
     }
