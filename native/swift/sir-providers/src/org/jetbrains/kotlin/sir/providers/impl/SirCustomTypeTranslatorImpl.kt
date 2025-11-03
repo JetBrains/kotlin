@@ -267,18 +267,19 @@ public class SirCustomTypeTranslatorImpl(
         val kotlinRangeClassId: ClassId,
         val kotlinRangeElementClassId: ClassId,
         val inclusive: Boolean,
-    ) : Bridge.CustomBridgeWithAdditionalConversions(swiftType) {
+    ) : Bridge.CustomBridgeWithAdditionalConversions(
+        swiftType,
+        kotlinTypeList = List(2) { NUMBERS[kotlinRangeElementClassId]!!.kotlinType },
+        cTypeList = List(2) { NUMBERS[kotlinRangeElementClassId]!!.cType }
+    ) {
         override val additionalObjCConversionsNumber: Int
             get() = 2
 
-        override val representsParameterAsPair: Boolean
-            get() = true
+        val pairedParameterKotlinType: KotlinType
+            get() = kotlinTypeList.first()
 
-        override val pairedParameterKotlinType: KotlinType
-            get() = NUMBERS[kotlinRangeElementClassId]!!.kotlinType
-
-        override val pairedParameterCType: CType
-            get() = NUMBERS[kotlinRangeElementClassId]!!.cType
+        val pairedParameterCType: CType
+            get() = cTypeList.first()
 
         override fun swiftToObjC(typeNamer: SirTypeNamer, valueExpression: String): String {
             return "$valueExpression.lowerBound, $valueExpression.upperBound"
