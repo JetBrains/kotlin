@@ -524,7 +524,8 @@ enum class LanguageFeature(
 
     // Just a safety mechanism to revert the change in inference behavior that was required for a performance problem fix.
     // If no problems are reported about it, can be removed after a couple of releases.
-    RevertSimplificationOfFlexibleUpperConstraintWithDnnLowerBound(sinceVersion = null, "KT-52283"),
+    // NB: Currently, leads to regression KT-82132
+    DisableSimplificationOfFlexibleUpperConstraintWithDnnLowerBound(sinceVersion = null, "KT-52283"),
 
     DontMakeExplicitJavaTypeArgumentsFlexible(sinceVersion = null, "KTLC-284"),
     PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621"),
