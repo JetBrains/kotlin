@@ -113,7 +113,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         val deploymentTarget = deploymentTarget.get()
 
         val buildArguments = mapOf(
-            "ARCHS" to target.map { it.appleArchitecture }.get(),
+            "ARCHS" to target.map { it.appleArchitecture }.get().xcodebuildArch,
             "CONFIGURATION" to configuration.get(),
             "DEPLOYMENT_TARGET_SETTING_NAME" to deploymentTargetSettingName,
             deploymentTargetSettingName to deploymentTarget,
