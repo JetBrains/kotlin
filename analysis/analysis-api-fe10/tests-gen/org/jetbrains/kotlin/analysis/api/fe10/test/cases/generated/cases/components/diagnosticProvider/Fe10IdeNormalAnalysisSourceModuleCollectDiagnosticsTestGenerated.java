@@ -53,6 +53,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   }
 
   @Test
+  @TestMetadata("baseConditionsOnDeclarationSite.kt")
+  public void testBaseConditionsOnDeclarationSite() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/baseConditionsOnDeclarationSite.kt");
+  }
+
+  @Test
   @TestMetadata("callablesFromScript.kt")
   public void testCallablesFromScript() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/callablesFromScript.kt");
@@ -74,6 +80,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   @TestMetadata("contracts.kt")
   public void testContracts() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/contracts.kt");
+  }
+
+  @Test
+  @TestMetadata("contractsOnAccessorsAllowed.kt")
+  public void testContractsOnAccessorsAllowed() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/contractsOnAccessorsAllowed.kt");
   }
 
   @Test
@@ -314,6 +326,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   @TestMetadata("varargParameterFromLibraryWithFunctionalType.kt")
   public void testVarargParameterFromLibraryWithFunctionalType() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/varargParameterFromLibraryWithFunctionalType.kt");
+  }
+
+  @Test
+  @TestMetadata("withOperatorFunction.kt")
+  public void testWithOperatorFunction() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/withOperatorFunction.kt");
   }
 
   @Nested

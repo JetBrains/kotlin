@@ -1,0 +1,12 @@
+KT element: KtNamedFunction
+KT element text:
+public inline fun <reified T> assertIs(value: kotlin.Any?): T { contract { /* compiled contract */ }; /* compiled code */ }
+FIR element: FirNamedFunctionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final inline [ResolvedTo(BODY_RESOLVE)] fun <reified [ResolvedTo(BODY_RESOLVE)] T> assertIs([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Any?|): R|T|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> value is T
+    >

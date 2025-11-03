@@ -1,0 +1,59 @@
+KT element: KtClass
+KT element text:
+public final class Foo public constructor() {
+    public final var kotlin.Int?.prop: kotlin.Int? /* compiled code */
+        public final get() { /* compiled code */ }
+        public final set(v: kotlin.Int?) { /* compiled code */ }
+
+    public final val Foo.Status.isError: kotlin.Boolean /* compiled code */
+        public final get() { /* compiled code */ }
+
+    context(s: Foo.Status) public final val isContextError: kotlin.Boolean /* compiled code */
+        public final get() { /* compiled code */ }
+
+    public sealed class Status protected constructor() {
+        public final class Ok public constructor() : Foo.Status {
+        }
+
+        public final class Error public constructor(message: kotlin.String) : Foo.Status {
+            public final val message: kotlin.String /* compiled code */
+        }
+    }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    public sealed [ResolvedTo(BODY_RESOLVE)] class Status : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] class Error : R|Foo.Status| {
+            public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val message: R|kotlin/String|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Error] get(): R|kotlin/String|
+
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Error] constructor([ResolvedTo(BODY_RESOLVE)] message: R|kotlin/String|): R|Foo.Status.Error|
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class Ok : R|Foo.Status| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ok] constructor(): R|Foo.Status.Ok|
+
+        }
+
+        protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Status] constructor(): R|Foo.Status|
+
+    }
+
+    context([ResolvedTo(BODY_RESOLVE)] s: R|Foo.Status|)
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val isContextError: R|kotlin/Boolean|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Boolean|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val [ResolvedTo(RAW_FIR)] R|Foo.Status|.isError: R|kotlin/Boolean|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Boolean|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] var [ResolvedTo(RAW_FIR)] R|kotlin/Int?|.prop: R|kotlin/Int?|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int?|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] set([ResolvedTo(BODY_RESOLVE)] v: R|kotlin/Int?|): R|kotlin/Unit|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo|
+
+}
