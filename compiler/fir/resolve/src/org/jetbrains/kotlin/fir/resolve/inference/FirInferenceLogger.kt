@@ -216,7 +216,7 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
                     if (element !is FixationLogRecordElement) continue
                     val log = element.record
                     if (log.chosen !== typeVariable) continue
-                    if (log.map[typeVariable]?.readiness?.get(Q.FORBIDDEN) == true) continue
+                    if (log.map[typeVariable]?.readiness?.get(Q.ALLOWED) == false) continue
                     log.fixedTo = type
                 }
             }

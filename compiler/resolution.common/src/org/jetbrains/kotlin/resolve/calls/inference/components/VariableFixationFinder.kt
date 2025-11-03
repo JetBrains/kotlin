@@ -112,7 +112,7 @@ class VariableFixationFinder(
 
         IS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES, // Otherwise, "declared..."
         ALL_PROPER_CONSTRAINTS_ARE_SELF_TYPE_BASED,
-        FORBIDDEN,
+        ALLOWED,
         ;
 
         val mask = 1 shl ordinal
@@ -185,9 +185,10 @@ class VariableFixationFinder(
         dependencyProvider: TypeVariableDependencyInformationProvider
     ): TypeVariableFixationReadiness {
         val result = TypeVariableFixationReadiness().also {
-            it[Q.FORBIDDEN] = !c.notFixedTypeVariables.contains(this)
+            val forbidden = !c.notFixedTypeVariables.contains(this)
                     || dependencyProvider.isVariableRelatedToTopLevelType(this)
                     || hasUnprocessedConstraintsInForks()
+            it[Q.ALLOWED] = !forbidden
 
             it[Q.ALL_PROPER_CONSTRAINTS_ARE_SELF_TYPE_BASED] = areAllProperConstraintsSelfTypeBased()
             it[Q.IS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES] = fixationEnhancementsIn22
@@ -278,7 +279,7 @@ class VariableFixationFinder(
         )
         val readiness = typeVariable.getReadiness(dependencyProvider)
         return when {
-            readiness[Q.FORBIDDEN] || !readiness[Q.HAS_PROPER_CONSTRAINTS] -> false
+            !readiness[Q.ALLOWED] || !readiness[Q.HAS_PROPER_CONSTRAINTS] -> false
             else -> true
         }
     }
@@ -315,7 +316,7 @@ class VariableFixationFinder(
         val readiness = candidate.getReadiness(dependencyProvider)
 
         return when {
-            readiness[Q.FORBIDDEN] -> null
+            !readiness[Q.ALLOWED] -> null
             !readiness[Q.HAS_PROPER_CONSTRAINTS] -> VariableForFixation(candidate, false)
             readiness[Q.HAS_OUTER_TYPE_VARIABLE_DEPENDENCY] ->
                 VariableForFixation(candidate, hasProperConstraint = true, hasDependencyOnOuterTypeVariable = true)
