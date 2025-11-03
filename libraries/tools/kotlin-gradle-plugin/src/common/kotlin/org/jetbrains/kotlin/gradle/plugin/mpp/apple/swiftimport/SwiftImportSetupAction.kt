@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_METADATA
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
@@ -202,10 +204,10 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             if (task.name == target.testTaskName) {
                 task as KotlinNativeTest
                 val frameworkSearchPathsDump = provider {
-                    defFilesAndLdDumpGenerationTask.get().frameworkSearchpathFilePath(target.konanTarget.architecture)
+                    defFilesAndLdDumpGenerationTask.get().frameworkSearchpathFilePath(target.konanTarget.appleArchitecture)
                 }.get()
                 val librariesSearchPathsDump = provider {
-                    defFilesAndLdDumpGenerationTask.get().librarySearchpathFilePath(target.konanTarget.architecture)
+                    defFilesAndLdDumpGenerationTask.get().librarySearchpathFilePath(target.konanTarget.appleArchitecture)
                 }.get()
 
                 task.processOptions.environment.put(
@@ -237,7 +239,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             binary.linkTaskProvider.configure { linkTask ->
                 // FIXME: Just do this once instead of in the spmDependencies.all callback
                 val ldArgDumpPath = provider {
-                    defFilesAndLdDumpGenerationTask.get().ldFilePath(target.konanTarget.architecture)
+                    defFilesAndLdDumpGenerationTask.get().ldFilePath(target.konanTarget.appleArchitecture)
                 }.get()
                 linkTask.dependsOn(defFilesAndLdDumpGenerationTask)
                 linkTask.additionalLinkerOptsProperty.set(
@@ -252,7 +254,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         }
 
         defFilesAndLdDumpGenerationTask.configure {
-            it.architectures.add(target.konanTarget.architecture)
+            it.architectures.add(target.konanTarget.appleArchitecture)
         }
 
         swiftPMImportExtension.spmDependencies.all { swiftPMDependency ->
@@ -261,7 +263,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             if (cinteropName !in mainCompilationCinterops.names) {
                 mainCompilationCinterops.create(cinteropName).definitionFile.set(
                     defFilesAndLdDumpGenerationTask.map {
-                        it.defFilePath(target.konanTarget.architecture).get()
+                        it.defFilePath(target.konanTarget.appleArchitecture).get()
                     }
                 )
             }
@@ -529,8 +531,6 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
         const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "_internal_linkage_SwiftPMImport"
         const val SUBPACKAGES = "subpackages"
         const val MANIFEST_NAME = "Package.swift"
-
-        const val STALENESS_CHECK = "STALE_KOTLIN_BUILD_CHECK"
     }
 }
 
@@ -592,7 +592,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     abstract val xcodebuildSdk: Property<String>
 
     @get:Input
-    abstract val architectures: SetProperty<Architecture>
+    abstract val architectures: SetProperty<AppleArchitecture>
 
     @get:Input
     abstract val clangModules: SetProperty<String>
@@ -661,7 +661,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         ldArgsDump.mkdirs()
 
         val targetArchitectures = architectures.get().map {
-            clangArchitecture(it)
+            it.xcodebuildArch
         }
 
         val projectRoot = syntheticImportProjectRoot.get().asFile
@@ -708,7 +708,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         }
 
         architectures.get().forEach { architecture ->
-            val clangArchitecture = clangArchitecture(architecture)
+            val clangArchitecture = architecture.clangArch
             val architectureSpecificProductClangCalls = clangArgsDump.listFiles().filter {
                 it.isFile
             }.filter {
@@ -810,19 +810,10 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         }
     }
 
-    fun defFilePath(architecture: Architecture) = defFiles.map { it.file("${architecture.name}.def") }
-    fun ldFilePath(architecture: Architecture) = ldDump.map { it.file("${architecture.name}") }
-    fun frameworkSearchpathFilePath(architecture: Architecture) = ldDump.map { it.file("${architecture.name}_framework_search_paths") }
-    fun librarySearchpathFilePath(architecture: Architecture) = ldDump.map { it.file("${architecture.name}_library_search_paths") }
-
-    // FIXME: Fix watchos and use some different mapping here
-    private fun clangArchitecture(architecture: Architecture) = when (architecture) {
-        Architecture.X64 -> "x86_64"
-        Architecture.ARM64 -> "arm64"
-        Architecture.X86,
-        Architecture.ARM32
-            -> error("???")
-    }
+    fun defFilePath(architecture: AppleArchitecture) = defFiles.map { it.file("${architecture.xcodebuildArch}.def") }
+    fun ldFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}.ld") }
+    fun frameworkSearchpathFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}_framework_search_paths") }
+    fun librarySearchpathFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}_library_search_paths") }
 
     private fun clangArgsDumpScript() = argsDumpScript("clang", KOTLIN_CLANG_ARGS_DUMP_FILE_ENV)
     private fun ldArgsDumpScript() = argsDumpScript("clang", KOTLIN_LD_ARGS_DUMP_FILE_ENV)
@@ -1074,7 +1065,7 @@ private fun linkerScriptHack(): String = """
     if __name__ == '__main__':
         is_synthetic_linkage_call = False
         for arg in sys.argv:
-            if arg.startswith('@rpath') and '_internal_linkage_SwiftPMImport' in arg:
+            if arg.startswith('@rpath') and '${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}' in arg:
                 is_synthetic_linkage_call = True
     
         if is_synthetic_linkage_call:
@@ -1107,7 +1098,7 @@ private fun linkerScriptHack(): String = """
             empty_object_file = None
             with open(filelist_path, 'r') as file:
                 for line in file:
-                    if '_internal_linkage_SwiftPMImport.o' in line:
+                    if '${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.o' in line:
                         empty_object_file = line
             if empty_object_file is None:
                 raise f'Missing empty object file {filelist_path}'
