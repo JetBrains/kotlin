@@ -681,9 +681,9 @@ internal class JsAstMapperVisitor(
         reportError("Super calls are not supported yet", ctx)
     }
 
-    override fun visitImportMetaExpression(ctx: JavaScriptParser.ImportMetaExpressionContext): JsNode? {
-        return makeRefNode("meta").apply {
-            qualifier = makeRefNode("import").applyLocation(ctx.Import())
+    override fun visitImportMetaExpression(ctx: JavaScriptParser.ImportMetaExpressionContext): JsNameRef {
+        return makeRefNode(ctx.Meta().text).apply {
+            qualifier = makeRefNode(ctx.Import().text).applyLocation(ctx.Import())
         }.applyLocation(ctx.Meta())
     }
 

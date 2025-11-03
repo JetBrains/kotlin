@@ -968,18 +968,6 @@ public interface JavaScriptParserListener extends ParseTreeListener {
 	 */
 	void exitOptionalChainExpression(JavaScriptParser.OptionalChainExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code NotExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 */
-	void enterNotExpression(JavaScriptParser.NotExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code NotExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 */
-	void exitNotExpression(JavaScriptParser.NotExpressionContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code ImportMetaExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
 	 * @param ctx the parse tree
@@ -991,6 +979,18 @@ public interface JavaScriptParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitImportMetaExpression(JavaScriptParser.ImportMetaExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code NotExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 */
+	void enterNotExpression(JavaScriptParser.NotExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code NotExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 */
+	void exitNotExpression(JavaScriptParser.NotExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code PreDecreaseExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.

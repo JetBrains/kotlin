@@ -395,7 +395,8 @@ singleExpressionImpl
     | New singleExpressionImpl arguments                                           # NewExpression
     | New singleExpressionImpl                                                     # NewExpression
     | singleExpressionImpl arguments                                               # ArgumentsExpression
-    | New '.' identifier                                                           # MetaExpression // new.target
+    | New '.' Target                                                               # MetaExpression // new.target
+    | Import '.' Meta                                                              # ImportMetaExpression
     | singleExpressionImpl {this.notLineTerminator()}? '++'                        # PostIncrementExpression
     | singleExpressionImpl {this.notLineTerminator()}? '--'                        # PostDecreaseExpression
     | Delete singleExpressionImpl                                                  # DeleteExpression
@@ -423,15 +424,14 @@ singleExpressionImpl
     | singleExpressionImpl '&&' singleExpressionImpl                               # LogicalAndExpression
     | singleExpressionImpl '||' singleExpressionImpl                               # LogicalOrExpression
     | <assoc = right> singleExpressionImpl '?' singleExpressionImpl ':' singleExpressionImpl # TernaryExpression
-    | <assoc = right> lhs=singleExpressionImpl '=' rhs=singleExpressionImpl                # AssignmentExpression
-    | <assoc = right> lhs=singleExpressionImpl assignmentOperator rhs=singleExpressionImpl # AssignmentOperatorExpression
+    | <assoc = right> lhs=singleExpressionImpl '=' rhs=singleExpressionImpl                  # AssignmentExpression
+    | <assoc = right> lhs=singleExpressionImpl assignmentOperator rhs=singleExpressionImpl   # AssignmentOperatorExpression
     | Import '(' singleExpressionImpl ')'                                          # ImportExpression
     | singleExpressionImpl templateStringLiteral                                   # TemplateStringExpression // ECMAScript 6
     | (Yield | YieldStar) ({this.notLineTerminator()}? expressionSequence)?        # YieldExpression          // ECMAScript 6
     | This                                                                         # ThisExpression
     | identifier                                                                   # IdentifierExpression
     | Super                                                                        # SuperExpression
-    | Import '.' Meta                                                              # ImportMetaExpression
     | literal                                                                      # LiteralExpression
     | arrayLiteral                                                                 # ArrayLiteralExpression
     | objectLiteral                                                                # ObjectLiteralExpression
@@ -542,6 +542,8 @@ identifier
     | From
     | Yield
     | Of
+    | Target
+    | Meta
     ;
 
 reservedWord

@@ -59,7 +59,6 @@ abstract class JavaScriptLexerBase(input: CharStream?) : Lexer(input) {
 
     /**
      * Current value of strict mode
-     * Can be defined during parsing, see StringFunctions.js and StringGlobal.js samples
      */
     private var useStrictCurrent = false
 

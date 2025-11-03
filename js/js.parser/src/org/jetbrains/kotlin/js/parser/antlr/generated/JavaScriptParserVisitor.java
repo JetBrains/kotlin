@@ -584,19 +584,19 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOptionalChainExpression(JavaScriptParser.OptionalChainExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code NotExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNotExpression(JavaScriptParser.NotExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code ImportMetaExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitImportMetaExpression(JavaScriptParser.ImportMetaExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NotExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNotExpression(JavaScriptParser.NotExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code PreDecreaseExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
