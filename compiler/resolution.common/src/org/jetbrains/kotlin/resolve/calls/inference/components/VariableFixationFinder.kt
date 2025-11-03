@@ -133,7 +133,7 @@ class VariableFixationFinder(
         override fun toString(): String {
             // `asReversed()` - to keep high-priority qualities first.
             val qualities = TypeVariableFixationReadinessQuality.entries.asReversed()
-                .joinToString(",\n\t") { it.name + " = " + get(it) }
+                .joinToString("\n\t") { (if (get(it)) " true " else "false ") + it.name }
             return "Readiness(\n\t$qualities\n)"
         }
     }
@@ -314,6 +314,12 @@ class VariableFixationFinder(
 
         val candidate = chooseBestTypeVariableCandidateWithLogging(allTypeVariables, dependencyProvider) ?: return null
         val readiness = candidate.getReadiness(dependencyProvider)
+
+//        VariableForFixation(
+//            candidate,
+//            readiness[Q.HAS_PROPER_CONSTRAINTS],
+//            readiness[Q.HAS_OUTER_TYPE_VARIABLE_DEPENDENCY]
+//        )
 
         return when {
             !readiness[Q.ALLOWED] -> null
