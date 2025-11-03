@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
+import org.jetbrains.kotlin.backend.common.lower.coroutines.addExplicitReturnUnitToSuspendFunctions
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -47,16 +48,20 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
     }
 
     private fun transformSuspendFunction(function: IrSimpleFunction): List<IrFunction>? {
+        val originalReturnType = function.returnType.also {
+            function.returnType = context.irBuiltIns.anyNType
+        }
         val body = function.body ?: return null
         return when (val functionKind = getSuspendFunctionKind(context, function, body, includeSuspendLambda = false)) {
-            is SuspendFunctionKind.NO_SUSPEND_CALLS -> null
+            is SuspendFunctionKind.NO_SUSPEND_CALLS -> {
+                addExplicitReturnUnitToSuspendFunctions(context, function, body, originalReturnType)
+                null
+            }
             is SuspendFunctionKind.DELEGATING -> {
                 removeReturnIfSuspendedCallAndSimplifyDelegatingCall(function, functionKind.delegatingCall)
                 null
             }
             is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
-                val originalReturnType = function.returnType
-                function.returnType = context.irBuiltIns.anyNType
                 generateGeneratorAndItsWrapper(function, body, originalReturnType)
             }
         }
