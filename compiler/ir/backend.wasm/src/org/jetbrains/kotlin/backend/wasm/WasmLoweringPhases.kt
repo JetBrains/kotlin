@@ -162,6 +162,12 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
     prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
+private val redundantCastsRemoverPhase = makeIrModulePhase(
+    lowering = ::RedundantCastsRemoverLowering,
+    name = "RedundantCastsRemoverLowering",
+    prerequisite = setOf(inlineAllFunctionsPhase),
+)
+
 private val removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase = makeIrModulePhase(
     { RemoveInlineDeclarationsWithReifiedTypeParametersLowering() },
     name = "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
@@ -619,6 +625,7 @@ fun getWasmLowerings(
         // just because it goes so in Native.
         validateIrAfterInliningOnlyPrivateFunctionsPhase,
         inlineAllFunctionsPhase,
+        redundantCastsRemoverPhase,
         validateIrAfterInliningAllFunctionsPhase,
         // END: Common Native/JS/Wasm prefix.
 
