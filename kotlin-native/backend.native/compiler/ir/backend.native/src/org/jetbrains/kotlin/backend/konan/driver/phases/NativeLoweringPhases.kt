@@ -561,6 +561,12 @@ private val assertionRemoverPhase = createFileLoweringPhase(
         prerequisite = setOf(assertionWrapperPhase),
 )
 
+internal val redundantCastsRemoverPhase = createFileLoweringPhase(
+        lowering = ::RedundantCastsRemoverLowering,
+        name = "RedundantCastsRemoverLowering",
+        prerequisite = setOf(inlineAllFunctionsPhase),
+)
+
 internal val constEvaluationPhase = createFileLoweringPhase(
         lowering = { context: Context ->
             val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true)
