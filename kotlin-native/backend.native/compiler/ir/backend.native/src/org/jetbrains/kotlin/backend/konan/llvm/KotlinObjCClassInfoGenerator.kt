@@ -63,7 +63,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                         NullPointer(llvm.int8Type)
                 ).pointer,
 
-                          generateClassDataImp(irClass)
+                          generateClassDataImp(irClass, objCLLvmDeclarations)
         )
 
         objCLLvmDeclarations.classInfoGlobal.setInitializer(info)
@@ -129,10 +129,16 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                 )
             }
 
-    private fun generateClassDataImp(irClass: IrClass): ConstPointer {
+    private fun generateClassDataImp(irClass: IrClass, objCLLvmDeclarations: KotlinObjCClassLlvmDeclarations): ConstPointer {
         val classDataPointer = staticData.placeGlobal(
                 "kobjcclassdata:${irClass.fqNameForIrSerialization}#internal",
-                Zero(runtime.kotlinObjCClassData)
+                Struct(
+                        runtime.kotlinObjCClassData,
+                        NullPointer(llvm.kTypeInfo),
+                        objCLLvmDeclarations.classInfoGlobal.pointer,
+                        NullPointer(llvm.int8Type),
+                        ConstInt32(llvm, 0)
+                )
         ).pointer
 
         val functionProto = LlvmFunctionSignature(
