@@ -24243,6 +24243,166 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/fp")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Fp {
+    @Test
+    @TestMetadata("addSubDenormalDouble.kt")
+    public void testAddSubDenormalDouble() {
+      runTest("compiler/testData/codegen/box/fp/addSubDenormalDouble.kt");
+    }
+
+    @Test
+    @TestMetadata("addSubDenormalFloat.kt")
+    public void testAddSubDenormalFloat() {
+      runTest("compiler/testData/codegen/box/fp/addSubDenormalFloat.kt");
+    }
+
+    @Test
+    @TestMetadata("addSubZeroInfinityDouble.kt")
+    public void testAddSubZeroInfinityDouble() {
+      runTest("compiler/testData/codegen/box/fp/addSubZeroInfinityDouble.kt");
+    }
+
+    @Test
+    @TestMetadata("addSubZeroInfinityFloat.kt")
+    public void testAddSubZeroInfinityFloat() {
+      runTest("compiler/testData/codegen/box/fp/addSubZeroInfinityFloat.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInFp() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fp"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("atan2ZeroGuadrantsDouble.kt")
+    public void testAtan2ZeroGuadrantsDouble() {
+      runTest("compiler/testData/codegen/box/fp/atan2ZeroGuadrantsDouble.kt");
+    }
+
+    @Test
+    @TestMetadata("denormalGradualDoubleBits.kt")
+    public void testDenormalGradualDoubleBits() {
+      runTest("compiler/testData/codegen/box/fp/denormalGradualDoubleBits.kt");
+    }
+
+    @Test
+    @TestMetadata("denormalGradualFloatBits.kt")
+    public void testDenormalGradualFloatBits() {
+      runTest("compiler/testData/codegen/box/fp/denormalGradualFloatBits.kt");
+    }
+
+    @Test
+    @TestMetadata("divZeroAndNanDouble.kt")
+    public void testDivZeroAndNanDouble() {
+      runTest("compiler/testData/codegen/box/fp/divZeroAndNanDouble.kt");
+    }
+
+    @Test
+    @TestMetadata("divZeroAndNanFloat.kt")
+    public void testDivZeroAndNanFloat() {
+      runTest("compiler/testData/codegen/box/fp/divZeroAndNanFloat.kt");
+    }
+
+    @Test
+    @TestMetadata("divisionOfZeroDouble.kt")
+    public void testDivisionOfZeroDouble() {
+      runTest("compiler/testData/codegen/box/fp/divisionOfZeroDouble.kt");
+    }
+
+    @Test
+    @TestMetadata("divisionOfZeroFloat.kt")
+    public void testDivisionOfZeroFloat() {
+      runTest("compiler/testData/codegen/box/fp/divisionOfZeroFloat.kt");
+    }
+
+    @Test
+    @TestMetadata("mulZeroInfinityDouble.kt")
+    public void testMulZeroInfinityDouble() {
+      runTest("compiler/testData/codegen/box/fp/mulZeroInfinityDouble.kt");
+    }
+
+    @Test
+    @TestMetadata("mulZeroInfinityFloat.kt")
+    public void testMulZeroInfinityFloat() {
+      runTest("compiler/testData/codegen/box/fp/mulZeroInfinityFloat.kt");
+    }
+
+    @Test
+    @TestMetadata("powDouble.kt")
+    public void testPowDouble() {
+      runTest("compiler/testData/codegen/box/fp/powDouble.kt");
+    }
+
+    @Test
+    @TestMetadata("powFloat.kt")
+    public void testPowFloat() {
+      runTest("compiler/testData/codegen/box/fp/powFloat.kt");
+    }
+
+    @Test
+    @TestMetadata("precisionAround2p53Double.kt")
+    public void testPrecisionAround2p53Double() {
+      runTest("compiler/testData/codegen/box/fp/precisionAround2p53Double.kt");
+    }
+
+    @Test
+    @TestMetadata("precisionAround2p53Float.kt")
+    public void testPrecisionAround2p53Float() {
+      runTest("compiler/testData/codegen/box/fp/precisionAround2p53Float.kt");
+    }
+
+    @Test
+    @TestMetadata("remainderMixedFpInfinitiesNans.kt")
+    public void testRemainderMixedFpInfinitiesNans() {
+      runTest("compiler/testData/codegen/box/fp/remainderMixedFpInfinitiesNans.kt");
+    }
+
+    @Test
+    @TestMetadata("remainderMixedFpSubnormalDivisor.kt")
+    public void testRemainderMixedFpSubnormalDivisor() {
+      runTest("compiler/testData/codegen/box/fp/remainderMixedFpSubnormalDivisor.kt");
+    }
+
+    @Test
+    @TestMetadata("remainderMixedIntFp.kt")
+    public void testRemainderMixedIntFp() {
+      runTest("compiler/testData/codegen/box/fp/remainderMixedIntFp.kt");
+    }
+
+    @Test
+    @TestMetadata("remainderMixedLongFpLargeRatio.kt")
+    public void testRemainderMixedLongFpLargeRatio() {
+      runTest("compiler/testData/codegen/box/fp/remainderMixedLongFpLargeRatio.kt");
+    }
+
+    @Test
+    @TestMetadata("remainderVsModDouble.kt")
+    public void testRemainderVsModDouble() {
+      runTest("compiler/testData/codegen/box/fp/remainderVsModDouble.kt");
+    }
+
+    @Test
+    @TestMetadata("remainderVsModFloat.kt")
+    public void testRemainderVsModFloat() {
+      runTest("compiler/testData/codegen/box/fp/remainderVsModFloat.kt");
+    }
+
+    @Test
+    @TestMetadata("toBitsZeroAndNanDouble.kt")
+    public void testToBitsZeroAndNanDouble() {
+      runTest("compiler/testData/codegen/box/fp/toBitsZeroAndNanDouble.kt");
+    }
+
+    @Test
+    @TestMetadata("toBitsZeroAndNanFloat.kt")
+    public void testToBitsZeroAndNanFloat() {
+      runTest("compiler/testData/codegen/box/fp/toBitsZeroAndNanFloat.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/fullJdk")
   @TestDataPath("$PROJECT_ROOT")
   public class FullJdk {
