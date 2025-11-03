@@ -29,6 +29,21 @@ public class PluginCliTestsGenerated extends AbstractPluginCliTests {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugins-interactions-testing/testData/cli"), Pattern.compile("^(.+)\\.args$"), null, false);
   }
 
+  @TestMetadata("pluginsLegacyOrdered.args")
+  public void testPluginsLegacyOrdered() {
+    runTest("plugins/plugins-interactions-testing/testData/cli/pluginsLegacyOrdered.args");
+  }
+
+  @TestMetadata("pluginsLegacyReversed.args")
+  public void testPluginsLegacyReversed() {
+    runTest("plugins/plugins-interactions-testing/testData/cli/pluginsLegacyReversed.args");
+  }
+
+  @TestMetadata("pluginsLegacySorted.args")
+  public void testPluginsLegacySorted() {
+    runTest("plugins/plugins-interactions-testing/testData/cli/pluginsLegacySorted.args");
+  }
+
   @TestMetadata("pluginsOrdered.args")
   public void testPluginsOrdered() {
     runTest("plugins/plugins-interactions-testing/testData/cli/pluginsOrdered.args");
