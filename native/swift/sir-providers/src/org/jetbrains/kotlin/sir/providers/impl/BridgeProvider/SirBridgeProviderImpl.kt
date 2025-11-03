@@ -198,9 +198,9 @@ private class BridgeFunctionDescriptor(
             extensionReceiverParameter?.let { allBridges.add(it.bridge) }
             allBridges.add(returnType)
             allBridges.forEach {
-                if (it !is Bridge.CustomBridgeWithAdditionalConversions) return@forEach
-                for (i in 0..<it.additionalObjCConversionsNumber) {
-                    add(it.additionalObjCConversionFunctionBridge(i))
+                if (it.kotlinTypeList.size <= 1) return@forEach
+                for (i in 0..<it.kotlinTypeList.size) {
+                    add(it.inSwiftSources.nativePointerToMultipleObjCBridge(i))
                 }
             }
         }.distinct()

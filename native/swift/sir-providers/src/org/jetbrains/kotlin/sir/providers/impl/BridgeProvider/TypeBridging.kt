@@ -55,7 +55,7 @@ internal fun bridgeAsNSCollectionElement(type: SirType): WithSingleType = when (
     AsOutError,
     AsVoid,
         -> bridge as WithSingleType
-    is CustomBridgeWithAdditionalConversions -> error("!!!")
+    is SirCustomTypeTranslatorImpl.RangeBridge -> error("XXX")
 }
 
 context(session: SirSession)
@@ -145,7 +145,7 @@ internal object IdentityValueConversion : ValueConversion {
     override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
 }
 
-internal interface NilableIdentityValueConversion : InSwiftSourcesConversion {
+internal interface NilableIdentityValueConversion : InSwiftSourcesConversionForSingleObjCType {
     override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
     override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
 }
@@ -189,6 +189,8 @@ internal sealed class Bridge(
         open val kotlinType: KotlinType get() = kotlinTypeList.single()
 
         open val cType: CType get() = cTypeList.single()
+
+        abstract override val inSwiftSources: InSwiftSourcesConversionForSingleObjCType
     }
 
     /**
@@ -251,7 +253,7 @@ internal sealed class Bridge(
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
         }
 
-        override val inSwiftSources = object : InSwiftSourcesConversion {
+        override val inSwiftSources = object : InSwiftSourcesConversionForSingleObjCType {
             override fun renderNil(): String = "nil"
 
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
@@ -292,7 +294,7 @@ internal sealed class Bridge(
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
         }
 
-        override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
+        override val inSwiftSources: InSwiftSourcesConversionForSingleObjCType = object : InSwiftSourcesConversionForSingleObjCType {
             override fun renderNil(): String = "nil"
 
             override fun swiftToKotlin(
@@ -334,7 +336,7 @@ internal sealed class Bridge(
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
         }
 
-        override val inSwiftSources = object : InSwiftSourcesConversion {
+        override val inSwiftSources = object : InSwiftSourcesConversionForSingleObjCType {
             override fun renderNil(): String = "nil"
 
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
@@ -371,7 +373,7 @@ internal sealed class Bridge(
                 "$valueExpression.objcPtr()"
         }
 
-        override val inSwiftSources: InSwiftSourcesConversion = object : NilableIdentityValueConversion {
+        override val inSwiftSources: InSwiftSourcesConversionForSingleObjCType = object : NilableIdentityValueConversion {
             override fun renderNil(): String = "nil"
         }
     }
@@ -457,7 +459,7 @@ internal sealed class Bridge(
     class AsNSObject(
         swiftType: SirNominalType,
     ) : AsObjCBridged(swiftType, CType.NSObject) {
-        override val inSwiftSources: InSwiftSourcesConversion = object : NilableIdentityValueConversion {
+        override val inSwiftSources: InSwiftSourcesConversionForSingleObjCType = object : NilableIdentityValueConversion {
             override fun renderNil(): String = "nil"
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
                 "$valueExpression as! ${typeNamer.swiftFqName(swiftType)}"
@@ -468,7 +470,7 @@ internal sealed class Bridge(
         swiftType: SirNominalType,
         cType: CType,
     ) : AsObjCBridged(swiftType, cType) {
-        abstract inner class InSwiftSources : InSwiftSourcesConversion {
+        abstract inner class InSwiftSources : InSwiftSourcesConversionForSingleObjCType {
             override fun renderNil(): String = super@AsNSCollection.inSwiftSources.renderNil()
 
             abstract override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String
@@ -542,7 +544,7 @@ internal sealed class Bridge(
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = "Unit"
         }
 
-        override val inSwiftSources = object : InSwiftSourcesConversion {
+        override val inSwiftSources = object : InSwiftSourcesConversionForSingleObjCType {
             override fun renderNil(): String = error("unrepresentable")
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = renderNil()
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
@@ -587,7 +589,7 @@ internal sealed class Bridge(
                 return when (wrappedObject) {
                     is AsObjCBridged ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsBlock, is AsAnyBridgeable, is CustomBridgeWithAdditionalConversions ->
+                    is AsObject, is AsExistential, is AsBlock, is AsAnyBridgeable, is SirCustomTypeTranslatorImpl.RangeBridge ->
                         "{ switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"
@@ -602,6 +604,10 @@ internal sealed class Bridge(
             }
 
             override fun renderNil(): String = error("we do not support wrapping optionals into optionals, as it is impossible in kotlin")
+
+            override fun nativePointerToMultipleObjCBridge(index: Int): SirFunctionBridge {
+                error("XXX")
+            }
         }
     }
 
@@ -684,7 +690,7 @@ internal sealed class Bridge(
                 }
             }
 
-        override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
+        override val inSwiftSources: InSwiftSourcesConversionForSingleObjCType = object : InSwiftSourcesConversionForSingleObjCType {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val argsInClosure = parameters
                     .mapIndexed { idx, el -> "arg${idx}" to el }.takeIf { it.isNotEmpty() }
@@ -721,8 +727,8 @@ internal sealed class Bridge(
         override val inKotlinSources: ValueConversion
             get() = IdentityValueConversion
 
-        override val inSwiftSources: InSwiftSourcesConversion
-            get() = object : InSwiftSourcesConversion {
+        override val inSwiftSources: InSwiftSourcesConversionForSingleObjCType
+            get() = object : InSwiftSourcesConversionForSingleObjCType {
                 override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                     return "&$valueExpression"
                 }
@@ -738,51 +744,6 @@ internal sealed class Bridge(
     }
 
     /**
-     * A bridge to be used in custom implementations inside [org.jetbrains.kotlin.sir.providers.impl.SirCustomTypeTranslatorImpl].
-     *
-     * Normally, this bridge should be focused on conversions of some custom types in Kotlin.
-     * We expect from these types that they are class-based, so the conversion is based on the one used in [AsObject].
-     * E.g., a default conversion in [kotlinToObjC] simply creates a native pointer for a Kotlin result.
-     */
-    abstract class CustomBridgeWithAdditionalConversions(
-        swiftType: SirNominalType, kotlinTypeList: List<KotlinType>, cTypeList: List<CType>
-    ) : Bridge(swiftType, kotlinTypeList, cTypeList) {
-        abstract fun swiftToObjC(typeNamer: SirTypeNamer, valueExpression: String): String
-
-        abstract fun objCToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String
-
-        open fun kotlinToObjC(typeNamer: SirTypeNamer, valueExpression: String): String =
-            "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
-
-        abstract fun objCToSwift(typeNamer: SirTypeNamer, valueExpression: String): String
-
-        open val additionalObjCConversionsNumber: Int get() = 0
-
-        /**
-         * @param index expected to be in 0 ..< [additionalObjCConversionsNumber]
-         */
-        abstract fun additionalObjCConversionFunctionBridge(index: Int): SirFunctionBridge
-
-        override val inKotlinSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                objCToKotlin(typeNamer, valueExpression)
-
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
-                kotlinToObjC(typeNamer, valueExpression)
-        }
-
-        override val inSwiftSources = object : InSwiftSourcesConversion {
-            override fun renderNil(): String = "nil"
-
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                swiftToObjC(typeNamer, valueExpression)
-
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
-                objCToSwift(typeNamer, valueExpression)
-        }
-    }
-
-    /**
      * [ValueConversion] to be used when generating Kotlin sources.
      */
     abstract val inKotlinSources: ValueConversion
@@ -792,5 +753,13 @@ internal sealed class Bridge(
      */
     abstract val inSwiftSources: InSwiftSourcesConversion
 
-    interface InSwiftSourcesConversion : ValueConversion, NilRepresentable
+    interface InSwiftSourcesConversion : ValueConversion, NilRepresentable {
+        fun nativePointerToMultipleObjCBridge(index: Int): SirFunctionBridge
+    }
+
+    interface InSwiftSourcesConversionForSingleObjCType : InSwiftSourcesConversion {
+        override fun nativePointerToMultipleObjCBridge(index: Int): SirFunctionBridge {
+            throw UnsupportedOperationException("Should never be called if a bridge has single ObjC type")
+        }
+    }
 }
