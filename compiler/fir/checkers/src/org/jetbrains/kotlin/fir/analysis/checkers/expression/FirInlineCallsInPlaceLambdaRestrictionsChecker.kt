@@ -3,9 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(org.jetbrains.kotlin.fir.symbols.SymbolInternals::class)
+
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -17,10 +21,12 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import kotlin.reflect.full.memberProperties
 
 object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
+        val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
         val variableSymbol = expression.calleeReference.toResolvedVariableSymbol() ?: return
         if (!variableSymbol.isVar) return
 
@@ -39,7 +45,14 @@ object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpres
         }
         if (hasCallsInplace != null && hasCallsInplace) return
 
-        reporter.reportOn(expression.source, FirErrors.USAGE_IS_NOT_INLINABLE, variableSymbol)
+        report(
+            IEData(
+                expressionName = expression::class.simpleName,
+                containingLambda = containingLambda.name.asString(),
+                call = call.source?.lighterASTNode.toString(),
+                varDeclaration = variableSymbol.fir.source?.lighterASTNode.toString()
+            )
+        )
     }
 
     context(context: CheckerContext)
@@ -67,3 +80,33 @@ object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpres
         return null
     }
 }
+
+class IEReporter(
+    private val source: KtSourceElement?,
+    private val context: CheckerContext,
+    private val reporter: DiagnosticReporter,
+    private val error: KtDiagnosticFactory1<String>,
+) {
+    operator fun invoke(v: IEData) {
+        val dataStr = buildList {
+            addAll(serializeData(v))
+        }.joinToString("; ")
+        val str = "$borderTag $dataStr $borderTag"
+        reporter.reportOn(source, error, str, context)
+    }
+
+    private val borderTag: String = "KLEKLE"
+
+    private fun serializeData(v: IEData): List<String> = buildList {
+        v::class.memberProperties.forEach { property ->
+            add("${property.name}: ${property.getter.call(v)}")
+        }
+    }
+}
+
+data class IEData(
+    val expressionName: String? = null,
+    val containingLambda: String? = null,
+    val call: String? = null,
+    val varDeclaration: String? = null,
+)

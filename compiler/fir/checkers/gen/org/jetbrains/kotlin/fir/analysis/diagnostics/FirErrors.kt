@@ -158,6 +158,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val UNSUPPORTED_FEATURE: KtDiagnosticFactory1<Pair<LanguageFeature, LanguageVersionSettings>> = KtDiagnosticFactory1("UNSUPPORTED_FEATURE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val UNSUPPORTED_SUSPEND_TEST: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNSUPPORTED_SUSPEND_TEST", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val NEW_INFERENCE_ERROR: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NEW_INFERENCE_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val IE_DIAGNOSTIC: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("IE_DIAGNOSTIC", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // Miscellaneous
     val OTHER_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("OTHER_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
