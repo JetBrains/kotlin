@@ -215,12 +215,14 @@ private class BridgeFunctionDescriptor(
             add(descriptor.swiftAsyncCall(typeNamer))
         } else if (errorParameter != null) {
             add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
-            add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvoke(typeNamer))
+            add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvocationLineForCBridge(typeNamer))
             val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
             add("guard ${errorParameter.name} == nil else { throw KotlinError(wrapped: $error) }")
             resultTransformer?.let { add(it(descriptor.returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result"))) }
         } else {
-            add((resultTransformer ?: { it })(descriptor.swiftCall(typeNamer)))
+            val swiftCallAndTransformationLines = descriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer)
+            addAll(swiftCallAndTransformationLines.dropLast(1))
+            add((resultTransformer ?: { it })(swiftCallAndTransformationLines.last()))
         }
     }
 }
@@ -315,7 +317,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     add("}")
 }
 
-private fun BridgeFunctionDescriptor.swiftInvoke(typeNamer: SirTypeNamer): String {
+private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: SirTypeNamer): String {
     val parameters = allParameters.filter { it.isRenderable }.joinToString {
         // We fix ugly `self` escaping here. This is the only place we'd otherwise need full support for swift's contextual keywords
         it.bridge.inSwiftSources.swiftToKotlin(typeNamer, it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier)
@@ -323,8 +325,15 @@ private fun BridgeFunctionDescriptor.swiftInvoke(typeNamer: SirTypeNamer): Strin
     return "$cBridgeName($parameters)"
 }
 
-private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String {
-    return returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvoke(typeNamer))
+private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer: SirTypeNamer): List<String> {
+    val swiftInvocation = swiftInvocationLineForCBridge(typeNamer)
+    if (returnType.cTypeList.size <= 1) {
+        return listOf(returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvocation))
+    }
+    return buildList {
+        add("let _result = $swiftInvocation")
+        add(returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result"))
+    }
 }
 
 private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer): String {
@@ -333,7 +342,7 @@ private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer): St
     return """
         await withUnsafeContinuation { nativeContinuation in
             let ${continuation.name.swiftIdentifier}: ${continuation.bridge.swiftType.swiftName} = { nativeContinuation.resume(returning: $0) }
-            let _: () = ${swiftInvoke(typeNamer)}
+            let _: () = ${swiftInvocationLineForCBridge(typeNamer)}
         }
     """.trimIndent()
 }
