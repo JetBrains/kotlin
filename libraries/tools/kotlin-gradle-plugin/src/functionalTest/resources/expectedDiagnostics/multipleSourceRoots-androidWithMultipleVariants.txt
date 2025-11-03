@@ -1,8 +1,8 @@
 [NonKmpAgpIsDeprecated | WARNING] The 'org.jetbrains.kotlin.multiplatform' plugin deprecated compatibility with Android Gradle plugin: 'com.android.application'
-The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins since Android Gradle Plugin version 9.0.0.
+The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with 'com.android.application' starting with Android Gradle Plugin 9.0.0.
 
-Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
+Please change the structure of the your project and move the usage of 'com.android.application' into a separate subproject. The new subproject should add a dependency on this KMP subproject.
 
-The change may require changing the structure of the your project. Read more: https://kotl.in/kmp-project-structure-migration
-Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
+Read more: https://kotl.in/kmp-project-structure-migration
+Please change the structure of your project and move the usage of 'com.android.application' into a separate subproject.
 See https://kotl.in/gradle/agp-new-kmp for more details.
