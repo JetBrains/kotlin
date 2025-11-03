@@ -326,6 +326,7 @@ include ":kotlin-script-runtime",
         ":compiler:build-tools:kotlin-build-statistics",
         ":gradle:android-test-fixes",
         ":gradle:documentation",
+        ":gradle:generators:native-cache-kotlin-version",
         ":gradle:gradle-warnings-detector",
         ":gradle:kotlin-compiler-args-properties",
         ":gradle:regression-benchmark-templates",
@@ -938,6 +939,7 @@ project(':kotlin-gradle-plugins-bom').projectDir = "$rootDir/libraries/tools/kot
 project(':kotlin-privacy-manifests-plugin').projectDir = "$rootDir/libraries/tools/kotlin-privacy-manifests-plugin" as File
 project(':gradle:android-test-fixes').projectDir = "$rootDir/libraries/tools/gradle/android-test-fixes" as File
 project(':gradle:documentation').projectDir = "$rootDir/libraries/tools/gradle/documentation" as File
+project(':gradle:generators:native-cache-kotlin-version').projectDir = "$rootDir/libraries/tools/gradle/generators/native-cache-kotlin-version" as File
 project(':gradle:gradle-warnings-detector').projectDir = "$rootDir/libraries/tools/gradle/gradle-warnings-detector" as File
 project(':gradle:kotlin-compiler-args-properties').projectDir = "$rootDir/libraries/tools/gradle/kotlin-compiler-args-properties" as File
 project(":gradle:regression-benchmark-templates").projectDir = "$rootDir/libraries/tools/gradle/regression-benchmark-templates" as File

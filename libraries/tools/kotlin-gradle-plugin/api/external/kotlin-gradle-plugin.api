@@ -1037,8 +1037,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework : org/jetbra
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary : org/gradle/api/Named {
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun binaryOption (Ljava/lang/String;Ljava/lang/String;)V
-	public final fun disableNativeCache (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;Ljava/lang/String;Ljava/net/URI;)V
-	public static synthetic fun disableNativeCache$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary;Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;Ljava/lang/String;Ljava/net/URI;ILjava/lang/Object;)V
+	public final fun disableNativeCache (Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion;Ljava/lang/String;Ljava/net/URI;)V
+	public static synthetic fun disableNativeCache$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary;Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion;Ljava/lang/String;Ljava/net/URI;ILjava/lang/Object;)V
 	public fun getBaseName ()Ljava/lang/String;
 	public final fun getBinaryOptions ()Ljava/util/Map;
 	public final fun getBuildType ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;
