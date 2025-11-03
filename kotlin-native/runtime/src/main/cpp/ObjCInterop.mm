@@ -52,6 +52,11 @@ static inline struct KotlinObjCClassData* GetKotlinClassData(id objOrClass) {
   return static_cast<struct KotlinObjCClassData*>(ptr);
 }
 
+RUNTIME_NOTHROW bool IsKotlinObjCClass(Class cls) {
+  // `CreateKotlinObjCClass` adds this selector to both class and meta-class using `AddKotlinClassData`.
+  return [cls instancesRespondToSelector:@selector(_kotlinObjCClassData)];
+}
+
 namespace {
 
 using BackRef = ManuallyScoped<mm::ObjCBackRef>;

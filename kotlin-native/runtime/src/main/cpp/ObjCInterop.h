@@ -55,6 +55,12 @@ struct KotlinObjCClassInfo {
 };
 
 void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info);
+
+// Returns `true` iff `cls` is created with `CreateKotlinObjCClass`.
+// Including the case when `cls` is a meta-class of a class returned from `CreateKotlinObjCClass`,
+// because `CreateKotlinObjCClass` creates both but returns only the class itself.
+RUNTIME_NOTHROW bool IsKotlinObjCClass(Class cls);
+
 RUNTIME_NOTHROW const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj);
 
 } // extern "C"
