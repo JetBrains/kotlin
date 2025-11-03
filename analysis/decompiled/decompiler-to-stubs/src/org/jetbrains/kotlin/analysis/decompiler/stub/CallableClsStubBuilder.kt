@@ -389,11 +389,11 @@ private class PropertyClsStubBuilder(
 
         val isNotDefault = Flags.IS_NOT_DEFAULT.get(getterFlags)
         val getterStub = KotlinPropertyAccessorStubImpl(
-            /* parent = */ callableStub,
-            /* isGetter = */ true,
-            /* hasBody = */ isNotDefault,
-            /* hasNoExpressionBody = */ true,
-            /* mayHaveContract = */ false, // property accessors don't have contracts in metadata yet
+            parent = callableStub,
+            isGetter = true,
+            hasBody = isNotDefault,
+            hasNoExpressionBody = true,
+            mayHaveContract = false, // property accessors don't have contracts in metadata yet
         )
 
         createModifierListAndAnnotationStubsForAccessor(
@@ -425,11 +425,11 @@ private class PropertyClsStubBuilder(
 
         val isNotDefault = Flags.IS_NOT_DEFAULT.get(setterFlags)
         val setterStub = KotlinPropertyAccessorStubImpl(
-            /* parent = */ callableStub,
-            /* isGetter = */ false,
-            /* hasBody = */ isNotDefault,
-            /* hasNoExpressionBody = */ true,
-            /* mayHaveContract = */ false, // property accessors don't have contracts in metadata yet
+            parent = callableStub,
+            isGetter = false,
+            hasBody = isNotDefault,
+            hasNoExpressionBody = true,
+            mayHaveContract = false, // property accessors don't have contracts in metadata yet
         )
 
         createModifierListAndAnnotationStubsForAccessor(
