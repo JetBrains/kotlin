@@ -25,7 +25,7 @@ class A
         Nested.CONST,
         Interface.CONST,
         <!INSTANCE_ACCESS_BEFORE_SUPER_CALL, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a<!>,
-        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b()<!>
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b<!>()
 )
 constructor() {
 
@@ -38,7 +38,7 @@ constructor() {
             Nested.CONST,
             Interface.CONST,
             <!INSTANCE_ACCESS_BEFORE_SUPER_CALL, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a<!>,
-            <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b()<!>
+            <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b<!>()
     )
     constructor(dummy: Int) : this()
 

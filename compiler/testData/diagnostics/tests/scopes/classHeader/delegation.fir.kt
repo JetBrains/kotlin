@@ -18,13 +18,13 @@ open class S(
 class A : I by S(
         foo(),
         Nested(),
-        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>Inner()<!>,
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>Inner<!>(),
         CONST,
         Companion.CONST,
         Nested.CONST,
         Interface.CONST,
         <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>a<!>,
-        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b()<!>
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b<!>()
 ) {
 
     class Nested {

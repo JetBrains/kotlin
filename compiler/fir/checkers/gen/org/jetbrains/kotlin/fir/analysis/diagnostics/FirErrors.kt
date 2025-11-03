@@ -247,7 +247,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val SUPER_NOT_AVAILABLE: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUPER_NOT_AVAILABLE", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val ABSTRACT_SUPER_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("ABSTRACT_SUPER_CALL", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val ABSTRACT_SUPER_CALL_WARNING: KtDiagnosticFactory0 = KtDiagnosticFactory0("ABSTRACT_SUPER_CALL_WARNING", WARNING, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
-    val INSTANCE_ACCESS_BEFORE_SUPER_CALL: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INSTANCE_ACCESS_BEFORE_SUPER_CALL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val INSTANCE_ACCESS_BEFORE_SUPER_CALL: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INSTANCE_ACCESS_BEFORE_SUPER_CALL", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val SUPER_CALL_WITH_DEFAULT_PARAMETERS: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("SUPER_CALL_WITH_DEFAULT_PARAMETERS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // Supertypes

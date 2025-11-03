@@ -250,7 +250,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SUPER_NOT_AVAILABLE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val ABSTRACT_SUPER_CALL by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val ABSTRACT_SUPER_CALL_WARNING by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
-        val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error<PsiElement> {
+        val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("target")
         }
         val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error<PsiElement> {
