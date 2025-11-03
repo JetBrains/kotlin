@@ -318,6 +318,8 @@ class WasmSymbols(
         val throwValue = CallableIds.throwValue.functionSymbol()
 
         val throw0 = CallableIds.throw0.functionSymbol()
+
+        val jsConcat = CallableIds.jsConcat.functionSymbol()
     }
 
     val wasmExportConstructor by ClassIds.WasmExport.primaryConstructorSymbol()
@@ -519,5 +521,6 @@ private object CallableIds {
     val js = CallableId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier("js"))
     val registerRootSuiteBlock = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("registerRootSuiteBlock"))
     val runRootSuites = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("runRootSuites"))
+    val jsConcat = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("jsConcat"))
 }
 
