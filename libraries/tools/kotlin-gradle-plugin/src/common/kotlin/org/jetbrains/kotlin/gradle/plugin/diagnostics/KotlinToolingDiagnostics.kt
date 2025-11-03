@@ -1948,13 +1948,13 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal object IncompatibleWithTheNewAgpDsl :
+    internal object KotlinAndroidIsIncompatibleWithTheNewAgpDsl :
         ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
             trace: Throwable,
         ) = build(throwable = trace) {
             title("Failed to apply plugin 'org.jetbrains.kotlin.android'")
-                .description("The 'org.jetbrains.kotlin.android' plugin is not compatible with AGP's 9.0 new DSL (`android.newDsl=true`).")
+                .description("The 'org.jetbrains.kotlin.android' plugin is not compatible with AGP's 9.0 new DSL (`android.newDsl=true` is enabled by default).")
                 .solution("Set `android.builtInKotlin=true` in `gradle.properties` and migrate to built-in Kotlin (see https://kotl.in/gradle/agp-built-in-kotlin for guidance), or set `android.newDsl=false` in `gradle.properties` to temporarily bypass this issue.")
                 .documentationLink(URI("https://kotl.in/gradle/agp-new-dsl"))
         }
@@ -1968,6 +1968,28 @@ internal object KotlinToolingDiagnostics {
                 .description("The 'org.jetbrains.kotlin.android' plugin in project '$projectPath' is no longer required for Kotlin support since AGP 9.0.")
                 .solution("Set `android.builtInKotlin=true` and remove `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin. For more information, see https://kotl.in/gradle/agp-built-in-kotlin.")
                 .documentationLink(URI("https://kotl.in/gradle/agp-built-in-kotlin"))
+        }
+    }
+
+    internal object KMPIsIncompatibleWithTheNewAgpDsl :
+        ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            androidPluginId: String,
+            trace: Throwable,
+        ) = build(throwable = trace) {
+            title("Failed to apply plugin 'org.jetbrains.kotlin.multiplatform'")
+                .description("The 'org.jetbrains.kotlin.multiplatform' plugin with `androidTarget()` enabled is not compatible with AGP's 9.0 new DSL (`android.newDsl=true` is enabled by default).")
+                .solution {
+                    if (androidPluginId == "com.android.library") {
+                        "Please migrate to the 'com.android.kotlin.multiplatform.library' plugin instead (see https://kotl.in/gradle/agp-new-kmp for guidance)," +
+                                " or set `android.newDsl=false` in `gradle.properties` to temporarily bypass this issue."
+                    } else {
+                        "Please change the structure of your project and move the usage of '$androidPluginId' into a separate subproject. " +
+                                "Then migrate this KMP subproject to the 'com.android.kotlin.multiplatform.library' plugin instead (see https://kotl.in/gradle/agp-new-kmp for guidance). " +
+                                "Or set `android.newDsl=false` in `gradle.properties` to temporarily bypass this issue."
+                    }
+                }
+                .documentationLink(URI("https://kotl.in/gradle/agp-new-kmp"))
         }
     }
 
