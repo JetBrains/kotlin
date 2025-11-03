@@ -20,6 +20,7 @@ extern "C" {
 
 struct KotlinObjCClassData {
   const TypeInfo* typeInfo;
+  struct KotlinObjCClassInfo* classInfo;
   Class objcClass;
   int32_t bodyOffset;
 };
