@@ -10,3 +10,13 @@ STEP 1..2:
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1, main/m
+STEP 3:
+    language: -IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, main
+    dirty js modules: lib1, main
+    dirty js files:   lib1/l1, main/m
+STEP 4:
+    language: -IrCrossModuleInlinerBeforeKlibSerialization
+    libs: lib1, main
+    dirty js modules: main
+    dirty js files:   main/m
