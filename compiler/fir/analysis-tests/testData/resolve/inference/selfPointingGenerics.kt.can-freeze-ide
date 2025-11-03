@@ -1,6 +1,11 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_FULL_JDK
 // WITH_STDLIB
+// ISSUE: KT-52283
+// LANGUAGE: +DisableSimplificationOfFlexibleUpperConstraintWithDnnLowerBound
+// NB: Currently, the feature above is not enabled by default in any language version, because other tests based on a user project are failing.
+// See testData/resolve/j+k/asListOfToArraySimplified.kt
+
 // FILE: ImmutableMap.java
 import java.util.*;
 
