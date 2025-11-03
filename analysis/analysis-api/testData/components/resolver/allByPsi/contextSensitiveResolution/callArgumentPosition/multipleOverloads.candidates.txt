@@ -544,7 +544,7 @@ KtValueArgument(310,315): 'id(X)'
   NO_CANDIDATES
 
 KtCallExpression(310,315): 'id(X)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -578,11 +578,10 @@ KtCallExpression(310,315): 'id(X)'
       typeArgumentsMapping = {
         X -> (ERROR CLASS: Cannot infer argument for type parameter X)
       }
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /id>
     isInBestCandidates = true
 
 KtNameReferenceExpression(310,312): 'id'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -616,7 +615,6 @@ KtNameReferenceExpression(310,312): 'id'
       typeArgumentsMapping = {
         X -> (ERROR CLASS: Cannot infer argument for type parameter X)
       }
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /id>
     isInBestCandidates = true
 
 KtValueArgumentList(312,315): '(X)'
@@ -1883,7 +1881,7 @@ KtValueArgument(477,482): 'id(X)'
   NO_CANDIDATES
 
 KtCallExpression(477,482): 'id(X)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -1917,11 +1915,10 @@ KtCallExpression(477,482): 'id(X)'
       typeArgumentsMapping = {
         X -> (ERROR CLASS: Cannot infer argument for type parameter X)
       }
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /id>
     isInBestCandidates = true
 
 KtNameReferenceExpression(477,479): 'id'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -1955,7 +1952,6 @@ KtNameReferenceExpression(477,479): 'id'
       typeArgumentsMapping = {
         X -> (ERROR CLASS: Cannot infer argument for type parameter X)
       }
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /id>
     isInBestCandidates = true
 
 KtValueArgumentList(479,482): '(X)'
