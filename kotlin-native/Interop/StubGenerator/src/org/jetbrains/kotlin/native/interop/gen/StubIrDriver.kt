@@ -8,6 +8,7 @@ import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS
+import org.jetbrains.kotlin.native.interop.gen.jvm.CCallMode
 import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 import org.jetbrains.kotlin.native.interop.gen.jvm.InteropConfiguration
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
@@ -189,6 +190,26 @@ class StubIrDriver(
     ) = Result.Metadata(StubIrMetadataEmitter(context, builderResult, moduleName, bridgeBuilderResult).emit())
 
     private fun emitCFile(context: StubIrContext, cFile: Appendable, entryPoint: String?, nativeBridges: NativeBridges) {
+        if (context.configuration.cCallMode == CCallMode.DIRECT) {
+            // There should be no bridges, because this source code won't be included in the generated cinterop klib
+            // and won't even be compiled.
+            check(nativeBridges.nativeLines.count() == 0) {
+                "Expected no native bridges, found:\n${nativeBridges.nativeLines.take(10).joinToString("\n")}"
+            }
+
+            // `entryPoint` is also prohibited in this case.
+            check(entryPoint == null) {
+                "Expected no entry point, found: $entryPoint"
+            }
+
+            // `preambleLines` below is a more tricky thing.
+            // The list can legitimately contain something.
+            // For example, function declarations -- they don't contribute to the compiled bitcode.
+            // So it is allowed to be non-empty but is not added here in any way.
+
+            return
+        }
+
         val out = { it: String -> cFile.appendLine(it) }
 
         context.libraryForCStubs.preambleLines.forEach {
