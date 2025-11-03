@@ -323,8 +323,7 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
               GET_VAR[-1, -1] 'val tmp_0: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
             BLOCK[179, 196] type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
               VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
-                TYPE_OP[185, 188] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                  GET_VAR[185, 188] 'val arg: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
+                GET_VAR[185, 188] 'val arg: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
               RETURNABLE_BLOCK[179, 196] type=kotlin.Unit origin=null
                 INLINED_BLOCK[179, 196]->[58, 123] type=kotlin.Unit origin=null
                   inlinedFunctionSymbol: public final fun inner <T> (arg: T of <root>.inner, block: kotlin.Function1<T of <root>.inner, kotlin.Unit>): kotlin.Unit declared in <root>

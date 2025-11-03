@@ -19,6 +19,7 @@ Kotlin to JS compiler performance report
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (IrValidationAfterInliningOnlyPrivateFunctionsPhase)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineAllFunctions)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineFunctionSerializationPreProcessing)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (RedundantCastsRemoverLowering)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (IrValidationAfterInliningAllFunctionsPhase)
     IR SERIALIZATION        $UINT>>$ ms            $REAL>>$ loc/s
         KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s

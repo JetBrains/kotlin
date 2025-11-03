@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
+import org.jetbrains.kotlin.backend.common.lower.RedundantCastsRemoverLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.lower.VersionOverloadsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.AvoidLocalFOsInInlineFunctionsLowering
@@ -122,6 +123,12 @@ private fun inlineFunctionSerializationPreProcessing(inlineCrossModuleFunctions:
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, /*inlineAllFunctionsPhase*/),
 )
 
+private val redundantCastsRemoverPhase = makeIrModulePhase(
+    lowering = ::RedundantCastsRemoverLowering,
+    name = "RedundantCastsRemoverLowering",
+    prerequisite = setOf(/*inlineAllFunctionsPhase*/),
+)
+
 private fun validateIrAfterInliningAllFunctionsPhase(inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
     { context: PreSerializationLoweringContext ->
         val resolver = PreSerializationNonPrivateInlineFunctionResolver(context, inlineCrossModuleFunctions)
@@ -163,6 +170,7 @@ fun loweringsOfTheFirstPhase(
         this += validateIrAfterInliningOnlyPrivateFunctions
         this += inlineAllFunctionsPhase(inlineCrossModuleFunctions)
         this += inlineFunctionSerializationPreProcessing(inlineCrossModuleFunctions)
+        this += redundantCastsRemoverPhase
         this += validateIrAfterInliningAllFunctionsPhase(inlineCrossModuleFunctions)
     }
 }
