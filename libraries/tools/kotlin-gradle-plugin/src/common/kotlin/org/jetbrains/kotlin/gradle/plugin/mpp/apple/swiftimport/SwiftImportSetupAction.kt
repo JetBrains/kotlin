@@ -287,6 +287,7 @@ internal fun Project.regenerateLinkageImportProjectTask(swiftPMDependencies: Pro
         ),
     ).also {
         it.configure {
+            it.failOnNonIdempotentChanges.set(true)
             it.onlyIf {
                 swiftPMDependencies.get().isNotEmpty()
             }
@@ -303,10 +304,16 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
     @get:Input
     abstract val dependencyIdentifierToImportedSwiftPMDependencies: MapProperty<String, Set<SwiftPMDependency>>
 
-    @get:OutputDirectory
-    open val syntheticImportProjectRoot: DirectoryProperty = project.objects.directoryProperty().convention(
+    @get:Internal
+    val syntheticImportProjectRoot: DirectoryProperty = project.objects.directoryProperty().convention(
         project.layout.buildDirectory.dir("kotlin/swiftImport")
     )
+
+    @get:OutputFiles
+    protected val projectRootTrackedFiles get() = syntheticImportProjectRoot.asFileTree.matching {
+        // FIXME: SwiftPM always generates Package.resolved adjacent to the root Package.swift or in the xcodeproj...
+        it.exclude("Package.resolved")
+    }
 
     @get:Input
     abstract val konanTargets: SetProperty<KonanTarget>
@@ -326,6 +333,9 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
     @get:Input
     abstract val syntheticProductType: Property<SyntheticProductType>
 
+    @get:Input
+    val failOnNonIdempotentChanges: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
+
     enum class SyntheticProductType : Serializable {
         DYNAMIC,
         INFERRED,
@@ -344,6 +354,14 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
     @TaskAction
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
         val packageRoot = syntheticImportProjectRoot.get().asFile
+        val initialDigest = if (failOnNonIdempotentChanges.get()) {
+            val sha = MessageDigest.getInstance("SHA-256")
+            projectRootTrackedFiles.files.sorted().forEach {
+                sha.update(it.readBytes())
+            }
+            sha.digest()
+        } else null
+
         val linkerHack = when (syntheticProductType.get()) {
             SyntheticProductType.DYNAMIC -> packageRoot.resolve("linkerHack").also {
                 it.writeText(linkerScriptHack())
@@ -372,6 +390,19 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                 directlyImportedSwiftPMDependencies = swiftPMDependencies,
                 localPackages = setOf(),
             )
+        }
+
+        if (initialDigest != null) {
+            val sha = MessageDigest.getInstance("SHA-256")
+            projectRootTrackedFiles.files.sorted().forEach {
+                sha.update(it.readBytes())
+            }
+            val finalDigest = sha.digest()
+            if (!initialDigest.contentEquals(finalDigest)) {
+                println("error: Synthetic project regenerated")
+                println("error: Please go to File -> Package -> Resolve Package Versions")
+                error("Synthetic project state updated")
+            }
         }
     }
 
@@ -496,6 +527,8 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
         const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "_internal_linkage_SwiftPMImport"
         const val SUBPACKAGES = "subpackages"
         const val MANIFEST_NAME = "Package.swift"
+
+        const val STALENESS_CHECK = "STALE_KOTLIN_BUILD_CHECK"
     }
 }
 
