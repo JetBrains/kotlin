@@ -16,7 +16,7 @@ open class ConeTypeRendererForDebugInfo protected constructor(
 ) : ConeTypeRenderer(coneAttributeRendererForReadability, renderCapturedDetails) {
     constructor(builder: StringBuilder, renderCapturedDetails: Boolean = false) : this(renderCapturedDetails) {
         this.builder = builder
-        idRenderer = ConeIdRendererForDiagnostics()
+        idRenderer = ConeFullyQualifiedIdRenderer()
         idRenderer.builder = builder
     }
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.renderer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
-class ConeIdRendererForDiagnostics : ConeIdRenderer() {
+class ConeFullyQualifiedIdRenderer : ConeIdRenderer() {
     override fun renderClassId(classId: ClassId) {
         builder.append(classId.asFqNameString())
     }

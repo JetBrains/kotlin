@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.renderer.ConeIdRendererForDiagnostics
+import org.jetbrains.kotlin.fir.renderer.ConeFullyQualifiedIdRenderer
 import org.jetbrains.kotlin.fir.renderer.ConeIdShortRenderer
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForReadability
@@ -188,7 +188,7 @@ fun ConeKotlinType.renderReadable(): String {
 
 fun ConeKotlinType.renderReadableWithFqNames(preRenderedConstructors: Map<TypeConstructorMarker, String>? = null): String {
     val builder = StringBuilder()
-    ConeTypeRendererForReadability(builder, preRenderedConstructors) { ConeIdRendererForDiagnostics() }.render(this)
+    ConeTypeRendererForReadability(builder, preRenderedConstructors) { ConeFullyQualifiedIdRenderer() }.render(this)
     return builder.toString()
 }
 

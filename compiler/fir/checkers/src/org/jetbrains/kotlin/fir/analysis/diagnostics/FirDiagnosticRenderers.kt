@@ -310,7 +310,7 @@ object FirDiagnosticRenderers {
                         }
 
                         if (isClassLike && isAmbiguous) {
-                            ConeTypeRendererForReadability(this) { ConeIdRendererForDiagnostics() }.renderConstructor(it)
+                            ConeTypeRendererForReadability(this) { ConeFullyQualifiedIdRenderer() }.renderConstructor(it)
                         } else {
                             append(representation)
                         }
