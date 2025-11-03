@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
@@ -73,95 +72,6 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         enum class Kind {
             REGULAR,
             CINTEROP,
-        }
-    }
-
-    @Test
-    @DisplayName("Test -Xabi-version CLI argument (KT-74467)")
-    fun testABIVersionCLIFlag() {
-        val module = createModules(Module("a"))
-
-        val correctVersions = arrayOf(
-            "0.0.0", "255.255.255",
-            "0.10.200", "10.200.0", "200.0.10",
-            "2.2.0", "2.3.0"
-        )
-        for (version in correctVersions) {
-            module.compileModules(
-                produceUnpackedKlibs = true,
-                useLibraryNamesInCliArguments = false,
-                extraCmdLineParams = listOf(K2NativeCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version)
-            ) { _, successKlib ->
-                val klib = successKlib.resultingArtifact
-                val manifest = File("${klib.path}/default/manifest")
-                val versionBumped = manifest.readLines()
-                    .find { it.startsWith("abi_version") }
-                    ?.split("=")
-                    ?.get(1)
-                kotlin.test.assertEquals(versionBumped, version)
-            }
-        }
-
-        val incorrectVersions = arrayOf(
-            "0", "0.1", "0.1.", "0.1.2.", "..", "0 .1. 2",
-            "00.001.0002", "-0.-0.-0", "256.256.256"
-        )
-        for (version in incorrectVersions) {
-            try {
-                module.compileModules(
-                    produceUnpackedKlibs = true,
-                    useLibraryNamesInCliArguments = false,
-                    extraCmdLineParams = listOf(K2NativeCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version)
-                )
-                assertTrue(false)
-            } catch (cte: CompilationToolException) {
-                assertTrue(cte.reason.contains("error: invalid ABI version"))
-            }
-        }
-    }
-
-    @Test
-    @DisplayName("Test -Xmetadata-version CLI argument (KT-56062)")
-    fun testMetadataVersionCLIFlag() {
-        val module = createModules(Module("a"))
-
-        val correctVersions = arrayOf(
-            "0.0.0", "255.255.255",
-            "1.4.1", "2.1.0", "2.2.0", "2.3.0"
-        )
-        for (version in correctVersions) {
-            module.compileModules(
-                produceUnpackedKlibs = true,
-                useLibraryNamesInCliArguments = false,
-                extraCmdLineParams = listOf(K2NativeCompilerArguments::metadataVersion.cliArgument + "=" + version)
-            ) { _, successKlib ->
-                val klib = successKlib.resultingArtifact
-                val manifest = File("${klib.path}/default/manifest")
-                val versionBumped = manifest.readLines()
-                    .find { it.startsWith("metadata_version") }
-                    ?.split("=")
-                    ?.get(1)
-                kotlin.test.assertEquals(versionBumped, version)
-            }
-        }
-
-        val incorrectVersions = arrayOf(
-            "0.1.", "0.1.2.", "..", "0 .1. 2",
-            // These test cases should be uncommented after fixing KT-76247
-            // "0", "0.1", "0.1.2.3",
-            // "00.001.0002", "-0.-0.-0", "256.256.256"
-        )
-        for (version in incorrectVersions) {
-            try {
-                module.compileModules(
-                    produceUnpackedKlibs = true,
-                    useLibraryNamesInCliArguments = false,
-                    extraCmdLineParams = listOf(K2NativeCompilerArguments::metadataVersion.cliArgument + "=" + version)
-                )
-                assertTrue(false)
-            } catch (cte: CompilationToolException) {
-                assertTrue(cte.reason.contains("error: invalid metadata version"))
-            }
         }
     }
 
