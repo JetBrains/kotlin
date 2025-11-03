@@ -1,0 +1,53 @@
+FILE[kind=File[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  PROPERTY[fqName=notNullIfNull, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=notNullIfNull]
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Boolean]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+      MODIFIER_LIST[public final]
+      VALUE_PARAMETER_LIST
+  FUN[fqName=notNullIfNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=notNullIfNotNull]
+    contract: [ effect:param(0) != null -> Returns(NOT_NULL) ]
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=encoded]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUN[fqName=notNullIfNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=notNullIfNull]
+    contract: [ effect:param(-1) == null -> Returns(NOT_NULL) ]
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Boolean]

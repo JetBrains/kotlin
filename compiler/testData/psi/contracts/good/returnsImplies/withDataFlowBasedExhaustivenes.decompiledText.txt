@@ -1,0 +1,29 @@
+Variants.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public sealed interface Variants {
+      public open fun foo(): kotlin.Unit { /* compiled code */ }
+
+      public data object A : Variants {
+          public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+          public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+          public open fun toString(): kotlin.String { /* compiled code */ }
+      }
+
+      public data object B : Variants {
+          public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+          public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+          public open fun toString(): kotlin.String { /* compiled code */ }
+      }
+  }
+
+WithDataFlowBasedExhaustivenesKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public fun ensureA(v: Variants): Variants? { contract { /* compiled contract */ }; /* compiled code */ }

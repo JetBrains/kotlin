@@ -1,0 +1,48 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithImpliesReturnKt]]
+  facadeFqName: CombinedContractWithImpliesReturnKt
+  partSimpleName: "CombinedContractWithImpliesReturnKt"
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
+      ANNOTATION_TARGET[useSiteTarget=FILE]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=OptIn]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          CLASS_LITERAL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=ExperimentalContracts]
+        VALUE_ARGUMENT[isSpread=false]
+          CLASS_LITERAL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=ExperimentalExtendedContracts]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=kotlin.contracts, isAllUnder=true, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=contracts]
+  FUN[fqName=holdsInAndImpliesReturn, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInAndImpliesReturn]
+    MODIFIER_LIST[inline]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=R]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=condition]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Any]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=R]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]

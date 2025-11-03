@@ -1,0 +1,4 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public operator fun kotlin.Any?.inc(): kotlin.Int? { contract { /* compiled contract */ }; /* compiled code */ }

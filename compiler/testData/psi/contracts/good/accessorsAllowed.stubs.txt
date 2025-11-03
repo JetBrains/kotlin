@@ -1,0 +1,83 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=AccessorsAllowedKt]]
+  facadeFqName: AccessorsAllowedKt
+  partSimpleName: "AccessorsAllowedKt"
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
+      ANNOTATION_TARGET[useSiteTarget=FILE]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=OptIn]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          CLASS_LITERAL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=ExperimentalContracts]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=kotlin.contracts, isAllUnder=true, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=contracts]
+  PROPERTY[fqName=prop, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=prop]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=true]
+      VALUE_PARAMETER_LIST
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=true]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=v]
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=/Status, fqName=Status, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Status, superNames=[]]
+    MODIFIER_LIST[sealed]
+    CLASS_BODY
+      CLASS[classId=/Status.Ok, fqName=Status.Ok, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Ok, superNames=[Status]]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Status]
+        CLASS_BODY
+      CLASS[classId=/Status.Error, fqName=Status.Error, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Error, superNames=[Status]]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Error]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=Status.Error.message, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=message]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=String]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Status]
+  PROPERTY[fqName=isError, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=isError]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Status]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=true]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=isContextError, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=isContextError]
+    MODIFIER_LIST[]
+      CONTEXT_RECEIVER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Status]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=true]
+      VALUE_PARAMETER_LIST

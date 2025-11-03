@@ -1,0 +1,26 @@
+AccessorsAllowedKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public var kotlin.Int?.prop: kotlin.Int? /* compiled code */
+      public final get() { /* compiled code */ }
+      public final set(v: kotlin.Int?) { /* compiled code */ }
+
+  public val Status.isError: kotlin.Boolean /* compiled code */
+      public final get() { /* compiled code */ }
+
+  context(s: Status) public val isContextError: kotlin.Boolean /* compiled code */
+      public final get() { /* compiled code */ }
+
+Status.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public sealed class Status protected constructor() {
+      public final class Ok public constructor() : Status {
+      }
+
+      public final class Error public constructor(message: kotlin.String) : Status {
+          public final val message: kotlin.String /* compiled code */
+      }
+  }

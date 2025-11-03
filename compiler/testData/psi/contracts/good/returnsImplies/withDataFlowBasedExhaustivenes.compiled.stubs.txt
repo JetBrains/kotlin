@@ -1,0 +1,114 @@
+Variants.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Variants, fqName=Variants, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=Variants, superNames=[]]
+      MODIFIER_LIST[public sealed]
+      CLASS_BODY
+        FUN[fqName=Variants.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          MODIFIER_LIST[public open]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Unit]
+        OBJECT_DECLARATION[classId=/Variants.A, fqName=Variants.A, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=A, superNames=[Variants]]
+          MODIFIER_LIST[public data]
+          SUPER_TYPE_LIST
+            SUPER_TYPE_ENTRY
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Variants]
+          CLASS_BODY
+            FUN[fqName=Variants.A.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+              MODIFIER_LIST[public open operator MustUseReturnValue]
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+                  TYPE_REFERENCE
+                    NULLABLE_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Any]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Boolean]
+            FUN[fqName=Variants.A.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+              MODIFIER_LIST[public open MustUseReturnValue]
+              VALUE_PARAMETER_LIST
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Int]
+            FUN[fqName=Variants.A.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+              MODIFIER_LIST[public open MustUseReturnValue]
+              VALUE_PARAMETER_LIST
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=String]
+        OBJECT_DECLARATION[classId=/Variants.B, fqName=Variants.B, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[Variants]]
+          MODIFIER_LIST[public data]
+          SUPER_TYPE_LIST
+            SUPER_TYPE_ENTRY
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Variants]
+          CLASS_BODY
+            FUN[fqName=Variants.B.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+              MODIFIER_LIST[public open operator MustUseReturnValue]
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+                  TYPE_REFERENCE
+                    NULLABLE_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Any]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Boolean]
+            FUN[fqName=Variants.B.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+              MODIFIER_LIST[public open MustUseReturnValue]
+              VALUE_PARAMETER_LIST
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Int]
+            FUN[fqName=Variants.B.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+              MODIFIER_LIST[public open MustUseReturnValue]
+              VALUE_PARAMETER_LIST
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=String]
+
+
+WithDataFlowBasedExhaustivenesKt.class:
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithDataFlowBasedExhaustivenesKt]]
+    facadeFqName: WithDataFlowBasedExhaustivenesKt
+    partSimpleName: "WithDataFlowBasedExhaustivenesKt"
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    FUN[fqName=ensureA, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=ensureA]
+      contract: [ effect:param(0) is KotlinClassTypeBean(classId=/Variants.A, arguments=[], nullable=false, abbreviatedType=null) -> Returns(NOT_NULL) ]
+      origin: Facade(className=WithDataFlowBasedExhaustivenesKt, jvmClassName=null)
+      MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=v]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Variants]
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Variants]

@@ -1,0 +1,300 @@
+KtFile: impliesReturnsInArgumentPosition.kt
+  PsiComment(EOL_COMMENT)('// LANGUAGE: +ConditionImpliesReturnsContracts')
+  PsiWhiteSpace('\n')
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      ANNOTATION_TARGET
+        PsiElement(file)('file')
+      PsiElement(COLON)(':')
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('OptIn')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        VALUE_ARGUMENT
+          CLASS_LITERAL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('ExperimentalContracts')
+            PsiElement(COLONCOLON)('::')
+            PsiElement(class)('class')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        VALUE_ARGUMENT
+          CLASS_LITERAL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('ExperimentalExtendedContracts')
+            PsiElement(COLONCOLON)('::')
+            PsiElement(class)('class')
+        PsiElement(RPAR)(')')
+  PACKAGE_DIRECTIVE
+    <empty list>
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// ISSUE: KT-79277, KT-79526')
+  PsiWhiteSpace('\n')
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('kotlin')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('contracts')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('notNullIfNotNull')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('encoded')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+            PsiElement(QUEST)('?')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Boolean')
+        PsiElement(QUEST)('?')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('contract')
+        PsiWhiteSpace(' ')
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n        ')
+              BLOCK
+                BINARY_EXPRESSION
+                  PARENTHESIZED
+                    PsiElement(LPAR)('(')
+                    BINARY_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('encoded')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(EXCLEQ)('!=')
+                      PsiWhiteSpace(' ')
+                      NULL
+                        PsiElement(null)('null')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(IDENTIFIER)('implies')
+                  PsiWhiteSpace(' ')
+                  PARENTHESIZED
+                    PsiElement(LPAR)('(')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('returnsNotNull')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        PsiElement(RPAR)(')')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      RETURN
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('encoded')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(EXCLEQ)('!=')
+          PsiWhiteSpace(' ')
+          NULL
+            PsiElement(null)('null')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('String')
+        PsiElement(QUEST)('?')
+    PsiElement(DOT)('.')
+    PsiElement(IDENTIFIER)('notNullIfNull')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Boolean')
+        PsiElement(QUEST)('?')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('contract')
+        PsiWhiteSpace(' ')
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n        ')
+              BLOCK
+                BINARY_EXPRESSION
+                  PARENTHESIZED
+                    PsiElement(LPAR)('(')
+                    BINARY_EXPRESSION
+                      THIS_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(this)('this')
+                        LABEL_QUALIFIER
+                          LABEL
+                            PsiElement(AT)('@')
+                            PsiElement(IDENTIFIER)('notNullIfNull')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(EQEQ)('==')
+                      PsiWhiteSpace(' ')
+                      NULL
+                        PsiElement(null)('null')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(IDENTIFIER)('implies')
+                  PsiWhiteSpace(' ')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('returnsNotNull')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      RETURN
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          THIS_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(this)('this')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(EXCLEQEQEQ)('!==')
+          PsiWhiteSpace(' ')
+          NULL
+            PsiElement(null)('null')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('String')
+        PsiElement(QUEST)('?')
+    PsiElement(DOT)('.')
+    PsiElement(IDENTIFIER)('notNullIfNull')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Boolean')
+        PsiElement(QUEST)('?')
+    PsiWhiteSpace('\n    ')
+    PROPERTY_ACCESSOR
+      PsiElement(get)('get')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n        ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('contract')
+          PsiWhiteSpace(' ')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace('\n            ')
+                BLOCK
+                  BINARY_EXPRESSION
+                    PARENTHESIZED
+                      PsiElement(LPAR)('(')
+                      BINARY_EXPRESSION
+                        THIS_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            PsiElement(this)('this')
+                          LABEL_QUALIFIER
+                            LABEL
+                              PsiElement(AT)('@')
+                              PsiElement(IDENTIFIER)('notNullIfNull')
+                        PsiWhiteSpace(' ')
+                        OPERATION_REFERENCE
+                          PsiElement(EQEQ)('==')
+                        PsiWhiteSpace(' ')
+                        NULL
+                          PsiElement(null)('null')
+                      PsiElement(RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(IDENTIFIER)('implies')
+                    PsiWhiteSpace(' ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('returnsNotNull')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        PsiElement(RPAR)(')')
+                PsiWhiteSpace('\n        ')
+                PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n        ')
+        RETURN
+          PsiElement(return)('return')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            THIS_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(this)('this')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(EXCLEQEQEQ)('!==')
+            PsiWhiteSpace(' ')
+            NULL
+              PsiElement(null)('null')
+        PsiWhiteSpace('\n    ')
+        PsiElement(RBRACE)('}')
