@@ -270,7 +270,9 @@ private class FunctionClsStubBuilder(
             hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty(),
             mayHaveContract = hasContract,
             runIf(hasContract) {
-                ClsContractBuilder(c, typeStubBuilder).loadContract(functionProto)
+                ClsContractBuilder(c, typeStubBuilder).loadContract(
+                    contractOwner = ClsContractOwner.Function(functionProto),
+                )
             },
             origin = createStubOrigin(protoContainer)
         )
@@ -388,12 +390,18 @@ private class PropertyClsStubBuilder(
         }
 
         val isNotDefault = Flags.IS_NOT_DEFAULT.get(getterFlags)
+        val hasContract = propertyProto.hasGetterContract()
         val getterStub = KotlinPropertyAccessorStubImpl(
             parent = callableStub,
             isGetter = true,
             hasBody = isNotDefault,
             hasNoExpressionBody = true,
-            mayHaveContract = false, // property accessors don't have contracts in metadata yet
+            mayHaveContract = hasContract,
+            contract = runIf(hasContract) {
+                ClsContractBuilder(c, typeStubBuilder).loadContract(
+                    contractOwner = ClsContractOwner.PropertyAccessor(propertyProto, isGetter = true),
+                )
+            },
         )
 
         createModifierListAndAnnotationStubsForAccessor(
@@ -424,12 +432,18 @@ private class PropertyClsStubBuilder(
         }
 
         val isNotDefault = Flags.IS_NOT_DEFAULT.get(setterFlags)
+        val hasContract = propertyProto.hasSetterContract()
         val setterStub = KotlinPropertyAccessorStubImpl(
             parent = callableStub,
             isGetter = false,
             hasBody = isNotDefault,
             hasNoExpressionBody = true,
-            mayHaveContract = false, // property accessors don't have contracts in metadata yet
+            mayHaveContract = hasContract,
+            contract = runIf(hasContract) {
+                ClsContractBuilder(c, typeStubBuilder).loadContract(
+                    contractOwner = ClsContractOwner.PropertyAccessor(propertyProto, isGetter = false),
+                )
+            },
         )
 
         createModifierListAndAnnotationStubsForAccessor(

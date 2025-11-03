@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
@@ -16,6 +17,9 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractSerializationVisitor
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean
 
 object StubUtils {
     @JvmStatic
@@ -142,5 +146,18 @@ object StubUtils {
                 }
             }
         }
+    }
+
+    @JvmStatic
+    internal fun StubOutputStream.writeContract(contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?) {
+        writeNullableCollection(contract) { effect ->
+            effect.accept(KotlinContractSerializationVisitor(this), null)
+        }
+    }
+
+    @JvmStatic
+    internal fun StubInputStream.readContract(): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = readNullableCollection {
+        val effectType: KotlinContractEffectType = KotlinContractEffectType.entries[readVarInt()]
+        effectType.deserialize(this@readContract)
     }
 }

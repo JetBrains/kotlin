@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.contracts.description.KtEffectDeclaration
 import org.jetbrains.kotlin.contracts.description.KtValueParameterReference
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.isInstanceType
-import org.jetbrains.kotlin.metadata.deserialization.receiverType
 import org.jetbrains.kotlin.metadata.deserialization.type
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractConstantValues
@@ -21,17 +20,20 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoBufContractDeseri
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 class ClsContractBuilder(private val c: ClsStubBuilderContext, private val typeStubBuilder: TypeClsStubBuilder) :
-    ProtoBufContractDeserializer<KotlinTypeBean, Nothing?, ProtoBuf.Function>() {
+    ProtoBufContractDeserializer<KotlinTypeBean, Nothing?, ClsContractOwner>() {
 
-    fun loadContract(proto: ProtoBuf.Function): List<KtEffectDeclaration<KotlinTypeBean, Nothing?>>? {
-        return proto.contract.effectList.map { loadPossiblyConditionalEffect(it, proto) ?: return null }
+    fun loadContract(contractOwner: ClsContractOwner): List<KtEffectDeclaration<KotlinTypeBean, Nothing?>>? {
+        return contractOwner.contract.effectList.map { loadPossiblyConditionalEffect(it, contractOwner) ?: return null }
     }
 
-    override fun extractVariable(valueParameterIndex: Int, owner: ProtoBuf.Function): KtValueParameterReference<KotlinTypeBean, Nothing?> {
+    override fun extractVariable(
+        valueParameterIndex: Int,
+        owner: ClsContractOwner,
+    ): KtValueParameterReference<KotlinTypeBean, Nothing?> {
         val type = when {
             valueParameterIndex == -1 -> owner.receiverType(c.typeTable)
-            valueParameterIndex < owner.valueParameterCount -> owner.valueParameterList[valueParameterIndex].type(c.typeTable)
-            else -> owner.contextParameterList[valueParameterIndex - owner.valueParameterCount].type(c.typeTable)
+            valueParameterIndex < owner.valueParameterCount -> owner.valueParameters[valueParameterIndex].type(c.typeTable)
+            else -> owner.contextParameters[valueParameterIndex - owner.valueParameterCount].type(c.typeTable)
         }
 
         return if (type?.hasClassName() == true && c.nameResolver.getClassId(type.className) == StandardClassIds.Boolean) {

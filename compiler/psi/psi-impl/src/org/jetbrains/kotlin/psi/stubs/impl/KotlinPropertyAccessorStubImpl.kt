@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
@@ -17,6 +18,7 @@ class KotlinPropertyAccessorStubImpl(
     override val hasBody: Boolean,
     override val hasNoExpressionBody: Boolean,
     override val mayHaveContract: Boolean,
+    val contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?,
 ) : KotlinStubBaseImpl<KtPropertyAccessor>(parent, KtStubElementTypes.PROPERTY_ACCESSOR), KotlinPropertyAccessorStub {
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinPropertyAccessorStubImpl = KotlinPropertyAccessorStubImpl(
@@ -25,5 +27,6 @@ class KotlinPropertyAccessorStubImpl(
         hasBody = hasBody,
         hasNoExpressionBody = hasNoExpressionBody,
         mayHaveContract = mayHaveContract,
+        contract = contract,
     )
 }

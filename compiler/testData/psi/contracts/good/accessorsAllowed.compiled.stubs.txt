@@ -19,10 +19,15 @@ AccessorsAllowedKt.class:
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=true]
+        contract: [ effect:Returns(WILDCARD) -> param(-1) != null ]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=true]
+        contract: [
+          effect:Returns(WILDCARD) -> param(0) != null
+          effect:Returns(WILDCARD) -> param(-1) != null
+        ]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=v]
@@ -43,7 +48,8 @@ AccessorsAllowedKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Boolean]
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=true]
+        contract: [ effect:Returns(TRUE) -> param(-1) is KotlinClassTypeBean(classId=/Status.Error, arguments=[], nullable=false, abbreviatedType=null) ]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=isContextError, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=isContextError]
@@ -59,7 +65,8 @@ AccessorsAllowedKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Boolean]
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=true]
+        contract: [ effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=/Status.Error, arguments=[], nullable=false, abbreviatedType=null) ]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
 

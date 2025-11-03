@@ -2261,8 +2261,6 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.facadePartSimpleNames
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.partSimpleName
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFlexibleTypeBean
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl.Companion.deserializeContract(StubInputStream)
-org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl.serializeContract(StubOutputStream)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinImportAliasStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinImportDirectiveStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl

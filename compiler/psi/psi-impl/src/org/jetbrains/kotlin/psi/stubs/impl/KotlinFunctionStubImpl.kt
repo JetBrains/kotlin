@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
-import org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableCollection
-import org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableCollection
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -40,12 +36,6 @@ class KotlinFunctionStubImpl(
 
     override fun getName(): String? = StringRef.toString(nameRef)
 
-    fun serializeContract(dataStream: StubOutputStream) {
-        dataStream.writeNullableCollection(contract) { effect ->
-            effect.accept(KotlinContractSerializationVisitor(this), null)
-        }
-    }
-
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinFunctionStubImpl = KotlinFunctionStubImpl(
         parent = newParent,
@@ -60,13 +50,4 @@ class KotlinFunctionStubImpl(
         contract = contract,
         origin = origin,
     )
-
-    companion object {
-        fun deserializeContract(
-            dataStream: StubInputStream,
-        ): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = dataStream.readNullableCollection {
-            val effectType: KotlinContractEffectType = KotlinContractEffectType.entries[readVarInt()]
-            effectType.deserialize(dataStream)
-        }
-    }
 }
