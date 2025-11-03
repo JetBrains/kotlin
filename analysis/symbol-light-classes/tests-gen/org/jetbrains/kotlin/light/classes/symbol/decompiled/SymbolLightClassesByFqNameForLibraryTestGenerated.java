@@ -463,6 +463,12 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
   }
 
   @Test
+  @TestMetadata("SuspendFunctionTypeAsAnnotationArgument.kt")
+  public void testSuspendFunctionTypeAsAnnotationArgument() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SuspendFunctionTypeAsAnnotationArgument.kt");
+  }
+
+  @Test
   @TestMetadata("Throws.kt")
   public void testThrows() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Throws.kt");
