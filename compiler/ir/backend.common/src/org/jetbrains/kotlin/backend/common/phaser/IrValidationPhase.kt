@@ -106,6 +106,7 @@ class IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase<Context : Loweri
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig()
+            .withCheckers(IrTypeOperatorRedundancyChecker)
     // Enable after KT-81470 fix
 //            .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
 }
