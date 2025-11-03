@@ -46,7 +46,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         baseBridgeName: String,
         explicitParameters: List<SirParameter>,
         returnType: SirType,
-        kotlinFqName: FqName?,
+        kotlinFqName: FqName,
         selfParameter: SirParameter?,
         extensionReceiverParameter: SirParameter?,
         errorParameter: SirParameter?,
@@ -101,7 +101,7 @@ internal fun isSupported(type: SirType): Boolean = when (type) {
 
 public interface BridgeFunctionBuilder {
     public val baseBridgeName: String
-    public val kotlinFqName: FqName?
+    public val kotlinFqName: FqName
     public val typeNamer: SirTypeNamer
 
     public val parameters: List<Any>
@@ -125,7 +125,7 @@ private class BridgeFunctionDescriptor(
     override val baseBridgeName: String,
     override val parameters: List<BridgeParameter>,
     override val returnType: Bridge,
-    override val kotlinFqName: FqName?,
+    override val kotlinFqName: FqName,
     override val selfParameter: BridgeParameter?,
     override val extensionReceiverParameter: BridgeParameter?,
     override val errorParameter: BridgeParameter?,
@@ -143,7 +143,7 @@ private class BridgeFunctionDescriptor(
     }
 
     override val name
-        get() = kotlinFqName?.pathSegments()?.joinToString(separator = ".") { it.asString().kotlinIdentifier } ?: ""
+        get() = kotlinFqName.pathSegments().joinToString(separator = ".") { it.asString().kotlinIdentifier }
 
     override val argNames
         get() = buildList {
@@ -170,7 +170,7 @@ private class BridgeFunctionDescriptor(
                 "__${extensionReceiverParameter.name}.$safeImportName$args"
             }
         } else {
-            val memberName = kotlinFqName?.shortName()?.asString()?.kotlinIdentifier ?: ""
+            val memberName = kotlinFqName.shortName().asString().kotlinIdentifier
             if (extensionReceiverParameter == null) {
                 "__${selfParameter.name}.$memberName$args"
             } else {
@@ -318,7 +318,7 @@ private fun BridgeFunctionDescriptor.cDeclaration() = buildString {
 }
 
 private fun BridgeFunctionDescriptor.additionalImports(): List<String> = listOfNotNull(
-    (extensionReceiverParameter != null && selfParameter == null && kotlinFqName?.asString()?.contains('.') == true).ifTrue {
+    (extensionReceiverParameter != null && selfParameter == null && !kotlinFqName.parent().isRoot).ifTrue {
         "$name as $safeImportName"
     },
     isAsync.ifTrue {
@@ -327,9 +327,4 @@ private fun BridgeFunctionDescriptor.additionalImports(): List<String> = listOfN
 )
 
 private val BridgeFunctionDescriptor.safeImportName: String
-    get() = kotlinFqName.run {
-        when {
-            this == null -> ""
-            else -> this.pathSegments().joinToString(separator = "_") { it.asString().replace("_", "__") }
-        }
-    }
+    get() = kotlinFqName.pathSegments().joinToString(separator = "_") { it.asString().replace("_", "__") }

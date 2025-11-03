@@ -141,8 +141,7 @@ internal class SirRegularInitFromKtSymbol(
             if (origin is InnerInitSource) {
                 bridgeInitProxy?.createSirBridge {
                     val args = this.argNames
-                    val kotlinFqName = kotlinFqName ?: error("Expected qualified name, but were null instead")
-                    require(kotlinFqName.asString().indexOf('.') >= 2) {
+                    require(!kotlinFqName.parent().isRoot) {
                         "Expected qualified name with a dot, but were ${kotlinFqName.asString()} instead"
                     }
                     require(args.size >= 2) {

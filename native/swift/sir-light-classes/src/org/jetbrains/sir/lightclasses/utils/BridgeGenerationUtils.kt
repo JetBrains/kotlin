@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.sir.mangler.mangledNameOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 
+// todo: should be changed with correct mangling KT-64970
 internal val FqName.baseBridgeName: String
     get() = asString().let {
         if (it.indexOf('.') == -1) "__root___$it"

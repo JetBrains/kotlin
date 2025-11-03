@@ -294,7 +294,7 @@ private class SirEnumCaseFromKtSymbol(
         generateFunctionBridge(
             baseBridgeName = baseName,
             explicitParameters = emptyList(),
-            returnType = SirType.Companion.any,
+            returnType = SirType.any,
             kotlinFqName = fqName,
             selfParameter = null,
             extensionReceiverParameter = null,
