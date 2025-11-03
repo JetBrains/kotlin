@@ -27275,6 +27275,12 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
       }
 
       @Test
+      @TestMetadata("kt82065.kt")
+      public void testKt82065() {
+        runTest("compiler/testData/codegen/box/inline/kt82065.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaAsAny.kt")
       public void testLambdaAsAny() {
         runTest("compiler/testData/codegen/box/inline/lambdaAsAny.kt");
