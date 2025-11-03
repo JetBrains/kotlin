@@ -70,7 +70,7 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
             override val languageVersionSettings: LanguageVersionSettings
                 get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
         }
-        val diagnostic = factory.create(message, languageVersionSettings) ?: return
+        val diagnostic = factory.create(message, context) ?: return
         report(diagnostic, context)
     }
 

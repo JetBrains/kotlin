@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(LegacyRenderingContextApi::class)
+
 package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.diagnostics.*

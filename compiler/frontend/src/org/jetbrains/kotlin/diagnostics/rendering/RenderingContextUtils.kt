@@ -17,4 +17,5 @@ fun RenderingContext.Companion.parameters(d: Diagnostic): List<Any> = when (d) {
     else -> listOf()
 }
 
+@OptIn(LegacyRenderingContextApi::class)
 fun RenderingContext.Companion.fromDiagnostic(d: Diagnostic): RenderingContext = RenderingContext.Impl(parameters(d))

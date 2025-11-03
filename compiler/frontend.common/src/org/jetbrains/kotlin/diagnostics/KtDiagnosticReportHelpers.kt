@@ -16,7 +16,7 @@ fun DiagnosticReporter.report(
     message: String,
     context: DiagnosticContext,
 ) {
-    report(factory.create(message, context.languageVersionSettings), context)
+    report(factory.create(message, context), context)
 }
 
 // #### KtDiagnosticFactory0 ####
@@ -27,7 +27,7 @@ fun DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), positioningStrategy, context), context)
 }
 
 @Deprecated(
@@ -41,7 +41,7 @@ fun DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
 ) {
-    report(factory.on(source.requireNotNull(), positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), positioningStrategy, context), context)
 }
 
 context(context: DiagnosticContext)
@@ -50,7 +50,7 @@ fun DiagnosticReporter.reportOn(
     factory: KtDiagnosticFactory0,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), positioningStrategy, context), context)
 }
 
 // #### KtDiagnosticFactory1 ####
@@ -62,7 +62,7 @@ fun <A> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, positioningStrategy, context), context)
 }
 
 @Deprecated(
@@ -77,7 +77,7 @@ fun <A> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, positioningStrategy, context), context)
 }
 
 context(context: DiagnosticContext)
@@ -87,7 +87,7 @@ fun <A> DiagnosticReporter.reportOn(
     a: A,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, positioningStrategy, context), context)
 }
 
 // #### KtDiagnosticFactory2 ####
@@ -100,7 +100,7 @@ fun <A, B> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, b, positioningStrategy, context), context)
 }
 
 @Deprecated(
@@ -116,7 +116,7 @@ fun <A, B> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, b, positioningStrategy, context), context)
 }
 
 context(context: DiagnosticContext)
@@ -127,7 +127,7 @@ fun <A, B> DiagnosticReporter.reportOn(
     b: B,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, b, positioningStrategy, context), context)
 }
 
 // #### KtDiagnosticFactory3 ####
@@ -141,7 +141,7 @@ fun <A, B, C> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, c, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, b, c, positioningStrategy, context), context)
 }
 
 @Deprecated(
@@ -158,7 +158,7 @@ fun <A, B, C> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, c, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, b, c, positioningStrategy, context), context)
 }
 
 context(context: DiagnosticContext)
@@ -170,7 +170,7 @@ fun <A, B, C> DiagnosticReporter.reportOn(
     c: C,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, c, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, b, c, positioningStrategy, context), context)
 }
 
 // #### KtDiagnosticFactory4 ####
@@ -185,7 +185,7 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, c, d, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, b, c, d, positioningStrategy, context), context)
 }
 
 @Deprecated(
@@ -203,7 +203,7 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, c, d, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, b, c, d, positioningStrategy, context), context)
 }
 
 context(context: DiagnosticContext)
@@ -216,7 +216,7 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     d: D,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, c, d, positioningStrategy, context.languageVersionSettings), context)
+    report(factory.on(source.requireNotNull(), a, b, c, d, positioningStrategy, context), context)
 }
 
 fun AbstractKtSourceElement?.requireNotNull(): AbstractKtSourceElement =

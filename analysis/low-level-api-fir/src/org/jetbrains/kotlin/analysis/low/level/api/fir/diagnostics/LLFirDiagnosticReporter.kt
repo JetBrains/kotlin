@@ -78,7 +78,8 @@ private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
             psiSourceElement,
             severity,
             factory,
-            positioningStrategy
+            positioningStrategy,
+            context,
         )
 
         is KtLightDiagnosticWithParameters1<*> -> KtPsiDiagnosticWithParameters1(
@@ -86,7 +87,8 @@ private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
             a,
             severity,
             factory as KtDiagnosticFactory1<Any?>,
-            positioningStrategy
+            positioningStrategy,
+            context,
         )
 
         is KtLightDiagnosticWithParameters2<*, *> -> KtPsiDiagnosticWithParameters2(
@@ -94,7 +96,8 @@ private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
             a, b,
             severity,
             factory as KtDiagnosticFactory2<Any?, Any?>,
-            positioningStrategy
+            positioningStrategy,
+            context,
         )
 
         is KtLightDiagnosticWithParameters3<*, *, *> -> KtPsiDiagnosticWithParameters3(
@@ -102,7 +105,8 @@ private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
             a, b, c,
             severity,
             factory as KtDiagnosticFactory3<Any?, Any?, Any?>,
-            positioningStrategy
+            positioningStrategy,
+            context,
         )
 
         is KtLightDiagnosticWithParameters4<*, *, *, *> -> KtPsiDiagnosticWithParameters4(
@@ -110,7 +114,8 @@ private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
             a, b, c, d,
             severity,
             factory as KtDiagnosticFactory4<Any?, Any?, Any?, Any?>,
-            positioningStrategy
+            positioningStrategy,
+            context,
         )
         else -> error("Unknown diagnostic type ${this::class.simpleName}")
     }

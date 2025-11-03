@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.CLASS_ID
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.CLASS_ID_RELATIVE_NAME_ONLY
@@ -3362,7 +3363,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             object : DiagnosticParameterRenderer<Boolean> {
                 val contextParametersKey: RenderingContext.Key<List<String>> =
                     object : RenderingContext.Key<List<String>>("contextParameters") {
-                        override fun compute(objectsToRender: Collection<Any?>): List<String> {
+                        override fun compute(objectsToRender: Collection<Any?>, diagnosticContext: DiagnosticBaseContext): List<String> {
                             @Suppress("UNCHECKED_CAST")
                             val symbols = objectsToRender.last() as? List<FirValueParameterSymbol> ?: return emptyList()
 
