@@ -47,6 +47,8 @@ enum Konan_TypeFlags {
   TF_ACYCLIC   = 1 << 1,
   TF_INTERFACE = 1 << 2,
   TF_OBJC_DYNAMIC = 1 << 3,
+  // Created for an Objective-C (meta-)class that is created with `CreateKotlinObjCClass`.
+  TF_KOTLIN_OBJC_CLASS = 1 << 4,
   TF_SUSPEND_FUNCTION = 1 << 5,
   TF_HAS_FINALIZER = 1 << 6,
   TF_REFLECTION_SHOW_PKG_NAME = 1 << 8, // If package name is available in reflection, e.g. in `KClass.qualifiedName`.
