@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LANGUAGE: -ImprovedResolutionInSecondaryConstructors
+// LANGUAGE: +ImprovedResolutionInSecondaryConstructors
 // DIAGNOSTICS: -UNUSED_PARAMETER
 open class Base(p: Any?) {
     fun foo1() {}
@@ -8,7 +8,7 @@ open class Base(p: Any?) {
 
 fun Base.foo() {
     class B : Base {
-        constructor() : super(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foo1<!>())
+        constructor() : super(foo1())
         constructor(x: Int) : super(this@foo.foo1())
         constructor(x: Int, y: Int) : super(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@B<!>.foo1())
     }

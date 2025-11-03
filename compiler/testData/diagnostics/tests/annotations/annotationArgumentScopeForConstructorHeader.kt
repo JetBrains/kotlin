@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ImprovedResolutionInSecondaryConstructors
 // ISSUE: KT-77180
 // ISSUE: KT-77276
 @Retention(AnnotationRetention.SOURCE)

@@ -591,6 +591,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Test
+    @TestMetadata("primaryVsSecondaryConstructorAfter.kt")
+    public void testPrimaryVsSecondaryConstructorAfter() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/primaryVsSecondaryConstructorAfter.kt");
+    }
+
+    @Test
     @TestMetadata("privateSubclassAsTypeArgInParentClass.kt")
     public void testPrivateSubclassAsTypeArgInParentClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/privateSubclassAsTypeArgInParentClass.kt");

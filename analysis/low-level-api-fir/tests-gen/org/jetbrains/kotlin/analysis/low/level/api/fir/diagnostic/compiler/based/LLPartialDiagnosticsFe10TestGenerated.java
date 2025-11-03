@@ -1875,6 +1875,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("receiverResolutionInDelegatedConstructorAfter.kt")
+    public void testReceiverResolutionInDelegatedConstructorAfter() {
+      runTest("compiler/testData/diagnostics/tests/receiverResolutionInDelegatedConstructorAfter.kt");
+    }
+
+    @Test
     @TestMetadata("RecursiveResolve.kt")
     public void testRecursiveResolve() {
       runTest("compiler/testData/diagnostics/tests/RecursiveResolve.kt");
@@ -2607,6 +2613,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("annotationArgumentScopeForConstructorHeader.kt")
       public void testAnnotationArgumentScopeForConstructorHeader() {
         runTest("compiler/testData/diagnostics/tests/annotations/annotationArgumentScopeForConstructorHeader.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationArgumentScopeForConstructorHeaderAfter.kt")
+      public void testAnnotationArgumentScopeForConstructorHeaderAfter() {
+        runTest("compiler/testData/diagnostics/tests/annotations/annotationArgumentScopeForConstructorHeaderAfter.kt");
       }
 
       @Test
@@ -41080,9 +41092,21 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("accessBaseGenericFromInnerExtendingSameBase2After.kt")
+        public void testAccessBaseGenericFromInnerExtendingSameBase2After() {
+          runTest("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/accessBaseGenericFromInnerExtendingSameBase2After.kt");
+        }
+
+        @Test
         @TestMetadata("accessBaseWithSameExtension.kt")
         public void testAccessBaseWithSameExtension() {
           runTest("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/accessBaseWithSameExtension.kt");
+        }
+
+        @Test
+        @TestMetadata("accessBaseWithSameExtensionAfter.kt")
+        public void testAccessBaseWithSameExtensionAfter() {
+          runTest("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/accessBaseWithSameExtensionAfter.kt");
         }
 
         @Test
@@ -41136,6 +41160,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         @TestMetadata("passingInstance.kt")
         public void testPassingInstance() {
           runTest("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/passingInstance.kt");
+        }
+
+        @Test
+        @TestMetadata("primaryVsSecondaryConstructor.kt")
+        public void testPrimaryVsSecondaryConstructor() {
+          runTest("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/primaryVsSecondaryConstructor.kt");
         }
 
         @Test

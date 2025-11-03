@@ -1,5 +1,6 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ImprovedResolutionInSecondaryConstructors
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// LANGUAGE: +ImprovedResolutionInSecondaryConstructors
 // ISSUE: KT-77180
 // ISSUE: KT-77276
 @Retention(AnnotationRetention.SOURCE)
@@ -15,7 +16,7 @@ abstract class MySuper(s: String)
 
 class TopLevelClass @Anno(CONST)/*Error*/ constructor(@Anno(CONST) x: @Anno(CONST) String) : MySuper(@Anno(CONST) "") {
     @Anno(CONST)/*Error*/
-    constructor(@Anno(<!ARGUMENT_TYPE_MISMATCH, INSTANCE_ACCESS_BEFORE_SUPER_CALL, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>CONST<!>)/*Error*/ i: @Anno(<!ARGUMENT_TYPE_MISMATCH, INSTANCE_ACCESS_BEFORE_SUPER_CALL, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>CONST<!>)/*Error*/ Int) : this(@Anno(<!ARGUMENT_TYPE_MISMATCH, INSTANCE_ACCESS_BEFORE_SUPER_CALL, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>CONST<!>) "")
+    constructor(@Anno(CONST)/*Error*/ i: @Anno(CONST)/*Error*/ Int) : this(@Anno(CONST) "")
 
     val CONST = "str"
 }

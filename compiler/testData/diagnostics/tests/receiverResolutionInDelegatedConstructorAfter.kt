@@ -1,6 +1,6 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// LANGUAGE: -ImprovedResolutionInSecondaryConstructors
+// LANGUAGE: +ImprovedResolutionInSecondaryConstructors
 // ISSUE: KT-48870
 
 open class Base(p: Any?) {
@@ -15,7 +15,7 @@ fun Vase.test1() {
     class B : Base {
         // FIR: OK, it's this@foo.foo1()
         // FE 1.0: INSTANCE_ACCESS_BEFORE_SUPER_CALL
-        constructor() : super(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foo1<!>())
+        constructor() : super(foo1())
     }
 }
 
@@ -29,7 +29,7 @@ open class BaseLambda(lambda: () -> Any?) {
 
 fun Base.test3() {
     class B : Base {
-        constructor() : super({ <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foo1<!>() })
+        constructor() : super({ foo1() })
     }
 }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -128,6 +129,8 @@ internal fun FirInaccessibleReceiverExpression.toInaccessibleReceiverDiagnostic(
     return when (kind) {
         InaccessibleReceiverKind.OuterClassOfNonInner -> InaccessibleOuterClassReceiver(calleeReference.boundSymbol as FirClassSymbol)
         InaccessibleReceiverKind.ClassHeader -> InaccessibleFromClassHeader
-        InaccessibleReceiverKind.SecondaryConstructor -> error("Should not be called for $kind")
+        @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
+        InaccessibleReceiverKind.SecondaryConstructor,
+            -> error("Should not be called for $kind")
     }
 }

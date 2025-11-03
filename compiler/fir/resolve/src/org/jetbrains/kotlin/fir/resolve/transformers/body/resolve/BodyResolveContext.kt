@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -337,12 +338,14 @@ class BodyResolveContext(
     fun buildConstructorParametersScope(constructor: FirConstructor, session: FirSession): FirLocalScope =
         constructor.valueParameters.fold(FirLocalScope(session)) { acc, param -> acc.storeVariable(param, session) }
 
+    @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
     @PrivateForInline
     fun addInaccessibleImplicitReceiverValue(
         owningClass: FirRegularClass?,
         holder: SessionAndScopeSessionHolder,
     ) {
         if (owningClass == null) return
+        if (with(holder) { LanguageFeature.ImprovedResolutionInSecondaryConstructors.isEnabled() }) return
         addReceiver(
             name = owningClass.name,
             implicitReceiverValue = InaccessibleImplicitReceiverValue(

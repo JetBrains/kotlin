@@ -143,7 +143,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 val resultType: ConeKotlinType = when {
                     implicitReceiver is InaccessibleImplicitReceiverValue -> ConeErrorType(
                         when (implicitReceiver.kind) {
-                            SecondaryConstructor, ClassHeader -> ConeInstanceAccessBeforeSuperCall("<this>")
+                            @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
+                            SecondaryConstructor,
+                            ClassHeader,
+                                -> ConeInstanceAccessBeforeSuperCall("<this>")
                             OuterClassOfNonInner -> ConeInaccessibleOuterClass(implicitReceiver.boundSymbol)
                         }
                     )
