@@ -2,10 +2,11 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("test-inputs-check")
+    id("project-tests-convention")
 }
 
-tasks.test {
-    useJUnitPlatform()
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
 dependencies {
@@ -19,7 +20,8 @@ dependencies {
 
     compileOnly(intellijCore())
 
-    testImplementation(project.kotlinTest("junit5"))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(project(":compiler:ir.backend.common"))
 }

@@ -44,8 +44,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.Variance
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.reflect.KProperty
-import kotlin.test.*
 
 class IrValidatorTest {
 
@@ -55,7 +59,7 @@ class IrValidatorTest {
         .withAllChecks()
         .withInlineFunctionCallsiteCheck { it.symbol.owner.name.toString() != "inlineFunctionUseSiteNotPermitted" }
 
-    @BeforeTest
+    @BeforeEach
     fun setUp() {
         messageCollector = MessageCollectorImpl()
 
@@ -147,7 +151,7 @@ class IrValidatorTest {
 
     private inline fun runValidationAndAssert(mode: IrVerificationMode, block: () -> Unit) {
         if (mode == IrVerificationMode.ERROR) {
-            assertFailsWith<IrValidationException>(block = block)
+            assertThrows<IrValidationException>(executable = block)
         } else {
             block()
         }
