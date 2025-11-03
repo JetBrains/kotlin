@@ -45832,15 +45832,33 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
-      @TestMetadata("expressionNotExhaustiveEnum.kt")
-      public void testExpressionNotExhaustiveEnum() {
-        runTest("compiler/testData/diagnostics/tests/tkachev_when/expressionNotExhaustiveEnum.kt");
+      @TestMetadata("branchConditionEmpty.kt")
+      public void testBranchConditionEmpty() {
+        runTest("compiler/testData/diagnostics/tests/tkachev_when/branchConditionEmpty.kt");
       }
 
       @Test
-      @TestMetadata("noDefaultBranch.kt")
-      public void testNoDefaultBranch() {
-        runTest("compiler/testData/diagnostics/tests/tkachev_when/noDefaultBranch.kt");
+      @TestMetadata("branchConditionOverlapSimple.kt")
+      public void testBranchConditionOverlapSimple() {
+        runTest("compiler/testData/diagnostics/tests/tkachev_when/branchConditionOverlapSimple.kt");
+      }
+
+      @Test
+      @TestMetadata("branchConditionOverlapViaConstant.kt")
+      public void testBranchConditionOverlapViaConstant() {
+        runTest("compiler/testData/diagnostics/tests/tkachev_when/branchConditionOverlapViaConstant.kt");
+      }
+
+      @Test
+      @TestMetadata("expressionImplicitlyExhaustive.kt")
+      public void testExpressionImplicitlyExhaustive() {
+        runTest("compiler/testData/diagnostics/tests/tkachev_when/expressionImplicitlyExhaustive.kt");
+      }
+
+      @Test
+      @TestMetadata("expressionNotExhaustiveEnum.kt")
+      public void testExpressionNotExhaustiveEnum() {
+        runTest("compiler/testData/diagnostics/tests/tkachev_when/expressionNotExhaustiveEnum.kt");
       }
 
       @Test
@@ -45853,6 +45871,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("orderOfBranches.kt")
       public void testOrderOfBranches() {
         runTest("compiler/testData/diagnostics/tests/tkachev_when/orderOfBranches.kt");
+      }
+
+      @Test
+      @TestMetadata("returnIncompatibleType.kt")
+      public void testReturnIncompatibleType() {
+        runTest("compiler/testData/diagnostics/tests/tkachev_when/returnIncompatibleType.kt");
       }
 
       @Test

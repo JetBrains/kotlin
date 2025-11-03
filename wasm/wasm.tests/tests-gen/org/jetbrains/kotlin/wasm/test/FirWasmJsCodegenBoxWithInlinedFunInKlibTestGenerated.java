@@ -61387,6 +61387,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("nullableIsAcceptableSubject.kt")
+      public void testNullableIsAcceptableSubject() {
+        runTest("compiler/testData/codegen/box/tkachev_when/nullableIsAcceptableSubject.kt");
+      }
+
+      @Test
       @TestMetadata("onlyDefaultBranch.kt")
       public void testOnlyDefaultBranch() {
         runTest("compiler/testData/codegen/box/tkachev_when/onlyDefaultBranch.kt");
@@ -61420,6 +61426,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("statementOnlyOneBranchExecutes.kt")
       public void testStatementOnlyOneBranchExecutes() {
         runTest("compiler/testData/codegen/box/tkachev_when/statementOnlyOneBranchExecutes.kt");
+      }
+
+      @Test
+      @TestMetadata("unitIsAcceptableSubject.kt")
+      public void testUnitIsAcceptableSubject() {
+        runTest("compiler/testData/codegen/box/tkachev_when/unitIsAcceptableSubject.kt");
       }
     }
 
