@@ -80,6 +80,72 @@ export declare namespace AnInterfaceWithCompanion {
         namespace $metadata$ {
             abstract class constructor {
                 get someValue(): string;
+                get constValue(): string;
+                private constructor();
+            }
+        }
+    }
+}
+export declare interface InterfaceWithCompanionWithStaticFun {
+    readonly __doNotUseOrImplementIt: {
+        readonly "foo.InterfaceWithCompanionWithStaticFun": unique symbol;
+    };
+}
+export declare namespace InterfaceWithCompanionWithStaticFun {
+    function bar(): string;
+    abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
+        private constructor();
+    }
+    namespace Companion {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            abstract class constructor {
+                private constructor();
+            }
+        }
+    }
+}
+export declare interface I {
+    foo(): string;
+    readonly __doNotUseOrImplementIt: {
+        readonly "foo.I": unique symbol;
+    };
+}
+export declare interface InterfaceWithCompanionWithInheritor {
+    readonly __doNotUseOrImplementIt: {
+        readonly "foo.InterfaceWithCompanionWithInheritor": unique symbol;
+    };
+}
+export declare namespace InterfaceWithCompanionWithInheritor {
+    abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
+        private constructor();
+    }
+    namespace Companion {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            abstract class constructor implements I {
+                foo(): string;
+                readonly __doNotUseOrImplementIt: I["__doNotUseOrImplementIt"];
+                private constructor();
+            }
+        }
+    }
+}
+export declare interface InterfaceWithCompanionWithInheritorAndStaticFun {
+    readonly __doNotUseOrImplementIt: {
+        readonly "foo.InterfaceWithCompanionWithInheritorAndStaticFun": unique symbol;
+    };
+}
+export declare namespace InterfaceWithCompanionWithInheritorAndStaticFun {
+    function foo(): string;
+    abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
+        private constructor();
+    }
+    namespace Companion {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            abstract class constructor implements I {
+                readonly __doNotUseOrImplementIt: I["__doNotUseOrImplementIt"];
                 private constructor();
             }
         }

@@ -39,10 +39,51 @@ object Parent {
     }
 }
 
+// KT-79926
 
 interface AnInterfaceWithCompanion {
     companion object {
-        val someValue = "OK"
+        private val privateValue = "OK"
+        val someValue = privateValue
+        const val constValue = "OK"
+    }
+}
+
+// Should be uncommented when KT-82128 is done
+//
+//interface InterfaceWithNamedCompanion {
+//    companion object Name {
+//        private val privateValue = "OK"
+//        val someValue = privateValue
+//        const val constValue = "OK"
+//    }
+//}
+
+
+interface InterfaceWithCompanionWithStaticFun {
+    companion object {
+        @JsStatic
+        fun bar() = "OK"
+    }
+}
+
+
+interface I {
+    fun foo(): String
+}
+
+
+interface InterfaceWithCompanionWithInheritor {
+    companion object : I {
+        override fun foo(): String = "OK"
+    }
+}
+
+
+interface InterfaceWithCompanionWithInheritorAndStaticFun {
+    companion object : I {
+        @JsStatic
+        override fun foo(): String = "OK"
     }
 }
 
