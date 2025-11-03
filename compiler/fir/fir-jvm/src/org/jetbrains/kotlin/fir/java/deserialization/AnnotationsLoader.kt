@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.java.deserialization
 
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.createConstantOrError
@@ -100,7 +101,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                         // type. See KT-62598.
                         // FIR provides no guarantees on having the exact type of deserialized array literals in annotations, including
                         // non-empty ones.
-                        coneTypeOrNull = StandardClassIds.Any.constructClassLikeType().createOutArrayType()
+                        coneTypeOrNull = StandardTypes.Any.createOutArrayType()
                         argumentList = buildArgumentList {
                             arguments += elements
                         }

@@ -2031,7 +2031,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 // We remove the type so that it will be set during completion to the CST of the arguments.
                 collectionLiteral.replaceConeTypeOrNull(
                     (data as? ResolutionMode.WithExpectedType)?.expectedType
-                        ?: StandardClassIds.Array.constructClassLikeType(arrayOf(StandardClassIds.Any.constructClassLikeType()))
+                        ?: StandardClassIds.Array.constructClassLikeType(arrayOf(StandardTypes.Any))
                 )
                 val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
                     collectionLiteral,

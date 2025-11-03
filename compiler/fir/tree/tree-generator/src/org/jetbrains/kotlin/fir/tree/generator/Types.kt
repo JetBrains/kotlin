@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.util.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.util.type
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
@@ -56,9 +55,9 @@ val operationKindType = type("contracts.description", "LogicOperationKind")
 val coneKotlinTypeType = type<ConeKotlinType>()
 val coneErrorTypeType = type<ConeErrorType>()
 val coneSimpleKotlinTypeType = type<ConeSimpleKotlinType>()
-val coneClassLikeTypeType = type<ConeClassLikeType>()
 val coneClassLikeTypeImplType = type<ConeClassLikeTypeImpl>()
 val standardClassIdsType = type<StandardClassIds>()
+val standardTypes = type("fir", "StandardTypes")
 
 val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef")
     .withArgs(FirTree.expression)
