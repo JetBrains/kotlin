@@ -65,11 +65,11 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
 
         BridgeFunctionDescriptor(
             baseBridgeName = baseBridgeName,
-            parameters = explicitParameters.mapIndexed { index, value -> bridgeParameter(value, index, session) },
-            returnType = bridgeType(returnType, session),
+            parameters = explicitParameters.mapIndexed { index, value -> bridgeParameter(value, index) },
+            returnType = bridgeType(returnType),
             kotlinFqName = kotlinFqName,
-            selfParameter = selfParameter?.let { bridgeParameter(it, 0, session) },
-            extensionReceiverParameter = extensionReceiverParameter?.let { bridgeParameter(it, 0, session) },
+            selfParameter = selfParameter?.let { bridgeParameter(it, 0) },
+            extensionReceiverParameter = extensionReceiverParameter?.let { bridgeParameter(it, 0) },
             errorParameter = errorParameter?.let {
                 BridgeParameter(
                     name = it.name!!.let(::createBridgeParameterName),
@@ -78,7 +78,6 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
             },
             isAsync = isAsync,
             typeNamer = typeNamer,
-            session = session,
         )
     }
 }
@@ -132,7 +131,6 @@ private class BridgeFunctionDescriptor(
     override val errorParameter: BridgeParameter?,
     override val isAsync: Boolean,
     override val typeNamer: SirTypeNamer,
-    private val session: SirSession,
 ) : BridgeFunctionBuilder, BridgeFunctionProxy {
     val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, parameters, typeNamer)
     val cBridgeName = kotlinBridgeName
@@ -142,7 +140,7 @@ private class BridgeFunctionDescriptor(
 
     val asyncContinuationParameter: BridgeParameter? = isAsync.ifTrue {
         BridgeParameter(
-            name = "continuation", bridge = Bridge.AsBlock(parameters = listOf(returnType), returnType = Bridge.AsVoid, session = session)
+            name = "continuation", bridge = Bridge.AsBlock(parameters = listOf(returnType), returnType = Bridge.AsVoid)
         )
     }
 

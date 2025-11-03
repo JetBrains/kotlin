@@ -52,42 +52,45 @@ public class SirCustomTypeTranslatorImpl(
     context(kaSession: KaSession)
     public override fun KaUsualClassType.toSirTypeBridge(ctx: TypeTranslationCtx): SirCustomTypeTranslator.BridgeWrapper? {
         var swiftType: SirNominalType
-        return when {
-            isStringType -> {
-                swiftType = SirNominalType(SirSwiftModule.string)
-                AsObjCBridged(swiftType, CType.NSString).wrapper()
-            }
-            isClassType(StandardClassIds.List) -> {
-                val swiftArgumentType = typeArguments.single().sirType(ctx)
-                swiftType = SirArrayType(
-                    swiftArgumentType,
-                )
-                AsNSArray(swiftType, bridgeAsNSCollectionElement(swiftArgumentType, session)).wrapper()
-            }
+        return context(session) {
+            when {
+                isStringType -> {
+                    swiftType = SirNominalType(SirSwiftModule.string)
+                    AsObjCBridged(swiftType, CType.NSString).wrapper()
+                }
+                isClassType(StandardClassIds.List) -> {
+                    val swiftArgumentType = typeArguments.single().sirType(ctx)
+                    swiftType = SirArrayType(
+                        swiftArgumentType,
+                    )
+                    AsNSArray(swiftType, bridgeAsNSCollectionElement(swiftArgumentType)).wrapper()
+                }
 
-            isClassType(StandardClassIds.Set) -> {
-                val swiftArgumentType = typeArguments.single().sirType(ctx.copy(requiresHashableAsAny = true))
-                swiftType = SirNominalType(
-                    SirSwiftModule.set,
-                    listOf(swiftArgumentType)
-                )
-                AsNSSet(swiftType, bridgeAsNSCollectionElement(swiftArgumentType, session)).wrapper()
-            }
+                isClassType(StandardClassIds.Set) -> {
+                    val swiftArgumentType = typeArguments.single().sirType(ctx.copy(requiresHashableAsAny = true))
+                    swiftType = SirNominalType(
+                        SirSwiftModule.set,
+                        listOf(swiftArgumentType)
+                    )
+                    AsNSSet(swiftType, bridgeAsNSCollectionElement(swiftArgumentType)).wrapper()
+                }
 
-            isClassType(StandardClassIds.Map) -> {
-                val swiftKeyType = typeArguments.first().sirType(ctx.copy(requiresHashableAsAny = true))
-                val swiftValueType = typeArguments.last().sirType(ctx)
-                swiftType = SirDictionaryType(swiftKeyType, swiftValueType)
-                AsNSDictionary(
-                    swiftType,
-                    bridgeAsNSCollectionElement(swiftKeyType, session),
-                    bridgeAsNSCollectionElement(swiftValueType, session),
-                ).wrapper()
-            }
+                isClassType(StandardClassIds.Map) -> {
+                    val swiftKeyType = typeArguments.first().sirType(ctx.copy(requiresHashableAsAny = true))
+                    val swiftValueType = typeArguments.last().sirType(ctx)
+                    swiftType = SirDictionaryType(swiftKeyType, swiftValueType)
+                    AsNSDictionary(
+                        swiftType,
+                        bridgeAsNSCollectionElement(swiftKeyType),
+                        bridgeAsNSCollectionElement(swiftValueType),
+                    ).wrapper()
+                }
 
-            else -> return null
-        }.also {
-            typeToWrapperMap[swiftType] = it
+
+                else -> return null
+            }.also {
+                typeToWrapperMap[swiftType] = it
+            }
         }
     }
 
