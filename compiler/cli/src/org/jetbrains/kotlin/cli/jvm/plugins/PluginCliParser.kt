@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
+import org.jetbrains.kotlin.cli.plugins.PluginOrderConstraint
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.extractPluginOrderConstraint
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginOptions
@@ -102,8 +103,14 @@ object PluginCliParser {
     ): ExitCode {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         try {
-            loadPluginsLegacyStyle(pluginClasspaths, pluginOptions, configuration, parentDisposable)
-            loadPluginsModernStyle(pluginConfigurations, pluginOrderConstraints, configuration, parentDisposable)
+            // Parse order constraints before creating class loaders and loading services.
+            val orderConstraints = pluginOrderConstraints.map { rawConstraint ->
+                extractPluginOrderConstraint(rawConstraint)
+                    ?: throw PluginProcessingException("Could not parse plugin order constraint: $rawConstraint")
+            }
+
+            loadPluginsLegacyStyle(pluginClasspaths, orderConstraints, pluginOptions, configuration, parentDisposable)
+            loadPluginsModernStyle(pluginConfigurations, orderConstraints, configuration, parentDisposable)
             return ExitCode.OK
         } catch (e: PluginProcessingException) {
             messageCollector.report(CompilerMessageSeverity.ERROR, e.message!!)
@@ -128,16 +135,10 @@ object PluginCliParser {
     @Suppress("DEPRECATION_ERROR")
     private fun loadRegisteredPluginsInfo(
         rawPluginConfigurations: Iterable<String>,
-        rawPluginOrderConstraints: Iterable<String>,
+        orderConstraints: List<PluginOrderConstraint>,
         parentDisposable: Disposable,
     ): List<RegisteredPluginInfo> {
         val pluginConfigurations = extractPluginClasspathAndOptions(rawPluginConfigurations)
-
-        // Parse order constraints before creating class loaders and loading services.
-        val orderConstraints = rawPluginOrderConstraints.map { rawConstraint ->
-            extractPluginOrderConstraint(rawConstraint)
-                ?: throw PluginProcessingException("Could not parse plugin order constraint: $rawConstraint")
-        }
 
         val pluginInfos = pluginConfigurations.map { pluginConfiguration ->
             val classLoader = createClassLoader(pluginConfiguration.classpath, parentDisposable)
@@ -206,11 +207,11 @@ object PluginCliParser {
 
     private fun loadPluginsModernStyle(
         rawPluginConfigurations: Iterable<String>,
-        rawPluginOrderConstraints: Iterable<String>,
+        orderConstraints: List<PluginOrderConstraint>,
         configuration: CompilerConfiguration,
         parentDisposable: Disposable,
     ) {
-        val pluginInfos = loadRegisteredPluginsInfo(rawPluginConfigurations, rawPluginOrderConstraints, parentDisposable)
+        val pluginInfos = loadRegisteredPluginsInfo(rawPluginConfigurations, orderConstraints, parentDisposable)
         for (pluginInfo in pluginInfos) {
             pluginInfo.componentRegistrar?.let {
                 @Suppress("DEPRECATION_ERROR")
@@ -228,6 +229,7 @@ object PluginCliParser {
     @Suppress("DEPRECATION_ERROR")
     private fun loadPluginsLegacyStyle(
         pluginClasspaths: Iterable<String>?,
+        orderConstraints: List<PluginOrderConstraint>,
         pluginOptions: Iterable<String>?,
         configuration: CompilerConfiguration,
         parentDisposable: Disposable,
@@ -237,7 +239,27 @@ object PluginCliParser {
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 
         val compilerPluginRegistrars = ServiceLoaderLite.loadImplementations(CompilerPluginRegistrar::class.java, classLoader)
-        configuration.addAll(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, compilerPluginRegistrars)
+
+        val registrarsById = compilerPluginRegistrars
+            .filter { it.pluginId.isNotEmpty() }
+            .associateBy { it.pluginId }
+
+        val dependenciesById = orderConstraints
+            .filter { it.before in registrarsById && it.after in registrarsById }
+            .groupBy(keySelector = { it.after }, valueTransform = { registrarsById.getValue(it.before) })
+
+        val topologicalSort = topologicalSort(
+            compilerPluginRegistrars,
+            reportCycle = {
+                val pluginId = it.pluginId
+                throw PluginProcessingException(
+                    "Compiler plugin '$pluginId' is part of an constraint cycle: ${orderConstraints.joinToString(", ")}"
+                )
+            },
+            dependencies = { dependenciesById[pluginId].orEmpty() }
+        )
+
+        configuration.addAll(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, topologicalSort.asReversed())
 
         processPluginOptions(pluginOptions, configuration, classLoader)
     }
