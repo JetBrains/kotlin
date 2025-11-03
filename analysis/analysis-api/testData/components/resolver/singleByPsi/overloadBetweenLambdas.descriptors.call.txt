@@ -1,0 +1,33 @@
+KtNameReferenceExpression(129,133): 'post'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        {} -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Unit, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Unit, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = test/post(action: kotlin.Function1<kotlin.Unit, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Unit, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Unit, kotlin.Unit>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = test/post
+      typeArgumentsMapping = {}

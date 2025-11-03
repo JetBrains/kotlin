@@ -943,6 +943,12 @@ public class SourceResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("overloadBetweenLambdas.kt")
+  public void testOverloadBetweenLambdas() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/overloadBetweenLambdas.kt");
+  }
+
+  @Test
   @TestMetadata("overloadWithReceiver.kt")
   public void testOverloadWithReceiver() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/overloadWithReceiver.kt");
