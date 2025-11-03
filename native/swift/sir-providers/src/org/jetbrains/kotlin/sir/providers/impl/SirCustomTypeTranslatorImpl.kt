@@ -100,25 +100,25 @@ public class SirCustomTypeTranslatorImpl(
     }
 
     private val typeToWrapperMap = mapOf(
-        SirSwiftModule.utf16CodeUnit to Pair(KotlinType.Char, CType.UInt16),
+        SirSwiftModule.utf16CodeUnit to KotlinAndCType(KotlinType.Char, CType.UInt16),
 
-        SirSwiftModule.int8 to Pair(KotlinType.Byte, CType.Int8),
-        SirSwiftModule.int16 to Pair(KotlinType.Short, CType.Int16),
-        SirSwiftModule.int32 to Pair(KotlinType.Int, CType.Int32),
-        SirSwiftModule.int64 to Pair(KotlinType.Long, CType.Int64),
+        SirSwiftModule.int8 to KotlinAndCType(KotlinType.Byte, CType.Int8),
+        SirSwiftModule.int16 to KotlinAndCType(KotlinType.Short, CType.Int16),
+        SirSwiftModule.int32 to KotlinAndCType(KotlinType.Int, CType.Int32),
+        SirSwiftModule.int64 to KotlinAndCType(KotlinType.Long, CType.Int64),
 
-        SirSwiftModule.uint8 to Pair(KotlinType.UByte, CType.UInt8),
-        SirSwiftModule.uint16 to Pair(KotlinType.UShort, CType.UInt16),
-        SirSwiftModule.uint32 to Pair(KotlinType.UInt, CType.UInt32),
-        SirSwiftModule.uint64 to Pair(KotlinType.ULong, CType.UInt64),
+        SirSwiftModule.uint8 to KotlinAndCType(KotlinType.UByte, CType.UInt8),
+        SirSwiftModule.uint16 to KotlinAndCType(KotlinType.UShort, CType.UInt16),
+        SirSwiftModule.uint32 to KotlinAndCType(KotlinType.UInt, CType.UInt32),
+        SirSwiftModule.uint64 to KotlinAndCType(KotlinType.ULong, CType.UInt64),
 
-        SirSwiftModule.bool to Pair(KotlinType.Boolean, CType.Bool),
+        SirSwiftModule.bool to KotlinAndCType(KotlinType.Boolean, CType.Bool),
 
-        SirSwiftModule.double to Pair(KotlinType.Double, CType.Double),
-        SirSwiftModule.float to Pair(KotlinType.Float, CType.Float),
+        SirSwiftModule.double to KotlinAndCType(KotlinType.Double, CType.Double),
+        SirSwiftModule.float to KotlinAndCType(KotlinType.Float, CType.Float),
     ).entries.associateTo(mutableMapOf()) { (declaration, kctype) ->
         SirNominalType(declaration) to Bridge.AsIs(
-            declaration, kctype.first, kctype.second
+            declaration, kctype.kotlinType, kctype.cType
         ).wrapper()
     }.also {
         it[SirNominalType(SirSwiftModule.void)] = Bridge.AsVoid.wrapper()
@@ -173,8 +173,8 @@ public class SirCustomTypeTranslatorImpl(
                 )
                 RangeBridge(
                     swiftType,
-                    kotlinRangeTypeName = classId.shortClassName.asString(),
-                    kotlinRangeElementTypeName = (argumentType.type as KaClassType).classId.shortClassName.asString(),
+                    kotlinRangeClassId = classId,
+                    kotlinRangeElementClassId = (argumentType.type as KaClassType).classId,
                     inclusive
                 ).wrapper()
             }
@@ -187,8 +187,8 @@ public class SirCustomTypeTranslatorImpl(
                 )
                 RangeBridge(
                     swiftType,
-                    kotlinRangeTypeName = "IntRange",
-                    kotlinRangeElementTypeName = "Int",
+                    kotlinRangeClassId = StandardClassIds.IntRange,
+                    kotlinRangeElementClassId = StandardClassIds.Int,
                     inclusive = true
                 ).wrapper()
             }
@@ -201,8 +201,8 @@ public class SirCustomTypeTranslatorImpl(
                 )
                 RangeBridge(
                     swiftType,
-                    kotlinRangeTypeName = "LongRange",
-                    kotlinRangeElementTypeName = "Long",
+                    kotlinRangeClassId = StandardClassIds.LongRange,
+                    kotlinRangeElementClassId = StandardClassIds.Long,
                     inclusive = true
                 ).wrapper()
             }
@@ -264,8 +264,8 @@ public class SirCustomTypeTranslatorImpl(
 
     private class RangeBridge(
         swiftType: SirNominalType,
-        val kotlinRangeTypeName: String,
-        val kotlinRangeElementTypeName: String,
+        val kotlinRangeClassId: ClassId,
+        val kotlinRangeElementClassId: ClassId,
         val inclusive: Boolean,
     ) : Bridge.CustomBridgeWithAdditionalConversions(swiftType) {
         override val additionalObjCConversionsNumber: Int
@@ -274,11 +274,11 @@ public class SirCustomTypeTranslatorImpl(
         override val representsParameterAsPair: Boolean
             get() = true
 
-        override val pairedParameterKotlinType: KotlinType?
-            get() = if (kotlinRangeElementTypeName == "Int") KotlinType.Int else KotlinType.Long
+        override val pairedParameterKotlinType: KotlinType
+            get() = NUMBERS[kotlinRangeElementClassId]!!.kotlinType
 
-        override val pairedParameterCType: CType?
-            get() = if (kotlinRangeElementTypeName == "Int") CType.Int32 else CType.Int64
+        override val pairedParameterCType: CType
+            get() = NUMBERS[kotlinRangeElementClassId]!!.cType
 
         override fun swiftToObjC(typeNamer: SirTypeNamer, valueExpression: String): String {
             return "$valueExpression.lowerBound, $valueExpression.upperBound"
@@ -301,13 +301,14 @@ public class SirCustomTypeTranslatorImpl(
                 0, 1 -> {
                     val propertyName = if (index == 0) "start" else "end${if (inclusive) "Inclusive" else "Exclusive"}"
                     val propertyNameCapitalized = propertyName.replaceFirstChar(Char::uppercase)
+                    val kotlinRangeTypeName = kotlinRangeClassId.shortClassName.asString()
                     val kotlinRangeNameDecapitalized = kotlinRangeTypeName.replaceFirstChar(Char::lowercase)
-                    val kotlinRangeElementNameDecapitalized = kotlinRangeElementTypeName.replaceFirstChar(Char::lowercase)
-                    val cRangeElementName = if (kotlinRangeElementTypeName == "Int") "int32_t" else "int64_t"
+                    val kotlinRangeElementNameDecapitalized = pairedParameterKotlinType.repr.replaceFirstChar(Char::lowercase)
+                    val cRangeElementName = pairedParameterCType.render("")
                     val name = "kotlin_ranges_${kotlinRangeNameDecapitalized}_get${propertyNameCapitalized}_$kotlinRangeElementNameDecapitalized"
-                    val kotlinRangeTypeDescription = when (kotlinRangeTypeName) {
-                        "IntRange", "LongRange" -> kotlinRangeTypeName
-                        else -> "$kotlinRangeTypeName<$kotlinRangeElementTypeName>"
+                    val kotlinRangeTypeDescription = when (kotlinRangeClassId) {
+                        StandardClassIds.IntRange, StandardClassIds.LongRange -> kotlinRangeTypeName
+                        else -> "$kotlinRangeTypeName<${pairedParameterKotlinType.repr}>"
                     }
 
                     return SirFunctionBridge(
@@ -315,7 +316,7 @@ public class SirCustomTypeTranslatorImpl(
                         KotlinFunctionBridge(
                             lines = listOf(
                                 "@${exportAnnotationFqName.substringAfterLast('.')}(\"$name\")",
-                                "fun $name(nativePtr: kotlin.native.internal.NativePtr): $kotlinRangeElementTypeName {",
+                                "fun $name(nativePtr: kotlin.native.internal.NativePtr): ${pairedParameterKotlinType.repr} {",
                                 "    val $kotlinRangeNameDecapitalized = interpretObjCPointer<${kotlinRangeTypeDescription}>(nativePtr)",
                                 "    return $kotlinRangeNameDecapitalized.$propertyName",
                                 "}",
@@ -335,15 +336,17 @@ public class SirCustomTypeTranslatorImpl(
     }
 
     public companion object {
-        private val NUMBERS = hashSetOf(
-            LONG,
-            INT,
-            SHORT,
-            BYTE,
-            ClassId.fromString("kotlin/ULong"),
-            ClassId.fromString("kotlin/UInt"),
-            ClassId.fromString("kotlin/UShort"),
-            ClassId.fromString("kotlin/UByte"),
+        private class KotlinAndCType(val kotlinType: KotlinType, val cType: CType)
+
+        private val NUMBERS = hashMapOf(
+            LONG to KotlinAndCType(KotlinType.Long, CType.Int64),
+            INT to KotlinAndCType(KotlinType.Int, CType.Int32),
+            SHORT to KotlinAndCType(KotlinType.Short, CType.Int16),
+            BYTE to KotlinAndCType(KotlinType.Byte, CType.Int8),
+            ClassId.fromString("kotlin/ULong") to KotlinAndCType(KotlinType.ULong, CType.UInt64),
+            ClassId.fromString("kotlin/UInt") to KotlinAndCType(KotlinType.UInt, CType.UInt32),
+            ClassId.fromString("kotlin/UShort") to KotlinAndCType(KotlinType.UShort, CType.UInt16),
+            ClassId.fromString("kotlin/UByte") to KotlinAndCType(KotlinType.UByte, CType.UInt8),
         )
     }
 }
