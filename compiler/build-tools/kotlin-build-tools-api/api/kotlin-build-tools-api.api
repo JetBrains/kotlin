@@ -254,6 +254,31 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerA
 public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$Companion {
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$Companion;
+	public static final field X_KLIB_ABI_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
+	public static final field X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
+	public static final field X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
+	public static final field X_KLIB_IR_INLINER Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
+	public static final field X_KLIB_NORMALIZE_ABSOLUTE_PATH Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
+	public static final field X_KLIB_RELATIVE_PATH_BASE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
+	public static final field X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
+	public static final field X_PARTIAL_LINKAGE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
+	public static final field X_PARTIAL_LINKAGE_LOGLEVEL Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
+	public abstract fun contains (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;)Z
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;)V
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+	public final fun getId ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$Companion {
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$Companion;
 	public static final field NOWARN Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;
@@ -278,6 +303,67 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArgum
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/arguments/ExperimentalCompilerArgument : java/lang/annotation/Annotation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/JsArguments : org/jetbrains/kotlin/buildtools/api/arguments/WasmArguments {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$Companion;
+	public static final field IR_OUTPUT_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field IR_OUTPUT_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field LIBRARIES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field MAIN Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field MODULE_KIND Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field OUTPUT Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field SOURCE_MAP Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field SOURCE_MAP_BASE_DIRS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field SOURCE_MAP_EMBED_SOURCES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field SOURCE_MAP_NAMES_POLICY Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field SOURCE_MAP_PREFIX Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_CACHE_DIRECTORY Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_ES_ARROW_FUNCTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_ES_CLASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_ES_GENERATORS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_ES_LONG_AS_BIGINT Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_FAKE_OVERRIDE_VALIDATOR Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_FRIEND_MODULES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_FRIEND_MODULES_DISABLED Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_GENERATE_DTS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_GENERATE_POLYFILLS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_INCLUDE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_BUILD_CACHE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_DCE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_DCE_PRINT_REACHABILITY_INFO Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_DCE_RUNTIME_DIAGNOSTIC Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_KEEP Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_MINIMIZED_MEMBER_NAMES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_MODULE_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_PER_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_PER_MODULE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_PER_MODULE_OUTPUT_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_PRODUCE_JS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_PRODUCE_KLIB_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_PRODUCE_KLIB_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_PROPERTY_LAZY_INITIALIZATION Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_SAFE_EXTERNAL_BOOLEAN Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_OPTIMIZE_GENERATED_JS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_STRICT_IMPLICIT_EXPORT_TYPES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_TYPED_ARRAYS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public abstract fun contains (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;)Z
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/JsArguments$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;)V
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+	public final fun getId ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments {
@@ -367,6 +453,41 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArgu
 	public final fun getId ()Ljava/lang/String;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/WasmArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$Companion;
+	public static final field X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_DEBUGGER_CUSTOM_FORMATTERS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_DEBUG_FRIENDLY Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_DEBUG_INFO Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_ENABLE_ARRAY_RANGE_CHECKS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_ENABLE_ASSERTS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_GENERATE_DWARF Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_GENERATE_WAT Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_IC_CACHE_READONLY Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_INCLUDED_MODULE_ONLY Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_KCLASS_FQN Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_NO_JSTAG Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_PRESERVE_IC_ORDER Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_USE_NEW_EXCEPTION_PROPOSAL Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public abstract fun contains (Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;)Z
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;)V
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+	public final fun getId ()Ljava/lang/String;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode : java/lang/Enum {
 	public static final field DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;
 	public static final field STRICT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;
@@ -399,6 +520,16 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/KlibIrInlinerMode : java/lang/Enum {
+	public static final field DEFAULT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KlibIrInlinerMode;
+	public static final field DISABLED Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KlibIrInlinerMode;
+	public static final field FULL Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KlibIrInlinerMode;
+	public static final field INTRAMODULE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KlibIrInlinerMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KlibIrInlinerMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KlibIrInlinerMode;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion : java/lang/Enum {
@@ -472,6 +603,40 @@ public abstract class org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getId ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain$Companion;
+	public abstract fun createJsCompilationOperation (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation;
+	public static fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain$Companion {
+	public final fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+	public static final field COMPILER_ARGUMENTS_LOG_LEVEL Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$Option;
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$Companion;
+	public static final field LOOKUP_TRACKER Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$Option;)Ljava/lang/Object;
+	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$CompilerArgumentsLogLevel : java/lang/Enum {
+	public static final field DEBUG Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$CompilerArgumentsLogLevel;
+	public static final field ERROR Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$CompilerArgumentsLogLevel;
+	public static final field INFO Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$CompilerArgumentsLogLevel;
+	public static final field WARNING Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$CompilerArgumentsLogLevel;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$CompilerArgumentsLogLevel;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$CompilerArgumentsLogLevel;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/js/operations/JsCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/AccessibleClassSnapshot : org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshot {
