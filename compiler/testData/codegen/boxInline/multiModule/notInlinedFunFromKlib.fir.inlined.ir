@@ -316,7 +316,7 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
           TYPE_OP[248, 252] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
             CONST[248, 252] String type=kotlin.String value="OK"
         RETURNABLE_BLOCK[243, 308] type=kotlin.Unit origin=null
-          INLINED_BLOCK[243, 308] type=kotlin.Unit origin=null
+          INLINED_BLOCK[243, 308]->[132, 198] type=kotlin.Unit origin=null
             inlinedFunctionSymbol: public final fun wrap <T> (arg: T of <root>.wrap, block: kotlin.Function1<T of <root>.wrap, kotlin.Unit>): kotlin.Unit declared in <root>
             inlinedFunctionFileEntry: FILE_ENTRY path:/main.kt
             VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:arg type:kotlin.Any? [val]
@@ -326,7 +326,7 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
                 TYPE_OP[185, 188] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
                   GET_VAR[185, 188] 'val arg: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
               RETURNABLE_BLOCK[179, 196] type=kotlin.Unit origin=null
-                INLINED_BLOCK[179, 196] type=kotlin.Unit origin=null
+                INLINED_BLOCK[179, 196]->[58, 123] type=kotlin.Unit origin=null
                   inlinedFunctionSymbol: public final fun inner <T> (arg: T of <root>.inner, block: kotlin.Function1<T of <root>.inner, kotlin.Unit>): kotlin.Unit declared in <root>
                   inlinedFunctionFileEntry: FILE_ENTRY path:/main.kt
                   VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:arg type:kotlin.Any? [val]
@@ -374,7 +374,7 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
           TYPE_OP[185, 188] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
             GET_VAR[185, 188] 'arg: T of <root>.wrap declared in <root>.wrap' type=T of <root>.wrap origin=null
         RETURNABLE_BLOCK[179, 196] type=kotlin.Unit origin=null
-          INLINED_BLOCK[179, 196] type=kotlin.Unit origin=null
+          INLINED_BLOCK[179, 196]->[58, 123] type=kotlin.Unit origin=null
             inlinedFunctionSymbol: public final fun inner <T> (arg: T of <root>.inner, block: kotlin.Function1<T of <root>.inner, kotlin.Unit>): kotlin.Unit declared in <root>
             inlinedFunctionFileEntry: FILE_ENTRY path:/main.kt
             VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:arg type:kotlin.Any? [val]

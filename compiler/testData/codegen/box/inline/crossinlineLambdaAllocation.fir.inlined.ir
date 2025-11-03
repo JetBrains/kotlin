@@ -131,7 +131,7 @@ FILE fqName:<root> fileName:/crossinlineLambdaAllocation.kt lineStartOffsets: [0
                   CALL[598, 604] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Int origin=INVOKE
                     ARG <this>: GET_VAR[598, 602] 'test: kotlin.Function0<kotlin.Int> declared in <root>.bar' type=kotlin.Function0<kotlin.Int> origin=VARIABLE_AS_FUNCTION
           RETURNABLE_BLOCK[371, 688] type=<root>.Pair<<root>.bar.<no name provided>> origin=null
-            INLINED_BLOCK[371, 688] type=<root>.Pair<<root>.bar.<no name provided>> origin=null
+            INLINED_BLOCK[371, 688]->[234, 279] type=<root>.Pair<<root>.bar.<no name provided>> origin=null
               inlinedFunctionSymbol: public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> declared in <root>
               inlinedFunctionFileEntry: FILE_ENTRY path:/crossinlineLambdaAllocation.kt
               RETURN[279, 279] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
@@ -139,7 +139,7 @@ FILE fqName:<root> fileName:/crossinlineLambdaAllocation.kt lineStartOffsets: [0
                   CONSTRUCTOR_CALL[265, 279] 'public constructor <init> (first: T of <root>.Pair, second: T of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<kotlin.Any?> origin=null
                     TYPE_ARG (of class) T: kotlin.Any?
                     ARG first: RETURNABLE_BLOCK[270, 273] type=kotlin.Any? origin=null
-                      INLINED_BLOCK[270, 273] type=kotlin.Any? origin=null
+                      INLINED_BLOCK[270, 273]->[380, 688] type=kotlin.Any? origin=null
                         inlinedFunctionFileEntry: FILE_ENTRY path:/crossinlineLambdaAllocation.kt
                         VAR[390, 411] name:insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
                           CONSTRUCTOR_CALL[410, 411] 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
@@ -163,7 +163,7 @@ FILE fqName:<root> fileName:/crossinlineLambdaAllocation.kt lineStartOffsets: [0
                           TYPE_OP[681, 682] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
                             GET_VAR[681, 682] 'val r: <root>.bar.<no name provided> declared in <root>.bar' type=<root>.bar.<no name provided> origin=null
                     ARG second: RETURNABLE_BLOCK[275, 278] type=kotlin.Any? origin=null
-                      INLINED_BLOCK[275, 278] type=kotlin.Any? origin=null
+                      INLINED_BLOCK[275, 278]->[380, 688] type=kotlin.Any? origin=null
                         inlinedFunctionFileEntry: FILE_ENTRY path:/crossinlineLambdaAllocation.kt
                         VAR[390, 411] name:insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
                           CONSTRUCTOR_CALL[410, 411] 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
@@ -203,7 +203,7 @@ FILE fqName:<root> fileName:/crossinlineLambdaAllocation.kt lineStartOffsets: [0
     BLOCK_BODY[788, 953]
       VAR[794, 816] name:result type:kotlin.Int [val]
         RETURNABLE_BLOCK[807, 816] type=kotlin.Int origin=null
-          INLINED_BLOCK[807, 816] type=kotlin.Int origin=null
+          INLINED_BLOCK[807, 816]->[288, 768] type=kotlin.Int origin=null
             inlinedFunctionSymbol: public final fun bar (test: kotlin.Function0<kotlin.Int>): kotlin.Int declared in <root>
             inlinedFunctionFileEntry: FILE_ENTRY path:/crossinlineLambdaAllocation.kt
             VAR[336, 358] name:outsideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
@@ -274,12 +274,12 @@ FILE fqName:<root> fileName:/crossinlineLambdaAllocation.kt lineStartOffsets: [0
                     BLOCK_BODY[598, 604]
                       RETURN[604, 604] type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.box.<no name provided>'
                         RETURNABLE_BLOCK[598, 604] type=kotlin.Int origin=null
-                          INLINED_BLOCK[598, 604] type=kotlin.Int origin=null
+                          INLINED_BLOCK[598, 604]->[811, 816] type=kotlin.Int origin=null
                             inlinedFunctionFileEntry: FILE_ENTRY path:/crossinlineLambdaAllocation.kt
                             RETURN[814, 814] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
                               CONST[813, 814] Int type=kotlin.Int value=5
                 RETURNABLE_BLOCK[371, 688] type=<root>.Pair<<root>.box.<no name provided>> origin=null
-                  INLINED_BLOCK[371, 688] type=<root>.Pair<<root>.box.<no name provided>> origin=null
+                  INLINED_BLOCK[371, 688]->[234, 279] type=<root>.Pair<<root>.box.<no name provided>> origin=null
                     inlinedFunctionSymbol: public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> declared in <root>
                     inlinedFunctionFileEntry: FILE_ENTRY path:/crossinlineLambdaAllocation.kt
                     RETURN[279, 279] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
@@ -287,7 +287,7 @@ FILE fqName:<root> fileName:/crossinlineLambdaAllocation.kt lineStartOffsets: [0
                         CONSTRUCTOR_CALL[265, 279] 'public constructor <init> (first: T of <root>.Pair, second: T of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<kotlin.Any?> origin=null
                           TYPE_ARG (of class) T: kotlin.Any?
                           ARG first: RETURNABLE_BLOCK[270, 273] type=kotlin.Any? origin=null
-                            INLINED_BLOCK[270, 273] type=kotlin.Any? origin=null
+                            INLINED_BLOCK[270, 273]->[380, 688] type=kotlin.Any? origin=null
                               inlinedFunctionFileEntry: FILE_ENTRY path:/crossinlineLambdaAllocation.kt
                               VAR[390, 411] name:insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
                                 CONSTRUCTOR_CALL[410, 411] 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
@@ -311,7 +311,7 @@ FILE fqName:<root> fileName:/crossinlineLambdaAllocation.kt lineStartOffsets: [0
                                 TYPE_OP[681, 682] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
                                   GET_VAR[681, 682] 'val r: <root>.box.<no name provided> declared in <root>.box' type=<root>.box.<no name provided> origin=null
                           ARG second: RETURNABLE_BLOCK[275, 278] type=kotlin.Any? origin=null
-                            INLINED_BLOCK[275, 278] type=kotlin.Any? origin=null
+                            INLINED_BLOCK[275, 278]->[380, 688] type=kotlin.Any? origin=null
                               inlinedFunctionFileEntry: FILE_ENTRY path:/crossinlineLambdaAllocation.kt
                               VAR[390, 411] name:insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
                                 CONSTRUCTOR_CALL[410, 411] 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null

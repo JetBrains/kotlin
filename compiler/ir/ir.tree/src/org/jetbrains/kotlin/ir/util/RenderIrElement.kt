@@ -694,8 +694,11 @@ private fun IrFile.renderLineStartOffsets(options: DumpIrTreeOptions): String =
         "lineStartOffsets: ${(fileEntry as? AbstractIrFileEntry)?.getLineStartOffsetsForSerialization().orEmpty()}"
     else ""
 
-private fun IrElement.renderOffsets(options: DumpIrTreeOptions): String =
-    if (options.printSourceOffsets) "[$startOffset, $endOffset]" else ""
+private fun IrElement.renderOffsets(options: DumpIrTreeOptions): String = when {
+    !options.printSourceOffsets -> ""
+    this is IrInlinedFunctionBlock -> "[$startOffset, $endOffset]->[$inlinedFunctionStartOffset, $inlinedFunctionEndOffset]"
+    else -> "[$startOffset, $endOffset]"
+}
 
 private fun IrDeclarationWithName.renderSignatureIfEnabled(printSignatures: Boolean): String =
     if (printSignatures) symbol.signature?.let { "signature:${it.render()} " }.orEmpty() else ""
