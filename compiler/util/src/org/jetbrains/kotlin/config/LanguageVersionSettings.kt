@@ -475,6 +475,7 @@ enum class LanguageFeature(
     ProperExhaustivenessCheckForJavaOpenSealedClass(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true,"KTLC-366"),
     DisableMaxTypeDepthFromInitialConstraints(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-372"),
     JsAllowExportingSuspendFunctions(sinceVersion = KOTLIN_2_4, "KT-56281"),
+    ImprovedResolutionInSecondaryConstructors(sinceVersion = KOTLIN_2_4, "KT-77275"),
     ForbidTypeAliasToCompilerRequiredAnnotation(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-79369"),
     ForbidArrayLiteralsInNonAnnotationContexts(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-369"),
     ForbidClassLiteralWithPotentiallyNullableReifiedLhs(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-370"),
