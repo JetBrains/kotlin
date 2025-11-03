@@ -401,8 +401,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(comparisonExpression) {
-            default("coneTypeOrNull", "StandardClassIds.Boolean.constructClassLikeType()")
-            additionalImports(standardClassIdsType, constructClassLikeTypeImport)
+            default("coneTypeOrNull", "StandardTypes.Boolean")
+            additionalImports(standardTypes)
         }
 
         impl(typeOperatorCall) {
@@ -414,8 +414,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(incrementDecrementExpression)
 
         impl(equalityOperatorCall) {
-            default("coneTypeOrNull", "StandardClassIds.Boolean.constructClassLikeType()")
-            additionalImports(standardClassIdsType, constructClassLikeTypeImport)
+            default("coneTypeOrNull", "StandardTypes.Boolean")
+            additionalImports(standardTypes)
         }
 
         impl(whenBranch, "FirRegularWhenBranch") {

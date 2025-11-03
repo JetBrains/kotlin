@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.types.*
@@ -17,17 +18,23 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 sealed class FirImplicitBuiltinTypeRef(
     override val source: KtSourceElement?,
-    val id: ClassId,
-    typeArguments: Array<out ConeTypeProjection> = emptyArray(),
-    isNullable: Boolean = false
+    override val coneType: ConeClassLikeType,
 ) : FirResolvedTypeRef() {
+    constructor(
+        source: KtSourceElement?,
+        id: ClassId,
+        typeArguments: Array<out ConeTypeProjection> = emptyArray(),
+        isNullable: Boolean = false
+    ) : this(source, ConeClassLikeTypeImpl(id.toLookupTag(), typeArguments, isNullable))
+
+    val id: ClassId
+        get() = coneType.classId
+
     override val customRenderer: Boolean
         get() = false
 
     override val annotations: List<FirAnnotation>
         get() = emptyList()
-
-    override val coneType: ConeClassLikeType = ConeClassLikeTypeImpl(id.toLookupTag(), typeArguments, isNullable)
 
     override val delegatedTypeRef: FirTypeRef?
         get() = null
@@ -56,15 +63,15 @@ sealed class FirImplicitBuiltinTypeRef(
 
 class FirImplicitUnitTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Unit)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.Unit)
 
 class FirImplicitAnyTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Any)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.Any)
 
 class FirImplicitNullableAnyTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Any, isNullable = true)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.NullableAny)
 
 class FirImplicitEnumTypeRef(
     source: KtSourceElement?
@@ -76,7 +83,7 @@ class FirImplicitAnnotationTypeRef(
 
 class FirImplicitBooleanTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Boolean)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.Boolean)
 
 class FirImplicitNumberTypeRef(
     source: KtSourceElement?
@@ -84,59 +91,59 @@ class FirImplicitNumberTypeRef(
 
 class FirImplicitByteTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Byte)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.Byte)
 
 class FirImplicitShortTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Short)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.Short)
 
 class FirImplicitIntTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Int)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.Int)
 
 class FirImplicitLongTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Long)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.Long)
 
 class FirImplicitDoubleTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Double)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.Double)
 
 class FirImplicitFloatTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Float)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.Float)
 
 class FirImplicitUIntTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.UInt)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.UInt)
 
 class FirImplicitULongTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.ULong)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.ULong)
 
 class FirImplicitUShortTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.UShort)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.UShort)
 
 class FirImplicitUByteTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.UByte)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.UByte)
 
 class FirImplicitNothingTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Nothing)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.Nothing)
 
 class FirImplicitNullableNothingTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Nothing, isNullable = true)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.NullableNothing)
 
 class FirImplicitCharTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Char)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.Char)
 
 class FirImplicitStringTypeRef(
     source: KtSourceElement?
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.String)
+) : FirImplicitBuiltinTypeRef(source, StandardTypes.String)
 
 class FirImplicitThrowableTypeRef(
     source: KtSourceElement?

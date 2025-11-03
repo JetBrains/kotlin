@@ -566,7 +566,7 @@ private class AnonymousTypesSubstitutor(
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeClassLikeType) return null
 
-        val hasStableName = type.classId?.isLocal == true
+        val hasStableName = type.classId.isLocal
         if (!hasStableName) {
             // Make sure we're not going to expand type argument over and over again.
             // If so, i.e., if there is a recursive type argument, return the current, non-null [type]
