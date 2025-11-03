@@ -177,6 +177,12 @@ public class FirLldbTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("kt82065.kt")
+  public void testKt82065() {
+    runTest("native/native.tests/testData/lldb/kt82065.kt");
+  }
+
+  @Test
   @TestMetadata("nothingReturn.kt")
   public void testNothingReturn() {
     runTest("native/native.tests/testData/lldb/nothingReturn.kt");
