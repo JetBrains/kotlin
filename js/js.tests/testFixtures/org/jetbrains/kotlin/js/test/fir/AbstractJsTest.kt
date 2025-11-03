@@ -131,7 +131,15 @@ open class AbstractJsCodegenBoxWithInlinedFunInKlibTest : AbstractJsCodegenBoxTe
             }
             configureLoweredIrHandlersStep {
                 useHandlers(
-                    { ts, ak -> IrTextDumpHandler(ts, ak, "inlined.ir", DUMP_IR_AFTER_INLINE) },
+                    { testServices, artifactKind ->
+                        IrTextDumpHandler(
+                            testServices = testServices,
+                            artifactKind = artifactKind,
+                            customExtension = "inlined.ir",
+                            directive = DUMP_IR_AFTER_INLINE,
+                            showOffsets = true,
+                        )
+                    },
                     ::IrPreprocessedInlineFunctionDumpHandler,
                 )
             }

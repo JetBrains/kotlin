@@ -1,596 +1,596 @@
-FILE fqName:kotlin fileName:/arrayAsserts.kt
-  FUN name:arraysEqual visibility:private modality:FINAL returnType:kotlin.Boolean
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER kind:Regular name:first index:0 type:kotlin.Array<out T of kotlin.arraysEqual>
-    VALUE_PARAMETER kind:Regular name:second index:1 type:kotlin.Array<out T of kotlin.arraysEqual>
-    BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        BRANCH
-          if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
-            ARG arg0: GET_VAR 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
-            ARG arg1: GET_VAR 'second: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
-          then: RETURN type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
-            CONST Boolean type=kotlin.Boolean value=true
-      WHEN type=kotlin.Unit origin=IF
-        BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
-            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              ARG arg0: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
-                ARG <this>: GET_VAR 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
-              ARG arg1: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
-                ARG <this>: GET_VAR 'second: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
-          then: RETURN type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
-            CONST Boolean type=kotlin.Boolean value=false
-      BLOCK type=kotlin.Unit origin=FOR_LOOP
-        VAR FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.IntIterator [val]
-          CALL 'public open fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
-            ARG <this>: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
-              ARG <this>: CONST Int type=kotlin.Int value=0
-              ARG other: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
-                ARG <this>: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
-                  ARG <this>: GET_VAR 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
-                ARG other: CONST Int type=kotlin.Int value=1
-        WHILE label=null origin=FOR_LOOP_INNER_WHILE
-          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-            ARG <this>: GET_VAR 'val tmp_0: kotlin.collections.IntIterator declared in kotlin.arraysEqual' type=kotlin.collections.IntIterator origin=null
-          body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
-            VAR FOR_LOOP_VARIABLE name:index type:kotlin.Int [val]
-              CALL 'public final fun next (): kotlin.Int declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
-                ARG <this>: GET_VAR 'val tmp_0: kotlin.collections.IntIterator declared in kotlin.arraysEqual' type=kotlin.collections.IntIterator origin=null
-            BLOCK type=kotlin.Unit origin=null
-              WHEN type=kotlin.Unit origin=IF
-                BRANCH
-                  if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-                    ARG <this>: CALL 'private final fun equal (first: kotlin.Any?, second: kotlin.Any?): kotlin.Boolean declared in kotlin' type=kotlin.Boolean origin=null
-                      ARG first: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=T of kotlin.arraysEqual origin=GET_ARRAY_ELEMENT
-                        ARG <this>: GET_VAR 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
-                        ARG index: GET_VAR 'val index: kotlin.Int declared in kotlin.arraysEqual' type=kotlin.Int origin=null
-                      ARG second: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=T of kotlin.arraysEqual origin=GET_ARRAY_ELEMENT
-                        ARG <this>: GET_VAR 'second: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
-                        ARG index: GET_VAR 'val index: kotlin.Int declared in kotlin.arraysEqual' type=kotlin.Int origin=null
-                  then: RETURN type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
-                    CONST Boolean type=kotlin.Boolean value=false
-      RETURN type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
-        CONST Boolean type=kotlin.Boolean value=true
-  FUN name:assertArrayEquals visibility:public modality:FINAL returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER kind:Regular name:expected index:0 type:kotlin.Array<out T of kotlin.assertArrayEquals>
-    VALUE_PARAMETER kind:Regular name:actual index:1 type:kotlin.Array<out T of kotlin.assertArrayEquals>
-    VALUE_PARAMETER kind:Regular name:message index:2 type:kotlin.String?
-      EXPRESSION_BODY
-        CONST Null type=kotlin.Nothing? value=null
-    BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-            ARG <this>: CALL 'private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin' type=kotlin.Boolean origin=null
+FILE fqName:kotlin fileName:/arrayAsserts.kt lineStartOffsets: [0, 15, 16, 115, 157, 229, 310, 316, 318, 319, 401, 439, 487, 526, 588, 594, 610, 612, 613, 660, 711, 746, 752, 763, 787]
+  FUN[327, 611] name:arraysEqual visibility:private modality:FINAL returnType:kotlin.Boolean
+    TYPE_PARAMETER[332, 333] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER[347, 366] kind:Regular name:first index:0 type:kotlin.Array<out T of kotlin.arraysEqual>
+    VALUE_PARAMETER[368, 388] kind:Regular name:second index:1 type:kotlin.Array<out T of kotlin.arraysEqual>
+    BLOCK_BODY[399, 611]
+      WHEN[405, 438] type=kotlin.Unit origin=IF
+        BRANCH[409, 438]
+          if: CALL[409, 425] 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+            ARG arg0: GET_VAR[409, 414] 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+            ARG arg1: GET_VAR[419, 425] 'second: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+          then: RETURN[427, 438] type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
+            CONST[434, 438] Boolean type=kotlin.Boolean value=true
+      WHEN[443, 486] type=kotlin.Unit origin=IF
+        BRANCH[447, 486]
+          if: CALL[447, 472] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL[447, 472] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL[453, 457] 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
+                ARG <this>: GET_VAR[447, 452] 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+              ARG arg1: CALL[468, 472] 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
+                ARG <this>: GET_VAR[461, 467] 'second: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+          then: RETURN[474, 486] type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
+            CONST[481, 486] Boolean type=kotlin.Boolean value=false
+      BLOCK[491, 593] type=kotlin.Unit origin=FOR_LOOP
+        VAR[505, 522] FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.IntIterator [val]
+          CALL[505, 522] 'public open fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+            ARG <this>: CALL[505, 522] 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
+              ARG <this>: CONST[505, 506] Int type=kotlin.Int value=0
+              ARG other: CALL[508, 522] 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
+                ARG <this>: CALL[514, 518] 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
+                  ARG <this>: GET_VAR[508, 513] 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+                ARG other: CONST[521, 522] Int type=kotlin.Int value=1
+        WHILE[491, 593] label=null origin=FOR_LOOP_INNER_WHILE
+          condition: CALL[505, 522] 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+            ARG <this>: GET_VAR[505, 522] 'val tmp_0: kotlin.collections.IntIterator declared in kotlin.arraysEqual' type=kotlin.collections.IntIterator origin=null
+          body: BLOCK[491, 593] type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
+            VAR[496, 501] FOR_LOOP_VARIABLE name:index type:kotlin.Int [val]
+              CALL[505, 522] 'public final fun next (): kotlin.Int declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
+                ARG <this>: GET_VAR[505, 522] 'val tmp_0: kotlin.collections.IntIterator declared in kotlin.arraysEqual' type=kotlin.collections.IntIterator origin=null
+            BLOCK[524, 593] type=kotlin.Unit origin=null
+              WHEN[534, 587] type=kotlin.Unit origin=IF
+                BRANCH[538, 587]
+                  if: CALL[538, 573] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                    ARG <this>: CALL[539, 573] 'private final fun equal (first: kotlin.Any?, second: kotlin.Any?): kotlin.Boolean declared in kotlin' type=kotlin.Boolean origin=null
+                      ARG first: CALL[545, 557] 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=T of kotlin.arraysEqual origin=GET_ARRAY_ELEMENT
+                        ARG <this>: GET_VAR[545, 550] 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+                        ARG index: GET_VAR[551, 556] 'val index: kotlin.Int declared in kotlin.arraysEqual' type=kotlin.Int origin=null
+                      ARG second: CALL[559, 572] 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=T of kotlin.arraysEqual origin=GET_ARRAY_ELEMENT
+                        ARG <this>: GET_VAR[559, 565] 'second: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+                        ARG index: GET_VAR[566, 571] 'val index: kotlin.Int declared in kotlin.arraysEqual' type=kotlin.Int origin=null
+                  then: RETURN[575, 587] type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
+                    CONST[582, 587] Boolean type=kotlin.Boolean value=false
+      RETURN[598, 609] type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
+        CONST[605, 609] Boolean type=kotlin.Boolean value=true
+  FUN[16, 317] name:assertArrayEquals visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER[21, 22] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER[42, 64] kind:Regular name:expected index:0 type:kotlin.Array<out T of kotlin.assertArrayEquals>
+    VALUE_PARAMETER[66, 86] kind:Regular name:actual index:1 type:kotlin.Array<out T of kotlin.assertArrayEquals>
+    VALUE_PARAMETER[88, 111] kind:Regular name:message index:2 type:kotlin.String?
+      EXPRESSION_BODY[107, 111]
+        CONST[107, 111] Null type=kotlin.Nothing? value=null
+    BLOCK_BODY[113, 317]
+      WHEN[119, 315] type=kotlin.Unit origin=IF
+        BRANCH[123, 315]
+          if: CALL[123, 153] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+            ARG <this>: CALL[124, 153] 'private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin' type=kotlin.Boolean origin=null
               TYPE_ARG T: T of kotlin.assertArrayEquals
-              ARG first: GET_VAR 'expected: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
-              ARG second: GET_VAR 'actual: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
-          then: BLOCK type=kotlin.Unit origin=null
-            VAR name:msg type:kotlin.String [val]
-              WHEN type=kotlin.String origin=IF
-                BRANCH
-                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    ARG arg0: GET_VAR 'message: kotlin.String? declared in kotlin.assertArrayEquals' type=kotlin.String? origin=null
-                    ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                  then: CONST String type=kotlin.String value=""
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: STRING_CONCATENATION type=kotlin.String
-                    CONST String type=kotlin.String value=", message = '"
-                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                      GET_VAR 'message: kotlin.String? declared in kotlin.assertArrayEquals' type=kotlin.String? origin=null
-                    CONST String type=kotlin.String value="'"
-            CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
-              ARG message: STRING_CONCATENATION type=kotlin.String
-                CONST String type=kotlin.String value="Unexpected array: expected = '"
-                GET_VAR 'expected: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
-                CONST String type=kotlin.String value="', actual = '"
-                GET_VAR 'actual: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
-                CONST String type=kotlin.String value="'"
-                GET_VAR 'val msg: kotlin.String declared in kotlin.assertArrayEquals' type=kotlin.String origin=null
-  FUN name:equal visibility:private modality:FINAL returnType:kotlin.Boolean
-    VALUE_PARAMETER kind:Regular name:first index:0 type:kotlin.Any?
-    VALUE_PARAMETER kind:Regular name:second index:1 type:kotlin.Any?
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='private final fun equal (first: kotlin.Any?, second: kotlin.Any?): kotlin.Boolean declared in kotlin'
-        WHEN type=kotlin.Boolean origin=IF
-          BRANCH
-            if: WHEN type=kotlin.Boolean origin=ANDAND
-              BRANCH
-                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
-                  GET_VAR 'first: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
-                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
-                  GET_VAR 'second: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
-              BRANCH
-                if: CONST Boolean type=kotlin.Boolean value=true
-                then: CONST Boolean type=kotlin.Boolean value=false
-            then: BLOCK type=kotlin.Boolean origin=null
-              CALL 'private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin' type=kotlin.Boolean origin=null
+              ARG first: GET_VAR[136, 144] 'expected: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
+              ARG second: GET_VAR[146, 152] 'actual: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
+          then: BLOCK[155, 315] type=kotlin.Unit origin=null
+            VAR[165, 228] name:msg type:kotlin.String [val]
+              WHEN[175, 228] type=kotlin.String origin=IF
+                BRANCH[179, 198]
+                  if: CALL[179, 194] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: GET_VAR[179, 186] 'message: kotlin.String? declared in kotlin.assertArrayEquals' type=kotlin.String? origin=null
+                    ARG arg1: CONST[190, 194] Null type=kotlin.Nothing? value=null
+                  then: CONST[196, 198] String type=kotlin.String value=""
+                BRANCH[204, 228]
+                  if: CONST[204, 228] Boolean type=kotlin.Boolean value=true
+                  then: STRING_CONCATENATION[204, 228] type=kotlin.String
+                    CONST[205, 218] String type=kotlin.String value=", message = '"
+                    TYPE_OP[219, 226] type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR[219, 226] 'message: kotlin.String? declared in kotlin.assertArrayEquals' type=kotlin.String? origin=null
+                    CONST[226, 227] String type=kotlin.String value="'"
+            CALL[237, 309] 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+              ARG message: STRING_CONCATENATION[242, 308] type=kotlin.String
+                CONST[243, 273] String type=kotlin.String value="Unexpected array: expected = '"
+                GET_VAR[274, 282] 'expected: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
+                CONST[282, 295] String type=kotlin.String value="', actual = '"
+                GET_VAR[296, 302] 'actual: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
+                CONST[302, 303] String type=kotlin.String value="'"
+                GET_VAR[304, 307] 'val msg: kotlin.String declared in kotlin.assertArrayEquals' type=kotlin.String origin=null
+  FUN[621, 792] name:equal visibility:private modality:FINAL returnType:kotlin.Boolean
+    VALUE_PARAMETER[631, 642] kind:Regular name:first index:0 type:kotlin.Any?
+    VALUE_PARAMETER[644, 656] kind:Regular name:second index:1 type:kotlin.Any?
+    BLOCK_BODY[664, 792]
+      RETURN[792, 792] type=kotlin.Nothing from='private final fun equal (first: kotlin.Any?, second: kotlin.Any?): kotlin.Boolean declared in kotlin'
+        WHEN[664, 792] type=kotlin.Boolean origin=IF
+          BRANCH[668, 751]
+            if: WHEN[668, 707] type=kotlin.Boolean origin=ANDAND
+              BRANCH[668, 707]
+                if: TYPE_OP[668, 685] type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
+                  GET_VAR[668, 673] 'first: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+                then: TYPE_OP[689, 707] type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
+                  GET_VAR[689, 695] 'second: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+              BRANCH[689, 707]
+                if: CONST[689, 707] Boolean type=kotlin.Boolean value=true
+                then: CONST[689, 707] Boolean type=kotlin.Boolean value=false
+            then: BLOCK[709, 751] type=kotlin.Boolean origin=null
+              CALL[719, 745] 'private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin' type=kotlin.Boolean origin=null
                 TYPE_ARG T: kotlin.Any?
-                ARG first: TYPE_OP type=kotlin.Array<*> origin=IMPLICIT_CAST typeOperand=kotlin.Array<*>
-                  GET_VAR 'first: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
-                ARG second: TYPE_OP type=kotlin.Array<*> origin=IMPLICIT_CAST typeOperand=kotlin.Array<*>
-                  GET_VAR 'second: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: BLOCK type=kotlin.Boolean origin=null
-              CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                ARG arg0: GET_VAR 'first: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
-                ARG arg1: GET_VAR 'second: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
-FILE fqName:kotlin fileName:/asserts.kt
-  FUN name:assertEquals visibility:public modality:FINAL returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER kind:Regular name:expected index:0 type:T of kotlin.assertEquals
-    VALUE_PARAMETER kind:Regular name:actual index:1 type:T of kotlin.assertEquals
-    VALUE_PARAMETER kind:Regular name:message index:2 type:kotlin.String?
-      EXPRESSION_BODY
-        CONST Null type=kotlin.Nothing? value=null
-    BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
-            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              ARG arg0: GET_VAR 'expected: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
-              ARG arg1: GET_VAR 'actual: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
-          then: BLOCK type=kotlin.Unit origin=null
-            VAR name:msg type:kotlin.String [val]
-              WHEN type=kotlin.String origin=IF
-                BRANCH
-                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    ARG arg0: GET_VAR 'message: kotlin.String? declared in kotlin.assertEquals' type=kotlin.String? origin=null
-                    ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                  then: CONST String type=kotlin.String value=""
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: STRING_CONCATENATION type=kotlin.String
-                    CONST String type=kotlin.String value=", message = '"
-                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                      GET_VAR 'message: kotlin.String? declared in kotlin.assertEquals' type=kotlin.String? origin=null
-                    CONST String type=kotlin.String value="'"
-            CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
-              ARG message: STRING_CONCATENATION type=kotlin.String
-                CONST String type=kotlin.String value="Unexpected value: expected = '"
-                GET_VAR 'expected: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
-                CONST String type=kotlin.String value="', actual = '"
-                GET_VAR 'actual: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
-                CONST String type=kotlin.String value="'"
-                GET_VAR 'val msg: kotlin.String declared in kotlin.assertEquals' type=kotlin.String origin=null
-  FUN name:assertFails visibility:public modality:FINAL returnType:kotlin.Throwable
-    VALUE_PARAMETER kind:Regular name:block index:0 type:kotlin.Function0<kotlin.Unit>
-    BLOCK_BODY
-      TRY type=kotlin.Unit
-        try: BLOCK type=kotlin.Unit origin=null
-          CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
-            ARG <this>: GET_VAR 'block: kotlin.Function0<kotlin.Unit> declared in kotlin.assertFails' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-        CATCH parameter=val t: kotlin.Throwable declared in kotlin.assertFails
-          VAR CATCH_PARAMETER name:t type:kotlin.Throwable [val]
-          BLOCK type=kotlin.Nothing origin=null
-            RETURN type=kotlin.Nothing from='public final fun assertFails (block: kotlin.Function0<kotlin.Unit>): kotlin.Throwable declared in kotlin'
-              GET_VAR 'val t: kotlin.Throwable declared in kotlin.assertFails' type=kotlin.Throwable origin=null
-      CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
-        ARG message: CONST String type=kotlin.String value="Expected an exception to be thrown, but was completed successfully."
-  FUN name:assertFalse visibility:public modality:FINAL returnType:kotlin.Unit
-    VALUE_PARAMETER kind:Regular name:actual index:0 type:kotlin.Boolean
-    VALUE_PARAMETER kind:Regular name:message index:1 type:kotlin.String?
-      EXPRESSION_BODY
-        CONST Null type=kotlin.Nothing? value=null
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin'
-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.assertEquals, actual: T of kotlin.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
+                ARG first: TYPE_OP[731, 736] type=kotlin.Array<*> origin=IMPLICIT_CAST typeOperand=kotlin.Array<*>
+                  GET_VAR[731, 736] 'first: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+                ARG second: TYPE_OP[738, 744] type=kotlin.Array<*> origin=IMPLICIT_CAST typeOperand=kotlin.Array<*>
+                  GET_VAR[738, 744] 'second: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+          BRANCH[761, 792]
+            if: CONST[761, 792] Boolean type=kotlin.Boolean value=true
+            then: BLOCK[761, 792] type=kotlin.Boolean origin=null
+              CALL[771, 786] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: GET_VAR[771, 776] 'first: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+                ARG arg1: GET_VAR[780, 786] 'second: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+FILE fqName:kotlin fileName:/asserts.kt lineStartOffsets: [0, 15, 142, 186, 187, 259, 289, 361, 442, 448, 450, 451, 525, 554, 626, 702, 708, 710, 711, 781, 812, 884, 972, 978, 980, 981, 1076, 1077, 1174, 1175, 1208, 1242, 1244, 1245, 1279, 1314, 1316, 1317, 1365, 1375, 1391, 1420, 1437, 1443, 1523]
+  FUN[187, 449] name:assertEquals visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER[192, 193] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER[208, 219] kind:Regular name:expected index:0 type:T of kotlin.assertEquals
+    VALUE_PARAMETER[221, 230] kind:Regular name:actual index:1 type:T of kotlin.assertEquals
+    VALUE_PARAMETER[232, 255] kind:Regular name:message index:2 type:kotlin.String?
+      EXPRESSION_BODY[251, 255]
+        CONST[251, 255] Null type=kotlin.Nothing? value=null
+    BLOCK_BODY[257, 449]
+      WHEN[263, 447] type=kotlin.Unit origin=IF
+        BRANCH[267, 447]
+          if: CALL[267, 285] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL[267, 285] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: GET_VAR[267, 275] 'expected: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
+              ARG arg1: GET_VAR[279, 285] 'actual: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
+          then: BLOCK[287, 447] type=kotlin.Unit origin=null
+            VAR[297, 360] name:msg type:kotlin.String [val]
+              WHEN[307, 360] type=kotlin.String origin=IF
+                BRANCH[311, 330]
+                  if: CALL[311, 326] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: GET_VAR[311, 318] 'message: kotlin.String? declared in kotlin.assertEquals' type=kotlin.String? origin=null
+                    ARG arg1: CONST[322, 326] Null type=kotlin.Nothing? value=null
+                  then: CONST[328, 330] String type=kotlin.String value=""
+                BRANCH[336, 360]
+                  if: CONST[336, 360] Boolean type=kotlin.Boolean value=true
+                  then: STRING_CONCATENATION[336, 360] type=kotlin.String
+                    CONST[337, 350] String type=kotlin.String value=", message = '"
+                    TYPE_OP[351, 358] type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR[351, 358] 'message: kotlin.String? declared in kotlin.assertEquals' type=kotlin.String? origin=null
+                    CONST[358, 359] String type=kotlin.String value="'"
+            CALL[369, 441] 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+              ARG message: STRING_CONCATENATION[374, 440] type=kotlin.String
+                CONST[375, 405] String type=kotlin.String value="Unexpected value: expected = '"
+                GET_VAR[406, 414] 'expected: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
+                CONST[414, 427] String type=kotlin.String value="', actual = '"
+                GET_VAR[428, 434] 'actual: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
+                CONST[434, 435] String type=kotlin.String value="'"
+                GET_VAR[436, 439] 'val msg: kotlin.String declared in kotlin.assertEquals' type=kotlin.String origin=null
+  FUN[1317, 1524] name:assertFails visibility:public modality:FINAL returnType:kotlin.Throwable
+    VALUE_PARAMETER[1333, 1350] kind:Regular name:block index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY[1363, 1524]
+      TRY[1369, 1442] type=kotlin.Unit
+        try: BLOCK[1373, 1396] type=kotlin.Unit origin=null
+          CALL[1383, 1390] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+            ARG <this>: GET_VAR[1383, 1388] 'block: kotlin.Function0<kotlin.Unit> declared in kotlin.assertFails' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+        CATCH[1397, 1442] parameter=val t: kotlin.Throwable declared in kotlin.assertFails
+          VAR[1404, 1416] CATCH_PARAMETER name:t type:kotlin.Throwable [val]
+          BLOCK[1418, 1442] type=kotlin.Nothing origin=null
+            RETURN[1428, 1436] type=kotlin.Nothing from='public final fun assertFails (block: kotlin.Function0<kotlin.Unit>): kotlin.Throwable declared in kotlin'
+              GET_VAR[1435, 1436] 'val t: kotlin.Throwable declared in kotlin.assertFails' type=kotlin.Throwable origin=null
+      CALL[1447, 1522] 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+        ARG message: CONST[1452, 1521] String type=kotlin.String value="Expected an exception to be thrown, but was completed successfully."
+  FUN[1077, 1173] name:assertFalse visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER[1093, 1108] kind:Regular name:actual index:0 type:kotlin.Boolean
+    VALUE_PARAMETER[1110, 1133] kind:Regular name:message index:1 type:kotlin.String?
+      EXPRESSION_BODY[1129, 1133]
+        CONST[1129, 1133] Null type=kotlin.Nothing? value=null
+    BLOCK_BODY[1137, 1173]
+      RETURN[1173, 1173] type=kotlin.Nothing from='public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin'
+        CALL[1137, 1173] 'public final fun assertEquals <T> (expected: T of kotlin.assertEquals, actual: T of kotlin.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
           TYPE_ARG T: kotlin.Boolean
-          ARG expected: CONST Boolean type=kotlin.Boolean value=false
-          ARG actual: GET_VAR 'actual: kotlin.Boolean declared in kotlin.assertFalse' type=kotlin.Boolean origin=null
-          ARG message: GET_VAR 'message: kotlin.String? declared in kotlin.assertFalse' type=kotlin.String? origin=null
-  FUN name:assertNotEquals visibility:public modality:FINAL returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER kind:Regular name:illegal index:0 type:T of kotlin.assertNotEquals
-    VALUE_PARAMETER kind:Regular name:actual index:1 type:T of kotlin.assertNotEquals
-    VALUE_PARAMETER kind:Regular name:message index:2 type:kotlin.String?
-      EXPRESSION_BODY
-        CONST Null type=kotlin.Nothing? value=null
-    BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        BRANCH
-          if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-            ARG arg0: GET_VAR 'illegal: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
-            ARG arg1: GET_VAR 'actual: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
-          then: BLOCK type=kotlin.Unit origin=null
-            VAR name:msg type:kotlin.String [val]
-              WHEN type=kotlin.String origin=IF
-                BRANCH
-                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    ARG arg0: GET_VAR 'message: kotlin.String? declared in kotlin.assertNotEquals' type=kotlin.String? origin=null
-                    ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                  then: CONST String type=kotlin.String value=""
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: STRING_CONCATENATION type=kotlin.String
-                    CONST String type=kotlin.String value=", message = '"
-                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                      GET_VAR 'message: kotlin.String? declared in kotlin.assertNotEquals' type=kotlin.String? origin=null
-                    CONST String type=kotlin.String value="'"
-            CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
-              ARG message: STRING_CONCATENATION type=kotlin.String
-                CONST String type=kotlin.String value="Illegal value: illegal = '"
-                GET_VAR 'illegal: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
-                CONST String type=kotlin.String value="', actual = '"
-                GET_VAR 'actual: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
-                CONST String type=kotlin.String value="'"
-                GET_VAR 'val msg: kotlin.String declared in kotlin.assertNotEquals' type=kotlin.String origin=null
-  FUN name:assertSame visibility:public modality:FINAL returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER kind:Regular name:expected index:0 type:T of kotlin.assertSame
-    VALUE_PARAMETER kind:Regular name:actual index:1 type:T of kotlin.assertSame
-    VALUE_PARAMETER kind:Regular name:message index:2 type:kotlin.String?
-      EXPRESSION_BODY
-        CONST Null type=kotlin.Nothing? value=null
-    BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQEQ
-            ARG <this>: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQEQ
-              ARG arg0: GET_VAR 'expected: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
-              ARG arg1: GET_VAR 'actual: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
-          then: BLOCK type=kotlin.Unit origin=null
-            VAR name:msg type:kotlin.String [val]
-              WHEN type=kotlin.String origin=IF
-                BRANCH
-                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    ARG arg0: GET_VAR 'message: kotlin.String? declared in kotlin.assertSame' type=kotlin.String? origin=null
-                    ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                  then: CONST String type=kotlin.String value=""
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: STRING_CONCATENATION type=kotlin.String
-                    CONST String type=kotlin.String value=", message = '"
-                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                      GET_VAR 'message: kotlin.String? declared in kotlin.assertSame' type=kotlin.String? origin=null
-                    CONST String type=kotlin.String value="'"
-            CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
-              ARG message: STRING_CONCATENATION type=kotlin.String
-                CONST String type=kotlin.String value="Expected same instances: expected = '"
-                GET_VAR 'expected: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
-                CONST String type=kotlin.String value="', actual = '"
-                GET_VAR 'actual: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
-                CONST String type=kotlin.String value="'"
-                GET_VAR 'val msg: kotlin.String declared in kotlin.assertSame' type=kotlin.String origin=null
-  FUN name:assertTrue visibility:public modality:FINAL returnType:kotlin.Unit
-    VALUE_PARAMETER kind:Regular name:actual index:0 type:kotlin.Boolean
-    VALUE_PARAMETER kind:Regular name:message index:1 type:kotlin.String?
-      EXPRESSION_BODY
-        CONST Null type=kotlin.Nothing? value=null
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin'
-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.assertEquals, actual: T of kotlin.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
+          ARG expected: CONST[1150, 1155] Boolean type=kotlin.Boolean value=false
+          ARG actual: GET_VAR[1157, 1163] 'actual: kotlin.Boolean declared in kotlin.assertFalse' type=kotlin.Boolean origin=null
+          ARG message: GET_VAR[1165, 1172] 'message: kotlin.String? declared in kotlin.assertFalse' type=kotlin.String? origin=null
+  FUN[451, 709] name:assertNotEquals visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER[456, 457] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER[475, 485] kind:Regular name:illegal index:0 type:T of kotlin.assertNotEquals
+    VALUE_PARAMETER[487, 496] kind:Regular name:actual index:1 type:T of kotlin.assertNotEquals
+    VALUE_PARAMETER[498, 521] kind:Regular name:message index:2 type:kotlin.String?
+      EXPRESSION_BODY[517, 521]
+        CONST[517, 521] Null type=kotlin.Nothing? value=null
+    BLOCK_BODY[523, 709]
+      WHEN[529, 707] type=kotlin.Unit origin=IF
+        BRANCH[533, 707]
+          if: CALL[533, 550] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: GET_VAR[533, 540] 'illegal: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
+            ARG arg1: GET_VAR[544, 550] 'actual: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
+          then: BLOCK[552, 707] type=kotlin.Unit origin=null
+            VAR[562, 625] name:msg type:kotlin.String [val]
+              WHEN[572, 625] type=kotlin.String origin=IF
+                BRANCH[576, 595]
+                  if: CALL[576, 591] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: GET_VAR[576, 583] 'message: kotlin.String? declared in kotlin.assertNotEquals' type=kotlin.String? origin=null
+                    ARG arg1: CONST[587, 591] Null type=kotlin.Nothing? value=null
+                  then: CONST[593, 595] String type=kotlin.String value=""
+                BRANCH[601, 625]
+                  if: CONST[601, 625] Boolean type=kotlin.Boolean value=true
+                  then: STRING_CONCATENATION[601, 625] type=kotlin.String
+                    CONST[602, 615] String type=kotlin.String value=", message = '"
+                    TYPE_OP[616, 623] type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR[616, 623] 'message: kotlin.String? declared in kotlin.assertNotEquals' type=kotlin.String? origin=null
+                    CONST[623, 624] String type=kotlin.String value="'"
+            CALL[634, 701] 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+              ARG message: STRING_CONCATENATION[639, 700] type=kotlin.String
+                CONST[640, 666] String type=kotlin.String value="Illegal value: illegal = '"
+                GET_VAR[667, 674] 'illegal: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
+                CONST[674, 687] String type=kotlin.String value="', actual = '"
+                GET_VAR[688, 694] 'actual: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
+                CONST[694, 695] String type=kotlin.String value="'"
+                GET_VAR[696, 699] 'val msg: kotlin.String declared in kotlin.assertNotEquals' type=kotlin.String origin=null
+  FUN[711, 979] name:assertSame visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER[716, 717] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER[730, 741] kind:Regular name:expected index:0 type:T of kotlin.assertSame
+    VALUE_PARAMETER[743, 752] kind:Regular name:actual index:1 type:T of kotlin.assertSame
+    VALUE_PARAMETER[754, 777] kind:Regular name:message index:2 type:kotlin.String?
+      EXPRESSION_BODY[773, 777]
+        CONST[773, 777] Null type=kotlin.Nothing? value=null
+    BLOCK_BODY[779, 979]
+      WHEN[785, 977] type=kotlin.Unit origin=IF
+        BRANCH[789, 977]
+          if: CALL[789, 808] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQEQ
+            ARG <this>: CALL[789, 808] 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQEQ
+              ARG arg0: GET_VAR[789, 797] 'expected: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
+              ARG arg1: GET_VAR[802, 808] 'actual: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
+          then: BLOCK[810, 977] type=kotlin.Unit origin=null
+            VAR[820, 883] name:msg type:kotlin.String [val]
+              WHEN[830, 883] type=kotlin.String origin=IF
+                BRANCH[834, 853]
+                  if: CALL[834, 849] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: GET_VAR[834, 841] 'message: kotlin.String? declared in kotlin.assertSame' type=kotlin.String? origin=null
+                    ARG arg1: CONST[845, 849] Null type=kotlin.Nothing? value=null
+                  then: CONST[851, 853] String type=kotlin.String value=""
+                BRANCH[859, 883]
+                  if: CONST[859, 883] Boolean type=kotlin.Boolean value=true
+                  then: STRING_CONCATENATION[859, 883] type=kotlin.String
+                    CONST[860, 873] String type=kotlin.String value=", message = '"
+                    TYPE_OP[874, 881] type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR[874, 881] 'message: kotlin.String? declared in kotlin.assertSame' type=kotlin.String? origin=null
+                    CONST[881, 882] String type=kotlin.String value="'"
+            CALL[892, 971] 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+              ARG message: STRING_CONCATENATION[897, 970] type=kotlin.String
+                CONST[898, 935] String type=kotlin.String value="Expected same instances: expected = '"
+                GET_VAR[936, 944] 'expected: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
+                CONST[944, 957] String type=kotlin.String value="', actual = '"
+                GET_VAR[958, 964] 'actual: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
+                CONST[964, 965] String type=kotlin.String value="'"
+                GET_VAR[966, 969] 'val msg: kotlin.String declared in kotlin.assertSame' type=kotlin.String origin=null
+  FUN[981, 1075] name:assertTrue visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER[996, 1011] kind:Regular name:actual index:0 type:kotlin.Boolean
+    VALUE_PARAMETER[1013, 1036] kind:Regular name:message index:1 type:kotlin.String?
+      EXPRESSION_BODY[1032, 1036]
+        CONST[1032, 1036] Null type=kotlin.Nothing? value=null
+    BLOCK_BODY[1040, 1075]
+      RETURN[1075, 1075] type=kotlin.Nothing from='public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin'
+        CALL[1040, 1075] 'public final fun assertEquals <T> (expected: T of kotlin.assertEquals, actual: T of kotlin.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
           TYPE_ARG T: kotlin.Boolean
-          ARG expected: CONST Boolean type=kotlin.Boolean value=true
-          ARG actual: GET_VAR 'actual: kotlin.Boolean declared in kotlin.assertTrue' type=kotlin.Boolean origin=null
-          ARG message: GET_VAR 'message: kotlin.String? declared in kotlin.assertTrue' type=kotlin.String? origin=null
-  FUN name:testFalse visibility:public modality:FINAL returnType:kotlin.Unit
-    VALUE_PARAMETER kind:Regular name:f index:0 type:kotlin.Function0<kotlin.Boolean>
-    BLOCK_BODY
-      CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
-        ARG actual: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Boolean origin=INVOKE
-          ARG <this>: GET_VAR 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testFalse' type=kotlin.Function0<kotlin.Boolean> origin=VARIABLE_AS_FUNCTION
-        ARG message: CALL 'public open fun toString (): kotlin.String declared in kotlin.Function0' type=kotlin.String origin=null
-          ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-            GET_VAR 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testFalse' type=kotlin.Function0<kotlin.Boolean> origin=null
-  FUN name:testTrue visibility:public modality:FINAL returnType:kotlin.Unit
-    VALUE_PARAMETER kind:Regular name:f index:0 type:kotlin.Function0<kotlin.Boolean>
-    BLOCK_BODY
-      CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
-        ARG actual: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Boolean origin=INVOKE
-          ARG <this>: GET_VAR 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testTrue' type=kotlin.Function0<kotlin.Boolean> origin=VARIABLE_AS_FUNCTION
-        ARG message: CALL 'public open fun toString (): kotlin.String declared in kotlin.Function0' type=kotlin.String origin=null
-          ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-            GET_VAR 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testTrue' type=kotlin.Function0<kotlin.Boolean> origin=null
-FILE fqName:kotlin fileName:/fail.kt
-  FUN name:fail visibility:public modality:FINAL returnType:kotlin.Nothing
-    VALUE_PARAMETER kind:Regular name:message index:0 type:kotlin.String?
-      EXPRESSION_BODY
-        CONST Null type=kotlin.Nothing? value=null
-    BLOCK_BODY
-      THROW type=kotlin.Nothing
-        CONSTRUCTOR_CALL 'public constructor <init> (message: kotlin.String?) declared in kotlin.Throwable' type=kotlin.Throwable origin=null
-          ARG message: GET_VAR 'message: kotlin.String? declared in kotlin.fail' type=kotlin.String? origin=null
-FILE fqName:<root> fileName:/generticReferences.kt
-  CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
-    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A<T of <root>.A>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public returnType:<root>.A<T of <root>.A> [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+          ARG expected: CONST[1053, 1057] Boolean type=kotlin.Boolean value=true
+          ARG actual: GET_VAR[1059, 1065] 'actual: kotlin.Boolean declared in kotlin.assertTrue' type=kotlin.Boolean origin=null
+          ARG message: GET_VAR[1067, 1074] 'message: kotlin.String? declared in kotlin.assertTrue' type=kotlin.String? origin=null
+  FUN[1245, 1315] name:testFalse visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER[1259, 1275] kind:Regular name:f index:0 type:kotlin.Function0<kotlin.Boolean>
+    BLOCK_BODY[1277, 1315]
+      CALL[1283, 1313] 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
+        ARG actual: CALL[1295, 1298] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Boolean origin=INVOKE
+          ARG <this>: GET_VAR[1295, 1296] 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testFalse' type=kotlin.Function0<kotlin.Boolean> origin=VARIABLE_AS_FUNCTION
+        ARG message: CALL[1302, 1312] 'public open fun toString (): kotlin.String declared in kotlin.Function0' type=kotlin.String origin=null
+          ARG <this>: TYPE_OP[1300, 1301] type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            GET_VAR[1300, 1301] 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testFalse' type=kotlin.Function0<kotlin.Boolean> origin=null
+  FUN[1175, 1243] name:testTrue visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER[1188, 1204] kind:Regular name:f index:0 type:kotlin.Function0<kotlin.Boolean>
+    BLOCK_BODY[1206, 1243]
+      CALL[1212, 1241] 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
+        ARG actual: CALL[1223, 1226] 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Boolean origin=INVOKE
+          ARG <this>: GET_VAR[1223, 1224] 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testTrue' type=kotlin.Function0<kotlin.Boolean> origin=VARIABLE_AS_FUNCTION
+        ARG message: CALL[1230, 1240] 'public open fun toString (): kotlin.String declared in kotlin.Function0' type=kotlin.String origin=null
+          ARG <this>: TYPE_OP[1228, 1229] type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            GET_VAR[1228, 1229] 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testTrue' type=kotlin.Function0<kotlin.Boolean> origin=null
+FILE fqName:kotlin fileName:/fail.kt lineStartOffsets: [0, 15, 142, 186, 187, 232, 261]
+  FUN[187, 262] name:fail visibility:public modality:FINAL returnType:kotlin.Nothing
+    VALUE_PARAMETER[196, 219] kind:Regular name:message index:0 type:kotlin.String?
+      EXPRESSION_BODY[215, 219]
+        CONST[215, 219] Null type=kotlin.Nothing? value=null
+    BLOCK_BODY[230, 262]
+      THROW[236, 260] type=kotlin.Nothing
+        CONSTRUCTOR_CALL[242, 260] 'public constructor <init> (message: kotlin.String?) declared in kotlin.Throwable' type=kotlin.Throwable origin=null
+          ARG message: GET_VAR[252, 259] 'message: kotlin.String? declared in kotlin.fail' type=kotlin.String? origin=null
+FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 26, 37, 61, 62, 63, 76, 101, 103, 104, 129, 164, 165, 193, 219, 221, 222, 263, 316, 317, 318, 347, 373, 375, 376, 418, 472, 473, 474, 494, 527, 552, 575, 600, 623, 624, 625, 665, 695, 720, 750, 775, 776, 816, 846, 871, 901, 926, 927, 943, 945]
+  CLASS[63, 102] CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[63, 102] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A<T of <root>.A>
+    TYPE_PARAMETER[71, 72] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR[63, 102] visibility:public returnType:<root>.A<T of <root>.A> [primary]
+      BLOCK_BODY[63, 102]
+        DELEGATING_CONSTRUCTOR_CALL[63, 102] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[63, 102] classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN[63, 102] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[63, 102] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[63, 102] kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[63, 102] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[63, 102] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[63, 102] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[63, 102] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-    FUN name:bar visibility:public modality:FINAL returnType:T of <root>.A
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<T of <root>.A>
-      VALUE_PARAMETER kind:Regular name:x index:1 type:T of <root>.A
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A'
-          GET_VAR 'x: T of <root>.A declared in <root>.A.bar' type=T of <root>.A origin=null
-  CLASS CLASS name:A2 modality:FINAL visibility:public superTypes:[kotlin.Any]
-    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A2<T of <root>.A2>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:false
-    CONSTRUCTOR visibility:public returnType:<root>.A2<T of <root>.A2> [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    FUN[80, 100] name:bar visibility:public modality:FINAL returnType:T of <root>.A
+      VALUE_PARAMETER[80, 100] kind:DispatchReceiver name:<this> index:0 type:<root>.A<T of <root>.A>
+      VALUE_PARAMETER[88, 92] kind:Regular name:x index:1 type:T of <root>.A
+      BLOCK_BODY[99, 100]
+        RETURN[100, 100] type=kotlin.Nothing from='public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A'
+          GET_VAR[99, 100] 'x: T of <root>.A declared in <root>.A.bar' type=T of <root>.A origin=null
+  CLASS[165, 220] CLASS name:A2 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[165, 220] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A2<T of <root>.A2>
+    TYPE_PARAMETER[174, 189] name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:false
+    CONSTRUCTOR[165, 220] visibility:public returnType:<root>.A2<T of <root>.A2> [primary]
+      BLOCK_BODY[165, 220]
+        DELEGATING_CONSTRUCTOR_CALL[165, 220] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[165, 220] classDescriptor='CLASS CLASS name:A2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN[165, 220] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[165, 220] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[165, 220] kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[165, 220] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[165, 220] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[165, 220] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[165, 220] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-    FUN name:bar2 visibility:public modality:FINAL returnType:T of <root>.A2
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A2<T of <root>.A2>
-      VALUE_PARAMETER kind:Regular name:x index:1 type:T of <root>.A2
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2'
-          GET_VAR 'x: T of <root>.A2 declared in <root>.A2.bar2' type=T of <root>.A2 origin=null
-  CLASS CLASS name:A3 modality:FINAL visibility:public superTypes:[kotlin.Any]
-    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A3<T of <root>.A3>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.A3>] reified:false
-    CONSTRUCTOR visibility:public returnType:<root>.A3<T of <root>.A3> [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    FUN[197, 218] name:bar2 visibility:public modality:FINAL returnType:T of <root>.A2
+      VALUE_PARAMETER[197, 218] kind:DispatchReceiver name:<this> index:0 type:<root>.A2<T of <root>.A2>
+      VALUE_PARAMETER[206, 210] kind:Regular name:x index:1 type:T of <root>.A2
+      BLOCK_BODY[217, 218]
+        RETURN[218, 218] type=kotlin.Nothing from='public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2'
+          GET_VAR[217, 218] 'x: T of <root>.A2 declared in <root>.A2.bar2' type=T of <root>.A2 origin=null
+  CLASS[318, 374] CLASS name:A3 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[318, 374] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A3<T of <root>.A3>
+    TYPE_PARAMETER[327, 343] name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.A3>] reified:false
+    CONSTRUCTOR[318, 374] visibility:public returnType:<root>.A3<T of <root>.A3> [primary]
+      BLOCK_BODY[318, 374]
+        DELEGATING_CONSTRUCTOR_CALL[318, 374] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[318, 374] classDescriptor='CLASS CLASS name:A3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN[318, 374] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[318, 374] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[318, 374] kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[318, 374] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[318, 374] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[318, 374] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[318, 374] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-    FUN name:bar3 visibility:public modality:FINAL returnType:T of <root>.A3
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A3<T of <root>.A3>
-      VALUE_PARAMETER kind:Regular name:x index:1 type:T of <root>.A3
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3'
-          GET_VAR 'x: T of <root>.A3 declared in <root>.A3.bar3' type=T of <root>.A3 origin=null
-  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
-    BLOCK_BODY
-      VAR name:r1 type:kotlin.Function1<kotlin.Int, kotlin.Int> [val]
-        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget='public final fun foo <T> (x: T of <root>.foo): T of <root>.foo declared in <root>'
+    FUN[351, 372] name:bar3 visibility:public modality:FINAL returnType:T of <root>.A3
+      VALUE_PARAMETER[351, 372] kind:DispatchReceiver name:<this> index:0 type:<root>.A3<T of <root>.A3>
+      VALUE_PARAMETER[360, 364] kind:Regular name:x index:1 type:T of <root>.A3
+      BLOCK_BODY[371, 372]
+        RETURN[372, 372] type=kotlin.Nothing from='public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3'
+          GET_VAR[371, 372] 'x: T of <root>.A3 declared in <root>.A3.bar3' type=T of <root>.A3 origin=null
+  FUN[474, 944] name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY[492, 944]
+      VAR[498, 526] name:r1 type:kotlin.Function1<kotlin.Int, kotlin.Int> [val]
+        RICH_FUNCTION_REFERENCE[521, 526] type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget='public final fun foo <T> (x: T of <root>.foo): T of <root>.foo declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Int
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.Int
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo (p0: @[ParameterName(name = "x")] kotlin.Int): kotlin.Int declared in <root>.box'
-                CALL 'public final fun foo <T> (x: T of <root>.foo): T of <root>.foo declared in <root>' type=kotlin.Int origin=null
+          invoke: FUN[521, 526] LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.Int
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo (p0: @[ParameterName(name = "x")] kotlin.Int): kotlin.Int declared in <root>.box'
+                CALL[521, 526] 'public final fun foo <T> (x: T of <root>.foo): T of <root>.foo declared in <root>' type=kotlin.Int origin=null
                   TYPE_ARG T: kotlin.Int
-                  ARG x: GET_VAR 'p0: @[ParameterName(name = "x")] kotlin.Int declared in <root>.box.foo' type=@[ParameterName(name = "x")] kotlin.Int origin=null
-      VAR name:r2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> [val]
-        RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget='public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>'
+                  ARG x: GET_VAR[521, 526] 'p0: @[ParameterName(name = "x")] kotlin.Int declared in <root>.box.foo' type=@[ParameterName(name = "x")] kotlin.Int origin=null
+      VAR[531, 551] name:r2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> [val]
+        RICH_FUNCTION_REFERENCE[540, 551] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget='public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Int
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A<kotlin.Int>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.Int
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo (p0: <root>.A<kotlin.Int>, p1: @[ParameterName(name = "x")] kotlin.Int): kotlin.Int declared in <root>.box'
-                CALL 'public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>' type=kotlin.Int origin=null
+          invoke: FUN[540, 551] LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A<kotlin.Int>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.Int
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo (p0: <root>.A<kotlin.Int>, p1: @[ParameterName(name = "x")] kotlin.Int): kotlin.Int declared in <root>.box'
+                CALL[540, 551] 'public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>' type=kotlin.Int origin=null
                   TYPE_ARG T: kotlin.Int
-                  ARG <this>: GET_VAR 'p0: <root>.A<kotlin.Int> declared in <root>.box.foo' type=<root>.A<kotlin.Int> origin=null
-                  ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.Int declared in <root>.box.foo' type=@[ParameterName(name = "x")] kotlin.Int origin=null
-      VAR name:r3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<*>, *, kotlin.Any?> [val]
-        RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Any?, kotlin.Any?> origin=null reflectionTarget='public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>'
+                  ARG <this>: GET_VAR[540, 551] 'p0: <root>.A<kotlin.Int> declared in <root>.box.foo' type=<root>.A<kotlin.Int> origin=null
+                  ARG x: GET_VAR[540, 551] 'p1: @[ParameterName(name = "x")] kotlin.Int declared in <root>.box.foo' type=@[ParameterName(name = "x")] kotlin.Int origin=null
+      VAR[556, 574] name:r3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<*>, *, kotlin.Any?> [val]
+        RICH_FUNCTION_REFERENCE[565, 574] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Any?, kotlin.Any?> origin=null reflectionTarget='public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Any?
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A<*>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:kotlin.Any?
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo (p0: <root>.A<*>, p1: kotlin.Any?): kotlin.Any? declared in <root>.box'
-                CALL 'public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>' type=kotlin.Any? origin=null
+          invoke: FUN[565, 574] LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Any?
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A<*>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.Any?
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo (p0: <root>.A<*>, p1: kotlin.Any?): kotlin.Any? declared in <root>.box'
+                CALL[565, 574] 'public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>' type=kotlin.Any? origin=null
                   TYPE_ARG T: kotlin.Any?
-                  ARG <this>: TYPE_OP type=<root>.A<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=<root>.A<kotlin.Any?>
-                    GET_VAR 'p0: <root>.A<*> declared in <root>.box.foo' type=<root>.A<*> origin=null
-                  ARG x: GET_VAR 'p1: kotlin.Any? declared in <root>.box.foo' type=kotlin.Any? origin=null
-      VAR name:r4 type:kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> [val]
-        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget='public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A'
+                  ARG <this>: TYPE_OP[565, 574] type=<root>.A<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=<root>.A<kotlin.Any?>
+                    GET_VAR[565, 574] 'p0: <root>.A<*> declared in <root>.box.foo' type=<root>.A<*> origin=null
+                  ARG x: GET_VAR[565, 574] 'p1: kotlin.Any? declared in <root>.box.foo' type=kotlin.Any? origin=null
+      VAR[579, 599] name:r4 type:kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> [val]
+        RICH_FUNCTION_REFERENCE[588, 599] type=kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget='public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Int
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A<kotlin.Int>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.Int
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun bar (p0: <root>.A<kotlin.Int>, p1: @[ParameterName(name = "x")] kotlin.Int): kotlin.Int declared in <root>.box'
-                CALL 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=kotlin.Int origin=null
-                  ARG <this>: GET_VAR 'p0: <root>.A<kotlin.Int> declared in <root>.box.bar' type=<root>.A<kotlin.Int> origin=null
-                  ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.Int declared in <root>.box.bar' type=@[ParameterName(name = "x")] kotlin.Int origin=null
-      VAR name:r5 type:kotlin.reflect.KFunction2<<root>.A<*>, *, kotlin.Any?> [val]
-        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Any?, kotlin.Any?> origin=null reflectionTarget='public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A'
+          invoke: FUN[588, 599] LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A<kotlin.Int>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.Int
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar (p0: <root>.A<kotlin.Int>, p1: @[ParameterName(name = "x")] kotlin.Int): kotlin.Int declared in <root>.box'
+                CALL[588, 599] 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR[588, 599] 'p0: <root>.A<kotlin.Int> declared in <root>.box.bar' type=<root>.A<kotlin.Int> origin=null
+                  ARG x: GET_VAR[588, 599] 'p1: @[ParameterName(name = "x")] kotlin.Int declared in <root>.box.bar' type=@[ParameterName(name = "x")] kotlin.Int origin=null
+      VAR[604, 622] name:r5 type:kotlin.reflect.KFunction2<<root>.A<*>, *, kotlin.Any?> [val]
+        RICH_FUNCTION_REFERENCE[613, 622] type=kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Any?, kotlin.Any?> origin=null reflectionTarget='public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Any?
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A<*>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:kotlin.Any?
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun bar (p0: <root>.A<*>, p1: kotlin.Any?): kotlin.Any? declared in <root>.box'
-                CALL 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=kotlin.Any? origin=null
-                  ARG <this>: GET_VAR 'p0: <root>.A<*> declared in <root>.box.bar' type=<root>.A<*> origin=null
-                  ARG x: GET_VAR 'p1: kotlin.Any? declared in <root>.box.bar' type=kotlin.Any? origin=null
-      VAR name:s1 type:kotlin.Function1<kotlin.String, kotlin.String> [val]
-        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo2 <T> (x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
+          invoke: FUN[613, 622] LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Any?
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A<*>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.Any?
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar (p0: <root>.A<*>, p1: kotlin.Any?): kotlin.Any? declared in <root>.box'
+                CALL[613, 622] 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=kotlin.Any? origin=null
+                  ARG <this>: GET_VAR[613, 622] 'p0: <root>.A<*> declared in <root>.box.bar' type=<root>.A<*> origin=null
+                  ARG x: GET_VAR[613, 622] 'p1: kotlin.Any? declared in <root>.box.bar' type=kotlin.Any? origin=null
+      VAR[629, 664] name:s1 type:kotlin.Function1<kotlin.String, kotlin.String> [val]
+        RICH_FUNCTION_REFERENCE[658, 664] type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo2 <T> (x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo2 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.String
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo2 (p0: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
-                CALL 'public final fun foo2 <T> (x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=kotlin.String origin=null
+          invoke: FUN[658, 664] LOCAL_FUNCTION_FOR_LAMBDA name:foo2 visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.String
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo2 (p0: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
+                CALL[658, 664] 'public final fun foo2 <T> (x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=kotlin.String origin=null
                   TYPE_ARG T: kotlin.String
-                  ARG x: GET_VAR 'p0: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.foo2' type=@[ParameterName(name = "x")] kotlin.String origin=null
-      VAR name:s2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
-        RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
+                  ARG x: GET_VAR[658, 664] 'p0: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.foo2' type=@[ParameterName(name = "x")] kotlin.String origin=null
+      VAR[669, 694] name:s2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
+        RICH_FUNCTION_REFERENCE[678, 694] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo2 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A2<kotlin.String>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo2 (p0: <root>.A2<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
-                CALL 'public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=kotlin.String origin=null
+          invoke: FUN[678, 694] LOCAL_FUNCTION_FOR_LAMBDA name:foo2 visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A2<kotlin.String>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo2 (p0: <root>.A2<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
+                CALL[678, 694] 'public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=kotlin.String origin=null
                   TYPE_ARG T: kotlin.String
-                  ARG <this>: GET_VAR 'p0: <root>.A2<kotlin.String> declared in <root>.box.foo2' type=<root>.A2<kotlin.String> origin=null
-                  ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.foo2' type=@[ParameterName(name = "x")] kotlin.String origin=null
-      VAR name:s3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<*>, *, kotlin.CharSequence> [val]
-        RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.CharSequence, kotlin.CharSequence> origin=null reflectionTarget='public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
+                  ARG <this>: GET_VAR[678, 694] 'p0: <root>.A2<kotlin.String> declared in <root>.box.foo2' type=<root>.A2<kotlin.String> origin=null
+                  ARG x: GET_VAR[678, 694] 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.foo2' type=@[ParameterName(name = "x")] kotlin.String origin=null
+      VAR[699, 719] name:s3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<*>, *, kotlin.CharSequence> [val]
+        RICH_FUNCTION_REFERENCE[708, 719] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.CharSequence, kotlin.CharSequence> origin=null reflectionTarget='public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo2 visibility:local modality:FINAL returnType:kotlin.CharSequence
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A2<*>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:kotlin.CharSequence
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo2 (p0: <root>.A2<*>, p1: kotlin.CharSequence): kotlin.CharSequence declared in <root>.box'
-                CALL 'public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=kotlin.CharSequence origin=null
+          invoke: FUN[708, 719] LOCAL_FUNCTION_FOR_LAMBDA name:foo2 visibility:local modality:FINAL returnType:kotlin.CharSequence
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A2<*>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.CharSequence
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo2 (p0: <root>.A2<*>, p1: kotlin.CharSequence): kotlin.CharSequence declared in <root>.box'
+                CALL[708, 719] 'public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=kotlin.CharSequence origin=null
                   TYPE_ARG T: kotlin.CharSequence
-                  ARG <this>: TYPE_OP type=<root>.A2<kotlin.CharSequence> origin=IMPLICIT_CAST typeOperand=<root>.A2<kotlin.CharSequence>
-                    GET_VAR 'p0: <root>.A2<*> declared in <root>.box.foo2' type=<root>.A2<*> origin=null
-                  ARG x: GET_VAR 'p1: kotlin.CharSequence declared in <root>.box.foo2' type=kotlin.CharSequence origin=null
-      VAR name:s4 type:kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
-        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2'
+                  ARG <this>: TYPE_OP[708, 719] type=<root>.A2<kotlin.CharSequence> origin=IMPLICIT_CAST typeOperand=<root>.A2<kotlin.CharSequence>
+                    GET_VAR[708, 719] 'p0: <root>.A2<*> declared in <root>.box.foo2' type=<root>.A2<*> origin=null
+                  ARG x: GET_VAR[708, 719] 'p1: kotlin.CharSequence declared in <root>.box.foo2' type=kotlin.CharSequence origin=null
+      VAR[724, 749] name:s4 type:kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
+        RICH_FUNCTION_REFERENCE[733, 749] type=kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar2 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A2<kotlin.String>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun bar2 (p0: <root>.A2<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
-                CALL 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=kotlin.String origin=null
-                  ARG <this>: GET_VAR 'p0: <root>.A2<kotlin.String> declared in <root>.box.bar2' type=<root>.A2<kotlin.String> origin=null
-                  ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.bar2' type=@[ParameterName(name = "x")] kotlin.String origin=null
-      VAR name:s5 type:kotlin.reflect.KFunction2<<root>.A2<*>, *, kotlin.CharSequence> [val]
-        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.CharSequence, kotlin.CharSequence> origin=null reflectionTarget='public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2'
+          invoke: FUN[733, 749] LOCAL_FUNCTION_FOR_LAMBDA name:bar2 visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A2<kotlin.String>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar2 (p0: <root>.A2<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
+                CALL[733, 749] 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR[733, 749] 'p0: <root>.A2<kotlin.String> declared in <root>.box.bar2' type=<root>.A2<kotlin.String> origin=null
+                  ARG x: GET_VAR[733, 749] 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.bar2' type=@[ParameterName(name = "x")] kotlin.String origin=null
+      VAR[754, 774] name:s5 type:kotlin.reflect.KFunction2<<root>.A2<*>, *, kotlin.CharSequence> [val]
+        RICH_FUNCTION_REFERENCE[763, 774] type=kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.CharSequence, kotlin.CharSequence> origin=null reflectionTarget='public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar2 visibility:local modality:FINAL returnType:kotlin.CharSequence
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A2<*>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:kotlin.CharSequence
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun bar2 (p0: <root>.A2<*>, p1: kotlin.CharSequence): kotlin.CharSequence declared in <root>.box'
-                CALL 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=kotlin.CharSequence origin=null
-                  ARG <this>: GET_VAR 'p0: <root>.A2<*> declared in <root>.box.bar2' type=<root>.A2<*> origin=null
-                  ARG x: GET_VAR 'p1: kotlin.CharSequence declared in <root>.box.bar2' type=kotlin.CharSequence origin=null
-      VAR name:t1 type:kotlin.Function1<kotlin.String, kotlin.String> [val]
-        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo3 <T> (x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
+          invoke: FUN[763, 774] LOCAL_FUNCTION_FOR_LAMBDA name:bar2 visibility:local modality:FINAL returnType:kotlin.CharSequence
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A2<*>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.CharSequence
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar2 (p0: <root>.A2<*>, p1: kotlin.CharSequence): kotlin.CharSequence declared in <root>.box'
+                CALL[763, 774] 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=kotlin.CharSequence origin=null
+                  ARG <this>: GET_VAR[763, 774] 'p0: <root>.A2<*> declared in <root>.box.bar2' type=<root>.A2<*> origin=null
+                  ARG x: GET_VAR[763, 774] 'p1: kotlin.CharSequence declared in <root>.box.bar2' type=kotlin.CharSequence origin=null
+      VAR[780, 815] name:t1 type:kotlin.Function1<kotlin.String, kotlin.String> [val]
+        RICH_FUNCTION_REFERENCE[809, 815] type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo3 <T> (x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo3 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.String
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo3 (p0: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
-                CALL 'public final fun foo3 <T> (x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=kotlin.String origin=null
+          invoke: FUN[809, 815] LOCAL_FUNCTION_FOR_LAMBDA name:foo3 visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.String
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo3 (p0: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
+                CALL[809, 815] 'public final fun foo3 <T> (x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=kotlin.String origin=null
                   TYPE_ARG T: kotlin.String
-                  ARG x: GET_VAR 'p0: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.foo3' type=@[ParameterName(name = "x")] kotlin.String origin=null
-      VAR name:t2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
-        RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
+                  ARG x: GET_VAR[809, 815] 'p0: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.foo3' type=@[ParameterName(name = "x")] kotlin.String origin=null
+      VAR[820, 845] name:t2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
+        RICH_FUNCTION_REFERENCE[829, 845] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo3 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A3<kotlin.String>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo3 (p0: <root>.A3<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
-                CALL 'public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=kotlin.String origin=null
+          invoke: FUN[829, 845] LOCAL_FUNCTION_FOR_LAMBDA name:foo3 visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A3<kotlin.String>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo3 (p0: <root>.A3<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
+                CALL[829, 845] 'public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=kotlin.String origin=null
                   TYPE_ARG T: kotlin.String
-                  ARG <this>: GET_VAR 'p0: <root>.A3<kotlin.String> declared in <root>.box.foo3' type=<root>.A3<kotlin.String> origin=null
-                  ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.foo3' type=@[ParameterName(name = "x")] kotlin.String origin=null
-      VAR name:t3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<*>, *, kotlin.Comparable<*>> [val]
-        RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Comparable<*>, kotlin.Comparable<*>> origin=null reflectionTarget='public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
+                  ARG <this>: GET_VAR[829, 845] 'p0: <root>.A3<kotlin.String> declared in <root>.box.foo3' type=<root>.A3<kotlin.String> origin=null
+                  ARG x: GET_VAR[829, 845] 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.foo3' type=@[ParameterName(name = "x")] kotlin.String origin=null
+      VAR[850, 870] name:t3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<*>, *, kotlin.Comparable<*>> [val]
+        RICH_FUNCTION_REFERENCE[859, 870] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Comparable<*>, kotlin.Comparable<*>> origin=null reflectionTarget='public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo3 visibility:local modality:FINAL returnType:kotlin.Comparable<*>
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A3<*>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:kotlin.Comparable<*>
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo3 (p0: <root>.A3<*>, p1: kotlin.Comparable<*>): kotlin.Comparable<*> declared in <root>.box'
-                CALL 'public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=kotlin.Comparable<*> origin=null
+          invoke: FUN[859, 870] LOCAL_FUNCTION_FOR_LAMBDA name:foo3 visibility:local modality:FINAL returnType:kotlin.Comparable<*>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A3<*>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.Comparable<*>
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo3 (p0: <root>.A3<*>, p1: kotlin.Comparable<*>): kotlin.Comparable<*> declared in <root>.box'
+                CALL[859, 870] 'public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=kotlin.Comparable<*> origin=null
                   TYPE_ARG T: kotlin.Comparable<*>
-                  ARG <this>: TYPE_OP type=<root>.A3<kotlin.Comparable<*>> origin=IMPLICIT_CAST typeOperand=<root>.A3<kotlin.Comparable<*>>
-                    GET_VAR 'p0: <root>.A3<*> declared in <root>.box.foo3' type=<root>.A3<*> origin=null
-                  ARG x: GET_VAR 'p1: kotlin.Comparable<*> declared in <root>.box.foo3' type=kotlin.Comparable<*> origin=null
-      VAR name:t4 type:kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
-        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3'
+                  ARG <this>: TYPE_OP[859, 870] type=<root>.A3<kotlin.Comparable<*>> origin=IMPLICIT_CAST typeOperand=<root>.A3<kotlin.Comparable<*>>
+                    GET_VAR[859, 870] 'p0: <root>.A3<*> declared in <root>.box.foo3' type=<root>.A3<*> origin=null
+                  ARG x: GET_VAR[859, 870] 'p1: kotlin.Comparable<*> declared in <root>.box.foo3' type=kotlin.Comparable<*> origin=null
+      VAR[875, 900] name:t4 type:kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
+        RICH_FUNCTION_REFERENCE[884, 900] type=kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar3 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A3<kotlin.String>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun bar3 (p0: <root>.A3<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
-                CALL 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.String origin=null
-                  ARG <this>: GET_VAR 'p0: <root>.A3<kotlin.String> declared in <root>.box.bar3' type=<root>.A3<kotlin.String> origin=null
-                  ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.bar3' type=@[ParameterName(name = "x")] kotlin.String origin=null
-      VAR name:t5 type:kotlin.reflect.KFunction2<<root>.A3<*>, *, kotlin.Comparable<*>> [val]
-        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Comparable<*>, kotlin.Comparable<*>> origin=null reflectionTarget='public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3'
+          invoke: FUN[884, 900] LOCAL_FUNCTION_FOR_LAMBDA name:bar3 visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A3<kotlin.String>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar3 (p0: <root>.A3<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
+                CALL[884, 900] 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR[884, 900] 'p0: <root>.A3<kotlin.String> declared in <root>.box.bar3' type=<root>.A3<kotlin.String> origin=null
+                  ARG x: GET_VAR[884, 900] 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.bar3' type=@[ParameterName(name = "x")] kotlin.String origin=null
+      VAR[905, 925] name:t5 type:kotlin.reflect.KFunction2<<root>.A3<*>, *, kotlin.Comparable<*>> [val]
+        RICH_FUNCTION_REFERENCE[914, 925] type=kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Comparable<*>, kotlin.Comparable<*>> origin=null reflectionTarget='public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
-          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar3 visibility:local modality:FINAL returnType:kotlin.Comparable<*>
-            VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.A3<*>
-            VALUE_PARAMETER kind:Regular name:p1 index:1 type:kotlin.Comparable<*>
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun bar3 (p0: <root>.A3<*>, p1: kotlin.Comparable<*>): kotlin.Comparable<*> declared in <root>.box'
-                CALL 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.Comparable<*> origin=null
-                  ARG <this>: GET_VAR 'p0: <root>.A3<*> declared in <root>.box.bar3' type=<root>.A3<*> origin=null
-                  ARG x: GET_VAR 'p1: kotlin.Comparable<*> declared in <root>.box.bar3' type=kotlin.Comparable<*> origin=null
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CONST String type=kotlin.String value="OK"
-  FUN name:foo visibility:public modality:FINAL returnType:T of <root>.foo
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.A<T of <root>.foo>
-    VALUE_PARAMETER kind:Regular name:x index:1 type:T of <root>.foo
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>'
-        CALL 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=T of <root>.foo origin=null
-          ARG <this>: GET_VAR '<this>: <root>.A<T of <root>.foo> declared in <root>.foo' type=<root>.A<T of <root>.foo> origin=IMPLICIT_ARGUMENT
-          ARG x: GET_VAR 'x: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
-  FUN name:foo visibility:public modality:FINAL returnType:T of <root>.foo
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER kind:Regular name:x index:0 type:T of <root>.foo
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo <T> (x: T of <root>.foo): T of <root>.foo declared in <root>'
-        GET_VAR 'x: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
-  FUN name:foo2 visibility:public modality:FINAL returnType:T of <root>.foo2
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:false
-    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.A2<T of <root>.foo2>
-    VALUE_PARAMETER kind:Regular name:x index:1 type:T of <root>.foo2
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
-        CALL 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=T of <root>.foo2 origin=null
-          ARG <this>: GET_VAR '<this>: <root>.A2<T of <root>.foo2> declared in <root>.foo2' type=<root>.A2<T of <root>.foo2> origin=IMPLICIT_ARGUMENT
-          ARG x: GET_VAR 'x: T of <root>.foo2 declared in <root>.foo2' type=T of <root>.foo2 origin=null
-  FUN name:foo2 visibility:public modality:FINAL returnType:T of <root>.foo2
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:false
-    VALUE_PARAMETER kind:Regular name:x index:0 type:T of <root>.foo2
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo2 <T> (x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
-        GET_VAR 'x: T of <root>.foo2 declared in <root>.foo2' type=T of <root>.foo2 origin=null
-  FUN name:foo3 visibility:public modality:FINAL returnType:T of <root>.foo3
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.foo3>] reified:false
-    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.A3<T of <root>.foo3>
-    VALUE_PARAMETER kind:Regular name:x index:1 type:T of <root>.foo3
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
-        CALL 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=T of <root>.foo3 origin=null
-          ARG <this>: GET_VAR '<this>: <root>.A3<T of <root>.foo3> declared in <root>.foo3' type=<root>.A3<T of <root>.foo3> origin=IMPLICIT_ARGUMENT
-          ARG x: GET_VAR 'x: T of <root>.foo3 declared in <root>.foo3' type=T of <root>.foo3 origin=null
-  FUN name:foo3 visibility:public modality:FINAL returnType:T of <root>.foo3
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.foo3>] reified:false
-    VALUE_PARAMETER kind:Regular name:x index:0 type:T of <root>.foo3
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo3 <T> (x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
-        GET_VAR 'x: T of <root>.foo3 declared in <root>.foo3' type=T of <root>.foo3 origin=null
+          invoke: FUN[914, 925] LOCAL_FUNCTION_FOR_LAMBDA name:bar3 visibility:local modality:FINAL returnType:kotlin.Comparable<*>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A3<*>
+            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.Comparable<*>
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar3 (p0: <root>.A3<*>, p1: kotlin.Comparable<*>): kotlin.Comparable<*> declared in <root>.box'
+                CALL[914, 925] 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.Comparable<*> origin=null
+                  ARG <this>: GET_VAR[914, 925] 'p0: <root>.A3<*> declared in <root>.box.bar3' type=<root>.A3<*> origin=null
+                  ARG x: GET_VAR[914, 925] 'p1: kotlin.Comparable<*> declared in <root>.box.bar3' type=kotlin.Comparable<*> origin=null
+      RETURN[931, 942] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST[938, 942] String type=kotlin.String value="OK"
+  FUN[129, 163] name:foo visibility:public modality:FINAL returnType:T of <root>.foo
+    TYPE_PARAMETER[134, 135] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER[137, 141] kind:ExtensionReceiver name:<this> index:0 type:<root>.A<T of <root>.foo>
+    VALUE_PARAMETER[146, 150] kind:Regular name:x index:1 type:T of <root>.foo
+    BLOCK_BODY[157, 163]
+      RETURN[163, 163] type=kotlin.Nothing from='public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>'
+        CALL[157, 163] 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=T of <root>.foo origin=null
+          ARG <this>: GET_VAR[157, 163] '<this>: <root>.A<T of <root>.foo> declared in <root>.foo' type=<root>.A<T of <root>.foo> origin=IMPLICIT_ARGUMENT
+          ARG x: GET_VAR[161, 162] 'x: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
+  FUN[104, 128] name:foo visibility:public modality:FINAL returnType:T of <root>.foo
+    TYPE_PARAMETER[109, 110] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER[116, 120] kind:Regular name:x index:0 type:T of <root>.foo
+    BLOCK_BODY[127, 128]
+      RETURN[128, 128] type=kotlin.Nothing from='public final fun foo <T> (x: T of <root>.foo): T of <root>.foo declared in <root>'
+        GET_VAR[127, 128] 'x: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
+  FUN[263, 315] name:foo2 visibility:public modality:FINAL returnType:T of <root>.foo2
+    TYPE_PARAMETER[268, 284] name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:false
+    VALUE_PARAMETER[286, 291] kind:ExtensionReceiver name:<this> index:0 type:<root>.A2<T of <root>.foo2>
+    VALUE_PARAMETER[297, 301] kind:Regular name:x index:1 type:T of <root>.foo2
+    BLOCK_BODY[308, 315]
+      RETURN[315, 315] type=kotlin.Nothing from='public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
+        CALL[308, 315] 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=T of <root>.foo2 origin=null
+          ARG <this>: GET_VAR[308, 315] '<this>: <root>.A2<T of <root>.foo2> declared in <root>.foo2' type=<root>.A2<T of <root>.foo2> origin=IMPLICIT_ARGUMENT
+          ARG x: GET_VAR[313, 314] 'x: T of <root>.foo2 declared in <root>.foo2' type=T of <root>.foo2 origin=null
+  FUN[222, 262] name:foo2 visibility:public modality:FINAL returnType:T of <root>.foo2
+    TYPE_PARAMETER[227, 243] name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:false
+    VALUE_PARAMETER[250, 254] kind:Regular name:x index:0 type:T of <root>.foo2
+    BLOCK_BODY[261, 262]
+      RETURN[262, 262] type=kotlin.Nothing from='public final fun foo2 <T> (x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
+        GET_VAR[261, 262] 'x: T of <root>.foo2 declared in <root>.foo2' type=T of <root>.foo2 origin=null
+  FUN[418, 471] name:foo3 visibility:public modality:FINAL returnType:T of <root>.foo3
+    TYPE_PARAMETER[423, 440] name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.foo3>] reified:false
+    VALUE_PARAMETER[442, 447] kind:ExtensionReceiver name:<this> index:0 type:<root>.A3<T of <root>.foo3>
+    VALUE_PARAMETER[453, 457] kind:Regular name:x index:1 type:T of <root>.foo3
+    BLOCK_BODY[464, 471]
+      RETURN[471, 471] type=kotlin.Nothing from='public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
+        CALL[464, 471] 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=T of <root>.foo3 origin=null
+          ARG <this>: GET_VAR[464, 471] '<this>: <root>.A3<T of <root>.foo3> declared in <root>.foo3' type=<root>.A3<T of <root>.foo3> origin=IMPLICIT_ARGUMENT
+          ARG x: GET_VAR[469, 470] 'x: T of <root>.foo3 declared in <root>.foo3' type=T of <root>.foo3 origin=null
+  FUN[376, 417] name:foo3 visibility:public modality:FINAL returnType:T of <root>.foo3
+    TYPE_PARAMETER[381, 398] name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.foo3>] reified:false
+    VALUE_PARAMETER[405, 409] kind:Regular name:x index:0 type:T of <root>.foo3
+    BLOCK_BODY[416, 417]
+      RETURN[417, 417] type=kotlin.Nothing from='public final fun foo3 <T> (x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
+        GET_VAR[416, 417] 'x: T of <root>.foo3 declared in <root>.foo3' type=T of <root>.foo3 origin=null

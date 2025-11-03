@@ -45,6 +45,7 @@ class IrTextDumpHandler(
     artifactKind: BackendKind<IrBackendInput>,
     val customExtension: String? = null,
     val directive: SimpleDirective = DUMP_IR,
+    val showOffsets: Boolean = false,
 ) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
         const val DUMP_EXTENSION = "ir.txt"
@@ -137,7 +138,8 @@ class IrTextDumpHandler(
             stableOrder = true,
             filePathRenderer = { irFileEntry, fullPath ->
                 renderFilePathForIrFile(testFileToIrFile, testServices, irFileEntry, fullPath)
-            }
+            },
+            printSourceOffsets = showOffsets,
         )
         val builder = baseDumper.builderForModule(module.name)
 
