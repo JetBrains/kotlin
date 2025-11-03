@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.prettyName
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
@@ -741,18 +740,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object UnrecognizedKotlinNativeDistributionType : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(actualValue: String) = build {
-            title("Unrecognized Kotlin/Native Distribution Type")
-                .description {
-                    "Gradle Property `kotlin.native.distribution.type` sets unknown Kotlin/Native distribution type: $actualValue"
-                }
-                .solution {
-                    "Available values: `prebuilt`, `light`"
-                }
-        }
-    }
-
     object AndroidTargetIsMissing : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(projectName: String, projectPath: String, androidPluginId: String) = build {
             title("Missing `androidTarget()` in Kotlin Multiplatform Project")
@@ -1253,24 +1240,6 @@ internal object KotlinToolingDiagnostics {
     object KotlinTargetAlreadyDeclaredWarning : KotlinTargetAlreadyDeclared(WARNING)
     object KotlinTargetAlreadyDeclaredError : KotlinTargetAlreadyDeclared(ERROR)
 
-    object KotlinCompilationSourceDeprecation : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Deprecation) {
-        operator fun invoke(trace: Throwable?) = build(throwable = trace) {
-            title("`KotlinCompilation.source(KotlinSourceSet)` Method Deprecated")
-                .description {
-                    """
-                    `KotlinCompilation.source(KotlinSourceSet)` method is deprecated
-                    and will be removed in Kotlin 2.3
-                    """.trimIndent()
-                }
-                .solution {
-                    "Please use `KotlinCompilation.defaultSourceSet` instead."
-                }
-                .documentationLink(URI("https://kotl.in/compilation-source-deprecation")) { url ->
-                    "See $url for details."
-                }
-        }
-    }
-
     object CircularDependsOnEdges : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(sourceSetsOnCycle: Collection<String>) = build {
             title("Circular dependsOn Relationship Detected in Kotlin Source Sets")
@@ -1531,21 +1500,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object ResourceMayNotBeResolvedWithGradleVersion : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(
-            targetName: String, currentGradleVersion: String, minimumRequiredVersion: String,
-        ) = build {
-            title("Resource Resolution for Target '$targetName' Requires Gradle $minimumRequiredVersion")
-                .description {
-                    "Resources for target $targetName may not be resolved. Minimum required Gradle version is $minimumRequiredVersion but current is ${currentGradleVersion}."
-                }
-                .solution {
-                    "Please upgrade Gradle to $minimumRequiredVersion or higher."
-                }
-                .documentationLink(BUG_REPORT_URL, ::resourcesBugReportRequest)
-        }
-    }
-
     object MissingRuntimeDependencyConfigurationForWasmTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(targetName: String) = build {
             title("Missing Runtime Dependency Configuration for Wasm Target '$targetName'")
@@ -1554,19 +1508,6 @@ internal object KotlinToolingDiagnostics {
                 }
                 .solution {
                     "Please add runtimeDependencyConfiguration to the target."
-                }
-                .documentationLink(BUG_REPORT_URL, ::resourcesBugReportRequest)
-        }
-    }
-
-    object MissingResourcesConfigurationForTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(targetName: String) = build {
-            title("Missing Resource Configuration for Target '$targetName'")
-                .description {
-                    "Resources will not be resolved for $targetName as it is missing resourcesConfiguration."
-                }
-                .solution {
-                    "Please add resourcesConfiguration to the target."
                 }
                 .documentationLink(BUG_REPORT_URL, ::resourcesBugReportRequest)
         }
@@ -1837,18 +1778,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object NotCompatibleWithGradle9 : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(fixAction: String) = build {
-            title("Kotlin Gradle Plugin Not Compatible with Gradle 9")
-                .description {
-                    "Current configuration of Kotlin Gradle Plugin is not compatible with Gradle 9."
-                }
-                .solution {
-                    "Please $fixAction to fix it."
-                }
-        }
-    }
-
     object KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion :
         ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
@@ -1921,22 +1850,6 @@ internal object KotlinToolingDiagnostics {
                 }
                 .solution {
                     "Please check the module name and ensure it is correct."
-                }
-        }
-    }
-
-    object SwiftExportArtifactResolution : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(component: String, artifacts: List<String>) = build(severity = if (artifacts.isEmpty()) WARNING else ERROR) {
-            title("Swift Export Artifact Resolution Error")
-                .description {
-                    if (artifacts.isEmpty()) {
-                        "Component $component doesn't have suitable artifacts"
-                    } else {
-                        "Component $component has too many artifacts: $artifacts"
-                    }
-                }
-                .solution {
-                    "Please check the component and ensure it has the correct artifacts."
                 }
         }
     }
