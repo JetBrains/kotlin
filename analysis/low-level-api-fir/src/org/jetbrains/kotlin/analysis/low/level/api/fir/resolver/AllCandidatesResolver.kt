@@ -135,6 +135,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         bodyResolveComponents.context.file = firFile
     }
 
+    @OptIn(ConstraintSystemCompletionMode.ExclusiveForOverloadResolutionByLambdaReturnType::class)
     private fun <T> List<OverloadCandidate>.postProcessCandidates(call: T) where T : FirExpression, T : FirResolvable {
         val callCompleter = bodyResolveComponents.callCompleter
         val analyzer = callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
@@ -149,7 +150,10 @@ class AllCandidatesResolver(private val firSession: FirSession) {
             // Runs completion for the candidate. This step is required to solve the constraint system
             callCompleter.runCompletionForCall(
                 candidate = candidate,
-                completionMode = ConstraintSystemCompletionMode.FULL,
+                // The lambda's processing logic modifies the original tree,
+                // so we cannot analyze them in the current state.
+                // See KT-82121 for more details.
+                completionMode = ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA,
                 call = call,
                 initialType = components.initialTypeOfCandidate(candidate),
                 analyzer = analyzer,

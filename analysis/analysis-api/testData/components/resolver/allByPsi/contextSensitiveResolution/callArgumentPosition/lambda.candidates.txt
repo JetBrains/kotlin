@@ -1290,7 +1290,7 @@ KtNameReferenceExpression(928,947): 'propInheritorObject'
     isInBestCandidates = true
 
 KtCallExpression(954,976): 'lMyClass(NestedObject)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         NestedObject -> (KaVariableSignature:
@@ -1325,7 +1325,6 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(954,962): 'lMyClass'
@@ -1374,7 +1373,7 @@ KtNameReferenceExpression(963,975): 'NestedObject'
     isInBestCandidates = false
 
 KtCallExpression(981,995): 'lMyClass(prop)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         prop -> (KaVariableSignature:
@@ -1409,7 +1408,6 @@ KtCallExpression(981,995): 'lMyClass(prop)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(981,989): 'lMyClass'
@@ -1460,7 +1458,7 @@ KtNameReferenceExpression(990,994): 'prop'
     isInBestCandidates = true
 
 KtCallExpression(1000,1019): 'lMyClass(superProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         superProp -> (KaVariableSignature:
@@ -1495,7 +1493,6 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1000,1008): 'lMyClass'
@@ -1546,7 +1543,7 @@ KtNameReferenceExpression(1009,1018): 'superProp'
     isInBestCandidates = true
 
 KtCallExpression(1024,1043): 'lMyClass(constProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         constProp -> (KaVariableSignature:
@@ -1581,7 +1578,6 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1024,1032): 'lMyClass'
@@ -1632,7 +1628,7 @@ KtNameReferenceExpression(1033,1042): 'constProp'
     isInBestCandidates = true
 
 KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         lazyProp -> (KaVariableSignature:
@@ -1667,7 +1663,6 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1048,1056): 'lMyClass'
@@ -1718,7 +1713,7 @@ KtNameReferenceExpression(1057,1065): 'lazyProp'
     isInBestCandidates = true
 
 KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         lambdaProp -> (KaVariableSignature:
@@ -1753,7 +1748,6 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1071,1079): 'lMyClass'

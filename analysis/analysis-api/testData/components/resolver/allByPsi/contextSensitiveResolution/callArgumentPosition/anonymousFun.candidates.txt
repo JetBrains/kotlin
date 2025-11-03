@@ -1232,7 +1232,7 @@ KtNameReferenceExpression(1029,1040): 'propMyClass'
     isInBestCandidates = true
 
 KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         prop -> (KaVariableSignature:
@@ -1267,7 +1267,6 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
@@ -1318,7 +1317,7 @@ KtNameReferenceExpression(1065,1069): 'prop'
     isInBestCandidates = true
 
 KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         constProp -> (KaVariableSignature:
@@ -1353,7 +1352,6 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
@@ -1404,7 +1402,7 @@ KtNameReferenceExpression(1093,1102): 'constProp'
     isInBestCandidates = true
 
 KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         lazyProp -> (KaVariableSignature:
@@ -1439,7 +1437,6 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
@@ -1490,7 +1487,7 @@ KtNameReferenceExpression(1126,1134): 'lazyProp'
     isInBestCandidates = true
 
 KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         lambdaProp -> (KaVariableSignature:
@@ -1525,7 +1522,6 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
@@ -1576,7 +1572,7 @@ KtNameReferenceExpression(1158,1168): 'lambdaProp'
     isInBestCandidates = true
 
 KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         superProp -> (KaVariableSignature:
@@ -1611,7 +1607,6 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
@@ -1806,7 +1801,7 @@ KtValueArgumentList(1265,1267): '()'
   NO_CANDIDATES
 
 KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         lambdaProp -> (KaVariableSignature:
@@ -1841,7 +1836,6 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'

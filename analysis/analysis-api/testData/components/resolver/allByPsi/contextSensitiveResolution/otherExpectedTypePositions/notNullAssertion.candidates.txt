@@ -1755,8 +1755,8 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
           isSafeNavigation = false
           type = kotlin.collections.Map<MyClass, kotlin.Int>
         signature = KaFunctionSignature:
-          receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
-          returnType = kotlin.Int?
+          receiverType = kotlin.collections.Map<out MyClass, V>
+          returnType = V?
           symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
           valueParameters = [
             KaVariableSignature:
@@ -1770,8 +1770,7 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
           contextParameters = []
           callableId = kotlin/collections/get
       typeArgumentsMapping = {
-        K -> (MyClass),
-        V -> (kotlin.Int)
+        K -> (MyClass)
       }
     isInBestCandidates = false
 
@@ -1858,7 +1857,7 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
           contextParameters = []
           callableId = kotlin/collections/Map.get
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun get(key: MyClass): Int?>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -1881,8 +1880,8 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
           isSafeNavigation = false
           type = kotlin.collections.Map<MyClass, kotlin.Int>
         signature = KaFunctionSignature:
-          receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
-          returnType = kotlin.Int?
+          receiverType = kotlin.collections.Map<out MyClass, V>
+          returnType = V?
           symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
           valueParameters = [
             KaVariableSignature:
@@ -1896,10 +1895,9 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
           contextParameters = []
           callableId = kotlin/collections/get
       typeArgumentsMapping = {
-        K -> (MyClass),
-        V -> (kotlin.Int)
+        K -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <K, V> Map<out K, V>.get(key: K): V?>
     isInBestCandidates = false
 
 KtNameReferenceExpression(831,834): 'map'
@@ -2007,8 +2005,8 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
           isSafeNavigation = false
           type = kotlin.collections.Map<MyClass, kotlin.Int>
         signature = KaFunctionSignature:
-          receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
-          returnType = kotlin.Int?
+          receiverType = kotlin.collections.Map<out MyClass, V>
+          returnType = V?
           symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
           valueParameters = [
             KaVariableSignature:
@@ -2022,8 +2020,7 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
           contextParameters = []
           callableId = kotlin/collections/get
       typeArgumentsMapping = {
-        K -> (MyClass),
-        V -> (kotlin.Int)
+        K -> (MyClass)
       }
     isInBestCandidates = false
 
@@ -2479,48 +2476,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         a -> (KaVariableSignature:
           name = element
           receiverType = null
-          returnType = ERROR CLASS: Cannot infer argument for type parameter T?
-          symbol = element: T?
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = MyClass.myClassProp..NestedInheritor
-          isSafeNavigation = false
-          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-        signature = KaFunctionSignature:
-          receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-          returnType = kotlin.Boolean
-          symbol = kotlin/ranges/contains(<extension receiver>: R, element: T?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = element
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T?
-              symbol = element: T?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/ranges/contains
-      typeArgumentsMapping = {
-        T -> (ERROR CLASS: Cannot infer argument for type parameter T),
-        R -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
-      }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        a -> (KaVariableSignature:
-          name = element
-          receiverType = null
           returnType = MyClass?
           symbol = element: T?
           contextParameters = []
@@ -2555,6 +2510,47 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     fun <T : Comparable<T>, R : ClosedRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = T?
+          symbol = element: T?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: R, element: T?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = element
+              receiverType = null
+              returnType = T?
+              symbol = element: T?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {
+        R -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3223,48 +3219,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         a -> (KaVariableSignature:
           name = element
           receiverType = null
-          returnType = ERROR CLASS: Cannot infer argument for type parameter T?
-          symbol = element: T?
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = MyClass.myClassProp..NestedInheritor
-          isSafeNavigation = false
-          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-        signature = KaFunctionSignature:
-          receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-          returnType = kotlin.Boolean
-          symbol = kotlin/ranges/contains(<extension receiver>: R, element: T?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = element
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T?
-              symbol = element: T?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/ranges/contains
-      typeArgumentsMapping = {
-        T -> (ERROR CLASS: Cannot infer argument for type parameter T),
-        R -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
-      }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        a -> (KaVariableSignature:
-          name = element
-          receiverType = null
           returnType = MyClass?
           symbol = element: T?
           contextParameters = []
@@ -3299,6 +3253,47 @@ KtOperationReferenceExpression(1244,1247): '!in'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     fun <T : Comparable<T>, R : ClosedRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = T?
+          symbol = element: T?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: R, element: T?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = element
+              receiverType = null
+              returnType = T?
+              symbol = element: T?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {
+        R -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:

@@ -1723,7 +1723,7 @@ KtValueArgument(926,944): 'test(NestedObject)'
   NO_CANDIDATES
 
 KtCallExpression(926,944): 'test(NestedObject)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         NestedObject -> (KaVariableSignature:
@@ -1757,11 +1757,10 @@ KtCallExpression(926,944): 'test(NestedObject)'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(926,930): 'test'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         NestedObject -> (KaVariableSignature:
@@ -1795,7 +1794,6 @@ KtNameReferenceExpression(926,930): 'test'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(930,944): '(NestedObject)'
@@ -1903,7 +1901,7 @@ KtValueArgument(965,975): 'test(prop)'
   NO_CANDIDATES
 
 KtCallExpression(965,975): 'test(prop)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         prop -> (KaVariableSignature:
@@ -1937,11 +1935,10 @@ KtCallExpression(965,975): 'test(prop)'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(965,969): 'test'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         prop -> (KaVariableSignature:
@@ -1975,7 +1972,6 @@ KtNameReferenceExpression(965,969): 'test'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(969,975): '(prop)'
@@ -2085,7 +2081,7 @@ KtValueArgument(996,1011): 'test(superProp)'
   NO_CANDIDATES
 
 KtCallExpression(996,1011): 'test(superProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         superProp -> (KaVariableSignature:
@@ -2119,11 +2115,10 @@ KtCallExpression(996,1011): 'test(superProp)'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(996,1000): 'test'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         superProp -> (KaVariableSignature:
@@ -2157,7 +2152,6 @@ KtNameReferenceExpression(996,1000): 'test'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(1000,1011): '(superProp)'
@@ -2267,7 +2261,7 @@ KtValueArgument(1032,1046): 'test(lazyProp)'
   NO_CANDIDATES
 
 KtCallExpression(1032,1046): 'test(lazyProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         lazyProp -> (KaVariableSignature:
@@ -2301,11 +2295,10 @@ KtCallExpression(1032,1046): 'test(lazyProp)'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1032,1036): 'test'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         lazyProp -> (KaVariableSignature:
@@ -2339,7 +2332,6 @@ KtNameReferenceExpression(1032,1036): 'test'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(1036,1046): '(lazyProp)'
@@ -2449,7 +2441,7 @@ KtValueArgument(1067,1083): 'test(lambdaProp)'
   NO_CANDIDATES
 
 KtCallExpression(1067,1083): 'test(lambdaProp)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         lambdaProp -> (KaVariableSignature:
@@ -2483,11 +2475,10 @@ KtCallExpression(1067,1083): 'test(lambdaProp)'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1067,1071): 'test'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         lambdaProp -> (KaVariableSignature:
@@ -2521,7 +2512,6 @@ KtNameReferenceExpression(1067,1071): 'test'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(1071,1083): '(lambdaProp)'

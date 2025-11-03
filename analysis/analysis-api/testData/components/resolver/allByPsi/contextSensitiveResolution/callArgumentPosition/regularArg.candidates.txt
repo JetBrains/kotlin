@@ -1362,7 +1362,7 @@ KtCallExpression(979,1007): 'receiveMyClass(NestedObject)'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(979,993): 'receiveMyClass'
@@ -1398,7 +1398,7 @@ KtNameReferenceExpression(979,993): 'receiveMyClass'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(993,1007): '(NestedObject)'
@@ -1460,7 +1460,7 @@ KtCallExpression(1012,1032): 'receiveMyClass(prop)'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1012,1026): 'receiveMyClass'
@@ -1496,7 +1496,7 @@ KtNameReferenceExpression(1012,1026): 'receiveMyClass'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(1026,1032): '(prop)'
@@ -1560,7 +1560,7 @@ KtCallExpression(1037,1062): 'receiveMyClass(superProp)'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1037,1051): 'receiveMyClass'
@@ -1596,7 +1596,7 @@ KtNameReferenceExpression(1037,1051): 'receiveMyClass'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(1051,1062): '(superProp)'
@@ -1660,7 +1660,7 @@ KtCallExpression(1067,1092): 'receiveMyClass(constProp)'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1067,1081): 'receiveMyClass'
@@ -1696,7 +1696,7 @@ KtNameReferenceExpression(1067,1081): 'receiveMyClass'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(1081,1092): '(constProp)'
@@ -1760,7 +1760,7 @@ KtCallExpression(1097,1121): 'receiveMyClass(lazyProp)'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1097,1111): 'receiveMyClass'
@@ -1796,7 +1796,7 @@ KtNameReferenceExpression(1097,1111): 'receiveMyClass'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(1111,1121): '(lazyProp)'
@@ -1860,7 +1860,7 @@ KtCallExpression(1126,1152): 'receiveMyClass(lambdaProp)'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1126,1140): 'receiveMyClass'
@@ -1896,7 +1896,7 @@ KtNameReferenceExpression(1126,1140): 'receiveMyClass'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(1140,1152): '(lambdaProp)'
@@ -1960,7 +1960,7 @@ KtCallExpression(1157,1182): 'receiveMyClass(superProp)'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1157,1171): 'receiveMyClass'
@@ -1996,7 +1996,7 @@ KtNameReferenceExpression(1157,1171): 'receiveMyClass'
           contextParameters = []
           callableId = /receiveMyClass
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(arg: MyClass): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(1171,1182): '(superProp)'
