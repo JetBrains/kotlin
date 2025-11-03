@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.StandardTypes
+import org.jetbrains.kotlin.fir.StandardTypes.UInt
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirLiteralExpressionImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-@OptIn(UnresolvedExpressionTypeAccess::class)
 fun buildLiteralExpression(
     source: KtSourceElement?,
     kind: ConstantValueKind,
@@ -23,29 +22,29 @@ fun buildLiteralExpression(
     setType: Boolean,
     prefix: String? = null,
 ): FirLiteralExpression {
-    return FirLiteralExpressionImpl(source, null, annotations.toMutableOrEmpty(), kind, value, prefix).also {
-        if (setType) {
-            when (kind) {
-                ConstantValueKind.Boolean -> it.coneTypeOrNull = StandardTypes.Boolean
-                ConstantValueKind.Byte -> it.coneTypeOrNull = StandardTypes.Byte
-                ConstantValueKind.Char -> it.coneTypeOrNull = StandardTypes.Char
-                ConstantValueKind.Double -> it.coneTypeOrNull = StandardTypes.Double
-                ConstantValueKind.Float -> it.coneTypeOrNull = StandardTypes.Float
-                ConstantValueKind.Int -> it.coneTypeOrNull = StandardTypes.Int
-                ConstantValueKind.Long -> it.coneTypeOrNull = StandardTypes.Long
-                ConstantValueKind.Null -> it.coneTypeOrNull = StandardTypes.NullableAny
-                ConstantValueKind.Short -> it.coneTypeOrNull = StandardTypes.Short
-                ConstantValueKind.String -> it.coneTypeOrNull = StandardTypes.String
-                ConstantValueKind.UnsignedByte -> it.coneTypeOrNull = StandardTypes.UByte
-                ConstantValueKind.UnsignedInt -> it.coneTypeOrNull = StandardTypes.UInt
-                ConstantValueKind.UnsignedLong -> it.coneTypeOrNull = StandardTypes.ULong
-                ConstantValueKind.UnsignedShort -> it.coneTypeOrNull = StandardTypes.UShort
-                ConstantValueKind.IntegerLiteral,
-                ConstantValueKind.UnsignedIntegerLiteral,
-                ConstantValueKind.Error,
-                    -> {
-                }
-            }
+    val coneType = if (setType) {
+        when (kind) {
+            ConstantValueKind.Boolean -> StandardTypes.Boolean
+            ConstantValueKind.Byte -> StandardTypes.Byte
+            ConstantValueKind.Char -> StandardTypes.Char
+            ConstantValueKind.Double -> StandardTypes.Double
+            ConstantValueKind.Float -> StandardTypes.Float
+            ConstantValueKind.Int -> StandardTypes.Int
+            ConstantValueKind.Long -> StandardTypes.Long
+            ConstantValueKind.Null -> StandardTypes.NullableAny
+            ConstantValueKind.Short -> StandardTypes.Short
+            ConstantValueKind.String -> StandardTypes.String
+            ConstantValueKind.UnsignedByte -> StandardTypes.UByte
+            ConstantValueKind.UnsignedInt -> UInt
+            ConstantValueKind.UnsignedLong -> StandardTypes.ULong
+            ConstantValueKind.UnsignedShort -> StandardTypes.UShort
+            ConstantValueKind.IntegerLiteral,
+            ConstantValueKind.UnsignedIntegerLiteral,
+            ConstantValueKind.Error
+                -> null
         }
+    } else {
+        null
     }
+    return FirLiteralExpressionImpl(source, coneType, annotations.toMutableOrEmpty(), kind, value, prefix)
 }
