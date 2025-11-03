@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
@@ -379,7 +378,8 @@ class KotlinAndroidIT : KGPBaseTest() {
                 """.trimMargin()
             )
             buildAndFail("help") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.IncompatibleWithTheNewAgpDsl)
+                assertHasDiagnostic(KotlinToolingDiagnostics.KotlinAndroidIsIncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
                 assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
             }
         }
@@ -420,7 +420,8 @@ class KotlinAndroidIT : KGPBaseTest() {
                 }
             }
             build("help") {
-                assertNoDiagnostic(KotlinToolingDiagnostics.IncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.KotlinAndroidIsIncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
                 assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
             }
         }
@@ -455,7 +456,52 @@ class KotlinAndroidIT : KGPBaseTest() {
                 }
             }
             build("help") {
-                assertNoDiagnostic(KotlinToolingDiagnostics.IncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.KotlinAndroidIsIncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
+                assertNoDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
+            }
+        }
+    }
+
+    @DisplayName("KT-81601: KMP plus AGP 9.0 with disabled built-in Kotlin fails with actionable diagnostic because of the new AGP DSL ")
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)
+    fun testNewAgpDslDiagnosticInKmp(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+                id("com.android.library")
+            }
+
+            buildScriptInjection {
+                @Suppress("DEPRECATION")
+                kotlinMultiplatform.androidTarget()
+
+                with(androidLibrary) {
+                    compileSdk = 36
+                    namespace = "com.example"
+                }
+            }
+
+            gradleProperties.appendText(
+                //language=properties
+                """
+                |
+                |android.builtInKotlin=false
+                """.trimMargin()
+            )
+            buildAndFail("help") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.KotlinAndroidIsIncompatibleWithTheNewAgpDsl)
                 assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
             }
         }
