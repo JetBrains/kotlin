@@ -38,11 +38,11 @@ public final class StringWrapper2 /* StringWrapper2*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String s1;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final StringWrapper getS1();//  getS1()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  StringWrapper2(@org.jetbrains.annotations.NotNull() StringWrapper);//  .ctor(StringWrapper)
 
   @org.jetbrains.annotations.NotNull()

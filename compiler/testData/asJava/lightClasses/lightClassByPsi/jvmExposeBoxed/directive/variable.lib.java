@@ -3,14 +3,14 @@ public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String s;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getOk();//  getOk()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  StringWrapper(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public final void setOk(@org.jetbrains.annotations.NotNull() java.lang.String);//  setOk(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()

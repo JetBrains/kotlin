@@ -9,7 +9,7 @@ public final class BoxKt {
 public final class StringWrapper {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
-    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.String): StringWrapper
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
@@ -19,7 +19,7 @@ public final class StringWrapper {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.String): int
-    public final @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method ok(): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method ok(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method ok-impl(p0: java.lang.String): java.lang.String
     public method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.String): java.lang.String

@@ -1,9 +1,9 @@
 public final class A /* A*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getF(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() B);//  getF(Z, B)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public final void setF(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() B, @org.jetbrains.annotations.NotNull() java.lang.String);//  setF(Z, B, java.lang.String)
 
   @org.jetbrains.annotations.NotNull()

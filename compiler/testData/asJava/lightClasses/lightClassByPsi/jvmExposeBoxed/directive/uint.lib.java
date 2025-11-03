@@ -1,11 +1,11 @@
 public final class TopLevelClass /* TopLevelClass*/ {
   private int topLevelClassProperty;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final kotlin.UInt getTopLevelClassProperty();//  getTopLevelClassProperty()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public final void setTopLevelClassProperty(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  setTopLevelClassProperty(kotlin.UInt)
 
   public  TopLevelClass();//  .ctor()

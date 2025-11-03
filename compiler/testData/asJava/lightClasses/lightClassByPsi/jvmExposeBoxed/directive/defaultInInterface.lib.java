@@ -2,7 +2,7 @@
 public final class IC /* IC*/ {
   private final int i;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  IC(int);//  .ctor(int)
 
   public boolean equals(java.lang.Object);//  equals(java.lang.Object)
@@ -25,10 +25,10 @@ public final class IC /* IC*/ {
 }
 
 public abstract interface Test /* Test*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   private abstract IC foo(IC);//  foo(IC)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   private abstract IC getBar();//  getBar()
 
   private abstract IC getBar-qjS0p_s();//  getBar-qjS0p_s()
@@ -44,7 +44,7 @@ public abstract interface Test /* Test*/ {
 }
 
 public final class TestClass /* TestClass*/ implements Test {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public IC test(@org.jetbrains.annotations.NotNull() IC);//  test(IC)
 

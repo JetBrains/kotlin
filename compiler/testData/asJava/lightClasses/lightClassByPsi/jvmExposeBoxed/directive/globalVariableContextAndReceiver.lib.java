@@ -3,7 +3,7 @@ public final class A /* A*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String value;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  A(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
@@ -28,11 +28,11 @@ public final class A /* A*/ {
 }
 
 public final class GlobalVariableContextAndReceiverKt /* GlobalVariableContextAndReceiverKt*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String getF(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() A);//  getF(Z, A)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public static final void setF(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() java.lang.String);//  setF(Z, A, java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
@@ -46,7 +46,7 @@ public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String value;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  Z(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()

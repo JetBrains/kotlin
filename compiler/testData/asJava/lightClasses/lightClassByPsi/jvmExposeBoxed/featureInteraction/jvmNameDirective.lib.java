@@ -1,7 +1,7 @@
 public final class Foo /* Foo*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "foo11")
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String foo1(@org.jetbrains.annotations.NotNull() StringWrapper);//  foo1(StringWrapper)
+  public final java.lang.String foo11(@org.jetbrains.annotations.NotNull() StringWrapper);//  foo11(StringWrapper)
 
   @kotlin.jvm.JvmExposeBoxed(jvmName = "foo22")
   @org.jetbrains.annotations.NotNull()
@@ -23,7 +23,7 @@ public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String s;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  StringWrapper(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()

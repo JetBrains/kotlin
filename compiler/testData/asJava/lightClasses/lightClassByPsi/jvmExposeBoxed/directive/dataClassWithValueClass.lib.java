@@ -2,19 +2,19 @@ public final class MyDataClass /* one.MyDataClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String value;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final one.MyDataClass copy(@org.jetbrains.annotations.NotNull() one.MyValueClass);//  copy(one.MyValueClass)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final one.MyValueClass component1();//  component1()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final one.MyValueClass getValue();//  getValue()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  MyDataClass(@org.jetbrains.annotations.NotNull() one.MyValueClass);//  .ctor(one.MyValueClass)
 
   @org.jetbrains.annotations.NotNull()
@@ -41,7 +41,7 @@ public final class MyValueClass /* one.MyValueClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String str;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  MyValueClass(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()

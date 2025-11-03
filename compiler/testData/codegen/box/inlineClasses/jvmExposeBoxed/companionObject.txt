@@ -21,7 +21,7 @@ public final class StringWrapper {
     public final static @org.jetbrains.annotations.NotNull field Companion: StringWrapper$Companion
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     static method <clinit>(): void
-    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.String): StringWrapper
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String

@@ -19,27 +19,27 @@ public abstract interface Interface /* pack.Interface*/ {
 public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   private final int int;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public java.lang.String toString();//  toString()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public pack.ValueClass getPropertyWithValueClass();//  getPropertyWithValueClass()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  ValueClass(int);//  .ctor(int)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public int getRegularVariable();//  getRegularVariable()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public void functionWithValueParam(@org.jetbrains.annotations.NotNull() pack.ValueClass);//  functionWithValueParam(pack.ValueClass)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public void regularFunction();//  regularFunction()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public void setRegularVariable(int);//  setRegularVariable(int)
 
   @org.jetbrains.annotations.NotNull()

@@ -1,5 +1,5 @@
 public final class TopLevelClass /* TopLevelClass*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final kotlin.UInt foo(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  foo(kotlin.UInt)
 

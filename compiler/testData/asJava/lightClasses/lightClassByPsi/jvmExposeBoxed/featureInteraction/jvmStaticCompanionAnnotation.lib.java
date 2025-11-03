@@ -2,7 +2,7 @@ public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public static final Foo.Companion Companion;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   public static final StringWrapper foo();//  foo()
@@ -17,7 +17,7 @@ public final class Foo /* Foo*/ {
 }
 
 public static final class Companion /* Foo.Companion*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   public final StringWrapper foo();//  foo()

@@ -17,7 +17,7 @@ public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String value;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  Z(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()

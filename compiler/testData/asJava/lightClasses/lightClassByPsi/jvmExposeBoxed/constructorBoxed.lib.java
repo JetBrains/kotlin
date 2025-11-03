@@ -31,11 +31,11 @@ public final class Test /* Test*/ {
   @org.jetbrains.annotations.Nullable()
   private final StringWrapper s;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.Nullable()
   public final StringWrapper getS();//  getS()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  Test(@org.jetbrains.annotations.Nullable() StringWrapper);//  .ctor(StringWrapper)
 
   @org.jetbrains.annotations.NotNull()

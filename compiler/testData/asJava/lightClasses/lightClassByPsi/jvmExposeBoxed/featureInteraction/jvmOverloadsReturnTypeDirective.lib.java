@@ -1,15 +1,15 @@
 public final class Baz /* Baz*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @kotlin.jvm.JvmOverloads()
   @org.jetbrains.annotations.NotNull()
   public final IntWrapper memberLevel();//  memberLevel()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @kotlin.jvm.JvmOverloads()
   @org.jetbrains.annotations.NotNull()
   public final IntWrapper memberLevel(int);//  memberLevel(int)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @kotlin.jvm.JvmOverloads()
   @org.jetbrains.annotations.NotNull()
   public final IntWrapper memberLevel(int, int);//  memberLevel(int, int)
@@ -30,7 +30,7 @@ public final class Baz /* Baz*/ {
 public final class IntWrapper /* IntWrapper*/ {
   private final int s;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  IntWrapper(int);//  .ctor(int)
 
   public boolean equals(java.lang.Object);//  equals(java.lang.Object)

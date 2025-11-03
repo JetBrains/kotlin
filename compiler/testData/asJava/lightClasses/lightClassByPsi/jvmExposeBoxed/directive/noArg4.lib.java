@@ -2,10 +2,10 @@
 public final class IntWrapper /* IntWrapper*/ {
   private final int i;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  IntWrapper();//  .ctor()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  IntWrapper(int);//  .ctor(int)
 
   public boolean equals(java.lang.Object);//  equals(java.lang.Object)
@@ -30,11 +30,11 @@ public final class IntWrapper /* IntWrapper*/ {
 public final class RegularClassWithValueConstructor /* RegularClassWithValueConstructor*/ {
   private final int property;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final IntWrapper getProperty();//  getProperty()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  RegularClassWithValueConstructor(@org.jetbrains.annotations.NotNull() IntWrapper);//  .ctor(IntWrapper)
 
   private  RegularClassWithValueConstructor(int);//  .ctor(int)
@@ -45,11 +45,11 @@ public final class RegularClassWithValueConstructor /* RegularClassWithValueCons
 public final class RegularClassWithValueConstructorAndAnnotation /* RegularClassWithValueConstructorAndAnnotation*/ {
   private final int property;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final IntWrapper getProperty();//  getProperty()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  RegularClassWithValueConstructorAndAnnotation(@org.jetbrains.annotations.NotNull() IntWrapper);//  .ctor(IntWrapper)
 
   private  RegularClassWithValueConstructorAndAnnotation(int);//  .ctor(int)

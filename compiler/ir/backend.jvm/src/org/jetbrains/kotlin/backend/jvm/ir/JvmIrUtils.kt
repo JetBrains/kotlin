@@ -73,16 +73,20 @@ import java.lang.annotation.RetentionPolicy
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName and @JvmExposeBoxed?
-    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.arguments[0] as? IrConst
-        ?: getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)?.arguments[0] as? IrConst
+    val value = (getAnnotation(DescriptorUtils.JVM_NAME)?.arguments[0] as? IrConst)?.value as? String
+        ?: getJvmNameFromJvmExposeBoxedAnnotation()
         ?: return null
-    val value = const.value as? String ?: return null
     return when (origin) {
         IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> "$value\$default"
         JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE,
         JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE -> "$value$FOR_INLINE_SUFFIX"
         else -> value
     }
+}
+
+private fun IrDeclaration.getJvmNameFromJvmExposeBoxedAnnotation(): String? {
+    val value = getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)?.arguments[0] as? IrConst ?: return null
+    return if (value.value == "") null else value.value as? String
 }
 
 fun IrFunction.getJvmVisibilityOfDefaultArgumentStub() =

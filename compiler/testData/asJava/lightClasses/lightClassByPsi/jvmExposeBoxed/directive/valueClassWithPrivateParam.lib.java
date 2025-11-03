@@ -7,7 +7,7 @@ public final class ValueClass /* pack.ValueClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final pack.OriginalClass value;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  ValueClass(@org.jetbrains.annotations.NotNull() pack.OriginalClass);//  .ctor(pack.OriginalClass)
 
   @org.jetbrains.annotations.NotNull()

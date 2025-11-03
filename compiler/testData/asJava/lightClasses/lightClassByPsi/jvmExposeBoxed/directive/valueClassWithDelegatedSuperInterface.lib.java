@@ -19,27 +19,27 @@ public abstract interface Interface /* pack.Interface*/ {
 public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   private final int value;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final pack.ValueClassImpl getValue();//  getValue()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public pack.ValueClassImpl getPropertyWithValueClass();//  getPropertyWithValueClass()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  ValueClass(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl);//  .ctor(pack.ValueClassImpl)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public int getRegularVariable();//  getRegularVariable()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public void functionWithValueParam(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl);//  functionWithValueParam(pack.ValueClassImpl)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public void regularFunction();//  regularFunction()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public void setRegularVariable(int);//  setRegularVariable(int)
 
   public boolean equals(java.lang.Object);//  equals(java.lang.Object)
@@ -75,27 +75,27 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
 public final class ValueClassImpl /* pack.ValueClassImpl*/ implements pack.Interface {
   private final int int;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public java.lang.String toString();//  toString()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public pack.ValueClassImpl getPropertyWithValueClass();//  getPropertyWithValueClass()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  ValueClassImpl(int);//  .ctor(int)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public int getRegularVariable();//  getRegularVariable()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public void functionWithValueParam(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl);//  functionWithValueParam(pack.ValueClassImpl)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public void regularFunction();//  regularFunction()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public void setRegularVariable(int);//  setRegularVariable(int)
 
   @org.jetbrains.annotations.NotNull()

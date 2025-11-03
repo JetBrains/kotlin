@@ -15,9 +15,9 @@ public final class Test$DefaultImpls {
 public interface Test {
     // source: 'Test.kt'
     public synthetic static method access$test-IKrLr70$jd(p0: Test, p1: int): int
-    private @kotlin.jvm.JvmExposeBoxed method foo(p0: kotlin.UInt): kotlin.UInt
+    private @kotlin.jvm.JvmExposeBoxed(jvmName="") method foo(p0: kotlin.UInt): kotlin.UInt
     private method foo-IKrLr70(p0: int): int
-    private @kotlin.jvm.JvmExposeBoxed method getBar(): kotlin.UInt
+    private @kotlin.jvm.JvmExposeBoxed(jvmName="") method getBar(): kotlin.UInt
     private method getBar-0hXNFcg(): kotlin.UInt
     public method test-IKrLr70(p0: int): int
     public final inner class Test$DefaultImpls
@@ -27,6 +27,6 @@ public interface Test {
 public final class TestClass {
     // source: 'Test.kt'
     public method <init>(): void
-    public @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: kotlin.UInt): kotlin.UInt
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: kotlin.UInt): kotlin.UInt
     public method test-IKrLr70(p0: int): int
 }

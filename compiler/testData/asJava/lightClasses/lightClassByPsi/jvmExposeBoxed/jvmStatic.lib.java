@@ -11,7 +11,7 @@ public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String unwrap(@org.jetbrains.annotations.NotNull() StringWrapper);//  unwrap(StringWrapper)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  StringWrapper(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
   @kotlin.jvm.JvmStatic()

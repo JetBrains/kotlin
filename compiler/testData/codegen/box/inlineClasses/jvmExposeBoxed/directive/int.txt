@@ -9,6 +9,6 @@ public final class TestKt {
     // source: 'Test.kt'
     public final static @kotlin.jvm.JvmExposeBoxed(jvmName="create") @org.jetbrains.annotations.NotNull method create(): kotlin.UInt
     public final static method createUInt(): int
-    public final static @kotlin.jvm.JvmExposeBoxed method foo(@org.jetbrains.annotations.NotNull p0: kotlin.UInt): int
+    public final static @kotlin.jvm.JvmExposeBoxed(jvmName="") method foo(@org.jetbrains.annotations.NotNull p0: kotlin.UInt): int
     public final static method foo-WZ4Q5Ns(p0: int): int
 }

@@ -3,10 +3,10 @@ public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.Object value;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  Z();//  .ctor()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  Z(@org.jetbrains.annotations.NotNull() java.lang.Object);//  .ctor(java.lang.Object)
 
   @org.jetbrains.annotations.NotNull()

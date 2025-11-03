@@ -1,5 +1,5 @@
 public final class IntKt /* IntKt*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public static final int foo(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  foo(kotlin.UInt)
 
   @kotlin.jvm.JvmExposeBoxed(jvmName = "create")

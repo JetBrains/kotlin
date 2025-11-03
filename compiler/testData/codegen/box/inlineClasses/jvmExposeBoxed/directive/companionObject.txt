@@ -9,7 +9,7 @@ public final class StringWrapper$Companion {
     // source: 'Box.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method unwrap(@org.jetbrains.annotations.NotNull p0: StringWrapper): java.lang.String
+    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method unwrap(@org.jetbrains.annotations.NotNull p0: StringWrapper): java.lang.String
     public final @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method unwrap-JELJCFg(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public final inner class StringWrapper$Companion
 }
@@ -21,7 +21,7 @@ public final class StringWrapper {
     public final static @org.jetbrains.annotations.NotNull field Companion: StringWrapper$Companion
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     static method <clinit>(): void
-    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.String): StringWrapper
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
@@ -34,7 +34,7 @@ public final class StringWrapper {
     public method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.String): java.lang.String
     public synthetic final method unbox-impl(): java.lang.String
-    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method unwrap(@org.jetbrains.annotations.NotNull p0: StringWrapper): java.lang.String
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method unwrap(@org.jetbrains.annotations.NotNull p0: StringWrapper): java.lang.String
     public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method unwrap-JELJCFg(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public final inner class StringWrapper$Companion
 }

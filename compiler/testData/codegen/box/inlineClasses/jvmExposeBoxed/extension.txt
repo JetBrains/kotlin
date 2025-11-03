@@ -2,7 +2,7 @@
 public final class A {
     // source: 'box.kt'
     public method <init>(): void
-    public final @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method f(@org.jetbrains.annotations.NotNull p0: Z, @org.jetbrains.annotations.NotNull p1: Z): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method f(@org.jetbrains.annotations.NotNull p0: Z, @org.jetbrains.annotations.NotNull p1: Z): java.lang.String
     public final @org.jetbrains.annotations.NotNull method f-e_ggP3o(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
 }
 
@@ -17,7 +17,7 @@ public final class BoxKt {
 public final class Z {
     // source: 'box.kt'
     private final @org.jetbrains.annotations.NotNull field value: java.lang.String
-    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.String): Z
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String

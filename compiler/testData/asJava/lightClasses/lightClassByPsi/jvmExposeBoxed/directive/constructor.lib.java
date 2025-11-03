@@ -3,7 +3,7 @@ public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String s;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  StringWrapper(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
@@ -31,11 +31,11 @@ public final class Test /* Test*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String s;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final StringWrapper getS();//  getS()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  Test(@org.jetbrains.annotations.NotNull() StringWrapper);//  .ctor(StringWrapper)
 
   @org.jetbrains.annotations.NotNull()

@@ -9,7 +9,7 @@ public final class BoxKt {
 public final class StringWrapper {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
-    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.String): StringWrapper
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
@@ -28,10 +28,10 @@ public final class StringWrapper {
 public final class Test {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
-    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: StringWrapper): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: StringWrapper): void
     private method <init>(p0: java.lang.String): void
     public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public final @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method getS(): StringWrapper
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getS(): StringWrapper
     public final @org.jetbrains.annotations.NotNull method getS-K4fyztM(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method ok(): java.lang.String
 }

@@ -9,8 +9,8 @@ public final class BoxKt {
 public final class StringWrapper {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
-    public @kotlin.jvm.JvmExposeBoxed method <init>(): void
-    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.String): StringWrapper
     public synthetic static method constructor-impl$default(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): java.lang.String

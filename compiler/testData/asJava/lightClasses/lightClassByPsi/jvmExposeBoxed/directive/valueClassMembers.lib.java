@@ -15,20 +15,20 @@ public final class ValueClass /* pack.ValueClass*/ {
 
   private static final int companionProperty;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final pack.ValueClass getPropertyWithValueClassType();//  getPropertyWithValueClassType()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  ValueClass(@org.jetbrains.annotations.NotNull() pack.OriginalClass);//  .ctor(pack.OriginalClass)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public final int getProperty();//  getProperty()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public final void funWithSelfParameter(@org.jetbrains.annotations.NotNull() pack.ValueClass);//  funWithSelfParameter(pack.ValueClass)
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public final void funWithoutParameters();//  funWithoutParameters()
 
   @org.jetbrains.annotations.NotNull()
@@ -66,11 +66,11 @@ public final class ValueClass /* pack.ValueClass*/ {
 }
 
 public static final class Companion /* pack.ValueClass.Companion*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.Nullable()
   public final pack.ValueClass companionFunctionWithValueClassType();//  companionFunctionWithValueClassType()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.Nullable()
   public final pack.ValueClass getCompanionPropertyWithValueClassType();//  getCompanionPropertyWithValueClassType()
 

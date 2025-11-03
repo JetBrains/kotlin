@@ -6,7 +6,7 @@ public abstract interface Interface /* pack.Interface*/ {
 public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   private final int value;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  ValueClass(int);//  .ctor(int)
 
   public boolean equals(java.lang.Object);//  equals(java.lang.Object)

@@ -2,7 +2,7 @@
 public final class IntValue /* one.IntValue*/ {
   private final int value;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  IntValue(int);//  .ctor(int)
 
   public boolean equals(java.lang.Object);//  equals(java.lang.Object)
@@ -25,7 +25,7 @@ public final class IntValue /* one.IntValue*/ {
 }
 
 public final class VarargAndValueClassKt /* one.VarargAndValueClassKt*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public static final void foo(@org.jetbrains.annotations.NotNull() java.lang.String[], @org.jetbrains.annotations.NotNull() one.IntValue);//  foo(java.lang.String[], one.IntValue)
 
   public static final void foo-fWO2PMw(@org.jetbrains.annotations.NotNull() java.lang.String[], int);//  foo-fWO2PMw(java.lang.String[], int)

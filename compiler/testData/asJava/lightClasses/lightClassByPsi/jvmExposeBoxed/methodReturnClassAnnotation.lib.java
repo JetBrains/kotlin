@@ -1,5 +1,5 @@
 public final class Foo /* Foo*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final StringWrapper foo();//  foo()
 

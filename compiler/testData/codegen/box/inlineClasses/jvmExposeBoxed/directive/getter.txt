@@ -16,7 +16,7 @@ public final class ICKt {
 public final class StringWrapper {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
-    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.String): StringWrapper
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
@@ -36,14 +36,14 @@ public final class StringWrapper {
 public final class StringWrapper2 {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.NotNull field s1: java.lang.String
-    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: StringWrapper): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: StringWrapper): void
     private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.String): StringWrapper2
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
-    public final @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method getS1(): StringWrapper
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getS1(): StringWrapper
     public final @org.jetbrains.annotations.NotNull method getS1-K4fyztM(): java.lang.String
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.String): int

@@ -1,9 +1,9 @@
 public final class Foo /* Foo*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @org.jetbrains.annotations.NotNull()
   public final IntWrapper getFoo();//  getFoo()
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public final void setFoo(@org.jetbrains.annotations.NotNull() IntWrapper);//  setFoo(IntWrapper)
 
   public  Foo();//  .ctor()
@@ -17,7 +17,7 @@ public final class Foo /* Foo*/ {
 public final class IntWrapper /* IntWrapper*/ {
   private final int i;
 
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  IntWrapper(int);//  .ctor(int)
 
   public boolean equals(java.lang.Object);//  equals(java.lang.Object)
