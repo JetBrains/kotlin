@@ -1337,6 +1337,133 @@ class LinkTest : BaseAbstractTest() {
         }
     }
 
+    @Test
+    fun `should resolve KDoc links in the second line of @param tag`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |interface Call
+            |/**
+            | * @param text some description with reference.
+            | *     But with a few lines and indent [Call]
+            | */
+            |fun protocol(text: String) {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    listOf(
+                        "Call" to DRI("example", "Call"),
+                    ),
+                    module.getAllLinkDRIFrom("protocol")
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `should resolve KDoc links in the second line of @constructor tag`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |interface Call
+            |/**
+            |* @constructor text some description with reference.
+            |*     But with a few lines and indent [Call]
+            |*/
+            |class A(val text: String) 
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    listOf(
+                        "Call" to DRI("example", "Call"),
+                    ),
+                    module.getAllLinkDRIFrom("A")
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `should resolve KDoc links in the second level of a list`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |interface IllegalTimeZoneException
+            |interface UTC
+            |
+            |/**
+            | * ...
+            | * How exactly the time zone is acquired is system-dependent. The current implementation:
+            | * - JVM: `java.time.ZoneId.systemDefault()` is queried.
+            | * - Kotlin/Native:
+            | *     - Darwin: first, `NSTimeZone.resetSystemTimeZone` is called to clear the cache of the system timezone.
+            | *       Then, `NSTimeZone.systemTimeZone.name` is used to obtain the up-to-date timezone name.
+            | *     - Linux: this function checks the `/etc/localtime` symbolic link.
+            | *       If the link is missing, [UTC] is used.
+            | *       If the file is not a link but a plain file,
+            | *       the contents of `/etc/timezone` are additionally checked for the timezone name.
+            | *       [IllegalTimeZoneException] is thrown if the timezone name cannot be determined
+            | *       or is invalid.
+            | * ...
+            | */
+            |fun currentSystemDefault(g) {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    listOf(
+                        "UTC" to DRI("example", "UTC"),
+                        "IllegalTimeZoneException" to DRI("example", "IllegalTimeZoneException"),
+                    ),
+                    module.getAllLinkDRIFrom("currentSystemDefault")
+                )
+            }
+        }
+    }
+
+    @Test
+    @OnlyDescriptors("#3385")
+    fun `should resolve KDoc links that goes after markdown blocks`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |interface JavaNetCookieJar
+            |
+            |/**
+            | * Markdown syntax ```code```
+            | * This references doesn't work: [System.currentTimeMillis] and [JavaNetCookieJar].
+            | */
+            |fun saveFromResponse(url: String)
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    listOf(
+                        "System.currentTimeMillis" to DRI(
+                            "java.lang", "System", Callable(
+                                "currentTimeMillis",
+                                receiver = null,
+                                params = emptyList()
+                            )
+                        ),
+                        "JavaNetCookieJar" to DRI("example", "JavaNetCookieJar"),
+                    ),
+                    module.getAllLinkDRIFrom("saveFromResponse")
+                )
+            }
+        }
+    }
+
     private fun DModule.getLinkDRIFrom(name: String): DRI? {
         val doc = this.dfs { it.name == name }?.documentation?.values?.single()
             ?: throw IllegalStateException("Can't find documentation for declaration '$name'")
