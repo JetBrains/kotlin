@@ -10,6 +10,8 @@ dependencies {
     api("com.nordstrom.tools:junit-foundation:17.2.4")
     // override beanutils dependency due to CVE-2025-48734
     api(libs.apache.commons.beanutils)
+    // override logback dependency due to CVE-2025-11226
+    api(libs.logback.classic)
 
     constraints {
         api(libs.apache.commons.lang)

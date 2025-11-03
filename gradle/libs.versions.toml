@@ -29,6 +29,7 @@ jsoup = "1.17.2"
 junit4 = "4.13.2"
 junit5 = "5.10.1"
 junit-platform = "1.10.0"
+logback = "1.5.20"
 okhttp = "4.12.0"
 opentest4j = "1.3.0" # should be consistent with the version brought by junit-platform
 android-gradle-plugin = "8.2.2"
@@ -138,6 +139,7 @@ junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", vers
 junit-platform-commons = { module = "org.junit.platform:junit-platform-commons", version.ref = "junit-platform" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 junit-platform-suite = { module = "org.junit.platform:junit-platform-suite", version.ref = "junit-platform" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 opentest4j = { module = "org.opentest4j:opentest4j", version.ref = "opentest4j" }
 lincheck = { module = "org.jetbrains.kotlinx:lincheck", version.ref = "lincheck" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
