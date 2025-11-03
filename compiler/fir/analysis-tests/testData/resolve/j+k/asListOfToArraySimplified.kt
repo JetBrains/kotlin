@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // DUMP_INFERENCE_LOGS: MARKDOWN
 
@@ -11,7 +11,7 @@ public class J {
 // FILE: main.kt
 
 fun foo(x: ArrayList<String>, y: Array<String?>): List<String> {
-    return <!RETURN_TYPE_MISMATCH!>J.asList(x.toArray(y))<!>
+    return J.asList(x.toArray(y))
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, nullableType */
