@@ -217,6 +217,12 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
     prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
+private val redundantCastsRemoverPhase = makeIrModulePhase(
+    lowering = ::RedundantCastsRemoverLowering,
+    name = "RedundantCastsRemoverLowering",
+    prerequisite = setOf(inlineAllFunctionsPhase),
+)
+
 private val copyInlineFunctionBodyLoweringPhase = makeIrModulePhase(
     ::CopyInlineFunctionBodyLowering,
     name = "CopyInlineFunctionBody",
@@ -763,6 +769,7 @@ fun getJsLowerings(
     // just because it goes so in Native.
     validateIrAfterInliningOnlyPrivateFunctions,
     inlineAllFunctionsPhase,
+    redundantCastsRemoverPhase,
     validateIrAfterInliningAllFunctions,
     // END: Common Native/JS/Wasm prefix.
 
