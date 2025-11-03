@@ -12,18 +12,17 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
-import org.jetbrains.kotlin.name.StandardClassIds
 
 internal class FirThrowExpressionImpl(
     override val source: KtSourceElement?,
@@ -31,7 +30,7 @@ internal class FirThrowExpressionImpl(
     override var exception: FirExpression,
 ) : FirThrowExpression() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType? = StandardClassIds.Nothing.constructClassLikeType()
+    override val coneTypeOrNull: ConeKotlinType? = StandardTypes.Nothing
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

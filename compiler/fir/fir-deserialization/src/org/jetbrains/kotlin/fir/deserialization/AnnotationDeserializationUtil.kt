@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -172,7 +173,7 @@ private fun resolveValue(session: FirSession, value: ProtoBuf.Annotation.Argumen
             // type. See KT-62598.
             // FIR provides no guarantees on having the exact type of deserialized array literals in annotations, including
             // non-empty ones.
-            coneTypeOrNull = StandardClassIds.Any.constructClassLikeType().createOutArrayType()
+            coneTypeOrNull = StandardTypes.Any.createOutArrayType()
             argumentList = buildArgumentList {
                 value.arrayElementList.mapTo(arguments) { resolveValue(session, it, nameResolver) }
             }

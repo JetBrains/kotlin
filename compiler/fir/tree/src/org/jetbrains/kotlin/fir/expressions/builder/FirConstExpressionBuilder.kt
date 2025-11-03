@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirLiteralExpressionImpl
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 @OptIn(UnresolvedExpressionTypeAccess::class)
@@ -27,24 +26,24 @@ fun buildLiteralExpression(
     return FirLiteralExpressionImpl(source, null, annotations.toMutableOrEmpty(), kind, value, prefix).also {
         if (setType) {
             when (kind) {
-                ConstantValueKind.Boolean -> it.coneTypeOrNull = StandardClassIds.Boolean.constructClassLikeType()
-                ConstantValueKind.Byte -> it.coneTypeOrNull = StandardClassIds.Byte.constructClassLikeType()
-                ConstantValueKind.Char -> it.coneTypeOrNull = StandardClassIds.Char.constructClassLikeType()
-                ConstantValueKind.Double -> it.coneTypeOrNull = StandardClassIds.Double.constructClassLikeType()
-                ConstantValueKind.Float -> it.coneTypeOrNull = StandardClassIds.Float.constructClassLikeType()
-                ConstantValueKind.Int -> it.coneTypeOrNull = StandardClassIds.Int.constructClassLikeType()
-                ConstantValueKind.Long -> it.coneTypeOrNull = StandardClassIds.Long.constructClassLikeType()
-                ConstantValueKind.Null -> it.coneTypeOrNull = StandardClassIds.Any.constructClassLikeType(isMarkedNullable = true)
-                ConstantValueKind.Short -> it.coneTypeOrNull = StandardClassIds.Short.constructClassLikeType()
-                ConstantValueKind.String -> it.coneTypeOrNull = StandardClassIds.String.constructClassLikeType()
-                ConstantValueKind.UnsignedByte -> it.coneTypeOrNull = StandardClassIds.UByte.constructClassLikeType()
-                ConstantValueKind.UnsignedInt -> it.coneTypeOrNull = StandardClassIds.UInt.constructClassLikeType()
-                ConstantValueKind.UnsignedLong -> it.coneTypeOrNull = StandardClassIds.ULong.constructClassLikeType()
-                ConstantValueKind.UnsignedShort -> it.coneTypeOrNull = StandardClassIds.UShort.constructClassLikeType()
+                ConstantValueKind.Boolean -> it.coneTypeOrNull = StandardTypes.Boolean
+                ConstantValueKind.Byte -> it.coneTypeOrNull = StandardTypes.Byte
+                ConstantValueKind.Char -> it.coneTypeOrNull = StandardTypes.Char
+                ConstantValueKind.Double -> it.coneTypeOrNull = StandardTypes.Double
+                ConstantValueKind.Float -> it.coneTypeOrNull = StandardTypes.Float
+                ConstantValueKind.Int -> it.coneTypeOrNull = StandardTypes.Int
+                ConstantValueKind.Long -> it.coneTypeOrNull = StandardTypes.Long
+                ConstantValueKind.Null -> it.coneTypeOrNull = StandardTypes.NullableAny
+                ConstantValueKind.Short -> it.coneTypeOrNull = StandardTypes.Short
+                ConstantValueKind.String -> it.coneTypeOrNull = StandardTypes.String
+                ConstantValueKind.UnsignedByte -> it.coneTypeOrNull = StandardTypes.UByte
+                ConstantValueKind.UnsignedInt -> it.coneTypeOrNull = StandardTypes.UInt
+                ConstantValueKind.UnsignedLong -> it.coneTypeOrNull = StandardTypes.ULong
+                ConstantValueKind.UnsignedShort -> it.coneTypeOrNull = StandardTypes.UShort
                 ConstantValueKind.IntegerLiteral,
                 ConstantValueKind.UnsignedIntegerLiteral,
                 ConstantValueKind.Error,
-                -> {
+                    -> {
                 }
             }
         }
