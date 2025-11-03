@@ -234,13 +234,14 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         }
 
         target.binaries.all { binary ->
-            binary.linkTaskProvider.configure {
+            binary.linkTaskProvider.configure { linkTask ->
                 // FIXME: Just do this once instead of in the spmDependencies.all callback
                 val ldArgDumpPath = provider {
                     defFilesAndLdDumpGenerationTask.get().ldFilePath(target.konanTarget.architecture)
                 }.get()
-                it.additionalLinkerOptsProperty.set(
-                    syntheticImportProjectGenerationTaskForCinteropsAndLdDump.flatMap {
+                linkTask.dependsOn(defFilesAndLdDumpGenerationTask)
+                linkTask.additionalLinkerOptsProperty.set(
+                    defFilesAndLdDumpGenerationTask.flatMap {
                         // Fight eager CC provider: fetch dump path eagerly, but read the file only when the task has executed
                         it.outputs.files.elements
                     }.map {
@@ -250,20 +251,21 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             }
         }
 
-        val mainCompilationCinterops = target.compilations.getByName("main").cinterops
-        if (cinteropName !in mainCompilationCinterops.names) {
-            defFilesAndLdDumpGenerationTask.configure {
-                it.architectures.add(target.konanTarget.architecture)
-            }
-            mainCompilationCinterops.create(cinteropName).definitionFile.set(
-                defFilesAndLdDumpGenerationTask.map {
-                    it.defFilePath(target.konanTarget.architecture).get()
-                }
-            )
+        defFilesAndLdDumpGenerationTask.configure {
+            it.architectures.add(target.konanTarget.architecture)
         }
 
         swiftPMImportExtension.spmDependencies.all { swiftPMDependency ->
             kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin = true
+            val mainCompilationCinterops = target.compilations.getByName("main").cinterops
+            if (cinteropName !in mainCompilationCinterops.names) {
+                mainCompilationCinterops.create(cinteropName).definitionFile.set(
+                    defFilesAndLdDumpGenerationTask.map {
+                        it.defFilePath(target.konanTarget.architecture).get()
+                    }
+                )
+            }
+
             syntheticImportTasks.forEach { it.configure { it.directlyImportedSpmModules.add(swiftPMDependency) } }
             swiftPMDependenciesMetadata.configure { it.importedSpmModules.add(swiftPMDependency) }
 
@@ -283,7 +285,7 @@ internal fun Project.regenerateLinkageImportProjectTask(swiftPMDependencies: Pro
     return locateOrRegisterTask<GenerateSyntheticLinkageImportProject>(
         lowerCamelCaseName(
             GenerateSyntheticLinkageImportProject.TASK_NAME,
-            "forLinkage",
+            "forEmbedAndSignLinkage",
         ),
     ).also {
         it.configure {
