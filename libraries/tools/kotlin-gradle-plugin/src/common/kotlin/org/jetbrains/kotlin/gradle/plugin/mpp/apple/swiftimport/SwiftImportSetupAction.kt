@@ -79,8 +79,19 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             }
         }
         if (hasDynamicFrameworks) {
-            // FIXME: A more serious problem is that
-            SyntheticProductType.DYNAMIC
+            /**
+             * FIXME: This is not correct: SwiftPM can promote products to be dynamic libraries when necessary and if we emit a package with
+             * type: .none, then this will not happen. However, we also
+             * - can't produce a dynamic library because it leads to symbol duplication with the K/N dynamic framework
+             * - can't pass always static K/N framework to this SwiftPM linkage
+             * - can't reexport all potential libraries for dynamic K/N framework (because private extern?)
+             * - can't hack with linker settings because SwiftPM passes these settings to all downstream linkage sites???
+             *
+             * Things to try in the future:
+             * - Redo the entire integration using an .pbxproj instead of the Package and hack something up in this linkage project file
+             */
+//             SyntheticProductType.INFERRED
+             SyntheticProductType.DYNAMIC
         } else {
             SyntheticProductType.INFERRED
         }
@@ -333,12 +344,20 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
     @TaskAction
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
         val packageRoot = syntheticImportProjectRoot.get().asFile
+        val linkerHack = when (syntheticProductType.get()) {
+            SyntheticProductType.DYNAMIC -> packageRoot.resolve("linkerHack").also {
+                it.writeText(linkerScriptHack())
+                it.setExecutable(true)
+            }
+            SyntheticProductType.INFERRED -> null
+        }
         generatePackageManifest(
             identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
             packageRoot = packageRoot,
             syntheticProductType = syntheticProductType.get(),
             directlyImportedSwiftPMDependencies = directlyImportedSpmModules.get(),
             localPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().keys,
+            linkerHackPath = linkerHack,
         )
         dependencyIdentifierToImportedSwiftPMDependencies.get().forEach { (dependencyIdentifier, swiftPMDependencies) ->
             generatePackageManifest(
@@ -363,6 +382,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
         directlyImportedSwiftPMDependencies: Set<SwiftPMDependency>,
         // FIXME: Implicitly, this is the directory, package and product name
         localPackages: Set<String>,
+        linkerHackPath: File? = null,
     ) {
         val repoDependencies = (directlyImportedSwiftPMDependencies.map { importedPackage ->
             buildString {
@@ -451,6 +471,9 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                 appendLine("      dependencies: [")
                 targetDependencies.forEach { appendLine("        $it") }
                 appendLine("      ]")
+                if (linkerHackPath != null) {
+                    appendLine("      , linkerSettings: [.unsafeFlags([\"-fuse-ld=${linkerHackPath.path}\"])]")
+                }
                 appendLine("    ),")
                 appendLine("  ]")
                 appendLine(")")
@@ -1006,6 +1029,78 @@ internal fun Project.swiftPMDependenciesMetadataClasspath() = swiftPMDependencie
         }
     }
 )
+
+private fun linkerScriptHack(): String = """
+    #!/usr/bin/python3
+    import os
+    import sys
+    from os.path import dirname
+    
+    if __name__ == '__main__':
+        is_synthetic_linkage_call = False
+        for arg in sys.argv:
+            if arg.startswith('@rpath') and '_internal_linkage_SwiftPMImport' in arg:
+                is_synthetic_linkage_call = True
+    
+        if is_synthetic_linkage_call:
+            print(sys.argv)
+            filelist_index = None
+            platform_version = None
+            arch = None
+            output = None
+            syslibroot = None
+            dependency_info = None
+    
+            for (index, arg) in enumerate(sys.argv[1:]):
+                if arg == '-platform_version':
+                    platform_version = sys.argv[index + 2:index + 5]
+                if arg == '-filelist':
+                    filelist_index = index + 2
+    
+                if arg == '-arch':
+                    arch = sys.argv[index + 2]
+                if arg == '-o':
+                    output = sys.argv[index + 2]
+                if arg == '-syslibroot':
+                    syslibroot = sys.argv[index + 2]
+                if arg == '-dependency_info':
+                    dependency_info = sys.argv[index + 2]
+            if filelist_index is None:
+                raise 'No filelist'
+    
+            filelist_path = sys.argv[filelist_index]
+            empty_object_file = None
+            with open(filelist_path, 'r') as file:
+                for line in file:
+                    if '_internal_linkage_SwiftPMImport.o' in line:
+                        empty_object_file = line
+            if empty_object_file is None:
+                raise f'Missing empty object file {filelist_path}'
+    
+            new_filelist = os.path.join(dirname(filelist_path), '_kotlinSwiftPMImport')
+            with open(new_filelist, 'w') as file:
+                file.write(empty_object_file)
+    
+            stub_ld_call = [
+                "-dylib",
+                "-dynamic",
+                "-filelist", new_filelist,
+                "-arch", arch,
+                "-platform_version", *platform_version,
+                "-syslibroot", syslibroot,
+                "-dependency_info", dependency_info,
+                "-lSystem",
+                "-export_dynamic",
+                "-o", output,
+            ]
+            print('ld ' + ' '.join([f'\'{arg}\'' for arg in stub_ld_call]))
+            print(stub_ld_call)
+            print(sys.argv)
+            os.execlp('ld', 'ld', *stub_ld_call)
+        else:
+            os.execlp('ld', 'ld', *sys.argv[1:])
+
+""".trimIndent()
 
 const val XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER = "-clonedSourcePackagesDirPath"
 const val SWIFTPM_DEPENDENCIES_METADATA_USAGE = "SWIFTPM_DEPENDENCIES_METADATA"
