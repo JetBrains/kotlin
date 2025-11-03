@@ -1,0 +1,6 @@
+ALL:
+  kotlin/collections/MutableList.clear(): Unit
+  kotlin/collections/MutableCollection.clear(): Unit
+DIRECT:
+  kotlin/collections/MutableList.clear(): Unit
+INTERSECTION:

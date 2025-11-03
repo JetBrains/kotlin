@@ -246,7 +246,9 @@ abstract class AbstractFirUseSiteMemberScope(
         callableSymbol: D,
         processor: (D, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
-        when (val directOverridden = directOverriddenMap[callableSymbol]) {
+        val key = directOverriddenMap.keys.find { it.callableId == callableSymbol.callableId }
+
+        when (val directOverridden = directOverriddenMap[callableSymbol] ?: directOverriddenMap[key]) {
             null -> {
                 val resultOfIntersection = callablesFromSupertypes[callableSymbol.name]
                     ?.firstOrNull { it.chosenSymbol == callableSymbol }

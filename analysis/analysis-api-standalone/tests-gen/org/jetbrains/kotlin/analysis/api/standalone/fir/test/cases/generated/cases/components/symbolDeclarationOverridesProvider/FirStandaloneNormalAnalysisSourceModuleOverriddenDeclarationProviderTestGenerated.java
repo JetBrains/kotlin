@@ -88,6 +88,18 @@ public class FirStandaloneNormalAnalysisSourceModuleOverriddenDeclarationProvide
   }
 
   @Test
+  @TestMetadata("interfaceDelegation.kt")
+  public void testInterfaceDelegation() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/interfaceDelegation.kt");
+  }
+
+  @Test
+  @TestMetadata("interfaceDelegation2.kt")
+  public void testInterfaceDelegation2() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/interfaceDelegation2.kt");
+  }
+
+  @Test
   @TestMetadata("intersectionOverride.kt")
   public void testIntersectionOverride() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/intersectionOverride.kt");

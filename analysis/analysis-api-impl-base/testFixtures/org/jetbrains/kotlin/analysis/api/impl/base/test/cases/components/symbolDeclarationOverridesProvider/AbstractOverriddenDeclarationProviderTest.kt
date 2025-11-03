@@ -36,8 +36,15 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
                 danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
             ) { contextFile ->
                 val symbol = getCallableSymbol(contextFile, mainModule, testServices)
-                val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
-                val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }
+
+                val containingDeclaration = symbol.containingDeclaration as KaNamedClassSymbol
+                val delegatedMemberScope = containingDeclaration.delegatedMemberScope
+                val delegatedCallables = delegatedMemberScope.callables.toList()
+                val find = delegatedCallables.find { it.name?.asString() == "clear" } ?: return@copyAwareAnalyzeForTest ""
+                val directlyOverridden = find.directlyOverriddenSymbols.toList()
+
+                val allOverriddenSymbols = /*emptyList<String>()*/symbol.allOverriddenSymbols.map { renderSignature(it) }.toList()
+                val directlyOverriddenSymbols = /*emptyList<String>()*/symbol.directlyOverriddenSymbols.map { renderSignature(it) }.toList()
 
                 // K1 doesn't support this
                 val intersectionOverriddenSymbols = if (configurator.frontendKind == FrontendKind.Fe10) {
