@@ -44764,6 +44764,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("leadingZerosInIntegerLiterals.kt")
+      public void testLeadingZerosInIntegerLiterals() {
+        runTest("compiler/testData/diagnostics/tests/syntax/leadingZerosInIntegerLiterals.kt");
+      }
+
+      @Test
       @TestMetadata("legacyHeaderAndImplKeywordsInEnumDefinition.kt")
       public void testLegacyHeaderAndImplKeywordsInEnumDefinition() {
         runTest("compiler/testData/diagnostics/tests/syntax/legacyHeaderAndImplKeywordsInEnumDefinition.kt");
