@@ -5890,6 +5890,18 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("asListOfToArrayJDKBased.kt")
+      public void testAsListOfToArrayJDKBased() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/j+k/asListOfToArrayJDKBased.kt");
+      }
+
+      @Test
+      @TestMetadata("asListOfToArraySimplified.kt")
+      public void testAsListOfToArraySimplified() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/j+k/asListOfToArraySimplified.kt");
+      }
+
+      @Test
       @TestMetadata("usingNullableValueAsLowerBoundLeadsToNullableResult.kt")
       public void testUsingNullableValueAsLowerBoundLeadsToNullableResult() {
         runTest("compiler/fir/analysis-tests/testData/resolve/j+k/usingNullableValueAsLowerBoundLeadsToNullableResult.kt");
