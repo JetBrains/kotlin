@@ -7551,6 +7551,12 @@ public class LightTreeJsBoxTestGenerated extends AbstractLightTreeJsBoxTest {
     }
 
     @Test
+    @TestMetadata("new.kt")
+    public void testNew() {
+      runTest("js/js.translator/testData/box/jsCode/new.kt");
+    }
+
+    @Test
     @TestMetadata("numberLiteralOverflow.kt")
     public void testNumberLiteralOverflow() {
       runTest("js/js.translator/testData/box/jsCode/numberLiteralOverflow.kt");
@@ -7599,6 +7605,12 @@ public class LightTreeJsBoxTestGenerated extends AbstractLightTreeJsBoxTest {
     }
 
     @Test
+    @TestMetadata("specialIdentifiers.kt")
+    public void testSpecialIdentifiers() {
+      runTest("js/js.translator/testData/box/jsCode/specialIdentifiers.kt");
+    }
+
+    @Test
     @TestMetadata("stringEscape.kt")
     public void testStringEscape() {
       runTest("js/js.translator/testData/box/jsCode/stringEscape.kt");
@@ -7620,6 +7632,12 @@ public class LightTreeJsBoxTestGenerated extends AbstractLightTreeJsBoxTest {
     @TestMetadata("while.kt")
     public void testWhile() {
       runTest("js/js.translator/testData/box/jsCode/while.kt");
+    }
+
+    @Test
+    @TestMetadata("yield.kt")
+    public void testYield() {
+      runTest("js/js.translator/testData/box/jsCode/yield.kt");
     }
   }
 

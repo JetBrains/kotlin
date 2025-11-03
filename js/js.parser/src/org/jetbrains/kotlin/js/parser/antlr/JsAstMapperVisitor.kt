@@ -767,14 +767,17 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitNewExpression(ctx: JavaScriptParser.NewExpressionContext): JsNew {
+        // For `new Object` or `new Object(...)`
         val jsNewPlainIdentifier = ctx.identifier()?.let { makeRefNode(it.text).applyLocation(it) }
+        // For `new (Object)` or `new (Object)(...)`
         val jsNewSingleExpression = ctx.singleExpressionImpl()?.let { visitNode<JsExpression>(it) }
         val jsNewExpression = when {
             jsNewPlainIdentifier != null -> jsNewPlainIdentifier
             else -> jsNewSingleExpression
         }
 
-        val jsArguments = visitAll<JsExpression>(ctx.arguments().argument())
+        // JS allows calling new-expressions without parens at all
+        val jsArguments = ctx.arguments()?.let { visitAll<JsExpression>(it.argument()) } ?: emptyList()
         return JsNew(jsNewExpression).apply {
             arguments.addAll(jsArguments)
         }.applyLocation(ctx)
