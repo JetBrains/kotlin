@@ -684,7 +684,7 @@ internal class GlobalStubBuilder(
                         AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
                     }
                     PropertyAccessor.Getter.ExternalGetter(listOf(annotation)).also {
-                        context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global)
+                        addWrapperGenerationInfo(it)
                     }
                 }
             }
@@ -705,7 +705,7 @@ internal class GlobalStubBuilder(
                                 AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
                             }
                             PropertyAccessor.Getter.ExternalGetter(listOf(annotation)).also {
-                                context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global)
+                                addWrapperGenerationInfo(it)
                             }
                         }
                     }
@@ -724,7 +724,7 @@ internal class GlobalStubBuilder(
                                     AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_setter")
                                 }
                                 PropertyAccessor.Setter.ExternalSetter(listOf(annotation)).also {
-                                    context.wrapperComponentsBuilder.setterToWrapperInfo[it] = WrapperGenerationInfo(global)
+                                    addWrapperGenerationInfo(it)
                                 }
                             }
                         }
@@ -742,7 +742,7 @@ internal class GlobalStubBuilder(
                                 AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
                             }
                             PropertyAccessor.Getter.ExternalGetter(listOf(annotation)).also {
-                                context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global, passViaPointer = true)
+                                addWrapperGenerationInfo(it, passViaPointer = true)
                             }
                         }
                     }
@@ -766,6 +766,30 @@ internal class GlobalStubBuilder(
                 // 2. If such a declaration is used in unreachable code, it doesn't make the compilation fail.
                 AnnotationStub.CCall.Direct("${global.name} unsupported: https://youtrack.jetbrains.com/issue/KT-79742")
             }
+
+    private fun addWrapperGenerationInfo(
+            getter: PropertyAccessor.Getter.ExternalGetter,
+            passViaPointer: Boolean = false
+    ) {
+        context.wrapperComponentsBuilder.getterToWrapperInfo[getter] =
+                wrapperGenerationInfo(getter, passViaPointer = passViaPointer) ?: return
+    }
+
+    private fun addWrapperGenerationInfo(
+            setter: PropertyAccessor.Setter.ExternalSetter
+    ) {
+        context.wrapperComponentsBuilder.setterToWrapperInfo[setter] =
+                wrapperGenerationInfo(setter, passViaPointer = false) ?: return
+    }
+
+    private fun wrapperGenerationInfo(
+            accessor: PropertyAccessor,
+            passViaPointer: Boolean
+    ): WrapperGenerationInfo? = if (accessor.annotations.any { it is AnnotationStub.CCall.Symbol }) {
+        WrapperGenerationInfo(global, passViaPointer = passViaPointer)
+    } else {
+        null
+    }
 }
 
 internal class TypedefStubBuilder(
