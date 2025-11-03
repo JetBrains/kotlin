@@ -27,7 +27,7 @@ suspend fun simpleReturnsUnit() {
 
 suspend fun callTailReturnsUnit() {
     effects += "[callTailReturnsUnit]"
-    suspendHere()
+    return suspendHere()
 }
 
 suspend fun complexReturnsUnit(shouldSuspend: Boolean) {
