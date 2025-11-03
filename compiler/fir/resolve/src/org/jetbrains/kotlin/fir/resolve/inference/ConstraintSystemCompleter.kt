@@ -255,11 +255,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
         when (argument) {
             is ConeResolvedCallableReferenceAtom -> {
-                // When resolution isn't needed, reviseExpectedType changes nothing in fact
-                if (!argument.needsResolution) return false
-                // It looks like this line actually does not influence any tests.
-                // There is a suggestion it replaces the revised type just by itself. See KT-74021
-                argument.reviseExpectedType(revisedExpectedType)
+                return false
+//                // When resolution isn't needed, reviseExpectedType changes nothing in fact
+//                if (!argument.needsResolution) return false
+//                // It looks like this line actually does not influence any tests.
+//                // There is a suggestion it replaces the revised type just by itself. See KT-74021
+//                argument.reviseExpectedType(revisedExpectedType)
             }
             is ConeLambdaWithTypeVariableAsExpectedTypeAtom ->
                 argument.transformToResolvedLambda(c.getBuilder(), resolutionContext, revisedExpectedType)
