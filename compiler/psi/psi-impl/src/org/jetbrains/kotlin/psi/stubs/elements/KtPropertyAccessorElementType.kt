@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.psi.stubs.elements
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
-import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
+import org.jetbrains.kotlin.psi.stubs.StubUtils.readContract
+import org.jetbrains.kotlin.psi.stubs.StubUtils.writeContract
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
-import java.io.IOException
 
 object KtPropertyAccessorElementType : KtStubElementType<KotlinPropertyAccessorStubImpl, KtPropertyAccessor>(
     "PROPERTY_ACCESSOR",
@@ -28,6 +28,7 @@ object KtPropertyAccessorElementType : KtStubElementType<KotlinPropertyAccessorS
             hasBody = psi.hasBody(),
             hasNoExpressionBody = psi.hasBlockBody(),
             mayHaveContract = psi.isLegacyContractPresentPsiCheck(),
+            contract = null,
         )
     }
 
@@ -35,7 +36,11 @@ object KtPropertyAccessorElementType : KtStubElementType<KotlinPropertyAccessorS
         dataStream.writeBoolean(stub.isGetter)
         dataStream.writeBoolean(stub.hasBody)
         dataStream.writeBoolean(stub.hasNoExpressionBody)
-        dataStream.writeBoolean(stub.mayHaveContract)
+        val mayHaveContract = stub.mayHaveContract
+        dataStream.writeBoolean(mayHaveContract)
+        if (mayHaveContract) {
+            dataStream.writeContract(stub.contract)
+        }
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinPropertyAccessorStubImpl {
@@ -43,12 +48,19 @@ object KtPropertyAccessorElementType : KtStubElementType<KotlinPropertyAccessorS
         val hasBody = dataStream.readBoolean()
         val hasNoExpressionBody = dataStream.readBoolean()
         val mayHaveContract = dataStream.readBoolean()
+        val contract = if (mayHaveContract) {
+            dataStream.readContract()
+        } else {
+            null
+        }
+
         return KotlinPropertyAccessorStubImpl(
             parent = parentStub,
             isGetter = isGetter,
             hasBody = hasBody,
             hasNoExpressionBody = hasNoExpressionBody,
             mayHaveContract = mayHaveContract,
+            contract = contract,
         )
     }
 }

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
+import org.jetbrains.kotlin.psi.stubs.StubUtils;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin;
 
@@ -63,7 +64,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
         dataStream.writeBoolean(haveContract);
 
         if (haveContract) {
-            stub.serializeContract(dataStream);
+            StubUtils.writeContract$psi_impl(dataStream, stub.getContract());
         }
 
         KotlinStubOrigin.serialize(stub.getOrigin(), dataStream);
@@ -86,7 +87,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
         return new KotlinFunctionStubImpl(
                 (StubElement<?>) parentStub, name, isTopLevel, fqName, isExtension, hasNoExpressionBody, hasBody,
                 hasTypeParameterListBeforeFunctionName, mayHaveContract,
-                mayHaveContract ? KotlinFunctionStubImpl.Companion.deserializeContract(dataStream) : null,
+                mayHaveContract ? StubUtils.readContract$psi_impl(dataStream) : null,
                 KotlinStubOrigin.deserialize(dataStream)
         );
     }

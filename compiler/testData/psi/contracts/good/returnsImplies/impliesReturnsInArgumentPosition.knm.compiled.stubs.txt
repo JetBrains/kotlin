@@ -15,7 +15,8 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Boolean]
-    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=true]
+      contract: [ effect:param(-1) == null -> Returns(NOT_NULL) ]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
   FUN[fqName=notNullIfNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=notNullIfNotNull]
