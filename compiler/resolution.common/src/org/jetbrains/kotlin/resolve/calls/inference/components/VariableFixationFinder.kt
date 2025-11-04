@@ -101,12 +101,14 @@ class VariableFixationFinder(
 
         HAS_PROPER_NON_NOTHING_LOWER_CONSTRAINT,
         IS_REIFIED,
+
+        HAS_PROPER_NON_ILT_CONSTRAINT,
+        HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT,
+
         ONLY_HAS_INCORPORATED_CONSTRAINTS_FROM_DECLARED_UPPER_BOUND,
         IS_RELATED_TO_ANY_OUTPUT_TYPE,
         ALL_CONSTRAINTS_ARE_TRIVIAL_OR_NON_PROPER,
 
-        HAS_PROPER_NON_ILT_CONSTRAINT,
-        HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT,
         HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY,
         HAS_PROPER_CONSTRAINTS,
 
@@ -198,12 +200,14 @@ class VariableFixationFinder(
             it[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints()
 
             it[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)
-            // hasDependencyToOtherTypeVariables()
-            computeReadinessForVariableWithDependencies(it)
 
 //            it[Q.ALL_CONSTRAINTS_ARE_TRIVIAL_OR_NON_PROPER] = allConstraintsTrivialOrNonProper()
             it[Q.IS_RELATED_TO_ANY_OUTPUT_TYPE] = dependencyProvider.isVariableRelatedToAnyOutputType(this)
             it[Q.ONLY_HAS_INCORPORATED_CONSTRAINTS_FROM_DECLARED_UPPER_BOUND] = hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
+
+            // hasDependencyToOtherTypeVariables()
+            computeReadinessForVariableWithDependencies(it)
+
             it[Q.IS_REIFIED] = isReified()
             it[Q.HAS_PROPER_NON_NOTHING_LOWER_CONSTRAINT] = hasLowerNonNothingProperConstraint()
         }
