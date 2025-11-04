@@ -17,18 +17,96 @@ KaNamedFunctionSymbol:
       name: a
       origin: SOURCE
       receiverParameter: null
-      returnType: KaErrorType:
+      returnType: KaUsualClassType:
         annotations: []
-        type: ERROR_TYPE
+        typeArguments: []
+        type: kotlin/Boolean
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(holdsInWithContextParameters.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: HoldsInWithContextParametersKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
       importableFqName: null
   ]
-  contextReceivers: []
-  contractEffects: []
+  contextReceivers: [
+    KaContextReceiver:
+      label: a
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Boolean
+  ]
+  contractEffects: [
+    KaContractHoldsInEffectDeclaration:
+      condition:
+        KaContractBooleanValueParameterExpression:
+          parameterSymbol:
+            KaContractExplicitParameterValue:
+              symbol:
+                KaContextParameterSymbol:
+                  annotations: []
+                  callableId: null
+                  compilerVisibility: Public
+                  contextReceivers: []
+                  isActual: false
+                  isExpect: false
+                  isExtension: false
+                  isVal: true
+                  location: LOCAL
+                  modality: FINAL
+                  name: a
+                  origin: SOURCE
+                  receiverParameter: null
+                  returnType: KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: kotlin/Boolean
+                  visibility: PUBLIC
+                  getContainingFileSymbol: KaFileSymbol(holdsInWithContextParameters.kt)
+                  getContainingJvmClassName: HoldsInWithContextParametersKt
+                  getContainingModule: KaSourceModule "Sources of main"
+                  deprecationStatus: null
+                  importableFqName: null
+      valueParameterReference:
+        KaContractExplicitParameterValue:
+          symbol:
+            KaValueParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              generatedPrimaryConstructorProperty: null
+              hasDeclaredDefaultValue: false
+              hasDefaultValue: false
+              isActual: false
+              isCrossinline: false
+              isExpect: false
+              isExtension: false
+              isImplicitLambdaParameter: false
+              isNoinline: false
+              isVal: true
+              isVararg: false
+              location: LOCAL
+              modality: FINAL
+              name: block
+              origin: SOURCE
+              receiverParameter: null
+              returnType: KaFunctionType:
+                annotations: []
+                typeArguments: [
+                  KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: kotlin/Int
+                ]
+                type: () -> kotlin/Int
+              visibility: PUBLIC
+              getContainingFileSymbol: KaFileSymbol(holdsInWithContextParameters.kt)
+              getContainingJvmClassName: HoldsInWithContextParametersKt
+              getContainingModule: KaSourceModule "Sources of main"
+              deprecationStatus: null
+              importableFqName: null
+  ]
   hasStableParameterNames: true
   isActual: false
   isBuiltinFunctionInvoke: false
@@ -56,7 +134,7 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -82,8 +160,8 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: kotlin/Function0<kotlin/Int>
-      visibility: LOCAL
+        type: () -> kotlin/Int
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(holdsInWithContextParameters.kt)
       getContainingJvmClassName: HoldsInWithContextParametersKt
       getContainingModule: KaSourceModule "Sources of main"

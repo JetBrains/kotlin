@@ -31,7 +31,7 @@ public interface KaContractConstantValue : KaLifetimeOwner {
 }
 
 /**
- * Represents parameter that can be passed to `value` argument of [kotlin.contracts.ContractBuilder.callsInPlace].
+ * Represents parameter that can be passed to `value` argument of [kotlin.contracts.ContractBuilder.callsInPlace] or [kotlin.contracts.ContractBuilder.holdsIn].
  */
 @KaExperimentalApi
 @OptIn(KaImplementationDetail::class)

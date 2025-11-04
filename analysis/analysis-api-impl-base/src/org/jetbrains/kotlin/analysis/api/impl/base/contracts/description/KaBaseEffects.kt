@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,14 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.contracts.description
 
 import com.google.common.base.Objects
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractCallsInPlaceContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConditionalContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstantValue
-import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractParameterValue
-import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.KaContractReturnsNotNullEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.KaContractReturnsSpecificValueEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.KaContractReturnsSuccessfullyEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.contracts.description.*
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.*
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBooleanExpression
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -62,14 +56,14 @@ class KaBaseContractConditionalContractEffectDeclaration(
 @KaImplementationDetail
 object KaBaseContractReturnsContractEffectDeclarations {
     class KaBaseContractReturnsNotNullEffectDeclaration(
-        override val token: KaLifetimeToken
+        override val token: KaLifetimeToken,
     ) : KaContractReturnsNotNullEffectDeclaration {
         override fun equals(other: Any?): Boolean = other is KaBaseContractReturnsNotNullEffectDeclaration
         override fun hashCode(): Int = javaClass.hashCode()
     }
 
     class KaBaseContractReturnsSpecificValueEffectDeclaration(
-        private val backingValue: KaContractConstantValue
+        private val backingValue: KaContractConstantValue,
     ) : KaContractReturnsSpecificValueEffectDeclaration {
         override val token: KaLifetimeToken get() = backingValue.token
 
@@ -85,9 +79,31 @@ object KaBaseContractReturnsContractEffectDeclarations {
     }
 
     class KaBaseContractReturnsSuccessfullyEffectDeclaration(
-        override val token: KaLifetimeToken
+        override val token: KaLifetimeToken,
     ) : KaContractReturnsSuccessfullyEffectDeclaration {
         override fun equals(other: Any?): Boolean = other is KaBaseContractReturnsSuccessfullyEffectDeclaration
         override fun hashCode(): Int = javaClass.hashCode()
     }
+}
+
+@KaImplementationDetail
+class KaBaseContractHoldsInEffectDeclaration(
+    private val backingCondition: KaContractBooleanExpression,
+    private val backingValueParameterReference: KaContractParameterValue,
+) : KaContractHoldsInEffectDeclaration {
+    override val condition: KaContractBooleanExpression
+        get() = withValidityAssertion { backingCondition }
+
+    override val valueParameterReference: KaContractParameterValue
+        get() = withValidityAssertion { backingValueParameterReference }
+
+    override val token: KaLifetimeToken
+        get() = backingCondition.token
+
+    override fun equals(other: Any?): Boolean = this === other ||
+            other is KaBaseContractHoldsInEffectDeclaration &&
+            other.backingCondition == backingCondition &&
+            other.backingValueParameterReference == backingValueParameterReference
+
+    override fun hashCode(): Int = Objects.hashCode(backingCondition, backingValueParameterReference)
 }
