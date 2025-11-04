@@ -44,6 +44,7 @@ public actual interface List<out E> : Collection<E> {
          * Returns an empty read-only list. The returned list is serializable (JVM).
          */
         @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
         public actual inline operator fun <T> of(): List<T> = listOf()
 
         /**
@@ -51,12 +52,16 @@ public actual interface List<out E> : Collection<E> {
          *
          * The returned list is serializable (JVM).
          */
-        public actual operator fun <T> of(element: T): List<T> = listOf(element)
+        @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
+        public actual inline operator fun <T> of(element: T): List<T> = listOf(element)
 
         /**
          * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
          */
-        public actual operator fun <T> of(vararg elements: T): List<T> = listOf(*elements)
+        @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
+        public actual inline operator fun <T> of(vararg elements: T): List<T> = listOf(*elements)
     }
 
     // Query Operations
@@ -153,17 +158,22 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
          * Returns an empty new [MutableList].
          */
         @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
         public actual inline operator fun <T> of(): MutableList<T> = mutableListOf()
 
         /**
          * Returns a new [MutableList] containing only the specified object [element].
          */
-        public actual operator fun <T> of(element: T): MutableList<T> = mutableListOf(element)
+        @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
+        public actual inline operator fun <T> of(element: T): MutableList<T> = mutableListOf(element)
 
         /**
          * Returns a new [MutableList] with the given elements.
          */
-        public actual operator fun <T> of(vararg elements: T): MutableList<T> = mutableListOf(*elements)
+        @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
+        public actual inline operator fun <T> of(vararg elements: T): MutableList<T> = mutableListOf(*elements)
     }
 
     // Modification Operations

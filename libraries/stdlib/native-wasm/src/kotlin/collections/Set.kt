@@ -45,6 +45,7 @@ public actual interface Set<out E> : Collection<E> {
          * Returns an empty read-only set.  The returned set is serializable (JVM).
          */
         @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
         public actual inline operator fun <T> of(): Set<T> = setOf()
 
         /**
@@ -52,14 +53,18 @@ public actual interface Set<out E> : Collection<E> {
          *
          * The returned set is serializable (JVM).
          */
-        public actual operator fun <T> of(element: T): Set<T> = setOf(element)
+        @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
+        public actual inline operator fun <T> of(element: T): Set<T> = setOf(element)
 
         /**
          * Returns a new read-only set with the given elements.
          * Elements of the set are iterated in the order they were specified.
          * The returned set is serializable (JVM).
          */
-        public actual operator fun <T> of(vararg elements: T): Set<T> = setOf(*elements)
+        @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
+        public actual inline operator fun <T> of(vararg elements: T): Set<T> = setOf(*elements)
     }
 
     // Query Operations
@@ -99,18 +104,23 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
          * The returned set preserves the element iteration order.
          */
         @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
         public actual inline operator fun <T> of(): MutableSet<T> = mutableSetOf()
 
         /**
          * Returns a new [MutableSet] containing only the specified object [element].
          */
-        public actual operator fun <T> of(element: T): MutableSet<T> = mutableSetOf(element)
+        @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
+        public actual inline operator fun <T> of(element: T): MutableSet<T> = mutableSetOf(element)
 
         /**
          * Returns a new [MutableSet] with the given elements.
          * Elements of the set are iterated in the order they were specified.
          */
-        public actual operator fun <T> of(vararg elements: T): MutableSet<T> = mutableSetOf(*elements)
+        @kotlin.internal.InlineOnly
+        @ExperimentalStdlibApi
+        public actual inline operator fun <T> of(vararg elements: T): MutableSet<T> = mutableSetOf(*elements)
     }
 
     // Query Operations
