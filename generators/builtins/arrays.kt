@@ -226,7 +226,19 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
         }
 
         protected fun MethodBuilder.defaultOperatorOfImplementation() {
-            "$arrayOfFunctionName(*$parameterName)".setAsExpressionBody()
+            val body = if (kind == null) {
+                "$arrayOfFunctionName(*$parameterName)"
+            } else {
+                parameterName
+            }
+            body.setAsExpressionBody()
+        }
+
+        protected fun MethodBuilder.makeInlineOnly() {
+            modifySignature {
+                isInline = true
+            }
+            annotations += "kotlin.internal.InlineOnly"
         }
 
         protected open fun ClassBuilder.modifyGeneratedClass() {}
@@ -321,6 +333,7 @@ class GenerateJsArrays(writer: PrintWriter, primitiveArrays: Boolean) : Generate
 
         override fun MethodBuilder.modifyOfOperator() {
             annotations += """Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")"""
+            makeInlineOnly()
         }
     }
 }
@@ -427,6 +440,7 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
         }
 
         override fun MethodBuilder.modifyOfOperator() {
+            makeInlineOnly()
             defaultOperatorOfImplementation()
         }
     }
@@ -523,6 +537,7 @@ class GenerateNativeArrays(writer: PrintWriter, primitiveArrays: Boolean) : Gene
         }
 
         override fun MethodBuilder.modifyOfOperator() {
+            makeInlineOnly()
             defaultOperatorOfImplementation()
         }
     }

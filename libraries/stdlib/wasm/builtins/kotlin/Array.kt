@@ -40,6 +40,7 @@ internal constructor(size: Int) {
     public actual companion object {
         /** Returns an array containing the specified elements. */
         @ExperimentalStdlibApi
+        @kotlin.internal.InlineOnly
         public actual inline operator fun <reified T> of(vararg elements: T): Array<T> =
             arrayOf(*elements)
     }
