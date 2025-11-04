@@ -21,13 +21,13 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
 import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
+import org.jetbrains.kotlin.gradle.targets.native.toKotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.attributeOf
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import java.net.URI
 
@@ -90,8 +90,14 @@ sealed class NativeBinary(
      */
     @Suppress("unused")
     @KotlinNativeCacheApi
-    fun disableNativeCache(version: KotlinToolingVersion, reason: String, issueUrl: URI? = null) {
-        disableCacheSettings.add(DisableNativeCacheSettings(version, reason, issueUrl))
+    fun disableNativeCache(version: DisableCacheInKotlinVersion, reason: String, issueUrl: URI? = null) {
+        disableCacheSettings.add(
+            DisableNativeCacheSettings(
+                version.toKotlinVersion(),
+                reason,
+                issueUrl
+            )
+        )
     }
 
     var binaryOptions: MutableMap<String, String> = mutableMapOf()

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunne
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import javax.inject.Inject
@@ -138,7 +139,7 @@ constructor(
     internal val disableCache: Provider<Boolean> = objects.propertyWithConvention(
         simpleKotlinNativeVersion.map { version ->
             binary.disableCacheSettings.any { disableSetting ->
-                disableSetting.version == KotlinToolingVersion(version)
+                disableSetting.version == KotlinToolingVersion(version).toKotlinVersion()
             }
         }
     )

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import java.io.File
 import java.net.URI
 import java.security.MessageDigest
+import kotlin.KotlinVersion as StdlibKotlinVersion
 
 internal object KotlinToolingDiagnostics {
     /**
@@ -417,7 +418,7 @@ internal object KotlinToolingDiagnostics {
 
     internal object NativeCacheDisabledDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
-            kotlinVersion: KotlinToolingVersion,
+            kotlinVersion: StdlibKotlinVersion,
             target: KonanTarget,
             reason: String,
             issueUrl: URI?

@@ -155,14 +155,12 @@ fun Project.generatedSourcesTask(
         outputs.dir(generationRoot)
     }
 
-    if (!commonSourceSet) {
-        sourceSets.named("main") {
-            val dependency: Any = when (dependOnTaskOutput) {
-                true -> task
-                false -> generationRoot
-            }
-            java.srcDirs(dependency)
+    sourceSets.named("common") {
+        val dependency: Any = when (dependOnTaskOutput) {
+            true -> task
+            false -> generationRoot
         }
+        java.srcDirs(dependency)
     }
 
     apply(plugin = "idea")

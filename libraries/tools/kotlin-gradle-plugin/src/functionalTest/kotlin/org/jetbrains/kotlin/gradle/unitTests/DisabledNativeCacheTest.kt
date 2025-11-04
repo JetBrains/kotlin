@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
@@ -167,8 +168,19 @@ class DisabledNativeCacheTest {
     }
 }
 
-private val ProjectInternal.currentVersionForDisableCache
-    get() = nativeProperties.kotlinNativeVersion.map { KotlinToolingVersion(it) }.get()
+private val ProjectInternal.currentVersionForDisableCache: DisableCacheInKotlinVersion
+    get() {
+        val allInstances: List<DisableCacheInKotlinVersion> =
+            DisableCacheInKotlinVersion::class.sealedSubclasses.mapNotNull { it.objectInstance }
+        val kotlinNativeVersion = nativeProperties.kotlinNativeVersion.get()
+        val nativeToolingVersion = KotlinToolingVersion(kotlinNativeVersion)
+
+        return allInstances.last { releaseVersion ->
+            releaseVersion.major < nativeToolingVersion.major ||
+                    (releaseVersion.major == nativeToolingVersion.major && releaseVersion.minor < nativeToolingVersion.minor) ||
+                    (releaseVersion.major == nativeToolingVersion.major && releaseVersion.minor == nativeToolingVersion.minor && releaseVersion.patch <= nativeToolingVersion.patch)
+        }
+    }
 
 private fun ProjectInternal.konanCacheKind(linkTask: String): Provider<NativeCacheKind> =
     tasks.named(linkTask, KotlinNativeLink::class.java).flatMap { it.konanCacheKind }
