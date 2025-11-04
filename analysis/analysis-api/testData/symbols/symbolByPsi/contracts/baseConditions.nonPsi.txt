@@ -7,7 +7,7 @@ KaAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isActual: false
   isExpect: false
-  isExtension: false
+  isExtension: true
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -167,7 +167,7 @@ KaAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isActual: false
   isExpect: false
-  isExtension: false
+  isExtension: true
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -327,7 +327,7 @@ KaAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isActual: false
   isExpect: false
-  isExtension: false
+  isExtension: true
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -492,7 +492,7 @@ KaAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isActual: false
   isExpect: false
-  isExtension: false
+  isExtension: true
   location: LOCAL
   modality: FINAL
   origin: SOURCE

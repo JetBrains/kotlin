@@ -119,6 +119,14 @@ private class ConeContractDescriptionElementToAnalysisApi(
         backingValueParameterReference = holdsInEffect.valueParameterReference.accept(),
     )
 
+    override fun visitConditionalReturnsDeclaration(
+        conditionalEffect: KtConditionalReturnsDeclaration<ConeKotlinType, ConeDiagnostic>,
+        data: Unit
+    ): KaContractConditionalContractEffectDeclaration = KaBaseContractConditionalContractEffectDeclaration(
+        backingEffect = conditionalEffect.returnsEffect.accept(),
+        backingCondition = conditionalEffect.argumentsCondition.accept(),
+    )
+
     override fun visitValueParameterReference(
         valueParameterReference: ConeValueParameterReference,
         data: Unit
