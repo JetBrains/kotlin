@@ -1,6 +1,4 @@
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: JVM_IR
-//  ^ refer to KT-81952
 // LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
 // ISSUE: KT-81722
