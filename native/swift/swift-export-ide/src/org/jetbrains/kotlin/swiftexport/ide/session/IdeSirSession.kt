@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.impl.*
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.SirBridgeProviderImpl
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.SirCustomTypeTranslatorImpl
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 import org.jetbrains.sir.lightclasses.StubbingSirDeclarationProvider

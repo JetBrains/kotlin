@@ -56,6 +56,8 @@ internal fun bridgeAsNSCollectionElement(type: SirType): WithSingleType = when (
     AsOutError,
     AsVoid,
         -> bridge as WithSingleType
+    // TODO: support ranges as collection elements
+    is SirCustomTypeTranslatorImpl.RangeBridge -> error("XXX")
 }
 
 context(session: SirSession)
@@ -589,7 +591,7 @@ internal sealed class Bridge(
                 return when (wrappedObject) {
                     is AsObjCBridged ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsBlock, is AsAnyBridgeable ->
+                    is AsObject, is AsExistential, is AsBlock, is AsAnyBridgeable, is SirCustomTypeTranslatorImpl.RangeBridge ->
                         "{ switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"
@@ -606,6 +608,7 @@ internal sealed class Bridge(
             override fun renderNil(): String = error("we do not support wrapping optionals into optionals, as it is impossible in kotlin")
 
             override fun nativePointerToMultipleObjCBridge(index: Int): SirFunctionBridge {
+                // TODO: support Optional on Range(s) and other tuple-based types
                 error("XXX")
             }
         }
