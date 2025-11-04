@@ -2,14 +2,14 @@ KT element: KtClass
 KT element text:
 public final class Foo public constructor() {
     public final var kotlin.Int?.prop: kotlin.Int? /* compiled code */
-        public final get() { /* compiled code */ }
-        public final set(v: kotlin.Int?) { /* compiled code */ }
+        public final get() { contract { /* compiled contract */ }; /* compiled code */ }
+        public final set(v: kotlin.Int?) { contract { /* compiled contract */ }; /* compiled code */ }
 
     public final val Foo.Status.isError: kotlin.Boolean /* compiled code */
-        public final get() { /* compiled code */ }
+        public final get() { contract { /* compiled contract */ }; /* compiled code */ }
 
     context(s: Foo.Status) public final val isContextError: kotlin.Boolean /* compiled code */
-        public final get() { /* compiled code */ }
+        public final get() { contract { /* compiled contract */ }; /* compiled code */ }
 
     public sealed class Status protected constructor() {
         public final class Ok public constructor() : Foo.Status {
