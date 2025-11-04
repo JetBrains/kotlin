@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.FirInterpreterDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.JsKlibInterpreterDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.WasmIrInterpreterDumpHandler
 import org.jetbrains.kotlin.test.builders.*
@@ -186,5 +187,7 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
     loweredIrHandlersStep()
 
     facadeStep(backendFacade)
-    klibArtifactsHandlersStep()
+    klibArtifactsHandlersStep {
+        useHandlers(::KlibBackendDiagnosticsHandler)
+    }
 }
