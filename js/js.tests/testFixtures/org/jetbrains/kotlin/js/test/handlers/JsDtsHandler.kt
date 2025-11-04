@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
-import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -32,10 +31,6 @@ class JsDtsHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
             ?: error("Can't find generated .d.ts file")
 
         val generatedDts = generatedDtsFile.readText()
-
-        if (JsEnvironmentConfigurationDirectives.UPDATE_REFERENCE_DTS_FILES in globalDirectives)
-            referenceDtsFile.writeText(generatedDts)
-        else
-            TestDataAssertions.assertEqualsToFile(referenceDtsFile, generatedDts)
+        assertions.assertEqualsToFile(referenceDtsFile, generatedDts)
     }
 }

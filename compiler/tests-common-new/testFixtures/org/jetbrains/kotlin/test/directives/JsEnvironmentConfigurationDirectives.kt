@@ -155,11 +155,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val UPDATE_REFERENCE_DTS_FILES by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     // Directives for IR tests
 
     val RUN_IR_DCE by directive(
