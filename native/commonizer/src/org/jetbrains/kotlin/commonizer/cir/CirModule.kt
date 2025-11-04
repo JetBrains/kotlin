@@ -5,13 +5,18 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
+import kotlinx.metadata.klib.KlibMetadataVersion
+
 interface CirModule : CirDeclaration, CirHasName {
+    val metadataVersion: KlibMetadataVersion
+
     companion object {
         @Suppress("NOTHING_TO_INLINE")
-        inline fun create(name: CirName): CirModule = CirModuleImpl(name)
+        inline fun create(name: CirName, metadataVersion: KlibMetadataVersion): CirModule = CirModuleImpl(name, metadataVersion)
     }
 }
 
 data class CirModuleImpl(
-    override val name: CirName
+    override val name: CirName,
+    override val metadataVersion: KlibMetadataVersion,
 ) : CirModule

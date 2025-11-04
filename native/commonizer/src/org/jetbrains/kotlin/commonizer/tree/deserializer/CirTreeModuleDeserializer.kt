@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
 import kotlin.metadata.internal.common.KmModuleFragment
+import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.commonizer.cir.CirModule
@@ -33,7 +34,7 @@ internal class CirTreeModuleDeserializer(
         }
 
         return CirTreeModule(
-            module = CirModule.create(CirName.create(module.name)),
+            module = CirModule.create(CirName.create(module.name), KlibMetadataVersion(metadata.metadataVersion)),
             packages = packages
         )
     }
