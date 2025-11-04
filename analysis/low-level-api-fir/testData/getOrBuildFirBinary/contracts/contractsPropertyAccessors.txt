@@ -8,3 +8,7 @@ FIR source kind: KtRealSourceElementKind
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val [ResolvedTo(RAW_FIR)] R|kotlin/Boolean|.myRequire: R|kotlin/Boolean|
     public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> this
+        >

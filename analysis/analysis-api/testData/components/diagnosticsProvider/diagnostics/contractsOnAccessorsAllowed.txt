@@ -1,7 +1,2 @@
 Diagnostics from file:
-  for PSI element of type KtNameReferenceExpression at (48,16-23)
-    UNRESOLVED_REFERENCE      text ranges: [(191,198)]
-      PSI: KtNameReferenceExpression at (48,16-23)
-  for PSI element of type KtNameReferenceExpression at (55,16-23)
-    UNRESOLVED_REFERENCE      text ranges: [(312,319)]
-      PSI: KtNameReferenceExpression at (55,16-23)
+  <NO DIAGNOSTICS>

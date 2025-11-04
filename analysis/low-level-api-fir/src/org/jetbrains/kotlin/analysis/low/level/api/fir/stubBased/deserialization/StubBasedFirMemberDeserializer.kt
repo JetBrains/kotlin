@@ -274,6 +274,14 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
+    private fun FirContractDescriptionOwner.loadContracts(local: StubBasedFirDeserializationContext) {
+        val declaration = (source as? KtRealPsiSourceElement)?.psi as? KtDeclarationWithBody ?: return
+        val resolvedDescription = StubBasedFirContractDeserializer(this, local.typeDeserializer).loadContract(declaration)
+        if (resolvedDescription != null) {
+            replaceContractDescription(resolvedDescription)
+        }
+    }
+
     private fun loadPropertySetter(
         setter: KtPropertyAccessor?,
         classSymbol: FirClassSymbol<*>?,
@@ -456,8 +464,12 @@ internal class StubBasedFirMemberDeserializer(
             }
 
             setLazyPublishedVisibility(c.session)
+
             this.getter?.setLazyPublishedVisibility(annotations, this, c.session)
+            this.getter?.loadContracts(local)
+
             this.setter?.setLazyPublishedVisibility(annotations, this, c.session)
+            this.setter?.loadContracts(local)
 
             replaceDeprecationsProvider(getDeprecationsProvider(c.session))
         }
@@ -582,11 +594,7 @@ internal class StubBasedFirMemberDeserializer(
             }
         }.apply {
             setLazyPublishedVisibility(c.session)
-        }
-
-        val resolvedDescription = StubBasedFirContractDeserializer(simpleFunction, local.typeDeserializer).loadContract(function)
-        if (resolvedDescription != null) {
-            simpleFunction.replaceContractDescription(resolvedDescription)
+            loadContracts(local)
         }
 
         return simpleFunction
