@@ -11,6 +11,9 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.calls.Caller
+import kotlin.reflect.jvm.internal.calls.getInlineClassUnboxMethod
+import kotlin.reflect.jvm.internal.calls.isUnderlyingPropertyOfValueClass
+import kotlin.reflect.jvm.internal.calls.toInlineClass
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 import java.lang.reflect.Array as ReflectArray
@@ -58,6 +61,21 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
 
 internal val ReflectKCallable<*>.isBound: Boolean
     get() = rawBoundReceiver !== CallableReference.NO_RECEIVER
+
+/**
+ * Same as [ReflectKCallable.rawBoundReceiver], except for when the receiver is an inline class value, in which case it's unboxed.
+ */
+internal val ReflectKCallable<*>.boundReceiver: Any?
+    get() = rawBoundReceiver.coerceToExpectedReceiverType(this)
+
+private fun Any?.coerceToExpectedReceiverType(callable: ReflectKCallable<*>): Any? {
+    if (callable is ReflectKProperty<*> && callable.isUnderlyingPropertyOfValueClass()) return this
+
+    val expectedReceiverType = callable.allParameters.singleOrNull { it.kind != KParameter.Kind.VALUE }?.type
+    val unboxMethod = expectedReceiverType?.toInlineClass()?.getInlineClassUnboxMethod(callable) ?: return this
+
+    return unboxMethod.invoke(this)
+}
 
 internal fun ReflectKCallable<*>.computeAbsentArguments(): Array<Any?> {
     val parameters = parameters
