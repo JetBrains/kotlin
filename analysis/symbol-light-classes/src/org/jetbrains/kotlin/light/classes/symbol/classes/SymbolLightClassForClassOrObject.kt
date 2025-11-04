@@ -172,7 +172,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
             addDelegatesToInterfaceMethods(result, classSymbol, allSupertypes)
 
-            addJavaCollectionMethodStubsIfNeeded(result, classSymbol)
+            addJavaCollectionMethodStubsIfNeeded(result, classSymbol, allSupertypes)
 
             result
         }
@@ -184,12 +184,18 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         allSupertypes: List<KaClassType>,
         result: MutableList<PsiMethod>
     ): Sequence<KaCallableSymbol> {
+        if (allSupertypes.none { it.classId.packageFqName.startsWith(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME) }) {
+            // The class definitely doesn't have mapped signatures
+            return visibleDeclarations
+        }
+
         val filteredDeclarations = mutableListOf<KaCallableSymbol>()
 
         for (callableSymbol in visibleDeclarations) {
             when (callableSymbol) {
                 is KaNamedFunctionSymbol -> {
-                    val javaMethod = getJavaMethodForMappedMethodWithSpecialSignature(callableSymbol, allSupertypes)
+                    val overriddenSymbol = findOverriddenCollectionSymbol(callableSymbol)
+                    val javaMethod = getJavaMethodForMappedMethodWithSpecialSignature(overriddenSymbol, allSupertypes)
                     if (javaMethod == null) {
                         // Default case: method is not mapped to Java collections method - just create the delegate
                         filteredDeclarations += callableSymbol
@@ -238,15 +244,14 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         return filteredDeclarations.asSequence()
     }
 
-    private fun KaSession.addJavaCollectionMethodStubsIfNeeded(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
+    private fun KaSession.addJavaCollectionMethodStubsIfNeeded(
+        result: MutableList<PsiMethod>,
+        classSymbol: KaNamedClassSymbol,
+        allSupertypes: List<KaClassType>
+    ) {
         if (classSymbol.classKind != KaClassKind.CLASS) {
             return
         }
-
-        val allSupertypes = classSymbol.defaultType.allSupertypes
-            .filterIsInstance<KaClassType>()
-            .filter { it.classId != StandardClassIds.Any }
-            .toList()
 
         if (allSupertypes.any { (it.symbol as? KaClassSymbol)?.classKind != KaClassKind.INTERFACE }) {
             // Collection method stubs should be created only inside the first non-interface subtype of the Kotlin mapped class
@@ -257,10 +262,10 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         val javaClassId = mapKotlinClassToJava(closestMappedSupertype.classId) ?: return
         val kotlinCollectionSymbol = closestMappedSupertype.symbol as? KaClassSymbol ?: return
         val javaCollectionSymbol = findClass(javaClassId) ?: return
-        val javaBaseClass = javaCollectionSymbol.psi as? PsiClass ?: return
+        val javaCollectionPsiClass = javaCollectionSymbol.psi as? PsiClass ?: return
 
         val typeParameterMapping = buildMap<PsiTypeParameter, PsiType> {
-            javaBaseClass.typeParameters.zip(closestMappedSupertype.typeArguments).forEach { (javaParam, kotlinArg) ->
+            javaCollectionPsiClass.typeParameters.zip(closestMappedSupertype.typeArguments).forEach { (javaParam, kotlinArg) ->
                 val psiType = kotlinArg.type?.asPsiType(useSitePosition = this@SymbolLightClassForClassOrObject, allowErrorTypes = true)
                     ?: return@forEach
                 put(javaParam, psiType)
@@ -268,7 +273,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
 
         val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
-        calcMethods(javaBaseClass, javaCollectionSymbol, kotlinCollectionSymbol, substitutor, result)
+        calcMethods(javaCollectionPsiClass, kotlinCollectionSymbol, substitutor, result)
     }
 
     private fun mapKotlinClassToJava(classId: ClassId): ClassId? {
@@ -278,8 +283,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     }
 
     private fun KaSession.calcMethods(
-        javaBaseClass: PsiClass,
-        javaCollectionSymbol: KaClassSymbol,
+        javaCollectionPsiClass: PsiClass,
         kotlinCollectionSymbol: KaClassSymbol,
         substitutor: PsiSubstitutor,
         result: MutableList<PsiMethod>,
@@ -291,11 +295,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             .mapNotNull { it.name }
             .toSet()
 
-        val javaMethods = javaBaseClass.methods
+        val javaMethods = javaCollectionPsiClass.methods
             // seems like there is no need to override default methods
             .filterNot { it.hasModifierProperty(PsiModifier.DEFAULT) }
 
-        val candidateMethods = javaMethods.flatMap { method -> methodWrappers(method, javaBaseClass, kotlinNames, substitutor) }
+        val candidateMethods = javaMethods.flatMap { method -> methodWrappers(method, javaCollectionPsiClass, kotlinNames, substitutor) }
 
         // TODO why PsiSubstitutor.EMPTY?
         val existingSignatures = result.map { it.getSignature(PsiSubstitutor.EMPTY) }.toSet()
@@ -325,7 +329,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     // TODO check "go to base method", "go to declaration" in IDE
     private fun methodWrappers(
         method: PsiMethod,
-        javaBaseClass: PsiClass,
+        javaCollectionPsiClass: PsiClass,
         kotlinNames: Set<Name>,
         substitutor: PsiSubstitutor,
     ): List<PsiMethod> {
@@ -356,17 +360,17 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             return emptyList()
         }
 
-        if (!method.isInKotlinInterface(javaBaseClass, kotlinNames)) {
+        if (!method.isInKotlinInterface(javaCollectionPsiClass, kotlinNames)) {
             // compiler generates stub override
             return listOf(method.openBridge(substitutor))
         }
 
         // TODO
-        return methodsWithSpecializedSignature(method, javaBaseClass, substitutor)
+        return methodsWithSpecializedSignature(method, javaCollectionPsiClass, substitutor)
     }
 
-    private fun PsiMethod.isInKotlinInterface(javaBaseClass: PsiClass, kotlinNames: Set<Name>): Boolean {
-        if (javaBaseClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP_ENTRY) {
+    private fun PsiMethod.isInKotlinInterface(javaCollectionPsiClass: PsiClass, kotlinNames: Set<Name>): Boolean {
+        if (javaCollectionPsiClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP_ENTRY) {
             when (name) {
                 "getValue", "getKey" -> return true
             }
@@ -374,13 +378,17 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         return Name.identifier(name) in kotlinNames
     }
 
-    private fun methodsWithSpecializedSignature(method: PsiMethod, javaBaseClass: PsiClass, substitutor: PsiSubstitutor): List<PsiMethod> {
+    private fun methodsWithSpecializedSignature(
+        method: PsiMethod,
+        javaCollectionPsiClass: PsiClass,
+        substitutor: PsiSubstitutor,
+    ): List<PsiMethod> {
         val methodName = method.name
-        if (methodName in erasedCollectionParameterNames || methodName !in membersWithSpecializedSignature) {
+        if (!mayHaveSpecializedSignature(methodName)) {
             return emptyList()
         }
 
-        if (javaBaseClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP) {
+        if (javaCollectionPsiClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP) {
             val abstractKotlinVariantWithGeneric = javaUtilMapMethodWithSpecialSignature(method, substitutor) ?: return emptyList()
             val finalBridgeWithObject = method.finalBridge(substitutor)
             return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
@@ -390,7 +398,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             if (method.parameterList.parameters.singleOrNull()?.type == PsiTypes.intType()) {
                 // remove(int) -> abstract removeAt(int), final bridge remove(int)
                 return listOf(method.finalBridge(substitutor), createRemoveAt(method, substitutor))
-            } else if (javaBaseClass.qualifiedName == CommonClassNames.JAVA_UTIL_ITERATOR) {
+            } else if (javaCollectionPsiClass.qualifiedName == CommonClassNames.JAVA_UTIL_ITERATOR) {
                 // java.util.Iterator#remove() is a default method and should have been filtered out, but isn't for some reason
                 return emptyList()
             }
@@ -403,6 +411,10 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         val abstractKotlinVariantWithGeneric = method.wrap(substitutor, substituteObjectWith = type)
         return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
     }
+
+    // TODO clarify semantics, currently looks suspicious
+    private fun mayHaveSpecializedSignature(methodName: String): Boolean =
+        methodName !in erasedCollectionParameterNames && methodName in membersWithSpecializedSignature
 
     private fun PsiType.isTypeParameter(): Boolean =
         this is PsiClassType && this.resolve() is PsiTypeParameter
@@ -587,7 +599,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbol.delegatedMemberScope.callables.forEach { callableSymbol ->
             when (callableSymbol) {
                 is KaNamedFunctionSymbol -> {
-                    val javaMethod = getJavaMethodForMappedMethodWithSpecialSignature(callableSymbol, allSupertypes)
+                    val original = callableSymbol.fakeOverrideOriginal as KaNamedFunctionSymbol // TODO remove cast
+                    val javaMethod = getJavaMethodForMappedMethodWithSpecialSignature(original, allSupertypes)
                     if (javaMethod == null) {
                         // Default case: method is not mapped to Java collections method - just create the delegate
                         createDelegateMethod(functionSymbol = callableSymbol)
@@ -641,38 +654,44 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
     }
 
+    private fun FqName.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+
     private fun KaSession.getJavaMethodForMappedMethodWithSpecialSignature(
-        symbol: KaFunctionSymbol,
+        symbol: KaNamedFunctionSymbol?,
         allSupertypes: List<KaClassType>,
     ): PsiMethod? {
+        if (symbol == null) return null
+        if (!symbol.isFromKotlinCollections()) return null
+        val symbolName = symbol.name.asString()
+
         return when {
-            matchesContainsMethod(symbol) ->
-                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "contains" }
-            matchesCollectionRemoveMethod(symbol) ->
-                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "remove" }
-            matchesContainsAllMethod(symbol) ->
-                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "containsAll" }
+            matchesMapRemoveMethod(symbol) ->
+                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "remove" }
             matchesAddAllMethod(symbol) ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "addAll" }
             matchesAddAll2Method(symbol) ->
                 getJavaListClass(allSupertypes)?.methods?.find { it.name == "addAll" && it.parameters.size == 2 }
-            matchesRemoveAllMethod(symbol) ->
+            symbolName == "contains" ->
+                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "contains" }
+            symbolName == "remove" ->
+                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "remove" }
+            symbolName == "containsAll" ->
+                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "containsAll" }
+            symbolName == "removeAll" ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "removeAll" }
-            matchesRetainAllMethod(symbol) ->
+            symbolName == "retainAll" ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "retainAll" }
-            matchesIndexOfMethod(symbol) ->
+            symbolName == "indexOf" ->
                 getJavaListClass(allSupertypes)?.methods?.find { it.name == "indexOf" }
-            matchesLastIndexOfMethod(symbol) ->
+            symbolName == "lastIndexOf" ->
                 getJavaListClass(allSupertypes)?.methods?.find { it.name == "lastIndexOf" }
-            matchesContainsKeyMethod(symbol) ->
+            symbolName == "containsKey" ->
                 getJavaMapClass(allSupertypes)?.methods?.find { it.name == "containsKey" }
-            matchesContainsValueMethod(symbol) ->
+            symbolName == "containsValue" ->
                 getJavaMapClass(allSupertypes)?.methods?.find { it.name == "containsValue" }
-            matchesGetMethod(symbol) ->
+            symbolName == "get" ->
                 getJavaMapClass(allSupertypes)?.methods?.find { it.name == "get" }
-            matchesMapRemoveMethod(symbol) ->
-                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "remove" }
-            matchesPutAllMethod(symbol) ->
+            symbolName == "putAll" ->
                 getJavaMapClass(allSupertypes)?.methods?.find { it.name == "putAll" }
             else -> null
         }
@@ -694,92 +713,24 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         return javaCollectionSymbol.psi as? PsiClass
     }
 
-    // TODO better check?
-    private fun matchesContainsMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "contains") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "element"
+    private fun KaCallableSymbol.isFromKotlinCollections(): Boolean =
+        callableId.packageName.startsWith(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
+
+    private fun KaSession.findOverriddenCollectionSymbol(symbol: KaNamedFunctionSymbol): KaNamedFunctionSymbol? {
+        return symbol.allOverriddenSymbols.find { it.isFromKotlinCollections() } as? KaNamedFunctionSymbol
     }
 
-    private fun matchesCollectionRemoveMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "remove") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "element"
+    private fun matchesAddAllMethod(symbol: KaNamedFunctionSymbol): Boolean {
+        return symbol.name.asString() == "addAll" && symbol.valueParameters.size == 1
     }
 
-    private fun matchesContainsAllMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "containsAll") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "elements"
+    private fun matchesAddAll2Method(symbol: KaNamedFunctionSymbol): Boolean {
+        return symbol.callableId?.classId == StandardClassIds.MutableList && symbol.name.asString() == "addAll" && symbol.valueParameters.size == 2
     }
 
-    private fun matchesAddAllMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "addAll") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "elements"
+    private fun matchesMapRemoveMethod(symbol: KaNamedFunctionSymbol): Boolean {
+        return symbol.callableId?.classId == StandardClassIds.MutableMap && symbol.name.asString() == "remove"
     }
-
-    private fun matchesAddAll2Method(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "addAll") return false
-        val parameters = symbol.valueParameters.takeIf { it.size == 2 } ?: return false
-        return parameters[0].name.asString() == "index" && parameters[1].name.asString() == "elements"
-    }
-
-    private fun matchesRemoveAllMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "removeAll") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "elements"
-    }
-
-    private fun matchesRetainAllMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "retainAll") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "elements"
-    }
-
-    private fun matchesIndexOfMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "indexOf") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "element"
-    }
-
-    private fun matchesLastIndexOfMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "lastIndexOf") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "element"
-    }
-
-    private fun matchesContainsKeyMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "containsKey") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "key"
-    }
-
-    private fun matchesContainsValueMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "containsValue") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "value"
-    }
-
-    private fun matchesGetMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "get") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "key"
-    }
-
-    private fun matchesMapRemoveMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "remove") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "key"
-    }
-
-    private fun matchesPutAllMethod(symbol: KaFunctionSymbol): Boolean {
-        if (symbol.name?.asString() != "putAll") return false
-        val parameter = symbol.valueParameters.singleOrNull() ?: return false
-        return parameter.name.asString() == "from"
-    }
-
-
 
     override fun getOwnFields(): List<PsiField> = cachedValue {
         withClassSymbol { classSymbol ->
