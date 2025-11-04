@@ -50,9 +50,11 @@ internal class BtaApiGenerator(
                     maybeAddApplyArgumentStringsFun(deprecated = true)
                 }
                 interfaceType("Builder") {
+                    addKdoc("A builder for [$className].\n\n@since 2.3.20")
                     generateGetPutFunctions(argumentTypeName)
                     if (level.isLeaf()) {
                         function("build") {
+                            addKdoc("Constructs a new immutable [$className] instance with the options set in this builder.")
                             addModifiers(KModifier.ABSTRACT)
                             returns(ClassName(targetPackage, className))
                         }

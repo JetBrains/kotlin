@@ -39,11 +39,28 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
 public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEntrySnapshot> {
 
     public interface Builder : BuildOperation.Builder {
+        /**
+         * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+         *
+         * @return the previously set value for an option
+         * @throws IllegalStateException if the option was not set and has no default value
+         */
         public operator fun <V> get(key: Option<V>): V
+
+        /**
+         * Set the [value] for option specified by [key], overriding any previous value for that option.
+         */
         public operator fun <V> set(key: Option<V>, value: V)
+
+        /**
+         * Creates an immutable instance of [JvmClasspathSnapshottingOperation] based on the configuration of this builder.
+         */
         public fun build(): JvmClasspathSnapshottingOperation
     }
 
+    /**
+     * Creates a builder for [JvmClasspathSnapshottingOperation] that contains a copy of this configuration.
+     */
     public fun toBuilder(): Builder
 
     /**
