@@ -123,11 +123,41 @@ object StubRenderer {
     }
 
     private fun renderNativeEnumType(nativeEnum: ObjCNSEnum): String = buildString {
-        append("typedef NS_ENUM(int32_t, ${nativeEnum.name}) {\n")
-        for ((index, literal) in nativeEnum.literals.withIndex()) {
-            append("  ${nativeEnum.name}${literal.objCName} NS_SWIFT_NAME(${literal.swiftName}) = $index,\n")
+        fun appendName() {
+            append("NS_ENUM(int32_t, ")
+            append(nativeEnum.name)
+            append(")")
         }
-        append("};")
+
+        append("typedef ")
+        appendName()
+        append(" {\n")
+        for (entry in nativeEnum.entries) {
+            appendNativeEnumEntry(entry)
+        }
+        append("};\n")
+    }
+
+    private fun Appendable.appendNativeEnumEntry(entry: ObjcExportNativeEnumEntry) {
+        fun appendName() {
+            append(entry.objCName)
+        }
+
+        fun appendSwiftName() {
+            append(entry.swiftName)
+        }
+
+        fun appendValue() {
+            append(entry.value.toString())
+        }
+
+        append("  ")
+        appendName()
+        append(" NS_SWIFT_NAME(")
+        appendSwiftName()
+        append(") = ")
+        appendValue()
+        append(",\n")
     }
 
     private fun renderMethod(method: ObjCMethod): String = buildString {

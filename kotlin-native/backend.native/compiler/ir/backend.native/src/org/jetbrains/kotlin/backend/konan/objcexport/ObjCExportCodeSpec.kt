@@ -93,8 +93,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                     val ordinalDescriptor = superClass.contributedMethods.first { it.name.asString() == "<get-ordinal>" }
                     val symbol = symbolTable.descriptorExtension.referenceSimpleFunction(ordinalDescriptor)
                     val bridge = mapper.bridgeMethod(ordinalDescriptor)
-                    val method = ObjCMethodSpec.BaseMethod(symbol, bridge, "toNSEnum")
-                    methods += ObjCGetterForNSEnumType(symbol, bridge, "toNSEnum", method)
+                    methods += ObjCGetterForNSEnumType(symbol, bridge, "nsEnum")
                 }
 
                 descriptor.enumEntries.mapTo(methods) {
@@ -179,7 +178,7 @@ internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String) {
             is ObjCInitMethodForKotlinConstructor -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
             is ObjCKotlinThrowableAsErrorMethod -> null
             is ObjCMethodForKotlinMethod -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
-            is ObjCGetterForNSEnumType -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
+            is ObjCGetterForNSEnumType -> "$objcClass.$selector,${symbol.signature}"
         }
         out.println("\n# Instance methods mapping")
         for (type in types) {
@@ -239,10 +238,9 @@ internal class ObjCGetterForNSEnumType(
         val symbol: IrSimpleFunctionSymbol,
         val bridge: MethodBridge,
         val selector: String,
-        val baseMethod: BaseMethod<IrSimpleFunctionSymbol>
 ) : ObjCMethodSpec() {
     override fun toString(): String =
-            "ObjC spec of ${baseMethod.selector} for ${baseMethod.symbol}"
+            "ObjC spec of $selector for $symbol"
 }
 
 

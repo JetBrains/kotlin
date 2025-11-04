@@ -45,6 +45,7 @@ typedef NS_ENUM(int32_t, OBJCFoo) {
 };
 
 
+
 /**
  * @note annotations
  *   kotlin.native.ObjCEnum(name="OBJCFoo")
@@ -54,7 +55,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-- (OBJCFoo)toNSEnum;
+@property (readonly) OBJCFoo nsEnum;
 @property (class, readonly) Foo *a __attribute__((swift_name("a")));
 @property (class, readonly) Foo *b __attribute__((swift_name("b")));
 @property (class, readonly) Foo *c __attribute__((swift_name("c")));

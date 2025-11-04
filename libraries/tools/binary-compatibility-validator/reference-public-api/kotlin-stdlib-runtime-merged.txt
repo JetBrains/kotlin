@@ -3257,6 +3257,9 @@ public abstract interface annotation class kotlin/experimental/ExpectRefinement 
 public abstract interface annotation class kotlin/experimental/ExperimentalNativeApi : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/experimental/ExperimentalObjCEnum : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/experimental/ExperimentalObjCName : java/lang/annotation/Annotation {
 }
 

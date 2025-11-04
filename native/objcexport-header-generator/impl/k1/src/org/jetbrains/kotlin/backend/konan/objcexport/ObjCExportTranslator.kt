@@ -32,11 +32,12 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.*
 
-
 class TranslatedClass(
-    val auxiliaryDeclarations: List<ObjCExportStub> = emptyList(),
+    val auxiliaryDeclarations: List<ObjCExportStub>,
     val objCInterface: ObjCInterface,
 )
+
+fun TranslatedClass(objCInterface: ObjCInterface) = TranslatedClass(emptyList(), objCInterface)
 
 interface ObjCExportTranslator {
     fun generateBaseDeclarations(): List<ObjCTopLevel>
@@ -293,22 +294,21 @@ class ObjCExportTranslatorImpl(
 
                     namer.getNSEnumFunctionTypeName(descriptor)?.let { nsEnumTypeName ->
                         auxiliaryDeclarations.add(
-                            ObjCNSEnum(nsEnumTypeName, descriptor.enumEntries.map {
-                                ObjcExportNativeEnumEntryName(
-                                    objCName = namer.getEnumEntrySelector(it).replaceFirstChar { it.uppercaseChar() },
-                                    swiftName = namer.getEnumEntrySwiftName(it))
-                            } ))
+                            ObjCNSEnum(nsEnumTypeName, descriptor.enumEntries.mapIndexed { ordinal, entry ->
+                                ObjcExportNativeEnumEntry(
+                                    objCName = nsEnumTypeName + namer.getEnumEntrySelector(entry).replaceFirstChar { it.uppercaseChar() },
+                                    swiftName = namer.getEnumEntrySwiftName(entry),
+                                    value = ordinal)
+                            }))
 
                         add {
-                            ObjCMethod(
+                            ObjCProperty(
+                                "nsEnum",
                                 null,
-                                null,
-                                true,
                                 ObjCRawType(nsEnumTypeName),
-                                listOf("toNSEnum"),
-                                emptyList<ObjCParameter>(),
-                                emptyList()
-                            )
+                                listOf("readonly"),
+                                declarationAttributes = emptyList(),
+                                comment = null)
                         }
                     }
 
