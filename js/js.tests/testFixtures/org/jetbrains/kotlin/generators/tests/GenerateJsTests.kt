@@ -114,6 +114,14 @@ fun main(args: Array<String>) {
             testClass<AbstractJsTypeScriptExportWithInlinedFunInKlibTest>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
+
+            testClass<AbstractJsAnalysisApiTypeScriptExportTest> {
+                model(pattern = "^([^_](.+))\\.kt$")
+            }
+
+            testClass<AbstractJsES6AnalysisApiTypeScriptExportTest>(annotations = listOf(*es6())) {
+                model(pattern = "^([^_](.+))\\.kt$")
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/lineNumbers", testRunnerMethodName = "runTest0") {

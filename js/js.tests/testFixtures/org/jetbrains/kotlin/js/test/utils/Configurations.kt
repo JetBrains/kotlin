@@ -39,11 +39,11 @@ fun TestConfigurationBuilder.configureSteppingTests() {
     }
 }
 
-fun TestConfigurationBuilder.configureJsTypeScriptExportTest() {
+fun TestConfigurationBuilder.configureJsTypeScriptExportTest(expectedDtsSuffix: String? = null) {
     defaultDirectives {
         +JsEnvironmentConfigurationDirectives.GENERATE_DTS
     }
     configureJsArtifactsHandlersStep {
-        useHandlers(::JsDtsHandler)
+        useHandlers(::JsDtsHandler.bind(expectedDtsSuffix))
     }
 }

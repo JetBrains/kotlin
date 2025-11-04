@@ -57,6 +57,7 @@ dependencies {
     testCompileOnly(intellijCore())
     testFixturesApi(project(":compiler:backend.js"))
     testFixturesApi(project(":js:js.translator"))
+    testFixturesApi(project(":js:typescript-export-standalone"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testImplementation(libs.junit4)
     testFixturesApi(testFixtures(project(":kotlin-build-common")))

@@ -45,6 +45,8 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val IGNORE_HMPP by enumDirective<TargetBackend>("Ignore test in HMPP setup")
 
+    val IGNORE_ANALYSIS_API_BASED_TYPESCRIPT_EXPORT by enumDirective<TargetBackend>("Ignore failures of the new AA-based TypeScript Export")
+
     val USE_JAVAC_BASED_ON_JVM_TARGET by directive(
         description = """
             Determine version of javac for compilation of java files based

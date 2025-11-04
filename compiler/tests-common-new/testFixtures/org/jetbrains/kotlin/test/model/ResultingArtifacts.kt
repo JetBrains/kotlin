@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
+import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 
 class SourceFileInfo(
@@ -36,7 +37,16 @@ object BinaryArtifacts {
 
         open fun unwrap(): Js = this
 
+        open val dtsFile: File?
+            get() = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")
+                ?: outputFile.withReplacedExtensionOrNull("_v5.mjs", ".d.ts")
+
         class JsIrArtifact(override val outputFile: File, val compilerResult: CompilerResult, val icCache: Map<String, ByteArray>? = null) : Js()
+
+        class TypeScriptArtifact(override val outputFile: File) : Js() {
+            override val dtsFile: File
+                get() = outputFile
+        }
 
         data class IncrementalJsArtifact(val originalArtifact: Js, val recompiledArtifact: Js) : Js() {
             override val outputFile: File
