@@ -24,7 +24,7 @@ abstract class LoweringPrerequisitesTest {
             val loweringClass = phase.loweringClass
             val prerequisites = loweringClass.getDeclaredAnnotation(PhasePrerequisites::class.java)?.value.orEmpty()
             for (prerequisite in prerequisites) {
-                if (prerequisite.java !in createdPhases) {
+                if (createdPhases.none { prerequisite.java.isAssignableFrom(it) }) {
                     unsatisfiedPrerequisites.add(loweringClass to prerequisite.java)
                 }
             }
