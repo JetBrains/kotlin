@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.targetPlatform
-import org.jetbrains.kotlin.ir.backend.js.getJsLowerings
+import org.jetbrains.kotlin.ir.backend.js.jsLowerings
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
@@ -40,7 +40,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         // setup phase config for the second compilation stage (JS codegen)
         if (arguments.includes != null) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
-                if (arguments.listPhases) it.list(getJsLowerings())
+                if (arguments.listPhases) it.list(jsLowerings)
             }
         }
     }
