@@ -241,13 +241,15 @@ public actual interface List<out E> : Collection<E> {
          * The returned list is serializable (JVM).
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(element: T): List<T> = listOf(element)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(element: T): List<T> = listOf(element)
 
         /**
          * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(vararg elements: T): List<T> = listOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(vararg elements: T): List<T> = listOf(*elements)
     }
 
     // Query Operations
@@ -364,13 +366,15 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
          * Returns a new [MutableList] containing only the specified object [element].
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(element: T): MutableList<T> = mutableListOf(element)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(element: T): MutableList<T> = mutableListOf(element)
 
         /**
          * Returns a new [MutableList] with the given elements.
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(vararg elements: T): MutableList<T> = mutableListOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(vararg elements: T): MutableList<T> = mutableListOf(*elements)
     }
 
     // Modification Operations
@@ -544,7 +548,8 @@ public actual interface Set<out E> : Collection<E> {
          * The returned set is serializable (JVM).
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(element: T): Set<T> = setOf(element)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(element: T): Set<T> = setOf(element)
 
         /**
          * Returns a new read-only set with the given elements.
@@ -552,7 +557,8 @@ public actual interface Set<out E> : Collection<E> {
          * The returned set is serializable (JVM).
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(vararg elements: T): Set<T> = setOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(vararg elements: T): Set<T> = setOf(*elements)
     }
 
     // Query Operations
@@ -611,14 +617,16 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
          * Returns a new [MutableSet] containing only the specified object [element].
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(element: T): MutableSet<T> = mutableSetOf(element)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(element: T): MutableSet<T> = mutableSetOf(element)
 
         /**
          * Returns a new [MutableSet] with the given elements.
          * Elements of the set are iterated in the order they were specified.
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(vararg elements: T): MutableSet<T> = mutableSetOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(vararg elements: T): MutableSet<T> = mutableSetOf(*elements)
     }
 
     // Query Operations

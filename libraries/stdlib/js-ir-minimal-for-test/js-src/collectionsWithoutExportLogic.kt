@@ -49,13 +49,15 @@ public actual interface List<out E> : Collection<E> {
          * The returned list is serializable (JVM).
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(element: T): List<T> = TODO("Use WITH_STDLIB pragma to use this function")
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(element: T): List<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
         /**
          * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(vararg elements: T): List<T> = TODO("Use WITH_STDLIB pragma to use this function")
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(vararg elements: T): List<T> = TODO("Use WITH_STDLIB pragma to use this function")
     }
 
     actual override val size: Int
@@ -86,13 +88,15 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
          * Returns a new [MutableList] containing only the specified object [element].
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(element: T): MutableList<T> = TODO("Use WITH_STDLIB pragma to use this function")
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(element: T): MutableList<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
         /**
          * Returns a new [MutableList] with the given elements.
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(vararg elements: T): MutableList<T> = TODO("Use WITH_STDLIB pragma to use this function")
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(vararg elements: T): MutableList<T> = TODO("Use WITH_STDLIB pragma to use this function")
     }
 
     @IgnorableReturnValue actual override fun add(element: E): Boolean
@@ -127,7 +131,8 @@ public actual interface Set<out E> : Collection<E> {
          * The returned set is serializable (JVM).
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(element: T): Set<T> = TODO("Use WITH_STDLIB pragma to use this function")
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(element: T): Set<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
         /**
          * Returns a new read-only set with the given elements.
@@ -135,7 +140,8 @@ public actual interface Set<out E> : Collection<E> {
          * The returned set is serializable (JVM).
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(vararg elements: T): Set<T> = TODO("Use WITH_STDLIB pragma to use this function")
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(vararg elements: T): Set<T> = TODO("Use WITH_STDLIB pragma to use this function")
     }
 
     actual override val size: Int
@@ -162,14 +168,16 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
          * Returns a new [MutableSet] containing only the specified object [element].
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(element: T): MutableSet<T> = TODO("Use WITH_STDLIB pragma to use this function")
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(element: T): MutableSet<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
         /**
          * Returns a new [MutableSet] with the given elements.
          * Elements of the set are iterated in the order they were specified.
          */
         @ExperimentalStdlibApi
-        public actual operator fun <T> of(vararg elements: T): MutableSet<T> = TODO("Use WITH_STDLIB pragma to use this function")
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(vararg elements: T): MutableSet<T> = TODO("Use WITH_STDLIB pragma to use this function")
     }
 
     actual override fun iterator(): MutableIterator<E>
