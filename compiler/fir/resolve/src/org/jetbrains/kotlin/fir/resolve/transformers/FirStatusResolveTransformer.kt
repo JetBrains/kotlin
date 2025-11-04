@@ -5,14 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
-import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -21,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -430,14 +426,6 @@ abstract class AbstractFirStatusResolveTransformer(
             isLocal = false,
             overriddenFunctions.map { it.status as FirResolvedDeclarationStatus },
         )
-        // Once the modality is determined, we can remove the body.
-        if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
-            namedFunction.isNonLocal &&
-            !namedFunction.isInline &&
-            namedFunction.returnTypeRef !is FirImplicitTypeRef
-        ) {
-            namedFunction.replaceBody(null)
-        }
 
         namedFunction.transformStatus(this, resolvedStatus)
         transformDeclaration(namedFunction, data) as FirStatement
