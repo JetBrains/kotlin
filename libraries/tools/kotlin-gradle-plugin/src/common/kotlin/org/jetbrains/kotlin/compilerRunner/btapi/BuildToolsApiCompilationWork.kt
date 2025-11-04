@@ -16,17 +16,17 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.BACKUP_CLASSES
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.FORCE_RECOMPILATION
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.KEEP_IC_CACHES_IN_MEMORY
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.MODULE_BUILD_DIR
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.OUTPUT_DIRS
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.PRECISE_JAVA_TRACKING
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.ROOT_PROJECT_DIR
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.BACKUP_CLASSES
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.FORCE_RECOMPILATION
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.KEEP_IC_CACHES_IN_MEMORY
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.MODULE_BUILD_DIR
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.OUTPUT_DIRS
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.PRECISE_JAVA_TRACKING
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.ROOT_PROJECT_DIR
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.COMPILER_ARGUMENTS_LOG_LEVEL
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.GENERATE_COMPILER_REF_INDEX
@@ -97,10 +97,10 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 parameters.classLoadersCachingService.get(),
                 workArguments.compilerFullClasspath
             )
-            val compilationService = buildSession.kotlinToolchains
+            val kotlinToolchains = buildSession.kotlinToolchains
 
             val args = parseCommandLineArguments<K2JVMCompilerArguments>(workArguments.compilerArgs.toList())
-            val jvmCompilationOperation = compilationService.jvm.createJvmCompilationOperation(
+            val jvmCompilationOperation = kotlinToolchains.jvm.jvmCompilationOperationBuilder(
                 args.freeArgs.mapNotNull {
                     try {
                         Paths.get(it)
@@ -109,59 +109,62 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     }
                 },
                 args.destinationAsFile.toPath()
-            )
-            jvmCompilationOperation.compilerArguments.applyArgumentStrings(workArguments.compilerArgs.toList())
-            jvmCompilationOperation[KOTLINSCRIPT_EXTENSIONS] = workArguments.kotlinScriptExtensions
-            jvmCompilationOperation[COMPILER_ARGUMENTS_LOG_LEVEL] = workArguments.compilerArgumentsLogLevel.toBtaCompilerArgumentsLogLevel()
-            if (metrics is BuildMetricsReporterImpl) {
-                @Suppress("DEPRECATION_ERROR")
-                jvmCompilationOperation[BuildOperation.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = true
-            }
-            jvmCompilationOperation[GENERATE_COMPILER_REF_INDEX] = workArguments.compilerExecutionSettings.generateCompilerRefIndex
-
-            val icEnv = workArguments.incrementalCompilationEnvironment
-            val classpathChanges = icEnv?.classpathChanges
-            if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
-                val classpathSnapshotsOptions = jvmCompilationOperation.createSnapshotBasedIcOptions().apply {
-                    this[ROOT_PROJECT_DIR] = icEnv.rootProjectDir.toPath()
-                    this[MODULE_BUILD_DIR] = icEnv.buildDir.toPath()
-                    this[PRECISE_JAVA_TRACKING] = icEnv.icFeatures.usePreciseJavaTracking
-                    this[BACKUP_CLASSES] = icEnv.icFeatures.preciseCompilationResultsBackup
-                    this[KEEP_IC_CACHES_IN_MEMORY] = icEnv.icFeatures.keepIncrementalCompilationCachesInMemory
-                    this[OUTPUT_DIRS] = workArguments.outputFiles.map { it.toPath() }.toSet()
-                    this[FORCE_RECOMPILATION] = classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
-                    this[USE_FIR_RUNNER] = icEnv.useJvmFirRunner
-                    this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = icEnv.icFeatures.enableUnsafeIncrementalCompilationForMultiplatform
-                    this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = icEnv.icFeatures.enableMonotonousIncrementalCompileSetExpansion
+            ).also { compilationOperationBuilder ->
+                compilationOperationBuilder.compilerArguments.applyArgumentStrings(workArguments.compilerArgs.toList())
+                compilationOperationBuilder[KOTLINSCRIPT_EXTENSIONS] = workArguments.kotlinScriptExtensions
+                compilationOperationBuilder[COMPILER_ARGUMENTS_LOG_LEVEL] =
+                    workArguments.compilerArgumentsLogLevel.toBtaCompilerArgumentsLogLevel()
+                if (metrics is BuildMetricsReporterImpl) {
+                    @Suppress("DEPRECATION_ERROR")
+                    compilationOperationBuilder[BuildOperation.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = true
                 }
-                jvmCompilationOperation[INCREMENTAL_COMPILATION] = JvmSnapshotBasedIncrementalCompilationConfiguration(
-                    icEnv.workingDir.toPath(),
-                    icEnv.changedFiles,
-                    classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.map { it.toPath() },
-                    classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.toPath(),
-                    classpathSnapshotsOptions
-                )
+                compilationOperationBuilder[GENERATE_COMPILER_REF_INDEX] = workArguments.compilerExecutionSettings.generateCompilerRefIndex
 
-                when (classpathChanges) {
-                    is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges -> {
-                        classpathSnapshotsOptions[JvmSnapshotBasedIncrementalCompilationOptions.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] =
-                            true
-                    }
-                    is ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun -> {
-                        classpathSnapshotsOptions[FORCE_RECOMPILATION] = true
-                    }
-                    else -> {}
+                val icEnv = workArguments.incrementalCompilationEnvironment
+                val classpathChanges = icEnv?.classpathChanges
+                if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+                    val classpathSnapshotsOptions = compilationOperationBuilder.snapshotBasedIcConfigurationBuilder(
+                        icEnv.workingDir.toPath(),
+                        icEnv.changedFiles,
+                        classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.map { it.toPath() },
+                        classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.toPath(),
+                    ).apply {
+                        this[ROOT_PROJECT_DIR] = icEnv.rootProjectDir.toPath()
+                        this[MODULE_BUILD_DIR] = icEnv.buildDir.toPath()
+                        this[PRECISE_JAVA_TRACKING] = icEnv.icFeatures.usePreciseJavaTracking
+                        this[BACKUP_CLASSES] = icEnv.icFeatures.preciseCompilationResultsBackup
+                        this[KEEP_IC_CACHES_IN_MEMORY] = icEnv.icFeatures.keepIncrementalCompilationCachesInMemory
+                        this[OUTPUT_DIRS] = workArguments.outputFiles.map { it.toPath() }.toSet()
+                        this[FORCE_RECOMPILATION] = classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
+                        this[USE_FIR_RUNNER] = icEnv.useJvmFirRunner
+                        this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] =
+                            icEnv.icFeatures.enableUnsafeIncrementalCompilationForMultiplatform
+                        this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = icEnv.icFeatures.enableMonotonousIncrementalCompileSetExpansion
+
+                        when (classpathChanges) {
+                            is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges -> {
+                                this[ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] =
+                                    true
+                            }
+                            is ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun -> {
+                                this[FORCE_RECOMPILATION] = true
+                            }
+                            else -> {}
+                        }
+                    }.build()
+
+                    compilationOperationBuilder[INCREMENTAL_COMPILATION] = classpathSnapshotsOptions
                 }
-            }
+            }.build()
             val executionConfig = when (executionStrategy) {
-                KotlinCompilerExecutionStrategy.DAEMON -> compilationService.createDaemonExecutionPolicy().apply {
+                KotlinCompilerExecutionStrategy.DAEMON -> kotlinToolchains.createDaemonExecutionPolicy().apply {
                     val arguments = workArguments.compilerExecutionSettings.daemonJvmArgs ?: emptyList()
                     this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = arguments
                     if (log.isDebugEnabled) {
                         log.debug("Kotlin compile daemon JVM options: ${arguments.joinToString(" ")}")
                     }
                 }
-                KotlinCompilerExecutionStrategy.IN_PROCESS -> compilationService.createInProcessExecutionPolicy()
+                KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinToolchains.createInProcessExecutionPolicy()
                 else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
             }
 
