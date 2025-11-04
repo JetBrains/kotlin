@@ -702,6 +702,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
     }
 
     @Test
+    @TestMetadata("holdsInWithContextParameters.kt")
+    public void testHoldsInWithContextParameters() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/holdsInWithContextParameters.kt");
+    }
+
+    @Test
     @TestMetadata("invalidContractParameterPassedToReturns.kt")
     public void testInvalidContractParameterPassedToReturns() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/invalidContractParameterPassedToReturns.kt");

@@ -1,0 +1,17 @@
+var kotlin.Int?.prop: kotlin.Int?
+  get()
+  set(v: kotlin.Int?)
+
+val Status.isError: kotlin.Boolean
+  get()
+
+val isContextError: kotlin.Boolean
+  get()
+
+sealed class Status {
+  class Ok : Status()
+
+  class Error(message: kotlin.String) : Status() {
+    val message: kotlin.String
+  }
+}

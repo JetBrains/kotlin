@@ -639,6 +639,28 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/contracts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Contracts {
+    @Test
+    @TestMetadata("accessorsAllowed.kt")
+    public void testAccessorsAllowed() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contracts/accessorsAllowed.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInContracts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("baseConditions.kt")
+    public void testBaseConditions() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contracts/baseConditions.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class ValueParameters {
