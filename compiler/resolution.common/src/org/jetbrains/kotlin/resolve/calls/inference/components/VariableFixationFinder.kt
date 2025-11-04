@@ -107,7 +107,7 @@ class VariableFixationFinder(
 
         HAS_PROPER_NON_ILT_CONSTRAINT,
         HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT,
-        HAS_OUTER_TYPE_VARIABLE_DEPENDENCY,
+        HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY,
         HAS_PROPER_CONSTRAINTS,
 
         IS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES, // Otherwise, either "declared..." or not all proper constraints are self-type-based
@@ -197,7 +197,7 @@ class VariableFixationFinder(
 
             it[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints()
 
-            it[Q.HAS_OUTER_TYPE_VARIABLE_DEPENDENCY] = dependencyProvider.isRelatedToOuterTypeVariable(this)
+            it[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)
             // hasDependencyToOtherTypeVariables()
             computeReadinessForVariableWithDependencies(it)
 
@@ -325,7 +325,7 @@ class VariableFixationFinder(
         return when {
             !readiness[Q.ALLOWED] -> null
             !readiness[Q.HAS_PROPER_CONSTRAINTS] -> VariableForFixation(candidate, false)
-            readiness[Q.HAS_OUTER_TYPE_VARIABLE_DEPENDENCY] ->
+            !readiness[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] ->
                 VariableForFixation(candidate, hasProperConstraint = true, hasDependencyOnOuterTypeVariable = true)
 
             else -> VariableForFixation(candidate, true)
