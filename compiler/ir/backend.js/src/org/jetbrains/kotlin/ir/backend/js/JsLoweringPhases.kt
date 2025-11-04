@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLow
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsAllFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsPrivateFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
-import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
@@ -104,17 +103,6 @@ private fun createLocalDeclarationsLoweringPhase(context: LoweringContext): Loca
 
 private fun createDefaultParameterCleanerPhase(context: CommonBackendContext): DefaultParameterCleaner {
     return DefaultParameterCleaner(context)
-}
-
-private fun createInlineClassDeclarationLoweringPhase(context: JsIrBackendContext): InlineClassLowering.InlineClassDeclarationLowering {
-    return JsInlineClassLowering(context).inlineClassDeclarationLowering
-}
-
-// Const lowering generates inline class constructors for unsigned integers which should be lowered by this lowering
-// This annotation must be placed on `inlineClassUsageLowering` but it is hard to achieve because this lowering is inner inside class in the common module
-//@PhasePrerequisites(ConstLowering::class)
-private fun createInlineClassUsageLoweringPhase(context: JsIrBackendContext): InlineClassLowering.InlineClassUsageLowering {
-    return JsInlineClassLowering(context).inlineClassUsageLowering
 }
 
 private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): AutoboxingTransformer {
@@ -248,8 +236,8 @@ fun getJsLowerings(): List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragme
         ::SecondaryFactoryInjectorLowering,
         ::JsClassReferenceLowering,
         ::ConstLowering,
-        ::createInlineClassDeclarationLoweringPhase,
-        ::createInlineClassUsageLoweringPhase,
+        ::JsInlineClassDeclarationLowering,
+        ::JsInlineClassUsageLowering,
         ::ExpressionBodyTransformer,
         ::createAutoboxingTransformerPhase,
         ::ObjectDeclarationLowering,

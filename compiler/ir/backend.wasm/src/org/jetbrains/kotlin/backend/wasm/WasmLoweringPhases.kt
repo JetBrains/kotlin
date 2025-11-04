@@ -450,12 +450,12 @@ private val bridgesConstructionPhase = makeIrModulePhase(
 )
 
 private val inlineClassDeclarationLoweringPhase = makeIrModulePhase<WasmBackendContext>(
-    { InlineClassLowering(it).inlineClassDeclarationLowering },
+    ::InlineClassDeclarationLowering,
     name = "InlineClassDeclarationLowering",
 )
 
 private val inlineClassUsageLoweringPhase = makeIrModulePhase<WasmBackendContext>(
-    { InlineClassLowering(it).inlineClassUsageLowering },
+    ::InlineClassUsageLowering,
     name = "InlineClassUsageLowering",
 )
 

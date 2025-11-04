@@ -24,327 +24,322 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import kotlin.collections.get
 
 private const val INLINE_CLASS_IMPL_SUFFIX = "-impl"
 
-class InlineClassLowering(val context: CommonBackendContext) {
-    val inlineClassDeclarationLowering = InlineClassDeclarationLowering(context)
+open class InlineClassDeclarationLowering(private val context: CommonBackendContext) : DeclarationTransformer {
+    protected open fun processDelegatedInlineClassMember(declaration: IrDeclaration) {}
 
-    open class InlineClassDeclarationLowering(private val context: CommonBackendContext) : DeclarationTransformer {
-        protected open fun processDelegatedInlineClassMember(declaration: IrDeclaration) {}
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        val irClass = declaration.parent as? IrClass ?: return null
+        if (!context.inlineClassesUtils.isClassInlineLike(irClass)) return null
 
-        override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-            val irClass = declaration.parent as? IrClass ?: return null
-            if (!context.inlineClassesUtils.isClassInlineLike(irClass)) return null
-
-            return when (declaration) {
-                is IrConstructor -> transformConstructor(declaration)
-                is IrSimpleFunction -> transformMethodFlat(declaration)
-                else -> null
-            }
+        return when (declaration) {
+            is IrConstructor -> transformConstructor(declaration)
+            is IrSimpleFunction -> transformMethodFlat(declaration)
+            else -> null
         }
+    }
 
-        private fun transformConstructor(irConstructor: IrConstructor): List<IrDeclaration> {
-            if (irConstructor.isPrimary)
-                return transformPrimaryConstructor(irConstructor)
+    private fun transformConstructor(irConstructor: IrConstructor): List<IrDeclaration> {
+        if (irConstructor.isPrimary)
+            return transformPrimaryConstructor(irConstructor)
 
-            // Secondary constructors are lowered into static function
-            val result = context.getOrCreateStaticMethod(irConstructor)
+        // Secondary constructors are lowered into static function
+        val result = context.getOrCreateStaticMethod(irConstructor)
 
-            transformConstructorBody(irConstructor, result)
+        transformConstructorBody(irConstructor, result)
 
-            return listOf(result)
-        }
+        return listOf(result)
+    }
 
 
-        private fun transformMethodFlat(function: IrSimpleFunction): List<IrDeclaration>? {
-            // TODO: Support fake-overridden methods without boxing
-            if (function.isStaticMethodOfClass || !function.isReal)
-                return null
+    private fun transformMethodFlat(function: IrSimpleFunction): List<IrDeclaration>? {
+        // TODO: Support fake-overridden methods without boxing
+        if (function.isStaticMethodOfClass || !function.isReal)
+            return null
 
-            val staticMethod = context.getOrCreateStaticMethod(function)
+        val staticMethod = context.getOrCreateStaticMethod(function)
 
-            transformMethodBodyFlat(function, staticMethod)
+        transformMethodBodyFlat(function, staticMethod)
             processDelegatedInlineClassMember(function)
-            function.body = delegateToStaticMethod(function, staticMethod)
+        function.body = delegateToStaticMethod(function, staticMethod)
 
-            if (function.overriddenSymbols.isEmpty())  // Function is used only in unboxed context
-                return listOf(staticMethod)
+        if (function.overriddenSymbols.isEmpty())  // Function is used only in unboxed context
+            return listOf(staticMethod)
 
-            return listOf(function, staticMethod)
+        return listOf(function, staticMethod)
+    }
+
+    private fun transformPrimaryConstructor(irConstructor: IrConstructor): List<IrDeclaration> {
+        val klass = irConstructor.parentAsClass
+        val inlineClassType = klass.defaultType
+        val initFunction = context.getOrCreateStaticMethod(irConstructor).also {
+            it.returnType = inlineClassType
         }
+        var delegatingCtorCall: IrDelegatingConstructorCall? = null
+        var setMemberField: IrSetField? = null
 
-        private fun transformPrimaryConstructor(irConstructor: IrConstructor): List<IrDeclaration> {
-            val klass = irConstructor.parentAsClass
-            val inlineClassType = klass.defaultType
-            val initFunction = context.getOrCreateStaticMethod(irConstructor).also {
-                it.returnType = inlineClassType
-            }
-            var delegatingCtorCall: IrDelegatingConstructorCall? = null
-            var setMemberField: IrSetField? = null
+        initFunction.body = irConstructor.body?.let { body ->
+            context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                val origParameterSymbol = irConstructor.parameters.single().symbol
+                statements += context.createIrBuilder(initFunction.symbol).irBlockBody(initFunction) {
+                    val builder = this
+                    fun unboxedInlineClassValue() = builder.irReinterpretCast(
+                        builder.irGet(initFunction.parameters.single()),
+                        type = klass.defaultType,
+                    )
 
-            initFunction.body = irConstructor.body?.let { body ->
-                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-                    val origParameterSymbol = irConstructor.parameters.single().symbol
-                    statements += context.createIrBuilder(initFunction.symbol).irBlockBody(initFunction) {
-                        val builder = this
-                        fun unboxedInlineClassValue() = builder.irReinterpretCast(
-                            builder.irGet(initFunction.parameters.single()),
-                            type = klass.defaultType,
-                        )
+                    (body as IrBlockBody).deepCopyWithSymbols(initFunction).statements.forEach { statement ->
+                        +statement.transformStatement(object : IrElementTransformerVoid() {
+                            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                                delegatingCtorCall = expression.deepCopyWithSymbols(irConstructor)
+                                return builder.irBlock {}  // Removing delegating constructor call
+                            }
 
-                        (body as IrBlockBody).deepCopyWithSymbols(initFunction).statements.forEach { statement ->
-                            +statement.transformStatement(object : IrElementTransformerVoid() {
-                                override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                                    delegatingCtorCall = expression.deepCopyWithSymbols(irConstructor)
-                                    return builder.irBlock {}  // Removing delegating constructor call
+                            override fun visitSetField(expression: IrSetField): IrExpression {
+                                val isMemberFieldSet = expression.symbol.owner.parent == klass
+                                if (isMemberFieldSet) {
+                                    setMemberField = expression.deepCopyWithSymbols(irConstructor)
                                 }
-
-                                override fun visitSetField(expression: IrSetField): IrExpression {
-                                    val isMemberFieldSet = expression.symbol.owner.parent == klass
-                                    if (isMemberFieldSet) {
-                                        setMemberField = expression.deepCopyWithSymbols(irConstructor)
-                                    }
-                                    expression.transformChildrenVoid()
-                                    if (isMemberFieldSet) {
-                                        return builder.irBlock {
-                                            if (!expression.value.isPure(true)) {
-                                                // Preserving side effects
-                                                +expression.value
-                                                // Adding empty block to provide Unit value.
-                                                // This is useful when original IrSetField is the last statement in a Unit-returning block.
-                                                +builder.irBlock {}
-                                            }
+                                expression.transformChildrenVoid()
+                                if (isMemberFieldSet) {
+                                    return builder.irBlock {
+                                        if (!expression.value.isPure(true)) {
+                                            // Preserving side effects
+                                            +expression.value
+                                            // Adding empty block to provide Unit value.
+                                            // This is useful when original IrSetField is the last statement in a Unit-returning block.
+                                            +builder.irBlock {}
                                         }
                                     }
-                                    return expression
                                 }
-
-                                override fun visitGetField(expression: IrGetField): IrExpression {
-                                    expression.transformChildrenVoid()
-                                    if (expression.symbol.owner.parent == klass)
-                                        return builder.irGet(initFunction.parameters.single())
-                                    return expression
-                                }
-
-                                override fun visitGetValue(expression: IrGetValue): IrExpression {
-                                    expression.transformChildrenVoid()
-                                    if (expression.symbol.owner.parent == klass)
-                                        return unboxedInlineClassValue()
-                                    if (expression.symbol == origParameterSymbol)
-                                        return builder.irGet(initFunction.parameters.single())
-                                    return expression
-                                }
-
-                                override fun visitSetValue(expression: IrSetValue): IrExpression {
-                                    expression.transformChildrenVoid()
-                                    if (expression.symbol == origParameterSymbol)
-                                        return builder.irSet(initFunction.parameters.single(), expression.value)
-                                    return expression
-                                }
-                            })
-                        }
-                        +irReturn(unboxedInlineClassValue())
-                    }.statements
-                }
-            }
-
-            if (irConstructor.body != null) {
-                irConstructor.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-                    delegatingCtorCall?.let { statements += it }
-                    setMemberField?.let { statements += it }
-                }
-            }
-
-            return listOf(irConstructor, initFunction)
-        }
-
-        private fun transformConstructorBody(irConstructor: IrConstructor, staticMethod: IrSimpleFunction) {
-            if (irConstructor.isPrimary) return // TODO error() maybe?
-
-            val irClass = irConstructor.parentAsClass
-
-            // Copied and adapted from Kotlin/Native InlineClassTransformer
-            staticMethod.body = irConstructor.body?.let { constructorBody ->
-                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-                    statements += context.createIrBuilder(staticMethod.symbol).irBlockBody(staticMethod) {
-
-                        // Secondary ctors of inline class must delegate to some other constructors.
-                        // Use these delegating call later to initialize this variable.
-                        lateinit var thisVar: IrVariable
-                        val parameterMapping = staticMethod.parameters.associateBy {
-                            irConstructor.parameters[it.indexInParameters].symbol
-                        }
-
-                        (constructorBody as IrBlockBody).statements.forEach { statement ->
-                            +statement.transformStatement(object : IrElementTransformerVoid() {
-                                override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                                    expression.transformChildrenVoid()
-                                    // Static function for delegating constructors return unboxed instance of inline class
-                                    expression.type = irClass.defaultType
-                                    return irBlock(expression) {
-                                        thisVar = createTmpVariable(
-                                            expression,
-                                            irType = irClass.defaultType
-                                        )
-                                        thisVar.parent = staticMethod
-                                    }
-                                }
-
-                                override fun visitGetValue(expression: IrGetValue): IrExpression {
-                                    expression.transformChildrenVoid()
-                                    if (expression.symbol == irClass.thisReceiver?.symbol) {
-                                        return irGet(thisVar)
-                                    }
-
-                                    parameterMapping[expression.symbol]?.let { return irGet(it) }
-                                    return expression
-                                }
-
-                                override fun visitSetValue(expression: IrSetValue): IrExpression {
-                                    expression.transformChildrenVoid()
-                                    parameterMapping[expression.symbol]?.let { return irSet(it.symbol, expression.value) }
-                                    return expression
-                                }
-
-                                override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
-                                    declaration.transformChildrenVoid(this)
-                                    if (declaration.parent == irConstructor)
-                                        declaration.parent = staticMethod
-                                    return declaration
-                                }
-
-                                override fun visitReturn(expression: IrReturn): IrExpression {
-                                    expression.transformChildrenVoid()
-                                    if (expression.returnTargetSymbol == irConstructor.symbol) {
-                                        return irReturn(irBlock(expression.startOffset, expression.endOffset) {
-                                            +expression.value
-                                            +irGet(thisVar)
-                                        })
-                                    }
-
-                                    return expression
-                                }
-
-                            })
-                        }
-                        +irReturn(irGet(thisVar))
-                    }.statements
-                }
-            }
-        }
-
-        private fun transformMethodBodyFlat(function: IrSimpleFunction, staticMethod: IrSimpleFunction) {
-            // TODO: Support fake-overridden methods without boxing
-            if (function.isStaticMethodOfClass || !function.isReal) return // TODO error()
-
-            // Move function body to static method, transforming value parameters and nested declarations
-            staticMethod.body = function.body?.let { functionBody ->
-                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-                    statements.addAll((functionBody as IrBlockBody).statements)
-
-                    transformChildrenVoid(object : IrElementTransformerVoid() {
-                        override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
-                            declaration.transformChildrenVoid(this)
-                            if (declaration.parent == function)
-                                declaration.parent = staticMethod
-
-                            return declaration
-                        }
-
-                        override fun visitGetValue(expression: IrGetValue): IrExpression {
-                            val valueDeclaration = expression.symbol.owner as? IrValueParameter ?: return super.visitGetValue(expression)
-
-                            return context.createIrBuilder(staticMethod.symbol).irGet(
-                                when (valueDeclaration) {
-                                    function.parentAsClass.thisReceiver -> staticMethod.parameters[0]
-                                    in function.parameters -> staticMethod.parameters[valueDeclaration.indexInParameters]
-                                    else -> return expression
-                                }
-                            )
-                        }
-
-                        override fun visitSetValue(expression: IrSetValue): IrExpression {
-                            val valueDeclaration = expression.symbol.owner as? IrValueParameter ?: return super.visitSetValue(expression)
-                            expression.transformChildrenVoid()
-                            return context.createIrBuilder(staticMethod.symbol).irSet(
-                                when (valueDeclaration) {
-                                    in function.parameters -> staticMethod.parameters[valueDeclaration.indexInParameters].symbol
-                                    else -> return expression
-                                },
-                                expression.value
-                            )
-                        }
-                    })
-                }
-            }
-        }
-
-        private fun delegateToStaticMethod(function: IrSimpleFunction, staticMethod: IrSimpleFunction): IrBlockBody {
-            // Delegate original function to static implementation
-            return context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-                statements += context.createIrBuilder(function.symbol).irBlockBody {
-                    +irReturn(
-                        irCall(staticMethod).apply {
-                            arguments.assignFrom(function.parameters.map { irGet(it) })
-                            val typeParameters = extractTypeParameters(function.parentAsClass) + function.typeParameters
-                            for ((index, typeParameter) in typeParameters.withIndex()) {
-                                typeArguments[index] =
-                                    IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
+                                return expression
                             }
-                        }
-                    )
+
+                            override fun visitGetField(expression: IrGetField): IrExpression {
+                                expression.transformChildrenVoid()
+                                if (expression.symbol.owner.parent == klass)
+                                    return builder.irGet(initFunction.parameters.single())
+                                return expression
+                            }
+
+                            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                                expression.transformChildrenVoid()
+                                if (expression.symbol.owner.parent == klass)
+                                    return unboxedInlineClassValue()
+                                if (expression.symbol == origParameterSymbol)
+                                    return builder.irGet(initFunction.parameters.single())
+                                return expression
+                            }
+
+                            override fun visitSetValue(expression: IrSetValue): IrExpression {
+                                expression.transformChildrenVoid()
+                                if (expression.symbol == origParameterSymbol)
+                                    return builder.irSet(initFunction.parameters.single(), expression.value)
+                                return expression
+                            }
+                        })
+                    }
+                    +irReturn(unboxedInlineClassValue())
                 }.statements
             }
         }
 
+        if (irConstructor.body != null) {
+            irConstructor.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                delegatingCtorCall?.let { statements += it }
+                setMemberField?.let { statements += it }
+            }
+        }
+
+        return listOf(irConstructor, initFunction)
     }
 
-    val inlineClassUsageLowering = InlineClassUsageLowering(context)
+    private fun transformConstructorBody(irConstructor: IrConstructor, staticMethod: IrSimpleFunction) {
+        if (irConstructor.isPrimary) return // TODO error() maybe?
 
-    class InlineClassUsageLowering(private val context: CommonBackendContext) : BodyLoweringPass {
+        val irClass = irConstructor.parentAsClass
 
-        override fun lower(irBody: IrBody, container: IrDeclaration) {
-            irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+        // Copied and adapted from Kotlin/Native InlineClassTransformer
+        staticMethod.body = irConstructor.body?.let { constructorBody ->
+            context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                statements += context.createIrBuilder(staticMethod.symbol).irBlockBody(staticMethod) {
 
-                override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-                    expression.transformChildrenVoid(this)
-                    val function = expression.symbol.owner
-                    if (!context.inlineClassesUtils.isClassInlineLike(function.parentAsClass)) {
-                        return expression
+                    // Secondary ctors of inline class must delegate to some other constructors.
+                    // Use these delegating call later to initialize this variable.
+                    lateinit var thisVar: IrVariable
+                    val parameterMapping = staticMethod.parameters.associateBy {
+                        irConstructor.parameters[it.indexInParameters].symbol
                     }
 
-                    return irCall(expression, context.getOrCreateStaticMethod(function))
-                }
+                    (constructorBody as IrBlockBody).statements.forEach { statement ->
+                        +statement.transformStatement(object : IrElementTransformerVoid() {
+                            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                                expression.transformChildrenVoid()
+                                // Static function for delegating constructors return unboxed instance of inline class
+                                expression.type = irClass.defaultType
+                                return irBlock(expression) {
+                                    thisVar = createTmpVariable(
+                                        expression,
+                                        irType = irClass.defaultType
+                                    )
+                                    thisVar.parent = staticMethod
+                                }
+                            }
 
-                override fun visitCall(expression: IrCall): IrExpression {
-                    expression.transformChildrenVoid(this)
-                    val function: IrSimpleFunction = expression.symbol.owner
-                    if (function.parent !is IrClass ||
-                        function.isStaticMethodOfClass ||
-                        !context.inlineClassesUtils.isClassInlineLike(function.parentAsClass) ||
-                        !function.isReal
-                    ) {
-                        return expression
+                            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                                expression.transformChildrenVoid()
+                                if (expression.symbol == irClass.thisReceiver?.symbol) {
+                                    return irGet(thisVar)
+                                }
+
+                                parameterMapping[expression.symbol]?.let { return irGet(it) }
+                                return expression
+                            }
+
+                            override fun visitSetValue(expression: IrSetValue): IrExpression {
+                                expression.transformChildrenVoid()
+                                parameterMapping[expression.symbol]?.let { return irSet(it.symbol, expression.value) }
+                                return expression
+                            }
+
+                            override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
+                                declaration.transformChildrenVoid(this)
+                                if (declaration.parent == irConstructor)
+                                    declaration.parent = staticMethod
+                                return declaration
+                            }
+
+                            override fun visitReturn(expression: IrReturn): IrExpression {
+                                expression.transformChildrenVoid()
+                                if (expression.returnTargetSymbol == irConstructor.symbol) {
+                                    return irReturn(irBlock(expression.startOffset, expression.endOffset) {
+                                        +expression.value
+                                        +irGet(thisVar)
+                                    })
+                                }
+
+                                return expression
+                            }
+
+                        })
                     }
-
-                    return irCall(
-                        expression,
-                        context.getOrCreateStaticMethod(function)
-                    )
-                }
-
-                override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                    expression.transformChildrenVoid(this)
-                    val function = expression.symbol.owner
-                    val klass = function.parentAsClass
-                    return when {
-                        !context.inlineClassesUtils.isClassInlineLike(klass) -> expression
-                        else -> irCall(expression, context.getOrCreateStaticMethod(function))
-                    }
-                }
-            })
+                    +irReturn(irGet(thisVar))
+                }.statements
+            }
         }
+    }
+
+    private fun transformMethodBodyFlat(function: IrSimpleFunction, staticMethod: IrSimpleFunction) {
+        // TODO: Support fake-overridden methods without boxing
+        if (function.isStaticMethodOfClass || !function.isReal) return // TODO error()
+
+        // Move function body to static method, transforming value parameters and nested declarations
+        staticMethod.body = function.body?.let { functionBody ->
+            context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                statements.addAll((functionBody as IrBlockBody).statements)
+
+                transformChildrenVoid(object : IrElementTransformerVoid() {
+                    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
+                        declaration.transformChildrenVoid(this)
+                        if (declaration.parent == function)
+                            declaration.parent = staticMethod
+
+                        return declaration
+                    }
+
+                    override fun visitGetValue(expression: IrGetValue): IrExpression {
+                        val valueDeclaration = expression.symbol.owner as? IrValueParameter ?: return super.visitGetValue(expression)
+
+                        return context.createIrBuilder(staticMethod.symbol).irGet(
+                            when (valueDeclaration) {
+                                function.parentAsClass.thisReceiver -> staticMethod.parameters[0]
+                                in function.parameters -> staticMethod.parameters[valueDeclaration.indexInParameters]
+                                else -> return expression
+                            }
+                        )
+                    }
+
+                    override fun visitSetValue(expression: IrSetValue): IrExpression {
+                        val valueDeclaration = expression.symbol.owner as? IrValueParameter ?: return super.visitSetValue(expression)
+                        expression.transformChildrenVoid()
+                        return context.createIrBuilder(staticMethod.symbol).irSet(
+                            when (valueDeclaration) {
+                                in function.parameters -> staticMethod.parameters[valueDeclaration.indexInParameters].symbol
+                                else -> return expression
+                            },
+                            expression.value
+                        )
+                    }
+                })
+            }
+        }
+    }
+
+    private fun delegateToStaticMethod(function: IrSimpleFunction, staticMethod: IrSimpleFunction): IrBlockBody {
+        // Delegate original function to static implementation
+        return context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+            statements += context.createIrBuilder(function.symbol).irBlockBody {
+                +irReturn(
+                    irCall(staticMethod).apply {
+                        arguments.assignFrom(function.parameters.map { irGet(it) })
+                        val typeParameters = extractTypeParameters(function.parentAsClass) + function.typeParameters
+                        for ((index, typeParameter) in typeParameters.withIndex()) {
+                            typeArguments[index] =
+                                IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
+                        }
+                    }
+                )
+            }.statements
+        }
+    }
+
+}
+
+open class InlineClassUsageLowering(private val context: CommonBackendContext) : BodyLoweringPass {
+
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+
+            override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+                expression.transformChildrenVoid(this)
+                val function = expression.symbol.owner
+                if (!context.inlineClassesUtils.isClassInlineLike(function.parentAsClass)) {
+                    return expression
+                }
+
+                return irCall(expression, context.getOrCreateStaticMethod(function))
+            }
+
+            override fun visitCall(expression: IrCall): IrExpression {
+                expression.transformChildrenVoid(this)
+                val function: IrSimpleFunction = expression.symbol.owner
+                if (function.parent !is IrClass ||
+                    function.isStaticMethodOfClass ||
+                    !context.inlineClassesUtils.isClassInlineLike(function.parentAsClass) ||
+                    !function.isReal
+                ) {
+                    return expression
+                }
+
+                return irCall(
+                    expression,
+                    context.getOrCreateStaticMethod(function)
+                )
+            }
+
+            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                expression.transformChildrenVoid(this)
+                val function = expression.symbol.owner
+                val klass = function.parentAsClass
+                return when {
+                    !context.inlineClassesUtils.isClassInlineLike(klass) -> expression
+                    else -> irCall(expression, context.getOrCreateStaticMethod(function))
+                }
+            }
+        })
     }
 }
 
