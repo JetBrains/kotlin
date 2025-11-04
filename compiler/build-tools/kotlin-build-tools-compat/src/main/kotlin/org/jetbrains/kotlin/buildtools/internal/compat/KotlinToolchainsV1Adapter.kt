@@ -301,7 +301,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
             options.options[key] = value
         }
 
-        override fun build(): JvmIncrementalCompilationConfiguration = deepCopy()
+        override fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration = deepCopy()
 
         operator fun <V> get(key: Option<V>): V {
             return options.options[key]

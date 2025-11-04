@@ -102,11 +102,11 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
         )
         val kotlinToolchains = buildSession.kotlinToolchains
 
-        val snapshotOperation = kotlinToolchains.jvm.createClasspathSnapshottingOperation(classpathEntryInputDirOrJar.toPath())
+        val snapshotOperation = kotlinToolchains.jvm.classpathSnapshottingOperationBuilder(classpathEntryInputDirOrJar.toPath())
             .apply {
                 this[GRANULARITY] = granularity
                 this[PARSE_INLINED_LOCAL_CLASSES] = parseInlinedLocalClasses
-            }
+            }.build()
         val snapshot = buildSession.executeOperation(snapshotOperation)
         snapshot.saveSnapshot(snapshotOutputFile)
     }
