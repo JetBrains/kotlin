@@ -667,6 +667,7 @@ abstract class CompileServiceImplBase(
                 icFeatures = incrementalCompilationOptions.icFeatures.copy(
                     usePreciseJavaTracking = verifiedPreciseJavaTracking
                 ),
+                generateCompilerRefIndex = incrementalCompilationOptions.generateCompilerRefIndex,
             )
         } else {
             IncrementalJvmCompilerRunner(
@@ -678,6 +679,7 @@ abstract class CompileServiceImplBase(
                 icFeatures = incrementalCompilationOptions.icFeatures.copy(
                     usePreciseJavaTracking = verifiedPreciseJavaTracking
                 ),
+                generateCompilerRefIndex = incrementalCompilationOptions.generateCompilerRefIndex,
             )
         }
         return try {
