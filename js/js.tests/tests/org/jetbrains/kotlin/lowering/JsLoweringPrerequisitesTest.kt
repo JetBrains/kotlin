@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.ir.backend.js.getJsLowerings
+import org.jetbrains.kotlin.ir.backend.js.jsLowerings
 import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.ir.backend.js.optimizationLoweringList
 import org.junit.jupiter.api.Test
@@ -28,7 +28,7 @@ class JsLoweringPrerequisitesTest : LoweringPrerequisitesTest() {
             )
         )
         checkPrerequisites(jsLoweringsOfTheFirstPhase(settings))
-        checkPrerequisites(getJsLowerings())
+        checkPrerequisites(jsLowerings)
         checkPrerequisites(optimizationLoweringList)
     }
 }
