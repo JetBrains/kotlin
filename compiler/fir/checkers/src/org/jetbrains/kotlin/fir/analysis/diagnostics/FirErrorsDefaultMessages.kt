@@ -381,6 +381,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IE_DIAGNOSTIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT
@@ -934,6 +935,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(UNSUPPORTED_FEATURE, "{0}", LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED))
         map.put(UNSUPPORTED_SUSPEND_TEST, "'suspend' functions annotated with '@kotlin.test.Test' are unsupported.")
         map.put(NEW_INFERENCE_ERROR, "New inference error [{0}].", STRING)
+        map.put(IE_DIAGNOSTIC, "No capturing inside not inline and callsInPlace lambda diagnostic", STRING)
 
         // Miscellaneous
         map.put(OTHER_ERROR, "Unknown error.")
