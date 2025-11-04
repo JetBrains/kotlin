@@ -39,6 +39,16 @@ public interface KaContractConditionalContractEffectDeclaration : KaContractEffe
 }
 
 /**
+ * Represents [kotlin.contracts.ContractBuilder.holdsIn].
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaContractHoldsInEffectDeclaration : KaContractEffectDeclaration {
+    public val condition: KaContractBooleanExpression
+    public val valueParameterReference: KaContractParameterValue
+}
+
+/**
  * Represents [kotlin.contracts.ContractBuilder.returnsNotNull] & [kotlin.contracts.ContractBuilder.returns].
  */
 @KaExperimentalApi
