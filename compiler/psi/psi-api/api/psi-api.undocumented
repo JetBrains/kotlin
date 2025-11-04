@@ -2081,7 +2081,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType:constructor
 org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderWithTextStubElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtPrimaryConstructorElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtPropertyAccessorElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtPropertyAccessorElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtPropertyElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtPropertyElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtScriptElementType
