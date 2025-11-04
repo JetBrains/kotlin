@@ -63,6 +63,7 @@ internal fun bridgeAsNSCollectionElement(type: SirType): WithSingleType = when (
     is AsExistential,
     is AsAnyBridgeable,
     is AsOpaqueObject,
+    is SirCustomTypeTranslatorImpl.RangeBridge
         -> AsObjCBridged(bridge.swiftType, CType.id)
     is AsObjCBridged,
     AsOutError,
@@ -84,6 +85,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
             is AsExistential,
             is AsAnyBridgeable,
             is AsBlock,
+            is SirCustomTypeTranslatorImpl.RangeBridge
                 -> AsOptionalWrapper(bridge)
 
             is AsOpaqueObject -> {
@@ -634,7 +636,8 @@ internal sealed class Bridge(
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                 require(
                     wrappedObject is AsObjCBridged || wrappedObject is AsObject ||
-                            wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsBlock
+                            wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsBlock ||
+                            wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
                 )
                 return valueExpression.mapSwift { wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it) } +
                         " ?? ${wrappedObject.renderNil()}"
@@ -644,7 +647,7 @@ internal sealed class Bridge(
                 return when (wrappedObject) {
                     is AsObjCBridged ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsAnyBridgeable ->
+                    is AsObject, is AsExistential, is AsAnyBridgeable, is SirCustomTypeTranslatorImpl.RangeBridge ->
                         "{ switch $valueExpression { case ${wrappedObject.renderNil()}: .none; case let res: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"
@@ -662,7 +665,8 @@ internal sealed class Bridge(
         }
 
         override fun nativePointerToMultipleObjCBridge(index: Int): SirFunctionBridge {
-            error("XXX")
+            // TODO: support Optional on Range(s) and other tuple-based types properly
+            return wrappedObject.nativePointerToMultipleObjCBridge(index)
         }
     }
 

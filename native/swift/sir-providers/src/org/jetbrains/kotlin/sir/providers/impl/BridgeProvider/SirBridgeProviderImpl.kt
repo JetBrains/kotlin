@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.sir.util.swiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-private const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
+internal const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
 private const val cinterop = "kotlinx.cinterop.*"
 private const val convertBlockPtrToKotlinFunction = "kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction"
 private const val stdintHeader = "stdint.h"

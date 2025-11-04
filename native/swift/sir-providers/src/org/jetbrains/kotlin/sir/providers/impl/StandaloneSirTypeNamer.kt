@@ -96,6 +96,16 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
             SirSwiftModule.optional -> kotlinFqName(type.typeArguments.first()) + "?"
 
+            SirSwiftModule.range -> "kotlin.ranges.OpenEndRange<${kotlinParametrizedName(type.typeArguments.first())}>"
+            SirSwiftModule.closedRange -> {
+                val firstArgument = type.typeArguments.first()
+                when ((firstArgument as? SirNominalType)?.typeDeclaration) {
+                    SirSwiftModule.int64 -> "kotlin.ranges.LongRange"
+                    SirSwiftModule.int32 -> "kotlin.ranges.IntRange"
+                    else -> "kotlin.ranges.ClosedRange<${kotlinParametrizedName(firstArgument)}>"
+                }
+            }
+
             else -> declaration.kaSymbolOrNull<KaClassLikeSymbol>()?.classId?.asFqNameString()
                 ?: error("Unnameable declaration $declaration")
         }
