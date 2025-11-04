@@ -61,6 +61,11 @@ public interface CommonToolArguments {
     public val availableSinceVersion: KotlinReleaseVersion,
   )
 
+  /**
+   * A builder for [CommonToolArguments].
+   *
+   * @since 2.3.20
+   */
   public interface Builder {
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
