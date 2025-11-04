@@ -38,13 +38,15 @@ public interface Sequence<out T> {
          * @return a sequence containing only the specified [element].
          */
         @ExperimentalStdlibApi
-        public operator fun <T> of(element: T): Sequence<T> = sequenceOf(element)
+        @kotlin.internal.InlineOnly
+        public inline operator fun <T> of(element: T): Sequence<T> = sequenceOf(element)
 
         /**
          * Creates a sequence that returns the specified values.
          */
         @ExperimentalStdlibApi
-        public operator fun <T> of(vararg elements: T): Sequence<T> = sequenceOf(*elements)
+        @kotlin.internal.InlineOnly
+        public inline operator fun <T> of(vararg elements: T): Sequence<T> = sequenceOf(*elements)
     }
 
     /**
