@@ -8963,8 +8963,17 @@ final inline fun <#A: reified kotlin/Any?, #B: kotlin.collections/MutableCollect
 final inline fun <#A: reified kotlin/Any?, #B: kotlin.collections/MutableCollection<in #A>> (kotlin.sequences/Sequence<*>).kotlin.sequences/filterIsInstanceTo(#B): #B // kotlin.sequences/filterIsInstanceTo|filterIsInstanceTo@kotlin.sequences.Sequence<*>(0:1){0§<kotlin.Any?>;1§<kotlin.collections.MutableCollection<in|0:0>>}[0]
 final inline fun <#A: reified kotlin/Any?, #B: kotlin.collections/MutableCollection<in #A>> (kotlin/Array<*>).kotlin.collections/filterIsInstanceTo(#B): #B // kotlin.collections/filterIsInstanceTo|filterIsInstanceTo@kotlin.Array<*>(0:1){0§<kotlin.Any?>;1§<kotlin.collections.MutableCollection<in|0:0>>}[0]
 final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Iterable<*>).kotlin.collections/filterIsInstance(): kotlin.collections/List<#A> // kotlin.collections/filterIsInstance|filterIsInstance@kotlin.collections.Iterable<*>(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Iterable<*>).kotlin.collections/findIs(): #A? // kotlin.collections/findIs|findIs@kotlin.collections.Iterable<*>(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Iterable<*>).kotlin.collections/firstIs(): #A // kotlin.collections/firstIs|firstIs@kotlin.collections.Iterable<*>(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Iterable<*>).kotlin.collections/firstIsOrNull(): #A? // kotlin.collections/firstIsOrNull|firstIsOrNull@kotlin.collections.Iterable<*>(){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> (kotlin.sequences/Sequence<*>).kotlin.sequences/filterIsInstance(): kotlin.sequences/Sequence<#A> // kotlin.sequences/filterIsInstance|filterIsInstance@kotlin.sequences.Sequence<*>(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (kotlin.sequences/Sequence<*>).kotlin.sequences/findIs(): #A? // kotlin.sequences/findIs|findIs@kotlin.sequences.Sequence<*>(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (kotlin.sequences/Sequence<*>).kotlin.sequences/firstIs(): #A // kotlin.sequences/firstIs|firstIs@kotlin.sequences.Sequence<*>(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (kotlin.sequences/Sequence<*>).kotlin.sequences/firstIsOrNull(): #A? // kotlin.sequences/firstIsOrNull|firstIsOrNull@kotlin.sequences.Sequence<*>(){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> (kotlin/Array<*>).kotlin.collections/filterIsInstance(): kotlin.collections/List<#A> // kotlin.collections/filterIsInstance|filterIsInstance@kotlin.Array<*>(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (kotlin/Array<*>).kotlin.collections/findIs(): #A? // kotlin.collections/findIs|findIs@kotlin.Array<*>(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (kotlin/Array<*>).kotlin.collections/firstIs(): #A // kotlin.collections/firstIs|firstIs@kotlin.Array<*>(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (kotlin/Array<*>).kotlin.collections/firstIsOrNull(): #A? // kotlin.collections/firstIsOrNull|firstIsOrNull@kotlin.Array<*>(){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> kotlin.concurrent.atomics/AtomicArray(kotlin/Int, kotlin/Function1<kotlin/Int, #A>): kotlin.concurrent.atomics/AtomicArray<#A> // kotlin.concurrent.atomics/AtomicArray|AtomicArray(kotlin.Int;kotlin.Function1<kotlin.Int,0:0>){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> kotlin.concurrent.atomics/atomicArrayOfNulls(kotlin/Int): kotlin.concurrent.atomics/AtomicArray<#A?> // kotlin.concurrent.atomics/atomicArrayOfNulls|atomicArrayOfNulls(kotlin.Int){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> kotlin.reflect/typeOf(): kotlin.reflect/KType // kotlin.reflect/typeOf|typeOf(){0§<kotlin.Any?>}[0]
@@ -13859,33 +13868,6 @@ final inline fun <#A: kotlin/Any?> (kotlin.collections/Collection<#A>).kotlin.co
 
 // Targets: [js, wasmJs, wasmWasi]
 final inline fun <#A: kotlin/Any?> kotlin/emptyArray(): kotlin/Array<#A> // kotlin/emptyArray|emptyArray(){0§<kotlin.Any?>}[0]
-
-// Targets: [js, wasmJs, wasmWasi]
-final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Iterable<*>).kotlin.collections/findIs(): #A? // kotlin.collections/findIs|findIs@kotlin.collections.Iterable<*>(){0§<kotlin.Any?>}[0]
-
-// Targets: [js, wasmJs, wasmWasi]
-final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Iterable<*>).kotlin.collections/firstIs(): #A // kotlin.collections/firstIs|firstIs@kotlin.collections.Iterable<*>(){0§<kotlin.Any?>}[0]
-
-// Targets: [js, wasmJs, wasmWasi]
-final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Iterable<*>).kotlin.collections/firstIsOrNull(): #A? // kotlin.collections/firstIsOrNull|firstIsOrNull@kotlin.collections.Iterable<*>(){0§<kotlin.Any?>}[0]
-
-// Targets: [js, wasmJs, wasmWasi]
-final inline fun <#A: reified kotlin/Any?> (kotlin.sequences/Sequence<*>).kotlin.sequences/findIs(): #A? // kotlin.sequences/findIs|findIs@kotlin.sequences.Sequence<*>(){0§<kotlin.Any?>}[0]
-
-// Targets: [js, wasmJs, wasmWasi]
-final inline fun <#A: reified kotlin/Any?> (kotlin.sequences/Sequence<*>).kotlin.sequences/firstIs(): #A // kotlin.sequences/firstIs|firstIs@kotlin.sequences.Sequence<*>(){0§<kotlin.Any?>}[0]
-
-// Targets: [js, wasmJs, wasmWasi]
-final inline fun <#A: reified kotlin/Any?> (kotlin.sequences/Sequence<*>).kotlin.sequences/firstIsOrNull(): #A? // kotlin.sequences/firstIsOrNull|firstIsOrNull@kotlin.sequences.Sequence<*>(){0§<kotlin.Any?>}[0]
-
-// Targets: [js, wasmJs, wasmWasi]
-final inline fun <#A: reified kotlin/Any?> (kotlin/Array<*>).kotlin.collections/findIs(): #A? // kotlin.collections/findIs|findIs@kotlin.Array<*>(){0§<kotlin.Any?>}[0]
-
-// Targets: [js, wasmJs, wasmWasi]
-final inline fun <#A: reified kotlin/Any?> (kotlin/Array<*>).kotlin.collections/firstIs(): #A // kotlin.collections/firstIs|firstIs@kotlin.Array<*>(){0§<kotlin.Any?>}[0]
-
-// Targets: [js, wasmJs, wasmWasi]
-final inline fun <#A: reified kotlin/Any?> (kotlin/Array<*>).kotlin.collections/firstIsOrNull(): #A? // kotlin.collections/firstIsOrNull|firstIsOrNull@kotlin.Array<*>(){0§<kotlin.Any?>}[0]
 
 // Targets: [js, wasmJs]
 open annotation class kotlin.js/ExperimentalWasmJsInterop : kotlin/Annotation { // kotlin.js/ExperimentalWasmJsInterop|null[0]
