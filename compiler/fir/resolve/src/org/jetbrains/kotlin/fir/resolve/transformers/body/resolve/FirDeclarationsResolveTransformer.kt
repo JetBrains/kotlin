@@ -378,7 +378,7 @@ open class FirDeclarationsResolveTransformer(
         // First, resolve delegate expression in dependent context withing existing (possibly Default) inference session
         val delegateExpression =
             // Resolve delegate expression; after that, delegate will contain either expr.provideDelegate or expr
-            if (property.isLocal) {
+            if (property.isLocalVariableOrParameter) {
                 transformDelegateExpression(delegateContainer)
             } else {
                 // TODO: the [skipCleanup] hack should be reverted on fixing KT-79107
@@ -498,7 +498,7 @@ open class FirDeclarationsResolveTransformer(
                     typeRef.approximateDeclarationType(
                         session,
                         property.visibilityForApproximation(),
-                        property.isLocal
+                        property.isLocalVariableOrParameter
                     )
                 )
 
@@ -642,7 +642,7 @@ open class FirDeclarationsResolveTransformer(
     }
 
     private fun transformLocalVariable(variable: FirProperty): FirProperty = whileAnalysing(session, variable) {
-        assert(variable.isLocal)
+        assert(variable.isLocalVariableOrParameter)
         val delegate = variable.delegate
 
         val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef

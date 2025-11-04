@@ -201,6 +201,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
     }
 
     @Test
+    @TestMetadata("delegatedSuperTypeByExpression.kt")
+    public void testDelegatedSuperTypeByExpression() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/delegatedSuperTypeByExpression.kt");
+    }
+
+    @Test
     @TestMetadata("delegatingConstructorCall.kt")
     public void testDelegatingConstructorCall() {
       runTest("compiler/fir/analysis-tests/testData/resolve/delegatingConstructorCall.kt");

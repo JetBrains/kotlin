@@ -3,7 +3,7 @@
 
 fun owner() {
     class Local(param: Any) {
-        val x: Any by <!UNRESOLVED_REFERENCE!>param<!>
+        val x: Any <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> param
     }
 }
 
