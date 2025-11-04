@@ -37,6 +37,7 @@ public actual class Array<T> {
         /** Returns an array containing the specified elements. */
         @ExperimentalStdlibApi
         @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        @kotlin.internal.InlineOnly
         public actual inline operator fun <reified T> of(vararg elements: T): Array<T>
     }
 
