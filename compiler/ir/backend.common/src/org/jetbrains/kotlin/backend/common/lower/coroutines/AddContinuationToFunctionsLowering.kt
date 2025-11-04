@@ -95,7 +95,7 @@ private fun transformSuspendFunction(context: CommonBackendContext, function: Ir
         new.defaultValue = old.defaultValue?.transform(VariableRemapper(parameterMapping), null)
     }
 
-    addExplicitReturnUnitToSuspendFunctions(context, function, newBody, function.returnType)
+    addExplicitReturnUnitToSuspendFunctions(context, newFunctionWithContinuation, newBody, function.returnType)
 
     newFunctionWithContinuation.body = newBody
     return newFunctionWithContinuation
