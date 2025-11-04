@@ -3,85 +3,78 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+
 package kotlin.js.internal
 
-@JsName("ArrayCompanionObject")
 @ExperimentalStdlibApi
-@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+@kotlin.internal.UsedFromCompilerGeneratedCode
 internal object ArrayCompanionObject {
     @ExperimentalStdlibApi
-    @JsName("of")
-    operator fun <T> of(vararg elements: T): Array<T> = arrayOf(*elements)
+    @kotlin.internal.InlineOnly
+    inline operator fun <T> of(vararg elements: T): Array<T> = arrayOf(*elements)
 }
 
-@JsName("IntArrayCompanionObject")
 @ExperimentalStdlibApi
-@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+@kotlin.internal.UsedFromCompilerGeneratedCode
 internal object IntArrayCompanionObject {
     @ExperimentalStdlibApi
-    @JsName("of")
-    operator fun of(vararg elements: Int): IntArray = elements
+    @kotlin.internal.InlineOnly
+    inline operator fun of(vararg elements: Int): IntArray = elements
 }
 
-@JsName("LongArrayCompanionObject")
 @ExperimentalStdlibApi
-@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+@kotlin.internal.UsedFromCompilerGeneratedCode
 internal object LongArrayCompanionObject {
     @ExperimentalStdlibApi
-    @JsName("of")
-    operator fun of(vararg elements: Long): LongArray = elements
+    @kotlin.internal.InlineOnly
+    inline operator fun of(vararg elements: Long): LongArray = elements
 }
 
-@JsName("ShortArrayCompanionObject")
 @ExperimentalStdlibApi
-@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+@kotlin.internal.UsedFromCompilerGeneratedCode
 internal object ShortArrayCompanionObject {
     @ExperimentalStdlibApi
-    @JsName("of")
-    operator fun of(vararg elements: Short): ShortArray = elements
+    @kotlin.internal.InlineOnly
+    inline operator fun of(vararg elements: Short): ShortArray = elements
 }
 
-@JsName("ByteArrayCompanionObject")
 @ExperimentalStdlibApi
-@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+@kotlin.internal.UsedFromCompilerGeneratedCode
 internal object ByteArrayCompanionObject {
     @ExperimentalStdlibApi
-    @JsName("of")
-    operator fun of(vararg elements: Byte): ByteArray = elements
+    @kotlin.internal.InlineOnly
+    inline operator fun of(vararg elements: Byte): ByteArray = elements
 }
 
-@JsName("CharArrayCompanionObject")
 @ExperimentalStdlibApi
-@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+@kotlin.internal.UsedFromCompilerGeneratedCode
 internal object CharArrayCompanionObject {
     @ExperimentalStdlibApi
-    @JsName("of")
-    operator fun of(vararg elements: Char): CharArray = elements
+    @kotlin.internal.InlineOnly
+    inline operator fun of(vararg elements: Char): CharArray = elements
 }
 
-@JsName("BooleanArrayCompanionObject")
 @ExperimentalStdlibApi
-@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+@kotlin.internal.UsedFromCompilerGeneratedCode
 internal object BooleanArrayCompanionObject {
     @ExperimentalStdlibApi
-    @JsName("of")
-    operator fun of(vararg elements: Boolean): BooleanArray = elements
+    @kotlin.internal.InlineOnly
+    inline operator fun of(vararg elements: Boolean): BooleanArray = elements
 }
 
-@JsName("FloatArrayCompanionObject")
 @ExperimentalStdlibApi
-@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+@kotlin.internal.UsedFromCompilerGeneratedCode
 internal object FloatArrayCompanionObject {
     @ExperimentalStdlibApi
-    @JsName("of")
-    operator fun of(vararg elements: Float): FloatArray = elements
+    @kotlin.internal.InlineOnly
+    inline operator fun of(vararg elements: Float): FloatArray = elements
 }
 
-@JsName("DoubleArrayCompanionObject")
 @ExperimentalStdlibApi
-@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+@kotlin.internal.UsedFromCompilerGeneratedCode
 internal object DoubleArrayCompanionObject {
     @ExperimentalStdlibApi
-    @JsName("of")
-    operator fun of(vararg elements: Double): DoubleArray = elements
+    @kotlin.internal.InlineOnly
+    inline operator fun of(vararg elements: Double): DoubleArray = elements
 }
