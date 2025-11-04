@@ -620,13 +620,31 @@ object Elements : TemplateGroupBase() {
         }
     }
 
-    val f_firstIs = fn("firstIs()") {
+    val f_firstIsOrNull = fn("firstIsOrNull()") {
         include(Iterables, Sequences, ArraysOfObjects)
     } builder {
         inlineOnly()
         genericStarProjection = true
         typeParam("reified R")
         returns("R?")
+
+        doc { """Returns the first transformed ${'$'}{f.element} matching specified type parameter R, or `null` if no such ${'$'}{f.element} was found.""" }
+
+        body {
+            """
+            for (element in this) if (element is R) return element
+            return null
+            """
+        }
+    }
+
+    val f_firstIs = fn("firstIs()") {
+        include(Iterables, Sequences, ArraysOfObjects)
+    } builder {
+        inlineOnly()
+        genericStarProjection = true
+        typeParam("reified R")
+        returns("R")
 
         doc { """Returns the first ${f.element} matching the specified type R.
         @throws [NoSuchElementException] if no such ${f.element} of specified type R is found.""" }
@@ -665,7 +683,7 @@ object Elements : TemplateGroupBase() {
         }
         body {
             """
-            return find { element -> element is R } as R?
+            return firstIsOrNull<R>()
             """
         }
     }

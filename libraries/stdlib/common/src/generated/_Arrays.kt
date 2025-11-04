@@ -1038,7 +1038,7 @@ public inline fun CharArray.find(predicate: (Char) -> Boolean): Char? {
  */
 @kotlin.internal.InlineOnly
 public inline fun <reified R> Array<*>.findIs(): R? {
-    return find { element -> element is R } as R?
+    return firstIsOrNull<R>()
 }
 
 /**
@@ -1316,9 +1316,18 @@ public inline fun CharArray.first(predicate: (Char) -> Boolean): Char {
  * @throws [NoSuchElementException] if no such element of specified type R is found.
  */
 @kotlin.internal.InlineOnly
-public inline fun <reified R> Array<*>.firstIs(): R? {
+public inline fun <reified R> Array<*>.firstIs(): R {
     for (element in this) if (element is R) return element
     throw NoSuchElementException("Array contains no element matching the specified type ${R::class.simpleName}.")
+}
+
+/**
+ * Returns the first transformed ${f.element} matching specified type parameter R, or `null` if no such ${f.element} was found.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified R> Array<*>.firstIsOrNull(): R? {
+    for (element in this) if (element is R) return element
+    return null
 }
 
 /**

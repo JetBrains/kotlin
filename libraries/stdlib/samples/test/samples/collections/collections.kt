@@ -1260,7 +1260,7 @@ class Collections {
             assertPrints(string, "one")
             assertEquals(number, 1)
             assertEquals(int, 1)
-            assertTrue { boolean == true }
+            assertTrue { boolean }
 
             val exception = assertFails {
                 objects.firstIs<Long>()

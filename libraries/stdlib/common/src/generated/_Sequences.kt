@@ -101,7 +101,7 @@ public inline fun <T> Sequence<T>.find(predicate: (T) -> Boolean): T? {
  */
 @kotlin.internal.InlineOnly
 public inline fun <reified R> Sequence<*>.findIs(): R? {
-    return find { element -> element is R } as R?
+    return firstIsOrNull<R>()
 }
 
 /**
@@ -148,9 +148,20 @@ public inline fun <T> Sequence<T>.first(predicate: (T) -> Boolean): T {
  * The operation is _terminal_.
  */
 @kotlin.internal.InlineOnly
-public inline fun <reified R> Sequence<*>.firstIs(): R? {
+public inline fun <reified R> Sequence<*>.firstIs(): R {
     for (element in this) if (element is R) return element
     throw NoSuchElementException("Sequence contains no element matching the specified type ${R::class.simpleName}.")
+}
+
+/**
+ * Returns the first transformed ${f.element} matching specified type parameter R, or `null` if no such ${f.element} was found.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified R> Sequence<*>.firstIsOrNull(): R? {
+    for (element in this) if (element is R) return element
+    return null
 }
 
 /**
