@@ -96,6 +96,7 @@ import kotlin.reflect.KClass
  */
 @Target(ANNOTATION_CLASS)
 @Retention(BINARY)
+@MustBeDocumented
 @SinceKotlin("1.3")
 public annotation class RequiresOptIn(
     val message: String = "",
@@ -176,6 +177,7 @@ public annotation class ExperimentalSubclassOptIn
  */
 @Target(CLASS)
 @Retention(BINARY)
+@MustBeDocumented
 @SinceKotlin("2.1")
 @WasExperimental(ExperimentalSubclassOptIn::class)
 public annotation class SubclassOptInRequired(

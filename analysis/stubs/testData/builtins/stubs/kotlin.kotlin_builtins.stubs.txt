@@ -10085,6 +10085,16 @@ FILE[kind=File[packageFqName=kotlin]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        valueArguments: [ ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
         valueArguments: [ version -> "1.3" ]
         CONSTRUCTOR_CALLEE
@@ -11935,6 +11945,16 @@ FILE[kind=File[packageFqName=kotlin]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        valueArguments: [ ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
         valueArguments: [ version -> "2.1" ]
         CONSTRUCTOR_CALLEE

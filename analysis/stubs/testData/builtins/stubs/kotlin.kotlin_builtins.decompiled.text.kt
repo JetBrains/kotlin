@@ -975,7 +975,7 @@ public abstract class Number public constructor() {
     public final val imports: kotlin.Array<out kotlin.String> /* compiled code */
 }
 
-@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.SinceKotlin public final annotation class RequiresOptIn public constructor(message: kotlin.String = COMPILED_CODE, level: kotlin.RequiresOptIn.Level = COMPILED_CODE) : kotlin.Annotation {
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class RequiresOptIn public constructor(message: kotlin.String = COMPILED_CODE, level: kotlin.RequiresOptIn.Level = COMPILED_CODE) : kotlin.Annotation {
     public final val message: kotlin.String /* compiled code */
 
     public final val level: kotlin.RequiresOptIn.Level /* compiled code */
@@ -1148,7 +1148,7 @@ public final class String public constructor() : kotlin.Comparable<kotlin.String
     @kotlin.internal.IntrinsicConstEvaluation public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.SinceKotlin @kotlin.WasExperimental public final annotation class SubclassOptInRequired public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin @kotlin.WasExperimental public final annotation class SubclassOptInRequired public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
     public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> /* compiled code */
 }
 
