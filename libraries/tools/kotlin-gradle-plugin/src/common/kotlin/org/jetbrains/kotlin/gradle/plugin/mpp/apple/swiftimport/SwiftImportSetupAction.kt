@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.gradle.plugin.testTaskName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
-import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -198,6 +197,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             it.xcodebuildSdk.set(targetSdk)
             it.swiftPMDependenciesCheckout.set(packageFetchTask.map { it.swiftPMDependenciesCheckout.get() })
             it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
+            it.discoverModulesImplicitly.set(swiftPMImportExtension.discoverModulesImplicitly)
         }
 
         tasks.configureEach { task ->
@@ -597,6 +597,9 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     @get:Input
     abstract val clangModules: SetProperty<String>
 
+    @get:Input
+    abstract val discoverModulesImplicitly: Property<Boolean>
+
     @get:InputFile
     abstract val resolvedPackagesState: RegularFileProperty
 
@@ -738,8 +741,49 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 }
             }
 
+            val moduleName = Regex("\\bmodule ([A-Za-z0-9_.]+) ")
+            fun inferModuleName(modulemap: File): String? = moduleName.find(modulemap.readText())?.let {
+                it.groups[1]?.value
+            }
+
+            val clangModules = if (discoverModulesImplicitly.get()) {
+                /**
+                 * FIXME: This will discovery logic will break on incremental runs as it will discover stale modules (same issue with Xcode)
+                 */
+                val implicitlyDiscoveredModules = mutableSetOf<String>()
+                compileTimeFrameworkSearchPaths.map { File(it) }.filter { it.exists() }.forEach {
+                    implicitlyDiscoveredModules.addAll(
+                        it.listFiles().filter {
+                            it.extension == "framework"
+                        }.filter { framework ->
+                            val hasModules = framework.listFiles().any { it.name == "Modules" }
+                            // FIXME: Google...
+                            val hasHeaders = framework.listFiles().any { it.name == "Headers" }
+                            hasModules && hasHeaders
+                        }.map { framework ->
+                            framework.nameWithoutExtension
+                        }
+                    )
+                }
+                includeSearchPaths.map { File(it) }.filter { it.exists() }.forEach { searchPath ->
+                    implicitlyDiscoveredModules.addAll(
+                        searchPath.listFiles().filter {
+                            it.extension == "modulemap"
+                        }.mapNotNull { modulemap ->
+                            inferModuleName(modulemap)
+                        }
+                    )
+                }
+                implicitlyDiscoveredModules.addAll(
+                    explicitModuleMaps.mapNotNull {
+                        inferModuleName(File(it))
+                    }
+                )
+                implicitlyDiscoveredModules
+            } else clangModules.get()
+
             val defFileSearchPaths = cinteropClangArgs.joinToString(" ") { "\"${it}\"" }
-            val modules = clangModules.get().joinToString(" ") { "\"${it}\"" }
+            val modules = clangModules.joinToString(" ") { "\"${it}\"" }
 
             val workaroundKT81695 = "-DSWIFT_TYPEDEFS"
             val defFilePath = defFilePath(architecture)
