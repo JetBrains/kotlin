@@ -84,7 +84,12 @@ private fun FirValueParameterSymbol.findSamFunction(context: CheckerContext): Fi
     val session = context.session
     val classSymbol = type.toClassSymbol(session) ?: return null
     val samFunction = classSymbol
-        .unsubstitutedScope(session, context.scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
+        .unsubstitutedScope(
+            session,
+            context.scopeSession,
+            withForcedTypeCalculator = true,
+            memberRequiredPhase = FirResolvePhase.DECLARATIONS
+        )
         .collectAllFunctions()
         .singleOrNull { it.modality == Modality.ABSTRACT }
     return samFunction
