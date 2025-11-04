@@ -85,11 +85,11 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
              * type: .none, then this will not happen. However, we also
              * - can't produce a dynamic library because it leads to symbol duplication with the K/N dynamic framework
              * - can't pass always static K/N framework to this SwiftPM linkage
-             * - can't reexport all potential libraries for dynamic K/N framework (because private extern?)
              * - can't hack with linker settings because SwiftPM passes these settings to all downstream linkage sites???
              *
              * Things to try in the future:
              * - Redo the entire integration using an .pbxproj instead of the Package and hack something up in this linkage project file
+             * - Reexport all potential libraries for dynamic K/N framework (was there an issue with "private extern" in public API of some Google library?)
              */
 //             SyntheticProductType.INFERRED
              SyntheticProductType.DYNAMIC
@@ -857,6 +857,9 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 }
                 // FIXME: This is the branch that is necessary to link against other targets. Do this properly
                 if (arg.startsWith("/")) {
+                    if (arg.endsWith(".a")) {
+                        ldArgs.add(arg)
+                    }
                     if (arg.endsWith(".dylib")) {
                         ldArgs.add(arg)
                         librarySearchPaths.add((File(arg).parentFile.path))
