@@ -9,4 +9,13 @@ FIR source kind: KtRealSourceElementKind
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] var [ResolvedTo(RAW_FIR)] R|kotlin/Any?|.isNotNull: R|kotlin/Boolean|
     public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> this != null
+        >
+
     public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Boolean|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> this != null
+        >

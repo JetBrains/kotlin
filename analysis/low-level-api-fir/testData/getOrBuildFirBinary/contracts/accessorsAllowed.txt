@@ -46,13 +46,34 @@ public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
     context([ResolvedTo(BODY_RESOLVE)] s: R|Foo.Status|)
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val isContextError: R|kotlin/Boolean|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Boolean|
+            [R|Contract description]
+             <
+                Returns(TRUE) -> s is Foo.Status.Error
+            >
+
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val [ResolvedTo(RAW_FIR)] R|Foo.Status|.isError: R|kotlin/Boolean|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Boolean|
+            [R|Contract description]
+             <
+                Returns(TRUE) -> this is Foo.Status.Error
+            >
+
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] var [ResolvedTo(RAW_FIR)] R|kotlin/Int?|.prop: R|kotlin/Int?|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int?|
+            [R|Contract description]
+             <
+                Returns(WILDCARD) -> this != null
+            >
+
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] set([ResolvedTo(BODY_RESOLVE)] v: R|kotlin/Int?|): R|kotlin/Unit|
+            [R|Contract description]
+             <
+                Returns(WILDCARD) -> v != null
+                Returns(WILDCARD) -> this != null
+            >
+
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo|
 
