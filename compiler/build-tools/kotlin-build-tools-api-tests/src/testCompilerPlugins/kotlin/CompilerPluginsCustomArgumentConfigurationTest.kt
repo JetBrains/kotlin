@@ -47,7 +47,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                     emptySet()
                 ),
             )
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
 
         // Scenario 2: pluginB AFTER pluginA
@@ -68,7 +68,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                     emptySet()
                 ),
             )
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
 
         fun onlyOrderFlags(args: List<String>): List<String> = args.filter { it.startsWith("-Xcompiler-plugin-order=") }
@@ -88,7 +88,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
         assertEquals(listOf("-P", "plugin:test-plugin:option1=value1"), stringArgumentsDump)
     }
 
@@ -104,7 +104,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         assertTrue(
             !stringArgumentsDump.contains("-P"),
             "Expected no -P flag (no options provided): $stringArgumentsDump"
@@ -123,7 +123,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
         assertEquals(listOf("-P", "plugin:test-plugin:option1=value1,plugin:test-plugin:option2=value2"), stringArgumentsDump)
     }
 
@@ -139,7 +139,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
         assertEquals(listOf("-P", "plugin:test-plugin:option1=value1,plugin:test-plugin:option1=value2"), stringArgumentsDump)
     }
 
@@ -159,7 +159,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
         assertEquals(
             listOf("-P", "plugin:test-plugin:option1=value1,plugin:test-plugin:option1=value1"),
             stringArgumentsDump
@@ -180,7 +180,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
         assertEquals(listOf("-P", "plugin:test-plugin:option1="), stringArgumentsDump)
     }
 
@@ -198,7 +198,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         println(stringArgumentsDump)
     }
 
@@ -216,7 +216,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         assertTrue(
             !stringArgumentsDump.contains("-P"),
             "Expected no -P flag when key and value are empty: $stringArgumentsDump"
@@ -237,7 +237,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         println(stringArgumentsDump)
     }
 
@@ -255,7 +255,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         println(stringArgumentsDump)
     }
 
@@ -273,7 +273,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         println(stringArgumentsDump)
     }
 
@@ -300,7 +300,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 setOf(CompilerPluginPartialOrder(CompilerPluginPartialOrderRelation.AFTER, "pluginA"))
             ),
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
         assertEquals(listOf("-Xcompiler-plugin-order=pluginA>pluginB"), stringArgumentsDump)
     }
 
@@ -331,7 +331,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             ),
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
         // Order of two flags is not semantically important; compare as a set
         assertEquals(
             setOf(
@@ -367,7 +367,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             ),
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
         assertEquals(
             setOf(
                 "-Xcompiler-plugin-order=pluginA>pluginB",
@@ -395,7 +395,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet(),
             ),
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         val orderingFlags = stringArgumentsDump.filter { it.startsWith("-Xcompiler-plugin-order=") }
         assertTrue(orderingFlags.isEmpty(), "Expected no -Xcompiler-plugin-order= flags: $orderingFlags")
     }
@@ -419,7 +419,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             ),
         )
         val exception = assertThrows<IllegalStateException> {
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
         assertEquals(
             "Invalid compiler plugin configuration: plugin id is empty in the ordering requirements for plugin 'plugin2'.",
@@ -446,7 +446,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 setOf(CompilerPluginPartialOrder(CompilerPluginPartialOrderRelation.AFTER, "plugin.one"))
             ),
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         val orderingFlags = stringArgumentsDump.filter { it.startsWith("-Xcompiler-plugin-order=") }
         assertEquals(listOf("-Xcompiler-plugin-order=plugin.one>plugin.two"), orderingFlags, "Expected A>B to appear only once")
     }
@@ -464,7 +464,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 setOf(CompilerPluginPartialOrder(CompilerPluginPartialOrderRelation.AFTER, "nonExistentPlugin"))
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
         // BTA emits the ordering constraint even though the target plugin doesn't exist in the list
         assertEquals(listOf("-Xcompiler-plugin-order=nonExistentPlugin>plugin1"), stringArgumentsDump)
     }
@@ -482,7 +482,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
         val exception = assertThrows<IllegalStateException> {
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
         assertEquals(
             "Invalid compiler plugin configuration: plugin id is empty.",
@@ -504,7 +504,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
         val exception = assertThrows<IllegalStateException> {
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
         assertEquals(
             "Invalid compiler plugin configuration: plugin id 'plug:in=bad' contains forbidden character(s): ':='.",
@@ -524,7 +524,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val args = operation.compilerArguments.toArgumentStrings()
+        val args = operation.build().compilerArguments.toArgumentStrings()
 
         assertTrue(args.any { it.endsWith("plugin1.jar") }, "plugin1.jar not found in classpath: $args")
     }
@@ -541,7 +541,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val args = operation.compilerArguments.toArgumentStrings()
+        val args = operation.build().compilerArguments.toArgumentStrings()
 
         assertTrue(args.any { it.contains("plugin1.jar") }, "plugin1.jar not found in classpath: $args")
         assertTrue(args.any { it.contains("lib.jar") }, "lib.jar not found in classpath: $args")
@@ -560,7 +560,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
         val exception = assertThrows<IllegalStateException> {
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
         assertEquals(
             "Invalid compiler plugin configuration: plugin 'plugin1' has empty classpath.",
@@ -580,7 +580,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val args = operation.compilerArguments.toArgumentStrings()
+        val args = operation.build().compilerArguments.toArgumentStrings()
 
         // Find the -Xplugin argument and count occurrences of plugin1.jar within it
         val xpluginArg = args.find { it.startsWith("-Xplugin=") } ?: ""
@@ -609,7 +609,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         println(stringArgumentsDump)
         // [-Xplugin=C:\same-plugin\same-plugin-id.jar,C:\same-plugin\same-plugin-id.jar,C:\same-plugin\lib.jar, -P, plugin:same-plugin-id:option1=value1,plugin:same-plugin-id:option2=value2]
     }
@@ -632,7 +632,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val args = operation.compilerArguments.toArgumentStrings()
+        val args = operation.build().compilerArguments.toArgumentStrings()
         println(args)
 
         // Find the -Xplugin argument and count occurrences of same-plugin.jar within it

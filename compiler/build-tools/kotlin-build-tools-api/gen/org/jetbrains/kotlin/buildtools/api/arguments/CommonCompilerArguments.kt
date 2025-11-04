@@ -5,6 +5,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Array
 import kotlin.Boolean
+import kotlin.Deprecated
 import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
@@ -29,6 +30,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
   /**
    * Set the [value] for option specified by [key], overriding any previous value for that option.
    */
+  @Deprecated(message = "Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
   public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V)
 
   /**
@@ -50,6 +52,30 @@ public interface CommonCompilerArguments : CommonToolArguments {
     public val id: String,
     public val availableSinceVersion: KotlinReleaseVersion,
   )
+
+  public interface Builder : CommonToolArguments.Builder {
+    /**
+     * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+     *
+     * @return the previously set value for an option
+     * @throws IllegalStateException if the option was not set and has no default value
+     */
+    public operator fun <V> `get`(key: CommonCompilerArgument<V>): V
+
+    /**
+     * Set the [value] for option specified by [key], overriding any previous value for that option.
+     */
+    public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V)
+
+    /**
+     * Check if an option specified by [key] has a value set.
+     *
+     * Note: trying to read an option (by using [get]) that has not been set will result in an exception.
+     *
+     * @return true if the option has a value set, false otherwise
+     */
+    public operator fun contains(key: CommonCompilerArgument<*>): Boolean
+  }
 
   public companion object {
     /**

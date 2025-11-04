@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as CommonTo
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
+internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments,
+    ArgumentsCommonToolArguments.Builder {
   protected val internalArguments: MutableSet<String> = mutableSetOf()
 
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -55,7 +56,7 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
 
-  public operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
+  private operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 
