@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
@@ -46,9 +48,6 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         descriptor,
         CallableReference.NO_RECEIVER,
     )
-
-    override val boundReceiver: Any?
-        get() = rawBoundReceiver.coerceToExpectedReceiverType(this, descriptor)
 
     override val javaField: Field? by lazy(PUBLICATION) {
         when (val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)) {
@@ -298,6 +297,12 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
         }
     }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptyList())
 }
+
+private fun DeclarationDescriptor?.toInlineClass(): Class<*>? =
+    if (this is ClassDescriptor && isInlineClass())
+        toJavaClass() ?: throw KotlinReflectionInternalError("Class object for the class $name cannot be found (classId=$classId)")
+    else
+        null
 
 private fun PropertyDescriptor.isJvmFieldPropertyInCompanionObject(): Boolean {
     val container = containingDeclaration

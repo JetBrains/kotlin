@@ -225,7 +225,7 @@ internal fun KType?.toInlineClass(): Class<*>? {
 private fun ReflectKCallable<*>.isGetterOfUnderlyingPropertyOfValueClass(): Boolean =
     this is KProperty.Getter<*> && (property as ReflectKProperty<*>).isUnderlyingPropertyOfValueClass()
 
-private fun ReflectKProperty<*>.isUnderlyingPropertyOfValueClass(): Boolean =
+internal fun ReflectKProperty<*>.isUnderlyingPropertyOfValueClass(): Boolean =
     allParameters.all { it.kind == KParameter.Kind.INSTANCE } &&
             name == (container as? KClassImpl<*>)?.inlineClassUnderlyingPropertyName
 

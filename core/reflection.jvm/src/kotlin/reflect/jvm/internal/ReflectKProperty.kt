@@ -19,11 +19,6 @@ internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V>, 
 
     val javaField: Field?
 
-    /**
-     * Same as [rawBoundReceiver], except for when the receiver is an inline class value, in which case it's unboxed.
-     */
-    val boundReceiver: Any?
-
     override fun findJavaDeclaration(): GenericDeclaration? = container.findMethodBySignature(signature)
 }
 

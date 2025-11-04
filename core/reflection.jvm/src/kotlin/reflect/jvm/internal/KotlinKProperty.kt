@@ -30,12 +30,6 @@ internal abstract class KotlinKProperty<out V>(
         kmProperty.returnType.toKType(container.jClass.classLoader, typeParameterTable.value)
     }
 
-    override val boundReceiver: Any?
-        get() {
-            checkLocalDelegatedPropertyOrAccessor()
-            return rawBoundReceiver
-        }
-
     private val typeParameterTable: Lazy<TypeParameterTable> = lazy(PUBLICATION) {
         checkLocalDelegatedPropertyOrAccessor()
 
