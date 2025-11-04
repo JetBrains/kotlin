@@ -792,13 +792,29 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                     )
                 }
                 includeSearchPaths.map { File(it) }.filter { it.exists() }.forEach { searchPath ->
-                    implicitlyDiscoveredModules.addAll(
-                        searchPath.listFiles().filter {
-                            it.extension == "modulemap"
-                        }.mapNotNull { modulemap ->
-                            inferModuleName(modulemap)
+                    searchPath.listFiles().forEach { searchPathFile ->
+                        if (searchPathFile.name == "module.modulemap") {
+                            val module = inferModuleName(searchPathFile)
+                            if (module != null) {
+                                implicitlyDiscoveredModules.add(module)
+                            }
                         }
-                    )
+                        // Also discover modules in the form
+                        // -I/search/path
+                        // /search/path/ModuleName/module.modulemap
+                        // E.g. GoogleMaps
+                        if (searchPathFile.isDirectory) {
+                            searchPathFile.listFiles().filter {
+                                it.name == "module.modulemap"
+                            }.forEach { subsearchPathFile ->
+                                val module = inferModuleName(subsearchPathFile)
+                                // The module must be eqiual to the directory name, same as with frameworks
+                                if (module != null && module == searchPathFile.name) {
+                                    implicitlyDiscoveredModules.add(module)
+                                }
+                            }
+                        }
+                    }
                 }
                 implicitlyDiscoveredModules.addAll(
                     explicitModuleMaps.mapNotNull {
