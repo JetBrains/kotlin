@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
 // LANGUAGE: +ConditionImpliesReturnsContracts
-// IGNORE_FIR
 
 @file:OptIn(ExperimentalContracts::class, ExperimentalExtendedContracts::class)
 
