@@ -27,18 +27,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 private const val INLINE_CLASS_IMPL_SUFFIX = "-impl"
 
-open class InlineClassLowering(val context: CommonBackendContext) {
-    private fun isClassInlineLike(irClass: IrClass): Boolean = context.inlineClassesUtils.isClassInlineLike(irClass)
+class InlineClassLowering(val context: CommonBackendContext) {
+    val inlineClassDeclarationLowering = InlineClassDeclarationLowering(context)
 
-    protected open fun processDelegatedInlineClassMember(declaration: IrDeclaration) {}
-
-    val inlineClassDeclarationLowering = InlineClassDeclarationLowering()
-
-    inner class InlineClassDeclarationLowering : DeclarationTransformer {
+    open class InlineClassDeclarationLowering(private val context: CommonBackendContext) : DeclarationTransformer {
+        protected open fun processDelegatedInlineClassMember(declaration: IrDeclaration) {}
 
         override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
             val irClass = declaration.parent as? IrClass ?: return null
-            if (!isClassInlineLike(irClass)) return null
+            if (!context.inlineClassesUtils.isClassInlineLike(irClass)) return null
 
             return when (declaration) {
                 is IrConstructor -> transformConstructor(declaration)
@@ -52,7 +49,7 @@ open class InlineClassLowering(val context: CommonBackendContext) {
                 return transformPrimaryConstructor(irConstructor)
 
             // Secondary constructors are lowered into static function
-            val result = getOrCreateStaticMethod(irConstructor)
+            val result = context.getOrCreateStaticMethod(irConstructor)
 
             transformConstructorBody(irConstructor, result)
 
@@ -65,7 +62,7 @@ open class InlineClassLowering(val context: CommonBackendContext) {
             if (function.isStaticMethodOfClass || !function.isReal)
                 return null
 
-            val staticMethod = getOrCreateStaticMethod(function)
+            val staticMethod = context.getOrCreateStaticMethod(function)
 
             transformMethodBodyFlat(function, staticMethod)
             processDelegatedInlineClassMember(function)
@@ -80,7 +77,7 @@ open class InlineClassLowering(val context: CommonBackendContext) {
         private fun transformPrimaryConstructor(irConstructor: IrConstructor): List<IrDeclaration> {
             val klass = irConstructor.parentAsClass
             val inlineClassType = klass.defaultType
-            val initFunction = getOrCreateStaticMethod(irConstructor).also {
+            val initFunction = context.getOrCreateStaticMethod(irConstructor).also {
                 it.returnType = inlineClassType
             }
             var delegatingCtorCall: IrDelegatingConstructorCall? = null
@@ -303,14 +300,9 @@ open class InlineClassLowering(val context: CommonBackendContext) {
 
     }
 
-    private fun getOrCreateStaticMethod(function: IrFunction): IrSimpleFunction =
-        function.staticMethod ?: createStaticBodilessMethod(function).also {
-            function.staticMethod = it
-        }
+    val inlineClassUsageLowering = InlineClassUsageLowering(context)
 
-    val inlineClassUsageLowering = InlineClassUsageLowering()
-
-    inner class InlineClassUsageLowering : BodyLoweringPass {
+    class InlineClassUsageLowering(private val context: CommonBackendContext) : BodyLoweringPass {
 
         override fun lower(irBody: IrBody, container: IrDeclaration) {
             irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -318,11 +310,11 @@ open class InlineClassLowering(val context: CommonBackendContext) {
                 override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                     expression.transformChildrenVoid(this)
                     val function = expression.symbol.owner
-                    if (!isClassInlineLike(function.parentAsClass)) {
+                    if (!context.inlineClassesUtils.isClassInlineLike(function.parentAsClass)) {
                         return expression
                     }
 
-                    return irCall(expression, getOrCreateStaticMethod(function))
+                    return irCall(expression, context.getOrCreateStaticMethod(function))
                 }
 
                 override fun visitCall(expression: IrCall): IrExpression {
@@ -330,7 +322,7 @@ open class InlineClassLowering(val context: CommonBackendContext) {
                     val function: IrSimpleFunction = expression.symbol.owner
                     if (function.parent !is IrClass ||
                         function.isStaticMethodOfClass ||
-                        !isClassInlineLike(function.parentAsClass) ||
+                        !context.inlineClassesUtils.isClassInlineLike(function.parentAsClass) ||
                         !function.isReal
                     ) {
                         return expression
@@ -338,7 +330,7 @@ open class InlineClassLowering(val context: CommonBackendContext) {
 
                     return irCall(
                         expression,
-                        getOrCreateStaticMethod(function)
+                        context.getOrCreateStaticMethod(function)
                     )
                 }
 
@@ -347,30 +339,35 @@ open class InlineClassLowering(val context: CommonBackendContext) {
                     val function = expression.symbol.owner
                     val klass = function.parentAsClass
                     return when {
-                        !isClassInlineLike(klass) -> expression
-                        else -> irCall(expression, getOrCreateStaticMethod(function))
+                        !context.inlineClassesUtils.isClassInlineLike(klass) -> expression
+                        else -> irCall(expression, context.getOrCreateStaticMethod(function))
                     }
                 }
             })
         }
     }
+}
 
-    private fun IrFunction.toInlineClassImplementationName(): Name {
-        val newName = parentAsClass.name.asString() + "__" + name.asString() + INLINE_CLASS_IMPL_SUFFIX
-        return when {
-            name.isSpecial -> Name.special("<$newName>")
-            else -> Name.identifier(newName)
-        }
+private fun CommonBackendContext.getOrCreateStaticMethod(function: IrFunction): IrSimpleFunction =
+    function.staticMethod ?: createStaticBodilessMethod(function).also {
+        function.staticMethod = it
     }
 
-    private fun createStaticBodilessMethod(function: IrFunction): IrSimpleFunction =
-        context.irFactory.createStaticFunctionWithReceivers(
-            function.parent,
-            function.toInlineClassImplementationName(),
-            function,
-            typeParametersFromContext = extractTypeParameters(function.parentAsClass),
-            remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
-        )
+private fun IrFunction.toInlineClassImplementationName(): Name {
+    val newName = parentAsClass.name.asString() + "__" + name.asString() + INLINE_CLASS_IMPL_SUFFIX
+    return when {
+        name.isSpecial -> Name.special("<$newName>")
+        else -> Name.identifier(newName)
+    }
 }
+
+private fun CommonBackendContext.createStaticBodilessMethod(function: IrFunction): IrSimpleFunction =
+    irFactory.createStaticFunctionWithReceivers(
+        function.parent,
+        function.toInlineClassImplementationName(),
+        function,
+        typeParametersFromContext = extractTypeParameters(function.parentAsClass),
+        remapMultiFieldValueClassStructure = ::remapMultiFieldValueClassStructure
+    )
 
 private var IrFunction.staticMethod: IrSimpleFunction? by irAttribute(copyByDefault = false)
