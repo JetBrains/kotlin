@@ -110,8 +110,8 @@ class VariableFixationFinder(
         HAS_OUTER_TYPE_VARIABLE_DEPENDENCY,
         HAS_PROPER_CONSTRAINTS,
 
-        IS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES, // Otherwise, "declared..."
-        ALL_PROPER_CONSTRAINTS_ARE_SELF_TYPE_BASED,
+        IS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES, // Otherwise, either "declared..." or not all proper constraints are self-type-based
+//        ALL_PROPER_CONSTRAINTS_ARE_SELF_TYPE_BASED,
         ALLOWED,
         ;
 
@@ -190,8 +190,9 @@ class VariableFixationFinder(
                     || hasUnprocessedConstraintsInForks()
             it[Q.ALLOWED] = !forbidden
 
-            it[Q.ALL_PROPER_CONSTRAINTS_ARE_SELF_TYPE_BASED] = areAllProperConstraintsSelfTypeBased()
-            it[Q.IS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES] = fixationEnhancementsIn22
+//            it[Q.ALL_PROPER_CONSTRAINTS_ARE_SELF_TYPE_BASED] = areAllProperConstraintsSelfTypeBased()
+            it[Q.IS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES] = areAllProperConstraintsSelfTypeBased()
+                    && fixationEnhancementsIn22
                     && !isReified() && hasDirectConstraintToNotFixedRelevantVariable()
 
             it[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints()
