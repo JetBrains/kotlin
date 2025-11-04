@@ -20,6 +20,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -62,16 +63,24 @@ import java.io.ObjectOutputStream
 import java.io.Serializable
 import kotlin.io.readLines
 
-
-internal val SwiftImportSetupAction = KotlinProjectSetupAction {
-    val kotlinExtension = project.multiplatformExtension
+internal fun Project.swiftPMDependenciesExtension(): SwiftImportExtension {
+    val existingExtension = kotlinExtension.extensions.findByName(SwiftImportExtension.EXTENSION_NAME)
+    if (existingExtension != null) {
+        return existingExtension as SwiftImportExtension
+    }
     kotlinExtension.extensions.create(
         SwiftImportExtension.EXTENSION_NAME,
         SwiftImportExtension::class.java
     )
-    val swiftPMImportExtension = kotlinExtension.getExtension<SwiftImportExtension>(
+    return kotlinExtension.getExtension<SwiftImportExtension>(
         SwiftImportExtension.EXTENSION_NAME
     )!!
+}
+
+
+internal val SwiftImportSetupAction = KotlinProjectSetupAction {
+    val kotlinExtension = project.multiplatformExtension
+    val swiftPMImportExtension = swiftPMDependenciesExtension()
 
     val productTypeProvider = provider {
         val hasDynamicFrameworks = kotlinExtension.targets.filterIsInstance<KotlinNativeTarget>().any { target ->
