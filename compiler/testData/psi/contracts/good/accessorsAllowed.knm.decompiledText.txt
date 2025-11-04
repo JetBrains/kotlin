@@ -2,14 +2,14 @@
 // Implementation of methods is not available
 
 public var kotlin.Int?.prop: kotlin.Int? /* compiled code */
-    public final get() { /* compiled code */ }
-    public final set(v: kotlin.Int?) { /* compiled code */ }
+    public final get() { contract { /* compiled contract */ }; /* compiled code */ }
+    public final set(v: kotlin.Int?) { contract { /* compiled contract */ }; /* compiled code */ }
 
 public val Status.isError: kotlin.Boolean /* compiled code */
-    public final get() { /* compiled code */ }
+    public final get() { contract { /* compiled contract */ }; /* compiled code */ }
 
 context(s: Status) public val isContextError: kotlin.Boolean /* compiled code */
-    public final get() { /* compiled code */ }
+    public final get() { contract { /* compiled contract */ }; /* compiled code */ }
 
 public sealed class Status protected constructor() {
     public final class Ok public constructor() : Status {

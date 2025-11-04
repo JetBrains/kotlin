@@ -4,4 +4,4 @@
 package test
 
 public val kotlin.Boolean.myRequire: kotlin.Boolean /* compiled code */
-    public final get() { /* compiled code */ }
+    public final get() { contract { /* compiled contract */ }; /* compiled code */ }

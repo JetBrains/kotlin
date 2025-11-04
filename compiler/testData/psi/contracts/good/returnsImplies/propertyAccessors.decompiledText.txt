@@ -11,5 +11,5 @@ PropertyAccessorsKt.class:
   // Implementation of methods is not available
 
   public var kotlin.Any?.isNotNull: kotlin.Boolean /* compiled code */
-      public final get() { /* compiled code */ }
-      public final set(value: kotlin.Boolean) { /* compiled code */ }
+      public final get() { contract { /* compiled contract */ }; /* compiled code */ }
+      public final set(value: kotlin.Boolean) { contract { /* compiled contract */ }; /* compiled code */ }
