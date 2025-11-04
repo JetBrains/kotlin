@@ -447,6 +447,7 @@ private fun Project.checkSandboxAndWriteProtectionTask(
 // FIXME: Add a check that synthetic import project is up-to-date in respect to currently declared SwiftPM dependencies
 private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(): TaskProvider<*> {
     val swiftPMDependencies = swiftPMDependenciesMetadataClasspath()
+    val hasDirectlyDeclaredSwiftPMDependencies = provider { swiftPMDependenciesExtension().spmDependencies.isNotEmpty() }
     val projectPathEnv = project.providers.environmentVariable("PROJECT_FILE_PATH")
     return locateOrRegisterTask<DefaultTask>("checkSyntheticImportProjectIsCorrectlyIntegrated") { task ->
         task.group = BasePlugin.BUILD_GROUP
@@ -454,7 +455,7 @@ private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(): TaskProv
         val execOps = project.serviceOf<ExecOperations>()
         val projectPath = project.path
         val rootProjectDir = rootProject.projectDir
-        task.onlyIf { projectPathEnv.isPresent && swiftPMDependencies.get().isNotEmpty() }
+        task.onlyIf { projectPathEnv.isPresent && (swiftPMDependencies.get().isNotEmpty() || hasDirectlyDeclaredSwiftPMDependencies.get()) }
         task.doFirst {
             checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
                 execOps,
