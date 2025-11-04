@@ -110,11 +110,11 @@ class VariableFixationFinder(
         HAS_PROPER_CONSTRAINTS,
 
         IS_READY_FOR_FIXATION_AND_HAS_PROPER_NON_NOTHING_LOWER_CONSTRAINT,
-        IS_READY_FOR_FIXATION_REIFIED,
         IS_READY_FOR_FIXATION,
 
         IS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES, // Otherwise, either "declared..." or not all proper constraints are self-type-based
 //        ALL_PROPER_CONSTRAINTS_ARE_SELF_TYPE_BASED,
+        IS_READY_FOR_FIXATION_REIFIED,
         ALLOWED,
         ;
 
