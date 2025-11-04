@@ -28,9 +28,9 @@
 
 /genericInvokeInCompanion.fir.kt:(590,591): error: Cannot infer type for type parameter 'T'. Specify it explicitly.
 
-/genericInvokeInCompanion.fir.kt:(616,631): error: One type argument expected for fun <T> invoke(name: String): C<T>.
+/genericInvokeInCompanion.fir.kt:(616,631): error: One type argument expected for 'fun <T> invoke(name: String): C<T>'.
 
-/genericInvokeInCompanion.fir.kt:(659,674): error: One type argument expected for fun <T> invoke(name: String): C<T>.
+/genericInvokeInCompanion.fir.kt:(659,674): error: One type argument expected for 'fun <T> invoke(name: String): C<T>'.
 
 /genericInvokeInCompanion.fir.kt:(683,699): error: Type arguments for outer class are redundant when nested class is referenced.
 
@@ -40,7 +40,7 @@
 
 /genericInvokeInCompanion.fir.kt:(757,763): error: Unresolved reference 'invoke'.
 
-/genericInvokeInCompanion.fir.kt:(791,806): error: One type argument expected for fun <T> invoke(name: String): C<T>.
+/genericInvokeInCompanion.fir.kt:(791,806): error: One type argument expected for 'fun <T> invoke(name: String): C<T>'.
 
 /genericInvokeInCompanion.fir.kt:(822,828): error: Unresolved reference 'invoke'.
 

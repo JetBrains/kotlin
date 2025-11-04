@@ -73,5 +73,5 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           contextParameters = []
           callableId = /forEach
       typeArgumentsMapping = {}
-    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for fun List<Int>.forEach(action: (Int) -> Unit): Unit.>
+    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for 'fun List<Int>.forEach(action: (Int) -> Unit): Unit'.>
     isInBestCandidates = false

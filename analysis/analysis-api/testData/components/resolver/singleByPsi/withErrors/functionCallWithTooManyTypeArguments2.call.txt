@@ -35,4 +35,4 @@ KtCallExpression(43,66): 'generic<Int, String>(5)'
           A -> (kotlin.Int)
         }
     ]
-    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: One type argument expected for fun <A> generic(a: A): Unit.>
+    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: One type argument expected for 'fun <A> generic(a: A): Unit'.>

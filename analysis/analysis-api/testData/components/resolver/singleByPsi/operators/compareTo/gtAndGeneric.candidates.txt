@@ -34,7 +34,7 @@ KtOperationReferenceExpression(97,98): '>'
           contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for fun compareTo(m: MyClass): Int.>
+    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for 'fun compareTo(m: MyClass): Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:

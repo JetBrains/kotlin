@@ -34,7 +34,7 @@ KtOperationReferenceExpression(177,180): '!in'
           contextParameters = []
           callableId = /MyClass.contains
       typeArgumentsMapping = {}
-    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for fun contains(str: String): Boolean.>
+    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for 'fun contains(str: String): Boolean'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:

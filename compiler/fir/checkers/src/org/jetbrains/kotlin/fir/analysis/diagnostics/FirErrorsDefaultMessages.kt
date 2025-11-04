@@ -1926,7 +1926,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         val wrongNumberOfTypeArguments = "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected"
         map.put(
             WRONG_NUMBER_OF_TYPE_ARGUMENTS,
-            "$wrongNumberOfTypeArguments for {1}.",
+            "$wrongNumberOfTypeArguments for ''{1}''.",
             null,
             SYMBOL,
         )

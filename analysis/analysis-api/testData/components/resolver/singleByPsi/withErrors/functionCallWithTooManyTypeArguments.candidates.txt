@@ -17,5 +17,5 @@ KtCallExpression(39,64): 'generic<String, String>()'
       typeArgumentsMapping = {
         A -> (kotlin.String)
       }
-    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: One type argument expected for fun <A> generic(): Unit.>
+    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: One type argument expected for 'fun <A> generic(): Unit'.>
     isInBestCandidates = true
