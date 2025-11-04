@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 import org.jetbrains.kotlin.resolveLlvmUtility
 import org.jetbrains.kotlin.testing.native.GoogleTestExtension
 import org.jetbrains.kotlin.utils.capitalized
+import java.io.File
 import java.time.Duration
 import javax.inject.Inject
 
@@ -211,6 +212,12 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         private val platformManager = project.extensions.getByType<PlatformManager>()
         private val nativeDependencies = project.extensions.getByType<NativeDependenciesExtension>()
 
+        private val reproducibilityRootsMap: Map<File, String>
+            get() = mapOf(
+                    // This is the common root for native dependencies: sysroots, llvm, ...
+                    nativeDependencies.nativeDependenciesRoot to "NATIVE_DEPS",
+            )
+
         private val allCompilerArgs = module.compilerArgs.map {
             it + when (sanitizer) {
                 null -> emptyList()
@@ -233,6 +240,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             this.headersDirs.from(this@SourceSet.headersDirs)
             this.inputFiles.from(this@SourceSet.inputFiles)
             this.workingDirectory.set(module.compilerWorkingDirectory)
+            this.reproducibilityRootsMap.set(this@SourceSet.reproducibilityRootsMap)
             dependsOn(nativeDependencies.llvmDependency)
             dependsOn(nativeDependencies.targetDependency(_target))
             dependsOn(this@SourceSet.dependencies)
@@ -255,7 +263,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                         from(this@SourceSet.inputFiles.dir)
                         from(this@SourceSet.headersDirs)
                     }
-                    arguments.addAll(ClangFrontend.defaultCompilerFlags(headers))
+                    arguments.addAll(ClangFrontend.defaultCompilerFlags(headers, reproducibilityRootsMap))
                     arguments.addAll(allCompilerArgs)
                     arguments.addAll(platformManager.clangArgs(target, module.compiler.get()))
                     output.set(this@SourceSet.outputDirectory.map { it.asFile.absolutePath })
@@ -279,6 +287,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             this.inputFiles.from(compileTask)
             this.outputFile.set(this@SourceSet.outputFile)
             this.arguments.set(module.linkerArgs)
+            this.reproducibilityRootsMap.set(this@SourceSet.reproducibilityRootsMap)
             val specs = this@SourceSet.onlyIf
             val target = target
             onlyIf {

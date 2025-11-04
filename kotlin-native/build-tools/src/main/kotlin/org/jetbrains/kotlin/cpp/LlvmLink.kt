@@ -10,10 +10,12 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
@@ -26,6 +28,8 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.execLlvmUtility
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.platformManagerProvider
+import org.jetbrains.kotlin.utils.reproduciblySortedFilePaths
+import java.io.File
 import javax.inject.Inject
 
 private abstract class LlvmLinkJob : WorkAction<LlvmLinkJob.Parameters> {
@@ -34,6 +38,7 @@ private abstract class LlvmLinkJob : WorkAction<LlvmLinkJob.Parameters> {
         val outputFile: RegularFileProperty
         val arguments: ListProperty<String>
         val platformManager: Property<PlatformManager>
+        val reproducibilityRootsMap: MapProperty<File, String>
     }
 
     @get:Inject
@@ -42,7 +47,8 @@ private abstract class LlvmLinkJob : WorkAction<LlvmLinkJob.Parameters> {
     override fun execute() {
         with(parameters) {
             execOperations.execLlvmUtility(platformManager.get(), "llvm-link") {
-                args = listOf("-o", outputFile.asFile.get().absolutePath) + arguments.get() + inputFiles.map { it.absolutePath }
+                val sortedInputs = inputFiles.reproduciblySortedFilePaths(reproducibilityRootsMap.get()).map { it.absolutePath }
+                args = listOf("-o", outputFile.asFile.get().absolutePath) + arguments.get() + sortedInputs
             }
         }
     }
@@ -75,6 +81,9 @@ open class LlvmLink @Inject constructor(
     @get:Input
     val arguments: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
+    @get:Internal
+    val reproducibilityRootsMap: MapProperty<File, String> = objectFactory.mapProperty(File::class.java, String::class.java)
+
     @get:Nested
     protected val platformManagerProvider = objectFactory.platformManagerProvider(project)
 
@@ -87,6 +96,7 @@ open class LlvmLink @Inject constructor(
             outputFile.set(this@LlvmLink.outputFile)
             arguments.set(this@LlvmLink.arguments)
             platformManager.set(this@LlvmLink.platformManagerProvider.platformManager)
+            reproducibilityRootsMap.set(this@LlvmLink.reproducibilityRootsMap)
         }
     }
 }
