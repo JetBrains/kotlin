@@ -836,17 +836,8 @@ tasks {
         )
     }
 
-    register("jsFirCompilerTest") {
-        // TODO(KTI-2710): Drop this task when we reconfigure TeamCity to run `jsCompilerTest`
-        dependsOn(":js:js.tests:jsTest")
-    }
-
     register("jsCompilerTest") {
         dependsOn(":js:js.tests:jsTest")
-    }
-
-    register("jsIrCompilerTest") {
-        // TODO(KTI-2710): Drop this task when we stop invoking it on TeamCity
     }
 
     register("wasmCompilerTest") {
@@ -969,8 +960,8 @@ tasks {
         dependsOn("compilerPluginTest")
         dependsOn(":kotlin-daemon-tests:test")
         dependsOn(":compiler:arguments:test")
-        dependsOn(":compiler:fir:modularized-tests:modelDumpTest")
         dependsOn(":compiler:multiplatform-parsing:jvmTest")
+        dependsOn(":compiler:fir:modularized-tests:test")
     }
 
     register("miscTest") {

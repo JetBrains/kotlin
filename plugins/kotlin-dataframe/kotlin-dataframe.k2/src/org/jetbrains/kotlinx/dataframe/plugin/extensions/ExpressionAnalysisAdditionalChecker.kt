@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableReference
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
@@ -247,7 +247,7 @@ private data object DataFramePropertyChecker : FirPropertyChecker(mppKind = MppC
             (declaration.symbol.resolvedReturnType.typeArguments.getOrNull(0) as? ConeClassLikeType)?.toRegularClassSymbol() ?: return
         val origin = typeArgument.origin
         if (context.findClosest<FirScriptSymbol>() != null) return
-        if (declaration.isNonLocal && typeArgument.isLocal && origin.isDataFrame) {
+        if (!declaration.isLocal && typeArgument.isLocal && origin.isDataFrame) {
             reporter.reportOn(
                 declaration.source,
                 DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE,
@@ -261,7 +261,7 @@ object ShadowedExtensionPropertyChecker : FirPropertyAccessExpressionChecker(mpp
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirPropertyAccessExpression) {
         val property = expression.toResolvedCallableReference()?.toResolvedPropertySymbol() ?: return
-        if (property.isLocal && !property.origin.isDataFrame) {
+        if (property is FirLocalPropertySymbol && !property.origin.isDataFrame) {
             val schema = context.findClosest<FirAnonymousFunctionSymbol>()
                 ?.resolvedReceiverType?.typeArguments?.getOrNull(0)
                 ?.type?.toRegularClassSymbol()

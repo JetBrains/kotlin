@@ -39,7 +39,6 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
             public final [ResolvedTo(TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
 
-
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                     LAZY_super<R|kotlin/Any|>

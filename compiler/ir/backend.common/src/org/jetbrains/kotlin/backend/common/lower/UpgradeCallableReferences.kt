@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -31,6 +32,8 @@ open class UpgradeCallableReferences(
     val upgradeLocalDelegatedPropertyReferences: Boolean = true,
     val upgradeSamConversions: Boolean = true,
     val upgradeExtractedAdaptedBlocks: Boolean = false,
+    val castDispatchReceiver: Boolean = true,
+    val generateFakeAccessorsForReflectionProperty: Boolean = false,
 ) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -250,15 +253,40 @@ open class UpgradeCallableReferences(
             fixCallableReferenceComingFromKlib(expression)
             if (!upgradePropertyReferences) return expression
             val getter = expression.getter?.owner
-            val arguments = expression.getArgumentsWithIr()
+            val arguments = if (getter?.hasMissingObjectDispatchReceiver() == true) {
+                val objectClass = expression.symbol.owner.parentAsClass
+                val dispatchReceiver = IrGetObjectValueImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.typeWith(), objectClass.symbol
+                )
+                listOf(objectClass.thisReceiver!! to dispatchReceiver) + expression.getArgumentsWithIr()
+            } else {
+                expression.getArgumentsWithIr()
+            }
             val getterFun: IrSimpleFunction
             val setterFun: IrSimpleFunction?
 
             if (getter != null) {
-                getterFun = expression.wrapFunction(arguments, data, getter, isPropertySetter = false)
-                setterFun = runIf(expression.type.isKMutableProperty()) {
-                    expression.setter?.let {
-                        expression.wrapFunction(arguments, data, it.owner, isPropertySetter = true)
+                if (generateFakeAccessorsForReflectionProperty && expression.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
+                    getterFun = getter.let {
+                        expression.buildReflectionPropertyAccessorWithoutBody(
+                            emptyList(), data, it.name, it.isSuspend, isPropertySetter = false
+                        )
+                    }
+                    setterFun = expression.setter?.owner?.let {
+                        expression.buildReflectionPropertyAccessorWithoutBody(
+                            emptyList(), data, it.name, it.isSuspend, isPropertySetter = true
+                        )
+                    }
+                } else {
+                    val getterHasMissingObjectDispatchReceiver = getter.hasMissingObjectDispatchReceiver()
+                    val getterArgsWithoutObjectReceiver = if (getterHasMissingObjectDispatchReceiver) arguments.drop(1) else arguments
+                    getterFun = expression.wrapFunction(getterArgsWithoutObjectReceiver, data, getter, isPropertySetter = false)
+                    setterFun = runIf(expression.type.isKMutableProperty()) {
+                        expression.setter?.owner?.let { setter ->
+                            val setterHasMissingObjectDispatchReceiver = setter.hasMissingObjectDispatchReceiver()
+                            val setterArgsWithoutObjectReceiver = if (setterHasMissingObjectDispatchReceiver) arguments.drop(1) else arguments
+                            expression.wrapFunction(setterArgsWithoutObjectReceiver, data, setter, isPropertySetter = true)
+                        }
                     }
                 }
             } else {
@@ -278,6 +306,7 @@ open class UpgradeCallableReferences(
                 origin = expression.origin,
             ).apply {
                 boundValues += arguments.map { it.second }
+                copyNecessaryAttributes(expression, this)
             }
         }
 
@@ -329,10 +358,16 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = expression.type,
                 reflectionTargetSymbol = expression.symbol,
-                getterFunction = expression.getter.owner.let { expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = false) },
-                setterFunction = expression.setter?.owner?.let { expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = true) },
+                getterFunction = expression.getter.owner.let {
+                    expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = false)
+                },
+                setterFunction = expression.setter?.owner?.let {
+                    expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = true)
+                },
                 origin = expression.origin
-            )
+            ).apply {
+                copyNecessaryAttributes(expression, this)
+            }
         }
 
         private fun IrCallableReference<*>.buildUnsupportedForLocalFunction(
@@ -349,18 +384,26 @@ open class UpgradeCallableReferences(
             returnType = context.irBuiltIns.nothingType
         }
 
+        private fun IrCallableReference<*>.buildReflectionPropertyAccessorWithoutBody(
+            captured: List<Pair<IrValueParameter, IrExpression>>,
+            parent: IrDeclarationParent,
+            name: Name,
+            isSuspend: Boolean,
+            isPropertySetter: Boolean,
+        ) = buildWrapperFunction(captured, parent, name, isSuspend, isPropertySetter, body = null)
+
         private fun IrCallableReference<*>.buildWrapperFunction(
             captured: List<Pair<IrValueParameter, IrExpression>>,
             parent: IrDeclarationParent,
             name: Name,
             isSuspend: Boolean,
             isPropertySetter: Boolean,
-            body: IrBlockBodyBuilder.(List<IrValueParameter>, IrType) -> Unit,
+            body: (IrBlockBodyBuilder.(List<IrValueParameter>, IrType) -> Unit)?,
         ): IrSimpleFunction {
             val referenceType = this@buildWrapperFunction.type as IrSimpleType
             val referenceTypeArgs = referenceType.arguments.map { it.typeOrNull ?: context.irBuiltIns.anyNType }
             val unboundArgTypes = if (isPropertySetter) referenceTypeArgs else referenceTypeArgs.dropLast(1)
-            // normally, it can't be empty. This is a workaround for plugin bugs , possibly already serialized in klibs
+            // normally, it can't be empty. This is a workaround for plugin bugs, possibly already serialized in klibs
             val returnType = if (isPropertySetter) context.irBuiltIns.unitType else referenceTypeArgs.lastOrNull() ?: context.irBuiltIns.anyNType
             val func = context.irFactory.buildFun {
                 setSourceRange(this@buildWrapperFunction)
@@ -384,9 +427,11 @@ open class UpgradeCallableReferences(
                         this.type = type
                     }
                 }
-                this.body = context.createIrBuilder(symbol).run {
-                    irBlockBody {
-                        body(parameters, returnType)
+                if (body != null) {
+                    this.body = context.createIrBuilder(symbol).run {
+                        irBlockBody {
+                            body(parameters, returnType)
+                        }
                     }
                 }
             }
@@ -476,7 +521,10 @@ open class UpgradeCallableReferences(
                         typeArguments = cleanedTypeArguments,
                     ).apply {
                         for (parameter in referencedFunction.parameters) {
-                            arguments[parameter] = uncheckedArguments[parameter.indexInParameters].implicitCastIfNeededTo(typeSubstitutor.substitute(parameter.type))
+                            val uncheckedArgument = uncheckedArguments[parameter.indexInParameters]
+                            arguments[parameter] =
+                                if (!castDispatchReceiver && parameter.kind == IrParameterKind.DispatchReceiver) uncheckedArgument
+                                else uncheckedArgument.implicitCastIfNeededTo(typeSubstitutor.substitute(parameter.type))
                         }
                     }.implicitCastIfNeededTo(expectedReturnType)
                 +irReturn(exprToReturn)
@@ -485,4 +533,7 @@ open class UpgradeCallableReferences(
     }
 
     protected open fun copyNecessaryAttributes(oldReference: IrFunctionReference, newReference: IrRichFunctionReference) {}
+    protected open fun copyNecessaryAttributes(oldReference: IrPropertyReference, newReference: IrRichPropertyReference) {}
+    protected open fun copyNecessaryAttributes(oldReference: IrLocalDelegatedPropertyReference, newReference: IrRichPropertyReference) {}
+    protected open fun IrDeclaration.hasMissingObjectDispatchReceiver(): Boolean = false
 }

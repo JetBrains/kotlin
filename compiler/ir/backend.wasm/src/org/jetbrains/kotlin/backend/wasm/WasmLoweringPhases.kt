@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
@@ -129,12 +128,7 @@ private val localClassesInInlineLambdasPhase = makeIrModulePhase(
  * The first phase of inlining (inline only private functions).
  */
 private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
-    { context: WasmBackendContext ->
-        WasmFunctionInlining(
-            context,
-            InlineMode.PRIVATE_INLINE_FUNCTIONS
-        )
-    },
+    ::WasmPrivateFunctionInlining,
     name = "InlineOnlyPrivateFunctions",
     prerequisite = setOf(arrayConstructorPhase)
 )
@@ -152,12 +146,7 @@ internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
 )
 
 private val inlineAllFunctionsPhase = makeIrModulePhase(
-    { context: WasmBackendContext ->
-        WasmFunctionInlining(
-            context,
-            InlineMode.ALL_INLINE_FUNCTIONS,
-        )
-    },
+    ::WasmAllFunctionInlining,
     name = "InlineAllFunctions",
     prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
@@ -595,7 +584,7 @@ fun wasmLoweringsOfTheFirstPhase(
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
         this += upgradeCallableReferences
     }
-    this += loweringsOfTheFirstPhase(JsManglerIr, languageVersionSettings)
+    this += loweringsOfTheFirstPhase(languageVersionSettings)
 }
 
 fun getWasmLowerings(

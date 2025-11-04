@@ -114,9 +114,9 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| { LAZY_BLOCK }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|kotlin/io/println|(String(foo))
-            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 [ResolvedTo(RAW_FIR)] lval i: R|kotlin/Int| = Int(1)
                 R|kotlin/io/println|(R|<local>/i|)
             }
@@ -134,9 +134,9 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|kotlin/io/println|(String(foo))
-            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 [ResolvedTo(RAW_FIR)] lval i: R|kotlin/Int| = Int(1)
                 R|kotlin/io/println|(R|<local>/i|)
             }
@@ -154,9 +154,9 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| { LAZY_BLOCK }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|kotlin/io/println|(String(foo))
-            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 [ResolvedTo(RAW_FIR)] lval i: R|kotlin/Int| = Int(1)
                 R|kotlin/io/println|(R|<local>/i|)
             }
@@ -174,9 +174,9 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|kotlin/io/println|(String(foo))
-            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 [ResolvedTo(BODY_RESOLVE)] lval i: R|kotlin/Int| = Int(1)
                 R|kotlin/io/println|(R|<local>/i|)
             }
@@ -196,9 +196,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] syntheticResultDeclarationWithBigBody.kts
             ^foo R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|kotlin/io/println|(String(foo))
-            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 [ResolvedTo(BODY_RESOLVE)] lval i: R|kotlin/Int| = Int(1)
                 R|kotlin/io/println|(R|<local>/i|)
             }

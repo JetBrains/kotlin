@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  * - [body] — the function body, if present, otherwise null.
  * - [contractDescription] — contract description for the function, if present (see [FirContractDescription] and its inheritors).
  * - [annotations] — annotations present on the function, if any.
+ * - [isLocal] — always true for anonymous functions. 
  *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.anonymousFunction]
  */
@@ -58,6 +59,7 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner, Fir
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val status: FirDeclarationStatus
+    abstract override val isLocal: Boolean
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverParameter: FirReceiverParameter?
     abstract override val deprecationsProvider: DeprecationsProvider

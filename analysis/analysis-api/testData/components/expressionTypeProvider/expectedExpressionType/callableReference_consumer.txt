@@ -10,4 +10,4 @@ expected type: KaFunctionType:
       typeArguments: []
       type: kotlin/Unit
   ]
-  type: kotlin/Function1<T, kotlin/Unit>
+  type: (T) -> kotlin/Unit

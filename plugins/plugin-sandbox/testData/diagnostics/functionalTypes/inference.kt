@@ -9,7 +9,7 @@ fun test_1() {
     val f: () -> Unit = id(@MyInlineable <!ARGUMENT_TYPE_MISMATCH!>{}<!>) // should be an error
     <!DEBUG_INFO_EXPRESSION_TYPE("@MyInlineable() some.MyInlineableFunction0<kotlin.Unit>")!>InlineableId({})<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("@MyInlineable() some.MyInlineableFunction0<kotlin.Unit>")!>InlineableId(@MyInlineable {})<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>suspendId(@MyInlineable <!ARGUMENT_TYPE_MISMATCH!>{}<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("suspend () -> kotlin.Unit")!>suspendId(@MyInlineable <!ARGUMENT_TYPE_MISMATCH!>{}<!>)<!>
 }
 
 fun test_2() {

@@ -98,7 +98,7 @@ KtDotQualifiedExpression(80,94): 'prop.action1()'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action1
           isSafeNavigation = false
-          type = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          type = kotlin.Int.() -> kotlin.Unit
         extensionReceiver = KaExplicitReceiverValue:
           expression = prop
           isSafeNavigation = false
@@ -106,7 +106,7 @@ KtDotQualifiedExpression(80,94): 'prop.action1()'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = p1
@@ -148,7 +148,7 @@ KtCallExpression(85,94): 'action1()'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action1
           isSafeNavigation = false
-          type = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          type = kotlin.Int.() -> kotlin.Unit
         extensionReceiver = KaExplicitReceiverValue:
           expression = prop
           isSafeNavigation = false
@@ -156,7 +156,7 @@ KtCallExpression(85,94): 'action1()'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = p1
@@ -181,8 +181,8 @@ KtNameReferenceExpression(85,92): 'action1'
         signature = KaVariableSignature:
           name = action1
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action1: @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          returnType = kotlin.Int.() -> kotlin.Unit
+          symbol = action1: kotlin.Int.() -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -201,7 +201,7 @@ KtCallExpression(99,112): 'action1(prop)'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action1
           isSafeNavigation = false
-          type = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          type = kotlin.Int.() -> kotlin.Unit
         extensionReceiver = KaExplicitReceiverValue:
           expression = prop
           isSafeNavigation = false
@@ -209,7 +209,7 @@ KtCallExpression(99,112): 'action1(prop)'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = p1
@@ -234,8 +234,8 @@ KtNameReferenceExpression(99,106): 'action1'
         signature = KaVariableSignature:
           name = action1
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action1: @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          returnType = kotlin.Int.() -> kotlin.Unit
+          symbol = action1: kotlin.Int.() -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -319,12 +319,12 @@ KtCallExpression(151,164): 'action2(prop)'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action2
           isSafeNavigation = false
-          type = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          type = (kotlin.Int) -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = p1
@@ -349,8 +349,8 @@ KtNameReferenceExpression(151,158): 'action2'
         signature = KaVariableSignature:
           name = action2
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action2: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          returnType = (kotlin.Int) -> kotlin.Unit
+          symbol = action2: (kotlin.Int) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read

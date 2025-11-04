@@ -109,7 +109,7 @@ KaLocalVariableSymbol:
         typeArguments: []
         type: kotlin/Int
     ]
-    type: kotlin/Function1<kotlin/Int, kotlin/Int>
+    type: (kotlin/Int) -> kotlin/Int
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
@@ -228,7 +228,7 @@ KaLocalVariableSymbol:
         typeArguments: []
         type: kotlin/Int
     ]
-    type: kotlin/Function1<kotlin/Int, kotlin/Int>
+    type: (kotlin/Int) -> kotlin/Int
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
@@ -424,7 +424,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: kotlin/Function1<kotlin/Int, kotlin/Int>
+        type: (kotlin/Int) -> kotlin/Int
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: ImplicitReturnInLambdaKt

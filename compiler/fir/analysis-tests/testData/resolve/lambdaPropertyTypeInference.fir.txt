@@ -24,15 +24,15 @@ FILE: KotlinClass.kt
             }
         }
 
-        R|<local>/validType|.R|/checkType|<R|(JavaClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<JavaClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/validType|.R|/checkType|<R|(JavaClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<(JavaClass) -> kotlin/Boolean>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|(JavaClass) -> kotlin/Boolean|>()
         }
         )
-        R|<local>/invalidType|.R|/checkType|<R|(JavaClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<JavaClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/invalidType|.R|/checkType|<R|(JavaClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<(JavaClass) -> kotlin/Boolean>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|(kotlin/Nothing) -> kotlin/Boolean|>()
         }
         )
-        R|/Case1.Case1|(R|<local>/javaClass|).R|/Case1.x|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/Case1.Case1|(R|<local>/javaClass|).R|/Case1.x|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<(KotlinClass) -> kotlin/Boolean>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|(kotlin/Nothing) -> kotlin/Boolean|>()
         }
         )
@@ -117,15 +117,15 @@ FILE: KotlinClass.kt
             }
         }
 
-        R|<local>/validType|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/validType|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<(KotlinClass) -> kotlin/Boolean>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|(KotlinClass) -> kotlin/Boolean|>()
         }
         )
-        R|<local>/invalidType|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/invalidType|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<(KotlinClass) -> kotlin/Boolean>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|(kotlin/Nothing) -> kotlin/Boolean|>()
         }
         )
-        R|/Case2.Case2|(R|<local>/kotlinClass|).R|/Case2.x|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/Case2.Case2|(R|<local>/kotlinClass|).R|/Case2.x|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<(KotlinClass) -> kotlin/Boolean>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|(kotlin/Nothing) -> kotlin/Boolean|>()
         }
         )

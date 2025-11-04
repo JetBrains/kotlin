@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.extensions.FirExtension
@@ -55,6 +56,7 @@ public class ConstructorBuildingContext(
             owner.typeParameterSymbols.mapTo(typeParameters) { buildConstructedClassTypeParameterRef { symbol = it } }
             returnTypeRef = owner.defaultType().toFirResolvedTypeRef()
             status = generateStatus()
+            isLocal = owner.isLocal
             if (owner.isInner) {
                 val parentSymbol = owner.getContainingClassLookupTag()?.toClassSymbol(session)
                     ?: error("Symbol for parent of $owner not found")

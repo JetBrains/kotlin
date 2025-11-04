@@ -49,8 +49,8 @@ private val jvmFilePhases = createFilePhases(
     ::SuspendLambdaLowering,
     ::PropertyReferenceDelegationLowering,
     ::SingletonOrConstantDelegationLowering,
-    ::PropertyReferenceLowering,
     ::JvmUpgradeCallableReferences,
+    ::PropertyReferenceLowering,
     ::ArrayConstructorLowering,
 
     // TODO: merge the next three phases together, as visitors behave incorrectly between them

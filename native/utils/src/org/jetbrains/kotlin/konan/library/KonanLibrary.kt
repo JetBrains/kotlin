@@ -8,14 +8,9 @@ const val KLIB_PROPERTY_INCLUDED_HEADERS = "includedHeaders"
 
 interface TargetedLibrary {
     val targetList: List<String>
-    val includedPaths: List<String>
 }
 
-interface BitcodeLibrary : TargetedLibrary {
-    val bitcodePaths: List<String>
-}
-
-interface KonanLibrary : BitcodeLibrary, KotlinLibrary {
+interface KonanLibrary : KotlinLibrary, TargetedLibrary {
     val linkerOpts: List<String>
 }
 

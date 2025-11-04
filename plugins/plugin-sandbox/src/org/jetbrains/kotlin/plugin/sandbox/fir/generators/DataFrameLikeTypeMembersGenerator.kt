@@ -121,6 +121,8 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
                 isMarkedNullable = false
             )
         ) {
+            // Note: we create here a member property with local visibility, and
+            // it does not match common compiler practice (a property has local visibility only if it's a local variable)
             visibility = Visibilities.Local
         }
     }

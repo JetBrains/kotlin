@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.isDelegatedProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
@@ -93,8 +94,11 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
             if (statement is FirVariableAssignment) {
                 val variableSymbol = statement.calleeReference?.toResolvedPropertySymbol() ?: continue
                 variablesWithUnobservedWrites.add(variableSymbol)
-                // TODO, KT-59831: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
-                reporter.reportOn(statement.lValue.source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ)
+                if (!variableSymbol.isDelegatedProperty) {
+                    // Writes to delegated properties may not be local and may be read somewhere else.
+                    // TODO, KT-59831: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
+                    reporter.reportOn(statement.lValue.source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ)
+                }
             } else if (statement is FirProperty) {
                 if (statement.symbol !in ownData.variablesWithoutReads && !statement.symbol.ignoreWarnings) {
                     reporter.reportOn(statement.initializer?.source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT)
@@ -105,8 +109,14 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
         for ((symbol, fir) in ownData.variablesWithoutReads) {
             if (symbol.ignoreWarnings) continue
             if ((fir.initializer as? FirFunctionCall)?.isIterator == true || fir.isCatchParameter == true) continue
-            val error = if (symbol in variablesWithUnobservedWrites) FirErrors.VARIABLE_NEVER_READ else FirErrors.UNUSED_VARIABLE
-            reporter.reportOn(fir.source, error)
+            val error = when {
+                symbol in variablesWithUnobservedWrites -> when (symbol.isDelegatedProperty) {
+                    false -> FirErrors.VARIABLE_NEVER_READ
+                    true -> null // Delegated properties should only report when completely unused.
+                }
+                else -> FirErrors.UNUSED_VARIABLE
+            }
+            if (error != null) reporter.reportOn(fir.source, error)
         }
     }
 

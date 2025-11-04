@@ -19,7 +19,6 @@ FILE: [ResolvedTo(IMPORTS)] destructuringNonLocal2.kt
 
         public final [ResolvedTo(STATUS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
 
-
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Nested : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|C.Nested| {
                 super<R|kotlin/Any|>()

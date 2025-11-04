@@ -35,6 +35,7 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var status: FirDeclarationStatus
+    override var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override lateinit var returnTypeRef: FirTypeRef
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
@@ -53,6 +54,7 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
             origin,
             attributes,
             status,
+            isLocal,
             returnTypeRef,
             deprecationsProvider,
             dispatchReceiverType,
@@ -131,6 +133,7 @@ inline fun buildFieldCopy(original: FirField, init: FirFieldBuilder.() -> Unit):
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.status = original.status
+    copyBuilder.isLocal = original.isLocal
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType

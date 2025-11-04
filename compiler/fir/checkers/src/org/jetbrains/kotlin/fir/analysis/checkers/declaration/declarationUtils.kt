@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -116,18 +117,20 @@ internal fun FirCallableSymbol<*>.isEffectivelyExternal(
 
 internal val FirClass.canHaveOpenMembers: Boolean get() = modality() != Modality.FINAL || classKind == ClassKind.ENUM_CLASS
 
-// contract: returns(true) implies (this is FirMemberDeclaration<*>)
-val FirDeclaration.isLocalMember: Boolean
-    get() = symbol.isLocalMember
-
-internal val FirBasedSymbol<*>.isLocalMember: Boolean
-    get() = when (this) {
-        is FirPropertySymbol -> this.isLocal
-        is FirClassLikeSymbol -> this.isLocal
-        is FirNamedFunctionSymbol -> this.isLocal
+/**
+ * Similar to [FirMemberDeclaration.isLocal], but returns false for callable members of local classes.
+ *
+ * @return true for local classes, including nested ones, and for local callables declared inside a block
+ * (e.g., inside a function / accessor / initializer body), excluding callable members of local classes
+ */
+val FirDeclaration.isLocalDeclaredInBlock: Boolean
+    // contract: returns(true) implies (this is FirMemberDeclaration<*>)
+    get() = if (this is FirClassLikeDeclaration) isLocal else when (val symbol = symbol) {
+        is FirLocalPropertySymbol -> true
+        is FirNamedFunctionSymbol -> symbol.rawStatus.visibility == Visibilities.Local
         // Anonymous functions and lambdas use DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS which has visibility public.
         is FirAnonymousFunctionSymbol -> true
-        is FirBackingFieldSymbol -> this.propertySymbol.isLocal
+        is FirBackingFieldSymbol -> symbol.propertySymbol is FirLocalPropertySymbol
         else -> false
     }
 

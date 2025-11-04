@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 interface WithInvoke {
     operator fun invoke()

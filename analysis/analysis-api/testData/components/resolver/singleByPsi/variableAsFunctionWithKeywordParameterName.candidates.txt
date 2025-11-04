@@ -30,12 +30,12 @@ KtCallExpression(66,80): 'x(1, "", true)'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = x
           isSafeNavigation = false
-          type = kotlin.Function3<@R|kotlin.ParameterName|(name = String(fun))  kotlin.Int, kotlin.String, @R|kotlin.ParameterName|(name = String(class))  kotlin.Boolean, kotlin.Unit>
+          type = (@R|kotlin.ParameterName|(name = String(fun))  kotlin.Int, kotlin.String, @R|kotlin.ParameterName|(name = String(class))  kotlin.Boolean) -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function3.invoke(<dispatch receiver>: kotlin.Function3<P1, P2, P3, R>, p1: P1, p2: P2, p3: P3): R
+          symbol = kotlin/Function3.invoke(<dispatch receiver>: (P1, P2, P3) -> R, p1: P1, p2: P2, p3: P3): R
           valueParameters = [
             KaVariableSignature:
               name = fun

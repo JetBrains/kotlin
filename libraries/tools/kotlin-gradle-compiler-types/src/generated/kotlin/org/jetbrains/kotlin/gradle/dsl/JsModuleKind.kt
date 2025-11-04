@@ -5,15 +5,25 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+/**
+ * @param kind
+ */
 enum class JsModuleKind(val kind: String) {
+    /***/
     MODULE_AMD("amd"),
+    /***/
     MODULE_PLAIN("plain"),
+    /***/
     MODULE_ES("es"),
+    /***/
     MODULE_COMMONJS("commonjs"),
+    /***/
     MODULE_UMD("umd"),
     ;
 
+    /***/
     companion object {
+        /***/
         @JvmStatic
         fun fromKind(kind: String): JsModuleKind =
             JsModuleKind.values().firstOrNull { it.kind == kind }

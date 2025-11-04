@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirPropertyAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitPropertyTypeMakesBehaviorOrderDependant
 import org.jetbrains.kotlin.fir.resolve.calls.NotFunctionAsOperator
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentTypeStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNotFunctionAsOperator
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -119,15 +121,15 @@ internal class FirInvokeResolveTowerExtension(
     }
 
     /**
-     * Let we have a call if a form of "x.f()" or "f()"
+     * Let us having a call in the form of `x.f()` or `f()`
      *
-     * This method enqueues a task (based on runResolutionForInvokeReceiverVariable) that for each successful property enqueues another task
-     * that tries to resolve "f()" call itself
+     * This method enqueues a task (based on [runResolutionForInvokeReceiverVariable]) that for each successful property enqueues another task
+     * that tries to resolve `f()` call itself
      *
-     * @param info describes whole "x.f()" or "f()"
-     * @param invokeReceiverInfo describes "x.f" or "f" variable (in case of no-receiver call or in case of resolving invokeExtension with "x")
-     * @param invokeBuiltinExtensionMode is true only when the original call has a form "x.f()" and invokeReceiverInfo is "f"
-     * @param runResolutionForInvokeReceiverVariable runs the process of looking for the receiver ("x.f" or "f") on the given FirTowerResolveTask
+     * @param info describes the whole `x.f()` or `f()`
+     * @param invokeReceiverInfo describes `x.f` or `f` variable (in case of no-receiver call or in case of resolving invokeExtension with `x`)
+     * @param invokeBuiltinExtensionMode is true only when the original call has a form `x.f()` and invokeReceiverInfo is `f`
+     * @param runResolutionForInvokeReceiverVariable runs the process of looking for the receiver (`x.f` or `f`) on the given FirTowerResolveTask
      */
     private inline fun enqueueInvokeReceiverTask(
         info: CallInfo,
@@ -149,6 +151,7 @@ internal class FirInvokeResolveTowerExtension(
                     receiverGroup = towerGroup,
                     collector
                 )
+                collector.forwardedDiagnostics().forEach { candidateFactoriesAndCollectors.resultCollector.addForwardedDiagnostic(it) }
                 collector.newDataSet()
             }
         )
@@ -164,12 +167,19 @@ internal class FirInvokeResolveTowerExtension(
         collector: CandidateCollector
     ) {
         for (invokeReceiverCandidate in collector.bestCandidates()) {
-            val symbol = invokeReceiverCandidate.symbol
-            if (symbol !is FirCallableSymbol<*> && symbol !is FirClassLikeSymbol<*>) continue
-
-            val isExtensionFunctionType =
-                symbol is FirCallableSymbol<*> &&
-                        components.returnTypeCalculator.tryCalculateReturnType(symbol).isExtensionFunctionType(components.session)
+            val isExtensionFunctionType = when (val symbol = invokeReceiverCandidate.symbol) {
+                is FirCallableSymbol<*> -> {
+                    val calculatedType = components.returnTypeCalculator.tryCalculateReturnType(symbol)
+                    checkImplicitPropertyTypeMakesBehaviorOrderDependant(symbol, info, collector)
+                    calculatedType.isExtensionFunctionType(components.session)
+                }
+                is FirClassLikeSymbol<*> -> {
+                    false
+                }
+                else -> {
+                    continue
+                }
+            }
 
             if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                 continue
@@ -209,6 +219,41 @@ internal class FirInvokeResolveTowerExtension(
                 receiverGroup
             )
         }
+    }
+
+    /**
+     * The diagnostic is dedicated to warn about code that can be resolved differently depending on declaration order (see KT-76240)
+     */
+    private fun checkImplicitPropertyTypeMakesBehaviorOrderDependant(
+        symbol: FirCallableSymbol<*>,
+        callInfo: CallInfo,
+        collector: CandidateCollector,
+    ) {
+        // Check the diagnostic for properties because only they can be affected by possible invoke call resolution.
+        if (symbol !is FirPropertySymbol) return
+
+        // If the return type has never been implicit, we interrupt the further checks. Such a property can't lead to an implicit resolve loop.
+        if (symbol.fir.returnTypeRef.let { it !is FirImplicitTypeRef && it.source?.kind != KtFakeSourceElementKind.ImplicitTypeRef }) return
+
+        // Local properties don't cause recursive problems
+        // because it's not possible to reference a declaration that are declared below a given local declaration
+        if (symbol.isLocal) return
+
+        // The call site without an explicit receiver can't cause the warning.
+        // In the case of nonnull `explicitReceiver`, the resolver is not trying to treat a property call as an invoke function call,
+        // and a recursive problem error is always reported on a function call site if it exists.
+        if (callInfo.explicitReceiver == null) return
+
+        // It seems like the warning is only actual with `ReturnTypeCalculatorWithJump`
+        // If we encounter a similar problem with `ReturnTypeCalculatorForFullBodyResolve` we can consider its support later
+        // (for instance, a complicated case with overridden declarations)
+        val implicitBodyResolveComputationSession =
+            (context.returnTypeCalculator as? ReturnTypeCalculatorWithJump)?.implicitBodyResolveComputationSession ?: return
+
+        // Check loops to filter out irrelevant cases
+        if (!implicitBodyResolveComputationSession.belongToSomeNonTrivialLoop(symbol)) return
+
+        collector.addForwardedDiagnostic(ImplicitPropertyTypeMakesBehaviorOrderDependant(symbol))
     }
 
     private fun enqueueResolverTasksForInvoke(

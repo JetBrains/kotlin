@@ -94,6 +94,9 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val contextParameters: List<FirValueParameter>
         get() = getter.contextParameters
 
+    override val isLocal: Boolean
+        get() = false
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         status.accept(visitor, data)

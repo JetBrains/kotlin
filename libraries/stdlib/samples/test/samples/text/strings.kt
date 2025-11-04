@@ -426,6 +426,65 @@ class Strings {
     }
 
     @Sample
+    fun allWithPredicate() {
+        val string = "Kotlin"
+        // All characters are letters
+        assertTrue(string.all { it.isLetter() })
+        // Not all of them are lowercase, though
+        assertFalse(string.all { it.isLowerCase() })
+        // And there are definitely no digits
+        assertFalse(string.all { it.isDigit() })
+
+        // For an empty string `all` always return `true`
+        assertTrue("".all { true })
+        assertTrue("".all { false })
+    }
+
+    @Sample
+    fun anyWithPredicate() {
+        val string = "Kotlin"
+        // All characters are letters
+        assertTrue(string.any { it.isLetter() })
+        // Some of them are lowercase letters
+        assertTrue(string.any { it.isLowerCase() })
+        // But there are no digits among them
+        assertFalse(string.any { it.isDigit() })
+
+        // For an empty string `any` always return `false`
+        assertFalse("".any { true })
+        assertFalse("".any { false })
+    }
+
+    @Sample
+    fun noneWithPredicate() {
+        val string = "Kotlin"
+        // All characters are letters
+        assertFalse(string.none { it.isLetter() })
+        // Some of them are lowercase letters
+        assertFalse(string.none { it.isLowerCase() })
+        // But there are no digits among them, thus none returns true only for this predicate
+        assertTrue(string.none { it.isDigit() })
+
+        // For an empty string `none` always return `true`
+        assertTrue("".none { true })
+        assertTrue("".none { false })
+    }
+
+    @Sample
+    fun any() {
+        // any is synonymous to !isEmpty()
+        assertTrue("str".any())
+        assertFalse("".any())
+    }
+
+    @Sample
+    fun none() {
+        // none is synonymous to isEmpty()
+        assertFalse("str".none())
+        assertTrue("".none())
+    }
+
+    @Sample
     fun indexOf() {
         fun matchDetails(inputString: String, whatToFind: String, startIndex: Int = 0): String {
             val matchIndex = inputString.indexOf(whatToFind, startIndex)

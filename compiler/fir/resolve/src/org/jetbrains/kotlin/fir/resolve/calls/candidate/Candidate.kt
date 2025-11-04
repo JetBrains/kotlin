@@ -44,9 +44,7 @@ class Candidate(
     // - in some cases with static entities, no matter is a use-site receiver explicit or not
     // OR we may have here a kind of ImplicitReceiverValue (non-statics only)
     override var dispatchReceiver: ConeResolutionAtom?,
-    // In most cases, it contains zero or single element
-    // More than one, only in case of context receiver group
-    val givenExtensionReceiverOptions: List<ConeResolutionAtom>,
+    val givenExtensionReceiver: ConeResolutionAtom?,
     override val explicitReceiverKind: ExplicitReceiverKind,
     private val constraintSystemFactory: InferenceComponents.ConstraintSystemFactory,
     private val baseSystem: ConstraintStorage,
@@ -294,7 +292,7 @@ class Candidate(
 
     // ---------------------------------------- Receivers ----------------------------------------
 
-    override var chosenExtensionReceiver: ConeResolutionAtom? = givenExtensionReceiverOptions.singleOrNull()
+    override var chosenExtensionReceiver: ConeResolutionAtom? = givenExtensionReceiver
 
     override var contextArguments: List<ConeResolutionAtom>? = null
 

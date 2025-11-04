@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.addDeclarationToParent
 import org.jetbrains.kotlin.fir.backend.generators.setParent
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.java.javaElementFinder
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.isNothingOrNullableNothing
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -586,13 +587,13 @@ class Fir2IrConverter(
             val needProcessMember = when (scriptDeclaration) {
                 is FirAnonymousInitializer -> false // processed later
                 is FirProperty -> {
-                    !scriptDeclaration.isLocal &&
+                    scriptDeclaration.symbol is FirRegularPropertySymbol &&
                             // '_' DD element
                             (scriptDeclaration.name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR ||
                                     scriptDeclaration.destructuringDeclarationContainerVariable == null)
                 }
                 is FirClassLikeDeclaration -> !scriptDeclaration.isLocal
-                is FirNamedFunction -> !scriptDeclaration.isLocal
+                is FirNamedFunction -> scriptDeclaration.status.visibility != Visibilities.Local
                 else -> true
             }
             if (needProcessMember) {

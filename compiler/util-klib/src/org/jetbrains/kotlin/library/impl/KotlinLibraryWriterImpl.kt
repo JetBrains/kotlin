@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 
 const val KLIB_DEFAULT_COMPONENT_NAME = "default"
@@ -18,7 +19,7 @@ open class KotlinLibraryLayoutForWriter(
     override val libFile: File,
     val unzippedDir: File,
     override val component: String = KLIB_DEFAULT_COMPONENT_NAME
-) : KotlinLibraryLayout, IrKotlinLibraryLayout {
+) : KotlinLibraryLayout {
     override val componentDir: File
         get() = File(unzippedDir, component)
     override val pre_1_4_manifest: File
@@ -105,8 +106,7 @@ private class KotlinLibraryWriterImpl(
     shortName: String? = null,
     val layout: KotlinLibraryLayoutForWriter,
     val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
-    ir: IrWriter = IrWriterImpl(layout)
-) : BaseWriter by base, IrWriter by ir, KotlinLibraryWriter
+) : BaseWriter by base, KotlinLibraryWriter
 
 fun buildKotlinLibrary(
     linkDependencies: List<KotlinLibrary>,
@@ -125,7 +125,6 @@ fun buildKotlinLibrary(
     val unzippedKlibDir = if (nopack) klibFile.also { it.isDirectory } else org.jetbrains.kotlin.konan.file.createTempDir(moduleName)
 
     val layout = KotlinLibraryLayoutForWriter(klibFile, unzippedKlibDir)
-    val irWriter = IrWriterImpl(layout)
     val library = KotlinLibraryWriterImpl(
         moduleName,
         versions,
@@ -133,12 +132,7 @@ fun buildKotlinLibrary(
         nativeTargets,
         nopack,
         layout = layout,
-        ir = irWriter
     )
-
-    if (ir != null) {
-        library.addIr(ir)
-    }
 
     manifestProperties?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)
@@ -146,7 +140,20 @@ fun buildKotlinLibrary(
     val metadataWriter = KlibMetadataWriterImpl(KlibMetadataComponentLayout(unzippedKlibDir))
     metadataWriter.writeMetadata(metadata)
 
+    if (ir != null) {
+        val mainIrWriter = KlibIrWriterImpl.ForMainIr(KlibIrComponentLayout.createForMainIr(unzippedKlibDir))
+        mainIrWriter.writeMainIr(ir.files)
+    }
+
+    ir?.fileWithPreparedInlinableFunctions?.let { inlinableFunctionsFile ->
+        val inlinableFunctionsWriter = KlibIrWriterImpl.ForInlinableFunctionsIr(
+            layout = KlibIrComponentLayout.createForInlinableFunctionsIr(unzippedKlibDir)
+        )
+        inlinableFunctionsWriter.writeInlinableFunctionsIr(inlinableFunctionsFile)
+    }
+
     library.commit()
+
     return library.layout
 }
 

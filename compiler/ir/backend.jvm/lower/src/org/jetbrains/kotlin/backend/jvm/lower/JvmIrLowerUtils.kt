@@ -87,6 +87,15 @@ internal val IrMemberAccessExpression<*>.constInitializer: IrExpression?
         return constPropertyField?.initializer?.expression?.shallowCopyOrNull()
     }
 
+internal val IrRichPropertyReference.constInitializer: IrExpression?
+    get() {
+        val symbol = reflectionTargetSymbol ?: return null
+        val property = symbol.owner as? IrProperty ?: return null
+        if (!property.isConst) return null
+        val constPropertyField = property.backingField
+        return constPropertyField?.initializer?.expression?.shallowCopyOrNull()
+    }
+
 internal fun JvmIrBuilder.jvmMethodHandle(handle: Handle): IrCall =
     irCall(backendContext.symbols.jvmMethodHandle).apply {
         arguments[0] = irInt(handle.tag)

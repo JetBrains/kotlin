@@ -50,10 +50,11 @@ internal fun TestModule.collectDependencies(
 ): Pair<Set<String>, Set<String>> {
     val runtimeLibraries: List<File> = when (wasmTargetOrNull(testServices, compilationStage)) {
         null -> { // JS
-            listOfNotNull(
+            // For proper compilation by the old compiler version, `kotlin-stdlib-js-ir-minimal-for-test` cannot be used from the current Kotlin repo.
+            // Instead, stdlib and `kotlin.test` from old dist must be used for all tests (`kotlin.test` is not part of `kotlin-stdlib-js-*.klib`)
+            listOf(
                 customJsCompilerSettings.stdlib,
-                // Load "kotlin-test" only when one of the corresponding directives has been specified.
-                runIf(JsEnvironmentConfigurator.isFullJsRuntimeNeeded(module = this)) { customJsCompilerSettings.kotlinTest },
+                customJsCompilerSettings.kotlinTest,
             )
         }
         WasmTarget.JS -> {

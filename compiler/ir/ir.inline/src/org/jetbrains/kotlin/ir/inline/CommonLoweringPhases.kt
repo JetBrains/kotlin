@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 private val avoidLocalFOsInInlineFunctionsLowering = makeIrModulePhase(
@@ -59,12 +58,7 @@ private val checkInlineCallCyclesPhase = makeIrModulePhase(
  * The first phase of inlining (inline only private functions).
  */
 private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
-    { context: LoweringContext ->
-        FunctionInlining(
-            context,
-            PreSerializationPrivateInlineFunctionResolver(context),
-        )
-    },
+    ::PreSerializationPrivateFunctionInlining,
     name = "InlineOnlyPrivateFunctions",
     prerequisite = setOf(arrayConstructorPhase, checkInlineCallCyclesPhase),
 )
@@ -100,26 +94,20 @@ private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrMod
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
 )
 
-private fun inlineAllFunctionsPhase(irMangler: IrMangler, inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
-    { context: LoweringContext ->
-        FunctionInlining(
-            context,
-            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions),
-        )
+private fun inlineAllFunctionsPhase(inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
+    { context: PreSerializationLoweringContext ->
+        if (inlineCrossModuleFunctions) PreSerializationIntraModuleFunctionInlining(context) else PreSerializationAllFunctionInlining(context)
     },
     name = "InlineAllFunctions",
     prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
-private fun inlineFunctionSerializationPreProcessing(irMangler: IrMangler, inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
+private fun inlineFunctionSerializationPreProcessing(inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
     lowering = { context ->
         // Run the cross-module inliner against pre-processed functions (and only pre-processed functions) if cross-module
         // inlining is not enabled in the main IR tree.
         val inliner: FunctionInlining? = runUnless(inlineCrossModuleFunctions) {
-            FunctionInlining(
-                context,
-                PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions = true),
-            )
+            PreSerializationIntraModuleFunctionInlining(context)
         }
 
         InlineFunctionSerializationPreProcessing(crossModuleFunctionInliner = inliner)
@@ -128,9 +116,9 @@ private fun inlineFunctionSerializationPreProcessing(irMangler: IrMangler, inlin
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, /*inlineAllFunctionsPhase*/),
 )
 
-private fun validateIrAfterInliningAllFunctionsPhase(irMangler: IrMangler, inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
-    { context: LoweringContext ->
-        val resolver = PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions)
+private fun validateIrAfterInliningAllFunctionsPhase(inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
+    { context: PreSerializationLoweringContext ->
+        val resolver = PreSerializationNonPrivateInlineFunctionResolver(context, inlineCrossModuleFunctions)
         IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase(
             context,
             checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
@@ -149,7 +137,6 @@ private fun validateIrAfterInliningAllFunctionsPhase(irMangler: IrMangler, inlin
 )
 
 fun loweringsOfTheFirstPhase(
-    irMangler: IrMangler,
     languageVersionSettings: LanguageVersionSettings
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
     this += avoidLocalFOsInInlineFunctionsLowering
@@ -167,8 +154,8 @@ fun loweringsOfTheFirstPhase(
         this += outerThisSpecialAccessorInInlineFunctionsPhase
         this += syntheticAccessorGenerationPhase
         this += validateIrAfterInliningOnlyPrivateFunctions
-        this += inlineAllFunctionsPhase(irMangler, inlineCrossModuleFunctions)
-        this += inlineFunctionSerializationPreProcessing(irMangler, inlineCrossModuleFunctions)
-        this += validateIrAfterInliningAllFunctionsPhase(irMangler, inlineCrossModuleFunctions)
+        this += inlineAllFunctionsPhase(inlineCrossModuleFunctions)
+        this += inlineFunctionSerializationPreProcessing(inlineCrossModuleFunctions)
+        this += validateIrAfterInliningAllFunctionsPhase(inlineCrossModuleFunctions)
     }
 }

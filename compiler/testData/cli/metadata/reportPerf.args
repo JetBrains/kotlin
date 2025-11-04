@@ -4,3 +4,4 @@ $TEMP_DIR$
 -cp
 $TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
 -Xreport-perf=true
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native

@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.getAllOverriddenSymbolsForParameter
+import org.jetbrains.kotlin.analysis.api.impl.base.components.getDirectlyOverriddenSymbolsForParameter
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
@@ -373,29 +375,35 @@ internal class KaFirSymbolRelationProvider(
             analysisSession.firSymbolBuilder.functionBuilder.buildConstructorSymbol(originalConstructor.symbol)
         }
 
-    private val overridesProvider = KaFirSymbolDeclarationOverridesProvider(analysisSessionProvider)
-
     override val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
         get() = withValidityAssertion {
-            overridesProvider.getAllOverriddenSymbols(this)
+            if (this is KaValueParameterSymbol) {
+                return getAllOverriddenSymbolsForParameter(this)
+            }
+
+            getAllOverriddenSymbols(this)
         }
 
     override val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
         get() = withValidityAssertion {
-            overridesProvider.getDirectlyOverriddenSymbols(this)
+            if (this is KaValueParameterSymbol) {
+                return getDirectlyOverriddenSymbolsForParameter(this)
+            }
+
+            getDirectlyOverriddenSymbols(this)
         }
 
     override fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean = withValidityAssertion {
-        return overridesProvider.isSubClassOf(this, superClass)
+        return isSubClassOf(this, superClass)
     }
 
     override fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean = withValidityAssertion {
-        return overridesProvider.isDirectSubClassOf(this, superClass)
+        return isDirectSubClassOf(this, superClass)
     }
 
     override val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
         get() = withValidityAssertion {
-            overridesProvider.getIntersectionOverriddenSymbols(this)
+            getIntersectionOverriddenSymbols(this)
         }
 
     override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {

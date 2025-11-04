@@ -35,7 +35,7 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/Boolean <: kotlin/Boolean` _from Argument R|<local>/flag|_
-2. `kotlin/Function0<TypeVariable(T)?> <: kotlin/Function0<TypeVariable(T)?>` _from Argument <L> = ifTrue <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {↩    try {↩        parse#(decode#(token#))↩    }↩    catch (e: Exception) {↩        Null(null)↩    }↩↩}↩_
+2. `() -> TypeVariable(T)? <: () -> TypeVariable(T)?` _from Argument <L> = ifTrue <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {↩    try {↩        parse#(decode#(token#))↩    }↩    catch (e: Exception) {↩        Null(null)↩    }↩↩}↩_
 
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 

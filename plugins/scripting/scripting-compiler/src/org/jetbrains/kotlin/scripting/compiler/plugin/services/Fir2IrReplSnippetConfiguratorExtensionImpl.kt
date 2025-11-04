@@ -225,6 +225,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
                     Modality.FINAL,
                     EffectiveVisibility.Public
                 )
+                isLocal = false
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 symbol = FirConstructorSymbol(classId)
                 returnTypeRef = FirImplicitTypeRefImplWithoutSource

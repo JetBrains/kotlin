@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.cpp.CppUsage
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.tools.ToolExecutionTask
 
@@ -22,8 +23,11 @@ native {
     val isWindows = PlatformInfo.isWindows()
     val obj = if (isWindows) "obj" else "o"
     val lib = if (isWindows) "lib" else "a"
-    val cflags = mutableListOf("-I${nativeDependencies.libffiPath}/include",
-                               *hostPlatform.clangForJni.hostCompilerArgsForJni)
+    val cflags = listOf(
+            "-I${nativeDependencies.libffiPath}/include",
+            *hostPlatform.clangForJni.hostCompilerArgsForJni,
+            *reproducibilityCompilerFlags,
+    )
     suffixes {
         (".c" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
@@ -44,6 +48,15 @@ native {
               "-L${project(":kotlin-native:libclangext").layout.buildDirectory.get().asFile}",
               "${nativeDependencies.libffiPath}/lib/libffi.$lib",
               "-lclangext")
+
+        if (HostManager.hostIsMac) {
+            // Set install_name to a non-absolute path.
+            flags("-Wl,-install_name,@rpath/$library")
+        }
+        if (HostManager.hostIsMingw) {
+            // Use binary hash as the timestamp in COFF headers.
+            flags("-Wl,/Brepro")
+        }
     }
     tasks.named(library).configure {
         dependsOn(":kotlin-native:libclangext:${lib("clangext")}")

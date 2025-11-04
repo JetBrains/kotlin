@@ -687,6 +687,18 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     }
 
     @Test
+    @TestMetadata("nameBasedDestructuringFullForm.kt")
+    public void testNameBasedDestructuringFullForm() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nameBasedDestructuringFullForm.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuringShortForm.kt")
+    public void testNameBasedDestructuringShortForm() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nameBasedDestructuringShortForm.kt");
+    }
+
+    @Test
     @TestMetadata("noArgActualConstructor.kt")
     public void testNoArgActualConstructor() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/basic/noArgActualConstructor.kt");

@@ -244,7 +244,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONTRACTS)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             @R|foo/Anno|[Types](position = <strcat>(String(property ), R|foo/constant|)) [ResolvedTo(RAW_FIR)] lval i: R|@R|foo/Anno|(position = <strcat>(String(local type ), R|foo/constant|))  kotlin/Int|
         }
         )
@@ -272,7 +272,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONTRACTS)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             @R|foo/Anno|[Types](position = <strcat>(String(property ), R|foo/constant|)) [ResolvedTo(RAW_FIR)] lval i: R|@R|foo/Anno|(position = <strcat>(String(local type ), R|foo/constant|))  kotlin/Int|
         }
         )
@@ -300,7 +300,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONTRACTS)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             @R|foo/Anno|[Types](position = <strcat>(String(property ), R|foo/constant|)) [ResolvedTo(RAW_FIR)] lval i: R|@R|foo/Anno|(position = <strcat>(String(local type ), R|foo/constant|))  kotlin/Int|
         }
         )
@@ -328,7 +328,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONTRACTS)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             @R|foo/Anno|[Types](position = <strcat>(String(property ), R|foo/constant|)) [ResolvedTo(BODY_RESOLVE)] lval i: R|@R|foo/Anno|(position = <strcat>(String(local type ), R|foo/constant|))  kotlin/Int|
         }
         )
@@ -357,7 +357,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resultBodyAnnotation.kts
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             @R|foo/Anno|[Types](position = <strcat>(String(property ), R|foo/constant|)) [ResolvedTo(BODY_RESOLVE)] lval i: R|@R|foo/Anno|(position = <strcat>(String(local type ), R|foo/constant|))  kotlin/Int|
         }
         )

@@ -105,7 +105,7 @@ internal class MetadataDependencyTransformationTaskInputs(
         kotlinSourceSet.internal.compilations
             .filter { compilation ->
                 if (compilation is KotlinNativeCompilation) {
-                    compilation.crossCompilationOnCurrentHostSupported.getOrThrow()
+                    compilation.crossCompilationOnCurrentHostSupported
                 } else {
                     true
                 }

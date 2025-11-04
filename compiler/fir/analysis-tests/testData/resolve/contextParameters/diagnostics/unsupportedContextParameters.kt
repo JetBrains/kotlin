@@ -127,7 +127,7 @@ fun localFunctionsContextParametersWithoutType() {
 fun localFunctionsContextParametersDisambiguation(a: Int) {
     // `context` is a call with missing lambda argument (that's why inapplicable)
     // `localFun` is a declaration that's not related to the context call
-    <!NONE_APPLICABLE!>context<!>(a)
+    <!NONE_APPLICABLE, NO_VALUE_FOR_PARAMETER!>context<!>(a)
     fun localFun() {}
 }
 

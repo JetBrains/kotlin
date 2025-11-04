@@ -84,7 +84,7 @@ internal abstract class FirBaseTowerResolveTask(
     ): ScopeBasedTowerLevel {
         return ScopeBasedTowerLevel(
             components, this,
-            givenExtensionReceiverOptions = listOfNotNull(extensionReceiver?.receiverExpression),
+            givenExtensionReceiver = extensionReceiver?.receiverExpression,
             withHideMembersOnly, constructorFilter, dispatchReceiverForStatics
         )
     }
@@ -118,7 +118,7 @@ internal abstract class FirBaseTowerResolveTask(
         skipSynthetics: Boolean = false,
     ) = DispatchReceiverMemberScopeTowerLevel(
         components, this,
-        givenExtensionReceiverOptions = listOfNotNull(extensionReceiver?.receiverExpression),
+        givenExtensionReceiver = extensionReceiver?.receiverExpression,
         skipSynthetics = skipSynthetics,
     )
 

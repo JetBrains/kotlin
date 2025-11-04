@@ -58,6 +58,8 @@ val ConeKotlinType.hasFlexibleMarkedNullability: Boolean
 
 val ConeKotlinType.classId: ClassId? get() = (this.lowerBoundIfFlexible() as? ConeClassLikeType)?.lookupTag?.classId
 
+val ConeClassLikeType.classId: ClassId get() = lookupTag.classId
+
 val ConeKotlinType.lookupTagIfAny: ConeClassifierLookupTag?
     get() = (this.lowerBoundIfFlexible() as? ConeLookupTagBasedType)?.lookupTag
 

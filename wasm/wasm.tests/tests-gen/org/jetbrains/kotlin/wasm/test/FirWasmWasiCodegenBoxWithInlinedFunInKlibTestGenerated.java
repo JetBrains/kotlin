@@ -15900,6 +15900,64 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
             runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/simple.kt");
           }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation")
+        @TestDataPath("$PROJECT_ROOT")
+        public class WrapContinuation {
+          @Test
+          public void testAllFilesPresentInWrapContinuation() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("av23.kt")
+          public void testAv23() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av23.kt");
+          }
+
+          @Test
+          @TestMetadata("av24.kt")
+          public void testAv24() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av24.kt");
+          }
+
+          @Test
+          @TestMetadata("av24_wrapped.kt")
+          public void testAv24_wrapped() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av24_wrapped.kt");
+          }
+
+          @Test
+          @TestMetadata("correctContinuation.kt")
+          public void testCorrectContinuation() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/correctContinuation.kt");
+          }
+
+          @Test
+          @TestMetadata("inline.kt")
+          public void testInline() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/inline.kt");
+          }
+
+          @Test
+          @TestMetadata("locals.kt")
+          public void testLocals() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/locals.kt");
+          }
+
+          @Test
+          @TestMetadata("samDefault.kt")
+          public void testSamDefault() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/samDefault.kt");
+          }
+
+          @Test
+          @TestMetadata("samDefaultInline.kt")
+          public void testSamDefaultInline() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/samDefaultInline.kt");
+          }
+        }
       }
 
       @Nested
@@ -42189,6 +42247,18 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
           }
 
           @Test
+          @TestMetadata("nameBasedDestructuringFullForm.kt")
+          public void testNameBasedDestructuringFullForm() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nameBasedDestructuringFullForm.kt");
+          }
+
+          @Test
+          @TestMetadata("nameBasedDestructuringShortForm.kt")
+          public void testNameBasedDestructuringShortForm() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nameBasedDestructuringShortForm.kt");
+          }
+
+          @Test
           @TestMetadata("noArgActualConstructor.kt")
           public void testNoArgActualConstructor() {
             runTest("compiler/testData/codegen/box/multiplatform/k2/basic/noArgActualConstructor.kt");
@@ -42886,6 +42956,76 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
             runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/stdlibClassRedefine.kt");
           }
         }
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/nameBasedDestructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NameBasedDestructuring {
+      @Test
+      public void testAllFilesPresentInNameBasedDestructuring() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nameBasedDestructuring"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("fullForm.kt")
+      public void testFullForm() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormExtraPropType.kt")
+      public void testFullFormExtraPropType() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormExtraPropType.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormFromSmartCast.kt")
+      public void testFullFormFromSmartCast() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormFromSmartCast.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormGenericBounds.kt")
+      public void testFullFormGenericBounds() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormGenericBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLoopsAndLambdas.kt")
+      public void testFullFormLoopsAndLambdas() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormLoopsAndLambdas.kt");
+      }
+
+      @Test
+      @TestMetadata("shortForm.kt")
+      public void testShortForm() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormExtraPropType.kt")
+      public void testShortFormExtraPropType() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormExtraPropType.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormFromSmartCast.kt")
+      public void testShortFormFromSmartCast() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormFromSmartCast.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormGenericBounds.kt")
+      public void testShortFormGenericBounds() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormGenericBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLoopsAndLambdas.kt")
+      public void testShortFormLoopsAndLambdas() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormLoopsAndLambdas.kt");
       }
     }
 
@@ -53559,6 +53699,18 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
         @TestMetadata("boundJvmStaticInObject.kt")
         public void testBoundJvmStaticInObject() {
           runTest("compiler/testData/codegen/box/reflection/callBy/boundJvmStaticInObject.kt");
+        }
+
+        @Test
+        @TestMetadata("brokenDefaultParametersFromDifferentFunctions.kt")
+        public void testBrokenDefaultParametersFromDifferentFunctions() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt");
+        }
+
+        @Test
+        @TestMetadata("brokenDefaultParametersFromDifferentFunctionsJvmDefault.kt")
+        public void testBrokenDefaultParametersFromDifferentFunctionsJvmDefault() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctionsJvmDefault.kt");
         }
 
         @Test
@@ -66271,6 +66423,12 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
         @Test
         public void testAllFilesPresentInAdaptedReferences() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/adaptedReferences"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("genericVararg.kt")
+        public void testGenericVararg() {
+          runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/genericVararg.kt");
         }
 
         @Test

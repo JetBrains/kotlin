@@ -113,6 +113,9 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val contextParameters: List<FirValueParameter>
         get() = emptyList()
 
+    override val isLocal: Boolean
+        get() = true
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }

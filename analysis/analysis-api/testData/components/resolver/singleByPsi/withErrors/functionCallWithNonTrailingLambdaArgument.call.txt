@@ -13,8 +13,8 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           { s -> true } -> (KaVariableSignature:
             name = b
             receiverType = null
-            returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
-            symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+            returnType = (kotlin.Int) -> kotlin.Boolean
+            symbol = b: (kotlin.Int) -> kotlin.Boolean
             contextParameters = []
             callableId = null),
           "str" -> (KaVariableSignature:
@@ -33,7 +33,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
-            symbol = /function(a: O1, b: kotlin.Function1<kotlin.Int, kotlin.Boolean>, c: T1): kotlin.Unit
+            symbol = /function(a: O1, b: (kotlin.Int) -> kotlin.Boolean, c: T1): kotlin.Unit
             valueParameters = [
               KaVariableSignature:
                 name = a
@@ -45,8 +45,8 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
               KaVariableSignature:
                 name = b
                 receiverType = null
-                returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
-                symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+                returnType = (kotlin.Int) -> kotlin.Boolean
+                symbol = b: (kotlin.Int) -> kotlin.Boolean
                 contextParameters = []
                 callableId = null,
               KaVariableSignature:
@@ -72,8 +72,8 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           { s -> true } -> (KaVariableSignature:
             name = b
             receiverType = null
-            returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
-            symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+            returnType = (kotlin.String) -> kotlin.Boolean
+            symbol = b: (kotlin.String) -> kotlin.Boolean
             contextParameters = []
             callableId = null),
           "str" -> (KaVariableSignature:
@@ -92,7 +92,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
-            symbol = /function(a: O2, b: kotlin.Function1<kotlin.String, kotlin.Boolean>, c: T2): kotlin.Unit
+            symbol = /function(a: O2, b: (kotlin.String) -> kotlin.Boolean, c: T2): kotlin.Unit
             valueParameters = [
               KaVariableSignature:
                 name = a
@@ -104,8 +104,8 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
               KaVariableSignature:
                 name = b
                 receiverType = null
-                returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
-                symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+                returnType = (kotlin.String) -> kotlin.Boolean
+                symbol = b: (kotlin.String) -> kotlin.Boolean
                 contextParameters = []
                 callableId = null,
               KaVariableSignature:

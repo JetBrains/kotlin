@@ -544,8 +544,8 @@ KtCallExpression(356,433): 'myRunWithMySealed {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<MySealed>
+          returnType = () -> MySealed
+          symbol = b: () -> MySealed
           contextParameters = []
           callableId = null)
       }
@@ -557,13 +557,13 @@ KtCallExpression(356,433): 'myRunWithMySealed {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /myRunWithMySealed(b: kotlin.Function0<MySealed>): kotlin.Unit
+          symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed>
-              symbol = b: kotlin.Function0<MySealed>
+              returnType = () -> MySealed
+              symbol = b: () -> MySealed
               contextParameters = []
               callableId = null
           ]
@@ -582,8 +582,8 @@ KtNameReferenceExpression(356,373): 'myRunWithMySealed'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<MySealed>
+          returnType = () -> MySealed
+          symbol = b: () -> MySealed
           contextParameters = []
           callableId = null)
       }
@@ -595,13 +595,13 @@ KtNameReferenceExpression(356,373): 'myRunWithMySealed'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /myRunWithMySealed(b: kotlin.Function0<MySealed>): kotlin.Unit
+          symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed>
-              symbol = b: kotlin.Function0<MySealed>
+              returnType = () -> MySealed
+              symbol = b: () -> MySealed
               contextParameters = []
               callableId = null
           ]
@@ -709,8 +709,8 @@ KtCallExpression(439,524): 'myRunWithMySealed {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<MySealed>
+          returnType = () -> MySealed
+          symbol = b: () -> MySealed
           contextParameters = []
           callableId = null)
       }
@@ -722,13 +722,13 @@ KtCallExpression(439,524): 'myRunWithMySealed {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /myRunWithMySealed(b: kotlin.Function0<MySealed>): kotlin.Unit
+          symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed>
-              symbol = b: kotlin.Function0<MySealed>
+              returnType = () -> MySealed
+              symbol = b: () -> MySealed
               contextParameters = []
               callableId = null
           ]
@@ -747,8 +747,8 @@ KtNameReferenceExpression(439,456): 'myRunWithMySealed'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<MySealed>
+          returnType = () -> MySealed
+          symbol = b: () -> MySealed
           contextParameters = []
           callableId = null)
       }
@@ -760,13 +760,13 @@ KtNameReferenceExpression(439,456): 'myRunWithMySealed'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /myRunWithMySealed(b: kotlin.Function0<MySealed>): kotlin.Unit
+          symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed>
-              symbol = b: kotlin.Function0<MySealed>
+              returnType = () -> MySealed
+              symbol = b: () -> MySealed
               contextParameters = []
               callableId = null
           ]
@@ -1034,8 +1034,8 @@ KtCallExpression(530,593): 'myRun<MySealed> {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MySealed
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1047,13 +1047,13 @@ KtCallExpression(530,593): 'myRun<MySealed> {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MySealed
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1074,8 +1074,8 @@ KtNameReferenceExpression(530,535): 'myRun'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MySealed
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1087,13 +1087,13 @@ KtNameReferenceExpression(530,535): 'myRun'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MySealed
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1300,8 +1300,8 @@ KtCallExpression(611,676): 'myRun {'
                 } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MySealed
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1313,13 +1313,13 @@ KtCallExpression(611,676): 'myRun {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MySealed
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1340,8 +1340,8 @@ KtNameReferenceExpression(611,616): 'myRun'
                 } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MySealed
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1353,13 +1353,13 @@ KtNameReferenceExpression(611,616): 'myRun'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MySealed
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1481,8 +1481,8 @@ KtCallExpression(706,759): 'myRun {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MySealed
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1494,13 +1494,13 @@ KtCallExpression(706,759): 'myRun {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MySealed
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1521,8 +1521,8 @@ KtNameReferenceExpression(706,711): 'myRun'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MySealed
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1534,13 +1534,13 @@ KtNameReferenceExpression(706,711): 'myRun'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MySealed
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1650,8 +1650,8 @@ KtCallExpression(765,818): 'myRun {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<ERROR CLASS: Cannot infer argument for type parameter T>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1663,13 +1663,13 @@ KtCallExpression(765,818): 'myRun {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = ERROR CLASS: Cannot infer argument for type parameter T
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<ERROR CLASS: Cannot infer argument for type parameter T>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1678,7 +1678,7 @@ KtCallExpression(765,818): 'myRun {'
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function0<??? (CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y)>', but 'Function0<uninferred T (of fun <T> myRun)>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> ??? (CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y)', but '() -> uninferred T (of fun <T> myRun)' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(765,770): 'myRun'
@@ -1691,8 +1691,8 @@ KtNameReferenceExpression(765,770): 'myRun'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<ERROR CLASS: Cannot infer argument for type parameter T>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1704,13 +1704,13 @@ KtNameReferenceExpression(765,770): 'myRun'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = ERROR CLASS: Cannot infer argument for type parameter T
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<ERROR CLASS: Cannot infer argument for type parameter T>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1719,7 +1719,7 @@ KtNameReferenceExpression(765,770): 'myRun'
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function0<??? (CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y)>', but 'Function0<uninferred T (of fun <T> myRun)>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> ??? (CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y)', but '() -> uninferred T (of fun <T> myRun)' was expected.>
     isInBestCandidates = true
 
 KtLambdaArgument(771,818): '{'
@@ -1787,8 +1787,8 @@ KtCallExpression(823,885): 'myRun {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed.X>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MySealed.X
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1800,13 +1800,13 @@ KtCallExpression(823,885): 'myRun {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed.X
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed.X>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MySealed.X
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1828,8 +1828,8 @@ KtNameReferenceExpression(823,828): 'myRun'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MySealed.X>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MySealed.X
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1841,13 +1841,13 @@ KtNameReferenceExpression(823,828): 'myRun'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed.X
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MySealed.X>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MySealed.X
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]

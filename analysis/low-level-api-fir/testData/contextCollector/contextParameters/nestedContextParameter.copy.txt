@@ -19,7 +19,7 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol a: R|T|
-                FirValueParameterSymbol action: R|@ContextFunctionTypeParams(1) context(D) (@ContextFunctionTypeParams(1) @ExtensionFunctionType kotlin/Function2<B, C, kotlin/Unit>) -> kotlin/Unit|
+                FirValueParameterSymbol action: R|@ContextFunctionTypeParams(1) context(D) (context(B) C.() -> kotlin/Unit) -> kotlin/Unit|
     Element 8
         Context parameters:
             FirValueParameterSymbol a: R|T|
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedContextParameter.kt
     context([ResolvedTo(RAW_FIR)] <unused var>: A, [ResolvedTo(RAW_FIR)] <unused var>: B, [ResolvedTo(RAW_FIR)] <unused var>: C, [ResolvedTo(RAW_FIR)] <unused var>: D)
     public? final? [ResolvedTo(RAW_FIR)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
     context([ResolvedTo(BODY_RESOLVE)] a: R|T|)
-    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|Another?|> usage([ResolvedTo(BODY_RESOLVE)] action: R|@ContextFunctionTypeParams(1) context(D) (@ContextFunctionTypeParams(1) @ExtensionFunctionType kotlin/Function2<B, C, kotlin/Unit>) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|Another?|> usage([ResolvedTo(BODY_RESOLVE)] action: R|@ContextFunctionTypeParams(1) context(D) (context(B) C.() -> kotlin/Unit) -> kotlin/Unit|): R|kotlin/Unit| {
         when () {
             (R|<local>/a| is R|BaseA|) ->  {
                 [ResolvedTo(BODY_RESOLVE)] lval d: R|D| = R|/D.D|()

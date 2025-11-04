@@ -10,10 +10,21 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.CompilerTestUtil
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
+import java.io.File
 
-class ModelDumpAndReadTest : TestCaseWithTmpdir() {
+@Execution(ExecutionMode.SAME_THREAD)
+class ModelDumpAndReadTest {
 
+    @TempDir
+    lateinit var tmpdir: File
+
+    @Test
     fun testModelDump() {
         // We don't want to bother with windows specifics yet, model dumping is unix-only now anyway.
         if (SystemInfo.isWindows) return
@@ -35,7 +46,7 @@ class ModelDumpAndReadTest : TestCaseWithTmpdir() {
         assertEquals(ExitCode.OK, res.second)
 
         val modelDumpFile = tmpdir.resolve("model-testmain.xml")
-        val moduleData = loadModuleDumpFile(modelDumpFile).single()
+        val moduleData = loadModuleDumpFile(modelDumpFile, ModularizedTestConfig()).single()
 
         val arguments = moduleData.arguments as K2JVMCompilerArguments
         assertEquals(jarFile.absolutePath, arguments.destination)
@@ -47,6 +58,7 @@ class ModelDumpAndReadTest : TestCaseWithTmpdir() {
         assertTrue(moduleData.classpath.any { it.name == "kotlin-stdlib.jar" })
     }
 
+    @Test
     fun testOldModelFormatDeserialization() {
         // We don't want to bother with windows specifics yet, model dumping is unix-only now anyway.
         if (SystemInfo.isWindows) return
@@ -96,7 +108,7 @@ class ModelDumpAndReadTest : TestCaseWithTmpdir() {
             </modules>
         """.trimIndent()
         val xmlFile = tmpdir.resolve("model-oldformat-simple.xml").apply { writeText(xml) }
-        val modules = loadModuleDumpFile(xmlFile)
+        val modules = loadModuleDumpFile(xmlFile, ModularizedTestConfig())
         assertEquals(1, modules.size)
         val m = modules.single()
         assertEquals("m1", m.name)

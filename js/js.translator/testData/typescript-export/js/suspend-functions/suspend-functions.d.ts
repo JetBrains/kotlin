@@ -18,7 +18,43 @@ declare namespace JS_TESTS {
         function genericWithConstraint<T extends string>(x: T): Promise<T>;
         function genericWithMultipleConstraints<T extends unknown/* kotlin.Comparable<T> */ & foo.SomeExternalInterface & Error>(x: T): Promise<T>;
         function generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Promise<Nullable<E>>;
-        function inlineFun(x: number, callback: (p0: number) => void): Promise<void>;
+        function inlineFun(x: number, callback: (p0: number) => number): Promise<number>;
+        function simpleSuspendFun(x: number): Promise<number>;
+        function inlineChain(x: number): Promise<number>;
+        function suspendExtensionFun(_this_: number): Promise<number>;
+        function suspendFunWithContext(ctx: number): Promise<number>;
+        class WithSuspendExtensionFunAndContext {
+            constructor();
+            suspendFun(ctx: number, _this_: number): Promise<number>;
+        }
+        namespace WithSuspendExtensionFunAndContext {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WithSuspendExtensionFunAndContext;
+            }
+        }
+        class WithSuspendFunInsideInnerClass {
+            constructor();
+            get Inner(): {
+                new(): WithSuspendFunInsideInnerClass.Inner;
+            } & typeof WithSuspendFunInsideInnerClass.Inner;
+        }
+        namespace WithSuspendFunInsideInnerClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WithSuspendFunInsideInnerClass;
+            }
+            class Inner {
+                protected constructor($outer: foo.WithSuspendFunInsideInnerClass);
+                suspendFun(): Promise<number>;
+            }
+            namespace Inner {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => Inner;
+                }
+            }
+        }
         interface HolderOfSum {
             sum(x: number, y: number): Promise<number>;
             sumNullable(x: Nullable<number>, y: Nullable<number>): Promise<number>;

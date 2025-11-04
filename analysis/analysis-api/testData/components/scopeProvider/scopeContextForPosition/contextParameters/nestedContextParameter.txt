@@ -466,13 +466,13 @@ scopes:
                   typeArguments: []
                   type: kotlin/Unit
               ]
-              type: @ContextFunctionTypeParams(1) @ExtensionFunctionType kotlin/Function2<B, C, kotlin/Unit>
+              type: context(B) C.() -> kotlin/Unit
             KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Unit
           ]
-          type: @ContextFunctionTypeParams(1) kotlin/Function2<D, @ContextFunctionTypeParams(1) @ExtensionFunctionType kotlin/Function2<B, C, kotlin/Unit>, kotlin/Unit>
+          type: context(D) (context(B) C.() -> kotlin/Unit) -> kotlin/Unit
         visibility: PUBLIC
     constructors: 0
 
@@ -947,13 +947,13 @@ scopes:
                       typeArguments: []
                       type: kotlin/Unit
                   ]
-                  type: @ContextFunctionTypeParams(1) @ExtensionFunctionType kotlin/Function2<B, C, kotlin/Unit>
+                  type: context(B) C.() -> kotlin/Unit
                 KaUsualClassType:
                   annotations: []
                   typeArguments: []
                   type: kotlin/Unit
               ]
-              type: @ContextFunctionTypeParams(1) kotlin/Function2<D, @ContextFunctionTypeParams(1) @ExtensionFunctionType kotlin/Function2<B, C, kotlin/Unit>, kotlin/Unit>
+              type: context(D) (context(B) C.() -> kotlin/Unit) -> kotlin/Unit
             visibility: PUBLIC
         ]
         visibility: PUBLIC

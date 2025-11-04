@@ -94,5 +94,3 @@ inline val FirClassSymbol<*>.isEnumEntry: Boolean
     get() = classKind.isEnumEntry
 
 // ---------------------- specific callables ----------------------
-
-inline val FirFunctionSymbol<*>.isLocal: Boolean get() = rawStatus.visibility == Visibilities.Local

@@ -260,6 +260,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                                 returnTypeRef = typeArguments.last()
                                 this.name = name
                                 status = functionStatus
+                                isLocal = false
                                 symbol = FirNamedFunctionSymbol(
                                     CallableId(packageFqName, relativeClassName, name)
                                 )

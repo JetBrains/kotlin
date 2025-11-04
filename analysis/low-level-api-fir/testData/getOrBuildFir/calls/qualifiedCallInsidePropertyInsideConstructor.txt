@@ -8,7 +8,7 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsidePropertyInsideConstructor.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.i] i: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.i] i: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                 ^foo <Unresolved name: B>#.<Unresolved name: prop>#.R|kotlin/toString|()
             }

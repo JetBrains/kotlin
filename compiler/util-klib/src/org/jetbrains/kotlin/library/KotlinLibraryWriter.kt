@@ -14,11 +14,7 @@ interface BaseWriter {
     fun commit()
 }
 
-interface IrWriter {
-    fun addIr(ir: SerializedIrModule)
-}
-
-interface KotlinLibraryWriter : BaseWriter, IrWriter
+interface KotlinLibraryWriter : BaseWriter
 
 // TODO: Move SerializedIr here too to eliminate dependency on backend.common.serialization
 class SerializedMetadata(

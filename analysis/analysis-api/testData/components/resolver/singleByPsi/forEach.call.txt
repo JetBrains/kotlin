@@ -5,8 +5,8 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         { } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action: kotlin.Function1<T, kotlin.Unit>
+          returnType = (kotlin.Int) -> kotlin.Unit
+          symbol = action: (T) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -21,13 +21,13 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.Int>
           returnType = kotlin.Unit
-          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: (T) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-              symbol = action: kotlin.Function1<T, kotlin.Unit>
+              returnType = (kotlin.Int) -> kotlin.Unit
+              symbol = action: (T) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]

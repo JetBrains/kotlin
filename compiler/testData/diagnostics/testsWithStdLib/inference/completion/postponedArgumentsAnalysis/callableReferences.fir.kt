@@ -35,11 +35,11 @@ fun main() {
     select(::foo, { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })
     select(id(::foo), { x: Number -> }, { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })
 
-    val x1 = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Int, kotlin.Unit>")!>id(::foo)<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Number, kotlin.Number>")!>id { x: Number -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!> }<!>)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<@ParameterName(...) kotlin.Int, kotlin.Any>")!>x1<!>
+    val x1 = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Int, kotlin.Unit>")!>id(::foo)<!>, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Number) -> kotlin.Number")!>id { x: Number -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!> }<!>)
+    <!DEBUG_INFO_EXPRESSION_TYPE("(@ParameterName(...) kotlin.Int) -> kotlin.Any")!>x1<!>
 
     val x11 = select(id(::foo), id { x: Number -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<@ParameterName(...) kotlin.Int, kotlin.Any>")!>x11<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(@ParameterName(...) kotlin.Int) -> kotlin.Any")!>x11<!>
 
     select(id(::foo2), id { x: Int -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })
 

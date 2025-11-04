@@ -325,12 +325,12 @@ KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(t
         dispatchReceiver = KaExplicitReceiverValue:
           expression = { arg: Boolean -> if (arg) enumProp else Option1 }
           isSafeNavigation = false
-          type = kotlin.Function1<kotlin.Boolean, ERROR CLASS: Cannot infer argument for type parameter K>
+          type = (kotlin.Boolean) -> ERROR CLASS: Cannot infer argument for type parameter K
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = ERROR CLASS: Cannot infer argument for type parameter K
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = p1

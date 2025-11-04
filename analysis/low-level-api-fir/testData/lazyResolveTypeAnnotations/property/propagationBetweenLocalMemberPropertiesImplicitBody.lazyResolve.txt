@@ -159,7 +159,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBody.
         ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                     super<R|kotlin/Any|>()
@@ -201,7 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBody.
         ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
-        ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                     super<R|kotlin/Any|>()
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBody.
         ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
-        ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                     super<R|kotlin/Any|>()
@@ -285,7 +285,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBody.
         ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        ^foo R|util/lambda|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^foo R|util/lambda|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                     super<R|kotlin/Any|>()
@@ -327,7 +327,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationBetweenLocalMemberPropertiesImplicit
         ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        ^foo R|util/lambda|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^foo R|util/lambda|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                     super<R|kotlin/Any|>()

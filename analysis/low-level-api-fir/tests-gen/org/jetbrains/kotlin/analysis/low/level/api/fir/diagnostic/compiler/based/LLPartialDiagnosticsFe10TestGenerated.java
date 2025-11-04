@@ -1911,6 +1911,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("renderFunctionTypesNicely.kt")
+    public void testRenderFunctionTypesNicely() {
+      runTest("compiler/testData/diagnostics/tests/renderFunctionTypesNicely.kt");
+    }
+
+    @Test
     @TestMetadata("renderingOfTypesWithSameName.kt")
     public void testRenderingOfTypesWithSameName() {
       runTest("compiler/testData/diagnostics/tests/renderingOfTypesWithSameName.kt");
@@ -38052,6 +38058,24 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("implicitPropertyTypeThatMakesBehaviorOrderDependant.kt")
+      public void testImplicitPropertyTypeThatMakesBehaviorOrderDependant() {
+        runTest("compiler/testData/diagnostics/tests/resolve/implicitPropertyTypeThatMakesBehaviorOrderDependant.kt");
+      }
+
+      @Test
+      @TestMetadata("implicitPropertyTypeThatMakesBehaviorOrderDependantAAResolve.kt")
+      public void testImplicitPropertyTypeThatMakesBehaviorOrderDependantAAResolve() {
+        runTest("compiler/testData/diagnostics/tests/resolve/implicitPropertyTypeThatMakesBehaviorOrderDependantAAResolve.kt");
+      }
+
+      @Test
+      @TestMetadata("implicitPropertyTypeThatMakesBehaviorOrderDependantComplexLoops.kt")
+      public void testImplicitPropertyTypeThatMakesBehaviorOrderDependantComplexLoops() {
+        runTest("compiler/testData/diagnostics/tests/resolve/implicitPropertyTypeThatMakesBehaviorOrderDependantComplexLoops.kt");
+      }
+
+      @Test
       @TestMetadata("implicitReceiverProperty.kt")
       public void testImplicitReceiverProperty() {
         runTest("compiler/testData/diagnostics/tests/resolve/implicitReceiverProperty.kt");
@@ -38127,6 +38151,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("newLineLambda.kt")
       public void testNewLineLambda() {
         runTest("compiler/testData/diagnostics/tests/resolve/newLineLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("noImplicitPropertyTypeThatMakesBehaviorOrderDependant.kt")
+      public void testNoImplicitPropertyTypeThatMakesBehaviorOrderDependant() {
+        runTest("compiler/testData/diagnostics/tests/resolve/noImplicitPropertyTypeThatMakesBehaviorOrderDependant.kt");
       }
 
       @Test

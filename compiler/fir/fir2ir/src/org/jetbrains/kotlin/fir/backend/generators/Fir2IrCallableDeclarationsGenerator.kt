@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.*
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.isSuspendFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -627,7 +629,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             // dispatch receiver
             if (function !is FirConstructor) {
                 // See [LocalDeclarationsLowering]: "local function must not have dispatch receiver."
-                val isLocal = function is FirNamedFunction && function.isLocal
+                val isLocal = function is FirNamedFunction && function.status.visibility == Visibilities.Local
                 if (function !is FirAnonymousFunction && dispatchReceiverType != null && !isStatic && !isLocal) {
                     this += declareThisReceiverParameter(
                         thisType = dispatchReceiverType,
@@ -921,7 +923,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
              * 3. Find supertype of current containing class with type constructor of
              *    class from step 2
              */
-            if (firCallable is FirProperty && firCallable.isLocal) return null
+            if (firCallable is FirProperty && firCallable.symbol is FirLocalPropertySymbol) return null
             val containingClass = computeContainingClass(parent) ?: return null
             val defaultType = containingClass.defaultType
             if (firCallable == null) return defaultType

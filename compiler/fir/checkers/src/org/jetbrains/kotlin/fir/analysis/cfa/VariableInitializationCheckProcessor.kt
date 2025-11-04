@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph.Kind
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.RenderingInternals
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -182,7 +183,7 @@ abstract class VariableInitializationCheckProcessor {
             scope != scopes[symbol] -> {
                 reportCapturedInitialization(node, symbol)
             }
-            !symbol.isLocal && !node.owner.isInline(until = symbol.getContainingSymbol(context.session)) -> {
+            symbol is FirRegularPropertySymbol && !node.owner.isInline(until = symbol.getContainingSymbol(context.session)) -> {
                 // If the assignment is inside INVOKE_ONCE lambda and the lambda is not inlined,
                 // backend generates either separate function or separate class for the lambda.
                 // If we try to initialize non-static final field there, we will get exception at
@@ -334,14 +335,8 @@ private fun ControlFlowGraph.isInline(until: FirBasedSymbol<*>?): Boolean {
     return enterNode.previousNodes.all { it.owner.isInline(until) }
 }
 
-private val FirVariableSymbol<*>.isLocal: Boolean
-    get() = when (this) {
-        is FirPropertySymbol -> isLocal
-        else -> false
-    }
-
 val FirVariableSymbol<*>.isCapturedByValue: Boolean
-    get() = isVal && isLocal
+    get() = isVal && this is FirLocalPropertySymbol
 
 context(context: CheckerContext)
 fun buildRecursionErrorMessage(

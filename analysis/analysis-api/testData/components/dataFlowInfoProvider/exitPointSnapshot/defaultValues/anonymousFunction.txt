@@ -3,7 +3,7 @@ KaDataFlowExitPointSnapshot:
     expression = fun(n: Int): Int {
             return n + 1
         }
-    type = kotlin.Function1<kotlin.Int, kotlin.Int>
+    type = (kotlin.Int) -> kotlin.Int
   hasEscapingJumps = false
   hasJumps = false
   hasMultipleJumpKinds = false

@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] val withContextProp: R|@ContextFunctionTypeParams(1) context(MyClass) () -> kotlin/Unit| = context([ResolvedTo(BODY_RESOLVE)] [UnnamedContextParameterNameKey=$context-MyClass] <unused var>: R|MyClass|) [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ContextFunctionTypeParams(1) kotlin/Function1<MyClass, kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+    public final [ResolvedTo(BODY_RESOLVE)] val withContextProp: R|@ContextFunctionTypeParams(1) context(MyClass) () -> kotlin/Unit| = context([ResolvedTo(BODY_RESOLVE)] [UnnamedContextParameterNameKey=$context-MyClass] <unused var>: R|MyClass|) [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=context(MyClass) () -> kotlin/Unit] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         ==(context(R|<local>/<unused var>|) R|/myContextOf|<R|MyClass|>, R|/MyClass.MyClass|())
     }
 

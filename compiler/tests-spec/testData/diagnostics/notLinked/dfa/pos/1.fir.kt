@@ -470,17 +470,17 @@ fun case_23(a: ((Float) -> Int?)?, b: Float?) {
 // TESTCASE NUMBER: 24
 fun case_24(a: ((() -> Unit) -> Unit)?, b: (() -> Unit)?) =
     if (a !== null && b !== null) {
-        a(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>b<!>)
+        a(<!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>b<!>)
         a(b)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>b<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>b<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>b<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>b<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>b<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>b<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>b<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>b<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>b<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>b<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>b<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>b<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>b<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>b<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>b<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>b<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>b<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>b<!>.funNullableAny()
     } else null
 
 // TESTCASE NUMBER: 25

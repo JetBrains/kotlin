@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.library.TestComponentConstants.MANDATORY_COMPONENT_I
 import org.jetbrains.kotlin.library.TestComponentConstants.OPTIONAL_COMPONENT_BASE_FOLDER_NAME
 import org.jetbrains.kotlin.library.TestComponentConstants.OPTIONAL_COMPONENT_STRING_VALUE_FILE_NAME
 import org.jetbrains.kotlin.library.TestComponentConstants.OPTIONAL_COMPONENT_EXTRACTED_FILES_FOLDER_NAME
-import org.jetbrains.kotlin.library.impl.KlibComponentsBuilder
+import org.jetbrains.kotlin.library.impl.KlibComponentsCache
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -147,29 +147,32 @@ class KlibLayoutReaderTest {
 
 private class TestLib(val location: KlibFile) {
     private val layoutReaderFactory = KlibLayoutReaderFactory(location, ZipFileSystemInPlaceAccessor)
-
-    private val components: Map<KlibComponent.Kind<*>, KlibComponent> = KlibComponentsBuilder(layoutReaderFactory = layoutReaderFactory)
-        .withMandatory(TestMandatoryComponent.Kind, ::TestMandatoryComponentLayout, ::TestMandatoryComponentImpl)
-        .withOptional(TestOptionalComponent.Kind, ::TestOptionalComponentLayout, ::TestOptionalComponentImpl)
-        .build()
+    private val components = KlibComponentsCache(layoutReaderFactory)
 
     val mandatoryComponent: TestMandatoryComponent
-        get() = components[TestMandatoryComponent.Kind] as TestMandatoryComponent?
+        get() = components.getComponent(TestMandatoryComponent.Kind)
             ?: fail("Mandatory component should be present: $location")
 
     val optionalComponent: TestOptionalComponent?
-        get() = components[TestOptionalComponent.Kind] as TestOptionalComponent?
+        get() = components.getComponent(TestOptionalComponent.Kind)
 
     override fun toString() = location.absolutePath
 }
 
-private interface TestOptionalComponent : KlibOptionalComponent {
+/**
+ * Note: "Optional" means that the actual data availability check is performed in
+ * [TestOptionalComponent.Kind.createComponentIfDataInKlibIsAvailable]: If there is no data to be read by the component,
+ * no component instance is created and `null` is returned.
+ */
+private interface TestOptionalComponent : KlibComponent {
     val stringValue: String
     val pathsOfExtractedFiles: Collection<String>
 
-    companion object Kind : KlibOptionalComponent.Kind<TestOptionalComponent, TestOptionalComponentLayout> {
-        override fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<TestOptionalComponentLayout>) =
-            layoutReader.readInPlaceOrFallback(false) { it.baseDir.exists }
+    companion object Kind : KlibComponent.Kind<TestOptionalComponent, TestOptionalComponentLayout> {
+        override fun createLayout(root: KlibFile) = TestOptionalComponentLayout(root)
+
+        override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<TestOptionalComponentLayout>) =
+            if (layoutReader.readInPlaceOrFallback(false) { it.baseDir.exists }) TestOptionalComponentImpl(layoutReader) else null
     }
 }
 
@@ -189,10 +192,21 @@ private class TestOptionalComponentLayout(root: KlibFile) : KlibComponentLayout(
     val extractedFilesDir: KlibFile get() = baseDir.child(OPTIONAL_COMPONENT_EXTRACTED_FILES_FOLDER_NAME)
 }
 
-private interface TestMandatoryComponent : KlibMandatoryComponent {
+/**
+ * Note: "Mandatory" means that no data availability check is performed in
+ * [TestMandatoryComponent.Kind.createComponentIfDataInKlibIsAvailable]: The component instance is always created.
+ * This can lead to some IO errors later during an attempt to read something using the component if no corresponding
+ * data is available in the KLIB.
+ */
+private interface TestMandatoryComponent : KlibComponent {
     val intValue: Int
 
-    companion object Kind : KlibMandatoryComponent.Kind<TestMandatoryComponent>
+    companion object Kind : KlibComponent.Kind<TestMandatoryComponent, TestMandatoryComponentLayout> {
+        override fun createLayout(root: KlibFile) = TestMandatoryComponentLayout(root)
+
+        override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<TestMandatoryComponentLayout>) =
+            TestMandatoryComponentImpl(layoutReader)
+    }
 }
 
 private class TestMandatoryComponentImpl(private val layoutReader: KlibLayoutReader<TestMandatoryComponentLayout>) : TestMandatoryComponent {

@@ -111,11 +111,13 @@ native {
                     "-DHAVE_CONFIG_H",
                     "-DBP_LOGGING_INCLUDE=\"loggingDisabled.h\"",
                     "-DBPLOG_INFO=LoggingLevelDisabled()",
+                    *reproducibilityCompilerFlags,
                     "-c", "-o", ruleOut(), ruleInFirst())
         }
         (".c" to ".$obj") {
             tool(*hostPlatform.clang.clangC("").toTypedArray())
             flags(
+                    *reproducibilityCompilerFlags,
                     "-c", "-o", ruleOut(), ruleInFirst())
         }
     }

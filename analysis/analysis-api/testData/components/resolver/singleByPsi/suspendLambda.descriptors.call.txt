@@ -1,0 +1,35 @@
+KtNameReferenceExpression(78,85): 'suspend'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        {} -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction0<kotlin.Unit>
+          symbol = block: kotlin.coroutines.SuspendFunction0<R>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction0<kotlin.Unit>
+          symbol = kotlin/suspend(block: kotlin.coroutines.SuspendFunction0<R>): kotlin.coroutines.SuspendFunction0<R>
+          valueParameters = [
+            KaVariableSignature:
+              name = block
+              receiverType = null
+              returnType = kotlin.coroutines.SuspendFunction0<kotlin.Unit>
+              symbol = block: kotlin.coroutines.SuspendFunction0<R>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/suspend
+      typeArgumentsMapping = {
+        R -> (kotlin.Unit)
+      }

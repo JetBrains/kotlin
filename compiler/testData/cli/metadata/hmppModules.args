@@ -9,3 +9,4 @@ $TEMP_DIR$
 -Xfragment-sources=c\:$TESTDATA_DIR$/../jvm/hmpp/src/c.kt
 -Xfragment-refines=b\:a
 -Xfragment-refines=c\:b
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native

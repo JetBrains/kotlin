@@ -18,7 +18,7 @@ abstract class JvmPlatform : SimplePlatform("JVM") {
 
 @Suppress("DEPRECATION_ERROR")
 object JvmPlatforms {
-    private val UNSPECIFIED_SIMPLE_JVM_PLATFORM = JdkPlatform(JvmTarget.DEFAULT)
+    val UNSPECIFIED_SIMPLE_JVM_PLATFORM = JdkPlatform(JvmTarget.DEFAULT)
     private val jvmTargetToJdkPlatform: Map<JvmTarget, TargetPlatform> =
         JvmTarget.entries.map { it to JdkPlatform(it).toTargetPlatform() }.toMap()
 

@@ -8,7 +8,7 @@ KtDotQualifiedExpression(53,61): 's.action'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action
           isSafeNavigation = false
-          type = @ExtensionFunctionType kotlin.Function1<kotlin.String, kotlin.Unit>?
+          type = (kotlin.String.() -> kotlin.Unit)?
         extensionReceiver = KaExplicitReceiverValue:
           expression = s
           isSafeNavigation = false
@@ -16,7 +16,7 @@ KtDotQualifiedExpression(53,61): 's.action'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = p1
@@ -29,5 +29,5 @@ KtDotQualifiedExpression(53,61): 's.action'
           contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNSAFE_IMPLICIT_INVOKE_CALL: Reference has a nullable type 'Function1<String, Unit>?'. Use explicit '?.invoke' to make a function-like call instead.>
+    diagnostic = ERROR<UNSAFE_IMPLICIT_INVOKE_CALL: Reference has a nullable type '(String.() -> Unit)?'. Use explicit '?.invoke' to make a function-like call instead.>
     isInBestCandidates = true

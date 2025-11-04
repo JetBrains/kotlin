@@ -331,7 +331,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ R|/materialize|<R|kotlin/String|>()
         }
         )
@@ -370,7 +370,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lazyProperty.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ R|/materialize|<R|kotlin/String|>()
         }
         )

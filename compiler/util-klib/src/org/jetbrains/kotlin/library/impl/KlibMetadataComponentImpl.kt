@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADA
 
 /**
  * The default implementation of [KlibMetadataComponent].
- *
- * TODO (KT-81411): This class is an implementation detail. It should be made internal after dropping `KonanLibraryImpl`.
  */
-class KlibMetadataComponentImpl(
+internal class KlibMetadataComponentImpl(
     private val layoutReader: KlibLayoutReader<KlibMetadataComponentLayout>,
 ) : KlibMetadataComponent {
 

@@ -123,6 +123,7 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             this.isVar = entry.isVar
             source = entry.source
             status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
+            isLocal = localEntries
             entry.extractAnnotationsTo(this, context.containerSymbol)
             if (!localEntries) {
                 getter = FirDefaultPropertyGetter(

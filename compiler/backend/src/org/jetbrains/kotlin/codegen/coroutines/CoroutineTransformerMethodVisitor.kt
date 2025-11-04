@@ -38,6 +38,22 @@ private const val COROUTINES_METADATA_METHOD_NAME_JVM_NAME = "m"
 private const val COROUTINES_METADATA_CLASS_NAME_JVM_NAME = "c"
 private const val COROUTINES_METADATA_VERSION_JVM_NAME = "v"
 
+private const val WRAP_CONTINUATION_METHOD_DESCRIPTOR = "(" +
+    //    declaringClass: String,
+    "Ljava/lang/String;" +
+    //    methodName: String,
+    "Ljava/lang/String;" +
+    //    fileName: String,
+    "Ljava/lang/String;" +
+    //    lineNumber: Int,
+    "I" +
+    //    spilledVariables: Array<Any?>,
+    "[Ljava/lang/Object;" +
+    //    continuation: T,
+    "Lkotlin/coroutines/Continuation;" +
+    // : T
+    ")Lkotlin/coroutines/Continuation;"
+
 class CoroutineTransformerMethodVisitor(
     delegate: MethodVisitor,
     access: Int,
@@ -89,7 +105,7 @@ class CoroutineTransformerMethodVisitor(
         // states of state-machine, leading to AnalyzerError.
         InplaceArgumentsMethodTransformer().transform(containingClassInternalName, methodNode)
         FixStackMethodTransformer().transform(containingClassInternalName, methodNode)
-        val suspensionPoints = collectSuspensionPoints(methodNode)
+        val suspensionPoints: List<SuspensionPoint> = collectSuspensionPoints(methodNode)
         RedundantLocalsEliminationMethodTransformer(suspensionPoints)
             .transform(containingClassInternalName, methodNode)
         ChangeBoxingMethodTransformer.transform(containingClassInternalName, methodNode)
@@ -108,6 +124,7 @@ class CoroutineTransformerMethodVisitor(
         if (isForNamedFunction) {
             if (methodNode.allSuspensionPointsAreTailCalls(suspensionPoints, !disableTailCallOptimizationForFunctionReturningUnit)) {
                 methodNode.addCoroutineSuspendedChecks(suspensionPoints)
+                methodNode.insertAsyncStackTraceEntriesForTailCallFunction(suspensionPoints)
                 dropSuspensionMarkers(methodNode)
                 dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
                 return
@@ -168,6 +185,106 @@ class CoroutineTransformerMethodVisitor(
         generatedCodeMarkers?.addFakeVariablesToLVTAndInitializeThem(methodNode, isForNamedFunction)
 
         writeDebugMetadata(methodNode, suspensionPointLineNumbers, suspensionPointNextLineNumbers, spilledToVariableMapping)
+    }
+
+    // Replace continuation of tail-call functions with wrapped one, when debugger is attached - this way,
+    // there will be no gaps in async stack traces.
+    private fun MethodNode.insertAsyncStackTraceEntriesForTailCallFunction(suspensionPoints: List<SuspensionPoint>) {
+        if (!config.wrapContinuationForTailCallFunctions) return
+
+        assert(isForNamedFunction) {
+            "Tail-call optimisation is not supported for suspend lambdas in $containingClassInternalName"
+        }
+
+        val continuationIndex = getLastParameterIndex(desc, access)
+
+        for (suspensionPoint in suspensionPoints) {
+            val lineNumber = findSuspensionPointLineNumber(suspensionPoint)?.line ?: 0
+
+            val visibleLocals = localVariables.filter { variableNode ->
+                variableNode.name != SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME &&
+                        (instructions.indexOf(variableNode.start) < instructions.indexOf(suspensionPoint.suspensionCallBegin) &&
+                                instructions.indexOf(suspensionPoint.suspensionCallBegin) < instructions.indexOf(variableNode.end))
+            }
+
+            // When calling default functions, we do not pass continuation as the last parameter.
+            // So, go backwards until we find continuation load
+            val suspendCall = suspensionPoint.suspensionCallBegin.next.next
+            if (suspendCall is MethodInsnNode && suspendCall.name.endsWith(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX)) {
+                val methodType = Type.getMethodType(suspendCall.desc)
+                var cursor: AbstractInsnNode? = suspensionPoint.suspensionCallBegin.previous
+                for (argType in methodType.argumentTypes.reversed()) {
+                    if (argType == CONTINUATION_ASM_TYPE) break
+                    cursor = cursor?.previous
+                }
+                if (cursor != null) {
+                    val continuationLoad = cursor
+                    cursor = cursor.previous
+                    instructions.remove(continuationLoad)
+                    instructions.insert(cursor, withInstructionAdapter {
+                        callWrapContinuation(name, lineNumber, continuationIndex, visibleLocals)
+                    })
+                    continue
+                }
+            }
+
+            // We generate bytecode differently for inline function calls
+            // For ordinary calls - we put the continuation right on top of the stack before suspension point marker.
+            // We do not check for exact slot, because inliner shifts function parameters.
+            val continuationLoad = suspensionPoint.suspensionCallBegin.findPreviousOrNull { it.isMeaningful }
+            if (continuationLoad?.opcode == Opcodes.ALOAD) {
+                val cursor = continuationLoad.previous
+                instructions.remove(continuationLoad)
+                instructions.insert(cursor, withInstructionAdapter {
+                    callWrapContinuation(name, lineNumber, continuationIndex, visibleLocals)
+                })
+                continue
+            }
+
+            // Otherwise, there is no load before the marker, so, replace the variable
+            instructions.insertBefore(suspensionPoint.suspensionCallBegin, withInstructionAdapter {
+                callWrapContinuation(name, lineNumber, continuationIndex, visibleLocals)
+                store(continuationIndex, CONTINUATION_ASM_TYPE)
+            })
+        }
+    }
+
+    // stack [] -> [Continuation]
+    private fun InstructionAdapter.callWrapContinuation(
+        name: String,
+        lineNumber: Int,
+        continuationIndex: Int,
+        visibleLocals: List<LocalVariableNode>
+    ) {
+        aconst(containingClassInternalName)
+        aconst(name)
+        aconst(sourceFile)
+        iconst(lineNumber)
+
+        // spilled variables
+        iconst(visibleLocals.size * 2)
+        newarray(AsmTypes.OBJECT_TYPE)
+        for ((index, local) in visibleLocals.withIndex()) {
+            // 2n'th - names
+            dup()
+            iconst(2 * index)
+            aconst(local.name)
+            astore(AsmTypes.OBJECT_TYPE)
+            // (2n+1)'st - values
+            dup()
+            iconst(2 * index + 1)
+            val asmType = Type.getType(local.desc)
+            load(local.index, asmType)
+            StackValue.coerce(asmType, AsmTypes.OBJECT_TYPE, this)
+            astore(AsmTypes.OBJECT_TYPE)
+        }
+        load(continuationIndex, CONTINUATION_ASM_TYPE)
+        invokestatic(
+            "kotlin/coroutines/jvm/internal/TailCallAsyncStackTraceEntryKt",
+            "wrapContinuation",
+            WRAP_CONTINUATION_METHOD_DESCRIPTOR,
+            false
+        )
     }
 
     private fun addLineNumberForSuspensionPointsAtTheSameLine(node: MethodNode, points: List<SuspensionPoint>) {

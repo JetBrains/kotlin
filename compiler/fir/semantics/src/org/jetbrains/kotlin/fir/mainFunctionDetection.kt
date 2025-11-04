@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -33,7 +33,7 @@ fun FirNamedFunction.isMaybeMainFunction(
     getPlatformName: FirNamedFunction.() -> String?,
     isPlatformStatic: FirNamedFunction.() -> Boolean,
 ): Boolean {
-    if (isLocal) return false
+    if (status.visibility == Visibilities.Local) return false
     if (typeParameters.isNotEmpty()) return false
     if (!returnTypeRef.coneType.isUnit) return false
 

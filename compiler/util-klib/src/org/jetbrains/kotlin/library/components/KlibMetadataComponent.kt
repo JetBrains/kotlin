@@ -7,21 +7,23 @@ package org.jetbrains.kotlin.library.components
 
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 import org.jetbrains.kotlin.library.Klib
+import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
-import org.jetbrains.kotlin.library.KlibMandatoryComponent
+import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_MODULE_METADATA_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
+import org.jetbrains.kotlin.library.impl.KlibMetadataComponentImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 
 /**
  * This component provides read access to Klib metadata.
  */
-interface KlibMetadataComponent : KlibMandatoryComponent {
+interface KlibMetadataComponent : KlibComponent {
     /** The metadata header in the raw form (bytes, yet to be deserialized to [KlibMetadataProtoBuf.Header]). */
     val moduleHeaderData: ByteArray
 
@@ -31,7 +33,16 @@ interface KlibMetadataComponent : KlibMandatoryComponent {
     /** The concrete package fragment in the raw form (bytes, yet to be deserialized to [ProtoBuf.PackageFragment]). */
     fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray
 
-    companion object Kind : KlibMandatoryComponent.Kind<KlibMetadataComponent>
+    companion object Kind : KlibComponent.Kind<KlibMetadataComponent, KlibMetadataComponentLayout> {
+        override fun createLayout(root: KlibFile) = KlibMetadataComponentLayout(root)
+
+        /**
+         * Note: It is expected that every correct Klib has metadata files.
+         * Therefore, no data availability check is performed in this method and the component is always created unconditionally.
+         */
+        override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<KlibMetadataComponentLayout>): KlibMetadataComponent =
+            KlibMetadataComponentImpl(layoutReader)
+    }
 }
 
 /**
@@ -41,7 +52,7 @@ interface KlibMetadataComponent : KlibMandatoryComponent {
  * a non-null component instance that can be used to read the Klib's metadata.
  */
 inline val Klib.metadata: KlibMetadataComponent
-    get() = getComponent(KlibMetadataComponent.Kind)
+    get() = getComponent(KlibMetadataComponent.Kind)!!
 
 class KlibMetadataComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
     constructor(root: String) : this(KlibFile(root))

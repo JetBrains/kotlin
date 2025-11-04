@@ -5,13 +5,21 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+/**
+ * @param mode
+ */
 enum class JsSourceMapEmbedMode(val mode: String) {
+    /***/
     SOURCE_MAP_SOURCE_CONTENT_INLINING("inlining"),
+    /***/
     SOURCE_MAP_SOURCE_CONTENT_NEVER("never"),
+    /***/
     SOURCE_MAP_SOURCE_CONTENT_ALWAYS("always"),
     ;
 
+    /***/
     companion object {
+        /***/
         @JvmStatic
         fun fromMode(mode: String): JsSourceMapEmbedMode =
             JsSourceMapEmbedMode.values().firstOrNull { it.mode == mode }

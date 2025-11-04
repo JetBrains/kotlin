@@ -99,7 +99,7 @@ private abstract class AbstractToolingDiagnostic(
             else -> buildString {
                 appendLine("Solutions:")
                 solutions.forEach { solution ->
-                    appendLine(" • $solution")
+                    appendLine(" * $solution")
                 }
             }.trimEnd()
         }
@@ -163,7 +163,7 @@ private class DefaultStyledToolingDiagnostic(
             when (solutions.size) {
                 1 -> append(solutions.single().italic().green())
                 else -> solutions.forEach { solution ->
-                    appendLine(" • ${solution.italic()}".green())
+                    appendLine(" * ${solution.italic()}".green())
                 }
             }
         }.trimEnd()

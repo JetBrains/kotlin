@@ -229,15 +229,16 @@ open class NativeInteropPlugin : Plugin<Project> {
         val stubsName = "${defFileName.removeSuffix(".def").split(".").reversed().joinToString(separator = "")}stubs"
         val library = solib(stubsName)
 
-        val linkedStaticLibraries = project.files(cppLink.incoming.artifactView {
+        val linkedStaticLibraries = cppLink.incoming.artifactView {
             attributes {
                 attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.LINK_ARCHIVE))
             }
-        }.files, *additionalLinkedStaticLibraries.toTypedArray())
+        }.files
 
         extensions.getByType<NativeToolsExtension>().apply {
             val obj = if (HostManager.hostIsMingw) "obj" else "o"
             suffixes {
+                val sortedIncludeFlags = reproduciblySortedFilePaths(includeDirs).map { "-I${it.absolutePath}" }
                 (".c" to ".$obj") {
                     tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
 
@@ -262,16 +263,21 @@ open class NativeInteropPlugin : Plugin<Project> {
 
                     val cflags = cCompilerArgs +
                             commonCompilerArgs +
+                            reproducibilityCompilerFlags +
                             ignoreWarningFlags +
                             "-Werror" +
-                            includeDirs.map { "-I${it.absolutePath}" } +
+                            sortedIncludeFlags +
                             hostPlatform.clangForJni.hostCompilerArgsForJni
 
                     flags(*cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
                 }
                 (".cpp" to ".$obj") {
                     tool(*hostPlatform.clang.clangCXX("").toTypedArray())
-                    val cxxflags = cppCompilerArgs + commonCompilerArgs + "-Werror" + includeDirs.map { "-I${it.absolutePath}" }
+                    val cxxflags = cppCompilerArgs +
+                            commonCompilerArgs +
+                            reproducibilityCompilerFlags +
+                            "-Werror" +
+                            sortedIncludeFlags
                     flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
                 }
             }
@@ -289,13 +295,28 @@ open class NativeInteropPlugin : Plugin<Project> {
             target(library, *objSet) {
                 tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
                 val ldflags = buildList {
-                    addAll(linkedStaticLibraries.map { it.absolutePath })
-                    cppLink.incoming.artifactView {
+                    addAll(reproduciblySortedFilePaths(linkedStaticLibraries).map { it.absolutePath })
+                    addAll(additionalLinkedStaticLibraries) // Do not additionally sort them, because they may have to be linked in a specific order.
+                    reproduciblySortedFilePaths(cppLink.incoming.artifactView {
                         attributes {
                             attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
                         }
-                    }.files.flatMapTo(this) { listOf("-L${it.parentFile.absolutePath}", "-l${libname(it)}") }
+                    }.files).flatMapTo(this) { listOf("-L${it.parentFile.absolutePath}", "-l${libname(it)}") }
                     addAll(linkerArgs)
+
+                    if (HostManager.hostIsMac) {
+                        // Set install_name to a non-absolute path.
+                        add("-Wl,-install_name,@rpath/$library")
+                        // Unlike -ffile-prefix-map for clang, it's only possible to add a single directory for -oso_prefix:
+                        // in the `ld_classic`, for example, see
+                        // https://github.com/apple-oss-distributions/ld64/blob/1a4389663d65d6630e4b3e31ace2a86b6183b452/src/ld/Options.cpp#L4249
+                        // Currently, we only need it for dependencies from inside the repo, so strip the root project's absolute path.
+                        add("-Wl,-oso_prefix,${isolated.rootProject.projectDirectory.asFile}")
+                    }
+                    if (HostManager.hostIsMingw) {
+                        // Use binary hash as the timestamp in COFF headers.
+                        add("-Wl,/Brepro")
+                    }
                 }
                 flags("-shared", "-o", ruleOut(), *ruleInAll(), *ldflags.toTypedArray())
             }
@@ -303,6 +324,7 @@ open class NativeInteropPlugin : Plugin<Project> {
 
         tasks.named(library).configure {
             inputs.files(linkedStaticLibraries).withPathSensitivity(PathSensitivity.NONE)
+            inputs.files(additionalLinkedStaticLibraries).withPathSensitivity(PathSensitivity.NONE)
         }
         tasks.named(obj(stubsName)).configure {
             inputs.dir(bindingsRoot.map { it.dir("c") }).withPathSensitivity(PathSensitivity.RELATIVE) // if C file was generated, need to set up task dependency

@@ -45,9 +45,12 @@ fun IrMemberAccessExpression<*>.getAllArgumentsWithIr(): List<Pair<IrValueParame
     val irFunction = when (this) {
         is IrFunctionAccessExpression -> this.symbol.owner
         is IrFunctionReference -> this.symbol.owner
-        is IrPropertyReference -> {
-            this.getter?.owner ?: error("There should be getter to use `getArgumentsWithIr` on IrPropertyReference: ${this.dump()}}")
+        is IrPropertyReference if getter != null -> this.getter!!.owner
+        is IrPropertyReference if field != null -> {
+            val field = field!!.owner
+            return if (field.isStatic) emptyList() else listOf(field.parentAsClass.thisReceiver!! to arguments.single())
         }
+        is IrPropertyReference -> error("There should be getter or field to use `getArgumentsWithIr` on IrPropertyReference: ${this.dump()}}")
         else -> error(dump())
     }
 

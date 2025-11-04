@@ -4,7 +4,6 @@
  */
 
 import org.jetbrains.kotlin.benchmark.BenchmarkingPlugin
-import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -28,6 +27,7 @@ native.apply {
     compilations["main"].cinterops {
         create("classes") {
             headers("$projectDir/src/nativeInterop/cinterop/complexNumbers.h")
+            extraOpts("-Xccall-mode", "indirect") // Required for -Xcompile-source
             extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/complexNumbers.m")
             extraOpts("-Xsource-compiler-option", "-lobjc", "-Xsource-compiler-option", "-fobjc-arc",
                     "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)=")

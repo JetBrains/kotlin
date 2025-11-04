@@ -23,7 +23,7 @@ var test3: Int = 0
 
 fun f4(fn: (@Ann Int, @Ann Int) -> Unit) {}
 
-val test4 = f4 <!ARGUMENT_TYPE_MISMATCH("Function1<Int, Unit>; Function2<Int, Int, Unit>")!>{ single -> }<!>
+val test4 = f4 <!ARGUMENT_TYPE_MISMATCH("(Int) -> Unit; (Int, Int) -> Unit")!>{ single -> }<!>
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, functionDeclaration, functionalType, inProjection,
 integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, setter, typeConstraint, typeParameter */

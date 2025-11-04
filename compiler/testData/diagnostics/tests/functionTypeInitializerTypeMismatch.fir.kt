@@ -9,14 +9,14 @@ var f3: () -> Int = l@ {
     if (true) return@l 4
     return@l <!RETURN_TYPE_MISMATCH("Int; String")!>""<!>
 }
-var f5: () -> Int <!INITIALIZER_TYPE_MISMATCH("Function0<Int>; Function1<??? (Unknown type for value parameter it), Int>")!>=<!> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>it<!> -> "" }
-var f6: () -> Int <!INITIALIZER_TYPE_MISMATCH("Function0<Int>; Function1<Any, Int>")!>=<!> { it: Any -> "" }
+var f5: () -> Int <!INITIALIZER_TYPE_MISMATCH("() -> Int; (??? (Unknown type for value parameter it)) -> Int")!>=<!> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>it<!> -> "" }
+var f6: () -> Int <!INITIALIZER_TYPE_MISMATCH("() -> Int; (Any) -> Int")!>=<!> { it: Any -> "" }
 var f7: () -> Int = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
 var f8: String.() -> Int = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
-var f9: String <!INITIALIZER_TYPE_MISMATCH("String; Function0<String>")!>=<!> {  -> "" }
+var f9: String <!INITIALIZER_TYPE_MISMATCH("String; () -> String")!>=<!> {  -> "" }
 var f10: Function0<Int> = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
-var f11: Function0<<!REDUNDANT_PROJECTION("Function0<out Int>")!>out<!> Int> = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
-var f12: Function0<<!CONFLICTING_PROJECTION("Function0<in Int>")!>in<!> Int> = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
+var f11: Function0<<!REDUNDANT_PROJECTION("() -> out Int")!>out<!> Int> = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
+var f12: Function0<<!CONFLICTING_PROJECTION("() -> in Int")!>in<!> Int> = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
 var f13: Function0<*> = {  -> "" }
 var f14: Function<Int> = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
 var f15: Function<Int> = { <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
@@ -45,11 +45,11 @@ fun assign() {
         return@l <!RETURN_TYPE_MISMATCH("Int; String")!>""<!>
     }
 
-    f5 <!ASSIGNMENT_TYPE_MISMATCH("Function0<Int>; Function1<??? (Unknown type for value parameter it), Int>")!>=<!> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>it<!> -> "" }
-    f6 <!ASSIGNMENT_TYPE_MISMATCH("Function0<Int>; Function1<Any, Int>")!>=<!> { it: Any -> "" }
+    f5 <!ASSIGNMENT_TYPE_MISMATCH("() -> Int; (??? (Unknown type for value parameter it)) -> Int")!>=<!> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>it<!> -> "" }
+    f6 <!ASSIGNMENT_TYPE_MISMATCH("() -> Int; (Any) -> Int")!>=<!> { it: Any -> "" }
     f7 = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
     f8 = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
-    f9 <!ASSIGNMENT_TYPE_MISMATCH("String; Function0<String>")!>=<!> {  -> "" }
+    f9 <!ASSIGNMENT_TYPE_MISMATCH("String; () -> String")!>=<!> {  -> "" }
     f10 = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
     f11 = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
     f12 = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }

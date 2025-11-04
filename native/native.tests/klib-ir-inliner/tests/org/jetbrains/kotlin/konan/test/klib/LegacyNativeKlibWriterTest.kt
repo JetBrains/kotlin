@@ -47,8 +47,8 @@ class LegacyNativeKlibWriterTest : AbstractNativeKlibWriterTest<LegacyNativeKlib
         val klibLocation = if (parameters.nopack) klibDir else klibDir.resolveSibling(klibDir.nameWithoutExtension + ".klib")
 
         buildLibrary(
-            natives = parameters.bitCodeFiles.map { it.file.path },
-            included = parameters.includedFiles.map { it.file.path },
+            natives = parameters.bitcodeFiles.map { it.file.path },
+            included = parameters.nativeIncludedBinaryFiles.map { it.file.path },
             linkDependencies = KlibLoader { libraryPaths(parameters.dependencies.map { it.path }) }.load().librariesStdlibFirst,
             metadata = parameters.metadata,
             ir = if (parameters.ir != null || parameters.irOfInlinableFunctions != null) {

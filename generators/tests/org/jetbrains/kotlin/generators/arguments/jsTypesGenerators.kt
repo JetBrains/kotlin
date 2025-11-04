@@ -16,20 +16,28 @@ internal fun generateJsMainFunctionExecutionMode(
 ) {
     val modeFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode")
     filePrinter(fileFromFqName(apiDir, modeFqName)) {
-        generateDeclaration("enum class", modeFqName, afterType = "(val mode: String)") {
+        generateDeclaration(
+            modifiers = "enum class",
+            type = modeFqName,
+            afterType = "(val mode: String)",
+            declarationKDoc = "@param mode",
+        ) {
             val modes = hashMapOf(
                 K2JsArgumentConstants::CALL.name to K2JsArgumentConstants.CALL,
                 K2JsArgumentConstants::NO_CALL.name to K2JsArgumentConstants.NO_CALL
             )
 
             for ((key, value) in modes) {
+                println("/***/")
                 println("$key(\"$value\"),")
             }
             println(";")
 
             println()
+            println("/***/")
             println("companion object {")
             withIndent {
+                println("/***/")
                 println("@JvmStatic")
                 println("fun fromMode(mode: String): JsMainFunctionExecutionMode =")
                 println("    JsMainFunctionExecutionMode.values().firstOrNull { it.mode == mode }")
@@ -49,7 +57,12 @@ internal fun generateJsModuleKind(
 ) {
     val jsModuleKindFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsModuleKind")
     filePrinter(fileFromFqName(apiDir, jsModuleKindFqName)) {
-        generateDeclaration("enum class", jsModuleKindFqName, afterType = "(val kind: String)") {
+        generateDeclaration(
+            modifiers = "enum class",
+            type = jsModuleKindFqName,
+            afterType = "(val kind: String)",
+            declarationKDoc = "@param kind",
+        ) {
             val kinds = hashMapOf(
                 K2JsArgumentConstants::MODULE_PLAIN.name to K2JsArgumentConstants.MODULE_PLAIN,
                 K2JsArgumentConstants::MODULE_AMD.name to K2JsArgumentConstants.MODULE_AMD,
@@ -59,13 +72,16 @@ internal fun generateJsModuleKind(
             )
 
             for ((key, value) in kinds) {
+                println("/***/")
                 println("$key(\"$value\"),")
             }
             println(";")
 
             println()
+            println("/***/")
             println("companion object {")
             withIndent {
+                println("/***/")
                 println("@JvmStatic")
                 println("fun fromKind(kind: String): JsModuleKind =")
                 println("    JsModuleKind.values().firstOrNull { it.kind == kind }")
@@ -85,7 +101,12 @@ internal fun generateJsSourceMapEmbedMode(
 ) {
     val jsSourceMapEmbedKindFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode")
     filePrinter(fileFromFqName(apiDir, jsSourceMapEmbedKindFqName)) {
-        generateDeclaration("enum class", jsSourceMapEmbedKindFqName, afterType = "(val mode: String)") {
+        generateDeclaration(
+            modifiers = "enum class",
+            type = jsSourceMapEmbedKindFqName,
+            afterType = "(val mode: String)",
+            declarationKDoc = "@param mode",
+        ) {
             val modes = hashMapOf(
                 K2JsArgumentConstants::SOURCE_MAP_SOURCE_CONTENT_ALWAYS.name to K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS,
                 K2JsArgumentConstants::SOURCE_MAP_SOURCE_CONTENT_NEVER.name to K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER,
@@ -93,13 +114,16 @@ internal fun generateJsSourceMapEmbedMode(
             )
 
             for ((key, value) in modes) {
+                println("/***/")
                 println("$key(\"$value\"),")
             }
             println(";")
 
             println()
+            println("/***/")
             println("companion object {")
             withIndent {
+                println("/***/")
                 println("@JvmStatic")
                 println("fun fromMode(mode: String): JsSourceMapEmbedMode =")
                 println("    JsSourceMapEmbedMode.values().firstOrNull { it.mode == mode }")
@@ -119,7 +143,12 @@ internal fun generateJsSourceMapNamesPolicy(
 ) {
     val jsSourceMapNamesPolicyFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsSourceMapNamesPolicy")
     filePrinter(fileFromFqName(apiDir, jsSourceMapNamesPolicyFqName)) {
-        generateDeclaration("enum class", jsSourceMapNamesPolicyFqName, afterType = "(val policy: String)") {
+        generateDeclaration(
+            modifiers = "enum class",
+            type = jsSourceMapNamesPolicyFqName,
+            afterType = "(val policy: String)",
+            declarationKDoc = "@param policy",
+        ) {
             val modes = hashMapOf(
                 K2JsArgumentConstants::SOURCE_MAP_NAMES_POLICY_NO.name to K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_NO,
                 K2JsArgumentConstants::SOURCE_MAP_NAMES_POLICY_SIMPLE_NAMES.name to K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_SIMPLE_NAMES,
@@ -127,13 +156,16 @@ internal fun generateJsSourceMapNamesPolicy(
             )
 
             for ((key, value) in modes) {
+                println("/***/")
                 println("$key(\"$value\"),")
             }
             println(";")
 
             println()
+            println("/***/")
             println("companion object {")
             withIndent {
+                println("/***/")
                 println("@JvmStatic")
                 println("fun fromPolicy(policy: String): JsSourceMapNamesPolicy =")
                 println("    JsSourceMapNamesPolicy.values().firstOrNull { it.policy == policy }")

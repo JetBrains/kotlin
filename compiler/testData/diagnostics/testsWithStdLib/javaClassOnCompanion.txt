@@ -4,6 +4,8 @@ package test {
     public val a0: java.lang.Class<test.A.Companion>
     public val a1: java.lang.Class<test.A.Companion>
     public val a2: java.lang.Class<test.A.Companion>
+    public val a21: java.lang.Class<test.A.Companion>
+    public val a22: java.lang.Class<test.A.Companion>
     public val a3: java.lang.Class<test.A>
     public val a4: java.lang.Class<test.A>
     public val a5: java.lang.Class<test.A.Companion>

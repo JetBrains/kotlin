@@ -51,7 +51,7 @@ private class VarargTransformer(
             when (e) {
                 is IrSpreadElement -> {
                     if (currentList.isNotEmpty()) {
-                        segments.add(arrayInfo.toPrimitiveArrayLiteral(currentList))
+                        segments.add(arrayInfo.toPrimitiveArrayLiteral(currentList, expression.startOffset, expression.endOffset))
                         currentList.clear()
                     }
                     segments.add(arrayInfo.unboxElementIfNeeded(e.expression))
@@ -63,14 +63,14 @@ private class VarargTransformer(
             }
         }
         if (currentList.isNotEmpty()) {
-            segments.add(arrayInfo.toPrimitiveArrayLiteral(currentList))
+            segments.add(arrayInfo.toPrimitiveArrayLiteral(currentList, expression.startOffset, expression.endOffset))
             currentList.clear()
         }
 
         // empty vararg => empty array literal
         if (segments.isEmpty()) {
             with(arrayInfo) {
-                return boxArrayIfNeeded(toPrimitiveArrayLiteral(emptyList<IrExpression>()))
+                return boxArrayIfNeeded(toPrimitiveArrayLiteral(emptyList<IrExpression>(), expression.startOffset, expression.endOffset))
             }
         }
 
@@ -90,7 +90,9 @@ private class VarargTransformer(
             segments.toArrayLiteral(
                 context,
                 IrSimpleTypeImpl(context.symbols.array, false, emptyList(), emptyList()), // TODO: Substitution
-                context.irBuiltIns.anyType
+                context.irBuiltIns.anyType,
+                expression.startOffset,
+                expression.endOffset,
             )
 
         val concatFun = if (arrayInfo.primitiveArrayType.classifierOrNull in context.symbols.primitiveArrays.keys) {
@@ -161,7 +163,7 @@ private class VarargTransformer(
             if (argument == null && varargElementType != null) {
                 val arrayInfo = InlineClassArrayInfo(context, varargElementType, parameter.type)
                 val emptyArray = with(arrayInfo) {
-                    boxArrayIfNeeded(toPrimitiveArrayLiteral(emptyList()))
+                    boxArrayIfNeeded(toPrimitiveArrayLiteral(emptyList(), UNDEFINED_OFFSET, UNDEFINED_OFFSET))
                 }
 
                 expression.arguments[parameter] = emptyArray
@@ -172,7 +174,13 @@ private class VarargTransformer(
     }
 }
 
-private fun List<IrExpression>.toArrayLiteral(context: JsIrBackendContext, type: IrType, varargElementType: IrType): IrExpression {
+private fun List<IrExpression>.toArrayLiteral(
+    context: JsIrBackendContext,
+    type: IrType,
+    varargElementType: IrType,
+    startOffset: Int,
+    endOffset: Int,
+): IrExpression {
 
     // TODO: Use symbols when builtins symbol table is fixes
     val primitiveType = context.symbols.primitiveArrays.mapKeys { it.key }[type.classifierOrNull]
@@ -182,9 +190,6 @@ private fun List<IrExpression>.toArrayLiteral(context: JsIrBackendContext, type:
             context.symbols.primitiveToLiteralConstructor.getValue(primitiveType)
         else
             context.symbols.arrayLiteral
-
-    val startOffset = firstOrNull()?.startOffset ?: UNDEFINED_OFFSET
-    val endOffset = lastOrNull()?.endOffset ?: UNDEFINED_OFFSET
 
     val irVararg = IrVarargImpl(startOffset, endOffset, type, varargElementType, this)
 
@@ -248,6 +253,6 @@ internal class InlineClassArrayInfo(val context: JsIrBackendContext, val element
         }
     }
 
-    fun toPrimitiveArrayLiteral(elements: List<IrExpression>) =
-        elements.toArrayLiteral(context, primitiveArrayType, primitiveElementType)
+    fun toPrimitiveArrayLiteral(elements: List<IrExpression>, startOffset: Int, endOffset: Int) =
+        elements.toArrayLiteral(context, primitiveArrayType, primitiveElementType, startOffset, endOffset)
 }

@@ -12,8 +12,8 @@ KtNameReferenceExpression(61,62): 'f'
         signature = KaVariableSignature:
           name = f
           receiverType = null
-          returnType = kotlin.Function0<kotlin.Unit>
-          symbol = val f: kotlin.Function0<kotlin.Unit>
+          returnType = () -> kotlin.Unit
+          symbol = val f: () -> kotlin.Unit
           contextParameters = []
           callableId = /A.f
       simpleAccess = Read

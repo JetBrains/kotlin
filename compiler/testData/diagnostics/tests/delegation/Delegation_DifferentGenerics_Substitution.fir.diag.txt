@@ -1,13 +1,13 @@
 /test.kt:(71,78): warning: The function 'fun <C : Any!> bar(): (Mutable)List<C!>!' defined in 'JI' from an interface is generic, but the function 'fun bar(): (Mutable)List<String!>!' defined in 'JC' from a delegate is not.
-Such an implementation can provoke runtime errors. This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KT-72140.
+Such an implementation can provoke runtime errors. This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KTLC-267.
 
 /test.kt:(71,78): warning: The function 'fun <C : Any!> foo(): (Mutable)List<Int!>!' defined in 'JI' from an interface is generic, but the function 'fun foo(): (Mutable)List<String!>!' defined in 'JC' from a delegate is not.
-Such an implementation can provoke runtime errors. This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KT-72140.
+Such an implementation can provoke runtime errors. This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KTLC-267.
 
 /test.kt:(82,88): error: Type mismatch: inferred type is 'JC', but 'JI<Int>' was expected.
 
 /test.kt:(113,123): warning: The function 'fun <C : Any!> bar(): (Mutable)List<C!>!' defined in 'JI' from an interface is generic, but the function 'fun bar(): (Mutable)List<String!>!' defined in 'JC' from a delegate is not.
-Such an implementation can provoke runtime errors. This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KT-72140.
+Such an implementation can provoke runtime errors. This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KTLC-267.
 
 /test.kt:(113,123): warning: The function 'fun <C : Any!> foo(): (Mutable)List<String!>!' defined in 'JI' from an interface is generic, but the function 'fun foo(): (Mutable)List<String!>!' defined in 'JC' from a delegate is not.
-Such an implementation can provoke runtime errors. This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KT-72140.
+Such an implementation can provoke runtime errors. This will become an error in language version 2.3. See https://youtrack.jetbrains.com/issue/KTLC-267.

@@ -9,7 +9,7 @@ fun bar(nullX: Int?, nullY: String?, notNullY: String) {
     foo(<!ARGUMENT_TYPE_MISMATCH!>nullX<!>)
     foo(<!ARGUMENT_TYPE_MISMATCH!>nullX<!>, notNullY)
     foo(<!ARGUMENT_TYPE_MISMATCH!>nullX<!>, <!ARGUMENT_TYPE_MISMATCH!>nullY<!>)
-    <!NONE_APPLICABLE!>foo<!>()
+    <!NONE_APPLICABLE, NO_VALUE_FOR_PARAMETER!>foo<!>()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, nullableType */

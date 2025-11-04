@@ -196,6 +196,7 @@ class JvmMappedScope(
             moduleData = firKotlinClass.moduleData
             origin = FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.OPEN, EffectiveVisibility.Public)
+            isLocal = firKotlinClass.isLocal
             returnTypeRef = buildResolvedTypeRef {
                 coneType = firKotlinClass.typeParameters.firstOrNull()
                     ?.let { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isMarkedNullable = false) }

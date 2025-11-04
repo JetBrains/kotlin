@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.prettyName
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
@@ -203,6 +204,34 @@ internal object KotlinToolingDiagnostics {
 
         val extendedDetailsLogInInfo: String
             get() = "Run the build with '--info' for more details."
+    }
+
+    internal object NativeHostNotSupportedError : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(platform: String, supportedHosts: List<String>) =
+            build {
+                val supportedHostsList = supportedHosts
+                    .sorted()
+                    .joinToString(separator = "\n* ", prefix = "* ")
+
+                title("The host platform is not supported by Kotlin/Native")
+                    .description(
+                        """
+                        |The Kotlin/Native compiler does not support your current host platform: $platform.
+                        |
+                        |Compilation of Kotlin/Native targets is only possible on the following host platforms:
+                        |$supportedHostsList
+                        |
+                        |Your platform is not on this list, so the Kotlin/Native compiler cannot be executed.
+                        """.trimMargin()
+                    )
+                    .solutions {
+                        listOf(
+                            "Run your build on one of the supported host platforms (listed above).",
+                            "If using a CI/CD service, configure your build pipeline to use a supported runner (e.g., a Linux x86_64 agent)."
+                        )
+                    }
+                    .documentationLink(URI("https://kotlinlang.org/docs/native-target-support.html"))
+            }
     }
 
     object CrossCompilationWithCinterops : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {

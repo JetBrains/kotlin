@@ -117,5 +117,16 @@ fun f1(): (() -> Unit) -> (() -> Unit) -> Unit {
     }<!>
 }
 
+fun hasOverload(x: Int) {}
+fun hasOverload(x: String) {}
+
+fun testOverloads() {
+    <!NONE_APPLICABLE!>hasOverload<!>(true)
+    <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
+
+    <!NONE_APPLICABLE!>hasOverload<!>(true)
+    foo@ <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
+}
+
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localFunction,
 vararg */

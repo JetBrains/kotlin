@@ -124,7 +124,7 @@ KaNamedFunctionSymbol:
                     typeArguments: []
                     type: kotlin/Unit
                 ]
-                type: kotlin/Function0<kotlin/Unit>
+                type: () -> kotlin/Unit
               visibility: PUBLIC
               getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
               getContainingJvmClassName: TwoContractsKt
@@ -248,7 +248,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Unit
         ]
-        type: kotlin/Function0<kotlin/Unit>
+        type: () -> kotlin/Unit
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -141,7 +142,7 @@ fun FirAnnotationContainer.getImplicitUseSiteTargetList(): List<AnnotationUseSit
                 emptyList()
         }
         is FirProperty ->
-            if (!isLocal) UseSiteTargetsList.T_PROPERTY else emptyList()
+            if (this.symbol is FirLocalPropertySymbol) emptyList() else UseSiteTargetsList.T_PROPERTY
         is FirPropertyAccessor ->
             if (isGetter) listOf(AnnotationUseSiteTarget.PROPERTY_GETTER) else listOf(AnnotationUseSiteTarget.PROPERTY_SETTER)
         else ->

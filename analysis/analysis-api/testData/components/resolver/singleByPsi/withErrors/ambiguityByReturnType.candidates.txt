@@ -8,8 +8,8 @@ KtCallExpression(208,319): 'sumOf { c ->'
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<T, java.math.BigDecimal>
+          returnType = (kotlin.Int) -> java.math.BigDecimal
+          symbol = selector: (T) -> java.math.BigDecimal
           contextParameters = []
           callableId = null)
       }
@@ -24,13 +24,13 @@ KtCallExpression(208,319): 'sumOf { c ->'
         signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.Int>
           returnType = java.math.BigDecimal
-          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: kotlin.Function1<T, java.math.BigDecimal>): java.math.BigDecimal
+          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> java.math.BigDecimal): java.math.BigDecimal
           valueParameters = [
             KaVariableSignature:
               name = selector
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, java.math.BigDecimal>
-              symbol = selector: kotlin.Function1<T, java.math.BigDecimal>
+              returnType = (kotlin.Int) -> java.math.BigDecimal
+              symbol = selector: (T) -> java.math.BigDecimal
               contextParameters = []
               callableId = null
           ]
@@ -50,8 +50,8 @@ KtCallExpression(208,319): 'sumOf { c ->'
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<T, java.math.BigInteger>
+          returnType = (kotlin.Int) -> java.math.BigInteger
+          symbol = selector: (T) -> java.math.BigInteger
           contextParameters = []
           callableId = null)
       }
@@ -66,13 +66,13 @@ KtCallExpression(208,319): 'sumOf { c ->'
         signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.Int>
           returnType = java.math.BigInteger
-          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: kotlin.Function1<T, java.math.BigInteger>): java.math.BigInteger
+          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> java.math.BigInteger): java.math.BigInteger
           valueParameters = [
             KaVariableSignature:
               name = selector
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, java.math.BigInteger>
-              symbol = selector: kotlin.Function1<T, java.math.BigInteger>
+              returnType = (kotlin.Int) -> java.math.BigInteger
+              symbol = selector: (T) -> java.math.BigInteger
               contextParameters = []
               callableId = null
           ]
@@ -92,8 +92,8 @@ KtCallExpression(208,319): 'sumOf { c ->'
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Double>
-          symbol = selector: kotlin.Function1<T, kotlin.Double>
+          returnType = (kotlin.Int) -> kotlin.Double
+          symbol = selector: (T) -> kotlin.Double
           contextParameters = []
           callableId = null)
       }
@@ -108,13 +108,13 @@ KtCallExpression(208,319): 'sumOf { c ->'
         signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.Int>
           returnType = kotlin.Double
-          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: kotlin.Function1<T, kotlin.Double>): kotlin.Double
+          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.Double): kotlin.Double
           valueParameters = [
             KaVariableSignature:
               name = selector
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Double>
-              symbol = selector: kotlin.Function1<T, kotlin.Double>
+              returnType = (kotlin.Int) -> kotlin.Double
+              symbol = selector: (T) -> kotlin.Double
               contextParameters = []
               callableId = null
           ]
@@ -134,8 +134,8 @@ KtCallExpression(208,319): 'sumOf { c ->'
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
-          symbol = selector: kotlin.Function1<T, kotlin.Int>
+          returnType = (kotlin.Int) -> kotlin.Int
+          symbol = selector: (T) -> kotlin.Int
           contextParameters = []
           callableId = null)
       }
@@ -150,13 +150,13 @@ KtCallExpression(208,319): 'sumOf { c ->'
         signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.Int>
           returnType = kotlin.Int
-          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: kotlin.Function1<T, kotlin.Int>): kotlin.Int
+          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.Int): kotlin.Int
           valueParameters = [
             KaVariableSignature:
               name = selector
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
-              symbol = selector: kotlin.Function1<T, kotlin.Int>
+              returnType = (kotlin.Int) -> kotlin.Int
+              symbol = selector: (T) -> kotlin.Int
               contextParameters = []
               callableId = null
           ]
@@ -176,8 +176,8 @@ KtCallExpression(208,319): 'sumOf { c ->'
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Long>
-          symbol = selector: kotlin.Function1<T, kotlin.Long>
+          returnType = (kotlin.Int) -> kotlin.Long
+          symbol = selector: (T) -> kotlin.Long
           contextParameters = []
           callableId = null)
       }
@@ -192,13 +192,13 @@ KtCallExpression(208,319): 'sumOf { c ->'
         signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.Int>
           returnType = kotlin.Long
-          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: kotlin.Function1<T, kotlin.Long>): kotlin.Long
+          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.Long): kotlin.Long
           valueParameters = [
             KaVariableSignature:
               name = selector
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Long>
-              symbol = selector: kotlin.Function1<T, kotlin.Long>
+              returnType = (kotlin.Int) -> kotlin.Long
+              symbol = selector: (T) -> kotlin.Long
               contextParameters = []
               callableId = null
           ]
@@ -218,8 +218,8 @@ KtCallExpression(208,319): 'sumOf { c ->'
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.UInt>
-          symbol = selector: kotlin.Function1<T, kotlin.UInt>
+          returnType = (kotlin.Int) -> kotlin.UInt
+          symbol = selector: (T) -> kotlin.UInt
           contextParameters = []
           callableId = null)
       }
@@ -234,13 +234,13 @@ KtCallExpression(208,319): 'sumOf { c ->'
         signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.Int>
           returnType = kotlin.UInt
-          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: kotlin.Function1<T, kotlin.UInt>): kotlin.UInt
+          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.UInt): kotlin.UInt
           valueParameters = [
             KaVariableSignature:
               name = selector
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.UInt>
-              symbol = selector: kotlin.Function1<T, kotlin.UInt>
+              returnType = (kotlin.Int) -> kotlin.UInt
+              symbol = selector: (T) -> kotlin.UInt
               contextParameters = []
               callableId = null
           ]
@@ -260,8 +260,8 @@ KtCallExpression(208,319): 'sumOf { c ->'
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.ULong>
-          symbol = selector: kotlin.Function1<T, kotlin.ULong>
+          returnType = (kotlin.Int) -> kotlin.ULong
+          symbol = selector: (T) -> kotlin.ULong
           contextParameters = []
           callableId = null)
       }
@@ -276,13 +276,13 @@ KtCallExpression(208,319): 'sumOf { c ->'
         signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.Int>
           returnType = kotlin.ULong
-          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: kotlin.Function1<T, kotlin.ULong>): kotlin.ULong
+          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.ULong): kotlin.ULong
           valueParameters = [
             KaVariableSignature:
               name = selector
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.ULong>
-              symbol = selector: kotlin.Function1<T, kotlin.ULong>
+              returnType = (kotlin.Int) -> kotlin.ULong
+              symbol = selector: (T) -> kotlin.ULong
               contextParameters = []
               callableId = null
           ]

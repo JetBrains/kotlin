@@ -31,7 +31,7 @@ fun testYield() {
     val buildee = build {
         yield { val x: UserKlass = <!UNRESOLVED_REFERENCE!>it<!> }
     }
-    checkExactType<Buildee<(UserKlass) -> Unit>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<Function0<Unit>>; Buildee<Function1<UserKlass, Unit>>")!>buildee<!>)
+    checkExactType<Buildee<(UserKlass) -> Unit>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<(UserKlass) -> Unit>")!>buildee<!>)
 }
 
 // test 2: PTV is in producing position (materialize-case)
@@ -43,7 +43,7 @@ fun testMaterialize() {
             materialize()
         )
     }
-    checkExactType<Buildee<(UserKlass) -> Unit>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<Function0<Unit>>; Buildee<Function1<UserKlass, Unit>>")!>buildee<!>)
+    checkExactType<Buildee<(UserKlass) -> Unit>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<(UserKlass) -> Unit>")!>buildee<!>)
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localFunction,

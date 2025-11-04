@@ -61,7 +61,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         }
         val matchingCompatibilityToMembersMap = declaration.symbol.expectForActual.orEmpty()
         if ((ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap || declaration.hasActualModifier()) &&
-            !declaration.isLocalMember // Reduce verbosity. WRONG_MODIFIER_TARGET will be reported anyway.
+            !declaration.isLocalDeclaredInBlock // Reduce verbosity. WRONG_MODIFIER_TARGET will be reported anyway.
         ) {
             checkActualDeclarationHasExpected(declaration, matchingCompatibilityToMembersMap)
         }

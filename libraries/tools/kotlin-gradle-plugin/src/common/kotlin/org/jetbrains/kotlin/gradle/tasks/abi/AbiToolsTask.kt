@@ -10,8 +10,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.abi.tools.api.AbiToolsFactory
-import org.jetbrains.kotlin.abi.tools.api.AbiToolsInterface
+import org.jetbrains.kotlin.abi.tools.AbiTools
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationVariantSpec
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import java.util.*
@@ -31,21 +30,12 @@ internal abstract class AbiToolsTask : DefaultTask(), UsesClassLoadersCachingBui
         val files = toolsClasspath.files.toList()
         // get class loader with the ABI Tools implementation from cache
         val classLoader = classLoadersCachingService.get().getClassLoader(files, SharedClassLoaderProvider)
-        // get implementation of the ABI Tools factory
-        val factory = loadImplementation(AbiToolsFactory::class, classLoader)
-        // get instance of the ABI Tools and invoke task logic
-        runTools(factory.get())
+        // get an instance of the ABI Tools and invoke task logic
+        val abiTools = AbiTools.getInstance(classLoader)
+        runTools(abiTools)
     }
 
-    protected abstract fun runTools(tools: AbiToolsInterface)
-
-
-    private fun <T : Any> loadImplementation(cls: KClass<T>, classLoader: ClassLoader): T {
-        val implementations = ServiceLoader.load(cls.java, classLoader)
-        implementations.firstOrNull() ?: error("The classpath contains no implementation for ${cls.qualifiedName}")
-        return implementations.singleOrNull()
-            ?: error("The classpath contains more than one implementation for ${cls.qualifiedName}")
-    }
+    protected abstract fun runTools(tools: AbiTools)
 
     companion object {
         /**

@@ -36,7 +36,6 @@ FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
         }
         )
 
-
     }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> transformation([ResolvedTo(RAW_FIR)] body: ( () -> T )): T { LAZY_BLOCK }
     public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {

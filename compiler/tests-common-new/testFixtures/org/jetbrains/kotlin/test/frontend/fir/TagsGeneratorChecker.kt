@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -288,7 +290,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
 
         if (namedFunction.receiverParameter != null) tags += FirTags.FUN_WITH_EXTENSION_RECEIVER
         if (namedFunction.contextParameters.isNotEmpty()) tags += FirTags.FUNCTION_WITH_CONTEXT
-        if (namedFunction.symbol.isLocal) tags += FirTags.LOCAL_FUNCTION
+        if (namedFunction.symbol.rawStatus.visibility == Visibilities.Local) tags += FirTags.LOCAL_FUNCTION
 
         checkSimpleFunctionStatus(namedFunction.status)
     }
@@ -310,7 +312,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
             tags += FirTags.GETTER
         if (property.setter?.symbol?.isDefault == false) tags += FirTags.SETTER
         if (property.contextParameters.isNotEmpty()) tags += FirTags.PROPERTY_WITH_CONTEXT
-        if (property.isLocal) tags += FirTags.LOCAL_PROPERTY
+        if (property.symbol is FirLocalPropertySymbol) tags += FirTags.LOCAL_PROPERTY
         if (property.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) tags += FirTags.UNNAMED_LOCAL_VARIABLE
         if (property.hasExplicitBackingField) tags += FirTags.EXPLICIT_BACKING_FIELD
         checkPropertyStatus(property.status)

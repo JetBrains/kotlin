@@ -19,6 +19,12 @@ abstract class AbstractParserTests<OldParseElement> : AbstractRecognizerTests<
         TestParseNode<out OldParseElement>,
         TestParseNode<out NewParserTestNode>
         >(), Disposable {
+
+    init {
+        // TODO: Remove it once KT-81457 is fixed
+        System.setProperty("ide.enable.implicit.blocking.context", "false")
+    }
+
     protected val disposable = Disposer.newDisposable("Disposable for `${javaClass.simpleName}`")
 
     abstract val parseMode: ParseMode

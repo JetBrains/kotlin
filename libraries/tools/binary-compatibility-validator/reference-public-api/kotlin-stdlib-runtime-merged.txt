@@ -3228,6 +3228,21 @@ public final class kotlin/coroutines/jvm/internal/SpillingKt {
 	public static final fun nullOutSpilledVariable (Ljava/lang/Object;)Ljava/lang/Object;
 }
 
+public final class kotlin/coroutines/jvm/internal/TailCallAsyncStackTraceEntryKt {
+	public static final fun wrapContinuation (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I[Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+}
+
+public final class kotlin/coroutines/jvm/internal/TailCallBaseContinuationImpl : kotlin/coroutines/jvm/internal/BaseContinuationImpl {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I[Ljava/lang/Object;Lkotlin/coroutines/Continuation;)V
+	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
+	public final fun getDeclaringClass ()Ljava/lang/String;
+	public final fun getFileName ()Ljava/lang/String;
+	public final fun getLineNumber ()I
+	public final fun getMethodName ()Ljava/lang/String;
+	public final fun getSpilledVariables ()[Ljava/lang/Object;
+	public fun getStackTraceElement ()Ljava/lang/StackTraceElement;
+}
+
 public abstract interface class kotlin/enums/EnumEntries : java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
 }
 

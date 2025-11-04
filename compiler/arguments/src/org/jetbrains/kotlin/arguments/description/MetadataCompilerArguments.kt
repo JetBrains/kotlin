@@ -83,4 +83,14 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
             introducedVersion = KotlinReleaseVersion.v2_1_0,
         )
     }
+
+    compilerArgument {
+        name = "Xtarget-platform"
+        description = "Target platform for metadata generation. Possible values: JVM, JS, WasmJs, WasmWasi, Native".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_20,
+        )
+    }
 }

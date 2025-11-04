@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -93,6 +94,7 @@ fun generateValuesFunction(
             isStatic = true
             isExpect = makeExpect
         }
+        isLocal = classStatus.visibility == Visibilities.Local
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
         resolvePhase = classResolvePhase
         body = buildEmptyExpressionBlock().also {
@@ -154,6 +156,7 @@ fun generateValueOfFunction(
             isStatic = true
             isExpect = makeExpect
         }
+        isLocal = classStatus.visibility == Visibilities.Local
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUE_OF))
         valueParameters += buildValueParameter vp@{
             source = sourceElement
@@ -240,6 +243,7 @@ fun generateEntriesGetter(
             isStatic = true
             isExpect = makeExpect
         }
+        isLocal = classStatus.visibility == Visibilities.Local
 
         symbol = FirRegularPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
         resolvePhase = classResolvePhase

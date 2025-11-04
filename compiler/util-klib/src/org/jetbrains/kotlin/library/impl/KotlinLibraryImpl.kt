@@ -22,10 +22,6 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.components.KlibIrComponent
-import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
-import org.jetbrains.kotlin.library.components.KlibMetadataComponent
-import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
@@ -64,27 +60,14 @@ class KotlinLibraryImpl(
 ) : KotlinLibrary,
     BaseKotlinLibrary by base {
 
-    private val components: Map<KlibComponent.Kind<*>, KlibComponent> = KlibComponentsBuilder(
+    private val components = KlibComponentsCache(
         layoutReaderFactory = KlibLayoutReaderFactory(
             klibFile = location,
             zipFileSystemAccessor = zipFileSystemAccessor
         )
     )
-        .withMandatory(KlibMetadataComponent.Kind, ::KlibMetadataComponentLayout, ::KlibMetadataComponentImpl)
-        .withOptional(KlibIrComponent.Kind.Main, KlibIrComponentLayout::createForMainIr, ::KlibIrComponentImpl)
-        .withOptional(KlibIrComponent.Kind.InlinableFunctions, KlibIrComponentLayout::createForInlinableFunctionsIr, ::KlibIrComponentImpl)
-        .build()
 
-    override fun <KC : KlibMandatoryComponent> getComponent(kind: KlibMandatoryComponent.Kind<KC>): KC {
-        @Suppress("UNCHECKED_CAST")
-        val component = components[kind] as KC?
-        return component ?: error("Unregistered component $kind")
-    }
-
-    override fun <KC : KlibOptionalComponent> getComponent(kind: KlibOptionalComponent.Kind<KC, *>): KC? {
-        @Suppress("UNCHECKED_CAST")
-        return components[kind] as KC?
-    }
+    override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>) = components.getComponent(kind)
 
     override fun toString(): String = buildString {
         append("name ")

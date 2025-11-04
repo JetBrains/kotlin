@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -109,7 +111,7 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
     fun isUnstableInCurrentScope(declaration: FirDeclaration, types: Set<ConeKotlinType>?, session: FirSession): Boolean {
         // Only captured local vars can be stable/unstable depending on scope; everything else has the same stability everywhere.
         if (assignedLocalVariablesByDeclaration == null) return false
-        if (declaration !is FirProperty || !declaration.isLocal || !declaration.isVar) return false
+        if (declaration !is FirProperty || declaration.symbol is FirRegularPropertySymbol || !declaration.isVar) return false
         return !allAssignmentsPreserveType(scopes.top().second[declaration], types, session) || postponedLambdas.all().any { lambdas ->
             // Control-flow-postponed lambdas' assignments should be in `functionScopes.top()`.
             // The reason we can't check them here is that one of the entries may be the lambda
@@ -583,7 +585,7 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
 
             override fun visitProperty(property: FirProperty, data: MiniCfgData) {
                 visitElement(property, data)
-                if (property.isLocal) {
+                if (property.symbol is FirLocalPropertySymbol) {
                     data.variableDeclarations.last()[property.name] = property
                 }
             }

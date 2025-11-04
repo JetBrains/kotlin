@@ -12,8 +12,8 @@ KtCallExpression(16,32): 'bar(2, l@{ it })'
         l@{ it } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
-          symbol = b: kotlin.Function1<kotlin.Int, kotlin.Int>
+          returnType = (kotlin.Int) -> kotlin.Int
+          symbol = b: (kotlin.Int) -> kotlin.Int
           contextParameters = []
           callableId = null)
       }
@@ -25,7 +25,7 @@ KtCallExpression(16,32): 'bar(2, l@{ it })'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /bar(a: kotlin.Int, b: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit
+          symbol = /bar(a: kotlin.Int, b: (kotlin.Int) -> kotlin.Int): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = a
@@ -37,8 +37,8 @@ KtCallExpression(16,32): 'bar(2, l@{ it })'
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
-              symbol = b: kotlin.Function1<kotlin.Int, kotlin.Int>
+              returnType = (kotlin.Int) -> kotlin.Int
+              symbol = b: (kotlin.Int) -> kotlin.Int
               contextParameters = []
               callableId = null
           ]

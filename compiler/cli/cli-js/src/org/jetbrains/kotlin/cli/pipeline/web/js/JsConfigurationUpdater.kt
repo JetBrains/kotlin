@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.cli.pipeline.SuccessfulPipelineExecutionException
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaseConfig
+import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.ir.backend.js.getJsLowerings
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
     override fun fillConfiguration(
@@ -69,6 +71,8 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         configuration.compileSuspendAsJsGenerator = arguments.useEsGenerators ?: isES2015
         configuration.compileLambdasAsEs6ArrowFunctions = arguments.useEsArrowFunctions ?: isES2015
         configuration.compileLongAsBigint = arguments.compileLongAsBigInt ?: false
+
+        configuration.targetPlatform = JsPlatforms.defaultJsPlatform
 
         arguments.irSafeExternalBooleanDiagnostic?.let {
             configuration.safeExternalBooleanDiagnostic = it

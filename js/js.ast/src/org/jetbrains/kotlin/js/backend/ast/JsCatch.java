@@ -14,7 +14,6 @@ public class JsCatch extends SourceInfoAwareJsNode {
 
     protected final JsCatchScope scope;
     private JsBlock body;
-    private JsExpression condition;
     private JsParameter param;
 
     public JsCatch(@NotNull JsName name) {
@@ -42,10 +41,6 @@ public class JsCatch extends SourceInfoAwareJsNode {
         return body;
     }
 
-    public JsExpression getCondition() {
-        return condition;
-    }
-
     public JsParameter getParameter() {
         return param;
     }
@@ -58,10 +53,6 @@ public class JsCatch extends SourceInfoAwareJsNode {
         this.body = body;
     }
 
-    public void setCondition(JsExpression condition) {
-        this.condition = condition;
-    }
-
     @Override
     public void accept(JsVisitor v) {
         v.visitCatch(this);
@@ -70,9 +61,6 @@ public class JsCatch extends SourceInfoAwareJsNode {
     @Override
     public void acceptChildren(JsVisitor visitor) {
         visitor.accept(param);
-        if (condition != null) {
-            visitor.accept(condition);
-        }
         visitor.accept(body);
     }
 
@@ -80,9 +68,6 @@ public class JsCatch extends SourceInfoAwareJsNode {
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
         if (v.visit(this, ctx)) {
             param = v.accept(param);
-            if (condition != null) {
-                condition = v.accept(condition);
-            }
             body = v.acceptStatement(body);
         }
         v.endVisit(this, ctx);
@@ -93,16 +78,14 @@ public class JsCatch extends SourceInfoAwareJsNode {
     public JsCatch deepCopy() {
         JsCatchScope scopeCopy = scope != null ? scope.copy() : null;
         JsBlock bodyCopy = AstUtil.deepCopy(body);
-        JsExpression conditionCopy = AstUtil.deepCopy(condition);
         JsParameter paramCopy = AstUtil.deepCopy(param);
 
-        return new JsCatch(scopeCopy, bodyCopy, conditionCopy, paramCopy).withMetadataFrom(this);
+        return new JsCatch(scopeCopy, bodyCopy, paramCopy).withMetadataFrom(this);
     }
 
-    private JsCatch(JsCatchScope scope, JsBlock body, JsExpression condition, JsParameter param) {
+    private JsCatch(JsCatchScope scope, JsBlock body, JsParameter param) {
         this.scope = scope;
         this.body = body;
-        this.condition = condition;
         this.param = param;
     }
 }

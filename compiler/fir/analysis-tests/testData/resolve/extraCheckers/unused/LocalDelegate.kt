@@ -33,8 +33,12 @@ fun test3() {
 }
 
 fun test4() {
-    var <!VARIABLE_NEVER_READ!>bool<!> by delegate(true)
-    invokeLater { <!ASSIGNED_VALUE_IS_NEVER_READ!>bool<!> = false }
+    var bool by delegate(true)
+    invokeLater { bool = false }
+}
+
+fun test5() {
+    val <!UNUSED_VARIABLE!>bool<!> by delegate(true)
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, interfaceDeclaration,

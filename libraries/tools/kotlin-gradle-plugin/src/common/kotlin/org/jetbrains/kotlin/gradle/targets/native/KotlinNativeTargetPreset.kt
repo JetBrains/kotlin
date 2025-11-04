@@ -16,10 +16,8 @@ import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOrRegisterDownloadKotlinNativeDistributionTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
-import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
-import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.lenient
+import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -132,10 +130,10 @@ internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     HostManager().isEnabled(this)
 }
 
-internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Future<Boolean>
+internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Boolean
     get() = when (this) {
-        is KotlinNativeCompilation -> target.crossCompilationOnCurrentHostSupported
-        else -> project.future { true }
+        is KotlinNativeCompilation -> target.crossCompilationOnCurrentHostSupported.getOrThrow()
+        else -> HostManager.hostOrNull != null
     }
 
 // KT-81134 with a fallback to `enabledOnCurrentHostForKlibCompilation`

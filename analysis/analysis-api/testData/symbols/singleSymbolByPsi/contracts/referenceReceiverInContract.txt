@@ -35,7 +35,7 @@ KaNamedFunctionSymbol:
                     typeArguments: []
                     type: kotlin/Unit
                 ]
-                type: kotlin/Function0<kotlin/Unit>
+                type: () -> kotlin/Unit
               visibility: PUBLIC
               getContainingFileSymbol: KaFileSymbol(referenceReceiverInContract.kt)
               getContainingJvmClassName: ReferenceReceiverInContractKt
@@ -84,7 +84,7 @@ KaNamedFunctionSymbol:
           typeArguments: []
           type: kotlin/Unit
       ]
-      type: kotlin/Function0<kotlin/Unit>
+      type: () -> kotlin/Unit
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(referenceReceiverInContract.kt)
     getContainingJvmClassName: ReferenceReceiverInContractKt

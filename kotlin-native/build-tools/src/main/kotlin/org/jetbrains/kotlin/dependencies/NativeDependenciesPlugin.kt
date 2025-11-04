@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.dependencies
 
+import kotlinBuildProperties
 import org.gradle.api.Buildable
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -14,6 +15,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.PlatformManagerPlugin
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
 import java.nio.file.Paths
 import javax.inject.Inject
@@ -58,6 +60,20 @@ abstract class NativeDependenciesExtension @Inject constructor(private val proje
             add(project.dependencies.project(":kotlin-native:dependencies"))
         }
     }
+
+    /**
+     * The root folder, where all dependencies are placed.
+     *
+     * The assumption is made, that the paths of each dependency relative to this root is stable across different machines.
+     * Note: this will not cause the dependencies to actually download.
+     */
+    // Keep this directory in sync with `:kotlin-native:dependencies`
+    val nativeDependenciesRoot: File
+        get() {
+            // Can't use `BuildPropertiesExt` from `native-build-tools`
+            val konanDataDir = project.kotlinBuildProperties.getOrNull("konan.data.dir") as String?
+            return DependencyDirectories.getDependenciesRoot(konanDataDir)
+        }
 
     private val llvmFileCollection: FileCollection = nativeDependencies.incoming.artifacts.artifactFiles.filter {
         it.matchesDependency(platformManager.hostPlatform.llvmHome!!)

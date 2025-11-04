@@ -112,6 +112,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 isTailRec = irFunction.isTailrec
                 isSuspend = irFunction.isSuspend
             }
+            isLocal = false
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             returnTypeRef = implicitType
             dispatchReceiverType = irFunction.parent.toFirClass()?.defaultType()
@@ -168,6 +169,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 isExpect = irConstructor.isExpect
                 isActual = false
             }
+            isLocal = constructedClass.isLocal
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             returnTypeRef = implicitType
 

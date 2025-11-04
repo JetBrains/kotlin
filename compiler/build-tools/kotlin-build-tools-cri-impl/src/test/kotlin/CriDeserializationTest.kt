@@ -1,8 +1,5 @@
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToByteArray
-import kotlinx.serialization.protobuf.ProtoBuf
 import kotlinx.serialization.protobuf.schema.ProtoBufSchemaGenerator
-import org.jetbrains.kotlin.buildtools.internal.cri.CriDataDeserializerImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.FileIdToPathEntryImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.LookupEntryImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.SubtypeEntryImpl
@@ -28,19 +25,6 @@ class CriDeserializationTest {
         assertEquals(EXPECTED_SCHEMA, schema)
     }
 
-    @Test
-    fun testLookupsSerialization() {
-        val lookups = listOf(
-            LookupEntryImpl(0L, emptyList()),
-            LookupEntryImpl(1L, listOf(0)),
-            LookupEntryImpl(2L, listOf(1, 2)),
-        )
-        val serializedLookups = ProtoBuf.encodeToByteArray(lookups)
-        val deserializer = CriDataDeserializerImpl()
-        val deserializedLookups = deserializer.deserializeLookupData(serializedLookups)
-        assertEquals(lookups, deserializedLookups)
-    }
-
     companion object {
         // TODO ignore comments, etc. in schema generation
         private val EXPECTED_SCHEMA = """
@@ -49,7 +33,7 @@ class CriDeserializationTest {
 
             // serial name 'org.jetbrains.kotlin.buildtools.internal.cri.LookupEntryImpl'
             message LookupEntryImpl {
-              optional int64 key = 1;
+              optional int32 fqNameHashCode = 1;
               repeated int32 fileIds = 2;
             }
 
@@ -61,7 +45,7 @@ class CriDeserializationTest {
 
             // serial name 'org.jetbrains.kotlin.buildtools.internal.cri.SubtypeEntryImpl'
             message SubtypeEntryImpl {
-              optional string className = 1;
+              optional int32 fqNameHashCode = 1;
               repeated string subtypes = 2;
             }
             

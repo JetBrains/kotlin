@@ -178,7 +178,7 @@ abstract class AbstractKotlinNativeCompile<
     @get:Classpath
     override val libraries: ConfigurableFileCollection by providerFactory.provider {
         val nativeCompilation = compilation.tcs.compilation as AbstractKotlinNativeCompilation
-        if (nativeCompilation.crossCompilationOnCurrentHostSupported.getOrThrow()) {
+        if (nativeCompilation.crossCompilationOnCurrentHostSupported) {
             objectFactory.fileCollection().from({ compilation.compileDependencyFiles })
         } else {
             objectFactory.fileCollection()

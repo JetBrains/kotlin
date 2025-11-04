@@ -115,6 +115,7 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
             }
 
             status = originalConstructor.status
+            isLocal = originalConstructor.isLocal
 
             deprecationsProvider = originalConstructor.deprecationsProvider
             containerSource = originalConstructor.containerSource

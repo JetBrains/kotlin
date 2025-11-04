@@ -62,7 +62,7 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
                 serializedMetadata = parameters.metadata,
                 outputPath = klibLocation.path,
                 moduleName = parameters.uniqueName,
-                nativeBitcodeFiles = parameters.bitCodeFiles.map { it.file.path },
+                nativeBitcodeFiles = parameters.bitcodeFiles.map { it.file.path },
                 target = parameters.target,
                 manifest = Properties().apply {
                     parameters.customManifestProperties.forEach { (key, value) -> setProperty(key, value) }
@@ -70,7 +70,7 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
                 dependencies = KlibLoader { libraryPaths(parameters.dependencies.map { it.path }) }.load().librariesStdlibFirst,
                 nopack = parameters.nopack,
                 shortName = parameters.shortName,
-                staticLibraries = parameters.includedFiles.map { it.file.path },
+                staticLibraries = parameters.nativeIncludedBinaryFiles.map { it.file.path },
                 klibAbiCompatibilityLevel = parameters.abiLevel,
         )
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library
 
+import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
@@ -14,15 +15,15 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
  * In the future, this interface is supposed to replace [KotlinLibrary].
  *
  * The [Klib] consists of multiple components, each responsible for a certain aspect of the library.
- * There are the following "mandatory" components that are always present:
+ * There are the following components that are supported out-of-the-box:
  * - [KlibMetadataComponent], which provides read access to the metadata stored inside the library.
- * - TODO(KT-81411): add more
+ * - [KlibIrComponent], which provides read access to the IR stored inside the library.
  *
  * The component can be obtained by calling [getComponent]. For some components there exist
  * extension properties to ease the access and provide a good DSL-like experience. For example:
  * ```
  * val klib: Klib = ...
- * val metadata: KlibMetadataComponent = klib.metadata // Shortcut for `klib.getComponent(KlibMetadataComponent.ID)`
+ * val metadata: KlibMetadataComponent = klib.metadata // A shortcut for `klib.getComponent(KlibMetadataComponent.ID)!!`
  * ```
  */
 interface Klib {
@@ -32,44 +33,33 @@ interface Klib {
     val location: KlibFile
 
     /**
-     * Get a specific [KlibMandatoryComponent] by its [kind]. Throw an error if the component is not found.
+     * Get a specific [KlibComponent] by its [kind]. Return `null` if the component is not found.
      */
-    fun <KC : KlibMandatoryComponent> getComponent(kind: KlibMandatoryComponent.Kind<KC>): KC
-
-    /**
-     * Get a specific [KlibOptionalComponent] by its [kind]. Return `null` if the component is not found.
-     */
-    fun <KC : KlibOptionalComponent> getComponent(kind: KlibOptionalComponent.Kind<KC, *>): KC?
+    fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>): KC?
 }
 
 /**
  * A representation of a certain slice of the Klib library that can be read.
+ *
+ * Note: The component is not available in the library if there is no data that it can read. The creation of the component and
+ * the corresponding data presence check are performed in the [KlibComponent.Kind.createComponentIfDataInKlibIsAvailable].
  */
-sealed interface KlibComponent {
+interface KlibComponent {
     /**
      * Kind (ID) of a [KlibComponent]. Used to access the component using [Klib.getComponent].
      */
-    sealed interface Kind<KC : KlibComponent>
-}
-
-/**
- * A [KlibComponent] that is mandatory: This component is always present in the library.
- */
-interface KlibMandatoryComponent : KlibComponent {
-    interface Kind<KMC : KlibMandatoryComponent> : KlibComponent.Kind<KMC>
-}
-
-/**
- * A [KlibComponent] that is optional: This component is not available in the library if there is
- * no data that it can read according to [KlibOptionalComponent.Kind.shouldComponentBeRegistered].
- */
-interface KlibOptionalComponent : KlibComponent {
-    interface Kind<KOC : KlibOptionalComponent, KCL : KlibComponentLayout> : KlibComponent.Kind<KOC> {
+    interface Kind<KC : KlibComponent, KCL : KlibComponentLayout> {
         /**
-         * Whether there is any data to be read by the component.
-         * And whether the optional component should be registered in the library.
+         * Create an instance [KlibComponentLayout] for the current component.
          */
-        fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<KCL>): Boolean
+        fun createLayout(root: KlibFile): KCL
+
+        /**
+         * Create an instance of the component.
+         *
+         * Note: If there is no data to be read by the component, no component instance is created and `null` is returned.
+         */
+        fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<KCL>): KC?
     }
 }
 

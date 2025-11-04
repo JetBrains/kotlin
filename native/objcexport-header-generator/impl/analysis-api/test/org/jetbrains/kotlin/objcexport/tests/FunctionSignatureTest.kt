@@ -67,7 +67,7 @@ class FunctionSignatureTest(
     fun `test - func param`() {
         doTest(
             "fun foo(param: () -> Unit) = Unit",
-            "foo(kotlin.Function0<kotlin.Unit>){}"
+            "foo(()->kotlin.Unit){}"
         )
     }
 
@@ -75,7 +75,7 @@ class FunctionSignatureTest(
     fun `test - func param with param and return type`() {
         doTest(
             "fun foo(param: (String) -> Int) = Unit",
-            "foo(kotlin.Function1<kotlin.String,kotlin.Int>){}"
+            "foo((kotlin.String)->kotlin.Int){}"
         )
     }
 

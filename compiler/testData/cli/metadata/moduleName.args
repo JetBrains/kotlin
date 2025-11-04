@@ -6,3 +6,4 @@ $TEMP_DIR$
 foo
 -language-version
 2.1
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native

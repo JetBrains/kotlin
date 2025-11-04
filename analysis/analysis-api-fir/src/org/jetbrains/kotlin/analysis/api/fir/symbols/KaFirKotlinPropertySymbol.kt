@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -174,7 +175,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         ): KaKotlinPropertySymbol = KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol(declaration, session)
 
         fun create(symbol: FirPropertySymbol, session: KaFirSession): KaKotlinPropertySymbol {
-            assert(!symbol.isLocal)
+            assert(symbol is FirRegularPropertySymbol)
             check(symbol !is FirSyntheticPropertySymbol)
             check(symbol.fir !is FirSyntheticProperty)
 

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.library.components
 
 import org.jetbrains.kotlin.library.Klib
+import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibLayoutReader
-import org.jetbrains.kotlin.library.KlibOptionalComponent
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DECLARATIONS_FILE_NAME
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_STRINGS_F
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILES_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILE_ENTRIES_FILE_NAME
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
+import org.jetbrains.kotlin.library.impl.KlibIrComponentImpl
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 /**
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
  * - Reading the (main) Klib IR. Corresponding component Kind: [Kind.Main].
  * - Reading the IR of inlinable functions. Corresponding component Kind: [Kind.InlinableFunctions].
  */
-interface KlibIrComponent : KlibOptionalComponent {
+interface KlibIrComponent : KlibComponent {
     val irFileCount: Int
 
     fun irFile(index: Int): ByteArray
@@ -46,11 +47,17 @@ interface KlibIrComponent : KlibOptionalComponent {
     fun signatures(fileIndex: Int): ByteArray
     fun stringLiterals(fileIndex: Int): ByteArray
 
-    enum class Kind : KlibOptionalComponent.Kind<KlibIrComponent, KlibIrComponentLayout> {
-        Main, InlinableFunctions;
+    sealed class Kind : KlibComponent.Kind<KlibIrComponent, KlibIrComponentLayout> {
+        object Main : Kind() {
+            override fun createLayout(root: KlibFile) = KlibIrComponentLayout.createForMainIr(root)
+        }
 
-        override fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<KlibIrComponentLayout>) =
-            layoutReader.readInPlaceOrFallback(false) { it.irDir.exists }
+        object InlinableFunctions : Kind() {
+            override fun createLayout(root: KlibFile) = KlibIrComponentLayout.createForInlinableFunctionsIr(root)
+        }
+
+        override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<KlibIrComponentLayout>): KlibIrComponent? =
+            if (layoutReader.readInPlaceOrFallback(false) { it.irDir.exists }) KlibIrComponentImpl(layoutReader) else null
     }
 }
 

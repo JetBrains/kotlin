@@ -20,11 +20,7 @@ public open [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|F
 
 public open override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: R|@R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String|
 
-
-
 public open override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T|
-
-
 
 public open override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T|
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] get(): R|T|

@@ -384,6 +384,7 @@ class FirSignatureEnhancement(
                     }
                 }
                 builder.apply {
+                    isLocal = false
                     source = firMethod.source
                     moduleData = this@FirSignatureEnhancement.moduleData
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -410,6 +411,7 @@ class FirSignatureEnhancement(
 
                     this.name = name!!
                     status = enhanceStatus(firMethod.status, predefinedEnhancementInfo, overriddenMembers)
+                    isLocal = false
                     symbol = if (isIntersectionOverride) {
                         FirIntersectionOverrideFunctionSymbol(
                             methodId, overriddenMembers.map { it.symbol },

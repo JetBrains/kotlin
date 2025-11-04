@@ -58,7 +58,7 @@ internal fun KtExpression.unwrap(): KtExpression {
  */
 internal fun FirCallableSymbol<*>.computeImportableName(): FqName? {
     val callableId = callableId ?: return null
-    if (callableId.isLocal) return null
+    if (isLocal) return null
 
     // SAM constructors are synthetic, but can be imported
     if (origin is FirDeclarationOrigin.SamConstructor) return callableId.asSingleFqName()

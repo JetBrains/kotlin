@@ -19,9 +19,11 @@ object WasmPlatformUnspecifiedTarget : WasmPlatform("Wasm") {
         get() = "general"
 }
 
-class WasmPlatformWithTarget(val target: WasmTarget) : WasmPlatform(target.alias) {
+data class WasmPlatformWithTarget(val target: WasmTarget) : WasmPlatform(target.alias) {
     override val targetName: String
         get() = target.name
+
+    override fun toString(): String = super.toString()
 }
 
 object WasmPlatforms {

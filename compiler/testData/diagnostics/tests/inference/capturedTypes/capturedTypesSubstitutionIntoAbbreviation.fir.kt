@@ -24,14 +24,14 @@ fun getTag7(): Tag7<*> = Tag7<Int> { }
 fun getTag8(): Tag8<*> = Tag8<Int> { 1 }
 
 fun main() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<CapturedType(*), kotlin.Unit>")!>getTag().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<in CapturedType(*), kotlin.Unit>")!>getTag2().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<CapturedType(*), kotlin.Unit>")!>getTag3().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<in CapturedType(*), kotlin.Unit>")!>getTag4().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<CapturedType(*), CapturedType(*)>")!>getTag5().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<in kotlin.Any?, kotlin.Unit>")!>getTag6().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Any?, kotlin.Unit>")!>getTag7().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Any?, kotlin.Any?>")!>getTag8().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(CapturedType(*)) -> kotlin.Unit")!>getTag().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(in CapturedType(*)) -> kotlin.Unit")!>getTag2().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(CapturedType(*)) -> kotlin.Unit")!>getTag3().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(in CapturedType(*)) -> kotlin.Unit")!>getTag4().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(CapturedType(*)) -> CapturedType(*)")!>getTag5().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(in kotlin.Any?) -> kotlin.Unit")!>getTag6().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Any?) -> kotlin.Unit")!>getTag7().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Any?) -> kotlin.Any?")!>getTag8().action<!>
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, data, functionDeclaration, functionalType, in, inProjection,

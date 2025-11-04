@@ -5,8 +5,8 @@ KtNameReferenceExpression(18,28): 'Comparator'
         {x: Int, y: Int -> 1} -> (KaVariableSignature:
           name = function
           receiverType = null
-          returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
-          symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
+          returnType = (kotlin.Int!, kotlin.Int!) -> kotlin.Int
+          symbol = function: (T!, T!) -> kotlin.Int
           contextParameters = []
           callableId = null)
       }
@@ -18,13 +18,13 @@ KtNameReferenceExpression(18,28): 'Comparator'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = java.util.Comparator<kotlin.Int!>
-          symbol = java/util/Comparator(function: kotlin.Function2<T!, T!, kotlin.Int>): java.util.Comparator<T>
+          symbol = java/util/Comparator(function: (T!, T!) -> kotlin.Int): java.util.Comparator<T>
           valueParameters = [
             KaVariableSignature:
               name = function
               receiverType = null
-              returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
-              symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
+              returnType = (kotlin.Int!, kotlin.Int!) -> kotlin.Int
+              symbol = function: (T!, T!) -> kotlin.Int
               contextParameters = []
               callableId = null
           ]

@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("project-tests-convention")
+    id("java-test-fixtures")
 }
 
 repositories {
@@ -16,21 +17,22 @@ repositories {
 val composeCompilerPlugin by configurations.creating
 
 dependencies {
-    testImplementation(intellijCore())
+    testFixturesImplementation(intellijCore())
 
     testRuntimeOnly(libs.xerces)
     testRuntimeOnly(commonDependency("org.apache.commons:commons-lang3"))
 
-    testImplementation(libs.junit4)
-    testCompileOnly(kotlinTest("junit"))
-    testImplementation(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
-    testImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
-    testImplementation(project(":compiler:fir:resolve"))
-    testImplementation(project(":compiler:fir:providers"))
-    testImplementation(project(":compiler:fir:semantics"))
-    testImplementation(project(":compiler:fir:dump"))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(project(":compiler:fir:resolve"))
+    testFixturesApi(project(":compiler:fir:providers"))
+    testFixturesApi(project(":compiler:fir:semantics"))
+    testFixturesApi(project(":compiler:fir:dump"))
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
@@ -44,39 +46,39 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
+    "testFixtures" { projectDefault() }
 }
 
 optInToK1Deprecation()
 
 projectTests {
-    val modelDumpAndReadTest = "org.jetbrains.kotlin.fir.ModelDumpAndReadTest"
-
-    testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit4) {
+    testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
-        systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
-        workingDir = rootDir
-        val composePluginClasspath = composeCompilerPlugin.asPath
-
-        filter {
-            excludeTestsMatching(modelDumpAndReadTest)
+        systemProperties(this.project.properties.filterKeys<String, Any?> { it.startsWith("fir.") })
+        this.workingDir = rootDir
+        systemProperty("fir.bench.compose.plugin.classpath", composeCompilerPlugin.asPath)
+        val argsExt = this.project.findProperty("fir.modularized.jvm.args") as? String
+        if (argsExt != null) {
+            val paramRegex = "([^\"]\\S*|\".+?\")\\s*".toRegex()
+            this.jvmArgs(paramRegex.findAll(argsExt).map<MatchResult, String> { it.groupValues[1] }.toList<String>())
         }
-        run {
-            systemProperty("fir.bench.compose.plugin.classpath", composePluginClasspath)
-            val argsExt = project.findProperty("fir.modularized.jvm.args") as? String
-            if (argsExt != null) {
-                val paramRegex = "([^\"]\\S*|\".+?\")\\s*".toRegex()
-                jvmArgs(paramRegex.findAll(argsExt).map { it.groupValues[1] }.toList())
-            }
-        }
+        systemProperties["junit.jupiter.execution.parallel.enabled"] = true
     }
 
-    testTask("modelDumpTest", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = false) {
-        dependsOn(":dist")
-        workingDir = rootDir
-        filter {
-            includeTestsMatching(modelDumpAndReadTest)
-        }
+    testGenerator(
+        "org.jetbrains.kotlin.fir.generators.tests.GenerateModularizedIsolatedTests",
+        generateTestsInBuildDirectory = true, skipCollectDataTask = true
+    ) {
+        fun String?.withModelDumpOrEmpty() = this?.let { "$it/test-project-model-dump" }.orEmpty()
+        args = args!! + "--" +
+                "Kotlin" + kotlinBuildProperties.pathToKotlinModularizedTestData.withModelDumpOrEmpty() +
+                "IntelliJ" + kotlinBuildProperties.pathToIntellijModularizedTestData.withModelDumpOrEmpty() +
+                "YouTrack" + kotlinBuildProperties.pathToYoutrackModularizedTestData.withModelDumpOrEmpty() +
+                "Space" + kotlinBuildProperties.pathToSpaceModularizedTestData.withModelDumpOrEmpty()
     }
 }
 

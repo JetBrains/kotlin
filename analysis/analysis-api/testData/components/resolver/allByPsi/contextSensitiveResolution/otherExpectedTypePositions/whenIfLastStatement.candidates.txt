@@ -317,12 +317,12 @@ KtCallExpression(404,407): 'b()'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
-          type = kotlin.Function0<T>
+          type = () -> T
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = T
-          symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+          symbol = kotlin/Function0.invoke(<dispatch receiver>: () -> R): R
           valueParameters = []
           contextParameters = []
           callableId = kotlin/Function0.invoke
@@ -340,8 +340,8 @@ KtNameReferenceExpression(404,405): 'b'
         signature = KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<T>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> T
+          symbol = b: () -> T
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -1505,8 +1505,8 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1518,13 +1518,13 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyClass
-          symbol = /run(b: kotlin.Function0<T>): T
+          symbol = /run(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1553,8 +1553,8 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
             } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = block: kotlin.Function0<R>
+          returnType = () -> MyClass
+          symbol = block: () -> R
           contextParameters = []
           callableId = null)
       }
@@ -1566,13 +1566,13 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyClass
-          symbol = kotlin/run(block: kotlin.Function0<R>): R
+          symbol = kotlin/run(block: () -> R): R
           valueParameters = [
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = block: kotlin.Function0<R>
+              returnType = () -> MyClass
+              symbol = block: () -> R
               contextParameters = []
               callableId = null
           ]
@@ -1602,8 +1602,8 @@ KtNameReferenceExpression(1284,1287): 'run'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1615,13 +1615,13 @@ KtNameReferenceExpression(1284,1287): 'run'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyClass
-          symbol = /run(b: kotlin.Function0<T>): T
+          symbol = /run(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1650,8 +1650,8 @@ KtNameReferenceExpression(1284,1287): 'run'
             } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = block: kotlin.Function0<R>
+          returnType = () -> MyClass
+          symbol = block: () -> R
           contextParameters = []
           callableId = null)
       }
@@ -1663,13 +1663,13 @@ KtNameReferenceExpression(1284,1287): 'run'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyClass
-          symbol = kotlin/run(block: kotlin.Function0<R>): R
+          symbol = kotlin/run(block: () -> R): R
           valueParameters = [
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = block: kotlin.Function0<R>
+              returnType = () -> MyClass
+              symbol = block: () -> R
               contextParameters = []
               callableId = null
           ]

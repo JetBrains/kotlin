@@ -1,7 +1,7 @@
 KaDataFlowExitPointSnapshot:
   defaultExpressionInfo = DefaultExpressionInfo:
     expression = foo
-    type = @ExtensionFunctionType kotlin.Function2<kotlin.String, kotlin.String, kotlin.Unit>
+    type = kotlin.String.(kotlin.String) -> kotlin.Unit
   hasEscapingJumps = false
   hasJumps = false
   hasMultipleJumpKinds = false
