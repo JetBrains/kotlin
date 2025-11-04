@@ -10,10 +10,13 @@ KtFile: 1.1.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('0')
-    PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0x876543')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('00')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('x876543')
+      PsiErrorElement:Expecting an element
+        <empty list>
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')
@@ -23,9 +26,8 @@ KtFile: 1.1.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(INTEGER_LITERAL)('00l')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0l')
       PsiElement(INTEGER_LITERAL)('0xf876L')
       PsiElement(INTEGER_LITERAL)('543')
   PsiWhiteSpace('\n')
@@ -64,62 +66,13 @@ KtFile: 1.1.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('0')
-    PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0xAcccccccccA')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('000000000000000000000000000000000000000000000000000000')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('xAcccccccccA')
+      PsiErrorElement:Expecting an element
+        <empty list>
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')
@@ -128,10 +81,13 @@ KtFile: 1.1.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('0')
-    PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0xA45')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('00')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('xA45')
+      PsiErrorElement:Expecting an element
+        <empty list>
   PsiWhiteSpace('\n\n')
   PROPERTY
     PsiElement(val)('val')
@@ -215,18 +171,13 @@ KtFile: 1.1.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('0')
-    PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0x')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('0000000000')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('x')
+      PsiErrorElement:Expecting an element
+        <empty list>
   PsiWhiteSpace('\n\n')
   PROPERTY
     PsiElement(val)('val')
@@ -250,11 +201,13 @@ KtFile: 1.1.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('0')
-    PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('9')
-      PsiElement(IDENTIFIER)('x98765432')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('09')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('x98765432')
+      PsiErrorElement:Expecting an element
+        <empty list>
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')

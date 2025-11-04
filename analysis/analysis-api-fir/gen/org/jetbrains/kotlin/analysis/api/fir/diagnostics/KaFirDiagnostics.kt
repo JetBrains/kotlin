@@ -203,6 +203,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = IntLiteralOutOfRange::class
     }
 
+    interface IntLiteralWithLeadingZeros : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = IntLiteralWithLeadingZeros::class
+    }
+
     interface FloatLiteralOutOfRange : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = FloatLiteralOutOfRange::class
     }

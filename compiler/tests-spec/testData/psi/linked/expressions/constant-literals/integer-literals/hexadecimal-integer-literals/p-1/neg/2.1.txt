@@ -12,9 +12,9 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0_')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('_x3_4_5_6_7_8')
+        PsiElement(IDENTIFIER)('x3_4_5_6_7_8')
       PsiErrorElement:Expecting an element
         <empty list>
   PsiWhiteSpace('\n')
@@ -27,9 +27,9 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0_')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('_X_______4_______5_______6_______7')
+        PsiElement(IDENTIFIER)('X_______4_______5_______6_______7')
       PsiErrorElement:Expecting an element
         <empty list>
   PsiWhiteSpace('\n')
@@ -42,9 +42,9 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0_0')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('_0X4_3_4_5_6_7_8_9')
+        PsiElement(IDENTIFIER)('X4_3_4_5_6_7_8_9')
       PsiErrorElement:Expecting an element
         <empty list>
   PsiWhiteSpace('\n')
@@ -57,9 +57,9 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0_0')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('_0X000000000')
+        PsiElement(IDENTIFIER)('X000000000')
       PsiErrorElement:Expecting an element
         <empty list>
   PsiWhiteSpace('\n')
@@ -72,9 +72,9 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0_0000000000')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('_0000000000X')
+        PsiElement(IDENTIFIER)('X')
       PsiErrorElement:Expecting an element
         <empty list>
   PsiWhiteSpace('\n')
@@ -87,9 +87,9 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0_9')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('_9x')
+        PsiElement(IDENTIFIER)('x')
       PsiErrorElement:Expecting an element
         <empty list>
   PsiWhiteSpace('\n')
@@ -102,9 +102,9 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0____________0')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('____________0x')
+        PsiElement(IDENTIFIER)('x')
       PsiErrorElement:Expecting an element
         <empty list>
   PsiWhiteSpace('\n')
@@ -117,9 +117,9 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0_0_')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('_0_x_0')
+        PsiElement(IDENTIFIER)('x_0')
       PsiErrorElement:Expecting an element
         <empty list>
   PsiWhiteSpace('\n')
@@ -132,9 +132,9 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0_')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('_x_0')
+        PsiElement(IDENTIFIER)('x_0')
       PsiErrorElement:Expecting an element
         <empty list>
   PsiWhiteSpace('\n')
@@ -147,9 +147,9 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0_')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('_x')
+        PsiElement(IDENTIFIER)('x')
       PsiErrorElement:Expecting an element
         <empty list>
   PsiWhiteSpace('\n')
@@ -162,9 +162,9 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0_')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('_x_')
+        PsiElement(IDENTIFIER)('x_')
       PsiErrorElement:Expecting an element
         <empty list>
   PsiWhiteSpace('\n')
@@ -177,8 +177,8 @@ KtFile: 2.1.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(INTEGER_LITERAL)('0_')
       OPERATION_REFERENCE
-        PsiElement(IDENTIFIER)('_x_0_')
+        PsiElement(IDENTIFIER)('x_0_')
       PsiErrorElement:Expecting an element
         <empty list>

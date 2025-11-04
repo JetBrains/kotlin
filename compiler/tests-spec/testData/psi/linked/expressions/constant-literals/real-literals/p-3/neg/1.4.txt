@@ -49,10 +49,7 @@ KtFile: 1.4.kt
         OPERATION_REFERENCE
           PsiElement(PLUS)('+')
         INTEGER_CONSTANT
-          PsiElement(INTEGER_LITERAL)('0')
-    PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
+          PsiElement(INTEGER_LITERAL)('000')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')
@@ -70,11 +67,7 @@ KtFile: 1.4.kt
         OPERATION_REFERENCE
           PsiElement(PLUS)('+')
         INTEGER_CONSTANT
-          PsiElement(INTEGER_LITERAL)('0')
-    PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
+          PsiElement(INTEGER_LITERAL)('0000')
   PsiWhiteSpace('\n\n')
   PROPERTY
     PsiElement(val)('val')
@@ -125,10 +118,7 @@ KtFile: 1.4.kt
         OPERATION_REFERENCE
           PsiElement(MINUS)('-')
         INTEGER_CONSTANT
-          PsiElement(INTEGER_LITERAL)('0')
-    PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
+          PsiElement(INTEGER_LITERAL)('000')
   PsiWhiteSpace('\n\n')
   PROPERTY
     PsiElement(val)('val')

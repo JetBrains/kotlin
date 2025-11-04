@@ -164,6 +164,7 @@ enum class DiagnosticKind {
     IllegalEscape,
 
     IntLiteralOutOfRange,
+    IntLiteralWithLeadingZeros,
     FloatLiteralOutOfRange,
     WrongLongSuffix,
     UnsignedNumbersAreNotPresent,

@@ -224,6 +224,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INT_LITERAL_WITH_LEADING_ZEROS) { firDiagnostic ->
+        IntLiteralWithLeadingZerosImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.FLOAT_LITERAL_OUT_OF_RANGE) { firDiagnostic ->
         FloatLiteralOutOfRangeImpl(
             firDiagnostic as KtPsiDiagnostic,

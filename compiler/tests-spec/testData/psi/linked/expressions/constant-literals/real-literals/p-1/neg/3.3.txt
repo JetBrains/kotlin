@@ -37,10 +37,8 @@ KtFile: 3.3.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(INTEGER_LITERAL)('000')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
       PsiElement(COLON)(':')
       PsiElement(FLOAT_CONSTANT)('1F')
   PsiWhiteSpace('\n')
@@ -65,9 +63,8 @@ KtFile: 3.3.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(INTEGER_LITERAL)('00')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
       PsiElement(BAD_CHARACTER)('·')
       PsiElement(FLOAT_CONSTANT)('0f')
   PsiWhiteSpace('\n')
@@ -92,11 +89,8 @@ KtFile: 3.3.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(INTEGER_LITERAL)('0000')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
       PsiElement(BAD_CHARACTER)('°')
       PsiElement(FLOAT_CONSTANT)('1f')
   PsiWhiteSpace('\n')

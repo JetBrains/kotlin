@@ -13,9 +13,7 @@ KtFile: 1.2.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('0b101L')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('1')
+      PsiElement(INTEGER_LITERAL)('001')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')

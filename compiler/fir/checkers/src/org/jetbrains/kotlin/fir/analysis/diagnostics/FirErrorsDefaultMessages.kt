@@ -455,6 +455,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INSTANCE_ACCESS_B
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_AS_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_WITH_SUPERCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INT_LITERAL_OUT_OF_RANGE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INT_LITERAL_WITH_LEADING_ZEROS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_CHARACTERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_DEFAULT_VALUE_DEPENDENCY
@@ -954,6 +955,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL, "Too many characters in a character literal.")
         map.put(ILLEGAL_ESCAPE, "Unsupported escape sequence.")
         map.put(INT_LITERAL_OUT_OF_RANGE, "Value out of range.")
+        map.put(
+            INT_LITERAL_WITH_LEADING_ZEROS,
+            "Leading zeros are not allowed in integer literals."
+        )
         map.put(FLOAT_LITERAL_OUT_OF_RANGE, "Value out of range.")
         map.put(WRONG_LONG_SUFFIX, "Use 'L' instead of 'l'.")
         map.put(

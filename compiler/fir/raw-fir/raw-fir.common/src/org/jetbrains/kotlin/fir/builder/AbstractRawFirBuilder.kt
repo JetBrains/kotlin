@@ -446,7 +446,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         return when (type) {
             INTEGER_CONSTANT -> {
                 var diagnostic: DiagnosticKind = DiagnosticKind.IllegalConstExpression
-                val number: Long?
+                var number: Long?
 
                 val kind = when {
                     convertedText == null -> {
@@ -484,6 +484,11 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                         number = convertedText
                         ConstantValueKind.IntegerLiteral
                     }
+                }
+
+                if (hasLeadingZeros(text)) {
+                    diagnostic = DiagnosticKind.IntLiteralWithLeadingZeros
+                    number = null
                 }
 
                 buildConstOrErrorExpression(
@@ -545,6 +550,10 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     withSourceElementEntry("literal", expression)
                 }
         }
+    }
+
+    private fun hasLeadingZeros(text: String): Boolean {
+        return text.length > 1 && text[0] == '0' && text[1].let { it.isDigit() || it == '_' }
     }
 
     protected fun ExceptionAttachmentBuilder.withSourceElementEntry(name: String, element: T?) {
