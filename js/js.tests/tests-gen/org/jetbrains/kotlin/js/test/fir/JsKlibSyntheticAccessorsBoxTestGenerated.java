@@ -1093,6 +1093,18 @@ public class JsKlibSyntheticAccessorsBoxTestGenerated extends AbstractJsCodegenB
       }
 
       @Test
+      @TestMetadata("KT-81497-JsFail.kt")
+      public void testKT_81497_JsFail() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/KT-81497-JsFail.kt");
+      }
+
+      @Test
+      @TestMetadata("KT-81497-NativeFail.kt")
+      public void testKT_81497_NativeFail() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/KT-81497-NativeFail.kt");
+      }
+
+      @Test
       @TestMetadata("leakingCapturedTypeParameter.kt")
       public void testLeakingCapturedTypeParameter() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingCapturedTypeParameter.kt");
