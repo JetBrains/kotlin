@@ -670,9 +670,18 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         val projectRoot = syntheticImportProjectRoot.get().asFile
         // FIXME: For some reason reusing dd in parallel xcodebuild calls explodes something in Xcode
         val dd = syntheticImportDd.get().asFile.resolve("dd_${xcodebuildSdk.get()}")
-        val forceClangToReexecute = dd.resolve("Build/Intermediates.noindex/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME.build")
-        if (forceClangToReexecute.exists()) {
-            forceClangToReexecute.deleteRecursively()
+        // val forceClangToReexecute = dd.resolve("Build/Intermediates.noindex/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME.build")
+        //        if (forceClangToReexecute.exists()) {
+//            forceClangToReexecute.deleteRecursively()
+//        }
+        val intermediates = dd.resolve("Build/Intermediates.noindex")
+        // Nuke all intermediates to discover c++ modules...
+        if (intermediates.exists()) {
+            intermediates.listFiles()
+                .filter { it.name.endsWith(".build") }
+                .forEach {
+                    it.deleteRecursively()
+                }
         }
 
         execOps.exec { exec ->
@@ -712,12 +721,29 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
         architectures.get().forEach { architecture ->
             val clangArchitecture = architecture.clangArch
-            val architectureSpecificProductClangCalls = clangArgsDump.listFiles().filter {
+            val architectureSpecificProductClangCalls = mutableListOf<File>()
+            val cxxModules = mutableSetOf<String>()
+
+            clangArgsDump.listFiles().filter {
                 it.isFile
-            }.filter {
+            }.forEach {
                 val clangArgs = it.readLines().single()
-                "-fmodule-name=${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}" in clangArgs
+                val isArchitectureSpecificProductClangCall = "-fmodule-name=${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}" in clangArgs
                         && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in clangArgs
+                if (isArchitectureSpecificProductClangCall) {
+                    architectureSpecificProductClangCalls.add(it)
+                }
+                val isCxxModule = discoverModulesImplicitly.get() && "-x${DUMP_FILE_ARGS_SEPARATOR}c++" in clangArgs
+                if (isCxxModule) {
+                    val moduleNameArg = "-fmodule-name="
+                    val moduleName = clangArgs.split(DUMP_FILE_ARGS_SEPARATOR).firstOrNull {
+                        it.startsWith(moduleNameArg)
+                    }
+                    // Some -x;c++ calls are version discoveries or something like that
+                    if (moduleName != null) {
+                        cxxModules.add(moduleName.substring(moduleNameArg.length))
+                    }
+                }
             }
             val architectureSpecificProductClangCall = architectureSpecificProductClangCalls.single()
             val cinteropClangArgs = mutableListOf<String>()
@@ -779,7 +805,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                         inferModuleName(File(it))
                     }
                 )
-                implicitlyDiscoveredModules
+                implicitlyDiscoveredModules - cxxModules
             } else clangModules.get()
 
             val defFileSearchPaths = cinteropClangArgs.joinToString(" ") { "\"${it}\"" }
