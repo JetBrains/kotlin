@@ -168,7 +168,7 @@ dependencies {
         overrideTargetJvmVersion(11)
         isTransitive = false
     }
-    commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
+    // commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     commonCompileOnly(libs.develocity.gradlePlugin)
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
     commonCompileOnly("com.github.gundy:semver4j:0.16.4:nodeps") {
@@ -220,7 +220,7 @@ dependencies {
 
     testCompileOnly(project(":compiler"))
 
-    testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
+    // testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(testFixtures(project(":kotlin-build-common")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(project(":kotlin-compiler-runner"))
