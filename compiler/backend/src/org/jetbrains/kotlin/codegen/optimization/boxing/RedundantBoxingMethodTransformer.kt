@@ -196,7 +196,16 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
                             LocalVariableNode(newVarName, type.descriptor, null, newStart, newEnd, newOffset)
                         }
                 } else {
+                    // Switch the local variable to the unboxed JVM type in the LVT
+                    // and preserve the original value class type in the generic signature
+                    // so that debuggers/evaluators can reconstruct the boxed value class.
+                    val originalDesc = localVariableNode.desc
                     localVariableNode.desc = unboxedType.descriptor
+                    if (descriptor.isValueClassValue) {
+                        // Keep the more precise Kotlin value class type in the signature
+                        // (e.g., Lcom/example/IdHolder;) while the descriptor becomes the underlying JVM type (e.g., I).
+                        localVariableNode.signature = originalDesc
+                    }
                 }
             }
         }
