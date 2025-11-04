@@ -44,7 +44,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                     }
                 }.joinToString(","))
             }
-            it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + compilerPluginArgs)
+            it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
         }
     }
 
@@ -73,7 +73,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                     }"
                 )
             }
-            it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + compilerPluginArgs)
+            it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
         }
     }
 
@@ -92,7 +92,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                 }.joinToString(","))
             }
             it.compilerArguments[COMPILER_PLUGINS] = listOf(ASSIGNMENT_PLUGIN)
-            it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + compilerPluginArgs)
+            it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
         }
     }
 
@@ -115,7 +115,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                     )
                 }
                 it.compilerArguments[COMPILER_PLUGINS] = listOf(ASSIGNMENT_PLUGIN)
-                it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + compilerPluginArgs)
+                it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
             }) {
                 // BTA currently transforms the structured way to the "default way", such a combination is considered illegal
                 expectFail()
@@ -154,7 +154,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                         }"
                     )
                 }
-                it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + legacyArgs + modernArgs)
+                it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + legacyArgs + modernArgs)
             }) {
                 expectFail()
                 assertLogContainsPatterns(

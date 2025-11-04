@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
-import org.jetbrains.kotlin.generators.kotlinpoet.annotation
-import org.jetbrains.kotlin.generators.kotlinpoet.function
-import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
-import org.jetbrains.kotlin.generators.kotlinpoet.property
+import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -29,7 +26,7 @@ internal class BtaImplGenerator(
 
     private val outputs = mutableListOf<Pair<Path, String>>()
 
-    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?): GeneratorOutputs {
+    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: ClassName?): GeneratorOutputs {
         val apiClassName = level.name.capitalizeAsciiOnly()
         val implClassName = apiClassName + "Impl"
         val mainFileAppendable = createGeneratedFileAppendable()
@@ -42,78 +39,96 @@ internal class BtaImplGenerator(
                 AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
                     .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
             )
-            addType(
-                TypeSpec.classBuilder(implClassName).apply {
-                    addModifiers(KModifier.INTERNAL)
-                    if (!level.isLeaf()) {
-                        addModifiers(KModifier.ABSTRACT)
+            classType(implClassName) {
+                addModifiers(KModifier.INTERNAL)
+                if (!level.isLeaf()) {
+                    addModifiers(KModifier.ABSTRACT)
+                }
+                if (parentClass != null) {
+                    superclass(parentClass)
+                } else {
+                    property(
+                        "internalArguments",
+                        ClassName("kotlin.collections", "MutableSet").parameterizedBy(typeNameOf<String>()),
+                        KModifier.PROTECTED
+                    ) {
+                        initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
                     }
-                    if (parentClass != null) {
-                        superclass(parentClass)
-                    } else {
-                        property(
-                            "internalArguments",
-                            ClassName("kotlin.collections", "MutableSet").parameterizedBy(typeNameOf<String>()),
-                            KModifier.PROTECTED
-                        ) {
-                            initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
-                        }
+                }
+
+                addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()))
+                addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()).nestedClass("Builder"))
+
+                val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
+                val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
+                val defaultsInitializer = CodeBlock.builder()
+
+                val argumentTypeNameString =
+                    generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
+                val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
+                val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
+
+                generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
+
+                addType(TypeSpec.companionObjectBuilder().apply {
+                    property(
+                        "knownArguments",
+                        ClassName("kotlin.collections", "MutableSet").parameterizedBy(ClassName("kotlin", "String")),
+                        KModifier.PRIVATE
+                    ) {
+                        initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
                     }
+                    generateOptions(
+                        arguments = level.transformImplArguments(),
+                        implClassName = implClassName,
+                        argumentTypeName = argumentImplTypeName,
+                        applyCompilerArgumentsFun = applyCompilerArgumentsFun,
+                        toCompilerConverterFun = toCompilerConverterFun,
+                        defaultsInitializer = defaultsInitializer,
+                    )
+                }.build())
 
-                    addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()))
+                // Initialize default values for custom arguments
+                defaultsInitializer.build().takeIf { it.isNotEmpty() }?.let { addInitializerBlock(it) }
 
-                    val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
-                    val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
-                    val defaultsInitializer = CodeBlock.builder()
-
-                    val argumentTypeNameString =
-                        generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
-                    val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
-                    val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
-
-                    generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
-                    addType(TypeSpec.companionObjectBuilder().apply {
-                        property(
-                            "knownArguments",
-                            ClassName("kotlin.collections", "MutableSet").parameterizedBy(ClassName("kotlin", "String")),
-                            KModifier.PRIVATE
-                        ) {
-                            initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
-                        }
-                        generateOptions(
-                            arguments = level.transformImplArguments(),
-                            implClassName = implClassName,
-                            argumentTypeName = argumentImplTypeName,
-                            applyCompilerArgumentsFun = applyCompilerArgumentsFun,
-                            toCompilerConverterFun = toCompilerConverterFun,
-                            defaultsInitializer = defaultsInitializer,
+                if (level.isLeaf()) {
+                    function("deepCopy") {
+                        addModifiers(KModifier.OVERRIDE)
+                        returns(ClassName(targetPackage, implClassName))
+                        addStatement(
+                            "return %T().also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }",
+                            ClassName(targetPackage, implClassName)
                         )
+                    }
+                    function("build") {
+                        addModifiers(KModifier.OVERRIDE)
+                        returns(ClassName(API_ARGUMENTS_PACKAGE, apiClassName))
+                        addStatement("return deepCopy()")
+                    }
+                    addSuperinterface(
+                        ClassName(targetPackage.removeSuffix("arguments"), "DeepCopyable").parameterizedBy(
+                            ClassName(targetPackage, implClassName)
+                        )
+                    )
+                    toCompilerConverterFun.addStatement(
+                        "arguments.internalArguments = %M<%T>(internalArguments.toList()).internalArguments",
+                        MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments"),
+                        level.getCompilerArgumentsClassName()
+                    )
+
+                    primaryConstructor(FunSpec.constructorBuilder().apply {
+                        addStatement("applyCompilerArguments(%T())", level.getCompilerArgumentsClassName())
                     }.build())
+                }
+                toCompilerConverterFun.addStatement("return arguments")
+                addFunction(toCompilerConverterFun.build())
 
-                    // Initialize default values for custom arguments
-                    defaultsInitializer.build().takeIf { it.isNotEmpty() }?.let { addInitializerBlock(it) }
+                applyCompilerArgumentsFun.addStatement("internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })")
+                addFunction(applyCompilerArgumentsFun.build())
 
-                    if (level.isLeaf()) {
-                        toCompilerConverterFun.addStatement(
-                            "arguments.internalArguments = %M<%T>(internalArguments.toList()).internalArguments",
-                            MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments"),
-                            level.getCompilerArgumentsClassName()
-                        )
-
-                        primaryConstructor(FunSpec.constructorBuilder().apply {
-                            addStatement("applyCompilerArguments(%T())", level.getCompilerArgumentsClassName())
-                        }.build())
-                    }
-                    toCompilerConverterFun.addStatement("return arguments")
-                    addFunction(toCompilerConverterFun.build())
-
-                    applyCompilerArgumentsFun.addStatement("internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })")
-                    addFunction(applyCompilerArgumentsFun.build())
-
-                    maybeAddApplyArgumentStringsFun(level, parentClass)
-                    maybeAddToArgumentsStringFun(level, parentClass)
-                }.build()
-            )
+                maybeAddApplyArgumentStringsFun(level, parentClass)
+                maybeAddToArgumentsStringFun(level, parentClass)
+            }
         }.build()
         mainFile.writeTo(mainFileAppendable)
         outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
@@ -388,7 +403,7 @@ internal class BtaImplGenerator(
         }
         function("set") {
             val typeParameter = TypeVariableName("V")
-            addModifiers(KModifier.OPERATOR)
+            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
             addTypeVariable(typeParameter)
             addParameter("key", implParameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)

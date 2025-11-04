@@ -115,7 +115,7 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
-    ArgumentsCommonCompilerArguments {
+    ArgumentsCommonCompilerArguments, ArgumentsCommonCompilerArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
@@ -137,7 +137,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonCompilerArgument<V>): V = optionsMap[key.id] as V
 
-  public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V) {
+  private operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 
