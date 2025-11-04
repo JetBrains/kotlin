@@ -3962,6 +3962,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("delegatedPropertyInsideLocalClass.kt")
+      public void testDelegatedPropertyInsideLocalClass() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/delegates/delegatedPropertyInsideLocalClass.kt");
+      }
+
+      @Test
       @TestMetadata("extensionGenericGetValue.kt")
       public void testExtensionGenericGetValue() {
         runTest("compiler/fir/analysis-tests/testData/resolve/delegates/extensionGenericGetValue.kt");
