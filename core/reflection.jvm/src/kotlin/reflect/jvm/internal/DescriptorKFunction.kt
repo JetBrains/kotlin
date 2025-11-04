@@ -179,9 +179,6 @@ internal class DescriptorKFunction private constructor(
         return null
     }
 
-    private val boundReceiver: Any?
-        get() = rawBoundReceiver.coerceToExpectedReceiverType(this, descriptor)
-
     // boundReceiver is unboxed receiver when the receiver is inline class.
     // However, when the expected dispatch receiver type is an interface,
     // the member belongs to the interface/DefaultImpls, so the receiver should not be unboxed.
