@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
@@ -124,6 +125,16 @@ internal class Kotlin230AndBelowWrapper(
             private val toolchain: JvmPlatformToolchainWrapper,
             private val sources: List<Path>,
             private val destinationDirectory: Path,
+            override val compilerArguments: JvmCompilerArgumentsWrapper = JvmCompilerArgumentsWrapper(
+                base.compilerArguments,
+                argumentsFactory = {
+                    toolchain.jvmCompilationOperationBuilder(
+                        emptyList(),
+                        Paths.get(
+                            ""
+                        )
+                    ).compilerArguments
+                }),
         ) : BuildOperationWrapper<CompilationResult>(base), JvmCompilationOperation by base, JvmCompilationOperation.Builder {
             override fun toBuilder(): JvmCompilationOperation.Builder {
                 return copy()
@@ -227,6 +238,19 @@ internal class Kotlin230AndBelowWrapper(
                         // this field was not set and has no default
                     }
                 }
+        }
+    }
+
+    private class JvmCompilerArgumentsWrapper(
+        private val baseCompilerArguments: JvmCompilerArguments,
+        private val argumentsFactory: () -> JvmCompilerArguments,
+    ) :
+        JvmCompilerArguments by baseCompilerArguments, JvmCompilerArguments.Builder {
+        override fun build(): JvmCompilerArguments {
+            return JvmCompilerArgumentsWrapper(
+                argumentsFactory().also { newArguments -> newArguments.applyArgumentStrings(toArgumentStrings()) },
+                argumentsFactory
+            )
         }
     }
 }

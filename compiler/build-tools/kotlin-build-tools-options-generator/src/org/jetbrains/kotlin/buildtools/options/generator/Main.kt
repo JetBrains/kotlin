@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.buildtools.options.generator
 
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
@@ -103,12 +104,12 @@ fun main(args: Array<String>) {
 internal interface BtaGenerator {
     fun generateArgumentsForLevel(
         level: KotlinCompilerArgumentsLevel,
-        parentClass: TypeName? = null,
+        parentClass: ClassName? = null,
     ): GeneratorOutputs
 }
 
-internal class GeneratorOutputs(val argumentTypeName: TypeName, val generatedFiles: List<Pair<Path, String>>)
-private class LevelWithParent(val level: KotlinCompilerArgumentsLevel, val parentName: TypeName?)
+internal class GeneratorOutputs(val argumentTypeName: ClassName, val generatedFiles: List<Pair<Path, String>>)
+private class LevelWithParent(val level: KotlinCompilerArgumentsLevel, val parentName: ClassName?)
 
 private fun KotlinCompilerArgumentsLevel.findPathToLeaf(leafName: String): Set<KotlinCompilerArgumentsLevel> {
     if (name == leafName) {

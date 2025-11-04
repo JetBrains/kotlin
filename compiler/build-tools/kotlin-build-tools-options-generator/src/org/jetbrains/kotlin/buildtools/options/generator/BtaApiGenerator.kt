@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
+import org.jetbrains.kotlin.generators.kotlinpoet.interfaceType
 import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
 import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -29,35 +30,47 @@ internal class BtaApiGenerator(
 ) : BtaGenerator {
     private val outputs = mutableListOf<Pair<Path, String>>()
 
-    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?): GeneratorOutputs {
+    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: ClassName?): GeneratorOutputs {
         val className = level.name.capitalizeAsciiOnly()
         val mainFileAppendable = createGeneratedFileAppendable()
         val mainFile = FileSpec.builder(targetPackage, className).apply {
-            addType(
-                TypeSpec.interfaceBuilder(className).apply {
-                    addKdoc(KDOC_SINCE_2_3_0)
-                    if (level.name in experimentalLevelNames) {
-                        addAnnotation(ANNOTATION_EXPERIMENTAL)
-                    }
-                    parentClass?.let { addSuperinterface(it) }
-                    val argument =
-                        generateArgumentType(
-                            className,
-                            includeSinceVersion = true,
-                            registerAsKnownArgument = false,
-                            CodeBlock.of(KDOC_BASE_OPTIONS_CLASS, ClassName(targetPackage, className))
-                        )
-                    val argumentTypeName = ClassName(targetPackage, className, argument)
-                    if (parentClass == null) {
-                        addToArgumentStringsFun()
-                        maybeAddApplyArgumentStringsFun()
-                    }
+            interfaceType(className) {
+                addKdoc(KDOC_SINCE_2_3_0)
+                if (level.name in experimentalLevelNames) {
+                    addAnnotation(ANNOTATION_EXPERIMENTAL)
+                }
+                parentClass?.let { addSuperinterface(it) }
+                val argument =
+                    generateArgumentType(
+                        className,
+                        includeSinceVersion = true,
+                        registerAsKnownArgument = false,
+                        CodeBlock.of(KDOC_BASE_OPTIONS_CLASS, ClassName(targetPackage, className))
+                    )
+                val argumentTypeName = ClassName(targetPackage, className, argument)
+                if (parentClass == null) {
+                    addToArgumentStringsFun()
+                    maybeAddApplyArgumentStringsFun(deprecated = true)
+                }
+                interfaceType("Builder") {
                     generateGetPutFunctions(argumentTypeName)
-                    addType(TypeSpec.companionObjectBuilder().apply {
-                        generateOptions(level.filterOutDroppedArguments(), argumentTypeName)
-                    }.build())
-                }.build()
-            )
+                    if (level.isLeaf()) {
+                        function("build") {
+                            addModifiers(KModifier.ABSTRACT)
+                            returns(ClassName(targetPackage, className))
+                        }
+                    }
+                    if (parentClass == null) {
+                        maybeAddApplyArgumentStringsFun()
+                    } else {
+                        addSuperinterface(parentClass.nestedClass("Builder"))
+                    }
+                }
+                generateGetPutFunctions(argumentTypeName, deprecateSet = true)
+                addType(TypeSpec.companionObjectBuilder().apply {
+                    generateOptions(level.filterOutDroppedArguments(), argumentTypeName)
+                }.build())
+            }
         }.build()
         mainFile.writeTo(mainFileAppendable)
         outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
@@ -194,7 +207,7 @@ internal class BtaApiGenerator(
         outputs += Path(enumFile.relativePath) to enumFileAppendable.toString()
     }
 
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
+    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, deprecateSet: Boolean = false) {
         function("get") {
             addKdoc(KDOC_OPTIONS_GET)
             addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
@@ -204,6 +217,7 @@ internal class BtaApiGenerator(
             addParameter("key", parameter.parameterizedBy(typeParameter))
         }
         function("set") {
+            maybeAddMutabilityDeprecationAnnotation(deprecateSet)
             addKdoc(KDOC_OPTIONS_SET)
             addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
             val typeParameter = TypeVariableName("V")
@@ -261,8 +275,9 @@ private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condit
     return this
 }
 
-private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun() {
+private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(deprecated: Boolean = false) {
     function("applyArgumentStrings") {
+        maybeAddMutabilityDeprecationAnnotation(deprecated)
         addKdoc("Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.")
         addParameter(
             ParameterSpec.builder("arguments", listTypeNameOf<String>())
@@ -277,5 +292,16 @@ private fun TypeSpec.Builder.addToArgumentStringsFun() {
         addKdoc("Converts the options to a list of string arguments recognized by the Kotlin CLI compiler.")
         returns(listTypeNameOf<String>())
         this.addModifiers(KModifier.ABSTRACT)
+    }
+}
+
+private fun FunSpec.Builder.maybeAddMutabilityDeprecationAnnotation(deprecated: Boolean) {
+    if (deprecated) {
+        annotation<Deprecated> {
+            addMember(
+                "message = %S", "Compiler argument classes will become immutable in an upcoming release. " +
+                        "Use a Builder instance to create and modify compiler arguments."
+            )
+        }
     }
 }

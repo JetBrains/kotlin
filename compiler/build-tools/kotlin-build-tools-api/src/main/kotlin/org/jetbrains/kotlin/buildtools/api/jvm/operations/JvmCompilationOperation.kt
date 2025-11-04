@@ -38,7 +38,7 @@ import java.nio.file.Path
 public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
 
     public interface Builder : BuildOperation.Builder {
-        public val compilerArguments: JvmCompilerArguments
+        public val compilerArguments: JvmCompilerArguments.Builder
         public operator fun <V> get(key: Option<V>): V
         public operator fun <V> set(key: Option<V>, value: V)
         public fun build(): JvmCompilationOperation
