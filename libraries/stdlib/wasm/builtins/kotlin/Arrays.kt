@@ -41,8 +41,9 @@ public actual constructor(size: Int) {
     public actual companion object {
         /** Returns an array containing the specified `Byte` elements. */
         @ExperimentalStdlibApi
-        public actual operator fun of(vararg elements: Byte): ByteArray =
-            byteArrayOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Byte): ByteArray =
+            elements
     }
 
     internal val storage: WasmByteArray
@@ -136,8 +137,9 @@ public actual constructor(size: Int) {
     public actual companion object {
         /** Returns an array containing the specified `Char` elements. */
         @ExperimentalStdlibApi
-        public actual operator fun of(vararg elements: Char): CharArray =
-            charArrayOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Char): CharArray =
+            elements
     }
 
     internal val storage: WasmCharArray
@@ -231,8 +233,9 @@ public actual constructor(size: Int) {
     public actual companion object {
         /** Returns an array containing the specified `Short` elements. */
         @ExperimentalStdlibApi
-        public actual operator fun of(vararg elements: Short): ShortArray =
-            shortArrayOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Short): ShortArray =
+            elements
     }
 
     internal val storage: WasmShortArray
@@ -326,8 +329,9 @@ public actual constructor(size: Int) {
     public actual companion object {
         /** Returns an array containing the specified `Int` elements. */
         @ExperimentalStdlibApi
-        public actual operator fun of(vararg elements: Int): IntArray =
-            intArrayOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Int): IntArray =
+            elements
     }
 
     internal val storage: WasmIntArray
@@ -421,8 +425,9 @@ public actual constructor(size: Int) {
     public actual companion object {
         /** Returns an array containing the specified `Long` elements. */
         @ExperimentalStdlibApi
-        public actual operator fun of(vararg elements: Long): LongArray =
-            longArrayOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Long): LongArray =
+            elements
     }
 
     internal val storage: WasmLongArray
@@ -516,8 +521,9 @@ public actual constructor(size: Int) {
     public actual companion object {
         /** Returns an array containing the specified `Float` elements. */
         @ExperimentalStdlibApi
-        public actual operator fun of(vararg elements: Float): FloatArray =
-            floatArrayOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Float): FloatArray =
+            elements
     }
 
     internal val storage: WasmFloatArray
@@ -611,8 +617,9 @@ public actual constructor(size: Int) {
     public actual companion object {
         /** Returns an array containing the specified `Double` elements. */
         @ExperimentalStdlibApi
-        public actual operator fun of(vararg elements: Double): DoubleArray =
-            doubleArrayOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Double): DoubleArray =
+            elements
     }
 
     internal val storage: WasmDoubleArray
@@ -706,8 +713,9 @@ public actual constructor(size: Int) {
     public actual companion object {
         /** Returns an array containing the specified `Boolean` elements. */
         @ExperimentalStdlibApi
-        public actual operator fun of(vararg elements: Boolean): BooleanArray =
-            booleanArrayOf(*elements)
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Boolean): BooleanArray =
+            elements
     }
 
     internal val storage: WasmByteArray

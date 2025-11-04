@@ -40,7 +40,8 @@ public actual constructor(size: Int) {
         /** Returns an array containing the specified `Byte` elements. */
         @ExperimentalStdlibApi
         @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
-        public actual operator fun of(vararg elements: Byte): ByteArray
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Byte): ByteArray
     }
 
     /**
@@ -110,7 +111,8 @@ public actual constructor(size: Int) {
         /** Returns an array containing the specified `Char` elements. */
         @ExperimentalStdlibApi
         @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
-        public actual operator fun of(vararg elements: Char): CharArray
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Char): CharArray
     }
 
     /**
@@ -180,7 +182,8 @@ public actual constructor(size: Int) {
         /** Returns an array containing the specified `Short` elements. */
         @ExperimentalStdlibApi
         @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
-        public actual operator fun of(vararg elements: Short): ShortArray
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Short): ShortArray
     }
 
     /**
@@ -250,7 +253,8 @@ public actual constructor(size: Int) {
         /** Returns an array containing the specified `Int` elements. */
         @ExperimentalStdlibApi
         @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
-        public actual operator fun of(vararg elements: Int): IntArray
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Int): IntArray
     }
 
     /**
@@ -320,7 +324,8 @@ public actual constructor(size: Int) {
         /** Returns an array containing the specified `Long` elements. */
         @ExperimentalStdlibApi
         @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
-        public actual operator fun of(vararg elements: Long): LongArray
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Long): LongArray
     }
 
     /**
@@ -390,7 +395,8 @@ public actual constructor(size: Int) {
         /** Returns an array containing the specified `Float` elements. */
         @ExperimentalStdlibApi
         @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
-        public actual operator fun of(vararg elements: Float): FloatArray
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Float): FloatArray
     }
 
     /**
@@ -460,7 +466,8 @@ public actual constructor(size: Int) {
         /** Returns an array containing the specified `Double` elements. */
         @ExperimentalStdlibApi
         @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
-        public actual operator fun of(vararg elements: Double): DoubleArray
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Double): DoubleArray
     }
 
     /**
@@ -530,7 +537,8 @@ public actual constructor(size: Int) {
         /** Returns an array containing the specified `Boolean` elements. */
         @ExperimentalStdlibApi
         @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
-        public actual operator fun of(vararg elements: Boolean): BooleanArray
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun of(vararg elements: Boolean): BooleanArray
     }
 
     /**
