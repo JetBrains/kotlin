@@ -149,7 +149,7 @@ private class BridgeFunctionDescriptor(
     override val argNames
         get() = buildList {
             var useNamed = false
-            parameters.forEachIndexed { index, bridgeParameter ->
+            parameters.forEachIndexed { _, bridgeParameter ->
                 val argName = buildString {
                     if (bridgeParameter.bridge is Bridge.AsNSArrayForVariadic) {
                         append("*")
@@ -192,7 +192,17 @@ private class BridgeFunctionDescriptor(
                     CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))
                 )
             )
-        }
+            val allBridges = parameters.mapTo(mutableListOf<AnyBridge>()) { it.bridge }
+            selfParameter?.let { allBridges.add(it.bridge) }
+            extensionReceiverParameter?.let { allBridges.add(it.bridge) }
+            allBridges.add(returnType)
+            allBridges.forEach {
+                if (it.typeList.size <= 1) return@forEach
+                for (i in 0..<it.typeList.size) {
+                    add(it.nativePointerToMultipleObjCBridge(i))
+                }
+            }
+        }.distinct()
     }
 
     override fun createSwiftInvocation(resultTransformer: ((String) -> String)?): List<String> = buildList {
@@ -204,12 +214,14 @@ private class BridgeFunctionDescriptor(
             add(descriptor.swiftAsyncCall(typeNamer))
         } else if (errorParameter != null) {
             add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
-            add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvoke(typeNamer))
+            add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvocationLineForCBridge(typeNamer))
             val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
             add("guard ${errorParameter.name} == nil else { throw KotlinError(wrapped: $error) }")
             resultTransformer?.let { add(it(descriptor.returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result"))) }
         } else {
-            add((resultTransformer ?: { it })(descriptor.swiftCall(typeNamer)))
+            val swiftCallAndTransformationLines = descriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer)
+            addAll(swiftCallAndTransformationLines.dropLast(1))
+            add((resultTransformer ?: { it })(swiftCallAndTransformationLines.last()))
         }
     }
 }
@@ -236,10 +248,29 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     buildCallSite: BridgeFunctionDescriptor.() -> String,
 ) = buildList {
     add("@${exportAnnotationFqName.substringAfterLast('.')}(\"${cBridgeName}\")")
+    val kotlinReturnType = when {
+        returnType.typeList.isEmpty() -> KotlinType.Unit
+        returnType.typeList.size == 1 -> returnType.typeList.single().kotlinType.takeIf { !isAsync } ?: KotlinType.Unit
+        // As we can't return multiple types, we use native pointer instead
+        else -> KotlinType.KotlinObject
+    }
     add(
         "public fun $kotlinBridgeName(${
-            allParameters.filter { it.isRenderable }.joinToString { "${it.name.kotlinIdentifier}: ${it.bridge.kotlinType.repr}" }
-        }): ${(returnType.kotlinType.takeIf { !isAsync } ?: KotlinType.Unit).repr} {"
+            allParameters.filter { it.isRenderable && it.bridge.typeList.isNotEmpty() }.joinToString {
+                val bridge = it.bridge
+                val identifier = it.name.kotlinIdentifier
+                if (bridge.typeList.size > 1) {
+                    var index = 0
+                    bridge.typeList.joinToString { (kotlinType, _) ->
+                        index++
+                        "${identifier}_$index: ${kotlinType.repr}"
+                    }
+                } else {
+                    val typeRepresentation = bridge.typeList.single().kotlinType.repr
+                    "$identifier: $typeRepresentation"
+                }
+            }
+        }): ${kotlinReturnType.repr} {"
     )
     val indent = "    "
 
@@ -266,6 +297,8 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
         add("${indent}$callSite")
     } else {
         if (errorParameter != null) {
+            // TODO: is it correct to use the first type only here?
+            val defaultValue = returnType.typeList.first().kotlinType.defaultValue
             add(
                 """
             try {
@@ -273,7 +306,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
                 return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}
             } catch (error: Throwable) {
                 __${errorParameter.name}.value = StableRef.create(error).asCPointer()
-                return ${returnType.kotlinType.defaultValue}
+                return $defaultValue
             }
             """.trimIndent().prependIndent(indent)
             )
@@ -285,7 +318,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     add("}")
 }
 
-private fun BridgeFunctionDescriptor.swiftInvoke(typeNamer: SirTypeNamer): String {
+private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: SirTypeNamer): String {
     val parameters = allParameters.filter { it.isRenderable }.joinToString {
         // We fix ugly `self` escaping here. This is the only place we'd otherwise need full support for swift's contextual keywords
         it.bridge.inSwiftSources.swiftToKotlin(typeNamer, it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier)
@@ -293,8 +326,15 @@ private fun BridgeFunctionDescriptor.swiftInvoke(typeNamer: SirTypeNamer): Strin
     return "$cBridgeName($parameters)"
 }
 
-private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String {
-    return returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvoke(typeNamer))
+private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer: SirTypeNamer): List<String> {
+    val swiftInvocation = swiftInvocationLineForCBridge(typeNamer)
+    if (returnType.typeList.size <= 1) {
+        return listOf(returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvocation))
+    }
+    return buildList {
+        add("let _result = $swiftInvocation")
+        add(returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result"))
+    }
 }
 
 private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer): String {
@@ -303,23 +343,40 @@ private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer): St
     return """
         await withUnsafeContinuation { nativeContinuation in
             let ${continuation.name.swiftIdentifier}: ${continuation.bridge.swiftType.swiftName} = { nativeContinuation.resume(returning: $0) }
-            let _: () = ${swiftInvoke(typeNamer)}
+            let _: () = ${swiftInvocationLineForCBridge(typeNamer)}
         }
     """.trimIndent()
 }
 
 private fun BridgeFunctionDescriptor.cDeclaration() = buildString {
-    val returnType = returnType.takeIf { !isAsync } ?: Bridge.AsVoid
+    val returnTypeBridge = returnType.takeIf { !isAsync } ?: Bridge.AsVoid
+    val returnType = when {
+        returnTypeBridge.typeList.isEmpty() -> CType.Void
+        returnTypeBridge.typeList.size == 1 -> returnTypeBridge.typeList.single().cType
+        // As we can't return multiple types, we use void* here
+        else -> CType.Object
+    }
 
     append(
-        returnType.cType.render(buildString {
+        returnType.render(buildString {
             append(cBridgeName)
             append("(")
-            allParameters.filter { it.isRenderable }.joinTo(this) { it.bridge.cType.render(it.name.cIdentifier) }
+            allParameters.filter { it.isRenderable && it.bridge.typeList.isNotEmpty() }.joinTo(this) {
+                val bridge = it.bridge
+                if (bridge.typeList.size > 1) {
+                    var index = 0
+                    bridge.typeList.joinToString { (_, cType) ->
+                        index++
+                        cType.render("${it.name.cIdentifier}_$index")
+                    }
+                } else {
+                    bridge.typeList.single().cType.render(it.name.cIdentifier)
+                }
+            }
             append(')')
         })
     )
-    if (returnType.swiftType.isNever) append(" __attribute((noreturn))")
+    if (returnTypeBridge.swiftType.isNever) append(" __attribute((noreturn))")
     append(";")
 }
 
