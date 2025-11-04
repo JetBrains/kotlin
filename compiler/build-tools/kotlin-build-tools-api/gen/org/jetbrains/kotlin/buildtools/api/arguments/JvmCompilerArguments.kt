@@ -52,6 +52,11 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     public val availableSinceVersion: KotlinReleaseVersion,
   )
 
+  /**
+   * A builder for [JvmCompilerArguments].
+   *
+   * @since 2.3.20
+   */
   public interface Builder : CommonCompilerArguments.Builder {
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -75,6 +80,9 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     public operator fun contains(key: JvmCompilerArgument<*>): Boolean
 
+    /**
+     * Constructs a new immutable [JvmCompilerArguments] instance with the options set in this builder.
+     */
     public fun build(): JvmCompilerArguments
   }
 
