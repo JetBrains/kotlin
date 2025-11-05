@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
@@ -87,6 +88,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
 
         val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
         val debugFriendlyCompilation = FORCE_DEBUG_FRIENDLY_COMPILATION in testServices.moduleStructure.allDirectives
+        val generateDwarf = GENERATE_DWARF in testServices.moduleStructure.allDirectives
 
         val currentSetup = when {
             debugFriendlyCompilation -> PrecompileSetup.DEBUG_FRIENDLY
@@ -109,6 +111,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             dependencyResolutionMap = moduleResolutionMap,
             typeScriptFragment = typeScriptFragment,
             generateSourceMaps = generateSourceMaps,
+            generateDwarf = generateDwarf,
         )
 
         return BinaryArtifacts.Wasm(
