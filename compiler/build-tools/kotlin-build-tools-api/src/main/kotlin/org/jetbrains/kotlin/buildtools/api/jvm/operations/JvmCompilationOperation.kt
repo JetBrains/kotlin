@@ -37,6 +37,9 @@ import java.nio.file.Path
 @ExperimentalBuildToolsApi
 public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
 
+    /**
+     * A builder for configuring and instantiating the [JvmCompilationOperation].
+     */
     public interface Builder : BuildOperation.Builder {
         /**
          * Kotlin compiler configurable options for JVM platform.

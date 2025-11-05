@@ -68,7 +68,15 @@ public interface KotlinToolchains {
      *
      * @see BuildSession.executeOperation
      */
+    @Deprecated("Use daemonExecutionPolicyBuilder instead", ReplaceWith("daemonExecutionPolicyBuilder()"))
     public fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon
+
+    /**
+     * Creates a builder for [ExecutionPolicy.WithDaemon] which allows executing operations using a Kotlin daemon.
+     *
+     * @see BuildSession.executeOperation
+     */
+    public fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder
 
     /**
      * Returns the version of the Kotlin compiler used to run compilation.
