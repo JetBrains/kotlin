@@ -32,6 +32,15 @@ object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpres
 
         val containingLambda = context.containingDeclarations.filterIsInstance<FirAnonymousFunctionSymbol>().lastOrNull() ?: return
 
+        val lambdaSource = containingLambda.fir.source
+        val variableSource = variableSymbol.fir.source
+        if (lambdaSource != null && variableSource != null) {
+            val vStart = variableSource.startOffset
+            val lStart = lambdaSource.startOffset
+            val lEnd = lambdaSource.endOffset
+            if (vStart in lStart..<lEnd) return
+        }
+
         if (!expression.partOfCall()) return
 
         val call = containingLambda.findContainingCall() ?: return
@@ -47,9 +56,9 @@ object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpres
 
         report(
             IEData(
-                expressionName = expression::class.simpleName,
                 containingLambda = containingLambda.name.asString(),
-                call = call.source?.lighterASTNode.toString(),
+                callName = calledFunctionSymbol.name.toString(),
+                variableName = variableSymbol.name.toString(),
                 varDeclaration = variableSymbol.fir.source?.lighterASTNode.toString()
             )
         )
@@ -105,8 +114,8 @@ class IEReporter(
 }
 
 data class IEData(
-    val expressionName: String? = null,
     val containingLambda: String? = null,
-    val call: String? = null,
+    val callName: String? = null,
+    val variableName: String? = null,
     val varDeclaration: String? = null,
 )

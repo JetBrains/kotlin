@@ -935,7 +935,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(UNSUPPORTED_FEATURE, "{0}", LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED))
         map.put(UNSUPPORTED_SUSPEND_TEST, "'suspend' functions annotated with '@kotlin.test.Test' are unsupported.")
         map.put(NEW_INFERENCE_ERROR, "New inference error [{0}].", STRING)
-        map.put(IE_DIAGNOSTIC, "No capturing inside not inline and callsInPlace lambda diagnostic", STRING)
+        map.put(IE_DIAGNOSTIC, "{0}", STRING)
 
         // Miscellaneous
         map.put(OTHER_ERROR, "Unknown error.")
