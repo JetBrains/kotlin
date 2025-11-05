@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.stubs.StubUtils.readContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.writeContract
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
 
-object KtPropertyAccessorElementType : KtStubElementType<KotlinPropertyAccessorStubImpl, KtPropertyAccessor>(
+internal object KtPropertyAccessorElementType : KtStubElementType<KotlinPropertyAccessorStubImpl, KtPropertyAccessor>(
     "PROPERTY_ACCESSOR",
     KtPropertyAccessor::class.java,
     KotlinPropertyAccessorStub::class.java,
