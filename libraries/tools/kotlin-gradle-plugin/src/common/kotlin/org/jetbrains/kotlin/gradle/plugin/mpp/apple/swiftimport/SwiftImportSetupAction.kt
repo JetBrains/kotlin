@@ -741,9 +741,11 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                     exec.environment.remove(it)
                 }
             }
-            // FIXME: Xcodebuild passes these from env to somewhere
             exec.environment.keys.filter {
+                // ScanDependencies explode with duplicate modules because it reads this env for some reason
                 it.startsWith("OTHER_")
+                        // Also some asset catalogs utility explodes
+                        || it.startsWith("ASSETCATALOG_")
             }.forEach {
                 exec.environment.remove(it)
             }
