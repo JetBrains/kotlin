@@ -314,17 +314,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
     }
 
-    private val membersWithSpecializedSignature: Set<String> = buildSet {
-        addAll(SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SHORT_NAMES.map { it.asString() })
-        add("addAll")
-        add("putAll")
-    }
+    private val membersWithSpecializedSignature: Set<String> =
+        SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SHORT_NAMES.map { it.asString() }.toSet()
 
-    private val erasedCollectionParameterNames: Set<String> = buildSet {
-        addAll(SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES)
-        add("addAll")
-        add("putAll")
-    }
+    private val erasedCollectionParameterNames: Set<String> =
+        SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES.toSet()
 
     // TODO check "go to base method", "go to declaration" in IDE
     private fun methodWrappers(
@@ -654,8 +648,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
     }
 
-    private fun FqName.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
-
     private fun KaSession.getJavaMethodForMappedMethodWithSpecialSignature(
         symbol: KaNamedFunctionSymbol?,
         allSupertypes: List<KaClassType>,
@@ -667,10 +659,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         return when {
             matchesMapRemoveMethod(symbol) ->
                 getJavaMapClass(allSupertypes)?.methods?.find { it.name == "remove" }
-            matchesAddAllMethod(symbol) ->
-                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "addAll" }
-            matchesAddAll2Method(symbol) ->
-                getJavaListClass(allSupertypes)?.methods?.find { it.name == "addAll" && it.parameters.size == 2 }
             symbolName == "contains" ->
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "contains" }
             symbolName == "remove" ->
@@ -691,8 +679,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 getJavaMapClass(allSupertypes)?.methods?.find { it.name == "containsValue" }
             symbolName == "get" ->
                 getJavaMapClass(allSupertypes)?.methods?.find { it.name == "get" }
-            symbolName == "putAll" ->
-                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "putAll" }
             else -> null
         }
     }
@@ -718,14 +704,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     private fun KaSession.findOverriddenCollectionSymbol(symbol: KaNamedFunctionSymbol): KaNamedFunctionSymbol? {
         return symbol.allOverriddenSymbols.find { it.isFromKotlinCollections() } as? KaNamedFunctionSymbol
-    }
-
-    private fun matchesAddAllMethod(symbol: KaNamedFunctionSymbol): Boolean {
-        return symbol.name.asString() == "addAll" && symbol.valueParameters.size == 1
-    }
-
-    private fun matchesAddAll2Method(symbol: KaNamedFunctionSymbol): Boolean {
-        return symbol.callableId?.classId == StandardClassIds.MutableList && symbol.name.asString() == "addAll" && symbol.valueParameters.size == 2
     }
 
     private fun matchesMapRemoveMethod(symbol: KaNamedFunctionSymbol): Boolean {
