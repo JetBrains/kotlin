@@ -33,7 +33,13 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
 
     override fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess = InProcessExecutionPolicyImpl
 
+    @Deprecated(
+        "Use jvmCompilationOperationBuilder instead",
+        replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)")
+    )
     override fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl()
+
+    override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder = DaemonExecutionPolicyImpl()
 
     override fun getCompilerVersion(): String = KotlinCompilerVersion.VERSION
 

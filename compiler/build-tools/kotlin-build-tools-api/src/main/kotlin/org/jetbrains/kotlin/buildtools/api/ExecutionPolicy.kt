@@ -29,6 +29,35 @@ public sealed interface ExecutionPolicy {
      * Execution policy that runs the build operation using the long-running Kotlin daemon.
      */
     public interface WithDaemon : ExecutionPolicy {
+
+        /**
+         * A builder for configuring and instantiating the [WithDaemon] execution policy.
+         */
+        public interface Builder {
+            /**
+             * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+             *
+             * @return the previously set value for an option
+             * @throws IllegalStateException if the option was not set and has no default value
+             */
+            public operator fun <V> get(key: Option<V>): V
+
+            /**
+             * Set the [value] for option specified by [key], overriding any previous value for that option.
+             */
+            public operator fun <V> set(key: Option<V>, value: V)
+
+            /**
+             * Creates an immutable instance of [WithDaemon] based on the configuration of this builder.
+             */
+            public fun build(): WithDaemon
+        }
+
+        /**
+         * Creates a builder for [WithDaemon] that contains a copy of this configuration.
+         */
+        public fun toBuilder(): Builder
+
         /**
          * Base class for [ExecutionPolicy.WithDaemon] options.
          *
@@ -48,6 +77,10 @@ public sealed interface ExecutionPolicy {
         /**
          * Set the [value] for option specified by [key], overriding any previous value for that option.
          */
+        @Deprecated(
+            "WithDaemon will become immutable in an upcoming release. " +
+                    "Use `KotlinToolchains.daemonExecutionPolicyBuilder` to create a mutable builder instead."
+        )
         public operator fun <V> set(key: Option<V>, value: V)
 
         public companion object {

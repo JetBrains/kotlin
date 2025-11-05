@@ -40,10 +40,36 @@ internal class Kotlin230AndBelowWrapper(
     } as T
 
     override fun createBuildSession(): KotlinToolchains.BuildSession {
-        return BuildSessionWrapper(base.createBuildSession())
+        return BuildSessionWrapper(this, base.createBuildSession())
     }
 
-    class BuildSessionWrapper(private val base: KotlinToolchains.BuildSession) : KotlinToolchains.BuildSession by base {
+    override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder = WithDaemonWrapper(base.createDaemonExecutionPolicy())
+
+    private inner class WithDaemonWrapper(val baseExecutionPolicy: ExecutionPolicy.WithDaemon) :
+        ExecutionPolicy.WithDaemon by baseExecutionPolicy, ExecutionPolicy.WithDaemon.Builder {
+        override fun build(): ExecutionPolicy.WithDaemon = deepCopy()
+
+        override fun toBuilder(): ExecutionPolicy.WithDaemon.Builder = deepCopy()
+
+        private fun deepCopy() = WithDaemonWrapper(createDaemonExecutionPolicy()).also { newPolicy ->
+            ExecutionPolicy.WithDaemon::class.java.declaredFields.filter {
+                it.type.isAssignableFrom(
+                    ExecutionPolicy.WithDaemon.Option::class.java
+                )
+            }.forEach { field ->
+                try {
+                    @Suppress("UNCHECKED_CAST")
+                    newPolicy[field.get(ExecutionPolicy.WithDaemon.Companion) as ExecutionPolicy.WithDaemon.Option<Any?>] =
+                        this[field.get(ExecutionPolicy.WithDaemon.Companion) as ExecutionPolicy.WithDaemon.Option<*>]
+                } catch (_: IllegalStateException) {
+                    // this field was not set and has no default
+                }
+            }
+        }
+    }
+
+    class BuildSessionWrapper(override val kotlinToolchains: Kotlin230AndBelowWrapper, private val base: KotlinToolchains.BuildSession) :
+        KotlinToolchains.BuildSession by base {
         override fun <R> executeOperation(operation: BuildOperation<R>): R {
             return this.executeOperation(operation, logger = null)
         }
@@ -51,7 +77,8 @@ internal class Kotlin230AndBelowWrapper(
         override fun <R> executeOperation(operation: BuildOperation<R>, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): R {
             // we need to unwrap due to an `operation is BuildOperationImpl` check inside `executeOperation`
             val realOperation = if (operation is BuildOperationWrapper) operation.baseOperation else operation
-            return base.executeOperation(realOperation, executionPolicy, logger)
+            val realExecutionPolicy = if (executionPolicy is WithDaemonWrapper) executionPolicy.baseExecutionPolicy else executionPolicy
+            return base.executeOperation(realOperation, realExecutionPolicy, logger)
         }
     }
 

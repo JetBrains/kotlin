@@ -76,6 +76,13 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPol
 	public static final field SHUTDOWN_DELAY_MILLIS Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;Ljava/lang/Object;)V
+	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Builder;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;Ljava/lang/Object;)V
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Companion {
@@ -117,6 +124,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolch
 	public abstract fun createBuildSession ()Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains$BuildSession;
 	public abstract fun createDaemonExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
 	public abstract fun createInProcessExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$InProcess;
+	public abstract fun daemonExecutionPolicyBuilder ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Builder;
 	public abstract fun getCompilerVersion ()Ljava/lang/String;
 	public abstract fun getToolchain (Ljava/lang/Class;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain;
 	public static fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;

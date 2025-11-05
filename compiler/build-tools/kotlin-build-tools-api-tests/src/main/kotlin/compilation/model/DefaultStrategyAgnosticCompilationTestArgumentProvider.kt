@@ -36,7 +36,7 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
                 ),
                 named(
                     "[v1][${kotlinToolchainV1Adapter.getCompilerVersion()}] within daemon",
-                    kotlinToolchainV1Adapter to kotlinToolchainV1Adapter.createDaemonExecutionPolicy()
+                    kotlinToolchainV1Adapter to kotlinToolchainV1Adapter.daemonExecutionPolicyBuilder().build()
                 )
             )
             val v2Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> =
@@ -52,7 +52,7 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
                         ),
                         named(
                             "[v2][${kotlinToolchains.getCompilerVersion()}] within daemon",
-                            kotlinToolchains to kotlinToolchains.createDaemonExecutionPolicy()
+                            kotlinToolchains to kotlinToolchains.daemonExecutionPolicyBuilder().build()
                         )
                     )
                 }
