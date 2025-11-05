@@ -6702,6 +6702,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS) { firDiagnostic ->
+        ReceiverMutabilityMismatchBasedOnJavaAnnotationsImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS) { firDiagnostic ->
         NullabilityMismatchBasedOnJavaAnnotationsImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

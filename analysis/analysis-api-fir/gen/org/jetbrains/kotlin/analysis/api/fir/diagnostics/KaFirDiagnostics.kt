@@ -4693,6 +4693,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val messageSuffix: String
     }
 
+    interface ReceiverMutabilityMismatchBasedOnJavaAnnotations : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ReceiverMutabilityMismatchBasedOnJavaAnnotations::class
+        val actualType: KaType
+        val expectedType: ClassId
+    }
+
     interface NullabilityMismatchBasedOnJavaAnnotations : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NullabilityMismatchBasedOnJavaAnnotations::class
         val actualType: KaType

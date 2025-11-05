@@ -5639,6 +5639,13 @@ internal class ReceiverNullabilityMismatchBasedOnJavaAnnotationsImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReceiverNullabilityMismatchBasedOnJavaAnnotations
 
+internal class ReceiverMutabilityMismatchBasedOnJavaAnnotationsImpl(
+    override val actualType: KaType,
+    override val expectedType: ClassId,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReceiverMutabilityMismatchBasedOnJavaAnnotations
+
 internal class NullabilityMismatchBasedOnJavaAnnotationsImpl(
     override val actualType: KaType,
     override val expectedType: KaType,

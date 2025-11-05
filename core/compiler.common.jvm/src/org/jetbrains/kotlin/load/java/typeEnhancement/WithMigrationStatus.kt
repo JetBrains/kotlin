@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
-data class NullabilityQualifierWithMigrationStatus(
-    val qualifier: NullabilityQualifier,
+typealias NullabilityQualifierWithMigrationStatus = WithMigrationStatus<NullabilityQualifier>
+typealias MutabilityQualifierWithMigrationStatus = WithMigrationStatus<MutabilityQualifier>
+
+data class WithMigrationStatus<T>(
+    val qualifier: T,
     val isForWarningOnly: Boolean = false
 )

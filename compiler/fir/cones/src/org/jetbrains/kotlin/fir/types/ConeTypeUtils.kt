@@ -168,6 +168,15 @@ fun ConeKotlinType.toTypeProjection(projectionKind: ProjectionKind): ConeTypePro
     }
 }
 
+fun ConeSimpleKotlinType.replaceArgumentsWithStarProjectionsOrNull(): ConeSimpleKotlinType? {
+    return when (this) {
+        is ConeClassLikeType -> this.replaceArgumentsWithStarProjections()
+        // Intersection overrides can have intersection types as dispatch receivers
+        is ConeIntersectionType -> this.mapTypes { (it as ConeClassLikeType).replaceArgumentsWithStarProjections() }
+        else -> null
+    }
+}
+
 fun ConeClassLikeType.replaceArgumentsWithStarProjections(): ConeClassLikeType {
     if (typeArguments.isEmpty()) return this
     val newArguments = Array(typeArguments.size) { ConeStarProjection }

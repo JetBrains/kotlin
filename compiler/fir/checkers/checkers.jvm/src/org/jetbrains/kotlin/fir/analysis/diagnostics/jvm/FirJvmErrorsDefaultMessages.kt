@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.jvm
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.CLASS_ID
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.NOT_RENDERED
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -98,6 +99,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.PROPERTY_HIDES_JAVA_FIELD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REDUNDANT_REPEATABLE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR
@@ -146,6 +148,12 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             OPTIONAL_SENTENCE,
         )
         map.put(
+            RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
+            "Java type mismatch: inferred receiver type is ''{0}'', but a member from ''{1}'' is called on it.",
+            RENDER_TYPE,
+            CLASS_ID,
+        )
+        map.put(
             NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
             "Java type mismatch: inferred type is ''{0}'', but ''{1}'' was expected.{2}",
             RENDER_TYPE,
@@ -177,7 +185,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
-            "Override ''{0}'' has incorrect nullability in its signature compared to the overridden declaration ''{1}''.",
+            "Override ''{0}'' has incorrect nullability/mutability in its signature compared to the overridden declaration ''{1}''.",
             SYMBOL,
             SYMBOL,
         )

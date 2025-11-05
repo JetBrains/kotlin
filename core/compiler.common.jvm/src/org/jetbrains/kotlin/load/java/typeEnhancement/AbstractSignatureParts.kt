@@ -58,18 +58,28 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
             }
         }
 
-    private fun KotlinTypeMarker.extractQualifiers(): JavaTypeQualifiers {
-        val forErrors = nullabilityQualifier
-        val forErrorsOrWarnings = forErrors ?: enhancedForWarnings?.nullabilityQualifier
-        val mutability = with(typeSystem) {
+    private val KotlinTypeMarker.mutabilityQualifier: MutabilityQualifier?
+        get() = with(typeSystem) {
             when {
                 JavaToKotlinClassMap.isReadOnly(lowerBoundIfFlexible().fqNameUnsafe) -> MutabilityQualifier.READ_ONLY
                 JavaToKotlinClassMap.isMutable(upperBoundIfFlexible().fqNameUnsafe) -> MutabilityQualifier.MUTABLE
                 else -> null
             }
         }
+
+    private fun KotlinTypeMarker.extractQualifiers(): JavaTypeQualifiers {
+        val nullabilityForErrors = nullabilityQualifier
+        val nullabilityForErrorsOrWarnings = nullabilityForErrors ?: enhancedForWarnings?.nullabilityQualifier
+        val mutabilityForErrors = mutabilityQualifier
+        val mutabilityForErrorsOrWarnings = mutabilityQualifier ?: enhancedForWarnings?.mutabilityQualifier
         val isNotNullTypeParameter = with(typeSystem) { isDefinitelyNotNullType() } || isNotNullTypeParameterCompat
-        return JavaTypeQualifiers(forErrorsOrWarnings, mutability, isNotNullTypeParameter, forErrorsOrWarnings != forErrors)
+        return JavaTypeQualifiers(
+            nullability = nullabilityForErrorsOrWarnings,
+            mutability = mutabilityForErrors,
+            definitelyNotNull = isNotNullTypeParameter,
+            isNullabilityQualifierForWarning = nullabilityForErrorsOrWarnings != nullabilityForErrors,
+            isMutabilityQualifierForWarning = mutabilityForErrorsOrWarnings != mutabilityForErrors,
+        )
     }
 
     private fun TypeAndDefaultQualifiers.extractQualifiersFromAnnotations(defaultTypeQualifier: JavaDefaultQualifiers?): JavaTypeQualifiers {
@@ -100,9 +110,11 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         val annotationsNullability = annotationTypeQualifierResolver.extractNullability(composedAnnotation) { forceWarning(type) }
         if (annotationsNullability != null) {
             return JavaTypeQualifiers(
-                annotationsNullability.qualifier, annotationsMutability,
-                annotationsNullability.qualifier == NullabilityQualifier.NOT_NULL && typeParameterUse != null,
-                annotationsNullability.isForWarningOnly
+                nullability = annotationsNullability.qualifier,
+                mutability = annotationsMutability?.qualifier,
+                definitelyNotNull = annotationsNullability.qualifier == NullabilityQualifier.NOT_NULL && typeParameterUse != null,
+                isNullabilityQualifierForWarning = annotationsNullability.isForWarningOnly,
+                isMutabilityQualifierForWarning = annotationsMutability?.isForWarningOnly == true,
             )
         }
 
@@ -129,7 +141,13 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         val substitutedParameterBoundsNullability = typeParameterForArgument?.boundsNullability
             ?.let { if (it.qualifier == NullabilityQualifier.NULLABLE) it.copy(qualifier = NullabilityQualifier.FORCE_FLEXIBILITY) else it }
         val result = mostSpecific(substitutedParameterBoundsNullability, defaultNullability)
-        return JavaTypeQualifiers(result?.qualifier, annotationsMutability, definitelyNotNull, result?.isForWarningOnly == true)
+        return JavaTypeQualifiers(
+            nullability = result?.qualifier,
+            mutability = annotationsMutability?.qualifier,
+            definitelyNotNull = definitelyNotNull,
+            isNullabilityQualifierForWarning = result?.isForWarningOnly == true,
+            isMutabilityQualifierForWarning = annotationsMutability?.isForWarningOnly == true,
+        )
     }
 
     private fun TypeAndDefaultQualifiers.extractDefaultQualifier(): JavaDefaultQualifiers? {

@@ -26,7 +26,12 @@ class TypeEnhancementInfo(val map: Map<Int, JavaTypeQualifiers>) {
     constructor(vararg pairs: Pair<Int, JavaTypeQualifiers>) : this(mapOf(*pairs))
 
     fun copyForWarnings(): TypeEnhancementInfo =
-        TypeEnhancementInfo(this.map.mapValues { it.value.copy(isNullabilityQualifierForWarning = true) })
+        TypeEnhancementInfo(this.map.mapValues {
+            it.value.copy(
+                isNullabilityQualifierForWarning = true,
+                isMutabilityQualifierForWarning = true,
+            )
+        })
 }
 
 class PredefinedFunctionEnhancementInfo(

@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.load.java
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier
+import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
+import org.jetbrains.kotlin.load.java.typeEnhancement.WithMigrationStatus
 import org.jetbrains.kotlin.name.FqName
 import java.util.concurrent.ConcurrentHashMap
 
@@ -136,26 +138,43 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
 
     fun extractNullability(
         annotations: Iterable<TAnnotation>, forceWarning: TAnnotation.() -> Boolean = { false }
-    ): NullabilityQualifierWithMigrationStatus? =
-        annotations.fold(null as NullabilityQualifierWithMigrationStatus?) { found, annotation ->
-            val extracted = extractNullability(annotation, forceWarning)
+    ): NullabilityQualifierWithMigrationStatus? {
+        return extractQualifier(annotations) { extractNullability(it, forceWarning) }
+    }
+
+    private fun extractMutability(annotation: TAnnotation): MutabilityQualifierWithMigrationStatus? {
+        val fqName = annotation.fqName ?: return null
+        val qualifier = when (fqName) {
+            in READ_ONLY_ANNOTATIONS -> MutabilityQualifier.READ_ONLY
+            in MUTABLE_ANNOTATIONS -> MutabilityQualifier.MUTABLE
+            else -> return null
+        }
+        val level = javaTypeEnhancementState.getReportLevelForAnnotation(fqName)
+        if (level.isIgnore) return null
+        // Mutability enhancement for warning is only supported in K2
+        if (level.isWarning && !isK2) return null
+        return MutabilityQualifierWithMigrationStatus(qualifier, level.isWarning)
+    }
+
+    fun extractMutability(annotations: Iterable<TAnnotation>): MutabilityQualifierWithMigrationStatus? {
+        return extractQualifier(annotations, this::extractMutability)
+    }
+
+    private fun <TQualifier> extractQualifier(
+        annotations: Iterable<TAnnotation>,
+        extract: (TAnnotation) -> WithMigrationStatus<TQualifier>?
+    ): WithMigrationStatus<TQualifier>? {
+        return annotations.fold(null as WithMigrationStatus<TQualifier>?) { found, annotation ->
+            val extracted = extract(annotation)
             when {
                 found == null -> extracted
                 extracted == null || extracted == found -> found
                 extracted.isForWarningOnly && !found.isForWarningOnly -> found
                 !extracted.isForWarningOnly && found.isForWarningOnly -> extracted
-                else -> return null // inconsistent
+                else -> return null
             }
         }
-
-    fun extractMutability(annotations: Iterable<TAnnotation>): MutabilityQualifier? =
-        annotations.fold(null as MutabilityQualifier?) { found, annotation ->
-            when (annotation.fqName) {
-                in READ_ONLY_ANNOTATIONS -> MutabilityQualifier.READ_ONLY
-                in MUTABLE_ANNOTATIONS -> MutabilityQualifier.MUTABLE
-                else -> return@fold found
-            }.also { if (found != null && found != it) return null /* inconsistent */ }
-        }
+    }
 
     private fun extractDefaultQualifiers(annotation: TAnnotation, isForWarningOnly: Boolean): JavaDefaultQualifiers? {
         resolveQualifierBuiltInDefaultAnnotation(annotation, isForWarningOnly)?.let { return it }

@@ -91,6 +91,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<String>("messageSuffix")
         }
+        val RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement> {
+            parameter<ConeKotlinType>("actualType")
+            parameter<ClassId>("expectedType")
+        }
         val NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement> {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
