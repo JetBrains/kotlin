@@ -43,8 +43,9 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
                     return expression.replaceWithCallTo(jvm8Replacement)
                 }
 
-                expression.arrayOfVarargArgument?.let {
-                    return it
+                if (expression.isArrayOfLikeCall()) {
+                    return expression.arrayOfVarargArgument
+                        ?: throw AssertionError("Non-null argument expected: ${expression.dump()}")
                 }
 
                 if (callee.isEmptyArray())
