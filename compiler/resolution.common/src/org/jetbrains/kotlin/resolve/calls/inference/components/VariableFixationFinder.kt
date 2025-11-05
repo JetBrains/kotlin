@@ -105,7 +105,8 @@ class VariableFixationFinder(
         NOT_ONLY_HAS_INCORPORATED_CONSTRAINTS_FROM_DECLARED_UPPER_BOUND,
         HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE,
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS,
-//        HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES,
+        HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES,
+        HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT,
 
         IS_READY_FOR_FIXATION_AND_HAS_PROPER_NON_NOTHING_LOWER_CONSTRAINT,
         IS_READY_FOR_FIXATION,
@@ -205,7 +206,10 @@ class VariableFixationFinder(
 //                return@also
 //            }
 
-            if (!hasDependencyToOtherTypeVariables()) {
+            it[Q.HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT] = it[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased()
+            it[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables()
+
+            if (it[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES]) {
                 it[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS] = !allConstraintsTrivialOrNonProper()
 
                 if (it[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS]) {
@@ -214,7 +218,6 @@ class VariableFixationFinder(
                 }
             }
 
-//            it[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables()
             computeReadinessForVariableWithDependencies(it)
 
             it[Q.IS_READY_FOR_FIXATION] = it[Q.HAS_PROPER_CONSTRAINTS]
