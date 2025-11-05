@@ -134,6 +134,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("ranges")
+  public void testRanges() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/ranges/");
+  }
+
+  @Test
   @TestMetadata("referenceTypes")
   public void testReferenceTypes() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/referenceTypes/");
