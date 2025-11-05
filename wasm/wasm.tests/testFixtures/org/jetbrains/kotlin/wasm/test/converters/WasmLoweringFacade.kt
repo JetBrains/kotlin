@@ -158,7 +158,7 @@ class WasmLoweringFacade(
             debugInformation = null,
             dts = dts,
             useDebuggerCustomFormatters = useDebuggerCustomFormatters,
-            staticJsModules = staticJsModules,
+            dynamicJsModules = dynamicJsModules,
             baseFileName = baseFileName,
         )
     }

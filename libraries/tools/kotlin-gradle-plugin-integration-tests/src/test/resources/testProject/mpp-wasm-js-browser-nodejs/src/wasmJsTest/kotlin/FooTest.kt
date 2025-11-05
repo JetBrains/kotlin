@@ -1,15 +1,14 @@
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
+import kotlin.test.Ignore
 
 class TestClient {
     @Test
+    @Ignore // KT-82073: requires exposing require into import-objects file
     fun testGreet() {
-        assertTrue { true }
-        // KT-82073: requires exposing require into import-objects file
-        // assertFalse("No require found", ::checkRequire)
+        assertFalse("No require found", ::checkRequire)
     }
 }
 
-// KT-82073: requires exposing require into import-objects file
-//@JsFun("() => require === undefined")
-//external fun checkRequire(): Boolean
+@JsFun("() => require === undefined")
+external fun checkRequire(): Boolean

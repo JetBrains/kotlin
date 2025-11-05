@@ -49,7 +49,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
-data class StaticJsModule(
+data class DynamicJsModule(
     val name: String,
     val content: String,
 )
@@ -61,7 +61,7 @@ class WasmCompilerResult(
     val debugInformation: DebugInformation?,
     val dts: String?,
     val useDebuggerCustomFormatters: Boolean,
-    val staticJsModules: List<StaticJsModule>,
+    val dynamicJsModules: List<DynamicJsModule>,
     val baseFileName: String,
 )
 
@@ -163,6 +163,10 @@ fun lowerPreservingTags(
 
 data class WasmModuleDependencyImport(val name: String, val fileName: String)
 
+private fun String.normalizeEmptyLines(): String {
+    return this.replace(Regex("\n\\s*\n+"), "\n\n")
+}
+
 fun compileWasm(
     wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
     moduleName: String,
@@ -224,7 +228,7 @@ fun compileWasm(
 
     val byteArray = os.toByteArray()
     val jsWrapper: String
-    val staticJsModules = mutableListOf<StaticJsModule>()
+    val dynamicJsModules = mutableListOf<DynamicJsModule>()
 
     if (isWasmJsTarget) {
         val jsModuleImports = mutableSetOf<String>()
@@ -244,16 +248,16 @@ fun compileWasm(
             }.joinToString("\n")
 
         if (jsBuiltinsComposed.isNotEmpty()) {
-            staticJsModules.add(
-                StaticJsModule(
+            dynamicJsModules.add(
+                DynamicJsModule(
                     name = "js-builtins",
                     content = jsBuiltinsComposed
                 )
             )
         }
 
-        val isStdlibModule = stdlibModuleNameForImport == null
         val wholeProgramMode = !configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)
+        val isStdlibModule = stdlibModuleNameForImport == null && !wholeProgramMode
         val stdlibModule = dependencyModules.find { it.name == stdlibModuleNameForImport }
 
         val importObject = generateImportObject(
@@ -269,8 +273,8 @@ fun compileWasm(
         )
 
         if (importObject.isNotEmpty()) {
-            staticJsModules.add(
-                StaticJsModule(
+            dynamicJsModules.add(
+                DynamicJsModule(
                     name = "import-object",
                     content = importObject
                 )
@@ -294,7 +298,7 @@ fun compileWasm(
 
     return WasmCompilerResult(
         wat = wat,
-        jsWrapper = jsWrapper,
+        jsWrapper = jsWrapper.normalizeEmptyLines(),
         wasm = byteArray,
         debugInformation = DebugInformation(
             sourceMapGeneratorForBinary?.generate(),
@@ -302,7 +306,7 @@ fun compileWasm(
         ),
         dts = typeScriptFragment?.raw,
         useDebuggerCustomFormatters = useDebuggerCustomFormatters,
-        staticJsModules = staticJsModules,
+        dynamicJsModules = dynamicJsModules.map { it.copy(content = it.content.normalizeEmptyLines()) },
         baseFileName = baseFileName,
     )
 }
@@ -328,7 +332,7 @@ const wasmInstance = new WebAssembly.Instance(wasmModule, wasi.getImportObject()
 wasi.initialize(wasmInstance);
 
 const exports = wasmInstance.exports
-${generateExports(exports, false, false)}
+${generateExports(exports, wholeProgramMode = false, isStdlibModule = false)}
 """
 
 fun generateImportObject(
@@ -342,7 +346,7 @@ fun generateImportObject(
     useJsTag: Boolean,
     wholeProgramMode: Boolean
 ): String {
-    val stdlibModuleOrWholeProgramMode = isStdlibModule or wholeProgramMode
+    val stdlibModuleOrWholeProgramMode = isStdlibModule || wholeProgramMode
 
     val imports = generateJsImports(
         jsModuleImports,
@@ -424,6 +428,7 @@ $jsCodeBodyIndented
 }
 
 ${if (stdlibModuleOrWholeProgramMode) "export { wasmTag as __TAG };" else ""}
+
 $importObject
     """
 }
@@ -498,7 +503,7 @@ fun generateImportObjectBody(
             val importVariableString = JsModuleAndQualifierReference.encode(it.name)
             moduleSpecifier to importVariableString
         }.joinToString("") {
-            "   ${it.first}: ${it.second}__ALL_EXPORTS,\n"
+            "    ${it.first}: ${it.second}__ALL_EXPORTS,\n"
         }
 
     val jsImports = jsModuleImports
@@ -507,7 +512,7 @@ fun generateImportObjectBody(
             val importVariableString = JsModuleAndQualifierReference.encode(it)
             moduleSpecifier to importVariableString
         }.joinToString("") {
-            "   ${it.first}: ${it.second},\n"
+            "    ${it.first}: ${it.second},\n"
         }
 
     val imports = dependencyImports + jsImports
@@ -518,8 +523,7 @@ export const importObject = {
     intrinsics: {
         tag: wasmTag
     },
-$imports
-};
+$imports};
     """.trimIndent()
 }
 
@@ -661,8 +665,8 @@ fun writeCompilationResult(
         File(dir, "$fileNameBase.d.mts").writeText(result.dts)
     }
 
-    for (staticModule in result.staticJsModules) {
-        File(dir, "${fileNameBase}.${staticModule.name}.mjs").writeText(staticModule.content)
+    for (dynamicJsModule in result.dynamicJsModules) {
+        File(dir, "${fileNameBase}.${dynamicJsModule.name}.mjs").writeText(dynamicJsModule.content)
     }
 }
 
@@ -684,7 +688,7 @@ fun generateExports(
         .ifNotEmpty {
             """
             |export const {
-                |${joinToString(",\n") { it.name }}
+            |${joinToString(",\n") { it.name }.prependIndent("    ")}
             |} = exports
             """.trimMargin()
         }
@@ -698,11 +702,11 @@ fun generateExports(
             /*language=js */
             """
             |const {
-                |${joinToString(",\n") { "'${it.second}': ${it.first}" }}
+            |${joinToString(",\n") { "'${it.second}': ${it.first}" }.prependIndent("    ")}
             |} = exports
             |
             |export {
-                |${joinToString(",\n") { "${it.first} as '${it.second}'" }}
+            |${joinToString(",\n") { "${it.first} as '${it.second}'" }.prependIndent("    ")}
             |}
             """.trimMargin()
         }
@@ -711,18 +715,22 @@ fun generateExports(
     val commonStdlibExports =
         if (isStdlibModule)
             """
-                wasmTag as __TAG,
-                getCachedJsObject,
-            """.trimIndent()
+            |    wasmTag as __TAG,
+            |    getCachedJsObject,
+            """.trimMargin()
         else
             ""
 
+    val exportsStructureSingleModule = """
+        |export {
+        |    exports as __ALL_EXPORTS,
+        |$commonStdlibExports
+        |}
+    """.trimMargin()
+
     /*language=js */
     return """
-export {
-    $commonStdlibExports
-    ${if (!wholeProgramMode) "exports as __ALL_EXPORTS," else ""}
-};
+${if (!wholeProgramMode) exportsStructureSingleModule else ""}
 
 $regularlyExportedVariables
 $escapedExportedVariables
