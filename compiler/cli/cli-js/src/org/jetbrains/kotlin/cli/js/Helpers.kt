@@ -142,7 +142,7 @@ internal fun reportCompiledSourcesList(messageCollector: MessageCollector, sourc
     messageCollector.report(LOGGING, "Compiling source files: " + join(fileNames, ", "), null)
 }
 
-internal fun reportCollectedDiagnostics(
+fun reportCollectedDiagnostics(
     compilerConfiguration: CompilerConfiguration,
     diagnosticsReporter: BaseDiagnosticsCollector,
     messageCollector: MessageCollector
@@ -151,7 +151,7 @@ internal fun reportCollectedDiagnostics(
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderName)
 }
 
-val CompilerConfiguration.platformChecker: KlibPlatformChecker
+internal val CompilerConfiguration.platformChecker: KlibPlatformChecker
     get() = if (wasmCompilation) KlibPlatformChecker.Wasm(wasmTarget.alias) else KlibPlatformChecker.JS
 
 internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {

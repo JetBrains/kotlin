@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.incremental
 
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextForTesting
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
-import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -19,10 +17,12 @@ import org.jetbrains.kotlin.codegen.ModelTarget
 import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
@@ -37,7 +37,7 @@ import kotlin.test.assertEquals
 abstract class WasmAbstractInvalidationTest(
     targetBackend: TargetBackend,
     workingDirPath: String,
-) : AbstractInvalidationTest<WasmPreSerializationLoweringContext>(targetBackend, workingDirPath) {
+) : AbstractInvalidationTest(targetBackend, workingDirPath) {
 
     override val modelTarget: ModelTarget = ModelTarget.WASM
 
@@ -77,6 +77,7 @@ abstract class WasmAbstractInvalidationTest(
         )
         config.wasmCompilation = true
         config.put(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
+        config.targetPlatform = WasmPlatforms.wasmJs
         return config
     }
 
@@ -221,9 +222,4 @@ abstract class WasmAbstractInvalidationTest(
         }
     }
 
-    override val createPreSerializationLoweringContext: LoweringContextFactory<WasmPreSerializationLoweringContext>
-        get() = ::WasmPreSerializationLoweringContext
-
-    override val firstStageLoweringPhases: LoweringPhasesFactory<WasmPreSerializationLoweringContext>
-        get() = ::wasmLoweringsOfTheFirstPhase
 }

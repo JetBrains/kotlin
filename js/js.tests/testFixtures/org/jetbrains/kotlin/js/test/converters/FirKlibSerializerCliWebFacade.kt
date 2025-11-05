@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_GENERATING_KLIB
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
@@ -38,7 +37,7 @@ class FirKlibSerializerCliWebFacade(
         return testServices.defaultsProvider.backendKind == inputKind && SKIP_GENERATING_KLIB !in module.directives
     }
 
-    override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib? {
+    override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
         require(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
             "FirKlibSerializerCliWebFacade expects Fir2IrCliBasedWebOutputArtifact as input, got ${inputArtifact::class.simpleName}"
         }
@@ -52,7 +51,6 @@ class FirKlibSerializerCliWebFacade(
 
         val output = if (firstTimeCompilation) {
             WebKlibSerializationPipelinePhase.executePhase(input)
-                ?: return processErrorFromCliPhase(messageCollector, testServices)
         } else {
             JsSerializedKlibPipelineArtifact(
                 outputKlibPath = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).absolutePath,

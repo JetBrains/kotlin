@@ -1,42 +1,47 @@
+IGNORE_PER_MODULE: true
+IGNORE_PER_FILE: true
+IGNORE_BACKEND: WASM
+// ^^^KT-80696 Can not get instance of singleton 'Obj': No class found for symbol '[ File 'm.kt' <- /Obj|null[0] ]'
+
 MODULES: main
 
 STEP 0:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
     libs: main
     dirty js modules: main
     dirty js files:   main/f, main/m, main/m.export, main
 STEP 1:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
     libs: main
     dirty js modules: main
     dirty js files:   main/f
 STEP 2:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
     libs: main
     dirty js modules: main
     dirty js files:   main/f main/m
 STEP 3..8:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
     libs: main
     dirty js modules: main
     dirty js files:   main/f, main/m
 STEP 9:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
     libs: main
     dirty js modules: main
     dirty js files:   main/f
 STEP 10:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
     libs: main
     dirty js modules: main
     dirty js files:   main/f, main/m
 STEP 11:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
     libs: main
     dirty js modules: main
     dirty js files:   main/f
 STEP 12..13:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
     libs: main
     dirty js modules: main
     dirty js files:   main/f, main/m

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,11 +16,7 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.lookupTracker
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.config.useLightTree
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
@@ -172,7 +168,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         return AnalyzedFirWithPsiOutput(output, ktFiles)
     }
 
-    fun compileModulesToAnalyzedFirWithLightTree(
+    private fun compileModulesToAnalyzedFirWithLightTree(
         moduleStructure: ModulesStructure,
         groupedSources: GroupedKtSources,
         ktSourceFiles: List<KtSourceFile>,
