@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.services
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.cli.common.setupKlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -187,9 +188,7 @@ fun createCompilerConfiguration(
     configuration.messageCollector = messageCollector
     configuration.languageVersionSettings = module.languageVersionSettings
     configuration.targetPlatform = module.targetPlatform(testServices)
-    KlibAbiCompatibilityLevel.fromLanguageVersion(module.languageVersionSettings.languageVersion)?.let {
-        configuration.klibAbiCompatibilityLevel = it
-    }
+    configuration.setupKlibAbiCompatibilityLevel()
 
     for (configurator in configurators) {
         if (compilationStage == configurator.compilationStage) {

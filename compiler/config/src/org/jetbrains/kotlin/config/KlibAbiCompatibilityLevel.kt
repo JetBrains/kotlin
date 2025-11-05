@@ -21,7 +21,5 @@ enum class KlibAbiCompatibilityLevel(val major: Int, val minor: Int) {
 
     companion object {
         val LATEST_STABLE = ABI_LEVEL_2_3
-
-        fun fromLanguageVersion(version: LanguageVersion) = entries.find { it.toString() == version.versionString }
     }
 }
