@@ -2203,6 +2203,12 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
       runTest("compiler/testData/psi/contracts/SimpleFunctionWithContract.kt");
     }
 
+    @Test
+    @TestMetadata("withContextParameters.kt")
+    public void testWithContextParameters() {
+      runTest("compiler/testData/psi/contracts/withContextParameters.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/psi/contracts/good")
     @TestDataPath("$PROJECT_ROOT")
