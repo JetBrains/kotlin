@@ -1,0 +1,28 @@
+library {
+  // module name: <pod1.def>
+
+  library fragment {
+    // package name: pod1
+
+    // class name: pod1/ProtocolDefProtocol
+    // class name: pod1/ProtocolDefProtocolMeta
+    // class name: pod1/ProtocolDefWithRuntimeNameProtocol
+    // class name: pod1/ProtocolDefWithRuntimeNameProtocolMeta
+
+    @kotlinx/cinterop/ExternalObjCClass(binaryName = "ProtocolDef")
+    public abstract interface pod1/ProtocolDefProtocol : kotlinx/cinterop/ObjCObject {
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass(binaryName = "ProtocolDef")
+    public abstract interface pod1/ProtocolDefProtocolMeta : kotlinx/cinterop/ObjCClass /* = kotlinx/cinterop/ObjCObjectMeta^ */ {
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public abstract interface pod1/ProtocolDefWithRuntimeNameProtocol : kotlinx/cinterop/ObjCObject {
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public abstract interface pod1/ProtocolDefWithRuntimeNameProtocolMeta : kotlinx/cinterop/ObjCClass /* = kotlinx/cinterop/ObjCObjectMeta^ */ {
+    }
+  }
+}

@@ -2,3 +2,8 @@ module CInteropLib {
     header "lib.h"
     export *
 }
+
+module ObjCInteropLib {
+    header "objcLib.h"
+    export *
+}

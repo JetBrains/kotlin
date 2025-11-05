@@ -7,11 +7,11 @@ library {
     // class name: objcinterop/SimpleProtocol
     // class name: objcinterop/SimpleProtocolMeta
 
-    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_objcinterop0_Simple")
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_objcinterop0_Simple", binaryName = "Simple")
     public abstract interface objcinterop/SimpleProtocol : kotlinx/cinterop/ObjCObject {
     }
 
-    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_objcinterop0_Simple")
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_objcinterop0_Simple", binaryName = "Simple")
     public abstract interface objcinterop/SimpleProtocolMeta : kotlinx/cinterop/ObjCClass /* = kotlinx/cinterop/ObjCObjectMeta^ */ {
     }
   }
