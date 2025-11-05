@@ -73,3 +73,53 @@ public abstract class CMutableList2 /* test.CMutableList2*/<Elem>  implements ja
 
   public void clear();//  clear()
 }
+
+public class CMutableList3 /* test.CMutableList3*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMutableList {
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.List<Elem> subList(int, int);//  subList(int, int)
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator();//  listIterator()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator(int);//  listIterator(int)
+
+  public  CMutableList3();//  .ctor()
+
+  public Elem get(int);//  get(int)
+
+  public Elem removeAt(int);//  removeAt(int)
+
+  public Elem set(int, Elem);//  set(int, Elem)
+
+  public boolean add(Elem);//  add(Elem)
+
+  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
+
+  public boolean addAll(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  addAll(int, @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
+
+  public boolean contains(Elem);//  contains(Elem)
+
+  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
+
+  public boolean isEmpty();//  isEmpty()
+
+  public boolean remove(Elem);//  remove(Elem)
+
+  public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
+
+  public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
+
+  public int getSize();//  getSize()
+
+  public int indexOf(Elem);//  indexOf(Elem)
+
+  public int lastIndexOf(Elem);//  lastIndexOf(Elem)
+
+  public void add(int, Elem);//  add(int, Elem)
+
+  public void clear();//  clear()
+}

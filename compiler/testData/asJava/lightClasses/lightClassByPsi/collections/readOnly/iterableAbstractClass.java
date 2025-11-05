@@ -9,3 +9,11 @@ public abstract class CIterable2 /* test.CIterable2*/<Elem>  implements java.lan
 
   public  CIterable2();//  .ctor()
 }
+
+public class CIterable3 /* test.CIterable3*/<Elem>  implements java.lang.Iterable<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
+
+  public  CIterable3();//  .ctor()
+}

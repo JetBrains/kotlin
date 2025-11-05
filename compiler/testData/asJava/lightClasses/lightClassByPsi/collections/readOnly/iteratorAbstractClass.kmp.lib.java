@@ -9,3 +9,11 @@ public abstract class CIterator2 /* test.CIterator2*/<Elem>  implements java.uti
 
   public boolean hasNext();//  hasNext()
 }
+
+public class CIterator3 /* test.CIterator3*/<Elem>  implements java.util.Iterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  CIterator3();//  .ctor()
+
+  public Elem next();//  next()
+
+  public boolean hasNext();//  hasNext()
+}

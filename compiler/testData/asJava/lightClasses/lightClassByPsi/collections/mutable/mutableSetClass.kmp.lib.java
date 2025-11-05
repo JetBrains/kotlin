@@ -47,3 +47,30 @@ public abstract class CMutableSet2 /* test.CMutableSet2*/<Elem>  implements java
 
   public void clear();//  clear()
 }
+
+public class CMutableSet3 /* test.CMutableSet3*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMutableSet {
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
+
+  public  CMutableSet3();//  .ctor()
+
+  public boolean add(Elem);//  add(Elem)
+
+  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
+
+  public boolean contains(Elem);//  contains(Elem)
+
+  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
+
+  public boolean isEmpty();//  isEmpty()
+
+  public boolean remove(Elem);//  remove(Elem)
+
+  public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
+
+  public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
+
+  public int getSize();//  getSize()
+
+  public void clear();//  clear()
+}
