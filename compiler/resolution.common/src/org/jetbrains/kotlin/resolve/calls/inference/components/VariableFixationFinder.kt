@@ -99,6 +99,9 @@ class VariableFixationFinder(
 //        HAS_CONSTRAINTS_WITH_LITERAL_TYPES,
 //        HAS_SELF_TYPE_DEPENDENCY,
 
+        HAS_PROPER_NON_NOTHING_LOWER_CONSTRAINT,
+        REIFIED,
+
         HAS_PROPER_NON_ILT_CONSTRAINT,
         HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT,
 
@@ -108,12 +111,7 @@ class VariableFixationFinder(
         HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES,
         HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT,
 
-        IS_READY_FOR_FIXATION_AND_HAS_PROPER_NON_NOTHING_LOWER_CONSTRAINT,
-
-        IS_READY_FOR_FIXATION_REIFIED,
-        IS_READY_FOR_FIXATION,
         IS_READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES, // Otherwise, either "declared..." or not all proper constraints are self-type-based
-//        ALL_PROPER_CONSTRAINTS_ARE_SELF_TYPE_BASED,
 
         HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY,
         HAS_PROPER_CONSTRAINTS,
@@ -197,14 +195,9 @@ class VariableFixationFinder(
             it[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints() || areAllProperConstraintsSelfTypeBased()
             it[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)
 
-//            it[Q.ALL_PROPER_CONSTRAINTS_ARE_SELF_TYPE_BASED] = areAllProperConstraintsSelfTypeBased()
             it[Q.IS_READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES] = areAllProperConstraintsSelfTypeBased()
                     && fixationEnhancementsIn22
                     && !isReified() && hasDirectConstraintToNotFixedRelevantVariable()
-
-//            if (areAllProperConstraintsSelfTypeBased() && !it[Q.IS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES]) {
-//                return@also
-//            }
 
             it[Q.HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT] = it[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased()
             it[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables()
@@ -214,17 +207,8 @@ class VariableFixationFinder(
 
             computeReadinessForVariableWithDependencies(it)
 
-            it[Q.IS_READY_FOR_FIXATION] = it[Q.HAS_PROPER_CONSTRAINTS]
-                    && it[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY]
-                    && !hasDependencyToOtherTypeVariables()
-                    && !allConstraintsTrivialOrNonProper()
-                    && !dependencyProvider.isVariableRelatedToAnyOutputType(this)
-                    && !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
-
-            if (it[Q.IS_READY_FOR_FIXATION]) {
-                it[Q.IS_READY_FOR_FIXATION_REIFIED] = isReified()
-                it[Q.IS_READY_FOR_FIXATION_AND_HAS_PROPER_NON_NOTHING_LOWER_CONSTRAINT] = hasLowerNonNothingProperConstraint()
-            }
+            it[Q.REIFIED] = isReified()
+            it[Q.HAS_PROPER_NON_NOTHING_LOWER_CONSTRAINT] = hasLowerNonNothingProperConstraint()
         }
         return result
 
