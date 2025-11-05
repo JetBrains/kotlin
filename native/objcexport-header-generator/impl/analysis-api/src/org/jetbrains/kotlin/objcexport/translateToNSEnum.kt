@@ -27,11 +27,12 @@ internal fun ObjCExportContext.translateNSEnum(symbol: KaClassSymbol, nsEnumType
 
 private fun ObjCExportContext.getNSEnumEntries(symbol: KaClassSymbol, typeName: String): List<ObjcExportNativeEnumEntry> {
     val staticMembers = with(analysisSession) { symbol.staticDeclaredMemberScope }.callables.toList()
-    return staticMembers.filterIsInstance<KaEnumEntrySymbol>().mapIndexed { index, entry ->
+    // Map the enum entries in declaration order, preserving the ordinal
+    return staticMembers.filterIsInstance<KaEnumEntrySymbol>().mapIndexed { ordinal, entry ->
         ObjcExportNativeEnumEntry(
             getEnumEntryName(entry, false),
             typeName + getEnumEntryName(entry, true).replaceFirstChar { it.uppercaseChar() },
-            index
+            ordinal
         )
     }
 }

@@ -293,6 +293,7 @@ class ObjCExportTranslatorImpl(
                     val type = mapType(descriptor.defaultType, ReferenceBridge, ObjCRootExportScope)
 
                     namer.getNSEnumFunctionTypeName(descriptor)?.let { nsEnumTypeName ->
+                        // Map the enum entries in declaration order, preserving the ordinal
                         auxiliaryDeclarations.add(
                             ObjCNSEnum(nsEnumTypeName, descriptor.enumEntries.mapIndexed { ordinal, entry ->
                                 ObjcExportNativeEnumEntry(
