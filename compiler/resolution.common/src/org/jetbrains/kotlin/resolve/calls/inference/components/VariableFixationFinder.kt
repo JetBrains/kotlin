@@ -102,7 +102,7 @@ class VariableFixationFinder(
         HAS_PROPER_NON_ILT_CONSTRAINT,
         HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT,
 
-        NOT_ONLY_HAS_INCORPORATED_CONSTRAINTS_FROM_DECLARED_UPPER_BOUND,
+        HAS_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
         HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE,
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS,
         HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES,
@@ -212,7 +212,7 @@ class VariableFixationFinder(
             it[Q.HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE] = !dependencyProvider.isVariableRelatedToAnyOutputType(this)
 
             if (it[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES]) {
-                it[Q.NOT_ONLY_HAS_INCORPORATED_CONSTRAINTS_FROM_DECLARED_UPPER_BOUND] = !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
+                it[Q.HAS_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] = !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
             }
 
             computeReadinessForVariableWithDependencies(it)
