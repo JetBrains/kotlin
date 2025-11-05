@@ -1040,36 +1040,36 @@ if (buildProperties.isKotlinNativeEnabled) {
     includeBuild("kotlin-native/build-tools") {
         name = "native-build-tools"
     }
-    include ':kotlin-native:dependencies'
-    include ':kotlin-native:endorsedLibraries:kotlinx.cli'
-    include ':kotlin-native:Interop:StubGenerator'
-    include ':kotlin-native:Interop:StubGeneratorConsistencyCheck'
-    include ':kotlin-native:backend.native'
+    include ':kotlin-native:dependencies',
+            ':kotlin-native:endorsedLibraries:kotlinx.cli',
+            ':kotlin-native:Interop:StubGenerator',
+            ':kotlin-native:Interop:StubGeneratorConsistencyCheck',
+            ':kotlin-native:backend.native'
     project(':kotlin-native:backend.native').projectDir = "$rootDir/kotlin-native/backend.native/compiler/ir/backend.native" as File
-    include ':kotlin-native:Interop:Runtime'
-    include ':kotlin-native:Interop:Indexer'
-    include ':kotlin-native:utilities:cli-runner'
-    include ':kotlin-native:klib'
-    include ':kotlin-native:common'
-    include ':kotlin-native:common:env'
-    include ':kotlin-native:common:files'
-    include ':kotlin-native:runtime'
-    include ':kotlin-native:libllvmext'
-    include ':kotlin-native:llvmDebugInfoC'
-    include ':kotlin-native:utilities'
-    include ':kotlin-native:tools:kdumputil'
-    include ':kotlin-native:platformLibs'
-    include ':kotlin-native:libclangext'
-    include ':kotlin-native:llvmInterop'
-    include ':kotlin-native:libclangInterop'
-    include ':kotlin-native:backend.native:tests'
+    include ':kotlin-native:Interop:Runtime',
+            ':kotlin-native:Interop:Indexer',
+            ':kotlin-native:utilities:cli-runner',
+            ':kotlin-native:klib',
+            ':kotlin-native:common',
+            ':kotlin-native:common:env',
+            ':kotlin-native:common:files',
+            ':kotlin-native:runtime',
+            ':kotlin-native:libllvmext',
+            ':kotlin-native:llvmDebugInfoC',
+            ':kotlin-native:utilities',
+            ':kotlin-native:tools:kdumputil',
+            ':kotlin-native:platformLibs',
+            ':kotlin-native:libclangext',
+            ':kotlin-native:llvmInterop',
+            ':kotlin-native:libclangInterop',
+            ':kotlin-native:backend.native:tests'
     project(':kotlin-native:backend.native:tests').projectDir = "$rootDir/kotlin-native/backend.native/tests" as File
-    include ':kotlin-native:prepare:kotlin-native-compiler-embeddable'
-    include ':kotlin-native:tools:compiler-cache-invalidator'
-    include ':native:kotlin-test-native-xctest'
-    include ':native:cli-native'
-    include ':native:native.tests:cli-tests'
-    include ':kotlin-native:tools:minidump-analyzer'
+    include ':kotlin-native:prepare:kotlin-native-compiler-embeddable',
+            ':kotlin-native:tools:compiler-cache-invalidator',
+            ':native:kotlin-test-native-xctest',
+            ':native:cli-native',
+            ':native:native.tests:cli-tests',
+            ':kotlin-native:tools:minidump-analyzer'
 }
 
 include 'compiler:test-security-manager'
