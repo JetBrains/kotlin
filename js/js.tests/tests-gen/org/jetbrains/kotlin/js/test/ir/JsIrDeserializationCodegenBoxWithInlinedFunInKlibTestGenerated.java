@@ -65992,6 +65992,12 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
         }
 
         @Test
+        @TestMetadata("inlineFuctionWithGenericVarargAndCallableRefAsDefaultValue.kt")
+        public void testInlineFuctionWithGenericVarargAndCallableRefAsDefaultValue() {
+          runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineFuctionWithGenericVarargAndCallableRefAsDefaultValue.kt");
+        }
+
+        @Test
         @TestMetadata("inlineVararg.kt")
         public void testInlineVararg() {
           runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineVararg.kt");
