@@ -82,20 +82,6 @@ abstract class FirAbstractInvalidationTest(
     granularity: JsGenerationGranularity,
     workingDirPath: String
 ) : JsAbstractInvalidationTest(targetBackend, granularity, workingDirPath) {
-    private fun getFirInfoFile(defaultInfoFile: File): File {
-        val firInfoFileName = "${defaultInfoFile.nameWithoutExtension}.fir.${defaultInfoFile.extension}"
-        val firInfoFile = defaultInfoFile.parentFile.resolve(firInfoFileName)
-        return firInfoFile.takeIf { it.exists() } ?: defaultInfoFile
-    }
-
-    override fun getModuleInfoFile(directory: File): File {
-        return getFirInfoFile(super.getModuleInfoFile(directory))
-    }
-
-    override fun getProjectInfoFile(directory: File): File {
-        return getFirInfoFile(super.getProjectInfoFile(directory))
-    }
-
     override fun buildKlib(
         configuration: CompilerConfiguration,
         moduleName: String,
