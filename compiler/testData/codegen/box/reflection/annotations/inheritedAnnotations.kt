@@ -58,12 +58,12 @@ private fun testFindAnnotations() {
 }
 
 private fun testJavaGetAnnotationsByType() {
-    fun <T: Any> getAnnoContent(klass: KClass<T>) =
-        klass.java.getAnnotationsByType(Anno::class.java).contentToString()
+    fun <T: Any> getAnnoValues(klass: KClass<T>) =
+        klass.java.getAnnotationsByType(Anno::class.java).map { it.value }.toString()
 
-    assertEquals("[@test.Anno(value=base)]", getAnnoContent(BaseClass::class))
-    assertEquals("[@test.Anno(value=OK)]", getAnnoContent(MiddleClass::class))
-    assertEquals("[@test.Anno(value=OK)]", getAnnoContent(ChildClass::class))
+    assertEquals("[base]", getAnnoValues(BaseClass::class))
+    assertEquals("[OK]", getAnnoValues(MiddleClass::class))
+    assertEquals("[OK]", getAnnoValues(ChildClass::class))
 }
 
 private fun testNoInheritanceOnFunctions() {
