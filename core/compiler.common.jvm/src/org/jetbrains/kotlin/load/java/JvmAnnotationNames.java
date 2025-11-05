@@ -51,6 +51,8 @@ public final class JvmAnnotationNames {
     public static final FqName JETBRAINS_NULLABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Nullable");
     public static final FqName JETBRAINS_MUTABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Mutable");
     public static final FqName JETBRAINS_READONLY_ANNOTATION = new FqName("org.jetbrains.annotations.ReadOnly");
+    public static final FqName JETBRAINS_UNMODIFIABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Unmodifiable");
+    public static final FqName JETBRAINS_UNMODIFIABLE_VIEW_ANNOTATION = new FqName("org.jetbrains.annotations.UnmodifiableView");
 
     public static final FqName READONLY_ANNOTATION = new FqName("kotlin.annotations.jvm.ReadOnly");
     public static final FqName MUTABLE_ANNOTATION = new FqName("kotlin.annotations.jvm.Mutable");

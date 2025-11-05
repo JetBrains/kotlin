@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.load.java
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier
+import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.name.FqName
@@ -148,13 +149,26 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
             }
         }
 
-    fun extractMutability(annotations: Iterable<TAnnotation>): MutabilityQualifier? =
-        annotations.fold(null as MutabilityQualifier?) { found, annotation ->
-            when (annotation.fqName) {
+    fun extractMutability(annotations: Iterable<TAnnotation>): MutabilityQualifierWithMigrationStatus? =
+        annotations.fold(null as MutabilityQualifierWithMigrationStatus?) { found, annotation ->
+            val fqName = annotation.fqName ?: return@fold found
+            val qualifier = when (fqName) {
                 in READ_ONLY_ANNOTATIONS -> MutabilityQualifier.READ_ONLY
                 in MUTABLE_ANNOTATIONS -> MutabilityQualifier.MUTABLE
                 else -> return@fold found
-            }.also { if (found != null && found != it) return null /* inconsistent */ }
+            }
+            val level = javaTypeEnhancementState.getReportLevelForAnnotation(fqName)
+            if (level.isIgnore) return@fold found
+            // Mutability enhancement for warning is only supported in K2
+            if (level.isWarning && !isK2) return@fold found
+            val extracted = MutabilityQualifierWithMigrationStatus(qualifier, level.isWarning)
+            when {
+                found == null -> extracted
+                extracted == found -> found
+                extracted.isForWarningOnly && !found.isForWarningOnly -> found
+                !extracted.isForWarningOnly && found.isForWarningOnly -> extracted
+                else -> return null // inconsistent
+            }
         }
 
     private fun extractDefaultQualifiers(annotation: TAnnotation, isForWarningOnly: Boolean): JavaDefaultQualifiers? {

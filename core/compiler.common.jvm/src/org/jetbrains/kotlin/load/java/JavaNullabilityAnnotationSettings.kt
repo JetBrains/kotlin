@@ -24,6 +24,7 @@ val RXJAVA3_ANNOTATIONS = arrayOf(
 val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullabilityAnnotationsStatus> = NullabilityAnnotationStatesImpl(
     mapOf(
         FqName("org.jetbrains.annotations") to JavaNullabilityAnnotationsStatus.DEFAULT,
+        FqName("kotlin.annotations.jvm") to JavaNullabilityAnnotationsStatus.DEFAULT,
         FqName("androidx.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
         FqName("android.support.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
         FqName("android.annotation") to JavaNullabilityAnnotationsStatus.DEFAULT,
@@ -61,6 +62,16 @@ val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullability
         FqName("jakarta.annotation") to JavaNullabilityAnnotationsStatus(
             reportLevelBefore = ReportLevel.WARN,
             sinceVersion = KotlinVersion(2, 4),
+            reportLevelAfter = ReportLevel.STRICT
+        ),
+        JvmAnnotationNames.JETBRAINS_UNMODIFIABLE_ANNOTATION to JavaNullabilityAnnotationsStatus(
+            reportLevelBefore = ReportLevel.WARN,
+            sinceVersion = KotlinVersion(2, 5),
+            reportLevelAfter = ReportLevel.STRICT
+        ),
+        JvmAnnotationNames.JETBRAINS_UNMODIFIABLE_VIEW_ANNOTATION to JavaNullabilityAnnotationsStatus(
+            reportLevelBefore = ReportLevel.WARN,
+            sinceVersion = KotlinVersion(2, 5),
             reportLevelAfter = ReportLevel.STRICT
         ),
     )

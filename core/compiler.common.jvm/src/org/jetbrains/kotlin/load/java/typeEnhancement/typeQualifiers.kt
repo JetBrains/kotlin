@@ -20,7 +20,8 @@ data class JavaTypeQualifiers(
     val nullability: NullabilityQualifier?,
     val mutability: MutabilityQualifier?,
     val definitelyNotNull: Boolean,
-    val isNullabilityQualifierForWarning: Boolean = false
+    val isNullabilityQualifierForWarning: Boolean = false,
+    val isMutabilityQualifierForWarning: Boolean = false,
 ) {
     companion object {
         val NONE = JavaTypeQualifiers(null, null, false)
