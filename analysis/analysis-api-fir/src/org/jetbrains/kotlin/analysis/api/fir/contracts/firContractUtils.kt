@@ -158,7 +158,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
 
             in firFunctionSymbol.valueParameters.indices -> firFunctionSymbol.valueParameters[index]
 
-            // Property accessors are not supported in the Analysis API
+            // TODO: KT-82177 Property accessors are not supported in the Analysis API Surface
             else -> firFunctionSymbol.contextParameters.elementAtOrNull(index - firFunctionSymbol.valueParameters.size)
                 ?: errorWithAttachment("${firFunctionSymbol::class.simpleName} doesn't contain parameter or context parameter with index $index") {
                     withFirEntry("fir", firFunctionSymbol.firSymbol.fir)
