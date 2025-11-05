@@ -134,7 +134,10 @@ internal class KClassImpl<T : Any>(
                             (currentClass === jClass || annotation.inheritable)
                         ) {
                             val unwrappedAnnotationClass: KClass<out Annotation> = annotation.unwrappedAnnotationClass
-                            val prevHost = unwrappedAnnotationClassesHosts.putIfAbsent(unwrappedAnnotationClass, currentClass)
+                            val prevHost = unwrappedAnnotationClassesHosts[unwrappedAnnotationClass]
+                            if (prevHost == null) {
+                                unwrappedAnnotationClassesHosts[unwrappedAnnotationClass] = currentClass
+                            }
                             if (prevHost == null || prevHost == currentClass) {
                                 resultReversed.add(annotation)
                             }

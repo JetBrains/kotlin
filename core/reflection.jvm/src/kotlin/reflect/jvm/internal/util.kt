@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaAnnotation
 import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -158,7 +159,7 @@ internal fun Annotated.computeAnnotations(): List<Annotation> =
 internal fun Annotation.hasInherited(): Boolean = annotationClass.hasInherited()
 
 private fun KClass<out Annotation>.hasInherited(): Boolean =
-    java.getDeclaredAnnotation(Inherited::class.java) != null
+    java.getAnnotation(Inherited::class.java) != null
 
 @Suppress("UNCHECKED_CAST")
 private fun getRepeatableContainerComponentType(containerClass: KClass<out Annotation>) =
@@ -188,9 +189,16 @@ private fun isJavaRepeatableContainer(klass: KClass<out Annotation>): Boolean {
     val returnComponentType = valueMethod.returnType.componentType ?: return false
     if (!returnComponentType.isAnnotation) return false
 
-    val javaRepeatable = returnComponentType.getAnnotation(Repeatable::class.java) ?: return false
-    val repeatableContainerClass = javaRepeatable.value
-    return klass == repeatableContainerClass
+    // we cannot directly use Java Repeatable class because it is missing on Android based on JDK 6
+//    val javaRepeatable = returnComponentType.getAnnotation(Repeatable::class.java) ?: return false
+//    val repeatableContainerClass: KClass<out Annotation> = javaRepeatable0.value
+
+    val javaRepeatable: Annotation =
+        returnComponentType.annotations.find { it.annotationClass.java.name == JvmAnnotationNames.REPEATABLE_ANNOTATION.asString() }
+            ?: return false
+    val repeatableContainerClass = javaRepeatable.annotationClass.java.getMethod("value").invoke(javaRepeatable) ?: return false
+
+    return jClass == repeatableContainerClass
 }
 
 fun List<Annotation>.unwrapKotlinRepeatableAnnotations(): List<Annotation> =
