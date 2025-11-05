@@ -23,14 +23,14 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
     name = "JsKlibSerializationPipelinePhase",
 ) {
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsSerializedKlibPipelineArtifact {
-        val (fir2IrResult, firOutput, configuration, diagnosticCollector, moduleStructure) = input
+        val (fir2IrResult, firResult, configuration, diagnosticCollector, moduleStructure) = input
         val irDiagnosticReporter =
             KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticCollector.deduplicating(), configuration.languageVersionSettings)
 
         val outputKlibPath = configuration.computeOutputKlibPath()
         val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
             moduleStructure.compilerConfiguration,
-            firOutputs = firOutput.output,
+            firOutputs = firResult.outputs,
             fir2IrActualizedResult = fir2IrResult,
             exportKDoc = false,
             produceHeaderKlib = false,

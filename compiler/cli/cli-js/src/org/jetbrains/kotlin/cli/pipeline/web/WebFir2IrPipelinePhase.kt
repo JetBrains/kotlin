@@ -43,14 +43,14 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
     postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: WebFrontendPipelineArtifact): JsFir2IrPipelineArtifact? {
-        val (analyzedOutput, configuration, diagnosticsReporter, moduleStructure, hasErrors) = input
-        val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
+        val (firResult, configuration, diagnosticsReporter, moduleStructure, hasErrors) = input
+        val fir2IrActualizedResult = transformFirToIr(moduleStructure, firResult.outputs, diagnosticsReporter)
         if (!configuration.wasmCompilation)
-            runJsKlibCallCheckers(diagnosticsReporter, configuration, analyzedOutput.output, fir2IrActualizedResult)
+            runJsKlibCallCheckers(diagnosticsReporter, configuration, firResult.outputs, fir2IrActualizedResult)
 
         return JsFir2IrPipelineArtifact(
             fir2IrActualizedResult,
-            analyzedOutput,
+            firResult,
             configuration,
             diagnosticsReporter,
             moduleStructure,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,22 +19,19 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import java.io.File
 
 data class WebFrontendPipelineArtifact(
-    val analyzedOutput: AnalyzedFirOutput,
+    override val result: FirResult,
     override val configuration: CompilerConfiguration,
     override val diagnosticCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
     val hasErrors: Boolean,
 ) : FrontendPipelineArtifact() {
-    override val result: FirResult
-        get() = FirResult(analyzedOutput.output)
-
     override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector) =
         copy(diagnosticCollector = newDiagnosticsCollector)
 }
 
 data class JsFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
-    val analyzedFirOutput: AnalyzedFirOutput,
+    val firResult: FirResult,
     val configuration: CompilerConfiguration,
     override val diagnosticCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,

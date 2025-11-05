@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
-import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
-import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
-import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.KlibIcData
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -98,7 +95,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 lookupTracker = lookupTracker,
                 useWasmPlatform = isWasm,
             ).also {
-                kotlinPackageUsageIsFine = it.output.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
+                kotlinPackageUsageIsFine = it.outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
             }
         } else {
             val sourceFiles = environmentForJS.getSourceFiles()
@@ -137,7 +134,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         )
     }
 
-    fun compileModuleToAnalyzedFirWithPsi(
+    private fun compileModuleToAnalyzedFirWithPsi(
         moduleStructure: ModulesStructure,
         ktFiles: List<KtFile>,
         libraries: List<String>,
@@ -146,7 +143,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         incrementalDataProvider: IncrementalDataProvider?,
         lookupTracker: LookupTracker?,
         useWasmPlatform: Boolean,
-    ): AnalyzedFirWithPsiOutput {
+    ): FirResult {
         for (ktFile in ktFiles) {
             AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, diagnosticsReporter)
         }
@@ -165,7 +162,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             useWasmPlatform = useWasmPlatform,
         )
         output.runPlatformCheckers(diagnosticsReporter)
-        return AnalyzedFirWithPsiOutput(output, ktFiles)
+        return FirResult(output)
     }
 
     private fun compileModulesToAnalyzedFirWithLightTree(
@@ -179,7 +176,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         incrementalDataProvider: IncrementalDataProvider?,
         lookupTracker: LookupTracker?,
         useWasmPlatform: Boolean,
-    ): AnalyzedFirOutput {
+    ): FirResult {
         val output = compileModuleToAnalyzedFir(
             moduleStructure,
             ktSourceFiles,
@@ -195,7 +192,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             useWasmPlatform = useWasmPlatform,
         )
         output.runPlatformCheckers(diagnosticsReporter)
-        return AnalyzedFirOutput(output)
+        return FirResult(output)
     }
 
     private inline fun <F> compileModuleToAnalyzedFir(
