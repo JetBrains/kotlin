@@ -131,8 +131,10 @@ internal class StubBasedFirContractDeserializer(
             )
         }
 
-        private fun getParameterName(parameterIndex: Int): String {
-            return if (parameterIndex < 0) "this" else simpleFunction.valueParameters[parameterIndex].name.asString()
+        private fun getParameterName(parameterIndex: Int): String = when {
+            parameterIndex == -1 -> "this"
+            parameterIndex < simpleFunction.valueParameters.size -> simpleFunction.valueParameters[parameterIndex].name.asString()
+            else -> simpleFunction.contextParameters[parameterIndex - simpleFunction.valueParameters.size].name.asString()
         }
 
         override fun visitConstantDescriptor(
