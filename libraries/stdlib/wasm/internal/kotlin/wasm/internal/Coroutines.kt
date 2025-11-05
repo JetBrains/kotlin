@@ -11,6 +11,7 @@ import kotlin.coroutines.*
 import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.coroutines.intrinsics.*
+import kotlin.wasm.internal.reftypes.contref1
 
 @PublishedApi
 @ExcludedFromCodegen
@@ -40,13 +41,50 @@ internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(noinline b
     return suspendCoroutineUninterceptedOrReturnImpl<T>(block)
 }
 
+internal class WasmContinuationBox(
+    @Suppress("UNUSED")
+    internal val cont: contref1,
+)
+
+internal class WasmContinuation<in T>(
+    internal var wasmContBox: WasmContinuationBox?,
+    private var isResumed: Boolean,
+    override val context: CoroutineContext
+) : Continuation<T> {
+
+    override fun resumeWith(result: Result<T>) {
+        if (isResumed) throw Throwable()
+        wasmContBox?.let { contBox ->
+            val (newCont, wasmContBox) = resumeWithImpl(contBox.cont, result)
+            newCont.wasmContBox = wasmContBox
+            isResumed = true
+        } ?: throw Throwable()
+    }
+}
+
+@Suppress("UNUSED")
+internal fun setWasmContinuation(receiver: WasmContinuation<*>, wasmContinuation: contref1) {
+    receiver.wasmContBox = WasmContinuationBox(wasmContinuation)
+}
+
+internal fun resumeWithImpl(wasmContinuation: contref1, result: Result<*>): Pair<WasmContinuation<*>, WasmContinuationBox> {
+    return resumeWithIntrinsic(wasmContinuation, result)
+}
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun resumeWithIntrinsic(wasmContinuation: contref1, result: Result<*>): Pair<WasmContinuation<*>, WasmContinuationBox> {
+    implementedAsIntrinsic
+}
+
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
 internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Continuation<T>) -> Any?): T {
-    val cont = getContinuation<T>()
-    val result = block(cont)
+    val completion = getContinuation<T>()
+    val remainingFunction = WasmContinuation<T>(null, false, completion.context)
+    val result = block(remainingFunction)
     return if (result == COROUTINE_SUSPENDED) {
-        suspendIntrinsic(cont) as T
+        suspendIntrinsic(remainingFunction) as T
     } else result as T
 }
 

@@ -259,6 +259,7 @@ class WasmSymbols(
         (0..2).map { getInternalWasmFunction("startCoroutineUninterceptedOrReturnIntrinsic${it}Stub") }
 
     val suspendIntrinsic = getInternalWasmFunction("suspendIntrinsic")
+    val resumeWithIntrinsic = getInternalWasmFunction("resumeWithIntrinsic")
 
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = getInternalWasmClass("KLocalDelegatedPropertyImpl")
@@ -292,6 +293,7 @@ class WasmSymbols(
     val wasmStructRefType by lazy { wasmStructRefClass.defaultType }
 
     val wasmAnyRefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.anyref"))
+    val wasmCont1RefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.contref1"))
 
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalWasmFunction("kotlinToJsStringAdapter")
