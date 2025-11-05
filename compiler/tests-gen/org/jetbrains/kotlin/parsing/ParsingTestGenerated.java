@@ -1941,6 +1941,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/contracts/SimpleFunctionWithContract.kt");
       }
 
+      @TestMetadata("withContextParameters.kt")
+      public void testWithContextParameters() {
+        runTest("compiler/testData/psi/contracts/withContextParameters.kt");
+      }
+
       @TestMetadata("compiler/testData/psi/contracts/good")
       @TestDataPath("$PROJECT_ROOT")
       @RunWith(JUnit3RunnerWithInners.class)

@@ -1,0 +1,23 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithContextParametersKt]]
+  facadeFqName: WithContextParametersKt
+  partSimpleName: "WithContextParametersKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=conditionInContext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=conditionInContext]
+    contract: [ effect:Returns(WILDCARD) -> param(0) != null ]
+    origin: Facade(className=WithContextParametersKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+      CONTEXT_RECEIVER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Boolean]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Unit]

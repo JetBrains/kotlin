@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,13 +11,14 @@ import org.jetbrains.kotlin.contracts.description.KtEffectDeclaration
 import org.jetbrains.kotlin.contracts.description.KtValueParameterReference
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.isInstanceType
+import org.jetbrains.kotlin.metadata.deserialization.receiverType
+import org.jetbrains.kotlin.metadata.deserialization.type
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractConstantValues
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.Companion.IGNORE_REFERENCE_PARAMETER_NAME
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBufContractDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import org.jetbrains.kotlin.metadata.deserialization.type
-import org.jetbrains.kotlin.metadata.deserialization.receiverType
 
 class ClsContractBuilder(private val c: ClsStubBuilderContext, private val typeStubBuilder: TypeClsStubBuilder) :
     ProtoBufContractDeserializer<KotlinTypeBean, Nothing?, ProtoBuf.Function>() {
@@ -27,12 +28,17 @@ class ClsContractBuilder(private val c: ClsStubBuilderContext, private val typeS
     }
 
     override fun extractVariable(valueParameterIndex: Int, owner: ProtoBuf.Function): KtValueParameterReference<KotlinTypeBean, Nothing?> {
-        val type = if (valueParameterIndex < 0) {
-            owner.receiverType(c.typeTable)
-        } else owner.valueParameterList[valueParameterIndex].type(c.typeTable)
+        val type = when {
+            valueParameterIndex == -1 -> owner.receiverType(c.typeTable)
+            valueParameterIndex < owner.valueParameterCount -> owner.valueParameterList[valueParameterIndex].type(c.typeTable)
+            else -> owner.contextParameterList[valueParameterIndex - owner.valueParameterCount].type(c.typeTable)
+        }
+
         return if (type?.hasClassName() == true && c.nameResolver.getClassId(type.className) == StandardClassIds.Boolean) {
             KtBooleanValueParameterReference(valueParameterIndex, name = IGNORE_REFERENCE_PARAMETER_NAME)
-        } else KtValueParameterReference(valueParameterIndex, name = IGNORE_REFERENCE_PARAMETER_NAME)
+        } else {
+            KtValueParameterReference(valueParameterIndex, name = IGNORE_REFERENCE_PARAMETER_NAME)
+        }
     }
 
     override fun extractType(proto: ProtoBuf.Expression): KotlinTypeBean? {

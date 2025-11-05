@@ -1,0 +1,4 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+context(a: kotlin.Boolean?) public fun conditionInContext(): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
