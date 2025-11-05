@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,17 +10,38 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
+import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
+import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase.transformFirToIr
+import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase.compileModulesToAnalyzedFirWithLightTree
+import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase.serializeFirKlib
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaserState
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.backend.js.MainModule
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinLibraryFile
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFileMap
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
 import org.jetbrains.kotlin.js.common.safeModuleName
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
@@ -34,16 +55,20 @@ import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.PrintStream
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 import java.util.stream.Collectors
 
-abstract class AbstractInvalidationTest(
+abstract class AbstractInvalidationTest<LoweringContext : PreSerializationLoweringContext>(
     protected val targetBackend: TargetBackend,
     private val workingDirPath: String,
 ) {
@@ -384,10 +409,89 @@ abstract class AbstractInvalidationTest(
 
     protected open fun isIgnoredTest(projectInfo: ProjectInfo) = projectInfo.muted
 
-    protected abstract fun buildKlib(
+    protected typealias LoweringContextFactory<LoweringContext> =
+                (IrBuiltIns, CompilerConfiguration, IrDiagnosticReporter) -> LoweringContext
+
+    protected typealias LoweringPhasesFactory<LoweringContext> =
+                (LanguageVersionSettings) -> List<NamedCompilerPhase<LoweringContext, IrModuleFragment, IrModuleFragment>>
+
+    protected abstract val createPreSerializationLoweringContext: LoweringContextFactory<LoweringContext>
+    protected abstract val firstStageLoweringPhases: LoweringPhasesFactory<LoweringContext>
+
+    private fun buildKlib(
         configuration: CompilerConfiguration,
         moduleName: String,
         sourceDir: File,
         outputKlibFile: File,
-    )
+    ) {
+        val outputStream = ByteArrayOutputStream()
+        val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+
+        val libraries = configuration.libraries
+        val friendLibraries = configuration.friendLibraries
+        val sourceFiles = configuration.addSourcesFromDir(sourceDir)
+
+        val klibs = loadWebKlibsInTestPipeline(
+            configuration,
+            libraryPaths = libraries,
+            friendPaths = friendLibraries,
+            platformChecker = configuration.platformChecker,
+        )
+
+        val moduleStructure = ModulesStructure(
+            project = environment.project,
+            mainModule = MainModule.SourceFiles(sourceFiles),
+            compilerConfiguration = configuration,
+            klibs = klibs,
+        )
+
+        val groupedSources = collectSources(configuration, environment.project, messageCollector)
+        val analyzedOutput = compileModulesToAnalyzedFirWithLightTree(
+            moduleStructure = moduleStructure,
+            groupedSources = groupedSources,
+            ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
+            libraries = libraries,
+            friendLibraries = friendLibraries,
+            diagnosticsReporter = diagnosticsReporter,
+            performanceManager = configuration.perfManager,
+            incrementalDataProvider = null,
+            lookupTracker = null,
+            useWasmPlatform = configuration.wasmCompilation,
+        )
+
+        val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
+
+        if (analyzedOutput.reportCompilationErrors(moduleStructure, diagnosticsReporter, messageCollector)) {
+            val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
+            throw AssertionError("The following errors occurred compiling test:\n$messages")
+        }
+
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            diagnosticsReporter,
+            configuration.languageVersionSettings
+        )
+        val transformedResult = PhaseEngine(
+            configuration.phaseConfig ?: PhaseConfig(),
+            PhaserState(),
+            createPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration, irDiagnosticReporter),
+        ).runPreSerializationLoweringPhases(fir2IrActualizedResult, firstStageLoweringPhases(configuration.languageVersionSettings))
+
+        serializeFirKlib(
+            moduleStructure = moduleStructure,
+            firOutputs = analyzedOutput.output,
+            fir2IrActualizedResult = transformedResult,
+            outputKlibPath = outputKlibFile.absolutePath,
+            nopack = false,
+            diagnosticsReporter = irDiagnosticReporter,
+            jsOutputName = moduleName,
+            useWasmPlatform = configuration.wasmCompilation,
+            wasmTarget = configuration[WasmConfigurationKeys.WASM_TARGET],
+        )
+
+        if (messageCollector.hasErrors()) {
+            val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
+            throw AssertionError("The following errors occurred serializing test klib:\n$messages")
+        }
+    }
 }
