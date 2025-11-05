@@ -13,6 +13,7 @@ public final class OperatorOfFromStdlibSequenceKt {
    L0
     LINENUMBER 7 L0
     GETSTATIC kotlin/sequences/Sequence.Companion : Lkotlin/sequences/Sequence$Companion;
+    POP
     ICONST_3
     ANEWARRAY java/lang/Long
     ASTORE 1
@@ -32,14 +33,21 @@ public final class OperatorOfFromStdlibSequenceKt {
     INVOKESTATIC java/lang/Long.valueOf (J)Ljava/lang/Long;
     AASTORE
     ALOAD 1
-    INVOKEVIRTUAL kotlin/sequences/Sequence$Companion.of ([Ljava/lang/Object;)Lkotlin/sequences/Sequence;
-    ASTORE 0
+    ASTORE 1
+    ALOAD 1
+    ALOAD 1
+    ARRAYLENGTH
+    INVOKESTATIC java/util/Arrays.copyOf ([Ljava/lang/Object;I)[Ljava/lang/Object;
+    INVOKESTATIC kotlin/sequences/SequencesKt.sequenceOf ([Ljava/lang/Object;)Lkotlin/sequences/Sequence;
    L1
-    LINENUMBER 8 L1
-    RETURN
+    LINENUMBER 7 L1
+    ASTORE 0
    L2
-    LOCALVARIABLE it Lkotlin/sequences/Sequence; L1 L2 0
-    MAXSTACK = 5
+    LINENUMBER 8 L2
+    RETURN
+   L3
+    LOCALVARIABLE it Lkotlin/sequences/Sequence; L2 L3 0
+    MAXSTACK = 4
     MAXLOCALS = 2
 
   // access flags 0x1009

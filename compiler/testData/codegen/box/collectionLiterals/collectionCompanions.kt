@@ -32,7 +32,7 @@ fun box(): String {
     }
     IntArray.run {
         toString()
-        of(1, 2, 3)
+        of(*[1, 2, 3])
     }
     LongArray.run {
         toString()
@@ -40,7 +40,7 @@ fun box(): String {
     }
     ShortArray.run {
         toString()
-        of(1, 2, 3)
+        of(*[1, 2, 3])
     }
     ByteArray.run {
         toString()
@@ -48,7 +48,7 @@ fun box(): String {
     }
     CharArray.run {
         toString()
-        of('a', 'b', 'c')
+        of(*['a', 'b', 'c'])
     }
     BooleanArray.run {
         toString()
@@ -56,7 +56,7 @@ fun box(): String {
     }
     FloatArray.run {
         toString()
-        of(1.0f, 2.0f, 3.0f)
+        of(*[1.0f, 2.0f, 3.0f])
     }
     DoubleArray.run {
         toString()
@@ -64,7 +64,7 @@ fun box(): String {
     }
     UIntArray.run {
         toString()
-        of(1u, 2u, 3u)
+        of(*[1u, 2u, 3u])
     }
     ULongArray.run {
         toString()
@@ -72,7 +72,7 @@ fun box(): String {
     }
     UShortArray.run {
         toString()
-        of(1.toUShort(), 2.toUShort(), 3.toUShort())
+        of(*[1.toUShort(), 2.toUShort(), 3.toUShort()])
     }
     UByteArray.run {
         toString()
