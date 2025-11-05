@@ -135,12 +135,15 @@ class VariableFixationFinder(
 
         override fun compareTo(other: TypeVariableFixationReadiness): Int = bitMask - other.bitMask
 
-        override fun toString(): String {
+        fun toString(linePadding: String): String {
             // `asReversed()` - to keep high-priority qualities first.
             val qualities = TypeVariableFixationReadinessQuality.entries.asReversed()
-                .joinToString("\n\t") { (if (get(it)) " true " else "false ") + it.name }
-            return "Readiness(\n\t$qualities\n)"
+                .joinToString("") { "\n$linePadding\t" + (if (get(it)) " true " else "false ") + it.name }
+            return "Readiness($qualities\n$linePadding)"
         }
+
+        fun toString(linePadding: Int) = toString(" ".repeat(linePadding))
+        override fun toString(): String = toString("")
     }
 
     private val fixationEnhancementsIn22: Boolean

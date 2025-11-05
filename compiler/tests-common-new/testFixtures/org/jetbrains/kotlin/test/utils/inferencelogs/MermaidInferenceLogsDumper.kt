@@ -44,6 +44,7 @@ class MermaidInferenceLogsDumper(
             withIndent { "${indent}classDef callStyle fill:#f2debb,stroke:#333,stroke-width:4px;" },
             withIndent { "${indent}classDef candidateStyle fill:#f2e5ce,stroke:#333,stroke-width:4px;" },
             withIndent { "${indent}classDef stageStyle fill:#c8f0f7,stroke:#333,stroke-width:4px;" },
+//            withIndent { "${indent}classDef readinessStyle fill:#fff4d6,stroke:#777,stroke-width:1px,text-align:left,white-space:nowrap;" },
             withIndent { "${indent}classDef readinessStyle fill:#fff4d6,stroke:#777,stroke-width:1px;" },
         ).joinToString("\n")
 
@@ -259,7 +260,7 @@ class MermaidInferenceLogsDumper(
 
         return node(
             idPrefix = "variableReadiness",
-            title = "Choose " + formatCode(variable) + " with " + formatCode(readiness),
+            title = "Choose " + formatCode(variable) + " with " + formatCodeBlock(readiness),
             extraClasses = listOf("readinessStyle"),
         )
     }
