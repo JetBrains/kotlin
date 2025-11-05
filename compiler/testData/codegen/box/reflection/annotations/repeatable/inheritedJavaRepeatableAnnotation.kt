@@ -20,14 +20,14 @@ import kotlin.test.assertTrue
 @java.lang.annotation.Repeatable(JAnnoContainer::class)
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Anno(val value: String = "myDefaultValue")
+annotation class Anno(val value: String)
 
 @java.lang.annotation.Inherited
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class JAnnoContainer(val value: Array<Anno>)
 
-@Anno
+@Anno("base")
 open class BaseClass
 
 @Anno("1")
@@ -76,7 +76,7 @@ private fun testAnnotationsJavaDifference() {
     // all differences below are because Java getAnnotations() misses shadowing between single annotations and containers
 
     assertEquals(
-        setOf(Anno("myDefaultValue"), JAnnoContainer(arrayOf(Anno("1"), Anno("2")))),
+        setOf(Anno("base"), JAnnoContainer(arrayOf(Anno("1"), Anno("2")))),
         javaAnnotations(MiddleClass::class))
     assertEquals(
         setOf(JAnnoContainer(arrayOf(Anno("1"), Anno("2")))),
@@ -90,7 +90,7 @@ private fun testAnnotationsJavaDifference() {
         kotlinAnnotations(ChildClass1::class))
 
     assertEquals(
-        setOf(Anno("myDefaultValue"), JAnnoContainer(arrayOf(Anno("1"), Anno("2")))),
+        setOf(Anno("base"), JAnnoContainer(arrayOf(Anno("1"), Anno("2")))),
         javaAnnotations(ChildClass2::class))
     assertEquals(
         setOf(JAnnoContainer(arrayOf(Anno("1"), Anno("2")))),

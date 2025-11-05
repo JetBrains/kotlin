@@ -22,10 +22,10 @@ annotation class NotInheritedAnno
 @Repeatable
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Anno(val value: String = "myDefaultValue")
+annotation class Anno(val value: String)
 
 @NotInheritedAnno
-@Anno
+@Anno("base")
 open class BaseClass
 
 @Anno("1")

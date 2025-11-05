@@ -15,9 +15,9 @@ import kotlin.test.fail
 @java.lang.annotation.Inherited
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Anno(val value: String = "myDefaultValue")
+annotation class Anno(val value: String)
 
-@Anno
+@Anno("base")
 open class BaseClass {
     @Anno("Base::foo")
     open fun foo() = "base"
@@ -34,7 +34,7 @@ private fun testAnnotations() {
     fun <T: Any> getAnnoValue(klass: KClass<T>) =
         (klass.annotations.single() as Anno).value
 
-    assertEquals("myDefaultValue", getAnnoValue(BaseClass::class))
+    assertEquals("base", getAnnoValue(BaseClass::class))
     assertEquals("OK", getAnnoValue(MiddleClass::class))
     assertEquals("OK", getAnnoValue(ChildClass::class))
 }
@@ -43,7 +43,7 @@ private fun testFindAnnotation() {
     fun <T: Any> getAnnoValue(klass: KClass<T>) =
         (klass.findAnnotation<Anno>() ?: fail("findAnnotation failed for $klass")).value
 
-    assertEquals("myDefaultValue", getAnnoValue(BaseClass::class))
+    assertEquals("base", getAnnoValue(BaseClass::class))
     assertEquals("OK", getAnnoValue(MiddleClass::class))
     assertEquals("OK", getAnnoValue(ChildClass::class))
 }
@@ -52,7 +52,7 @@ private fun testFindAnnotations() {
     fun <T: Any> getAnnoValue(klass: KClass<T>) =
         klass.findAnnotations<Anno>().single().value
 
-    assertEquals("myDefaultValue", getAnnoValue(BaseClass::class))
+    assertEquals("base", getAnnoValue(BaseClass::class))
     assertEquals("OK", getAnnoValue(MiddleClass::class))
     assertEquals("OK", getAnnoValue(ChildClass::class))
 }
@@ -61,7 +61,7 @@ private fun testJavaGetAnnotationsByType() {
     fun <T: Any> getAnnoContent(klass: KClass<T>) =
         klass.java.getAnnotationsByType(Anno::class.java).contentToString()
 
-    assertEquals("[@test.Anno(value=myDefaultValue)]", getAnnoContent(BaseClass::class))
+    assertEquals("[@test.Anno(value=base)]", getAnnoContent(BaseClass::class))
     assertEquals("[@test.Anno(value=OK)]", getAnnoContent(MiddleClass::class))
     assertEquals("[@test.Anno(value=OK)]", getAnnoContent(ChildClass::class))
 }
@@ -71,7 +71,7 @@ private fun testNoInheritanceOnFunctions() {
     assertEquals(0, foo.annotations.size)
 }
 
-@Anno
+@Anno("")
 interface I1
 
 interface I2: I1

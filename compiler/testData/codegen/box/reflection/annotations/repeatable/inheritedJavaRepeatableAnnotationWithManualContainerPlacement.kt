@@ -20,7 +20,7 @@ import kotlin.test.assertTrue
 @java.lang.annotation.Repeatable(JAnnoContainer::class)
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Anno(val value: String = "myDefaultValue")
+annotation class Anno(val value: String)
 
 @java.lang.annotation.Inherited
 @Target(AnnotationTarget.CLASS)
