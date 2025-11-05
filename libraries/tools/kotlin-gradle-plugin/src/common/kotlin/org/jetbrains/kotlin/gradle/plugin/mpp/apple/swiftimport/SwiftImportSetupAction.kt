@@ -293,6 +293,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
  * - should emit the linkage structure at specific sites, e.g. for embedAndSign, for internal linkage, etc
  */
 internal fun Project.regenerateLinkageImportProjectTask(swiftPMDependencies: Provider<Map<String, Set<SwiftPMDependency>>>): TaskProvider<GenerateSyntheticLinkageImportProject> {
+    val hasDirectlyDeclaredSwiftPMDependencies = provider { swiftPMDependenciesExtension().spmDependencies.isNotEmpty() }
     return locateOrRegisterTask<GenerateSyntheticLinkageImportProject>(
         lowerCamelCaseName(
             GenerateSyntheticLinkageImportProject.TASK_NAME,
@@ -302,7 +303,7 @@ internal fun Project.regenerateLinkageImportProjectTask(swiftPMDependencies: Pro
         it.configure {
             it.failOnNonIdempotentChanges.set(true)
             it.onlyIf {
-                swiftPMDependencies.get().isNotEmpty()
+                swiftPMDependencies.get().isNotEmpty() || hasDirectlyDeclaredSwiftPMDependencies.get()
             }
         }
     }
