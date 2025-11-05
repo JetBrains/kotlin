@@ -30,4 +30,4 @@
 
 /incorrectCollections.kt:(789,801): error: Argument type mismatch: actual type is 'Short', but 'UShort' was expected.
 
-/incorrectCollections.kt:(828,830): error: Argument type mismatch: actual type is 'Function0<Unit>', but 'UByte' was expected.
+/incorrectCollections.kt:(828,830): error: Argument type mismatch: actual type is '() -> Unit', but 'UByte' was expected.
