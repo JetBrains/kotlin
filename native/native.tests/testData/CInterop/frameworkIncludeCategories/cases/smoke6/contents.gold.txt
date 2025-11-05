@@ -34,14 +34,14 @@ library {
       protected /* secondary */ constructor()
     }
 
-    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol")
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol", binaryName = "MyProtocol")
     public abstract interface dependency/MyProtocolProtocol : kotlinx/cinterop/ObjCObject {
 
       @kotlinx/cinterop/ObjCMethod(selector = "wasInMyClass", encoding = "v16@0:8", isStret = false)
       public abstract fun wasInMyClass(): kotlin/Unit
     }
 
-    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol")
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol", binaryName = "MyProtocol")
     public abstract interface dependency/MyProtocolProtocolMeta : kotlinx/cinterop/ObjCClass /* = kotlinx/cinterop/ObjCObjectMeta^ */ {
     }
 

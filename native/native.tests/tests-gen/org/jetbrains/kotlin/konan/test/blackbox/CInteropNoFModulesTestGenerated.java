@@ -305,5 +305,29 @@ public class CInteropNoFModulesTestGenerated extends AbstractNativeCInteropNoFMo
     public void testIndirect() {
       runTest("native/native.tests/testData/CInterop/cCallMode/cCallMode/indirect/");
     }
+
+    @Test
+    @TestMetadata("objcBoth")
+    public void testObjcBoth() {
+      runTest("native/native.tests/testData/CInterop/cCallMode/cCallMode/objcBoth/");
+    }
+
+    @Test
+    @TestMetadata("objcBothWithModules")
+    public void testObjcBothWithModules() {
+      runTest("native/native.tests/testData/CInterop/cCallMode/cCallMode/objcBothWithModules/");
+    }
+
+    @Test
+    @TestMetadata("objcDirect")
+    public void testObjcDirect() {
+      runTest("native/native.tests/testData/CInterop/cCallMode/cCallMode/objcDirect/");
+    }
+
+    @Test
+    @TestMetadata("objcIndirect")
+    public void testObjcIndirect() {
+      runTest("native/native.tests/testData/CInterop/cCallMode/cCallMode/objcIndirect/");
+    }
   }
 }
