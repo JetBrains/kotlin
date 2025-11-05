@@ -29,118 +29,119 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
     val name by lazy {
         file?.nameWithoutExtension ?: ""
     }
+
     class DefFileConfig(private val properties: Properties) {
-        val headers by lazy {
+        val headers: List<String> by lazy {
             properties.getSpaceSeparated("headers")
         }
 
-        val modules by lazy {
+        val modules: List<String> by lazy {
             properties.getSpaceSeparated("modules")
         }
 
-        val language by lazy {
+        val language: String? by lazy {
             properties.getProperty("language")
         }
 
-        val compilerOpts by lazy {
+        val compilerOpts: List<String> by lazy {
             properties.getSpaceSeparated("compilerOpts")
         }
 
-        val excludeSystemLibs by lazy {
+        val excludeSystemLibs: Boolean by lazy {
             properties.getProperty("excludeSystemLibs")?.toBoolean() ?: false
         }
 
-        val excludeDependentModules by lazy {
+        val excludeDependentModules: Boolean by lazy {
             properties.getProperty("excludeDependentModules")?.toBoolean() ?: false
         }
 
-        val entryPoints by lazy {
+        val entryPoints: List<String> by lazy {
             properties.getSpaceSeparated("entryPoint")
         }
 
-        val linkerOpts by lazy {
+        val linkerOpts: List<String> by lazy {
             properties.getSpaceSeparated("linkerOpts")
         }
 
-        val linker by lazy {
+        val linker: String? by lazy {
             properties.getProperty("linker", "clang")
         }
 
-        val excludedFunctions by lazy {
+        val excludedFunctions: List<String> by lazy {
             properties.getSpaceSeparated("excludedFunctions")
         }
 
-        val excludedMacros by lazy {
+        val excludedMacros: List<String> by lazy {
             properties.getSpaceSeparated("excludedMacros")
         }
 
-        val staticLibraries by lazy {
+        val staticLibraries: List<String> by lazy {
             properties.getSpaceSeparated("staticLibraries")
         }
 
-        val libraryPaths by lazy {
+        val libraryPaths: List<String> by lazy {
             properties.getSpaceSeparated("libraryPaths")
         }
 
-        val packageName by lazy {
+        val packageName: String? by lazy {
             properties.getProperty("package")
         }
 
         /**
          * Header inclusion globs.
          */
-        val headerFilter by lazy {
+        val headerFilter: List<String> by lazy {
             properties.getSpaceSeparated("headerFilter")
         }
 
         /**
          * Header exclusion globs. Have higher priority than [headerFilter].
          */
-        val excludeFilter by lazy {
+        val excludeFilter: List<String> by lazy {
             properties.getSpaceSeparated("excludeFilter")
         }
 
-        val strictEnums by lazy {
+        val strictEnums: List<String> by lazy {
             properties.getSpaceSeparated("strictEnums")
         }
 
-        val nonStrictEnums by lazy {
+        val nonStrictEnums: List<String> by lazy {
             properties.getSpaceSeparated("nonStrictEnums")
         }
 
-        val noStringConversion by lazy {
+        val noStringConversion: List<String> by lazy {
             properties.getSpaceSeparated("noStringConversion")
         }
 
-        val depends by lazy {
+        val depends: List<String> by lazy {
             properties.getSpaceSeparated("depends")
         }
 
-        val exportForwardDeclarations by lazy {
+        val exportForwardDeclarations: List<String> by lazy {
             properties.getSpaceSeparated("exportForwardDeclarations")
         }
 
-        val allowedOverloadsForCFunctions by lazy {
+        val allowedOverloadsForCFunctions: List<String> by lazy {
             properties.getSpaceSeparated("allowedOverloadsForCFunctions")
         }
 
-        val disableDesignatedInitializerChecks by lazy {
+        val disableDesignatedInitializerChecks: Boolean by lazy {
             properties.getProperty("disableDesignatedInitializerChecks")?.toBoolean() ?: false
         }
 
-        val foreignExceptionMode by lazy {
+        val foreignExceptionMode: String? by lazy {
             properties.getProperty("foreignExceptionMode")
         }
 
-        val objcClassesIncludingCategories by lazy {
+        val objcClassesIncludingCategories: List<String> by lazy {
             properties.getSpaceSeparated("objcClassesIncludingCategories")
         }
 
-        val allowIncludingObjCCategoriesFromDefFile by lazy {
+        val allowIncludingObjCCategoriesFromDefFile: Boolean by lazy {
             properties.getProperty("allowIncludingObjCCategoriesFromDefFile")?.toBoolean() ?: false
         }
 
-        val userSetupHint by lazy {
+        val userSetupHint: String? by lazy {
             properties.getProperty("userSetupHint")
         }
     }
