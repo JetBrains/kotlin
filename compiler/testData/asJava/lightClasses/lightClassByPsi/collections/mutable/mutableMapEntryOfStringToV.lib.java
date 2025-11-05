@@ -13,3 +13,14 @@ public abstract class SMutableMapEntry2 /* test.SMutableMapEntry2*/<VElem>  impl
 
   public VElem getValue();//  getValue()
 }
+
+public class SMutableMapEntry3 /* test.SMutableMapEntry3*/<VElem>  implements java.util.Map.Entry<java.lang.String, VElem>, kotlin.jvm.internal.markers.KMutableMap.Entry {
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.String getKey();//  getKey()
+
+  public  SMutableMapEntry3();//  .ctor()
+
+  public VElem getValue();//  getValue()
+
+  public VElem setValue(VElem);//  setValue(VElem)
+}
