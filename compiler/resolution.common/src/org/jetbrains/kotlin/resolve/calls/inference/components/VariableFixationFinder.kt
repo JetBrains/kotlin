@@ -85,7 +85,7 @@ class VariableFixationFinder(
         HAS_PROPER_NON_ILT_CONSTRAINT,
         HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT,
 
-        HAS_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
+        HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
         HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE,
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS,
         HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES,
@@ -148,10 +148,7 @@ class VariableFixationFinder(
             it[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables()
             it[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS] = !allConstraintsTrivialOrNonProper()
             it[Q.HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE] = !dependencyProvider.isVariableRelatedToAnyOutputType(this)
-
-            if (it[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES]) {
-                it[Q.HAS_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] = !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
-            }
+            it[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] = !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
 
             computeReadinessForVariableWithDependencies(it)
 
@@ -213,7 +210,10 @@ class VariableFixationFinder(
     private fun TypeConstructorMarker.hasOnlyIncorporatedConstraintsFromDeclaredUpperBound(): Boolean {
         val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
 
-        return constraints.filter { it.isProperArgumentConstraint() }.all { it.position.isFromDeclaredUpperBound }
+        fun Constraint.isTrivial() = kind == ConstraintKind.LOWER && type.isNothing()
+                || kind == ConstraintKind.UPPER && type.isNullableAny()
+
+        return constraints.filter { it.isProperArgumentConstraint() && !it.isTrivial() }.all { it.position.isFromDeclaredUpperBound }
     }
 
     context(c: Context)
