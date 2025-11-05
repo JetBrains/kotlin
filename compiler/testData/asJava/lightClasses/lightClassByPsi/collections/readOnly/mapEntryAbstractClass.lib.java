@@ -13,3 +13,13 @@ public abstract class CMapEntry2 /* test.CMapEntry2*/<KElem, VElem>  implements 
 
   public VElem setValue(VElem);//  setValue(VElem)
 }
+
+public class CMapEntry3 /* test.CMapEntry3*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  CMapEntry3();//  .ctor()
+
+  public KElem getKey();//  getKey()
+
+  public VElem getValue();//  getValue()
+
+  public VElem setValue(VElem);//  setValue(VElem)
+}

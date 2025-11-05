@@ -22,6 +22,16 @@ public abstract class ABMapEntry2 /* test.ABMapEntry2*/ implements java.util.Map
   public  ABMapEntry2();//  .ctor()
 }
 
+public class ABMapEntry3 /* test.ABMapEntry3*/ implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() test.A getKey();//  getKey()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() test.B getValue();//  getValue()
+
+  public  ABMapEntry3();//  .ctor()
+}
+
 public final class B /* test.B*/ {
   public  B();//  .ctor()
 }

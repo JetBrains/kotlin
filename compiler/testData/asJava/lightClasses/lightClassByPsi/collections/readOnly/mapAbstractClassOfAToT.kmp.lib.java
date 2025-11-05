@@ -46,3 +46,27 @@ public abstract class ATMap2 /* test.ATMap2*/<T>  implements java.util.Map<@org.
 
   public int getSize();//  getSize()
 }
+
+public class ATMap3 /* test.ATMap3*/<T>  implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, T>, kotlin.jvm.internal.markers.KMappedMarker {
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<T> getValues();//  getValues()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, T>> getEntries();//  getEntries()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() test.A> getKeys();//  getKeys()
+
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() T get(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  get(@org.jetbrains.annotations.NotNull() test.A)
+
+  public  ATMap3();//  .ctor()
+
+  public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  containsKey(@org.jetbrains.annotations.NotNull() test.A)
+
+  public boolean containsValue(T);//  containsValue(T)
+
+  public boolean isEmpty();//  isEmpty()
+
+  public int getSize();//  getSize()
+}

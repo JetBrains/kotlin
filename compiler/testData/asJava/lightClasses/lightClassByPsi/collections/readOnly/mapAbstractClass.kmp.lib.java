@@ -42,3 +42,27 @@ public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements java.util.
 
   public int getSize();//  getSize()
 }
+
+public class CMap3 /* test.CMap3*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<VElem> getValues();//  getValues()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<KElem, VElem>> getEntries();//  getEntries()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<KElem> getKeys();//  getKeys()
+
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() VElem get(KElem);//  get(KElem)
+
+  public  CMap3();//  .ctor()
+
+  public boolean containsKey(KElem);//  containsKey(KElem)
+
+  public boolean containsValue(VElem);//  containsValue(VElem)
+
+  public boolean isEmpty();//  isEmpty()
+
+  public int getSize();//  getSize()
+}

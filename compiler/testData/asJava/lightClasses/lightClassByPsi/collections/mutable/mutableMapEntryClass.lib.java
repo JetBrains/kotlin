@@ -12,3 +12,13 @@ public abstract class CMutableMapEntry2 /* test.CMutableMapEntry2*/<KElem, VElem
 
   public VElem getValue();//  getValue()
 }
+
+public class CMutableMapEntry3 /* test.CMutableMapEntry3*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap.Entry {
+  public  CMutableMapEntry3();//  .ctor()
+
+  public KElem getKey();//  getKey()
+
+  public VElem getValue();//  getValue()
+
+  public VElem setValue(VElem);//  setValue(VElem)
+}
