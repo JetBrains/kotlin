@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
+import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.backend.js.loadIrForSingleModule
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
@@ -57,10 +59,10 @@ fun getAllReferencedDeclarations(
 }
 
 private val IrModuleFragment.outputFileName
-    get() = name.asString()
+    get() = kotlinLibrary?.jsOutputName ?: (name.asString()
         .replace("<", "_")
         .replace(">", "_")
-        .let { URLEncoder.encode(it, "UTF-8") }
+        .let { URLEncoder.encode(it, "UTF-8").replace("%", "%25") })
 
 object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact>("WasmBackendPipelinePhase") {
     override val configFiles: EnvironmentConfigFiles
