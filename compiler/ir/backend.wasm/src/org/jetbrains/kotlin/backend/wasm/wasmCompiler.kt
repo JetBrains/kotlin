@@ -592,7 +592,9 @@ try {
   }
 
   if (isStandaloneJsVM) {
-    const wasmBuffer = read(wasmFilePath, 'binary');
+    const importMeta = import.meta;
+    const filepath = importMeta.url.replace(/\.mjs$/, '.wasm');
+    const wasmBuffer = read(filepath, 'binary');
     const wasmModule = new WebAssembly.Module(wasmBuffer);
     wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
   }

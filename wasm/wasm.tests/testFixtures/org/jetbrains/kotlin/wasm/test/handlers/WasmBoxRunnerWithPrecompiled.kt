@@ -10,13 +10,10 @@ import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 
 class WasmBoxRunnerWithPrecompiled(
     testServices: TestServices
 ) : WasmBoxRunnerBase(testServices) {
-
-    override val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
         super.processModule(module, info)

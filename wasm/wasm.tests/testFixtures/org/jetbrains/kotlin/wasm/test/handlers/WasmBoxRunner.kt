@@ -11,14 +11,11 @@ import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
 internal class WasmBoxRunner(
     testServices: TestServices
 ) : WasmBoxRunnerBase(testServices) {
-    override val vmsToCheck: List<WasmVM> =
-        listOf(WasmVM.V8, WasmVM.SpiderMonkey, WasmVM.JavaScriptCore)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {

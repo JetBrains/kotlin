@@ -18,7 +18,6 @@ import java.io.File
 abstract class WasmBoxRunnerBase(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
-    internal abstract val vmsToCheck: List<WasmVM>
 
     protected fun saveAdditionalFilesAndRun(
         outputDir: File,
@@ -128,7 +127,7 @@ abstract class WasmBoxRunnerBase(
 
         val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
 
-        return vmsToCheck
+        return listOf(WasmVM.V8, WasmVM.SpiderMonkey, WasmVM.JavaScriptCore)
             .mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
