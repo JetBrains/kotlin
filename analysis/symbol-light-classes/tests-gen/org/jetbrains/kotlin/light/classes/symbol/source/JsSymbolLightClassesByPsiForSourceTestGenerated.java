@@ -499,12 +499,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
-      @TestMetadata("mutableCollectionOfA.kt")
-      public void testMutableCollectionOfA() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableCollectionOfA.kt");
-      }
-
-      @Test
       @TestMetadata("mutableCollectionOfString.kt")
       public void testMutableCollectionOfString() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableCollectionOfString.kt");
@@ -520,12 +514,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("mutableIterableInterface.kt")
       public void testMutableIterableInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIterableInterface.kt");
-      }
-
-      @Test
-      @TestMetadata("mutableIterableOfA.kt")
-      public void testMutableIterableOfA() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIterableOfA.kt");
       }
 
       @Test
@@ -547,12 +535,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
-      @TestMetadata("mutableIteratorOfA.kt")
-      public void testMutableIteratorOfA() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIteratorOfA.kt");
-      }
-
-      @Test
       @TestMetadata("mutableIteratorOfString.kt")
       public void testMutableIteratorOfString() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIteratorOfString.kt");
@@ -568,12 +550,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("mutableListInterface.kt")
       public void testMutableListInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableListInterface.kt");
-      }
-
-      @Test
-      @TestMetadata("mutableListOfA.kt")
-      public void testMutableListOfA() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableListOfA.kt");
       }
 
       @Test
@@ -643,12 +619,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
-      @TestMetadata("mutableSetOfA.kt")
-      public void testMutableSetOfA() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableSetOfA.kt");
-      }
-
-      @Test
       @TestMetadata("mutableSetOfString.kt")
       public void testMutableSetOfString() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableSetOfString.kt");
@@ -671,12 +641,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
-      @TestMetadata("collectionAbstractClassOfA.kt")
-      public void testCollectionAbstractClassOfA() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/collectionAbstractClassOfA.kt");
-      }
-
-      @Test
       @TestMetadata("collectionAbstractClassOfString.kt")
       public void testCollectionAbstractClassOfString() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/collectionAbstractClassOfString.kt");
@@ -692,12 +656,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("iterableAbstractClass.kt")
       public void testIterableAbstractClass() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iterableAbstractClass.kt");
-      }
-
-      @Test
-      @TestMetadata("iterableAbstractClassOfA.kt")
-      public void testIterableAbstractClassOfA() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iterableAbstractClassOfA.kt");
       }
 
       @Test
@@ -719,12 +677,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
-      @TestMetadata("iteratorAbstractClassOfA.kt")
-      public void testIteratorAbstractClassOfA() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iteratorAbstractClassOfA.kt");
-      }
-
-      @Test
       @TestMetadata("iteratorAbstractClassOfString.kt")
       public void testIteratorAbstractClassOfString() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iteratorAbstractClassOfString.kt");
@@ -740,12 +692,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("listAbstractClass.kt")
       public void testListAbstractClass() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/listAbstractClass.kt");
-      }
-
-      @Test
-      @TestMetadata("listAbstractClassOfA.kt")
-      public void testListAbstractClassOfA() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/listAbstractClassOfA.kt");
       }
 
       @Test
@@ -818,12 +764,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("setAbstractClass.kt")
       public void testSetAbstractClass() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/setAbstractClass.kt");
-      }
-
-      @Test
-      @TestMetadata("setAbstractClassOfA.kt")
-      public void testSetAbstractClassOfA() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/setAbstractClassOfA.kt");
       }
 
       @Test
