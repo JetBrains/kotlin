@@ -41,5 +41,19 @@ enum class CCallMode {
      * Use only `@CCall.Direct`, ignore `@CCall`.
      * If the function has only `@CCall`, the compilation fails with an error.
      */
-    Direct,
+    Direct;
+
+    /**
+     * Implements the selection behaviour designated by this mode.
+     * `indirect` and `direct` are the generation methods that can return `null` when unavailable.
+     */
+    fun <T> select(
+        indirect: () -> T?,
+        direct: () -> T?,
+    ): T? = when (this) {
+        Indirect -> indirect()
+        IndirectOrDirect -> indirect() ?: direct()
+        DirectOrIndirect -> direct() ?: indirect()
+        Direct -> direct()
+    }
 }
