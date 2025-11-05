@@ -8,6 +8,7 @@ package kotlin.reflect
 import java.lang.reflect.*
 import kotlin.internal.LowPriorityInOverloadResolution
 import kotlin.jvm.internal.KTypeBase
+import kotlin.jvm.internal.KTypeParameterBase
 
 /**
  * Returns a Java [Type] instance corresponding to the given Kotlin type.
@@ -16,9 +17,6 @@ import kotlin.jvm.internal.KTypeBase
  * In particular, the following is not supported correctly or at all:
  * - declaration-site variance
  * - variance of types annotated with [JvmSuppressWildcards]
- * - obtaining the containing declaration of a type parameter ([TypeVariable.getGenericDeclaration])
- * - annotations of type parameters and their bounds ([TypeVariable.getAnnotation], [TypeVariable.getAnnotations],
- *   [TypeVariable.getDeclaredAnnotations], [TypeVariable.getAnnotatedBounds])
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
@@ -36,7 +34,11 @@ public val KType.javaType: Type
 @ExperimentalStdlibApi
 private fun KType.computeJavaType(forceWrapper: Boolean = false): Type {
     when (val classifier = classifier) {
-        is KTypeParameter -> return TypeVariableImpl(classifier)
+        is KTypeParameter -> {
+            val container = (classifier as? KTypeParameterBase)?.javaContainingDeclaration
+                ?: throw UnsupportedOperationException("javaType is not supported for this type: $this")
+            return container.typeParameters.single { it.name == classifier.name }
+        }
         is KClass<*> -> {
             val jClass = if (forceWrapper) classifier.javaObjectType else classifier.java
             val arguments = arguments
@@ -101,44 +103,6 @@ private interface TypeImpl : Type {
         "VIRTUAL_MEMBER_HIDDEN"
     ) // This is needed for cases when environment variable JDK_1_6 points to JDK 8+.
     fun getTypeName(): String
-}
-
-// Suppression of the error is needed for `AnnotatedType[] getAnnotatedBounds()` which is impossible to implement on JDK 6
-// because `AnnotatedType` has only appeared in JDK 8.
-@Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED")
-@ExperimentalStdlibApi
-private class TypeVariableImpl(private val typeParameter: KTypeParameter) : TypeVariable<GenericDeclaration>, TypeImpl {
-    override fun getName(): String = typeParameter.name
-
-    override fun getGenericDeclaration(): GenericDeclaration =
-        TODO("getGenericDeclaration() is not yet supported for type variables created from KType: $typeParameter")
-
-    override fun getBounds(): Array<Type> = typeParameter.upperBounds.map { it.computeJavaType(forceWrapper = true) }.toTypedArray()
-
-    override fun getTypeName(): String = name
-
-    override fun equals(other: Any?): Boolean =
-        other is TypeVariable<*> && name == other.name && genericDeclaration == other.genericDeclaration
-
-    override fun hashCode(): Int =
-        name.hashCode() xor genericDeclaration.hashCode()
-
-    override fun toString(): String = getTypeName()
-
-    // [TypeVariable] extends [AnnotatedElement] starting from JDK 8. The following are copies of methods from there.
-    // Suppression of VIRTUAL_MEMBER_HIDDEN is needed for cases when environment variable JDK_1_6 points to JDK 8+.
-    @Suppress("VIRTUAL_MEMBER_HIDDEN", "UNUSED_PARAMETER")
-    fun <T : Annotation> getAnnotation(annotationClass: Class<T>): T? = null
-
-    @Suppress("VIRTUAL_MEMBER_HIDDEN")
-    fun getAnnotations(): Array<Annotation> = emptyArray()
-
-    @Suppress("VIRTUAL_MEMBER_HIDDEN")
-    fun getDeclaredAnnotations(): Array<Annotation> = emptyArray()
-
-    // There is also [getAnnotatedBounds] which returns an array of [AnnotatedType]; because [AnnotatedType] is JDK 8+,
-    // we can't declare that method here for compatibility with Android SDK 25 and lower, so we leave it unimplemented
-    // to throw an exception at runtime if called.
 }
 
 @ExperimentalStdlibApi
