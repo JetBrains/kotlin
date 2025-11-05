@@ -17,7 +17,7 @@ class ExampleCompatibilityTest {
     @Test
     @DisplayName("Sample compatibility test that is run as part of each test suit")
     fun testDefaultNonIncrementalSettings() {
-        val config = KotlinToolchains.loadImplementation(ExampleCompatibilityTest::class.java.classLoader).createDaemonExecutionPolicy()
+        val config = KotlinToolchains.loadImplementation(ExampleCompatibilityTest::class.java.classLoader).daemonExecutionPolicyBuilder()
         config[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = emptyList()
         assertEquals(emptyList<String>(), config[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS])
     }

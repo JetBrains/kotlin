@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.BACKUP_CLASSES
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.FORCE_RECOMPILATION
@@ -61,7 +60,6 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.nio.file.Paths
 import javax.inject.Inject
-import kotlin.collections.orEmpty
 
 internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     private val fileSystemOperations: FileSystemOperations,
@@ -157,13 +155,13 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 }
             }.build()
             val executionConfig = when (executionStrategy) {
-                KotlinCompilerExecutionStrategy.DAEMON -> kotlinToolchains.createDaemonExecutionPolicy().apply {
+                KotlinCompilerExecutionStrategy.DAEMON -> kotlinToolchains.daemonExecutionPolicyBuilder().apply {
                     val arguments = workArguments.compilerExecutionSettings.daemonJvmArgs ?: emptyList()
                     this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = arguments
                     if (log.isDebugEnabled) {
                         log.debug("Kotlin compile daemon JVM options: ${arguments.joinToString(" ")}")
                     }
-                }
+                }.build()
                 KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinToolchains.createInProcessExecutionPolicy()
                 else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
             }

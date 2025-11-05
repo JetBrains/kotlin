@@ -70,16 +70,16 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     fun daemonWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
         val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
-        val daemonPolicy = kotlinToolchains.createDaemonExecutionPolicy()
-        assumeTrue(hasCancellationSupport)
-
         val daemonRunPath: Path = createTempDirectory("test-daemon-files")
-        daemonPolicy[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = listOf(
-            "Dkotlin.daemon.wait.before.compilation.for.tests=true"
-        )
-        @OptIn(DelicateBuildToolsApi::class)
-        daemonPolicy[ExecutionPolicy.WithDaemon.DAEMON_RUN_DIR_PATH] = daemonRunPath
-        daemonPolicy[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 0
+        assumeTrue(hasCancellationSupport)
+        val daemonPolicy = kotlinToolchains.daemonExecutionPolicyBuilder().apply {
+            this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = listOf(
+                "Dkotlin.daemon.wait.before.compilation.for.tests=true"
+            )
+            @OptIn(DelicateBuildToolsApi::class)
+            this[ExecutionPolicy.WithDaemon.DAEMON_RUN_DIR_PATH] = daemonRunPath
+            this[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 0
+        }.build()
 
         project(kotlinToolchains, daemonPolicy) {
             val module1 = module("jvm-module-1") as JvmModule

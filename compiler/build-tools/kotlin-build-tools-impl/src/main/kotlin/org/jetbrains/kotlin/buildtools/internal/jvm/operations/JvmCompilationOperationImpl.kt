@@ -221,6 +221,7 @@ internal class JvmCompilationOperationImpl private constructor(
             createSessionIsAliveFlagFile()
         }
 
+        val additionalJvmArguments = mutableListOf<String>()
         val daemonOptions = configureDaemonOptions(
             DaemonOptions().apply {
                 executionPolicy[SHUTDOWN_DELAY_MILLIS]?.let { shutdownDelay ->
@@ -228,17 +229,16 @@ internal class JvmCompilationOperationImpl private constructor(
                 }
 
                 runFilesPath = executionPolicy[DAEMON_RUN_DIR_PATH].absolutePathString()
-                executionPolicy[JVM_ARGUMENTS] = (executionPolicy[JVM_ARGUMENTS] ?: emptyList()) +
-                        "D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=$runFilesPath"
-
+                additionalJvmArguments += "D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=$runFilesPath"
             })
 
         val jvmOptions = configureDaemonJVMOptions(
             inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true
         ).also { opts ->
-            executionPolicy[JVM_ARGUMENTS]?.takeIf { it.isNotEmpty() }?.let { daemonJvmArguments ->
+            val effectiveJvmArguments = additionalJvmArguments + (executionPolicy[JVM_ARGUMENTS] ?: emptyList())
+            if (effectiveJvmArguments.isNotEmpty()) {
                 opts.jvmParams.addAll(
-                    daemonJvmArguments.filterExtractProps(opts.mappers, "", opts.restMapper)
+                    effectiveJvmArguments.filterExtractProps(opts.mappers, "", opts.restMapper)
                 )
             }
         }
