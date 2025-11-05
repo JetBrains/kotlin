@@ -250,11 +250,11 @@ class VariableFixationFinder(
 
         return when {
             !readiness[Q.ALLOWED] -> null
-            !readiness[Q.HAS_PROPER_CONSTRAINTS] -> VariableForFixation(candidate, false)
-            !readiness[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] ->
-                VariableForFixation(candidate, hasProperConstraint = true, hasDependencyOnOuterTypeVariable = true)
-
-            else -> VariableForFixation(candidate, true)
+            else -> VariableForFixation(
+                variable = candidate,
+                hasProperConstraint = readiness[Q.HAS_PROPER_CONSTRAINTS],
+                hasDependencyOnOuterTypeVariable = !readiness[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY],
+            )
         }
     }
 
