@@ -14,14 +14,14 @@ fun box(): String {
 
     val dfGrouped = df.group { a and b }.into("d")
 
-    dfGrouped.move { d.b }.toStart(true).let {
+    dfGrouped.move { d.b }.toStart(insideGroup = true).let {
         it.checkCompileTimeSchemaEqualsRuntime()
         it.c
         it.d
         it.d.b
         it.d.a
     }
-    dfGrouped.moveToStart(true) { d.b }.let {
+    dfGrouped.moveToStart(insideGroup = true) { d.b }.let {
         it.checkCompileTimeSchemaEqualsRuntime()
         it.c
         it.d
