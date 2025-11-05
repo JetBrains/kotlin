@@ -54,6 +54,15 @@ internal fun CValue<CXString>.convertAndDispose(): String {
     }
 }
 
+@JvmName("convertAndDisposeCString")
+internal fun CValue<CString>.convertAndDispose(): String? {
+    try {
+        return this.useContents { data }?.toKString()
+    } finally {
+        clang_disposeCString(this)
+    }
+}
+
 internal fun CPointer<CXStringSet>.convertAndDispose(): Set<String> = try {
     (0 until this.pointed.Count).mapTo(mutableSetOf()) {
         clang_getCString(this.pointed.Strings!![it].readValue())!!.toKString()

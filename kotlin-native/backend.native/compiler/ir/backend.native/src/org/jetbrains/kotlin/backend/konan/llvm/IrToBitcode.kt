@@ -1673,10 +1673,6 @@ internal class CodeGeneratorVisitor(
      *
      * This function decides which to use the same way as for other `-Xccall-mode`-dependant entities:
      * it selects one of the available methods based on the `cCallMode` passed to the compiler.
-     *
-     * Note: it is possible that both methods return `null`.
-     * This can happen when cinterop uses `-Xccall-mode direct` (so `protocolGetter` is not available),
-     * but `cinterop` couldn't deduce the `binaryName` (KT-82200).
      */
     private fun genInstanceOfObjCProtocol(
             kotlinObject: LLVMValueRef,
