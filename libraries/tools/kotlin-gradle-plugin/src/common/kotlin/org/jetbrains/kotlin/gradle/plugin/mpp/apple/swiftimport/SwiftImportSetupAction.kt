@@ -9,6 +9,8 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
@@ -101,7 +103,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
              * - Reexport all potential libraries for dynamic K/N framework (was there an issue with "private extern" in public API of some Google library?)
              */
 //             SyntheticProductType.INFERRED
-             SyntheticProductType.DYNAMIC
+            SyntheticProductType.DYNAMIC
         } else {
             SyntheticProductType.INFERRED
         }
@@ -201,7 +203,10 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         ) {
             // FIXME: Remove this and fix input/outputs
             it.dependsOn(packageFetchTask)
-            it.resolvedPackagesState.set(packageFetchTask.map{ it.swiftPMDependenciesCheckoutWorkspaceFile.get() })
+            it.resolvedPackagesState.from(
+                packageFetchTask.map { it.inputManifests },
+                packageFetchTask.map { it.lockFile },
+            )
             it.xcodebuildPlatform.set(targetPlatform)
             it.xcodebuildSdk.set(targetSdk)
             it.swiftPMDependenciesCheckout.set(packageFetchTask.map { it.swiftPMDependenciesCheckout.get() })
@@ -550,8 +555,13 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     @get:Internal
     val syntheticImportProjectRoot: DirectoryProperty = project.objects.directoryProperty()
 
-    @get:InputFile
-    protected val manifest get() = syntheticImportProjectRoot.map { it.file(GenerateSyntheticLinkageImportProject.MANIFEST_NAME) }
+    @get:InputFiles
+    val inputManifests
+        get() = syntheticImportProjectRoot
+            .asFileTree
+            .matching {
+                it.include("**/Package.swift")
+            }
 
     // FIXME: Actually think about: "what do we want as a UTD check for the the packages checkout? The lock file?"
     // FIXME: We probably want this cache to be global
@@ -560,8 +570,11 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         project.layout.buildDirectory.dir("kotlin/swiftPMCheckout")
     )
 
+    /**
+     * Invalidate fetch when Package.swift or Package.resolved files changed.
+     */
     @get:OutputFile
-    val swiftPMDependenciesCheckoutWorkspaceFile = swiftPMDependenciesCheckout.file("workspace-state.json")
+    val lockFile = syntheticImportProjectRoot.file("Package.resolved")
 
     @get:Internal
     protected val swiftPMDependenciesCheckoutLogs: DirectoryProperty = project.objects.directoryProperty().convention(
@@ -610,8 +623,8 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     @get:Input
     abstract val discoverModulesImplicitly: Property<Boolean>
 
-    @get:InputFile
-    abstract val resolvedPackagesState: RegularFileProperty
+    @get:InputFiles
+    abstract val resolvedPackagesState: ConfigurableFileCollection
 
     @get:OutputDirectory
     protected val defFiles = xcodebuildSdk.flatMap { sdk ->
@@ -693,6 +706,12 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                     it.deleteRecursively()
                 }
         }
+        val products = dd.resolve("Build/Products")
+        // Also nuke products to avoid discovering stale modulemaps in the products directory
+        if (products.exists()) {
+            products.deleteRecursively()
+        }
+        // FIXME: Why not just "clean"?
 
         execOps.exec { exec ->
             exec.workingDir(projectRoot)
@@ -701,6 +720,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 "-scheme", SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
                 "-destination", "generic/platform=${xcodebuildPlatform.get()}",
                 "-derivedDataPath", dd.path,
+                // "-disableAutomaticPackageResolution", FIXME: Probably?
                 XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER, swiftPMDependenciesCheckout.get().asFile.path,
                 "CC=${clangArgsDumpScript.path}",
                 "LD=${ldArgsDumpScript.path}",
