@@ -80,6 +80,9 @@ public abstract class ABMutableMap2 /* test.ABMutableMap2*/ implements java.util
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>)
+
   public  ABMutableMap2();//  .ctor()
 
   public final @org.jetbrains.annotations.NotNull() test.B get(java.lang.Object);//  get(java.lang.Object)
@@ -97,8 +100,6 @@ public abstract class ABMutableMap2 /* test.ABMutableMap2*/ implements java.util
   public final java.util.Set<@org.jetbrains.annotations.NotNull() test.A> keySet();//  keySet()
 
   public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>> entrySet();//  entrySet()
-
-  public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends @org.jetbrains.annotations.NotNull() test.B>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends @org.jetbrains.annotations.NotNull() test.B>)
 }
 
 public class ABMutableMap3 /* test.ABMutableMap3*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMutableMap {
@@ -141,6 +142,9 @@ public class ABMutableMap3 /* test.ABMutableMap3*/ implements java.util.Map<@org
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>)
+
   public  ABMutableMap3();//  .ctor()
 
   public final @org.jetbrains.annotations.NotNull() test.B get(java.lang.Object);//  get(java.lang.Object)
@@ -158,8 +162,6 @@ public class ABMutableMap3 /* test.ABMutableMap3*/ implements java.util.Map<@org
   public final java.util.Set<@org.jetbrains.annotations.NotNull() test.A> keySet();//  keySet()
 
   public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>> entrySet();//  entrySet()
-
-  public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends @org.jetbrains.annotations.NotNull() test.B>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends @org.jetbrains.annotations.NotNull() test.B>)
 }
 
 public final class B /* test.B*/ {
