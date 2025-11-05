@@ -667,6 +667,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/SimpleFunctionWithContract.kt");
     }
 
+    @Test
+    @TestMetadata("withContextParameters.kt")
+    public void testWithContextParameters() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/withContextParameters.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good")
     @TestDataPath("$PROJECT_ROOT")
