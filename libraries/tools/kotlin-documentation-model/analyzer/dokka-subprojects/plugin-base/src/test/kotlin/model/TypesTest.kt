@@ -10,6 +10,7 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import utils.AbstractModelTest
 import utils.OnlySymbols
+import utils.assertIsInstance
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -168,6 +169,90 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                     val classNamesOfProjections =
                         projections.map { ((it as Invariance<*>).inner as GenericTypeConstructor).dri.classNames }
                     classNamesOfProjections equals listOf("String", "Double", "Boolean", "Int", "String")
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `type with typealias to nullable type`() {
+        inlineModelTest(
+            """
+            |typealias Nullable = String?
+            |typealias NonNullable = String
+            |fun nonNullableParameters(nullable: Nullable, nonNullable: NonNullable) {}
+            |fun nullableParameters(nullable: Nullable?, nonNullable: NonNullable?) {}"""
+        ) {
+            with((this / "types" / "Nullable").cast<DTypeAlias>()) {
+                val type = type
+                type.assertIsInstance<GenericTypeConstructor>()
+                type.projections counts 0
+
+                name equals "Nullable"
+                assertTrue(underlyingType.values.first() is Nullable)
+                underlyingType.values.first().driOrNull equals DRI("kotlin", "String")
+            }
+
+            with((this / "types" / "NonNullable").cast<DTypeAlias>()) {
+                val type = type
+                type.assertIsInstance<GenericTypeConstructor>()
+                type.projections counts 0
+
+                name equals "NonNullable"
+                assertTrue(underlyingType.values.first() is GenericTypeConstructor)
+                underlyingType.values.first().driOrNull equals DRI("kotlin", "String")
+            }
+
+            with((this / "types" / "nonNullableParameters").cast<DFunction>()) {
+                name equals "nonNullableParameters"
+                parameters.size equals 2
+                val (nullable, nonNullable) = parameters
+
+                with(nullable.type) {
+                    assertIsInstance<TypeAliased>()
+
+                    typeAlias.assertIsInstance<GenericTypeConstructor>()
+                    typeAlias.driOrNull equals DRI("types", "Nullable")
+
+                    inner.assertIsInstance<Nullable>()
+                    inner.driOrNull equals DRI("kotlin", "String")
+                }
+
+                with(nonNullable.type) {
+                    assertIsInstance<TypeAliased>()
+
+                    typeAlias.assertIsInstance<GenericTypeConstructor>()
+                    typeAlias.driOrNull equals DRI("types", "NonNullable")
+
+                    inner.assertIsInstance<GenericTypeConstructor>()
+                    inner.driOrNull equals DRI("kotlin", "String")
+                }
+            }
+
+            with((this / "types" / "nullableParameters").cast<DFunction>()) {
+                name equals "nullableParameters"
+                parameters.size equals 2
+                val (nullable, nonNullable) = parameters
+
+                with(nullable.type) {
+                    assertIsInstance<TypeAliased>()
+
+                    typeAlias.assertIsInstance<Nullable>()
+                    typeAlias.driOrNull equals DRI("types", "Nullable")
+
+                    inner.assertIsInstance<Nullable>()
+                    inner.driOrNull equals DRI("kotlin", "String")
+                }
+
+                // nullability is propagated from the typealias to the underlying type
+                with(nonNullable.type) {
+                    assertIsInstance<TypeAliased>()
+
+                    typeAlias.assertIsInstance<Nullable>()
+                    typeAlias.driOrNull equals DRI("types", "NonNullable")
+
+                    inner.assertIsInstance<Nullable>()
+                    inner.driOrNull equals DRI("kotlin", "String")
                 }
             }
         }

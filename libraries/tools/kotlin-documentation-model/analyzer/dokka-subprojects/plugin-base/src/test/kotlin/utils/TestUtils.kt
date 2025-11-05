@@ -9,6 +9,8 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.P
 import kotlin.collections.orEmpty
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.asserter
@@ -69,8 +71,11 @@ internal fun assertContains(
     )
 }
 
-inline fun <reified T : Any> Any?.assertIsInstance(name: String): T =
-    this.let { it as? T } ?: throw AssertionError("$name should not be null")
+@OptIn(ExperimentalContracts::class)
+inline fun <reified T : Any> Any?.assertIsInstance(name: String? = ""): T {
+    contract { returns() implies (this@assertIsInstance is T) }
+    return this.let { it as? T } ?: throw AssertionError("$name should not be null")
+}
 
 fun TagWrapper.text(): String = when (val t = this) {
     is NamedTagWrapper -> "${t.name}: [${t.root.text()}]"
