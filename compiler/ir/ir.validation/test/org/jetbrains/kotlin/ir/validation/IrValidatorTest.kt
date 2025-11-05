@@ -149,6 +149,18 @@ class IrValidatorTest {
         return file
     }
 
+    private fun buildValidIrTree(): IrElement {
+        val file = createIrFile()
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        val body = IrFactoryImpl.createBlockBody(5, 24)
+        function.body = body
+        file.addChild(function)
+        return file
+    }
+
     private inline fun runValidationAndAssert(mode: IrVerificationMode, block: () -> Unit) {
         if (mode == IrVerificationMode.ERROR) {
             assertThrows<IrValidationException>(executable = block)
@@ -226,6 +238,51 @@ class IrValidatorTest {
                     CompilerMessageLocation.create(null, 1, 10, null),
                 ),
             ),
+        )
+    }
+
+    @Test
+    fun `sanity check for IrValidatorTest, whether IrVerificationException is really thrown if IrVerificationMode is ERROR`() {
+        val exception = assertThrows<AssertionError> {
+            testValidation(
+                IrVerificationMode.ERROR,
+                buildValidIrTree(),
+                emptyList(),
+            )
+        }
+        assertEquals(
+            "Expected org.jetbrains.kotlin.ir.validation.IrValidationException to be thrown, but nothing was thrown.",
+            exception.message
+        )
+    }
+
+    @Test
+    fun `sanity check for IrValidatorTest, whether message is really verified, when IrValidationException is really thrown if IrVerificationMode is ERROR`() {
+        val exception = assertThrows<AssertionError> {
+            testValidation(
+                IrVerificationMode.ERROR,
+                buildInvalidIrExpressionWithNoLocations(),
+                listOf(
+                    Message(
+                        ERROR,
+                        $$"""
+                        IT'S THE INTENTIONALLY WRONG MESSAGE TO VERIFY THE ASSERTION ERROR WOULD HAPPEN
+                        """.trimIndent(),
+                        CompilerMessageLocation.create(null, 0, 0, null),
+                    ),
+                ),
+            )
+        }
+        assertEquals(
+            $$"""
+            expected: <[error: IT'S THE INTENTIONALLY WRONG MESSAGE TO VERIFY THE ASSERTION ERROR WOULD HAPPEN]> but was: <[error: [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
+            STRING_CONCATENATION type=kotlin.Any
+              inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                inside BLOCK_BODY
+                  inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
+                    inside FILE fqName:org.sample fileName:test.kt]>
+            """.trimIndent(),
+            exception.message
         )
     }
 
