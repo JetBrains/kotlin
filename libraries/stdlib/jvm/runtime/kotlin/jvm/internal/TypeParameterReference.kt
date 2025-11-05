@@ -12,11 +12,11 @@ import kotlin.reflect.typeOf
 
 @SinceKotlin("1.4")
 public class TypeParameterReference(
-    private val container: Any?, // Either ClassReference or CallableReference
+    container: TypeParameterContainer,
     override val name: String,
     override val variance: KVariance,
     override val isReified: Boolean,
-) : KTypeParameter {
+) : KTypeParameterBase(container) {
     @Volatile
     private var bounds: List<KType>? = null
 
@@ -32,14 +32,6 @@ public class TypeParameterReference(
         }
         bounds = upperBounds
     }
-
-    override fun equals(other: Any?): Boolean =
-        other is TypeParameterReference && container == other.container && name == other.name
-
-    override fun hashCode(): Int =
-        container.hashCode() * 31 + name.hashCode()
-
-    override fun toString(): String = toString(this)
 
     public companion object {
         public fun toString(typeParameter: KTypeParameter): String =
