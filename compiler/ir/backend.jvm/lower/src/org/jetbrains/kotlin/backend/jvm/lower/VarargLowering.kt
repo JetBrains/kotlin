@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Replaces varargs with array arguments, and lowers [arrayOf] and [emptyArray] calls.
@@ -71,12 +73,14 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
                 is IrExpression -> +element.transform(this@VarargLowering, null)
                 is IrSpreadElement -> {
                     val spread = element.expression
-                    // Don't copy immediately created arrays
-                    // TODO: what about `emptyArray`?
-                    val arrayOfArgumentOfSpread = (spread as? IrFunctionAccessExpression)?.arrayOfVarargArgument
-                    if (arrayOfArgumentOfSpread is IrVararg) {
-                        addVararg(arrayOfArgumentOfSpread)
-                        continue@loop
+                    // TODO: What about `emptyArray`
+                    if (spread.isArrayOfLikeCall()) {
+                        // Skip empty arrays and don't copy immediately created arrays
+                        val argument = spread.arrayOfVarargArgument ?: continue@loop
+                        if (argument is IrVararg) {
+                            addVararg(argument)
+                            continue@loop
+                        }
                     }
                     addSpread(spread.transform(this@VarargLowering, null))
                 }
@@ -122,21 +126,28 @@ internal fun IrFunction.isArrayCompanionOf(): Boolean {
             && parameters[1].isVararg
 }
 
+@OptIn(ExperimentalContracts::class)
+internal fun IrExpression.isArrayOfLikeCall(): Boolean {
+    contract {
+        returns(true) implies (this@isArrayOfLikeCall is IrFunctionAccessExpression)
+    }
+    if (this !is IrFunctionAccessExpression) return false
+    return symbol.owner.isArrayOf() || symbol.owner.isArrayCompanionOf()
+}
+
 /**
- * @return If this call is to `(type)ArrayOf` or `(Type)Array.Companion.of` intrinsic, its vararg argument. Otherwise, `null`.
+ * Expects the function to be `(type)ArrayOf` or `(Type)Array.Companion.of` intrinsic.
+ * @return Its vararg argument. It may be `null`.
  */
 internal val IrFunctionAccessExpression.arrayOfVarargArgument: IrExpression?
     get() {
         val callee = symbol.owner
 
-        fun argument(idx: Int): IrExpression =
-            arguments[idx] ?: throw AssertionError("Argument #$idx expected: ${dump()}")
-
         return when {
-            callee.isArrayOf() -> argument(0)
+            callee.isArrayOf() -> arguments[0]
             // the first parameter is `(Type)Array.Companion`
-            callee.isArrayCompanionOf() -> argument(1)
-            else -> null
+            callee.isArrayCompanionOf() -> arguments[1]
+            else -> error("Expected `arrayOf`-like or `Array.Companion.of`-like call but was: ${dump()}")
         }
     }
 
