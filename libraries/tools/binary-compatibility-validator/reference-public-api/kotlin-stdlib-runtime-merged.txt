@@ -4088,6 +4088,14 @@ public abstract interface class kotlin/jvm/internal/KTypeBase : kotlin/reflect/K
 	public abstract fun getJavaType ()Ljava/lang/reflect/Type;
 }
 
+public abstract class kotlin/jvm/internal/KTypeParameterBase : kotlin/reflect/KTypeParameter {
+	public fun <init> (Ljava/lang/Object;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContainer$kotlin_stdlib ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract class kotlin/jvm/internal/Lambda : java/io/Serializable, kotlin/jvm/internal/FunctionBase {
 	public fun <init> (I)V
 	public fun getArity ()I
@@ -4490,17 +4498,14 @@ public class kotlin/jvm/internal/TypeIntrinsics {
 	public static fun throwCce (Ljava/lang/String;)V
 }
 
-public final class kotlin/jvm/internal/TypeParameterReference : kotlin/reflect/KTypeParameter {
+public final class kotlin/jvm/internal/TypeParameterReference : kotlin/jvm/internal/KTypeParameterBase {
 	public static final field Companion Lkotlin/jvm/internal/TypeParameterReference$Companion;
 	public fun <init> (Ljava/lang/Object;Ljava/lang/String;Lkotlin/reflect/KVariance;Z)V
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getName ()Ljava/lang/String;
 	public fun getUpperBounds ()Ljava/util/List;
 	public fun getVariance ()Lkotlin/reflect/KVariance;
-	public fun hashCode ()I
 	public fun isReified ()Z
 	public final fun setUpperBounds (Ljava/util/List;)V
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlin/jvm/internal/TypeParameterReference$Companion {
