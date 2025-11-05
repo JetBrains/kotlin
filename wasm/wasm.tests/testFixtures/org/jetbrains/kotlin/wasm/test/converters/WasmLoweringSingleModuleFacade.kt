@@ -109,6 +109,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             dependencyResolutionMap = moduleResolutionMap,
             typeScriptFragment = typeScriptFragment,
             generateSourceMaps = generateSourceMaps,
+            generateDwarf = false,
         )
 
         return BinaryArtifacts.Wasm(

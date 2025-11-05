@@ -177,6 +177,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 module = module,
                 outputDir = outputDir,
                 wasmDebug = wasmDebug,
+                generateDwarf = generateDwarf,
             )
         }
     }
@@ -280,6 +281,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         module: ModulesStructure,
         outputDir: File,
         wasmDebug: Boolean,
+        generateDwarf: Boolean,
     ): WasmCompilerResult {
 
         val dependencyResolutionMap = parseDependencyResolutionMap(configuration)
@@ -320,6 +322,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 dependencyResolutionMap = dependencyResolutionMap,
                 typeScriptFragment = typeScriptFragment,
                 generateSourceMaps = generateSourceMaps,
+                generateDwarf = generateDwarf,
             )
 
             writeCompilationResult(
@@ -343,6 +346,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
     wasmDebug: Boolean,
     typeScriptFragment: TypeScriptFragment?,
     generateSourceMaps: Boolean,
+    generateDwarf: Boolean,
     outputFileNameBase: String? = null,
     dependencyResolutionMap: Map<String, String>,
 ): WasmCompilerResult {
@@ -406,7 +410,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
         emitNameSection = wasmDebug,
         generateWat = generateWat,
         generateSourceMaps = generateSourceMaps,
-        generateDwarf = false,
+        generateDwarf = generateDwarf,
         useDebuggerCustomFormatters = useDebuggerCustomFormatters,
         stdlibModuleNameForImport = stdlibModuleNameForImport,
         dependencyModules = dependencyImports,
