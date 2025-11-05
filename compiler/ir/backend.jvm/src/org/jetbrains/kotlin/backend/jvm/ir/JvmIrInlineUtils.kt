@@ -81,7 +81,7 @@ fun IrDeclaration.isInlineOnly(): Boolean =
             )
 
 fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
-    this is IrFunction && (isReifiable() || isInlineOnly() || isPrivateInlineSuspend())
+    this is IrFunction && isInline && (isReifiable() || isInlineOnly() || isPrivateInlineSuspend())
 
 fun IrFunction.isPrivateInlineSuspend(): Boolean =
     isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
