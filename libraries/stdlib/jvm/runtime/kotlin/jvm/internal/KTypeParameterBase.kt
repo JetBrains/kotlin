@@ -5,6 +5,8 @@
 
 package kotlin.jvm.internal
 
+import java.lang.reflect.GenericDeclaration
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KTypeParameter
 
 /**
@@ -13,6 +15,10 @@ import kotlin.reflect.KTypeParameter
 public abstract class KTypeParameterBase(
     internal val container: TypeParameterContainer,
 ) : KTypeParameter {
+    internal val javaContainingDeclaration: GenericDeclaration? by lazy(PUBLICATION) {
+        (container as? KotlinGenericDeclaration)?.findJavaDeclaration()
+    }
+
     override fun equals(other: Any?): Boolean =
         other is KTypeParameterBase && name == other.name && container == other.container
 

@@ -5,13 +5,12 @@
 
 package kotlin.reflect.jvm.internal
 
+import java.lang.reflect.GenericDeclaration
 import kotlin.coroutines.Continuation
 import kotlin.jvm.internal.CallableReference
-import kotlin.reflect.KCallable
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
-import kotlin.reflect.KType
+import kotlin.jvm.internal.KotlinGenericDeclaration
+import kotlin.jvm.internal.findMethodBySignature
+import kotlin.reflect.*
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.javaType
@@ -59,10 +58,12 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
     }
 }
 
-internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunction<Any?> {
+internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunction<Any?>, KotlinGenericDeclaration {
     val signature: String
 
     val overridden: Collection<ReflectKFunction>
+
+    override fun findJavaDeclaration(): GenericDeclaration? = container.findMethodBySignature(signature)
 }
 
 internal val ReflectKCallable<*>.isBound: Boolean

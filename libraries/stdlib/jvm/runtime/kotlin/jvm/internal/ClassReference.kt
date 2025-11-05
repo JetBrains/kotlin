@@ -5,9 +5,10 @@
 
 package kotlin.jvm.internal
 
+import java.lang.reflect.GenericDeclaration
 import kotlin.reflect.*
 
-public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDeclarationContainer {
+public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDeclarationContainer, KotlinGenericDeclaration {
     override val simpleName: String?
         get() = getClassSimpleName(jClass)
 
@@ -86,6 +87,8 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
         get() = error()
 
     private fun error(): Nothing = throw KotlinReflectionNotSupportedError()
+
+    override fun findJavaDeclaration(): GenericDeclaration = jClass
 
     override fun equals(other: Any?): Boolean =
         other is ClassReference && javaObjectType == other.javaObjectType

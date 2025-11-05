@@ -55225,6 +55225,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("oldReflectWithoutKTypeParameterBase.kt")
+        public void testOldReflectWithoutKTypeParameterBase() {
+          runTest("compiler/testData/codegen/box/reflection/mapping/types/oldReflectWithoutKTypeParameterBase.kt");
+        }
+
+        @Test
         @TestMetadata("overrideAnyWithPrimitive.kt")
         public void testOverrideAnyWithPrimitive() {
           runTest("compiler/testData/codegen/box/reflection/mapping/types/overrideAnyWithPrimitive.kt");

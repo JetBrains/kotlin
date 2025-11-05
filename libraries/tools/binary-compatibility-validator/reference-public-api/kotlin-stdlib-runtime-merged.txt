@@ -3798,7 +3798,7 @@ public final class kotlin/jvm/internal/ByteSpreadBuilder : kotlin/jvm/internal/P
 	public final fun toArray ()[B
 }
 
-public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializable, kotlin/reflect/KCallable {
+public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializable, kotlin/jvm/internal/KotlinGenericDeclaration, kotlin/reflect/KCallable {
 	public static final field NO_RECEIVER Ljava/lang/Object;
 	protected final field receiver Ljava/lang/Object;
 	public fun <init> ()V
@@ -3808,6 +3808,7 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	public fun callBy (Ljava/util/Map;)Ljava/lang/Object;
 	public fun compute ()Lkotlin/reflect/KCallable;
 	protected abstract fun computeReflected ()Lkotlin/reflect/KCallable;
+	public fun findJavaDeclaration ()Ljava/lang/reflect/GenericDeclaration;
 	public fun getAnnotations ()Ljava/util/List;
 	public fun getBoundReceiver ()Ljava/lang/Object;
 	public fun getName ()Ljava/lang/String;
@@ -3849,10 +3850,11 @@ public abstract interface class kotlin/jvm/internal/ClassBasedDeclarationContain
 	public abstract fun getJClass ()Ljava/lang/Class;
 }
 
-public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/ClassBasedDeclarationContainer, kotlin/reflect/KClass {
+public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/ClassBasedDeclarationContainer, kotlin/jvm/internal/KotlinGenericDeclaration, kotlin/reflect/KClass {
 	public static final field Companion Lkotlin/jvm/internal/ClassReference$Companion;
 	public fun <init> (Ljava/lang/Class;)V
 	public fun equals (Ljava/lang/Object;)Z
+	public fun findJavaDeclaration ()Ljava/lang/reflect/GenericDeclaration;
 	public fun getAnnotations ()Ljava/util/List;
 	public fun getConstructors ()Ljava/util/Collection;
 	public fun getJClass ()Ljava/lang/Class;
@@ -4092,8 +4094,17 @@ public abstract class kotlin/jvm/internal/KTypeParameterBase : kotlin/reflect/KT
 	public fun <init> (Ljava/lang/Object;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getContainer$kotlin_stdlib ()Ljava/lang/Object;
+	public final fun getJavaContainingDeclaration$kotlin_stdlib ()Ljava/lang/reflect/GenericDeclaration;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class kotlin/jvm/internal/KotlinGenericDeclaration {
+	public abstract fun findJavaDeclaration ()Ljava/lang/reflect/GenericDeclaration;
+}
+
+public final class kotlin/jvm/internal/KotlinGenericDeclarationKt {
+	public static final fun findMethodBySignature (Lkotlin/reflect/KDeclarationContainer;Ljava/lang/String;)Ljava/lang/reflect/GenericDeclaration;
 }
 
 public abstract class kotlin/jvm/internal/Lambda : java/io/Serializable, kotlin/jvm/internal/FunctionBase {

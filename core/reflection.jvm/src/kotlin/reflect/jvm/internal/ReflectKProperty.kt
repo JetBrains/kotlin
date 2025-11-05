@@ -5,17 +5,16 @@
 
 package kotlin.reflect.jvm.internal
 
-import java.lang.reflect.AccessibleObject
-import java.lang.reflect.Field
-import java.lang.reflect.Member
-import java.lang.reflect.Method
+import java.lang.reflect.*
+import kotlin.jvm.internal.KotlinGenericDeclaration
+import kotlin.jvm.internal.findMethodBySignature
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.IllegalPropertyDelegateAccessException
 import kotlin.reflect.jvm.internal.DescriptorKProperty.Companion.EXTENSION_PROPERTY_DELEGATE
 import kotlin.reflect.jvm.isAccessible
 
-internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V> {
+internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V>, KotlinGenericDeclaration {
     val signature: String
 
     val javaField: Field?
@@ -24,6 +23,8 @@ internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V> {
      * Same as [rawBoundReceiver], except for when the receiver is an inline class value, in which case it's unboxed.
      */
     val boundReceiver: Any?
+
+    override fun findJavaDeclaration(): GenericDeclaration? = container.findMethodBySignature(signature)
 }
 
 internal val ReflectKProperty<*>.isLocalDelegated: Boolean
