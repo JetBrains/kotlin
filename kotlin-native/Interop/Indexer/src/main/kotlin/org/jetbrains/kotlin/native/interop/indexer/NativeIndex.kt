@@ -255,6 +255,7 @@ sealed class ObjCContainer {
 
 sealed class ObjCClassOrProtocol(val name: String) : ObjCContainer(), TypeDeclaration {
     abstract val isForwardDeclaration: Boolean
+    abstract val binaryName: String?
 }
 
 data class ObjCMethod(
@@ -303,7 +304,6 @@ data class ObjCProperty(val name: String, val getter: ObjCMethod, val setter: Ob
 }
 
 abstract class ObjCClass(name: String) : ObjCClassOrProtocol(name) {
-    abstract val binaryName: String?
     abstract val baseClass: ObjCClass?
     /**
      * Categories whose methods and properties should be generated as members of Kotlin class.
