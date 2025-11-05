@@ -50,14 +50,13 @@ internal fun bridgeAsNSCollectionElement(type: SirType): WithSingleType = when (
     is AsExistential,
     is AsAnyBridgeable,
     is AsOpaqueObject,
+    is SirCustomTypeTranslatorImpl.RangeBridge
         -> AsObjCBridged(bridge.swiftType, CType.id)
     is AsBlock,
     is AsObjCBridged,
     AsOutError,
     AsVoid,
         -> bridge as WithSingleType
-    // TODO: support ranges as collection elements
-    is SirCustomTypeTranslatorImpl.RangeBridge -> error("XXX")
 }
 
 context(session: SirSession)
@@ -74,6 +73,7 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
             is AsExistential,
             is AsAnyBridgeable,
             is AsBlock,
+            is SirCustomTypeTranslatorImpl.RangeBridge
                 -> AsOptionalWrapper(bridge)
 
             is AsOpaqueObject -> {
@@ -558,16 +558,48 @@ internal sealed class Bridge(
     class AsOptionalWrapper(
         val wrappedObject: Bridge,
     ) : Bridge(
-        wrappedObject.swiftType.optional(),
-        wrappedObject.typeList.map { TypePair(it.kotlinType, it.cType.nullable) },
+        swiftType = wrappedObject.swiftType.optional(),
+        typeList = wrappedObject.typeList.map {
+            // We can't use _Nullable on primitive numbers
+            val cType = if (it.kotlinType.isNumber) CType.NSNumber.nullable else it.cType.nullable
+            // If we use NSNumber* in ObjC we have to use NativePtr in Kotlin
+            val kotlinType = if (it.kotlinType.isNumber) KotlinType.KotlinObject else it.kotlinType
+            TypePair(kotlinType, cType)
+        },
     ) {
+        private val nsNumberBridge by lazy { AsNSNumber((wrappedObject.swiftType as SirNominalType).typeArguments.single()) }
 
         override val inKotlinSources: ValueConversion
             get() = object : ValueConversion {
                 override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                    return "if ($valueExpression == kotlin.native.internal.NativePtr.NULL) null else ${
-                        wrappedObject.inKotlinSources.swiftToKotlin(typeNamer, valueExpression)
-                    }"
+                    val condition = if (typeList.size > 1) {
+                        var index = 0
+                        typeList.joinToString(separator = " || ") {
+                            index++
+                            "${valueExpression}_$index == kotlin.native.internal.NativePtr.NULL"
+                        }
+                    } else {
+                        "$valueExpression == kotlin.native.internal.NativePtr.NULL"
+                    }
+                    val result = wrappedObject.inKotlinSources.swiftToKotlin(typeNamer, valueExpression)
+                    val transformedResult = if (typeList.size <= 1 || typeList.all { it.cType.unwrapAnnotated() != CType.NSNumber }) {
+                        result
+                    } else {
+                        buildString {
+                            val parts = result.split(" ")
+                            for (i in parts.indices step 2) {
+                                if (typeList[i / 2].cType.unwrapAnnotated() != CType.NSNumber) {
+                                    append(parts[i])
+                                } else {
+                                    append(nsNumberBridge.inKotlinSources.swiftToKotlin(typeNamer, parts[i]))
+                                }
+                                if (i != parts.size - 1) {
+                                    append(" ${parts[i + 1]} ")
+                                }
+                            }
+                        }
+                    }
+                    return "if ($condition) null else $transformedResult"
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
@@ -581,10 +613,25 @@ internal sealed class Bridge(
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                 require(
                     wrappedObject is AsObjCBridged || wrappedObject is AsObject ||
-                            wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsBlock
+                            wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsBlock ||
+                            wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
                 )
-                return valueExpression.mapSwift { wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it) } +
-                        " ?? ${wrappedObject.inSwiftSources.renderNil()}"
+
+                val wrappedRepresentation = wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, "it")
+                val nilFallback = " ?? ${wrappedObject.inSwiftSources.renderNil()}"
+                return if (wrappedRepresentation.contains(", ") && typeList.size > 1) {
+                    var index = -1
+                    wrappedRepresentation.split(", ").joinToString { part ->
+                        index++
+                        valueExpression.mapSwift {
+                            if (typeList[index].cType.unwrapAnnotated() != CType.NSNumber) part
+                            else nsNumberBridge.inSwiftSources.swiftToKotlin(typeNamer, part)
+                        } + nilFallback
+                    }
+                } else {
+                    valueExpression.mapSwift { wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it) } +
+                            nilFallback
+                }
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
@@ -608,8 +655,7 @@ internal sealed class Bridge(
             override fun renderNil(): String = error("we do not support wrapping optionals into optionals, as it is impossible in kotlin")
 
             override fun nativePointerToMultipleObjCBridge(index: Int): SirFunctionBridge {
-                // TODO: support Optional on Range(s) and other tuple-based types
-                error("XXX")
+                return wrappedObject.inSwiftSources.nativePointerToMultipleObjCBridge(index)
             }
         }
     }

@@ -216,7 +216,7 @@ public class SirCustomTypeTranslatorImpl(
         override val inKotlinSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val operator = if (inclusive) ".." else "..<"
-                return "${valueExpression}_1$operator${valueExpression}_2"
+                return "${valueExpression}_1 $operator ${valueExpression}_2"
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =

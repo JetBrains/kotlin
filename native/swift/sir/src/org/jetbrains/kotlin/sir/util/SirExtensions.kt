@@ -49,6 +49,7 @@ val SirParameter.name: String? get() = parameterName ?: argumentName
 
 val SirType.isVoid: Boolean get() = this is SirNominalType && this.typeDeclaration == SirSwiftModule.void
 val SirType.isNever: Boolean get() = this is SirNominalType && this.typeDeclaration == SirSwiftModule.never
+val SirType.isOptional: Boolean get() = this is SirNominalType && this.typeDeclaration == SirSwiftModule.optional
 
 fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () -> T): T {
     val child = producer()

@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 internal sealed class CType {
     abstract fun render(name: String): String
 
-    val nullable: CType get() = ((this as? NullabilityAnnotated)?.wrapped ?: this).let { NullabilityAnnotated(it, Nullability.NULLABLE) }
-    val nonnulll: CType get() = ((this as? NullabilityAnnotated)?.wrapped ?: this).let { NullabilityAnnotated(it, Nullability.NONNULL) }
+    val nullable: CType
+        get() = NullabilityAnnotated(unwrapAnnotated(), Nullability.NULLABLE)
+    val nonnulll: CType
+        get() = NullabilityAnnotated(unwrapAnnotated(), Nullability.NONNULL)
+
+    fun unwrapAnnotated(): CType = (this as? NullabilityAnnotated)?.wrapped ?: this
 
     sealed class Predefined(private val repr: String) : CType() {
         override fun render(name: String): String = if (name.isBlank()) repr else "$repr $name"
@@ -69,10 +73,10 @@ internal sealed class CType {
     }
 }
 
-internal enum class KotlinType(val repr: String) {
-    Unit("Unit"),
+internal enum class KotlinType(val repr: String, val isNumber: Boolean = true) {
+    Unit("Unit", isNumber = false),
 
-    Boolean("Boolean"),
+    Boolean("Boolean", isNumber = false),
     Char("Char"),
 
     Byte("Byte"),
@@ -88,14 +92,14 @@ internal enum class KotlinType(val repr: String) {
     Float("Float"),
     Double("Double"),
 
-    KotlinObject("kotlin.native.internal.NativePtr"),
+    KotlinObject("kotlin.native.internal.NativePtr", isNumber = false),
 
-    PointerToKotlinObject("kotlinx.cinterop.COpaquePointerVar"),
+    PointerToKotlinObject("kotlinx.cinterop.COpaquePointerVar", isNumber = false),
 
     // id, +0
-    ObjCObjectUnretained("kotlin.native.internal.NativePtr"),
+    ObjCObjectUnretained("kotlin.native.internal.NativePtr", isNumber = false),
 
-    String("String"),
+    String("String", isNumber = false),
 }
 
 internal val KotlinType.defaultValue: String

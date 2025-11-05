@@ -7,11 +7,17 @@ void * generation_ranges_ranges_accept__TypesOfArguments__Swift_ClosedRange_Swif
 
 void * generation_ranges_ranges_acceptClosed__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(int32_t range_1, int32_t range_2);
 
+void * generation_ranges_ranges_acceptNullable__TypesOfArguments__Swift_Optional_Swift_ClosedRange_Swift_Int32____(NSNumber * _Nullable range_1, NSNumber * _Nullable range_2);
+
 void * generation_ranges_ranges_bar();
 
 void * generation_ranges_ranges_baz();
 
 void * generation_ranges_ranges_foo();
+
+NSArray<id> * generation_ranges_ranges_mapper__TypesOfArguments__Swift_Array_Swift_ClosedRange_Swift_Int64____(NSArray<id> * arg);
+
+void * generation_ranges_ranges_total__TypesOfArguments__Swift_Array_Swift_ClosedRange_Swift_Int32____(NSArray<id> * list);
 
 void * generation_ranges_ranges_unsupported();
 
