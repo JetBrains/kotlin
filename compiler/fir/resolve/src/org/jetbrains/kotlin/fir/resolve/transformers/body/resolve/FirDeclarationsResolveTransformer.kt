@@ -1039,7 +1039,7 @@ open class FirDeclarationsResolveTransformer(
                 }
             result.transformReturnTypeRef(transformer, ResolutionMode.UpdateImplicitTypeRef(returnTypeRef))
         }
-        if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) && !function.isInline) {
+        if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) && !function.isInline && !function.isLocal) {
             // Header mode: once the return type for non-inline function is known, the body can be removed.
             result.replaceBody(null)
         }

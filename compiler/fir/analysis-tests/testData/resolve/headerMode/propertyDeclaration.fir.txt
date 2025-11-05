@@ -1,0 +1,8 @@
+FILE: propertyDeclaration.kt
+    public final val a: R|kotlin/String| = String(A)
+        public get(): R|kotlin/String|
+    public final val b: R|kotlin/String| = String(B)
+        public get(): R|kotlin/String|
+    public final fun getC(): R|kotlin/String|
+    public final val c: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+        public get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>

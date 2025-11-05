@@ -25,6 +25,11 @@ class A {
     }
 
     fun funD() = 1 + 2
+
+    inline fun funE(): String {
+        fun funF() = "funF body"
+        return funF()
+    }
 }
 
 interface B {
