@@ -31,6 +31,14 @@ enum CXNullabilityKind {
   CXNullabilityKind_Unspecified
 };
 
+// Dynamically allocated null-terminated string.
+// Must be freed with clang_disposeCString.
+// Ideally, we should've used CXString instead, but that would require
+// breaking encapsulation of libclang even more.
+typedef struct {
+  char* data;
+} CString;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,6 +58,10 @@ unsigned clang_Cursor_isObjCInitMethod(CXCursor cursor);
 unsigned clang_Cursor_isObjCReturningRetainedMethod(CXCursor cursor);
 
 unsigned clang_Cursor_isObjCConsumingSelfMethod(CXCursor cursor);
+
+void clang_disposeCString(CString str);
+
+CString clang_Cursor_getObjCProtocolRuntimeName(CXCursor cursor);
 
 #ifdef __cplusplus
 }

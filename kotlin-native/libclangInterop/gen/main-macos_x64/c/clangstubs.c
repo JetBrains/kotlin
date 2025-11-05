@@ -1177,3 +1177,10 @@ JNIEXPORT jint JNICALL Java_clang_clang_kniBridge352 (JNIEnv* jniEnv, jclass jcl
 JNIEXPORT jint JNICALL Java_clang_clang_kniBridge353 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
     return (jint)clang_Cursor_isObjCConsumingSelfMethod(*(CXCursor*)p0);
 }
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge354 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeCString(*(CString*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge355 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    CString kniStructResult = clang_Cursor_getObjCProtocolRuntimeName(*(CXCursor*)p0);
+    memcpy((void*) p1, &kniStructResult, sizeof(kniStructResult));
+}

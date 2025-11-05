@@ -15,6 +15,7 @@
  */
 
 #include <cassert>
+#include <cstring>
 
 #include <clang/AST/Attr.h>
 #include <clang/AST/DeclObjC.h>
@@ -72,6 +73,9 @@ static CXTypeAttributes makeCXTypeAttributes() {
 #endif // LIBCLANGEXT_ENABLE
 
 extern "C" {
+  void clang_disposeCString(CString str) {
+    free(str.data);
+  }
 
   const char* clang_Cursor_getAttributeSpelling(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
@@ -153,6 +157,18 @@ extern "C" {
 #else
     return CXNullabilityKind_Unspecified;
 #endif
+  }
+
+  CString clang_Cursor_getObjCProtocolRuntimeName(CXCursor cursor) {
+#if LIBCLANGEXT_ENABLE
+    if (cursor.kind == CXCursor_ObjCProtocolDecl) {
+      if (const ObjCProtocolDecl *decl = dyn_cast_or_null<ObjCProtocolDecl>(getCursorDecl(cursor))) {
+        std::string name = decl->getObjCRuntimeNameAsString().str();
+        return CString { strdup(name.c_str()) };
+      }
+    }
+#endif
+    return CString { nullptr };
   }
 
   unsigned clang_Cursor_isObjCInitMethod(CXCursor cursor) {
