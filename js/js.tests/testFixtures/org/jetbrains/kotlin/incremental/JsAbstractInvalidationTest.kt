@@ -1,21 +1,33 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.cli.common.collectSources
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase.transformFirToIr
+import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase.compileModulesToAnalyzedFirWithLightTree
+import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase.serializeFirKlib
 import org.jetbrains.kotlin.codegen.ModelTarget
 import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
-import org.jetbrains.kotlin.ir.backend.js.JsICContext
-import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
+import org.jetbrains.kotlin.config.phaser.PhaserState
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
@@ -26,6 +38,7 @@ import org.jetbrains.kotlin.js.test.ir.AbstractJsCompilerInvocationTest
 import org.jetbrains.kotlin.js.test.ir.JsCompilerInvocationTestConfiguration
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.TargetBackend
@@ -33,7 +46,10 @@ import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.junit.ComparisonFailure
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.PrintStream
+import java.nio.charset.Charset
 
 abstract class JsAbstractInvalidationTest(
     targetBackend: TargetBackend,
@@ -272,6 +288,83 @@ abstract class JsAbstractInvalidationTest(
             }
 
             return compiledJsFiles.mapTo(prepareExternalJsFiles()) { it.absolutePath }
+        }
+    }
+
+    override fun buildKlib(
+        configuration: CompilerConfiguration,
+        moduleName: String,
+        sourceDir: File,
+        outputKlibFile: File
+    ) {
+        val outputStream = ByteArrayOutputStream()
+        val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+
+        val libraries = configuration.libraries
+        val friendLibraries= configuration.friendLibraries
+        val sourceFiles = configuration.addSourcesFromDir(sourceDir)
+
+        val klibs = loadWebKlibsInTestPipeline(
+            configuration,
+            libraryPaths = libraries,
+            friendPaths = friendLibraries,
+            platformChecker = KlibPlatformChecker.JS,
+        )
+
+        val moduleStructure = ModulesStructure(
+            project = environment.project,
+            mainModule = MainModule.SourceFiles(sourceFiles),
+            compilerConfiguration = configuration,
+            klibs = klibs,
+        )
+
+        val groupedSources = collectSources(configuration, environment.project, messageCollector)
+        val analyzedOutput = compileModulesToAnalyzedFirWithLightTree(
+            moduleStructure = moduleStructure,
+            groupedSources = groupedSources,
+            ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
+            libraries = libraries,
+            friendLibraries = friendLibraries,
+            diagnosticsReporter = diagnosticsReporter,
+            performanceManager = configuration.perfManager,
+            incrementalDataProvider = null,
+            lookupTracker = null,
+            useWasmPlatform = false,
+        )
+
+        val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
+
+        if (analyzedOutput.reportCompilationErrors(moduleStructure, diagnosticsReporter, messageCollector)) {
+            val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
+            throw AssertionError("The following errors occurred compiling test:\n$messages")
+        }
+
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            diagnosticsReporter,
+            configuration.languageVersionSettings
+        )
+        val transformedResult = PhaseEngine(
+            configuration.phaseConfig ?: PhaseConfig(),
+            PhaserState(),
+            JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration, irDiagnosticReporter),
+        ).runPreSerializationLoweringPhases(fir2IrActualizedResult, jsLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
+
+        serializeFirKlib(
+            moduleStructure = moduleStructure,
+            firOutputs = analyzedOutput.output,
+            fir2IrActualizedResult = transformedResult,
+            outputKlibPath = outputKlibFile.absolutePath,
+            nopack = false,
+            diagnosticsReporter = irDiagnosticReporter,
+            jsOutputName = moduleName,
+            useWasmPlatform = false,
+            wasmTarget = null,
+        )
+
+        if (messageCollector.hasErrors()) {
+            val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
+            throw AssertionError("The following errors occurred serializing test klib:\n$messages")
         }
     }
 }
