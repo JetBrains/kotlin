@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.native.interop.indexer.EnumDef
 import org.jetbrains.kotlin.native.interop.indexer.FunctionDecl
 import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
 import org.jetbrains.kotlin.native.interop.indexer.Language
+import org.jetbrains.kotlin.native.interop.indexer.ObjCProtocol
 import org.jetbrains.kotlin.native.interop.indexer.StructDecl
 import org.jetbrains.kotlin.utils.atMostOne
 
@@ -46,4 +47,7 @@ open class IndexerTestsBase : InteropTestsBase() {
 
     fun indexEnum(headerContents: String): EnumDef =
             index(headerContents).index.enums.single()
+
+    fun indexProtocol(headerContents: String): ObjCProtocol =
+            index(headerContents, language = Language.OBJECTIVE_C).index.objCProtocols.single()
 }
