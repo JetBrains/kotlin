@@ -1772,7 +1772,7 @@ class LightTreeRawFirDeclarationBuilder(
                 valueParameters += firValueParameters
             }
             val allowLegacyContractDescription = outerContractDescription == null
-            val bodyWithContractDescription = withForcedLocalContext {
+            val bodyWithContractDescription = withForcedLocalContext(forceKeepingTheBodyInHeaderMode = propertyTypeRef is FirImplicitTypeRef) {
                 convertFunctionBody(block, expression, allowLegacyContractDescription)
             }
             this.body = bodyWithContractDescription.first
