@@ -195,7 +195,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             when (callableSymbol) {
                 is KaNamedFunctionSymbol -> {
                     val overriddenSymbol = findOverriddenCollectionSymbol(callableSymbol)
-                    val javaMethod = getJavaMethodForMappedMethodWithSpecialSignature(overriddenSymbol, allSupertypes)
+                    val javaMethod = mapMethodWithSpecialSignatureToJavaMethod(overriddenSymbol, allSupertypes)
                     if (javaMethod == null) {
                         // Default case: method is not mapped to Java collections method - just create the delegate
                         filteredDeclarations += callableSymbol
@@ -594,7 +594,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             when (callableSymbol) {
                 is KaNamedFunctionSymbol -> {
                     val original = callableSymbol.fakeOverrideOriginal as KaNamedFunctionSymbol // TODO remove cast
-                    val javaMethod = getJavaMethodForMappedMethodWithSpecialSignature(original, allSupertypes)
+                    val javaMethod = mapMethodWithSpecialSignatureToJavaMethod(original, allSupertypes)
                     if (javaMethod == null) {
                         // Default case: method is not mapped to Java collections method - just create the delegate
                         createDelegateMethod(functionSymbol = callableSymbol)
@@ -648,39 +648,28 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
     }
 
-    private fun KaSession.getJavaMethodForMappedMethodWithSpecialSignature(
+    private fun KaSession.mapMethodWithSpecialSignatureToJavaMethod(
         symbol: KaNamedFunctionSymbol?,
         allSupertypes: List<KaClassType>,
     ): PsiMethod? {
         if (symbol == null) return null
         if (!symbol.isFromKotlinCollections()) return null
         val symbolName = symbol.name.asString()
-
-        return when {
-            matchesMapRemoveMethod(symbol) ->
-                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "remove" }
-            symbolName == "contains" ->
-                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "contains" }
-            symbolName == "remove" ->
-                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "remove" }
-            symbolName == "containsAll" ->
-                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "containsAll" }
-            symbolName == "removeAll" ->
-                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "removeAll" }
-            symbolName == "retainAll" ->
-                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == "retainAll" }
-            symbolName == "indexOf" ->
-                getJavaListClass(allSupertypes)?.methods?.find { it.name == "indexOf" }
-            symbolName == "lastIndexOf" ->
-                getJavaListClass(allSupertypes)?.methods?.find { it.name == "lastIndexOf" }
-            symbolName == "containsKey" ->
-                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "containsKey" }
-            symbolName == "containsValue" ->
-                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "containsValue" }
-            symbolName == "get" ->
-                getJavaMapClass(allSupertypes)?.methods?.find { it.name == "get" }
+        val javaClass = when (symbolName) {
+            "contains", "containsAll", "removeAll", "retainAll" -> getJavaCollectionClass(allSupertypes)
+            "indexOf", "lastIndexOf" -> getJavaListClass(allSupertypes)
+            "get", "containsKey", "containsValue" -> getJavaMapClass(allSupertypes)
+            "remove" -> {
+                if (symbol.callableId?.classId == StandardClassIds.MutableMap) {
+                    getJavaMapClass(allSupertypes)
+                } else {
+                    getJavaCollectionClass(allSupertypes)
+                }
+            }
             else -> null
         }
+
+        return javaClass?.methods?.find { it.name == symbolName }
     }
 
     private fun KaSession.getJavaCollectionClass(allSupertypes: List<KaClassType>): PsiClass? =
@@ -704,10 +693,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     private fun KaSession.findOverriddenCollectionSymbol(symbol: KaNamedFunctionSymbol): KaNamedFunctionSymbol? {
         return symbol.allOverriddenSymbols.find { it.isFromKotlinCollections() } as? KaNamedFunctionSymbol
-    }
-
-    private fun matchesMapRemoveMethod(symbol: KaNamedFunctionSymbol): Boolean {
-        return symbol.callableId?.classId == StandardClassIds.MutableMap && symbol.name.asString() == "remove"
     }
 
     override fun getOwnFields(): List<PsiField> = cachedValue {
