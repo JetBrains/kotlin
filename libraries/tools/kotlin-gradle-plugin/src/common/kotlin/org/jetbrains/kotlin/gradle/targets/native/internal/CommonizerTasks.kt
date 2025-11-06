@@ -157,8 +157,12 @@ internal suspend fun Project.copyCommonizeCInteropForIdeTask(): TaskProvider<Cop
     return null
 }
 
+internal const val fakeCommonizedNativeDistributionKlibs = "fakeCommonizedNativeDistributionKlibs"
+
 internal fun Project.commonizedNativeDistributionKlibsOrNull(target: SharedCommonizerTarget): Provider<List<File>>? {
     val task = commonizeNativeDistributionTask ?: return null
+    // task.map to preserve task dependency
+    if (project.kotlinPropertiesProvider.isFunctionalTestMode) return task.map { listOf(project.file(fakeCommonizedNativeDistributionKlibs)) }
     return task.flatMap { it.commonizedNativeDistributionLocationFile.map { getCommonizedPlatformLibrariesFor(it.asFile, target) } }
 }
 
