@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
+import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.LatestLanguageVersionMetaConfigurator
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -65,6 +66,7 @@ fun TestConfigurationBuilder.configureDiagnosticTest(parser: FirParser) {
     configureFirParser(parser)
 
     useAdditionalService(::LibraryProvider)
+    useMetaTestConfigurators(::FirSpecificParserSuppressor)
 }
 
 /**
