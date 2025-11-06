@@ -41,7 +41,7 @@ private fun dependencyTypes(type: WasmTypeDeclaration): Sequence<WasmTypeDeclara
             }
         }
         is WasmContType -> {
-            TODO()
+            yield(type.funType.owner)
         }
     }
 }
@@ -119,7 +119,7 @@ private fun wasmDeclarationFingerprint(
         }
         is WasmContType -> {
             val contHash = currentHash.combineWith(contHash)
-            wasmDeclarationFingerprint(declaration.funType, contHash, visited)
+            wasmDeclarationFingerprint(declaration.funType.owner, contHash, visited)
         }
     }
 }

@@ -56,9 +56,8 @@ class WasmFileCodegenContext(
     }
 
     fun defineContType(wasmType: WasmContType) {
-        val arity = wasmType.funType.parameterTypes.size
-        if (wasmFileFragment.contTypes.defined.containsKey(arity)) return
-        wasmFileFragment.contTypes.define(wasmType.funType.parameterTypes.size, wasmType)
+        if (wasmFileFragment.contTypes.defined.containsKey(wasmType.arity)) return
+        wasmFileFragment.contTypes.define(wasmType.arity, wasmType)
     }
 
     fun defineContFunctionType(wasmFunctionType: WasmFunctionType) {

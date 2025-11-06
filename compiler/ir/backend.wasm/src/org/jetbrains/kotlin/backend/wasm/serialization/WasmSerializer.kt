@@ -190,7 +190,7 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeWasmContType(contType: WasmContType) =
         serializeNamedModuleField(contType) {
-            serializeWasmFunctionType(contType.funType)
+            serializeWasmFunctionType(contType.funType.owner)
         }
 
     private fun serializeWasmTypeDeclaration(typeDecl: WasmTypeDeclaration): Unit =

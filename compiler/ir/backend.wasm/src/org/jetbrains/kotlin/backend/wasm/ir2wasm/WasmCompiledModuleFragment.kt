@@ -250,9 +250,6 @@ class WasmCompiledModuleFragment(
 
         val additionalTypes = mutableListOf<WasmTypeDeclaration>()
         additionalTypes.add(parameterlessNoReturnFunctionType)
-        additionalTypes.addAll(wasmCompiledFileFragments.flatMap { it.contFunctionTypes.elements })
-        additionalTypes.addAll(wasmCompiledFileFragments.flatMap { it.contTypes.elements })
-        additionalTypes.addAll(wasmCompiledFileFragments.flatMap { it.contBlockTypes.elements })
 
         val elements = mutableListOf<WasmElement>()
         createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, elements, exports, globals)
@@ -409,6 +406,9 @@ class WasmCompiledModuleFragment(
             addAll(gcTypes)
             addAll(wasmCompiledFileFragments.flatMap { it.vTableGcTypes.elements })
             addAll(canonicalFunctionTypes.values)
+            addAll(wasmCompiledFileFragments.flatMap { it.contFunctionTypes.elements })
+            addAll(wasmCompiledFileFragments.flatMap { it.contTypes.elements })
+            addAll(wasmCompiledFileFragments.flatMap { it.contBlockTypes.elements })
         }
 
         val recursiveGroups = createRecursiveTypeGroups(recGroupTypes)
@@ -853,10 +853,14 @@ class WasmCompiledModuleFragment(
         val canonicalFunctionTypes = LinkedHashMap<WasmFunctionType, WasmFunctionType>()
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.functionTypes.elements.associateWithTo(canonicalFunctionTypes) { it }
+            fragment.contFunctionTypes.elements.associateWithTo(canonicalFunctionTypes) { it }
         }
         // Rebind symbol to canonical
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.functionTypes.unbound.forEach { (_, wasmSymbol) ->
+                wasmSymbol.bind(canonicalFunctionTypes.getValue(wasmSymbol.owner))
+            }
+            fragment.contFunctionTypes.unbound.forEach { (_, wasmSymbol) ->
                 wasmSymbol.bind(canonicalFunctionTypes.getValue(wasmSymbol.owner))
             }
         }

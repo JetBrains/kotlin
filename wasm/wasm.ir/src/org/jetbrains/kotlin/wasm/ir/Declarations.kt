@@ -166,8 +166,9 @@ data class WasmFunctionType(
 ) : WasmTypeDeclaration("")
 
 data class WasmContType(
-    val funType: WasmFunctionType,
-) : WasmTypeDeclaration("continuation_${funType.parameterTypes.size}")
+    val arity: Int,
+    val funType: WasmSymbolReadOnly<WasmFunctionType>,
+) : WasmTypeDeclaration("continuation_$arity")
 
 class WasmStructDeclaration(
     name: String,

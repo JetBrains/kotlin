@@ -89,16 +89,20 @@ class DeclarationGenerator(
                 parameterTypes = irParameters.map { wasmModuleTypeTransformer.transformValueParameterType(it) },
                 resultTypes = listOfNotNull(resultType)
             )
+        val arity = irParameters.size
         wasmFileCodegenContext.defineFunctionType(declaration.symbol, wasmFunctionType)
+        val wasmFunctionTypeRef = wasmFileCodegenContext.referenceFunctionType(declaration.symbol)
         val suspendFunctionNames = buildSet { repeat(3) { add(FqName("kotlin.coroutines.SuspendFunction$size.invoke")) } }
         val suspendFunArity = suspendFunctionNames.indexOfFirst { declaration.hasEqualFqName(it) }.takeIf { it >= 0 }
         if (suspendFunArity != null) {
             wasmFileCodegenContext.defineContFunctionType(wasmFunctionType)
-            wasmFileCodegenContext.defineContType(WasmContType(wasmFunctionType))
+            wasmFileCodegenContext.defineContType(WasmContType(arity, wasmFunctionTypeRef))
+
             val kotlinAny = wasmModuleTypeTransformer.transformType(irBuiltIns.anyType)
             val suspendedContFunctionType = WasmFunctionType(listOf(kotlinAny), listOf(kotlinAny))
-            val suspendedContType = WasmContType(suspendedContFunctionType)
             wasmFileCodegenContext.defineContFunctionType(suspendedContFunctionType)
+            val suspendedContFunctionTypeRef = wasmFileCodegenContext.referenceContFunctionType(1)
+            val suspendedContType = WasmContType(1, suspendedContFunctionTypeRef)
             wasmFileCodegenContext.defineContType(suspendedContType)
         }
 

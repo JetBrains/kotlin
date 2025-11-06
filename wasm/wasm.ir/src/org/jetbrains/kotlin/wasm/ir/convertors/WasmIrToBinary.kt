@@ -388,7 +388,7 @@ class WasmIrToBinary(
 
     private fun appendContTypeDeclaration(type: WasmContType) {
         b.writeVarInt7(WasmBinary.CONT_TYPE)
-        appendHeapType(WasmHeapType.Type(WasmSymbol(type.funType)))
+        appendHeapType(WasmHeapType.Type(type.funType))
     }
 
     private fun appendBlockType(type: WasmImmediate.BlockType) {
