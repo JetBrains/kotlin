@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
@@ -78,7 +79,8 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             if (source.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
                 source.origin != IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
             ) {
-                annotations = source.annotations.withJvmExposeBoxedAnnotation(source, context).withoutJvmNameAnnotation()
+                annotations = source.annotations.withJvmExposeBoxedAnnotation(source, context).withoutJvmNameAnnotation() +
+                        source.copyPropagatedJvmStaticAnnotation()
             } else {
                 annotations = source.annotations
             }
@@ -91,6 +93,15 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             // a continuation class.
             copyAttributes(source)
         }
+
+    // If a property is annotated with @JvmStatic, we generate static accessors.
+    // Thus, we should expose the accessors. The easiest way to do so is to copy @JvmStatic annotation.
+    private fun IrSimpleFunction.copyPropagatedJvmStaticAnnotation(): List<IrConstructorCall> {
+        if (!isPropertyAccessor) return emptyList()
+        if (hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return emptyList()
+        if (!propertyIfAccessor.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return emptyList()
+        return propertyIfAccessor.annotations.filter { it.isAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) }.map { it.deepCopyWithSymbols() }
+    }
 
     override fun IrClass.isSpecificLoweringLogicApplicable(): Boolean = isSingleFieldValueClass
 

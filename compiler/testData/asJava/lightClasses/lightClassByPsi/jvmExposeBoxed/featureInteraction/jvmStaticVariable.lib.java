@@ -3,10 +3,12 @@ public final class Foo /* Foo*/ {
   public static final Foo INSTANCE;
 
   @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   public static final StringWrapper getBaz();//  getBaz()
 
   @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmStatic()
   public static final void setBaz(@org.jetbrains.annotations.NotNull() StringWrapper);//  setBaz(StringWrapper)
 
   @org.jetbrains.annotations.NotNull()

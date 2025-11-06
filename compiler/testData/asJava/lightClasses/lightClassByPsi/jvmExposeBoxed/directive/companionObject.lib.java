@@ -9,7 +9,16 @@ public final class StringWrapper /* StringWrapper*/ {
   @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
+  public static final StringWrapper getStaticVariable();//  getStaticVariable()
+
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
   public static final java.lang.String unwrap(@org.jetbrains.annotations.NotNull() StringWrapper);//  unwrap(StringWrapper)
+
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+  @kotlin.jvm.JvmStatic()
+  public static final void setStaticVariable(@org.jetbrains.annotations.NotNull() StringWrapper);//  setStaticVariable(StringWrapper)
 
   @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  StringWrapper(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
@@ -57,13 +66,15 @@ public static final class Companion /* StringWrapper.Companion*/ {
   @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String unwrap(@org.jetbrains.annotations.NotNull() StringWrapper);//  unwrap(StringWrapper)
-
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
-  @org.jetbrains.annotations.NotNull()
   public final StringWrapper getStaticVariable();//  getStaticVariable()
 
   @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String unwrap(@org.jetbrains.annotations.NotNull() StringWrapper);//  unwrap(StringWrapper)
+
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+  @kotlin.jvm.JvmStatic()
   public final void setStaticVariable(@org.jetbrains.annotations.NotNull() StringWrapper);//  setStaticVariable(StringWrapper)
 
   @kotlin.jvm.JvmStatic()
