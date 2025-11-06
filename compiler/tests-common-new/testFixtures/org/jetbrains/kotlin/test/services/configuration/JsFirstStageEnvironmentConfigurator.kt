@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-class JsFirstStageEnvironmentConfigurator(testServices: TestServices) : JsEnvironmentConfigurator(testServices) {
+open class JsFirstStageEnvironmentConfigurator(testServices: TestServices) : JsEnvironmentConfigurator(testServices) {
     override val compilationStage: CompilationStage
         get() = CompilationStage.FIRST
 

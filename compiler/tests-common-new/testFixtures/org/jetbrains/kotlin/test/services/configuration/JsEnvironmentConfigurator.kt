@@ -114,6 +114,11 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
         }
     }
 
+    // To be used in child classes, to specify custom stdlib & kotlin-test
+    open fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String> {
+        return JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
+    }
+
     override fun provideAdditionalAnalysisFlags(
         directives: RegisteredDirectives,
         languageVersion: LanguageVersion

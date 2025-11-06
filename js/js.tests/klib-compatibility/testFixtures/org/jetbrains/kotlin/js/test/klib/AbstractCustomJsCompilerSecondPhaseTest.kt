@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.js.test.services.configuration.JsFirstStageCustomLibrariesEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
@@ -65,7 +67,12 @@ open class AbstractCustomJsCompilerSecondPhaseTest : AbstractKotlinCompilerWithT
 
         setUpDefaultDirectivesForJsBoxTest(FirParser.LightTree)
 
-        commonConfigurationForJsTest()
+        commonConfigurationForJsTest(
+            customConfigurators = listOf(
+                ::CommonEnvironmentConfigurator,
+                ::JsFirstStageCustomLibrariesEnvironmentConfigurator,
+            )
+        )
 
         configureFirHandlersStep {
             commonFirHandlersForCodegenTest()

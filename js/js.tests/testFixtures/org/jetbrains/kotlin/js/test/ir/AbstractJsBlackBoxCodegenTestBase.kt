@@ -256,8 +256,10 @@ fun TestConfigurationBuilder.commonServicesConfigurationForJsCodegenTest(
  *
  * There are handler steps after each facade step.
  */
-fun TestConfigurationBuilder.commonConfigurationForJsTest() {
-    commonServicesConfigurationForJsCodegenTest()
+fun TestConfigurationBuilder.commonConfigurationForJsTest(
+    customConfigurators: List<Constructor<AbstractEnvironmentConfigurator>>? = null,
+) {
+    commonServicesConfigurationForJsCodegenTest(customConfigurators)
     facadeStep(::FirCliWebFacade)
     firHandlersStep()
 
