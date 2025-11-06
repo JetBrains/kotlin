@@ -314,11 +314,17 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
     }
 
-    private val membersWithSpecializedSignature: Set<String> =
-        SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SHORT_NAMES.map { it.asString() }.toSet()
+    private val membersWithSpecializedSignature: Set<String> = buildSet {
+        addAll(SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SHORT_NAMES.map { it.asString() })
+        add("addAll")
+        add("putAll")
+    }
 
-    private val erasedCollectionParameterNames: Set<String> =
-        SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES.toSet()
+    private val erasedCollectionParameterNames: Set<String> = buildSet {
+        addAll(SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES)
+        add("addAll")
+        add("putAll")
+    }
 
     // TODO check "go to base method", "go to declaration" in IDE
     private fun methodWrappers(
@@ -655,10 +661,20 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         if (symbol == null) return null
         if (!symbol.isFromKotlinCollections()) return null
         val symbolName = symbol.name.asString()
+
+        if (symbolName == "addAll") {
+            // Special case: "addAll" has two overloads from different types
+            return if (symbol.valueParameters.size == 1) {
+                getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == symbolName }
+            } else {
+                getJavaListClass(allSupertypes)?.methods?.find { it.name == symbolName && it.parameters.size == 2 }
+            }
+        }
+
         val javaClass = when (symbolName) {
             "contains", "containsAll", "removeAll", "retainAll" -> getJavaCollectionClass(allSupertypes)
             "indexOf", "lastIndexOf" -> getJavaListClass(allSupertypes)
-            "get", "containsKey", "containsValue" -> getJavaMapClass(allSupertypes)
+            "get", "containsKey", "containsValue", "putAll" -> getJavaMapClass(allSupertypes)
             "remove" -> {
                 if (symbol.callableId?.classId == StandardClassIds.MutableMap) {
                     getJavaMapClass(allSupertypes)
