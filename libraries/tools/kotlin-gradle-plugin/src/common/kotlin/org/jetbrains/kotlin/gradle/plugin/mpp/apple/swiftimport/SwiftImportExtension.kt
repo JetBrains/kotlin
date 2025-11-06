@@ -27,60 +27,6 @@ abstract class SwiftImportExtension @Inject constructor(
 
     internal abstract val spmDependencies: DomainObjectSet<SwiftPMDependency>
 
-    fun `package`(
-        url: String,
-        version: String,
-        products: List<String>,
-        packageName: String = inferPackageName(url),
-        importedModules: List<String> = products
-    ) {
-        spmDependencies.add(
-            SwiftPMDependency.Remote(
-                repository = Repository.Url(url),
-                version = Version.From(version),
-                packageName = packageName,
-                products = products,
-                cinteropClangModules = importedModules
-            )
-        )
-    }
-
-    fun `package`(
-        url: Repository.Url,
-        version: Version,
-        products: List<String>,
-        packageName: String = inferPackageName(url.value),
-        importedModules: List<String> = products
-    ) {
-        spmDependencies.add(
-            SwiftPMDependency.Remote(
-                repository = url,
-                version = version,
-                packageName = packageName,
-                products = products,
-                cinteropClangModules = importedModules
-            )
-        )
-    }
-
-    fun `package`(
-        repository: Repository,
-        version: Version,
-        products: List<String>,
-        packageName: String,
-        importedModules: List<String> = products
-    ) {
-        spmDependencies.add(
-            SwiftPMDependency.Remote(
-                repository = repository,
-                version = version,
-                packageName = packageName,
-                products = products,
-                cinteropClangModules = importedModules
-            )
-        )
-    }
-
     fun url(value: String): Repository.Url = Repository.Url(value)
     fun id(value: String): Repository.Id = Repository.Id(value)
 
@@ -90,17 +36,139 @@ abstract class SwiftImportExtension @Inject constructor(
     fun branch(version: String): Version = Version.Branch(version)
     fun range(from: String, through: String): Version = Version.Range(from, through)
 
+    fun product(
+        name: String,
+        platforms: Set<SwiftPMDependency.Platform>? = null,
+        importedModules: Set<String> = if (platforms != null) setOf(name) else emptySet(),
+    ): SwiftPMDependency.Product = SwiftPMDependency.Product(
+        name,
+        importedModules,
+        platforms
+    )
+    fun iOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.iOS
+    fun macOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.macOS
+    fun watchOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.watchOS
+    fun tvOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.tvOS
+
+    fun `package`(
+        url: String,
+        version: String,
+        products: List<String>,
+        packageName: String = inferPackageName(url),
+        importedModules: List<String> = products,
+        traits: Set<String> = setOf(),
+    ) {
+        spmDependencies.add(
+            SwiftPMDependency.Remote(
+                repository = Repository.Url(url),
+                version = Version.From(version),
+                packageName = packageName,
+                products = products.map { SwiftPMDependency.Product(it) },
+                cinteropClangModules = importedModules.map {
+                    SwiftPMDependency.CinteropClangModule(it)
+                },
+                traits = traits
+            )
+        )
+    }
+
+    fun `package`(
+        url: Repository.Url,
+        version: Version,
+        products: List<SwiftPMDependency.Product>,
+        packageName: String = inferPackageName(url.value),
+        importedModules: List<String> = products.filter {
+            it.platformConstraints == null && it.cinteropClangModules.isEmpty()
+        }.map { it.name },
+        traits: Set<String> = setOf(),
+    ) {
+        spmDependencies.add(
+            SwiftPMDependency.Remote(
+                repository = url,
+                version = version,
+                packageName = packageName,
+                products = products,
+                cinteropClangModules = importedModules.map {
+                    SwiftPMDependency.CinteropClangModule(it)
+                } + products.flatMap { product ->
+                    product.cinteropClangModules.map {
+                        SwiftPMDependency.CinteropClangModule(it, product.platformConstraints)
+                    }
+                },
+                traits = traits,
+            )
+        )
+    }
+
+    fun `package`(
+        repository: Repository,
+        version: Version,
+        products: List<SwiftPMDependency.Product>,
+        packageName: String,
+        importedModules: List<String> = products.filter {
+            it.platformConstraints == null && it.cinteropClangModules.isEmpty()
+        }.map { it.name },
+        traits: Set<String> = setOf(),
+    ) {
+        spmDependencies.add(
+            SwiftPMDependency.Remote(
+                repository = repository,
+                version = version,
+                packageName = packageName,
+                products = products,
+                cinteropClangModules = importedModules.map {
+                    SwiftPMDependency.CinteropClangModule(it)
+                } + products.flatMap { product ->
+                    product.cinteropClangModules.map {
+                        SwiftPMDependency.CinteropClangModule(it, product.platformConstraints)
+                    }
+                },
+                traits = traits,
+            )
+        )
+    }
+
     fun localPackage(
         path: File,
         products: List<String>,
-        importedModules: List<String> = products
+        importedModules: List<String> = products,
+        traits: Set<String> = setOf(),
+    ) {
+        spmDependencies.add(
+            SwiftPMDependency.Local(
+                path = path.path,
+                packageName = path.name,
+                products = products.map { SwiftPMDependency.Product(it) },
+                cinteropClangModules = importedModules.map {
+                    SwiftPMDependency.CinteropClangModule(it)
+                },
+                traits = traits,
+            )
+        )
+    }
+
+    fun localPackage(
+        path: File,
+        products: List<SwiftPMDependency.Product>,
+        importedModules: List<String> = products.filter {
+            it.platformConstraints == null && it.cinteropClangModules.isEmpty()
+        }.map { it.name },
+        traits: Set<String> = setOf(),
+        javaOverloadsArePain: Boolean = true,
     ) {
         spmDependencies.add(
             SwiftPMDependency.Local(
                 path = path.path,
                 packageName = path.name,
                 products = products,
-                cinteropClangModules = importedModules
+                cinteropClangModules = importedModules.map {
+                    SwiftPMDependency.CinteropClangModule(it)
+                } + products.flatMap { product ->
+                    product.cinteropClangModules.map {
+                        SwiftPMDependency.CinteropClangModule(it, product.platformConstraints)
+                    }
+                },
+                traits = traits,
             )
         )
     }
@@ -115,20 +183,49 @@ abstract class SwiftImportExtension @Inject constructor(
 
 sealed class SwiftPMDependency(
     val packageName: String,
-    val products: List<String>,
-    val cinteropClangModules: List<String>,
+    val products: List<Product>,
+    val cinteropClangModules: List<CinteropClangModule>,
+    val traits: Set<String>,
 ) : Serializable {
+    class Product internal constructor(
+        val name: String,
+        // this is not actually used for translation
+        val cinteropClangModules: Set<String> = setOf(),
+        val platformConstraints: Set<Platform>? = null,
+    ) : Serializable
+
+    class CinteropClangModule internal constructor(
+        val name: String,
+        val platformConstraints: Set<Platform>? = null,
+    ) : Serializable
+
+    enum class Platform {
+        iOS,
+        macOS,
+        tvOS,
+        watchOS;
+
+        val swiftEnumName: String get() = when (this) {
+                iOS -> "iOS"
+                macOS -> "macOS"
+                tvOS -> "tvOS"
+                watchOS -> "watchOS"
+            }
+    }
+
     class Remote internal constructor(
         val repository: Repository,
         val version: Version,
         // FIXME: This can actually be inferred from the repository URL
-        products: List<String>,
-        cinteropClangModules: List<String>,
+        products: List<Product>,
+        cinteropClangModules: List<CinteropClangModule>,
         packageName: String,
+        traits: Set<String>,
     ) : SwiftPMDependency(
         products = products,
         cinteropClangModules = cinteropClangModules,
         packageName = packageName,
+        traits = traits,
     ) {
         sealed class Version : Serializable {
             data class Exact internal constructor(val value: String) : Version()
@@ -146,12 +243,14 @@ sealed class SwiftPMDependency(
 
     class Local internal constructor(
         val path: String,
-        products: List<String>,
-        cinteropClangModules: List<String>,
+        products: List<Product>,
+        cinteropClangModules: List<CinteropClangModule>,
         packageName: String,
+        traits: Set<String>,
     ) : SwiftPMDependency(
         products = products,
         cinteropClangModules = cinteropClangModules,
         packageName = packageName,
+        traits = traits,
     )
 }
