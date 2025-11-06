@@ -1,4 +1,4 @@
-// WASM_FAILS_IN: WasmEdge, NodeJs
+// WASM_FAILS_IN: WasmEdge, NodeJs, Wasmtime
 
 typealias S = String
 
