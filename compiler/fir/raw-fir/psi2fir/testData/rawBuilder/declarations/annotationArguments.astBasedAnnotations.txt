@@ -17,6 +17,12 @@ context -> FirRegularClassSymbol Positive
 context -> FirRegularClassSymbol WithSimpleOperations
 @Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
 
+context -> FirRegularClassSymbol WithConversionCall
+@Simple(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithResolvedConversionCall
+@ConversionCallConsumer(LAZY_EXPRESSION)
+
 context -> FirRegularClassSymbol WithStringLiteralConcat
 @StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
 

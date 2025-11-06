@@ -35,6 +35,12 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.AnnotationValuesKt]]
               VALUE_ARGUMENT[isSpread=false]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
               VALUE_ARGUMENT[isSpread=false]
+                DOT_QUALIFIED_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=toByte]
+                    VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
                 FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
               VALUE_ARGUMENT[isSpread=false]
                 VALUE_ARGUMENT_NAME
@@ -46,11 +52,11 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.AnnotationValuesKt]]
                 CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
               VALUE_ARGUMENT[isSpread=false]
                 VALUE_ARGUMENT_NAME
-                  REFERENCE_EXPRESSION[referencedName=b1]
+                  REFERENCE_EXPRESSION[referencedName=bool1]
                 BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
               VALUE_ARGUMENT[isSpread=false]
                 VALUE_ARGUMENT_NAME
-                  REFERENCE_EXPRESSION[referencedName=b2]
+                  REFERENCE_EXPRESSION[referencedName=bool2]
                 BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
       CLASS[classId=test/AnnotationValues.WithStringLiteral, fqName=test.AnnotationValues.WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
         MODIFIER_LIST[]
@@ -188,6 +194,10 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.AnnotationValuesKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Byte]
+        VALUE_PARAMETER[fqName=test.Simple.b2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b2]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Byte]
         VALUE_PARAMETER[fqName=test.Simple.d, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=d]
           TYPE_REFERENCE
             USER_TYPE
@@ -200,11 +210,11 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.AnnotationValuesKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Char]
-        VALUE_PARAMETER[fqName=test.Simple.b1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b1]
+        VALUE_PARAMETER[fqName=test.Simple.bool1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=bool1]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Boolean]
-        VALUE_PARAMETER[fqName=test.Simple.b2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b2]
+        VALUE_PARAMETER[fqName=test.Simple.bool2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=bool2]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Boolean]

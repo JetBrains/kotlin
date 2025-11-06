@@ -16,11 +16,12 @@ AnnotationValues.class:
                 i -> 12
                 l -> 12.toLong()
                 b -> 12.toByte()
+                b2 -> 12.toByte()
                 d -> 3.3.toDouble()
                 f -> 3.3.toFloat()
                 c -> \u0061 ('a')
-                b1 -> true
-                b2 -> false
+                bool1 -> true
+                bool2 -> false
               ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -528,6 +529,12 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Byte]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b2]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Byte]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=d]
             TYPE_REFERENCE
               USER_TYPE
@@ -546,13 +553,13 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Char]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b1]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=bool1]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Boolean]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b2]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=bool2]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -587,6 +594,13 @@ Simple.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Byte]
+        PROPERTY[fqName=test.Simple.b2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b2]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Byte]
         PROPERTY[fqName=test.Simple.d, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=d]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -608,14 +622,14 @@ Simple.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Char]
-        PROPERTY[fqName=test.Simple.b1, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b1]
+        PROPERTY[fqName=test.Simple.bool1, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bool1]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Boolean]
-        PROPERTY[fqName=test.Simple.b2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b2]
+        PROPERTY[fqName=test.Simple.bool2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bool2]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE

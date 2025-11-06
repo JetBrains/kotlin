@@ -107,6 +107,27 @@ FILE: annotationArguments.kt
         }
 
     }
+    @Simple(LAZY_EXPRESSION) public final? class WithConversionCall : R|kotlin/Any| {
+        public? constructor(): R|WithConversionCall| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @ConversionCallConsumer(LAZY_EXPRESSION) public final? class WithResolvedConversionCall : R|kotlin/Any| {
+        public? constructor(): R|WithResolvedConversionCall| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? annotation class ConversionCallConsumer : R|kotlin/Annotation| {
+        public? constructor(b: Byte): R|ConversionCallConsumer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? val b: Byte = R|<local>/b|
+            public? get(): Byte
+
+    }
     @StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithStringLiteral : R|kotlin/Any| {
         public? constructor(): R|WithStringLiteral| {
             LAZY_super<R|kotlin/Any|>

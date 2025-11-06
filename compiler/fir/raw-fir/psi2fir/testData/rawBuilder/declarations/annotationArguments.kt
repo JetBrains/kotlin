@@ -105,6 +105,18 @@ class WithNamedSimple
 )
 class WithSimpleOperations
 
+@Simple(
+    12.toByte()
+)
+class WithConversionCall
+
+@ConversionCallConsumer(
+    12.toByte()
+)
+class WithResolvedConversionCall
+
+annotation class ConversionCallConsumer(val b: Byte)
+
 @StringLiteral("some", "", "H$CONSTANT")
 class WithStringLiteral
 

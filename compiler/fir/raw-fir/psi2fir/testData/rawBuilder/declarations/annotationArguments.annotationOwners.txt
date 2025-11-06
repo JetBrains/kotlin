@@ -70,6 +70,14 @@ context -> FirRegularClassSymbol WithNamedSimple
 owner -> FirRegularClassSymbol WithSimpleOperations
 context -> FirRegularClassSymbol WithSimpleOperations
 
+@Simple(IntegerLiteral(12).toByte#())
+owner -> FirRegularClassSymbol WithConversionCall
+context -> FirRegularClassSymbol WithConversionCall
+
+@ConversionCallConsumer(IntegerLiteral(12).toByte#())
+owner -> FirRegularClassSymbol WithResolvedConversionCall
+context -> FirRegularClassSymbol WithResolvedConversionCall
+
 @StringLiteral(String(some), String(), <strcat>(String(H), CONSTANT#))
 owner -> FirRegularClassSymbol WithStringLiteral
 context -> FirRegularClassSymbol WithStringLiteral

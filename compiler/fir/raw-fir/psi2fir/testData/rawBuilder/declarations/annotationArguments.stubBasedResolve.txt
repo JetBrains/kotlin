@@ -107,6 +107,27 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
+    @<ERROR TYPE REF: Symbol not found for Simple>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithConversionCall : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithConversionCall] constructor(): R|WithConversionCall| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|ConversionCallConsumer|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithResolvedConversionCall : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithResolvedConversionCall] constructor(): R|WithResolvedConversionCall| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class ConversionCallConsumer : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConversionCallConsumer] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/ConversionCallConsumer.b] b: R|kotlin/Byte|): R|ConversionCallConsumer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val b: R|kotlin/Byte| = R|<local>/b|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConversionCallConsumer] get(): R|kotlin/Byte|
+
+    }
     @<ERROR TYPE REF: Symbol not found for StringLiteral>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithStringLiteral : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithStringLiteral] constructor(): R|WithStringLiteral| {
             super<R|kotlin/Any|>()

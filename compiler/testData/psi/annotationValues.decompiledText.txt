@@ -123,12 +123,14 @@ Simple.class:
 
   package test
 
-  public final annotation class Simple public constructor(i: kotlin.Int, l: kotlin.Long, b: kotlin.Byte, d: kotlin.Double, f: kotlin.Float, c: kotlin.Char, b1: kotlin.Boolean, b2: kotlin.Boolean) : kotlin.Annotation {
+  public final annotation class Simple public constructor(i: kotlin.Int, l: kotlin.Long, b: kotlin.Byte, b2: kotlin.Byte, d: kotlin.Double, f: kotlin.Float, c: kotlin.Char, bool1: kotlin.Boolean, bool2: kotlin.Boolean) : kotlin.Annotation {
       public final val i: kotlin.Int /* compiled code */
 
       public final val l: kotlin.Long /* compiled code */
 
       public final val b: kotlin.Byte /* compiled code */
+
+      public final val b2: kotlin.Byte /* compiled code */
 
       public final val d: kotlin.Double /* compiled code */
 
@@ -136,9 +138,9 @@ Simple.class:
 
       public final val c: kotlin.Char /* compiled code */
 
-      public final val b1: kotlin.Boolean /* compiled code */
+      public final val bool1: kotlin.Boolean /* compiled code */
 
-      public final val b2: kotlin.Boolean /* compiled code */
+      public final val bool2: kotlin.Boolean /* compiled code */
   }
 
 StringLiteral.class:

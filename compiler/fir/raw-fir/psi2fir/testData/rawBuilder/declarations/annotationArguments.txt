@@ -107,6 +107,27 @@ FILE: annotationArguments.kt
         }
 
     }
+    @Simple(IntegerLiteral(12).toByte#()) public final? class WithConversionCall : R|kotlin/Any| {
+        public? [ContainingClassKey=WithConversionCall] constructor(): R|WithConversionCall| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @ConversionCallConsumer(IntegerLiteral(12).toByte#()) public final? class WithResolvedConversionCall : R|kotlin/Any| {
+        public? [ContainingClassKey=WithResolvedConversionCall] constructor(): R|WithResolvedConversionCall| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final? annotation class ConversionCallConsumer : R|kotlin/Annotation| {
+        public? [ContainingClassKey=ConversionCallConsumer] constructor([CorrespondingProperty=/ConversionCallConsumer.b] b: Byte): R|ConversionCallConsumer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val b: Byte = R|<local>/b|
+            public? [ContainingClassKey=ConversionCallConsumer] get(): Byte
+
+    }
     @StringLiteral(String(some), String(), <strcat>(String(H), CONSTANT#)) public final? class WithStringLiteral : R|kotlin/Any| {
         public? [ContainingClassKey=WithStringLiteral] constructor(): R|WithStringLiteral| {
             super<R|kotlin/Any|>()

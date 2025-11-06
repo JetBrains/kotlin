@@ -81,6 +81,19 @@ KtFile: annotationValues.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('12')
               PsiElement(COMMA)(',')
+              PsiWhiteSpace('\n        ')
+              VALUE_ARGUMENT
+                DOT_QUALIFIED_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('12')
+                  PsiElement(DOT)('.')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('toByte')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      PsiElement(RPAR)(')')
+              PsiElement(COMMA)(',')
               PsiWhiteSpace('\n\n        ')
               VALUE_ARGUMENT
                 FLOAT_CONSTANT
@@ -112,7 +125,7 @@ KtFile: annotationValues.kt
               VALUE_ARGUMENT
                 VALUE_ARGUMENT_NAME
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('b1')
+                    PsiElement(IDENTIFIER)('bool1')
                 PsiWhiteSpace(' ')
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
@@ -123,7 +136,7 @@ KtFile: annotationValues.kt
               VALUE_ARGUMENT
                 VALUE_ARGUMENT_NAME
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('b2')
+                    PsiElement(IDENTIFIER)('bool2')
                 PsiWhiteSpace(' ')
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
@@ -465,6 +478,18 @@ KtFile: annotationValues.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Byte')
         PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b2')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Byte')
+        PsiElement(COMMA)(',')
         PsiWhiteSpace('\n\n    ')
         VALUE_PARAMETER
           PsiElement(val)('val')
@@ -505,7 +530,7 @@ KtFile: annotationValues.kt
         VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('b1')
+          PsiElement(IDENTIFIER)('bool1')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
@@ -517,7 +542,7 @@ KtFile: annotationValues.kt
         VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('b2')
+          PsiElement(IDENTIFIER)('bool2')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE

@@ -10,14 +10,15 @@ class AnnotationValues {
         12,
         12L,
         12,
+        12.toByte(),
 
         3.3,
         f = 3.3F,
 
         c = 'a',
 
-        b1 = true,
-        b2 = false
+        bool1 = true,
+        bool2 = false
     )
     class WithSimple
 
@@ -54,14 +55,15 @@ annotation class Simple(
     val i: Int,
     val l: Long,
     val b: Byte,
+    val b2: Byte,
 
     val d: Double,
     val f: Float,
 
     val c: Char,
 
-    val b1: Boolean,
-    val b2: Boolean
+    val bool1: Boolean,
+    val bool2: Boolean
 )
 
 annotation class StringLiteral(
