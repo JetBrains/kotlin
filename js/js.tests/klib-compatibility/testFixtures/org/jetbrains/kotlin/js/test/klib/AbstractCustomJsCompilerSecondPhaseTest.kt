@@ -68,10 +68,11 @@ open class AbstractCustomJsCompilerSecondPhaseTest : AbstractKotlinCompilerWithT
         setUpDefaultDirectivesForJsBoxTest(FirParser.LightTree)
 
         commonConfigurationForJsTest(
-            customConfigurators = listOf(
-                ::CommonEnvironmentConfigurator,
-                ::JsFirstStageCustomLibrariesEnvironmentConfigurator,
-            )
+            // TODO after fix of KT-82217(or after master will have 2.4 version), uncomment the following to use previous stdlib version
+//            customConfigurators = listOf(
+//                ::CommonEnvironmentConfigurator,
+//                ::JsFirstStageCustomLibrariesEnvironmentConfigurator,
+//            )
         )
 
         configureFirHandlersStep {
