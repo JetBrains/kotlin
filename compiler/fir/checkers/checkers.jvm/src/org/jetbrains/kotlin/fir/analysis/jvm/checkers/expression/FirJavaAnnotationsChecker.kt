@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
@@ -52,7 +53,10 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
             if (argumentList is FirResolvedArgumentList) {
                 val arguments = argumentList.originalArgumentList?.arguments ?: return
                 for (key in arguments) {
-                    if (key !is FirWrappedArgumentExpression && argumentList.mapping[key]?.name.let { it != null && it != Annotations.ParameterNames.value}) {
+                    if (key !is FirWrappedArgumentExpression &&
+                        key !is FirErrorExpression &&
+                        argumentList.mapping[key]?.name.let { it != null && it != Annotations.ParameterNames.value }
+                    ) {
                         reporter.reportOn(key.source, FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION)
                     }
                 }

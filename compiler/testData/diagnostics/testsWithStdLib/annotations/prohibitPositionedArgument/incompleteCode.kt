@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// DISABLE_WITH_PARSER: LightTree
 // FILE: Foo.java
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;

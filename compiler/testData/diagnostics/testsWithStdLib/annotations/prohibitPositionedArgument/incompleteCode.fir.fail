@@ -1,1 +1,0 @@
-java.lang.IllegalArgumentException: class org.jetbrains.kotlin.psi.KtValueArgument is not a subtype of class org.jetbrains.kotlin.psi.KtExpression for factory POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
