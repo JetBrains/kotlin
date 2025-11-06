@@ -21,7 +21,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(kotlinStdlib())
+                implementation(kotlinStdlib())
                 implementation(libs.org.jetbrains.syntax.api)
                 implementation(libs.org.jetbrains.annotations)
             }
@@ -40,7 +40,7 @@ kotlin {
                 implementation(project(":compiler:cli"))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
-                api(kotlinTest("junit"))
+                implementation(kotlinTest("junit"))
             }
             kotlin {
                 srcDir("jvm/test")
