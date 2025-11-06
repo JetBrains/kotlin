@@ -88,8 +88,8 @@ class WithIndexLoopHeader(
     override val consumesLoopVariableComponents = true
 
     override fun initializeIteration(
-        loopVariable: IrVariable?,
-        loopVariableComponents: Map<Int, IrVariable>,
+        loopVariables: List<IrVariable>,
+        loopVariableComponents: Map<Int, List<IrVariable>>,
         builder: DeclarationIrBuilder,
         backendContext: CommonBackendContext,
     ): List<IrStatement> =
@@ -159,9 +159,9 @@ class WithIndexLoopHeader(
             //   }
             //
             // We "wire" the 1st destructured component to index, and the 2nd to the loop variable value from the underlying iterable.
-            loopVariableComponents[1]?.initializer = irGet(indexVariable)
-            listOfNotNull(loopVariableComponents[1], incrementIndexStatement) +
-                    nestedLoopHeader.initializeIteration(loopVariableComponents[2], linkedMapOf(), builder, backendContext)
+            loopVariableComponents[1]?.forEach { it.initializer = irGet(indexVariable) }
+            loopVariableComponents[1].orEmpty() + listOfNotNull(incrementIndexStatement) +
+                    nestedLoopHeader.initializeIteration(loopVariableComponents[2].orEmpty(), linkedMapOf(), builder, backendContext)
         }
 
     // Use the nested loop header to build the loop. More info in comments in initializeIteration().
