@@ -39,6 +39,7 @@ package kotlin.collections
 public actual interface List<out E> : Collection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     @ExperimentalStdlibApi
+    @kotlin.native.CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /**
          * Returns an empty read-only list. The returned list is serializable (JVM).
@@ -153,6 +154,7 @@ public actual interface List<out E> : Collection<E> {
 public actual interface MutableList<E> : List<E>, MutableCollection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     @ExperimentalStdlibApi
+    @kotlin.native.CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /**
          * Returns an empty new [MutableList].

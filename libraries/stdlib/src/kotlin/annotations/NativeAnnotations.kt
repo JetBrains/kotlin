@@ -99,6 +99,11 @@ public expect annotation class HidesFromObjC()
 @SinceKotlin("1.8")
 public expect annotation class HiddenFromObjC()
 
+@OptIn(ExperimentalObjCRefinement::class)
+@HidesFromObjC
+@Target(AnnotationTarget.CLASS)
+internal annotation class CollectionLiteralsAreHiddenFromObjCAndSwift
+
 /**
  * Meta-annotation that instructs the Kotlin compiler to mark the annotated function or property as
  * `swift_private` in the generated Objective-C API.

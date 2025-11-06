@@ -40,6 +40,7 @@ package kotlin.collections
 public actual interface Set<out E> : Collection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     @ExperimentalStdlibApi
+    @kotlin.native.CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /**
          * Returns an empty read-only set.  The returned set is serializable (JVM).
@@ -97,6 +98,7 @@ public actual interface Set<out E> : Collection<E> {
 public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     @ExperimentalStdlibApi
+    @kotlin.native.CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /**
          * Returns an empty new [MutableSet].

@@ -40,6 +40,7 @@ public actual class Array<T> {
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     @ExperimentalStdlibApi
+    @CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /** Returns an array containing the specified elements. */
         @ExperimentalStdlibApi

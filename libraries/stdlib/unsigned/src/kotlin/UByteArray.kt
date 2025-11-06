@@ -19,6 +19,7 @@ internal constructor(@PublishedApi internal val storage: ByteArray) : Collection
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     @ExperimentalStdlibApi
+    @kotlin.native.CollectionLiteralsAreHiddenFromObjCAndSwift
     public companion object {
         /** Returns an array containing the specified `UByte` elements. */
         @ExperimentalStdlibApi

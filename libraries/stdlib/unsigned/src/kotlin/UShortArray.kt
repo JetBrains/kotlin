@@ -19,6 +19,7 @@ internal constructor(@PublishedApi internal val storage: ShortArray) : Collectio
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     @ExperimentalStdlibApi
+    @kotlin.native.CollectionLiteralsAreHiddenFromObjCAndSwift
     public companion object {
         /** Returns an array containing the specified `UShort` elements. */
         @ExperimentalStdlibApi

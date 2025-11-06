@@ -43,6 +43,7 @@ public actual constructor(size: Int) {
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
     @ExperimentalStdlibApi
+    @CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /** Returns an array containing the specified `Byte` elements. */
         @ExperimentalStdlibApi
@@ -132,6 +133,7 @@ public actual constructor(size: Int) {
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
     @ExperimentalStdlibApi
+    @CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /** Returns an array containing the specified `Char` elements. */
         @ExperimentalStdlibApi
@@ -221,6 +223,7 @@ public actual constructor(size: Int) {
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
     @ExperimentalStdlibApi
+    @CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /** Returns an array containing the specified `Short` elements. */
         @ExperimentalStdlibApi
@@ -310,6 +313,7 @@ public actual constructor(size: Int) {
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
     @ExperimentalStdlibApi
+    @CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /** Returns an array containing the specified `Int` elements. */
         @ExperimentalStdlibApi
@@ -399,6 +403,7 @@ public actual constructor(size: Int) {
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
     @ExperimentalStdlibApi
+    @CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /** Returns an array containing the specified `Long` elements. */
         @ExperimentalStdlibApi
@@ -488,6 +493,7 @@ public actual constructor(size: Int) {
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
     @ExperimentalStdlibApi
+    @CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /** Returns an array containing the specified `Float` elements. */
         @ExperimentalStdlibApi
@@ -577,6 +583,7 @@ public actual constructor(size: Int) {
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
     @ExperimentalStdlibApi
+    @CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /** Returns an array containing the specified `Double` elements. */
         @ExperimentalStdlibApi
@@ -666,6 +673,7 @@ public actual constructor(size: Int) {
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
     @ExperimentalStdlibApi
+    @CollectionLiteralsAreHiddenFromObjCAndSwift
     public actual companion object {
         /** Returns an array containing the specified `Boolean` elements. */
         @ExperimentalStdlibApi

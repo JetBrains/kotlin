@@ -21,6 +21,7 @@ package kotlin.sequences
 public interface Sequence<out T> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     @ExperimentalStdlibApi
+    @kotlin.native.CollectionLiteralsAreHiddenFromObjCAndSwift
     public companion object {
         /**
          * Creates an empty [Sequence].
