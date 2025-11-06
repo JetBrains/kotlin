@@ -234,7 +234,7 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitYieldStatement(ctx: JavaScriptParser.YieldStatementContext): JsStatement {
-        val expression = visitNode<JsExpression>(ctx.expressionSequence())
+        val expression = ctx.expressionSequence()?.let { visitNode<JsExpression>(it) }
         return JsYield(expression).makeStmt().applyLocation(ctx)
     }
 
@@ -757,7 +757,7 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitYieldExpression(ctx: JavaScriptParser.YieldExpressionContext): JsYield {
-        val expression = visitNode<JsExpression>(ctx.expressionSequence())
+        val expression = ctx.expressionSequence()?.let { visitNode<JsExpression>(it) }
         return JsYield(expression).applyLocation(ctx)
     }
 
