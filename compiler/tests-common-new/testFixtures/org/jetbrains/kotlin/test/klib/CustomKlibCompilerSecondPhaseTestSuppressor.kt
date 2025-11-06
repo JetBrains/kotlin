@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.test.klib
 
 import org.jetbrains.kotlin.test.WrappedException
+import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
@@ -30,7 +32,11 @@ class CustomKlibCompilerSecondPhaseTestSuppressor(
             return emptyList()
 
         val newFailedAssertions = failedAssertions.flatMap { wrappedException ->
-            processSecondPhaseException(wrappedException)
+            when (wrappedException) {
+                is WrappedException.FromHandler -> processHandlerException(wrappedException)
+                is WrappedException.FromFacade -> processFacadeException(wrappedException)
+                else -> error("Yet unsupported wrapped exception type: ${wrappedException::class.qualifiedName} ")
+            }
         }
 
         if (newFailedAssertions.isEmpty()) {
@@ -41,15 +47,28 @@ class CustomKlibCompilerSecondPhaseTestSuppressor(
         }
     }
 
+    private fun processHandlerException(wrappedException: WrappedException.FromHandler): List<WrappedException> =
+        when (wrappedException.handler) {
+            is NoFirCompilationErrorsHandler -> emptyList() // Some tests cannot be compiled with previous LV. These are just ignored
+            is JsBinaryArtifactHandler -> processSecondPhaseException(wrappedException) // Execution error
+            else -> listOf(wrappedException)
+        }
+
+    private fun processFacadeException(wrappedException: WrappedException.FromFacade): List<WrappedException> =
+        when (wrappedException.facade) {
+            is CustomKlibCompilerSecondPhaseFacade -> processSecondPhaseException(wrappedException)
+            else -> listOf(wrappedException)
+        }
+
     private fun processSecondPhaseException(wrappedException: WrappedException): List<WrappedException> {
         val directives = testServices.moduleStructure.modules.first().directives
-        if (customCompilerVersion == "2.2.0") { // KT-76131 TODO: Drop thos clause after 2.4.0-Beta1 release and moving to forward test against 2.3.0 and 2.4.0-Beta1
-            // Ideally, the directive `// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0` should be temporarily added to each failed test
-            // However, too much testData fails with the following reasons. So let's use this temporary hack before 2.4.0-Beta1 release and tested versions bump.
+        if (customCompilerVersion == "2.2.0") { // KT-76131 TODO: Drop this clause after master will have LV 2.4.0 and forward compatibility testing would be against 2.3.0
+            // Ideally, forward compatibility tests must be compiled against stdlib of previous Kotlin version, so `assertFails` and `assertFailsWith` would be resolved against old stdlib
+            // However, unfortunately, KT-82217 prevents now from using old klib for forward compatibility tests.
+            // So, using latest stdlib causes `assertFails` and `assertFailsWith` be resolved to the signatures that weren't in old stdlib, and such test fails.
             val wrappedExceptionText = wrappedException.cause.toString()
             if (wrappedExceptionText.contains(messageAssertFails) ||
-                wrappedExceptionText.contains(messageAssertFailsWith) ||
-                wrappedExceptionText.contains(messageContextParameters)
+                wrappedExceptionText.contains(messageAssertFailsWith)
             ) return emptyList()
         }
         if (IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE !in directives)
@@ -74,8 +93,5 @@ class CustomKlibCompilerSecondPhaseTestSuppressor(
 
         // KT-79094: kotlin.test.assertFailsWith has changed its signature in 2.3.0-Beta1
         private val messageAssertFailsWith = "IrLinkageError: Function 'assertFailsWith' can not be called: No function found for symbol"
-
-        // Avoids temporary patching of dozens of testData, which anyway will need to be reverted after the `2.4.0-Beta1` release
-        private val messageContextParameters = "Context parameter serialization is not supported at ABI compatibility level 2.2"
     }
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.fir.setUpDefaultDirectivesForJsBoxTest
 import org.jetbrains.kotlin.js.test.ir.commonConfigurationForJsTest
 import org.jetbrains.kotlin.js.test.ir.configureJsBoxHandlers
+import org.jetbrains.kotlin.js.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -28,8 +29,6 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.js.test.services.configuration.JsFirstStageCustomLibrariesEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
@@ -52,6 +51,7 @@ open class AbstractCustomJsCompilerSecondPhaseTest : AbstractKotlinCompilerWithT
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         // KT-47200: TODO export `box()` by means of CLI configuration, and not using `JsExportBoxPreprocessor` hack.
         useSourcePreprocessor(::JsExportBoxPreprocessor)
+        useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)
         defaultDirectives {
             if (customJsCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
                 +ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING

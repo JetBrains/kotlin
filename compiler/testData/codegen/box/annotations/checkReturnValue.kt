@@ -2,8 +2,6 @@
 // RETURN_VALUE_CHECKER_MODE: FULL
 // IGNORE_BACKEND_K1: ANY
 // WITH_STDLIB
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
-// ^^^ KT-80605: MustUseReturnValues is added since vesrion 2.3
 
 @file:MustUseReturnValues
 
