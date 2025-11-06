@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
@@ -33,7 +34,7 @@ internal class LLFirJavaSymbolProvider private constructor(
         FirJavaFacadeForSource(
             session,
             session.moduleData,
-            session.project.createJavaClassFinder(searchScope)
+            session.project.createJavaClassFinder(searchScope, session.javaAnnotationProvider)
         ),
         searchScope
     )

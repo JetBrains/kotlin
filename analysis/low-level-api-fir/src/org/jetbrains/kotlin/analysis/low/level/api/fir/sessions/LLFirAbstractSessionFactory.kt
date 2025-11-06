@@ -118,12 +118,13 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         components.session = session
 
         val moduleData = createModuleData(session)
+        val resolutionScope = resolutionScopeProvider.getResolutionScope(module)
 
         return session.apply {
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
-            registerAllCommonComponents(languageVersionSettings)
+            registerAllCommonComponents(languageVersionSettings, module, resolutionScope)
             registerSourceLikeComponents()
 
             registerCommonComponentsAfterExtensionsAreConfigured()
@@ -216,12 +217,13 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         components.session = session
 
         val moduleData = createModuleData(session)
+        val resolutionScope = resolutionScopeProvider.getResolutionScope(module)
 
         return session.apply {
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
-            registerAllCommonComponents(languageVersionSettings)
+            registerAllCommonComponents(languageVersionSettings, module, resolutionScope)
             registerSourceLikeComponents()
 
             registerCommonComponentsAfterExtensionsAreConfigured()
@@ -300,7 +302,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
-            registerAllCommonComponents(languageVersionSettings)
+            registerAllCommonComponents(languageVersionSettings, module, resolutionScope)
             registerSourceLikeComponents()
 
             val firProvider = LLFirProvider(
@@ -383,12 +385,13 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         components.session = session
 
         val moduleData = createModuleData(session)
+        val resolutionScope = resolutionScopeProvider.getResolutionScope(module)
 
         return session.apply {
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
-            registerAllCommonComponents(languageVersionSettings)
+            registerAllCommonComponents(languageVersionSettings, module, resolutionScope)
             registerCommonComponentsAfterExtensionsAreConfigured()
 
             val firProvider = LLFirProvider(
@@ -463,7 +466,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         return session.apply {
             val languageVersionSettings = KotlinProjectStructureProvider.getInstance(project).libraryLanguageVersionSettings
             registerModuleData(moduleData)
-            registerIdeComponents(project, languageVersionSettings)
+            registerIdeComponents(project, languageVersionSettings, resolutionScopeProvider.getResolutionScope(module))
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
             registerCommonComponents(languageVersionSettings)
             registerCommonComponentsAfterExtensionsAreConfigured()
@@ -520,7 +523,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
-            registerAllCommonComponents(languageVersionSettings)
+            registerAllCommonComponents(languageVersionSettings, module, resolutionScope)
             registerSourceLikeComponents()
 
             val firProvider = LLFirProvider(
@@ -722,8 +725,12 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         return LLFirModuleData(session)
     }
 
-    private fun LLFirSession.registerAllCommonComponents(languageVersionSettings: LanguageVersionSettings) {
-        registerIdeComponents(project, languageVersionSettings)
+    private fun LLFirSession.registerAllCommonComponents(
+        languageVersionSettings: LanguageVersionSettings,
+        module: KaModule,
+        resolutionScope: GlobalSearchScope,
+    ) {
+        registerIdeComponents(project, languageVersionSettings, resolutionScope)
         registerCommonComponents(languageVersionSettings)
         registerResolveComponents()
         registerDefaultComponents()

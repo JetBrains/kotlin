@@ -124,6 +124,7 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
     useInstance(moduleClassResolver)
 
     useInstance(SyntheticJavaResolveExtension.getProvider(moduleContext.project))
+    useInstance(JavaAnnotationProvider.Empty)
 
     if (configureJavaClassFinder != null) {
         configureJavaClassFinder()
