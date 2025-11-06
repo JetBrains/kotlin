@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.components.isFunctionType
 import org.jetbrains.kotlin.analysis.api.components.isNothingType
 import org.jetbrains.kotlin.analysis.api.components.isPrimitive
 import org.jetbrains.kotlin.analysis.api.export.utilities.isAllSuperTypesExported
-import org.jetbrains.kotlin.analysis.api.export.utilities.isCompanion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -198,12 +197,6 @@ public class SirVisibilityCheckerImpl(
             unsupportedDeclarationReporter.report(this@isExported, "inline classes are not supported yet.")
             return@withSessions SirAvailability.Unavailable("Inline classes are not supported")
         }
-        if (isCompanion) {
-            val containingSymbol = containingSymbol
-            if (containingSymbol is KaNamedClassSymbol && containingSymbol.classId in unsupportedClassIdWithOfOperator) {
-                return@withSessions SirAvailability.Unavailable("Experimental companion with of operator is unsupported")
-            }
-        }
 
         return@withSessions SirAvailability.Available(SirVisibility.PUBLIC)
     }
@@ -237,19 +230,6 @@ public class SirVisibilityCheckerImpl(
     private fun KaNamedClassSymbol.isAllContainingSymbolsExported(): Boolean = sirSession.withSessions {
         if (containingSymbol !is KaNamedClassSymbol) return@withSessions true
         return@withSessions (containingSymbol as? KaNamedClassSymbol)?.isExported() is SirAvailability.Available
-    }
-
-    public companion object {
-        private val unsupportedClassIdWithOfOperator = buildSet {
-            add(StandardClassIds.Array)
-            addAll(StandardClassIds.primitiveArrayTypeByElementType.values)
-            addAll(StandardClassIds.unsignedArrayTypeByElementType.values)
-            add(StandardClassIds.List)
-            add(StandardClassIds.MutableList)
-            add(StandardClassIds.Set)
-            add(StandardClassIds.MutableSet)
-            add(ClassId.topLevel(FqName("kotlin.sequences.Sequence")))
-        }
     }
 }
 
