@@ -69,9 +69,6 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
   @java.lang.Override()
   public void clear();//  clear()
 
-  @java.lang.Override()
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>)
-
   public  SMutableMap2();//  .ctor()
 
   public boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
@@ -89,6 +86,8 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
   public final java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> keySet();//  keySet()
 
   public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>> entrySet();//  entrySet()
+
+  public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>)
 }
 
 public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.jvm.internal.markers.KMutableMap {
@@ -128,9 +127,6 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
   @java.lang.Override()
   public void clear();//  clear()
 
-  @java.lang.Override()
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>)
-
   public  SMutableMap3();//  .ctor()
 
   public boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
@@ -148,4 +144,6 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
   public final java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> keySet();//  keySet()
 
   public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>> entrySet();//  entrySet()
+
+  public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>)
 }

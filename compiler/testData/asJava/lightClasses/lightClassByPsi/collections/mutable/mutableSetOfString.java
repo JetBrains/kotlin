@@ -25,10 +25,6 @@ public abstract class SMutableSet2 /* test.SMutableSet2*/ implements java.util.S
 
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
-  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
-
-  @java.lang.Override()
-  @kotlin.IgnorableReturnValue()
   public boolean remove(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
@@ -47,6 +43,8 @@ public abstract class SMutableSet2 /* test.SMutableSet2*/ implements java.util.S
   public  SMutableSet2();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
 
   public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
 
@@ -74,9 +72,6 @@ public class SMutableSet3 /* test.SMutableSet3*/ implements java.util.Set<@org.j
   public boolean add(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
-  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
-
-  @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
@@ -94,6 +89,8 @@ public class SMutableSet3 /* test.SMutableSet3*/ implements java.util.Set<@org.j
   public  SMutableSet3();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
 
   public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
 

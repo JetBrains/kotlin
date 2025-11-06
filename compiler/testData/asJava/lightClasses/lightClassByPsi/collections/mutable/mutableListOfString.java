@@ -51,14 +51,6 @@ public abstract class SMutableList2 /* test.SMutableList2*/ implements java.util
 
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
-  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
-
-  @java.lang.Override()
-  @kotlin.IgnorableReturnValue()
-  public boolean addAll(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(int, @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
-
-  @java.lang.Override()
-  @kotlin.IgnorableReturnValue()
   public boolean remove(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
@@ -102,6 +94,10 @@ public abstract class SMutableList2 /* test.SMutableList2*/ implements java.util
   public  SMutableList2();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
 
   public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
 
@@ -159,12 +155,6 @@ public class SMutableList3 /* test.SMutableList3*/ implements java.util.List<@or
   public boolean add(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
-  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
-
-  @java.lang.Override()
-  public boolean addAll(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(int, @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
-
-  @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
@@ -191,6 +181,10 @@ public class SMutableList3 /* test.SMutableList3*/ implements java.util.List<@or
   public  SMutableList3();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
 
   public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
 

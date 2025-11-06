@@ -16,10 +16,6 @@ public abstract class CMutableCollection2 /* test.CMutableCollection2*/<Elem>  i
   public boolean add(Elem);//  add(Elem)
 
   @java.lang.Override()
-  @kotlin.IgnorableReturnValue()
-  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
-
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
@@ -35,6 +31,8 @@ public abstract class CMutableCollection2 /* test.CMutableCollection2*/<Elem>  i
   public  CMutableCollection2();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
 
   public boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
@@ -60,9 +58,6 @@ public class CMutableCollection3 /* test.CMutableCollection3*/<Elem>  implements
   public boolean add(Elem);//  add(Elem)
 
   @java.lang.Override()
-  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
-
-  @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
@@ -74,6 +69,8 @@ public class CMutableCollection3 /* test.CMutableCollection3*/<Elem>  implements
   public  CMutableCollection3();//  .ctor()
 
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
 
   public boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
