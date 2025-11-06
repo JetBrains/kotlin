@@ -260,7 +260,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         )
     }
     val syntheticLinkageImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated()
-    syntheticLinkageImportProjectCheck.dependsOn(regenerateSyntheticLinkageProject)
+    regenerateSyntheticLinkageProject.dependsOn(syntheticLinkageImportProjectCheck)
     val assembleTask = registerAssembleAppleFrameworkTask(framework, environment) ?: return
 
     val builtProductsDir = builtProductsDir(frameworkTaskName, environment)
@@ -289,8 +289,8 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     assembleTask.taskProvider.dependsOn(sandBoxTask)
     framework.linkTaskProvider.dependsOn(sandBoxTask)
 
-    assembleTask.taskProvider.dependsOn(syntheticLinkageImportProjectCheck)
-    framework.linkTaskProvider.dependsOn(syntheticLinkageImportProjectCheck)
+    assembleTask.taskProvider.dependsOn(regenerateSyntheticLinkageProject)
+    framework.linkTaskProvider.dependsOn(regenerateSyntheticLinkageProject)
 
     val embedAndSignTask = registerEmbedTask(framework, frameworkTaskName, environment) { !framework.isStatic } ?: return
     embedAndSignTask.dependsOn(assembleTask.taskProvider)
@@ -444,7 +444,6 @@ private fun Project.checkSandboxAndWriteProtectionTask(
         task.userScriptSandboxingEnabled.set(userScriptSandboxingEnabled)
     }
 
-// FIXME: Add a check that synthetic import project is up-to-date in respect to currently declared SwiftPM dependencies
 private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(): TaskProvider<*> {
     val swiftPMDependencies = swiftPMDependenciesMetadataClasspath()
     val hasDirectlyDeclaredSwiftPMDependencies = provider { swiftPMDependenciesExtension().spmDependencies.isNotEmpty() }
