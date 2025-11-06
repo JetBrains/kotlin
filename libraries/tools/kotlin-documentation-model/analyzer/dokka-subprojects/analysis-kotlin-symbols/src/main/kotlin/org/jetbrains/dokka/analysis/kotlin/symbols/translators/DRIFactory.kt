@@ -57,7 +57,7 @@ internal fun KaSession.getDRIFromConstructor(symbol: KaConstructorSymbol): DRI {
     return containingClassId.createDRI().copy(
         callable = Callable(
             name = containingClassId.shortClassName.asString(),
-            params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType) }
+            params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType, isVararg = it.isVararg) }
         )
     )
 }
@@ -71,7 +71,7 @@ internal fun KaSession.getDRIFromVariable(symbol: KaVariableSymbol): DRI {
 
 
 internal fun KaSession.getDRIFromFunction(symbol: KaFunctionSymbol): DRI {
-    val params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType) }
+    val params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType, isVararg = it.isVararg) }
     val contextParams = @OptIn(KaExperimentalApi::class) symbol.contextParameters.map { getTypeReferenceFrom(it.returnType) }
     val receiver = symbol.receiverType?.let {
         getTypeReferenceFrom(it)
@@ -100,7 +100,7 @@ internal fun KaSession.getDRIFromReceiverParameter(receiverParameterSymbol: KaRe
     getDRIFromReceiverType(receiverParameterSymbol.returnType)
 
 private fun KaSession.getDRIFromReceiverType(type: KaType): DRI {
-    return when(type) {
+    return when (type) {
         is KaClassType -> getDRIFromClassType(type)
         is KaTypeParameterType -> getDRIFromTypeParameter(type.symbol)
         is KaDefinitelyNotNullType -> getDRIFromReceiverType(type.original)
@@ -149,7 +149,7 @@ private fun KaSession.getDRIFromLocalFunction(symbol: KaFunctionSymbol): DRI {
     return containingSymbolDRI.copy(
         callable = Callable(
             (symbol as? KaNamedSymbol)?.name?.asString() ?: "",
-            params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType) },
+            params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType, isVararg = it.isVararg) },
             receiver = symbol.receiverType?.let {
                 getTypeReferenceFrom(it)
             }
