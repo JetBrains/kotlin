@@ -146,6 +146,10 @@ public data class Nullable(val wrapped: TypeReference) : TypeReference() {
     override fun toString(): String = "$wrapped?"
 }
 
+public data class Vararg(val elementType: TypeReference) : TypeReference() {
+    override fun toString(): String = "vararg($elementType)"
+}
+
 public object StarProjection : TypeReference() {
     override fun toString(): String = "*"
 }
