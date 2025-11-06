@@ -382,6 +382,28 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
     }
 
     @Test
+    fun `fake functions should have the parameter default value`() {
+        inlineModelTest(
+            """
+                |/src/main/kotlin/function/Test.kt
+                |package function
+                |interface A<T> {
+                |   fun f(x: String = "000"): T? = null
+                |}
+                |class B<T> : A<T>
+        """
+        ) {
+            with((this / "function" / "B" /"f").cast<DFunction>()) {
+                parameters.forEach { p ->
+                    p.name equals "x"
+                    p.type.name.assertNotNull("Parameter type: ") equals "String"
+                    p.extra[DefaultValue]?.expression?.get(sourceSets.single()) equals StringConstant("000")
+                }
+            }
+        }
+    }
+
+    @Test
     fun sinceKotlin() {
         inlineModelTest(
             """
