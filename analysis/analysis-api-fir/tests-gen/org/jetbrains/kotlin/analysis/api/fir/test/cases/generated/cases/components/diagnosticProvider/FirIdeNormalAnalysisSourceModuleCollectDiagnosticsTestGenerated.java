@@ -239,6 +239,42 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
   }
 
   @Test
+  @TestMetadata("packageAnnotations.kt")
+  public void testPackageAnnotations() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("packageAnnotationsFromLibrary.kt")
+  public void testPackageAnnotationsFromLibrary() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("packageAnnotationsOverloads.kt")
+  public void testPackageAnnotationsOverloads() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsOverloads.kt");
+  }
+
+  @Test
+  @TestMetadata("packageAnnotationsOverloadsFromLibrary.kt")
+  public void testPackageAnnotationsOverloadsFromLibrary() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsOverloadsFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("packageAnnotationsUnrelatedOverloads.kt")
+  public void testPackageAnnotationsUnrelatedOverloads() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsUnrelatedOverloads.kt");
+  }
+
+  @Test
+  @TestMetadata("packageAnnotationsUnrelatedOverloadsFromLibrary.kt")
+  public void testPackageAnnotationsUnrelatedOverloadsFromLibrary() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsUnrelatedOverloadsFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("resolutionErrors.kt")
   public void testResolutionErrors() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/resolutionErrors.kt");
