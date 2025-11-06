@@ -107,15 +107,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Simple>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithConversionCall : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithConversionCall] constructor(): R|WithConversionCall| {
-            LAZY_super<R|kotlin/Any|>
+    @<ERROR TYPE REF: Symbol not found for Simple>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithConversionCall : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConversionCall] constructor(): R|WithConversionCall| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @R|ConversionCallConsumer|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithResolvedConversionCall : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithResolvedConversionCall] constructor(): R|WithResolvedConversionCall| {
-            LAZY_super<R|kotlin/Any|>
+    @R|ConversionCallConsumer|[Types](b = Int(12).R|kotlin/Int.toByte|()) public final [ResolvedTo(BODY_RESOLVE)] class WithResolvedConversionCall : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithResolvedConversionCall] constructor(): R|WithResolvedConversionCall| {
+            super<R|kotlin/Any|>()
         }
 
     }

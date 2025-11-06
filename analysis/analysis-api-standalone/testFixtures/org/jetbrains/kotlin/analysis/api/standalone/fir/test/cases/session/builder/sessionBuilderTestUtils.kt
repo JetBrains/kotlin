@@ -26,16 +26,11 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 import kotlin.streams.asSequence
-
-internal fun testDataPath(path: String): Path {
-    return Paths.get("analysis/analysis-api-standalone/testData/sessionBuilder").resolve(path)
-}
 
 fun KtCallExpression.assertIsSuccessfulCallOf(
     callableId: CallableId,
