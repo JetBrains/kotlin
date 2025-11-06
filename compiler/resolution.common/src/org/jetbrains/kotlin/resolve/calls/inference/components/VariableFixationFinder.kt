@@ -155,7 +155,6 @@ class VariableFixationFinder(
             hasDependencyToOtherTypeVariables() -> computeReadinessForVariableWithDependencies()
             // TODO: Consider removing this kind of readiness, see KT-63032
             allConstraintsTrivialOrNonProper() -> TypeVariableFixationReadiness.ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER
-            dependencyProvider.isVariableRelatedToAnyOutputType(this) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
             hasOnlyIncorporatedConstraintsFromDeclaredUpperBound() ->
                 TypeVariableFixationReadiness.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND
             isReified() -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED

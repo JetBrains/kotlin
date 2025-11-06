@@ -1,4 +1,4 @@
-CHOSEN for fixation: TypeVariable(T) --- RELATED_TO_ANY_OUTPUT_TYPE
+CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_LOWER
      >: kotlin/String
      = kotlin/String (inferred during fixation)
     FIXED TO: kotlin/String
