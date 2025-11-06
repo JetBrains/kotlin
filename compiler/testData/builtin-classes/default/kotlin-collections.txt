@@ -73,6 +73,13 @@ public interface List</*0*/ out E> : kotlin.collections.Collection<E> {
     public abstract fun listIterator(): kotlin.collections.ListIterator<E>
     public abstract fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.ListIterator<E>
     public abstract fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.List<E>
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public final operator fun </*0*/ T> of(): kotlin.collections.List<T>
+        public final operator fun </*0*/ T> of(/*0*/ element: T): kotlin.collections.List<T>
+        public final operator fun </*0*/ T> of(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>
+    }
 }
 
 public interface ListIterator</*0*/ out T> : kotlin.collections.Iterator<T> {
@@ -162,6 +169,13 @@ public interface MutableList</*0*/ E> : kotlin.collections.List<E>, kotlin.colle
     @kotlin.IgnorableReturnValue public abstract override /*1*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     @kotlin.IgnorableReturnValue public abstract operator fun set(/*0*/ index: kotlin.Int, /*1*/ element: E): E
     public abstract override /*1*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.MutableList<E>
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public final operator fun </*0*/ T> of(): kotlin.collections.MutableList<T>
+        public final operator fun </*0*/ T> of(/*0*/ element: T): kotlin.collections.MutableList<T>
+        public final operator fun </*0*/ T> of(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.collections.MutableList<T>
+    }
 }
 
 public interface MutableListIterator</*0*/ T> : kotlin.collections.ListIterator<T>, kotlin.collections.MutableIterator<T> {
@@ -218,6 +232,13 @@ public interface MutableSet</*0*/ E> : kotlin.collections.Set<E>, kotlin.collect
     @kotlin.IgnorableReturnValue public abstract override /*1*/ fun remove(/*0*/ element: E): kotlin.Boolean
     @kotlin.IgnorableReturnValue public abstract override /*1*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     @kotlin.IgnorableReturnValue public abstract override /*1*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public final operator fun </*0*/ T> of(): kotlin.collections.MutableSet<T>
+        public final operator fun </*0*/ T> of(/*0*/ element: T): kotlin.collections.MutableSet<T>
+        public final operator fun </*0*/ T> of(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.collections.MutableSet<T>
+    }
 }
 
 public interface Set</*0*/ out E> : kotlin.collections.Collection<E> {
@@ -227,6 +248,13 @@ public interface Set</*0*/ out E> : kotlin.collections.Collection<E> {
     public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.collections.Iterator<E>
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public final operator fun </*0*/ T> of(): kotlin.collections.Set<T>
+        public final operator fun </*0*/ T> of(/*0*/ element: T): kotlin.collections.Set<T>
+        public final operator fun </*0*/ T> of(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.collections.Set<T>
+    }
 }
 
 public abstract class ShortIterator : kotlin.collections.Iterator<kotlin.Short> {

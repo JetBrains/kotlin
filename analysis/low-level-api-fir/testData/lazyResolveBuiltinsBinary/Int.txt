@@ -2061,6 +2061,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class Array<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        @R|kotlin/ExperimentalStdlibApi|[Types]() public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|kotlin/Array.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/ExperimentalStdlibApi|[Types]() public final inline operator [ResolvedTo(BODY_RESOLVE)] fun <reified [ResolvedTo(BODY_RESOLVE)] T> of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>| {
+            }
+
+        }
+
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Array] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] init: R|(kotlin/Int) -> T|): R|kotlin/Array<T>| {
             super<R|kotlin/Any|>()
         }
@@ -2118,6 +2128,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
     public final [ResolvedTo(BODY_RESOLVE)] class BooleanArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BooleanArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/BooleanArray| {
             super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/ExperimentalStdlibApi|[Types]() public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|kotlin/BooleanArray.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/ExperimentalStdlibApi|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/BooleanArray|): R|kotlin/BooleanArray| {
+            }
+
         }
 
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BooleanArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] init: R|(kotlin/Int) -> kotlin/Boolean|): R|kotlin/BooleanArray| {
@@ -2338,6 +2358,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
             super<R|kotlin/Any|>()
         }
 
+        @R|kotlin/ExperimentalStdlibApi|[Types]() public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|kotlin/ByteArray.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/ExperimentalStdlibApi|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/ByteArray|): R|kotlin/ByteArray| {
+            }
+
+        }
+
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ByteArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] init: R|(kotlin/Int) -> kotlin/Byte|): R|kotlin/ByteArray| {
             super<R|kotlin/Any|>()
         }
@@ -2455,6 +2485,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
     public final [ResolvedTo(BODY_RESOLVE)] class CharArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CharArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/CharArray| {
             super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/ExperimentalStdlibApi|[Types]() public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|kotlin/CharArray.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/ExperimentalStdlibApi|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/CharArray|): R|kotlin/CharArray| {
+            }
+
         }
 
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CharArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] init: R|(kotlin/Int) -> kotlin/Char|): R|kotlin/CharArray| {
@@ -2730,6 +2770,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
             super<R|kotlin/Any|>()
         }
 
+        @R|kotlin/ExperimentalStdlibApi|[Types]() public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|kotlin/DoubleArray.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/ExperimentalStdlibApi|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/DoubleArray|): R|kotlin/DoubleArray| {
+            }
+
+        }
+
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DoubleArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] init: R|(kotlin/Int) -> kotlin/Double|): R|kotlin/DoubleArray| {
             super<R|kotlin/Any|>()
         }
@@ -2991,6 +3041,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
             super<R|kotlin/Any|>()
         }
 
+        @R|kotlin/ExperimentalStdlibApi|[Types]() public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|kotlin/FloatArray.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/ExperimentalStdlibApi|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/FloatArray|): R|kotlin/FloatArray| {
+            }
+
+        }
+
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FloatArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] init: R|(kotlin/Int) -> kotlin/Float|): R|kotlin/FloatArray| {
             super<R|kotlin/Any|>()
         }
@@ -3238,6 +3298,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
             super<R|kotlin/Any|>()
         }
 
+        @R|kotlin/ExperimentalStdlibApi|[Types]() public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|kotlin/IntArray.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/ExperimentalStdlibApi|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/IntArray|): R|kotlin/IntArray| {
+            }
+
+        }
+
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IntArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] init: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/IntArray| {
             super<R|kotlin/Any|>()
         }
@@ -3475,6 +3545,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
     public final [ResolvedTo(BODY_RESOLVE)] class LongArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LongArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/LongArray| {
             super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/ExperimentalStdlibApi|[Types]() public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|kotlin/LongArray.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/ExperimentalStdlibApi|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/LongArray|): R|kotlin/LongArray| {
+            }
+
         }
 
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LongArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] init: R|(kotlin/Int) -> kotlin/Long|): R|kotlin/LongArray| {
@@ -3792,6 +3872,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
     public final [ResolvedTo(BODY_RESOLVE)] class ShortArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ShortArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/ShortArray| {
             super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/ExperimentalStdlibApi|[Types]() public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|kotlin/ShortArray.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/ExperimentalStdlibApi|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray| {
+            }
+
         }
 
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ShortArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] init: R|(kotlin/Int) -> kotlin/Short|): R|kotlin/ShortArray| {
