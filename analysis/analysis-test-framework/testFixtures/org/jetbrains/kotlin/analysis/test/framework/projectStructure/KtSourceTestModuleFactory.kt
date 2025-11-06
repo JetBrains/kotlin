@@ -25,13 +25,17 @@ object KtSourceTestModuleFactory : KtTestModuleFactory {
         project: Project,
     ): KtTestModule {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
+        val psiDirectories = psiFiles.mapNotNullTo(mutableSetOf()) { it.parent }
+
+        val contentScopeVirtualFiles = (psiFiles + psiDirectories).map { it.virtualFile }
+        val contentScope = GlobalSearchScope.filesScope(project, contentScopeVirtualFiles)
 
         val module = KaSourceModuleImpl(
             testModule.name,
             testModule.targetPlatform(testServices),
             testModule.languageVersionSettings,
             project,
-            GlobalSearchScope.filesScope(project, psiFiles.mapTo(mutableSetOf()) { it.virtualFile }),
+            contentScope,
         )
 
         return KtTestModule(TestModuleKind.Source, testModule, module, psiFiles)

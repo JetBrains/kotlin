@@ -121,12 +121,10 @@ class KaSourceModuleByCompilerConfiguration(
     project: Project,
     testModule: TestModule,
     psiFiles: List<PsiFile>,
-    testServices: TestServices
+    testServices: TestServices,
+    override val baseContentScope: GlobalSearchScope
 ) : KtModuleByCompilerConfiguration(project, testModule, psiFiles, testServices), KaSourceModule {
     override val ktModule: KaModule get() = this
-
-    override val baseContentScope: GlobalSearchScope =
-        GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 
     @KaExperimentalApi
     override val psiRoots: List<PsiFileSystemItem>

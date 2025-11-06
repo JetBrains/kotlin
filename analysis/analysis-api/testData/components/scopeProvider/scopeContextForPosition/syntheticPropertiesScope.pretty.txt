@@ -46,7 +46,8 @@ scopes:
       kotlin
       org
       sun
-    classifiers: 0
+    classifiers: 1
+      class JavaClass
     callables: 1
       fun JavaClass.test()
     constructors: 0
