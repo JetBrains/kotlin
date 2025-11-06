@@ -42,10 +42,22 @@ interface ForLoopHeader {
      */
     val consumesLoopVariableComponents: Boolean
 
-    /** Statements used to initialize an iteration of the loop (e.g., assign loop variable). */
+    /**
+     * Statements used to initialize an iteration of the loop (e.g., assign loop variable).
+     *
+     * Note: `loopVariables` is a list (not a single variable) to support name-based destructuring in `for` loops.
+     * With name-based destructuring, a single element can initialize several user-declared variables by name, e.g.:
+     *
+     *   for ((a = index, b = value, c = value) in list.withIndex()) {
+     *       ...
+     *   }
+     *
+     * In such cases, all the declared variables for the current iteration are provided in
+     * `loopVariables`, so the implementation can initialize them appropriately.
+     */
     fun initializeIteration(
-        loopVariable: IrVariable?,
-        loopVariableComponents: Map<Int, IrVariable>,
+        loopVariables: List<IrVariable>,
+        loopVariableComponents: Map<Int, List<IrVariable>>,
         builder: DeclarationIrBuilder,
         backendContext: CommonBackendContext,
     ): List<IrStatement>

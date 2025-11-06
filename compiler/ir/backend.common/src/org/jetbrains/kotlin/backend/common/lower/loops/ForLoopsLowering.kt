@@ -122,7 +122,7 @@ abstract class ForLoopBodyTransformer : IrElementTransformerVoid() {
         loopBody: IrExpression,
         loopVariable: IrVariable,
         forLoopHeader: ForLoopHeader,
-        loopComponents: Map<Int, IrVariable>
+        loopComponents: Map<Int, List<IrVariable>>
     )
 }
 
@@ -260,7 +260,7 @@ private class RangeLoopTransformer(
                 mainLoopVariable.endOffset,
                 context.irBuiltIns.unitType,
                 IrStatementOrigin.FOR_LOOP_NEXT,
-                loopHeader.initializeIteration(mainLoopVariable, loopVariableComponents, this, this@RangeLoopTransformer.context)
+                loopHeader.initializeIteration(listOf(mainLoopVariable), loopVariableComponents, this, this@RangeLoopTransformer.context)
             )
         }
 
@@ -341,7 +341,7 @@ private class RangeLoopTransformer(
     private data class LoopVariableInfo(
         val mainLoopVariable: IrVariable,
         val mainLoopVariableIndex: Int,
-        val loopVariableComponents: Map<Int, IrVariable>,
+        val loopVariableComponents: Map<Int, List<IrVariable>>,
         val loopVariableComponentIndices: List<Int>
     )
 
@@ -395,7 +395,7 @@ private class RangeLoopTransformer(
         // We find the main loop variable and all the component variables that are used to initialize the iteration.
         var mainLoopVariable: IrVariable? = null
         var mainLoopVariableIndex = -1
-        val loopVariableComponents = mutableMapOf<Int, IrVariable>()
+        val loopVariableComponents = mutableMapOf<Int, MutableList<IrVariable>>()
         val loopVariableComponentIndices = mutableListOf<Int>()
         for ((i, stmt) in statements.withIndex()) {
             if (stmt !is IrVariable) continue
@@ -449,15 +449,17 @@ private class RangeLoopTransformer(
                     mainLoopVariableIndex = i
                 }
                 is IrStatementOrigin.COMPONENT_N -> {
-                    loopVariableComponents[origin.index] = stmt
+                    loopVariableComponents.getOrPut(origin.index) { mutableListOf() }.add(stmt)
                     loopVariableComponentIndices.add(i)
                 }
                 IrStatementOrigin.GET_PROPERTY -> {
-                    // KT-80243: This lowering does not support name-based destructuring,
-                    // since it's designed to reuse component indices, provided as indices in COMPONENT_N
-                    // Possible way to support name-based destructuring here would be to calculate the index for loopVariableComponents,
-                    // and fill in `loopVariableComponents` and `loopVariableComponentIndices`, instead of returning null
-                    return null
+                    when {
+                        initializer.symbol.owner.hasEqualFqName(STDLIB_INDEXED_VALUE_GET_INDEX_NAME) ->
+                            loopVariableComponents.getOrPut(1) { mutableListOf() }.add(stmt)
+                        initializer.symbol.owner.hasEqualFqName(STDLIB_INDEXED_VALUE_GET_VALUE_NAME) ->
+                            loopVariableComponents.getOrPut(2) { mutableListOf() }.add(stmt)
+                    }
+                    loopVariableComponentIndices.add(i)
                 }
             }
         }
@@ -470,5 +472,7 @@ private class RangeLoopTransformer(
 
     companion object {
         val STDLIB_ITERATOR_FUNCTION_FQ_NAME = FqName("kotlin.collections.CollectionsKt.iterator")
+        val STDLIB_INDEXED_VALUE_GET_INDEX_NAME = FqName("kotlin.collections.IndexedValue.<get-index>")
+        val STDLIB_INDEXED_VALUE_GET_VALUE_NAME = FqName("kotlin.collections.IndexedValue.<get-value>")
     }
 }

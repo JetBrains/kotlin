@@ -44,13 +44,13 @@ internal class BoundsCheckAnalysisResult(val boundsAreSafe: Boolean, val arrayIn
 class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
     lateinit var mainLoopVariable: IrVariable
     lateinit var loopHeader: ForLoopHeader
-    lateinit var loopVariableComponents: Map<Int, IrVariable>
+    lateinit var loopVariableComponents: Map<Int, List<IrVariable>>
     lateinit var context: CommonBackendContext
 
     private var analysisResult: BoundsCheckAnalysisResult = BoundsCheckAnalysisResult(false, null)
 
     override fun transform(context: CommonBackendContext, loopBody: IrExpression, loopVariable: IrVariable,
-                           forLoopHeader: ForLoopHeader, loopComponents: Map<Int, IrVariable>) {
+                           forLoopHeader: ForLoopHeader, loopComponents: Map<Int, List<IrVariable>>) {
         this.context = context
         mainLoopVariable = loopVariable
         loopHeader = forLoopHeader
@@ -330,14 +330,14 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
             is WithIndexLoopHeader -> with(loopHeader as WithIndexLoopHeader) {
                 when (nestedLoopHeader) {
                     is IndexedGetLoopHeader ->
-                        replaceOperators(newExpression, index, listOfNotNull(indexVariable, loopVariableComponents[1]))
+                        replaceOperators(newExpression, index, listOfNotNull(indexVariable) + loopVariableComponents[1].orEmpty())
                     is ProgressionLoopHeader ->
                         // Case of `for ((index, value) in (0..array.size - 1 step n).withIndex())`.
                         // Both `index` (progression size less than array size)
                         // and `value` (progression start and end element are inside bounds)
                         // are safe variables if use them in get/set operators.
                         replaceOperators(newExpression, index,
-                                listOfNotNull(indexVariable, loopVariableComponents[1], loopVariableComponents[2])
+                                listOfNotNull(indexVariable) + loopVariableComponents[1].orEmpty() + loopVariableComponents[2].orEmpty()
                         )
                     else -> newExpression
                 }
