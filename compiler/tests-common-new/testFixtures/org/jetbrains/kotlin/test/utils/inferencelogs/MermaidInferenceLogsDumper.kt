@@ -259,7 +259,7 @@ class MermaidInferenceLogsDumper(
 
         return node(
             idPrefix = "variableReadiness",
-            title = "Choose " + formatCode(variable) + " with " + formatCode(readiness),
+            title = "Choose " + formatCode(variable) + " with " + formatCodeBlock(readiness),
             extraClasses = listOf("readinessStyle"),
         )
     }

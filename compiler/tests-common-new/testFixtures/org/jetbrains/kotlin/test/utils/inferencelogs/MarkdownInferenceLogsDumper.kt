@@ -60,7 +60,7 @@ class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) 
             chosen?.let {
                 val chosenReadiness = map[chosen]?.readiness ?: error("No readiness for chosen variable")
                 val number = "$indent${indexWithinParent + 1}. "
-                number + "Choose " + formatCode(it) + " with " + formatCode(chosenReadiness)
+                number + "Choose " + formatCode(it) + " with " + formatCode(chosenReadiness.toString(number.length))
             },
         )
 
@@ -69,7 +69,7 @@ class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) 
             map.mapNotNullTo(lines) { (variable, info) ->
                 if (variable == chosen) return@mapNotNullTo null
                 val number = "$indent${index++ + 1}. "
-                number + formatCode(variable) + " is " + formatCode(info.readiness)
+                number + formatCode(variable) + " is " + formatCode(info.readiness.toString(number.length))
             }
         }
 
