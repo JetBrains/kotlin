@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonClassicFrontendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
@@ -310,6 +311,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
         useHandlers(::FirJsKlibAbiDumpBeforeInliningSavingHandler)
         useHandlers(::NoIrCompilationErrorsHandler)
         useHandlers(::IrMangledNameAndSignatureDumpHandler)
+        useHandlers(::IrDiagnosticsHandler)
     }
 
     configureLoweredIrHandlersStep {
