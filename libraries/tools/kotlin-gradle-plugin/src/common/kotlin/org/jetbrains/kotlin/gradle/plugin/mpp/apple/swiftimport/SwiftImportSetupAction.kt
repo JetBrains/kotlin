@@ -10,10 +10,8 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -42,6 +40,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile.Companion.DUMP_FILE_ARGS_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Platform
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.property
 import org.jetbrains.kotlin.gradle.plugin.testTaskName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
@@ -286,10 +285,44 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             swiftPMDependenciesMetadata.configure { it.importedSpmModules.add(swiftPMDependency) }
 
             defFilesAndLdDumpGenerationTask.configure {
-                it.clangModules.addAll(swiftPMDependency.cinteropClangModules)
+                val swiftPMPlatform = target.konanTarget.swiftPMPlatform()
+                it.clangModules.addAll(
+                    swiftPMDependency.cinteropClangModules.filter { dependency ->
+                        dependency.platformConstraints?.let { constraints ->
+                            swiftPMPlatform in constraints
+                        } ?: true
+                    }.map {
+                        it.name
+                    }
+                )
             }
         }
     }
+}
+
+private fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (this) {
+    KonanTarget.IOS_ARM64,
+    KonanTarget.IOS_SIMULATOR_ARM64,
+    KonanTarget.IOS_X64 -> Platform.iOS
+    KonanTarget.MACOS_ARM64,
+    KonanTarget.MACOS_X64 -> Platform.macOS
+    KonanTarget.TVOS_ARM64,
+    KonanTarget.TVOS_SIMULATOR_ARM64,
+    KonanTarget.TVOS_X64 -> Platform.tvOS
+    KonanTarget.WATCHOS_ARM32,
+    KonanTarget.WATCHOS_ARM64,
+    KonanTarget.WATCHOS_DEVICE_ARM64,
+    KonanTarget.WATCHOS_SIMULATOR_ARM64,
+    KonanTarget.WATCHOS_X64 -> Platform.watchOS
+
+    KonanTarget.ANDROID_ARM32,
+    KonanTarget.ANDROID_ARM64,
+    KonanTarget.ANDROID_X64,
+    KonanTarget.ANDROID_X86,
+    KonanTarget.LINUX_ARM32_HFP,
+    KonanTarget.LINUX_ARM64,
+    KonanTarget.LINUX_X64,
+    KonanTarget.MINGW_X64 -> error("unsupported targets")
 }
 
 /**
@@ -297,6 +330,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
  * - collect dependencies from all the entire classpath
  * - should emit the linkage structure at specific sites, e.g. for embedAndSign, for internal linkage, etc
  */
+// FIXME: Rearrange this task so that it only runs after linkage package detection
 internal fun Project.regenerateLinkageImportProjectTask(swiftPMDependencies: Provider<Map<String, Set<SwiftPMDependency>>>): TaskProvider<GenerateSyntheticLinkageImportProject> {
     val hasDirectlyDeclaredSwiftPMDependencies = provider { swiftPMDependenciesExtension().spmDependencies.isNotEmpty() }
     return locateOrRegisterTask<GenerateSyntheticLinkageImportProject>(
@@ -393,7 +427,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
             packageRoot = packageRoot,
             syntheticProductType = syntheticProductType.get(),
             directlyImportedSwiftPMDependencies = directlyImportedSpmModules.get(),
-            localPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().keys,
+            localSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().keys,
             linkerHackPath = linkerHack,
         )
         dependencyIdentifierToImportedSwiftPMDependencies.get().forEach { (dependencyIdentifier, swiftPMDependencies) ->
@@ -407,7 +441,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                  */
                 syntheticProductType = SyntheticProductType.INFERRED,
                 directlyImportedSwiftPMDependencies = swiftPMDependencies,
-                localPackages = setOf(),
+                localSyntheticPackages = setOf(),
             )
         }
 
@@ -431,7 +465,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
         syntheticProductType: SyntheticProductType,
         directlyImportedSwiftPMDependencies: Set<SwiftPMDependency>,
         // FIXME: Implicitly, this is the directory, package and product name
-        localPackages: Set<String>,
+        localSyntheticPackages: Set<String>,
         linkerHackPath: File? = null,
     ) {
         val repoDependencies = (directlyImportedSwiftPMDependencies.map { importedPackage ->
@@ -448,26 +482,40 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                             }
                         }
                         when (val version = importedPackage.version) {
-                            is SwiftPMDependency.Remote.Version.Exact -> appendLine("  exact: \"${version.value}\"")
-                            is SwiftPMDependency.Remote.Version.From -> appendLine("  from: \"${version.value}\"")
+                            is SwiftPMDependency.Remote.Version.Exact -> appendLine("  exact: \"${version.value}\",")
+                            is SwiftPMDependency.Remote.Version.From -> appendLine("  from: \"${version.value}\",")
                             // FIXME: Range specification needs more thought
-                            is SwiftPMDependency.Remote.Version.Range -> appendLine("  \"${version.from}\"...\"${version.through}\"")
-                            is SwiftPMDependency.Remote.Version.Branch -> appendLine("  branch: \"${version.value}\"")
-                            is SwiftPMDependency.Remote.Version.Revision -> appendLine("  revision: \"${version.value}\"")
+                            is SwiftPMDependency.Remote.Version.Range -> appendLine("  \"${version.from}\"...\"${version.through}\",")
+                            is SwiftPMDependency.Remote.Version.Branch -> appendLine("  branch: \"${version.value}\",")
+                            is SwiftPMDependency.Remote.Version.Revision -> appendLine("  revision: \"${version.value}\",")
                         }
                     }
                     is SwiftPMDependency.Local -> {
-                        appendLine("  path: \"${importedPackage.path}\"")
+                        appendLine("  path: \"${importedPackage.path}\",")
                     }
+                }
+                if (importedPackage.traits.isNotEmpty()) {
+                    val traitsString = importedPackage.traits.joinToString(", ") { "\"${it}\"" }
+                    appendLine("  traits: [${traitsString}],")
                 }
                 appendLine("),")
             }
-        } + localPackages.map {
+        } + localSyntheticPackages.map {
             ".package(path: \"${SUBPACKAGES}/${it}\"),"
         })
         val targetDependencies = (directlyImportedSwiftPMDependencies.flatMap { dep -> dep.products.map { it to dep.packageName } }.map {
-            ".product(name: \"${it.first}\", package: \"${it.second}\"),"
-        } + localPackages.map {
+            buildString {
+                appendLine(".product(")
+                appendLine("  name: \"${it.first.name}\",")
+                appendLine("  package: \"${it.second}\",")
+                val platformConstraints = it.first.platformConstraints
+                if (platformConstraints != null) {
+                    val platformsString = platformConstraints.joinToString(", ") { ".${it.swiftEnumName}" }
+                    appendLine("  condition: .when(platforms: [${platformsString}]),")
+                }
+                appendLine("),")
+            }
+        } + localSyntheticPackages.map {
             ".product(name: \"${it}\", package: \"${it}\"),"
         })
 
@@ -519,7 +567,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                 appendLine("    .target(")
                 appendLine("      name: \"$identifier\",")
                 appendLine("      dependencies: [")
-                targetDependencies.forEach { appendLine("        $it") }
+                targetDependencies.forEach { appendLine(it.replaceIndent("        ")) }
                 appendLine("      ]")
                 if (linkerHackPath != null) {
                     appendLine("      , linkerSettings: [.unsafeFlags([\"-fuse-ld=${linkerHackPath.path}\"])]")
@@ -854,7 +902,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                     }
                 )
                 implicitlyDiscoveredModules - cxxModules
-            } else clangModules.get()
+            } else clangModules.get().map { it }
 
             val defFileSearchPaths = cinteropClangArgs.joinToString(" ") { "\"${it}\"" }
             val modules = clangModules.joinToString(" ") { "\"${it}\"" }
