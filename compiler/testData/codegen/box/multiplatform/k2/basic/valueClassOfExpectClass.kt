@@ -10,7 +10,7 @@ import kotlin.jvm.JvmInline
 
 class Session<T>(val value: T)
 
-@JvmInline
+@<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>JvmInline<!>
 value class SessionMutex<T> private constructor(
     private val currentSessionHolder: AtomicReference<Session<T>?>
 ) {

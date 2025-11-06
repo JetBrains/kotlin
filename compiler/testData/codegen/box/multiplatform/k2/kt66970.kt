@@ -5,18 +5,18 @@
 // MODULE: lib-common
 // FILE: lib-common.kt
 object JvmStaticTest {
-    @kotlin.jvm.JvmStatic
+    @<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>kotlin.jvm.JvmStatic<!>
     fun annotatedFunction(): String = "JvmStatic function"
 
-    @kotlin.jvm.JvmStatic
+    @<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>kotlin.jvm.JvmStatic<!>
     val annotatedProperty: String = "JvmStatic property"
 
     val annotatedGetter: String
-        @kotlin.jvm.JvmStatic get() = "JvmStatic property getter"
+        @<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>kotlin.jvm.JvmStatic<!> get() = "JvmStatic property getter"
 
     var annotatedSetter: String = "JvmStaticTest.annotatedSetter default value"
         get() = field
-        @kotlin.jvm.JvmStatic set(newValue) {
+        @<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>kotlin.jvm.JvmStatic<!> set(newValue) {
             field = newValue
         }
 }
@@ -24,18 +24,18 @@ object JvmStaticTest {
 // @JsStatic is not supported on regular objects
 class JsStaticTest {
     companion object {
-        @kotlin.js.JsStatic
+        @<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>kotlin.js.JsStatic<!>
         fun annotatedFunction(): String = "JsStatic function"
 
-        @kotlin.js.JsStatic
+        @<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>kotlin.js.JsStatic<!>
         val annotatedProperty: String = "JsStatic property"
 
         val annotatedGetter: String
-            @kotlin.js.JsStatic get() = "JsStatic property getter"
+            @<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>kotlin.js.JsStatic<!> get() = "JsStatic property getter"
 
         var annotatedSetter: String = "JsStaticTest.Companion.annotatedSetter default value"
             get() = field
-            @kotlin.js.JsStatic set(newValue) {
+            @<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>kotlin.js.JsStatic<!> set(newValue) {
                 field = newValue
             }
     }
