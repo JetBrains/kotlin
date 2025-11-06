@@ -42253,6 +42253,12 @@ public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
         public void testOptionalExpectation() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/optionalExpectation.kt");
         }
+
+        @Test
+        @TestMetadata("optionalExpectationAnnotation.kt")
+        public void testOptionalExpectationAnnotation() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/optionalExpectationAnnotation.kt");
+        }
       }
 
       @Nested
