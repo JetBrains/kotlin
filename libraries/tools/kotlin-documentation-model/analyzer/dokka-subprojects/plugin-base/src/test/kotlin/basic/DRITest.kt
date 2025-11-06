@@ -15,18 +15,19 @@ import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.MemberPageNode
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 class DRITest : BaseAbstractTest() {
-    @Test
-    fun issue634() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
+    private val defaultConfiguration = dokkaConfiguration {
+        sourceSets {
+            sourceSet {
+                sourceRoots = listOf("src/")
             }
         }
+    }
 
+    @Test
+    fun issue634() {
         testInline(
             """
             |/src/main/kotlin/basic/Test.kt
@@ -36,7 +37,7 @@ class DRITest : BaseAbstractTest() {
             |    crossinline selector: (T) -> R?): Array<out T> = TODO()
             |}
         """.trimMargin(),
-            configuration
+            defaultConfiguration
         ) {
             documentablesMergingStage = { module ->
                 val expected = TypeConstructor(
@@ -55,14 +56,6 @@ class DRITest : BaseAbstractTest() {
 
     @Test
     fun issue634WithImmediateNullableSelf() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/basic/Test.kt
@@ -71,10 +64,19 @@ class DRITest : BaseAbstractTest() {
             |fun <T : Comparable<T>> Array<T>.doSomething(t: T?): Array<T> = TODO()
             |}
         """.trimMargin(),
-            configuration
+            defaultConfiguration
         ) {
             documentablesMergingStage = { module ->
-                val expected = Nullable(TypeParam(listOf(TypeConstructor("kotlin.Comparable", listOf(RecursiveType(0))))))
+                val expected = Nullable(
+                    TypeParam(
+                        listOf(
+                            TypeConstructor(
+                                "kotlin.Comparable",
+                                listOf(RecursiveType(0))
+                            )
+                        )
+                    )
+                )
                 val actual = module.packages.single()
                     .functions.single()
                     .dri.callable?.params?.single()
@@ -85,14 +87,6 @@ class DRITest : BaseAbstractTest() {
 
     @Test
     fun issue634WithGenericNullableReceiver() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/basic/Test.kt
@@ -101,10 +95,19 @@ class DRITest : BaseAbstractTest() {
             |fun <T : Comparable<T>> T?.doSomethingWithNullable() = TODO()
             |}
         """.trimMargin(),
-            configuration
+            defaultConfiguration
         ) {
             documentablesMergingStage = { module ->
-                val expected = Nullable(TypeParam(listOf(TypeConstructor("kotlin.Comparable", listOf(RecursiveType(0))))))
+                val expected = Nullable(
+                    TypeParam(
+                        listOf(
+                            TypeConstructor(
+                                "kotlin.Comparable",
+                                listOf(RecursiveType(0))
+                            )
+                        )
+                    )
+                )
                 val actual = module.packages.single()
                     .functions.single()
                     .dri.callable?.receiver
@@ -173,14 +176,7 @@ class DRITest : BaseAbstractTest() {
     }
 
     @Test
-    fun driForGenericClass(){
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
+    fun driForGenericClass() {
         testInline(
             """
             |/src/main/kotlin/Test.kt
@@ -190,20 +186,23 @@ class DRITest : BaseAbstractTest() {
             |
             |
         """.trimMargin(),
-            configuration
+            defaultConfiguration
         ) {
             pagesGenerationStage = { module ->
                 val sampleClass = module.dfs { it.name == "Sample" } as ClasslikePageNode
                 val classDocumentable = sampleClass.documentables.firstOrNull() as DClass
 
-                assertEquals( "example/Sample///PointingToDeclaration/", sampleClass.dri.first().toString())
-                assertEquals("example/Sample///PointingToGenericParameters(0)/", classDocumentable.generics.first().dri.toString())
+                assertEquals("example/Sample///PointingToDeclaration/", sampleClass.dri.first().toString())
+                assertEquals(
+                    "example/Sample///PointingToGenericParameters(0)/",
+                    classDocumentable.generics.first().dri.toString()
+                )
             }
         }
     }
 
     @Test
-    fun driForGenericFunction(){
+    fun driForGenericFunction() {
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -231,15 +230,24 @@ class DRITest : BaseAbstractTest() {
                 val functionDocumentable = functionNode.documentables.firstOrNull() as DFunction
                 val parameter = functionDocumentable.parameters.first()
 
-                assertEquals("example/Sample/genericFun/#kotlin.String/PointingToDeclaration/", functionNode.dri.first().toString())
+                assertEquals(
+                    "example/Sample/genericFun/#kotlin.String/PointingToDeclaration/",
+                    functionNode.dri.first().toString()
+                )
 
                 assertEquals(1, functionDocumentable.parameters.size)
-                assertEquals("example/Sample/genericFun/#kotlin.String/PointingToCallableParameters(0)/", parameter.dri.toString())
+                assertEquals(
+                    "example/Sample/genericFun/#kotlin.String/PointingToCallableParameters(0)/",
+                    parameter.dri.toString()
+                )
                 //1 since from the function's perspective there is only 1 new generic declared
                 //The other one is 'inherited' from class
-                assertEquals( 1, functionDocumentable.generics.size)
-                assertEquals( "T", functionDocumentable.generics.first().name)
-                assertEquals( "example/Sample/genericFun/#kotlin.String/PointingToGenericParameters(0)/", functionDocumentable.generics.first().dri.toString())
+                assertEquals(1, functionDocumentable.generics.size)
+                assertEquals("T", functionDocumentable.generics.first().name)
+                assertEquals(
+                    "example/Sample/genericFun/#kotlin.String/PointingToGenericParameters(0)/",
+                    functionDocumentable.generics.first().dri.toString()
+                )
             }
         }
     }
@@ -283,14 +291,7 @@ class DRITest : BaseAbstractTest() {
     }
 
     @Test
-    fun driForGenericExtensionFunction(){
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
+    fun driForGenericExtensionFunction() {
         testInline(
             """
             |/src/main/kotlin/Test.kt
@@ -299,7 +300,7 @@ class DRITest : BaseAbstractTest() {
             | fun <T> List<T>.extensionFunction(): String = ""
             |
         """.trimMargin(),
-            configuration
+            defaultConfiguration
         ) {
             pagesGenerationStage = { module ->
                 val extensionFunction = module.dfs { it.name == "extensionFunction" } as MemberPageNode
@@ -313,7 +314,7 @@ class DRITest : BaseAbstractTest() {
                 assertEquals("T", documentable.generics.first().name)
                 assertEquals(
                     "example//extensionFunction/kotlin.collections.List[TypeParam(bounds=[kotlin.Any?])]#/PointingToGenericParameters(0)/",
-                     documentable.generics.first().dri.toString()
+                    documentable.generics.first().dri.toString()
                 )
 
             }
@@ -322,13 +323,6 @@ class DRITest : BaseAbstractTest() {
 
     @Test
     fun `deep recursive typebound #1342`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
         testInline(
             """
             |/src/main/kotlin/Test.kt
@@ -337,7 +331,7 @@ class DRITest : BaseAbstractTest() {
             | fun <T, S, R> recursiveBound(t: T, s: S, r: R) where T: List<S>, S: List<R>, R: List<S> = Unit
             |
         """.trimMargin(),
-            configuration
+            defaultConfiguration
         ) {
             documentablesMergingStage = { module ->
                 val function = module.dfs { it.name == "recursiveBound" }
@@ -355,13 +349,7 @@ class DRITest : BaseAbstractTest() {
         |/src/main/kotlin/Test.kt
         |class Parent { class Nested { class DoubleNested } }
     """.trimMargin(),
-        dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
+        defaultConfiguration
     ) {
         documentablesMergingStage = { module ->
             fun findConstructorDriOfClass(className: String) =
@@ -391,6 +379,117 @@ class DRITest : BaseAbstractTest() {
                     callable = Callable("DoubleNested", null, emptyList())
                 )
             )
+        }
+    }
+
+    @Test
+    fun `#3558 DRI for function with varags parameter`() {
+        testInline(
+            """
+        |/src/main/kotlin/Test.kt
+        |package test
+        |fun withObjectVararg(vararg s: String) {}
+        |fun withPrimitiveVararg(vararg s: Int) {}
+        """.trimMargin(),
+            defaultConfiguration
+        ) {
+            documentablesMergingStage = { module ->
+                val withObjectVararg = module.dfs { it.name == "withObjectVararg" }!!
+                val withPrimitiveVararg = module.dfs { it.name == "withPrimitiveVararg" }!!
+
+                assertEquals(
+                    "test//withObjectVararg/#vararg(kotlin.String)/PointingToDeclaration/",
+                    withObjectVararg.dri.toString()
+                )
+                assertEquals(
+                    DRI(
+                        "test", null,
+                        Callable(
+                            name = "withObjectVararg",
+                            receiver = null,
+                            params = listOf(
+                                Vararg(TypeConstructor("kotlin.String", emptyList())),
+                            )
+                        )
+                    ), withObjectVararg.dri
+                )
+
+                assertEquals(
+                    "test//withPrimitiveVararg/#vararg(kotlin.Int)/PointingToDeclaration/",
+                    withPrimitiveVararg.dri.toString()
+                )
+                assertEquals(
+                    DRI(
+                        "test", null,
+                        Callable(
+                            name = "withPrimitiveVararg",
+                            receiver = null,
+                            params = listOf(
+                                Vararg(TypeConstructor("kotlin.Int", emptyList())),
+                            )
+                        )
+                    ), withPrimitiveVararg.dri
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `#4049 different DRI for varags and arrays`() {
+        testInline(
+            """
+        |/src/main/kotlin/Test.kt
+        |package test
+        |fun f1(vararg s: String) {}
+        |fun f2(s: Array<String>) {}
+        """.trimMargin(),
+            defaultConfiguration
+        ) {
+            documentablesMergingStage = { module ->
+                val f1 = module.dfs { it.name == "f1" }!!
+                val f2 = module.dfs { it.name == "f2" }!!
+
+                assertNotEquals(f1.dri, f2.dri, "Expected different DRI for vararg and array")
+
+                assertEquals(
+                    "test//f1/#vararg(kotlin.String)/PointingToDeclaration/",
+                    f1.dri.toString()
+                )
+                assertEquals(
+                    expected = DRI(
+                        "test", null,
+                        Callable(
+                            name = "f1",
+                            receiver = null,
+                            params = listOf(
+                                Vararg(TypeConstructor("kotlin.String", emptyList())),
+                            )
+                        )
+                    ),
+                    actual = f1.dri
+                )
+
+                assertEquals(
+                    "test//f2/#kotlin.Array[kotlin.String]/PointingToDeclaration/",
+                    f2.dri.toString()
+                )
+                assertEquals(
+                    expected = DRI(
+                        "test", null,
+                        Callable(
+                            name = "f2",
+                            receiver = null,
+                            params = listOf(
+                                TypeConstructor(
+                                    fullyQualifiedName = "kotlin.Array",
+                                    params = listOf(TypeConstructor("kotlin.String", emptyList())),
+                                )
+                            )
+                        )
+                    ),
+                    actual = f2.dri
+                )
+            }
         }
     }
 }

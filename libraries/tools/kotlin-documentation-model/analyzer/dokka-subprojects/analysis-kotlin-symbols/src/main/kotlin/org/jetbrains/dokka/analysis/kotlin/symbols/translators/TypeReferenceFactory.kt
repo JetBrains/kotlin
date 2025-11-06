@@ -8,8 +8,13 @@ import org.jetbrains.dokka.links.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.types.*
 
-internal fun KaSession.getTypeReferenceFrom(type: KaType): TypeReference =
-    getTypeReferenceFromPossiblyRecursive(type, emptyList())
+internal fun KaSession.getTypeReferenceFrom(type: KaType, isVararg: Boolean = false): TypeReference {
+    val typeReference = getTypeReferenceFromPossiblyRecursive(type, emptyList())
+    return when {
+        isVararg -> Vararg(typeReference)
+        else -> typeReference
+    }
+}
 
 
 // see `deep recursive typebound #1342` test
