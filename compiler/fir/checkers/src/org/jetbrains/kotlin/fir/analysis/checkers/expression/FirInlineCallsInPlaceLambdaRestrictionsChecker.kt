@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import kotlin.reflect.full.memberProperties
 
 object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -32,14 +33,7 @@ object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpres
 
         val containingLambda = context.containingDeclarations.filterIsInstance<FirAnonymousFunctionSymbol>().lastOrNull() ?: return
 
-        val lambdaSource = containingLambda.fir.source
-        val variableSource = variableSymbol.fir.source
-        if (lambdaSource != null && variableSource != null) {
-            val vStart = variableSource.startOffset
-            val lStart = lambdaSource.startOffset
-            val lEnd = lambdaSource.endOffset
-            if (vStart in lStart..<lEnd) return
-        }
+        if (isAccessSafeInsideLambda(expression, variableSymbol, containingLambda)) return
 
         if (!expression.partOfCall()) return
 
@@ -119,3 +113,51 @@ data class IEData(
     val variableName: String? = null,
     val varDeclaration: String? = null,
 )
+
+private fun isAccessSafeInsideLambda(
+    expression: FirQualifiedAccessExpression,
+    variableSymbol: FirVariableSymbol<*>,
+    lambdaSymbol: FirAnonymousFunctionSymbol,
+): Boolean {
+    // Case 1: the variable itself is declared inside the lambda
+    if (isDeclaredInsideLambda(variableSymbol, lambdaSymbol)) return true
+
+    // Case 2: the leftmost receiver in a qualified chain is a local val declared inside the lambda
+    val baseReceiverSymbol = leftmostReceiverVariableSymbol(expression) ?: return false
+    if (!baseReceiverSymbol.isVal) return false
+    return isDeclaredInsideLambda(baseReceiverSymbol, lambdaSymbol)
+}
+
+private fun isDeclaredInsideLambda(
+    symbol: FirVariableSymbol<*>,
+    lambdaSymbol: FirAnonymousFunctionSymbol,
+): Boolean {
+    val symSource = symbol.fir.source ?: return false
+    val lambdaSource = lambdaSymbol.fir.source ?: return false
+    return symSource.startOffset >= lambdaSource.startOffset && symSource.endOffset <= lambdaSource.endOffset
+}
+
+// Walks the explicit receiver chain to find the leftmost variable symbol, handling
+// cases like `root.next!!.next!!.field` where `root` is the base variable.
+private fun leftmostReceiverVariableSymbol(expression: FirQualifiedAccessExpression): FirVariableSymbol<*>? {
+    var current: FirExpression = expression.explicitReceiver?.unwrapErrorExpression()?.unwrapArgument() ?: return null
+    while (true) {
+        when (val e = current) {
+            is FirQualifiedAccessExpression -> {
+                val next = e.explicitReceiver?.unwrapErrorExpression()?.unwrapArgument()
+                if (next != null) {
+                    current = next
+                    continue
+                }
+                return e.calleeReference.toResolvedVariableSymbol()
+            }
+            is FirSafeCallExpression -> {
+                current = e.receiver.unwrapErrorExpression().unwrapArgument()
+            }
+            is FirCheckNotNullCall -> {
+                current = e.argument.unwrapErrorExpression().unwrapArgument()
+            }
+            else -> return null
+        }
+    }
+}
