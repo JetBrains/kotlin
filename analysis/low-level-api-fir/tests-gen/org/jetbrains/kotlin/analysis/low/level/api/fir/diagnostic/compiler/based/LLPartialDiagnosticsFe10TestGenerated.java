@@ -49931,6 +49931,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("incompleteCode.kt")
+        public void testIncompleteCode() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument/incompleteCode.kt");
+        }
+
+        @Test
         @TestMetadata("kotlinAnnotation.kt")
         public void testKotlinAnnotation() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument/kotlinAnnotation.kt");
