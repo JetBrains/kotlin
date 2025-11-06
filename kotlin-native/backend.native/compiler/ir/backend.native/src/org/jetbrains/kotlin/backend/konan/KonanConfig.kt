@@ -331,7 +331,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         } ?: true
 
-    private val defaultGenericSafeCasts = !optimizationsEnabled // For now disabled in -opt due to performance penalty.
+    private val defaultGenericSafeCasts = false // For now disabled due to unstability.
     val genericSafeCasts: Boolean by lazy {
         configuration.get(BinaryOptions.genericSafeCasts)
                 ?: defaultGenericSafeCasts
