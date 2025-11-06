@@ -44,7 +44,7 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
         /* Define simple targets */
         kotlin.jvm()
         kotlin.linuxX64()
-        kotlin.iosX64()
+        kotlin.iosArm64()
 
         kotlin.applyDefaultHierarchyTemplate()
 
