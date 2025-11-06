@@ -9060,6 +9060,14 @@ open annotation class kotlin.js/JsStatic : kotlin/Annotation { // kotlin.js/JsSt
 }
 
 // Targets: [native, wasmJs, wasmWasi]
+open annotation class kotlin.js/JsSymbol : kotlin/Annotation { // kotlin.js/JsSymbol|null[1]
+    constructor <init>(kotlin/String) // kotlin.js/JsSymbol.<init>|<init>(kotlin.String){}[1]
+
+    final val name // kotlin.js/JsSymbol.name|{}name[1]
+        final fun <get-name>(): kotlin/String // kotlin.js/JsSymbol.name.<get-name>|<get-name>(){}[1]
+}
+
+// Targets: [native, wasmJs, wasmWasi]
 open annotation class kotlin.jvm/Synchronized : kotlin/Annotation { // kotlin.jvm/Synchronized|null[1]
     constructor <init>() // kotlin.jvm/Synchronized.<init>|<init>(){}[1]
 }
@@ -14156,6 +14164,14 @@ open annotation class kotlin.js/JsOutlinedFunction : kotlin/Annotation { // kotl
 // Targets: [js]
 open annotation class kotlin.js/JsStatic : kotlin/Annotation { // kotlin.js/JsStatic|null[0]
     constructor <init>() // kotlin.js/JsStatic.<init>|<init>(){}[0]
+}
+
+// Targets: [js]
+open annotation class kotlin.js/JsSymbol : kotlin/Annotation { // kotlin.js/JsSymbol|null[0]
+    constructor <init>(kotlin/String) // kotlin.js/JsSymbol.<init>|<init>(kotlin.String){}[0]
+
+    final val name // kotlin.js/JsSymbol.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.js/JsSymbol.name.<get-name>|<get-name>(){}[0]
 }
 
 // Targets: [js]

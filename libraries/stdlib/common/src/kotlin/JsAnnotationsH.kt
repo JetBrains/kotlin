@@ -19,6 +19,17 @@ import kotlin.reflect.KClass
 public expect annotation class JsName(val name: String)
 
 /**
+ * Declare access to a declaration by a well-known Symbol in JavaScript.
+ *
+ * See [additional information about well-known Symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol#well-known_symbols)
+ */
+@ExperimentalStdlibApi
+@Target(FUNCTION)
+@SinceKotlin("2.3")
+@OptionalExpectation
+public expect annotation class JsSymbol(val name: String)
+
+/**
  * Marks experimental [JsFileName] annotation.
  *
  * Note that behavior of these annotations will likely be changed in the future.

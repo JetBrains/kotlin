@@ -57,6 +57,8 @@ object FirJsErrors : KtDiagnosticsContainer() {
     val NAME_CONTAINS_ILLEGAL_CHARS: KtDiagnosticFactory0 = KtDiagnosticFactory0("NAME_CONTAINS_ILLEGAL_CHARS", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val JS_NAME_CLASH: KtDiagnosticFactory2<String, Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory2("JS_NAME_CLASH", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val JS_FAKE_NAME_CLASH: KtDiagnosticFactory3<String, FirBasedSymbol<*>, Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory3("JS_FAKE_NAME_CLASH", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val JS_SYMBOL_ON_TOP_LEVEL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_SYMBOL_ON_TOP_LEVEL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val JS_SYMBOL_PROHIBITED_FOR_OVERRIDE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_SYMBOL_PROHIBITED_FOR_OVERRIDE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // Supertypes
     val WRONG_MULTIPLE_INHERITANCE: KtDiagnosticFactory1<FirCallableSymbol<*>> = KtDiagnosticFactory1("WRONG_MULTIPLE_INHERITANCE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())

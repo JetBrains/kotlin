@@ -644,6 +644,12 @@ public class JsES6InvalidationPerModuleTestGenerated extends AbstractJsES6Invali
   }
 
   @Test
+  @TestMetadata("jsSymbol")
+  public void testJsSymbol() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsSymbol/");
+  }
+
+  @Test
   @TestMetadata("kotlinTest")
   public void testKotlinTest() {
     runTest("js/js.translator/testData/incremental/invalidation/kotlinTest/");

@@ -7881,6 +7881,18 @@ public class PsiJsBoxTestGenerated extends AbstractPsiJsBoxTest {
     }
 
     @Test
+    @TestMetadata("jsSymbolOnExternal.kt")
+    public void testJsSymbolOnExternal() {
+      runTest("js/js.translator/testData/box/jsName/jsSymbolOnExternal.kt");
+    }
+
+    @Test
+    @TestMetadata("jsSymbolSuperDelegation.kt")
+    public void testJsSymbolSuperDelegation() {
+      runTest("js/js.translator/testData/box/jsName/jsSymbolSuperDelegation.kt");
+    }
+
+    @Test
     @TestMetadata("jsTopLevelClashes.kt")
     public void testJsTopLevelClashes() {
       runTest("js/js.translator/testData/box/jsName/jsTopLevelClashes.kt");
@@ -7920,6 +7932,12 @@ public class PsiJsBoxTestGenerated extends AbstractPsiJsBoxTest {
     @TestMetadata("methodOfOpenClass.kt")
     public void testMethodOfOpenClass() {
       runTest("js/js.translator/testData/box/jsName/methodOfOpenClass.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleOverriddenMembersWithDifferentJsSymbol.kt")
+    public void testMultipleOverriddenMembersWithDifferentJsSymbol() {
+      runTest("js/js.translator/testData/box/jsName/multipleOverriddenMembersWithDifferentJsSymbol.kt");
     }
 
     @Test

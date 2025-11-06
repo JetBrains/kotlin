@@ -734,6 +734,22 @@ public class LightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractLigh
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsSymbol")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JsSymbol {
+    @Test
+    public void testAllFilesPresentInJsSymbol() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jsSymbol"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("jsSymbolDiagnostics.kt")
+    public void testJsSymbolDiagnostics() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsSymbol/jsSymbolDiagnostics.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations")
   @TestDataPath("$PROJECT_ROOT")
   public class JvmDeclarations {

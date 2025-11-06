@@ -22,6 +22,8 @@ public final class JsFunction extends JsLiteral implements HasName {
     @NotNull
     private final JsFunctionScope scope;
     private JsName name;
+    @Nullable
+    private JsExpression computedName;
     private Set<Modifier> modifiers;
     private boolean isEs6Arrow;
 
@@ -51,6 +53,10 @@ public final class JsFunction extends JsLiteral implements HasName {
     @Override
     public JsName getName() {
         return name;
+    }
+
+    public JsExpression getComputedName() {
+        return computedName;
     }
 
     @NotNull
@@ -108,6 +114,10 @@ public final class JsFunction extends JsLiteral implements HasName {
     @Override
     public void setName(@Nullable JsName name) {
         this.name = name;
+    }
+
+    public void setComputedName(@Nullable JsExpression computedName) {
+        this.computedName = computedName;
     }
 
     @Override

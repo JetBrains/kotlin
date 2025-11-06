@@ -67,6 +67,9 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             parameter<FirBasedSymbol<*>>("override")
             parameter<Collection<FirBasedSymbol<*>>>("existing")
         }
+
+        val JS_SYMBOL_ON_TOP_LEVEL_DECLARATION by error<KtElement>()
+        val JS_SYMBOL_PROHIBITED_FOR_OVERRIDE by error<KtElement>()
     }
 
     val SUPERTYPES by object : DiagnosticGroup("Supertypes") {

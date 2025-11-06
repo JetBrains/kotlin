@@ -61,6 +61,23 @@ internal annotation class marker
 @Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
 public actual annotation class JsName(actual val name: String)
 
+
+/**
+ * Declare access to a declaration (right now, only functions are supported) by a well-known Symbol in JavaScript.
+ *
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol#well-known_symbols
+ *
+ * This is especially useful for interop to implement different JS conventions to override JS iterability, auto-closing behavior, casting to primitives, etc
+ *
+ * @property name the name of a well-known symbol by which the declaration would be accessible.
+ *           It's required the symbol to be presented under the [name] inside the `Symbol` static scope.
+ */
+@ExperimentalStdlibApi
+@Retention(AnnotationRetention.BINARY)
+@Target(FUNCTION)
+@SinceKotlin("2.3")
+public actual annotation class JsSymbol(actual val name: String)
+
 /**
  * Specifies the name of the compiled file produced from the annotated source file instead of the default one.
  *

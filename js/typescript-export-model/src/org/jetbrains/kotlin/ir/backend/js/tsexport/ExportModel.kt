@@ -29,8 +29,13 @@ public class ExportedNamespace(
     public val isPrivate: Boolean = false
 ) : ExportedDeclaration()
 
+public sealed interface ExportedFunctionName {
+    public class Identifier(public val value: String) : ExportedFunctionName
+    public class WellKnownSymbol(public val value: String) : ExportedFunctionName
+}
+
 public data class ExportedFunction(
-    val name: String,
+    val name: ExportedFunctionName,
     val returnType: ExportedType,
     val parameters: List<ExportedParameter>,
     val typeParameters: List<ExportedType.TypeParameter> = emptyList(),

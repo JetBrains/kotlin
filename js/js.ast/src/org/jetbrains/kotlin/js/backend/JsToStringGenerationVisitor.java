@@ -693,7 +693,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         rightParen();
     }
 
-    // [static?] [get|set?] name(<params>) { <body> }
+    // [static?] [get|set?] [name|computedName](<params>) { <body> }
     private void printFunction(@NotNull JsFunction x) {
         if (x.isStatic()) {
             p.print(CHARS_STATIC);
@@ -712,7 +712,13 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             p.print(CHARS_GENERATOR);
         }
 
-        if (x.getName() != null) {
+        JsExpression computedName = x.getComputedName();
+
+        if (computedName != null) {
+            leftSquare();
+            accept(computedName);
+            rightSquare();
+        } else if (x.getName() != null) {
             nameOf(x);
         }
 

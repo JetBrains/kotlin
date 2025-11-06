@@ -521,6 +521,40 @@ public class JsES6TypeScriptExportTestGenerated extends AbstractJsES6TypeScriptE
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/js-symbol")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
+  public class Js_symbol {
+    @Test
+    public void testAllFilesPresentInJs_symbol() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js-symbol"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("js-symbol.kt")
+    public void testJs_symbol() {
+      runTest("js/js.translator/testData/typescript-export/js/js-symbol/js-symbol.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/js-symbol-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
+  public class Js_symbol_in_exported_file {
+    @Test
+    public void testAllFilesPresentInJs_symbol_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js-symbol-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("js-symbol.kt")
+    public void testJs_symbol() {
+      runTest("js/js.translator/testData/typescript-export/js/js-symbol-in-exported-file/js-symbol.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/long-type")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("es6")

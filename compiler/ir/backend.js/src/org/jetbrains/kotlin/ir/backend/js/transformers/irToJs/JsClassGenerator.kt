@@ -133,14 +133,18 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                     if (es6mode) {
                         if (declaration.isEs6ConstructorReplacement && irClass.isInterface) continue
-                        val (memberName, function) = generateMemberFunction(declaration)
+                        val (memberName, symbolKey, function) = generateMemberFunction(declaration)
                         function?.let { jsClass.members += it.escapedIfNeed() }
-                        declaration.generateAssignmentIfMangled(memberName)
+                        declaration.generateAssignmentIfMangled(memberName, symbolKey)
                     } else {
-                        val (memberName, function) = generateMemberFunction(declaration)
-                        val memberRef = jsElementAccess(memberName, classPrototypeRef)
-                        function?.let { classBlock.statements += jsAssignment(memberRef, it.apply { name = null }).makeStmt() }
-                        declaration.generateAssignmentIfMangled(memberName)
+                        val (memberName, symbolKey, function) = generateMemberFunction(declaration)
+                        val memberRef = jsElementAccess(memberName, symbolKey, classPrototypeRef)
+                        function?.let {
+                            it.name = null
+                            it.computedName = null
+                            classBlock.statements += jsAssignment(memberRef, it).makeStmt()
+                        }
+                        declaration.generateAssignmentIfMangled(memberName, symbolKey)
                     }
                 }
                 is IrClass -> {
@@ -319,11 +323,12 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             )
         }
 
-    private fun IrSimpleFunction.generateAssignmentIfMangled(memberName: JsName) {
+    private fun IrSimpleFunction.generateAssignmentIfMangled(memberName: JsName, symbolKey: JsExpression?) {
         if (
             irClass.isExported(backendContext) &&
             visibility.isPublicAPI && hasMangledName() &&
-            correspondingPropertySymbol == null
+            correspondingPropertySymbol == null &&
+            symbolKey == null
         ) {
             classBlock.statements += jsAssignment(prototypeAccessRef(), jsElementAccess(memberName, classPrototypeRef)).makeStmt()
         }
@@ -348,7 +353,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return !superIrClass.isSubclassOf(this)
     }
 
-    private fun generateMemberFunction(declaration: IrSimpleFunction): Pair<JsName, JsFunction?> {
+    private fun generateMemberFunction(declaration: IrSimpleFunction): Triple<JsName, JsExpression?, JsFunction?> {
+        val symbolKey = declaration.getJsSymbolForOverriddenDeclaration()?.toWellKnownSymbolAccess()
         val memberName = context.getNameForMemberFunction(declaration.realOverrideTargetOrNull ?: declaration)
 
         if (declaration.isReal && declaration.body != null) {
@@ -357,10 +363,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
             if (irClass.isInterface) {
                 interfaceDefaultsBlock.statements += translatedFunction.makeStmt()
-                return Pair(memberName, null)
+                return Triple(memberName, symbolKey, null)
             }
 
-            return Pair(memberName, translatedFunction)
+            return Triple(memberName, symbolKey, translatedFunction)
         }
 
         // do not generate code like
@@ -377,20 +383,19 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     }
                 }
                 .find { it.modality != Modality.ABSTRACT }
-                ?.let {
-                    val implClassDeclaration = it.parent as IrClass
+                ?.let { realOverride ->
+                    val implClassDeclaration = realOverride.parent as IrClass
 
                     if (implClassDeclaration.shouldCopyFrom()) {
-                        val reference = context.getNameForStaticDeclaration(it).makeRef()
-                        classModel.postDeclarationBlock.statements += jsAssignment(
-                            jsElementAccess(memberName, classPrototypeRef),
-                            reference
-                        ).makeStmt()
+                        val reference = context.getNameForStaticDeclaration(realOverride).makeRef()
+                        val elementAccess = jsElementAccess(memberName, symbolKey, classPrototypeRef)
+                        classModel.postDeclarationBlock.statements += jsAssignment(elementAccess, reference).makeStmt()
                         if (isFakeOverride) {
                             classModel.postDeclarationBlock.statements += missedOverrides
                                 .map { missedOverride ->
                                     val name = context.getNameForMemberFunction(missedOverride)
-                                    val ref = jsElementAccess(name.ident, classPrototypeRef)
+                                    val symbol = missedOverride.getJsSymbol()?.toWellKnownSymbolAccess()
+                                    val ref = jsElementAccess(name, symbol, classPrototypeRef)
                                     jsAssignment(ref, reference).makeStmt()
                                 }
                         }
@@ -398,7 +403,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 }
         }
 
-        return Pair(memberName, null)
+        return Triple(memberName, symbolKey, null)
     }
 
     private fun maybeGeneratePrimaryConstructor() {
@@ -572,8 +577,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 }
 
 fun JsFunction.escapedIfNeed(): JsFunction {
-    if (name?.ident?.isValidES5Identifier() == false) {
-        name = JsName("'${name.ident}'", name.isTemporary)
+    val identifier = name?.ident
+    if (computedName == null && identifier?.isValidES5Identifier() == false) {
+        name = null
+        computedName = JsStringLiteral(identifier)
     }
     return this
 
