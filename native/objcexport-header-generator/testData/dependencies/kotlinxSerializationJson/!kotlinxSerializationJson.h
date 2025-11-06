@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class ClassDiscriminatorMode, DecodeSequenceMode, Decoder, DeserializationStrategy<T0>, Encoder, Json, JsonArrayBuilder, JsonBuilder, JsonConfiguration, JsonDefault, JsonElement, JsonElementCompanion, JsonNamingStrategyBuiltins, JsonNull, JsonObjectBuilder, JsonPrimitive, JsonPrimitiveCompanion, KSerializer<T0>, KotlinArray<T>, KotlinCharArray, KotlinCharIterator, KotlinEnum<E>, KotlinEnumCompanion, KotlinNothing, SerialDescriptor, SerializationStrategy<T0>, SerializersModule, StringFormat;
+@class ClassDiscriminatorMode, DecodeSequenceMode, Decoder, DeserializationStrategy<T0>, Encoder, Json, JsonArrayBuilder, JsonBuilder, JsonConfiguration, JsonDefault, JsonElement, JsonElementCompanion, JsonNamingStrategyBuiltins, JsonNull, JsonObjectBuilder, JsonPrimitive, JsonPrimitiveCompanion, KSerializer<T0>, KotlinArray<T>, KotlinArrayCompanion, KotlinCharArray, KotlinCharArrayCompanion, KotlinCharIterator, KotlinEnum<E>, KotlinEnumCompanion, KotlinNothing, SerialDescriptor, SerializationStrategy<T0>, SerializersModule, StringFormat;
 
 @protocol InternalJsonReader, InternalJsonWriter, JsonNamingStrategy, KotlinComparable, KotlinIterator, KotlinKAnnotatedElement, KotlinKClass, KotlinKClassifier, KotlinKDeclarationContainer, KotlinSequence;
 
@@ -325,6 +325,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)arrayWithSize:(int32_t)size init:(T _Nullable (^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly, getter=companion) KotlinArrayCompanion *companion __attribute__((swift_name("companion")));
 - (T _Nullable)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(T _Nullable)value __attribute__((swift_name("set(index:value:)")));
@@ -390,6 +391,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)arrayWithSize:(int32_t)size init:(id (^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly, getter=companion) KotlinCharArrayCompanion *companion __attribute__((swift_name("companion")));
 - (unichar)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (KotlinCharIterator *)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(unichar)value __attribute__((swift_name("set(index:value:)")));
@@ -405,10 +407,49 @@ __attribute__((objc_subclassing_restricted))
 - (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
 @end
 
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+__attribute__((objc_subclassing_restricted))
+@interface KotlinArrayCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KotlinArrayCompanion *shared __attribute__((swift_name("shared")));
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+- (KotlinArray<id> *)ofElements:(KotlinArray<id> *)elements __attribute__((swift_name("of(elements:)")));
+@end
+
 @protocol KotlinIterator
 @required
 - (BOOL)hasNext __attribute__((swift_name("hasNext()")));
 - (id _Nullable)next __attribute__((swift_name("next()")));
+@end
+
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinCharArray.Companion")))
+@interface KotlinCharArrayCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KotlinCharArrayCompanion *shared __attribute__((swift_name("shared")));
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+- (KotlinCharArray *)ofElements:(KotlinCharArray *)elements __attribute__((swift_name("of(elements:)")));
 @end
 
 @interface KotlinCharIterator : Base <KotlinIterator>

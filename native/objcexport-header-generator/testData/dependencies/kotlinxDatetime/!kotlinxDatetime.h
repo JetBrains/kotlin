@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class AbstractPolymorphicSerializer<T0>, AmPmMarker, ClockCompanion, ClockSystem, CompositeDecoder, DateBasedDateTimeUnitSerializer, DatePeriod, DatePeriodCompanion, DatePeriodComponentSerializer, DatePeriodIso8601Serializer, DateTimeComponents, DateTimeComponentsCompanion, DateTimeComponentsFormats, DateTimeFormatCompanion, DateTimePeriod, DateTimePeriodCompanion, DateTimePeriodComponentSerializer, DateTimePeriodIso8601Serializer, DateTimeUnit, DateTimeUnitCompanion, DateTimeUnitDateBased, DateTimeUnitDateBasedCompanion, DateTimeUnitDayBased, DateTimeUnitDayBasedCompanion, DateTimeUnitMonthBased, DateTimeUnitMonthBasedCompanion, DateTimeUnitSerializer, DateTimeUnitTimeBased, DateTimeUnitTimeBasedCompanion, DayBasedDateTimeUnitSerializer, DayOfWeek, DayOfWeekNames, DayOfWeekNamesCompanion, DayOfWeekSerializer, Decoder, DeserializationStrategy<T0>, Encoder, FixedOffsetTimeZone, FixedOffsetTimeZoneCompanion, FixedOffsetTimeZoneSerializer, Instant, InstantCompanion, InstantComponentSerializer, InstantIso8601Serializer, KSerializer<T0>, KotlinArray<T>, KotlinEnum<E>, KotlinEnumCompanion, KotlinException, KotlinIllegalArgumentException, KotlinRuntimeException, KotlinThrowable, KotlinUnit, LocalDate, LocalDateCompanion, LocalDateComponentSerializer, LocalDateFormats, LocalDateIso8601Serializer, LocalDateTime, LocalDateTimeCompanion, LocalDateTimeComponentSerializer, LocalDateTimeFormats, LocalDateTimeIso8601Serializer, LocalTime, LocalTimeCompanion, LocalTimeComponentSerializer, LocalTimeFormats, LocalTimeIso8601Serializer, Month, MonthBasedDateTimeUnitSerializer, MonthNames, MonthNamesCompanion, MonthSerializer, NSDate, NSDateComponents, NSTimeZone, Padding, SerialDescriptor, SerializationStrategy<T0>, TimeBasedDateTimeUnitSerializer, TimeZone, TimeZoneCompanion, TimeZoneSerializer, UtcOffset, UtcOffsetCompanion, UtcOffsetFormats, UtcOffsetSerializer;
+@class AbstractPolymorphicSerializer<T0>, AmPmMarker, ClockCompanion, ClockSystem, CompositeDecoder, DateBasedDateTimeUnitSerializer, DatePeriod, DatePeriodCompanion, DatePeriodComponentSerializer, DatePeriodIso8601Serializer, DateTimeComponents, DateTimeComponentsCompanion, DateTimeComponentsFormats, DateTimeFormatCompanion, DateTimePeriod, DateTimePeriodCompanion, DateTimePeriodComponentSerializer, DateTimePeriodIso8601Serializer, DateTimeUnit, DateTimeUnitCompanion, DateTimeUnitDateBased, DateTimeUnitDateBasedCompanion, DateTimeUnitDayBased, DateTimeUnitDayBasedCompanion, DateTimeUnitMonthBased, DateTimeUnitMonthBasedCompanion, DateTimeUnitSerializer, DateTimeUnitTimeBased, DateTimeUnitTimeBasedCompanion, DayBasedDateTimeUnitSerializer, DayOfWeek, DayOfWeekNames, DayOfWeekNamesCompanion, DayOfWeekSerializer, Decoder, DeserializationStrategy<T0>, Encoder, FixedOffsetTimeZone, FixedOffsetTimeZoneCompanion, FixedOffsetTimeZoneSerializer, Instant, InstantCompanion, InstantComponentSerializer, InstantIso8601Serializer, KSerializer<T0>, KotlinArray<T>, KotlinArrayCompanion, KotlinEnum<E>, KotlinEnumCompanion, KotlinException, KotlinIllegalArgumentException, KotlinRuntimeException, KotlinThrowable, KotlinUnit, LocalDate, LocalDateCompanion, LocalDateComponentSerializer, LocalDateFormats, LocalDateIso8601Serializer, LocalDateTime, LocalDateTimeCompanion, LocalDateTimeComponentSerializer, LocalDateTimeFormats, LocalDateTimeIso8601Serializer, LocalTime, LocalTimeCompanion, LocalTimeComponentSerializer, LocalTimeFormats, LocalTimeIso8601Serializer, Month, MonthBasedDateTimeUnitSerializer, MonthNames, MonthNamesCompanion, MonthSerializer, NSDate, NSDateComponents, NSTimeZone, Padding, SerialDescriptor, SerializationStrategy<T0>, TimeBasedDateTimeUnitSerializer, TimeZone, TimeZoneCompanion, TimeZoneSerializer, UtcOffset, UtcOffsetCompanion, UtcOffsetFormats, UtcOffsetSerializer;
 
 @protocol Clock, DateTimeFormat, DateTimeFormatBuilder, DateTimeFormatBuilderWithDate, DateTimeFormatBuilderWithDateTime, DateTimeFormatBuilderWithDateTimeComponents, DateTimeFormatBuilderWithTime, DateTimeFormatBuilderWithUtcOffset, KotlinAppendable, KotlinComparable, KotlinIterator, KotlinKAnnotatedElement, KotlinKClass, KotlinKClassifier, KotlinKDeclarationContainer, KotlinTimeMark, KotlinTimeSource, KotlinTimeSourceWithComparableMarks;
 
@@ -1090,6 +1090,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)arrayWithSize:(int32_t)size init:(T _Nullable (^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly, getter=companion) KotlinArrayCompanion *companion __attribute__((swift_name("companion")));
 - (T _Nullable)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(T _Nullable)value __attribute__((swift_name("set(index:value:)")));
@@ -1209,6 +1210,25 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)unit __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) KotlinUnit *shared __attribute__((swift_name("shared")));
 - (NSString *)description __attribute__((swift_name("description()")));
+@end
+
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+__attribute__((objc_subclassing_restricted))
+@interface KotlinArrayCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KotlinArrayCompanion *shared __attribute__((swift_name("shared")));
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+- (KotlinArray<id> *)ofElements:(KotlinArray<id> *)elements __attribute__((swift_name("of(elements:)")));
 @end
 
 @protocol KotlinIterator

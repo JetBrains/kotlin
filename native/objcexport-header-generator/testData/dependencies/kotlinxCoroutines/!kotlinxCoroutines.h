@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class AtomicOp<__contravariant T>, AtomicfuSynchronizedObject, AtomicfuSynchronizedObjectLockState, AtomicfuSynchronizedObjectStatus, BufferOverflow, ChannelFactory, ChannelFlow<T>, CloseableCoroutineDispatcher, CoroutineDispatcher, CoroutineDispatcherKey, CoroutineExceptionHandlerKey, CoroutineName, CoroutineNameKey, CoroutineStart, Dispatchers, GlobalScope, JobKey, JobSupport, KotlinAbstractCoroutineContextElement, KotlinAbstractCoroutineContextKey<B, E>, KotlinArray<T>, KotlinAtomicReference<T>, KotlinCancellationException, KotlinEnum<E>, KotlinEnumCompanion, KotlinException, KotlinIllegalStateException, KotlinIntArray, KotlinIntIterator, KotlinIntProgression, KotlinIntProgressionCompanion, KotlinIntRange, KotlinIntRangeCompanion, KotlinLongArray, KotlinLongIterator, KotlinLongProgression, KotlinLongProgressionCompanion, KotlinLongRange, KotlinLongRangeCompanion, KotlinNoSuchElementException, KotlinNothing, KotlinRuntimeException, KotlinThrowable, KotlinUnit, LockFreeLinkedListNode, MainCoroutineDispatcher, NonCancellable, NonDisposableHandle, OpDescriptor, SharingCommand, SharingStartedCompanion, ThreadSafeHeap<T>, TimeoutCancellationException;
+@class AtomicOp<__contravariant T>, AtomicfuSynchronizedObject, AtomicfuSynchronizedObjectLockState, AtomicfuSynchronizedObjectStatus, BufferOverflow, ChannelFactory, ChannelFlow<T>, CloseableCoroutineDispatcher, CoroutineDispatcher, CoroutineDispatcherKey, CoroutineExceptionHandlerKey, CoroutineName, CoroutineNameKey, CoroutineStart, Dispatchers, GlobalScope, JobKey, JobSupport, KotlinAbstractCoroutineContextElement, KotlinAbstractCoroutineContextKey<B, E>, KotlinArray<T>, KotlinArrayCompanion, KotlinAtomicReference<T>, KotlinCancellationException, KotlinEnum<E>, KotlinEnumCompanion, KotlinException, KotlinIllegalStateException, KotlinIntArray, KotlinIntArrayCompanion, KotlinIntIterator, KotlinIntProgression, KotlinIntProgressionCompanion, KotlinIntRange, KotlinIntRangeCompanion, KotlinLongArray, KotlinLongArrayCompanion, KotlinLongIterator, KotlinLongProgression, KotlinLongProgressionCompanion, KotlinLongRange, KotlinLongRangeCompanion, KotlinNoSuchElementException, KotlinNothing, KotlinRuntimeException, KotlinThrowable, KotlinUnit, LockFreeLinkedListNode, MainCoroutineDispatcher, NonCancellable, NonDisposableHandle, OpDescriptor, SharingCommand, SharingStartedCompanion, ThreadSafeHeap<T>, TimeoutCancellationException;
 
 @protocol BroadcastChannel, CancellableContinuation, Channel, ChannelIterator, ChildHandle, ChildJob, CompletableDeferred, CompletableJob, CopyableThrowable, CoroutineExceptionHandler, CoroutineScope, Deferred, DisposableHandle, Flow, FlowCollector, FusibleFlow, Job, KotlinClosedRange, KotlinComparable, KotlinContinuation, KotlinContinuationInterceptor, KotlinCoroutineContext, KotlinCoroutineContextElement, KotlinCoroutineContextKey, KotlinFunction, KotlinIterable, KotlinIterator, KotlinKAnnotatedElement, KotlinKClass, KotlinKClassifier, KotlinKDeclarationContainer, KotlinOpenEndRange, KotlinSequence, KotlinSuspendFunction0, KotlinSuspendFunction1, KotlinSuspendFunction2, KotlinSuspendFunction3, KotlinSuspendFunction4, KotlinSuspendFunction5, KotlinSuspendFunction6, MainDispatcherFactory, MutableSharedFlow, MutableStateFlow, Mutex, ParentJob, ProducerScope, ReceiveChannel, Runnable, SelectBuilder, SelectClause, SelectClause0, SelectClause1, SelectClause2, SelectInstance, Semaphore, SendChannel, SharedFlow, SharingStarted, StateFlow;
 
@@ -1123,6 +1123,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)arrayWithSize:(int32_t)size init:(T _Nullable (^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly, getter=companion) KotlinArrayCompanion *companion __attribute__((swift_name("companion")));
 - (T _Nullable)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(T _Nullable)value __attribute__((swift_name("set(index:value:)")));
@@ -1135,6 +1136,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)arrayWithSize:(int32_t)size init:(Int *(^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly, getter=companion) KotlinIntArrayCompanion *companion __attribute__((swift_name("companion")));
 - (int32_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (KotlinIntIterator *)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(int32_t)value __attribute__((swift_name("set(index:value:)")));
@@ -1147,6 +1149,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)arrayWithSize:(int32_t)size init:(Long *(^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly, getter=companion) KotlinLongArrayCompanion *companion __attribute__((swift_name("companion")));
 - (int64_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (KotlinLongIterator *)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(int64_t)value __attribute__((swift_name("set(index:value:)")));
@@ -2159,10 +2162,49 @@ __attribute__((objc_subclassing_restricted))
 - (NSString *)description __attribute__((swift_name("description()")));
 @end
 
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+__attribute__((objc_subclassing_restricted))
+@interface KotlinArrayCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KotlinArrayCompanion *shared __attribute__((swift_name("shared")));
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+- (KotlinArray<id> *)ofElements:(KotlinArray<id> *)elements __attribute__((swift_name("of(elements:)")));
+@end
+
 @protocol KotlinIterator
 @required
 - (BOOL)hasNext __attribute__((swift_name("hasNext()")));
 - (id _Nullable)next __attribute__((swift_name("next()")));
+@end
+
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinIntArray.Companion")))
+@interface KotlinIntArrayCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KotlinIntArrayCompanion *shared __attribute__((swift_name("shared")));
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+- (KotlinIntArray *)ofElements:(KotlinIntArray *)elements __attribute__((swift_name("of(elements:)")));
 @end
 
 @interface KotlinIntIterator : Base <KotlinIterator>
@@ -2170,6 +2212,26 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (Int *)next __attribute__((swift_name("next()")));
 - (int32_t)nextInt __attribute__((swift_name("nextInt()")));
+@end
+
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinLongArray.Companion")))
+@interface KotlinLongArrayCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KotlinLongArrayCompanion *shared __attribute__((swift_name("shared")));
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+- (KotlinLongArray *)ofElements:(KotlinLongArray *)elements __attribute__((swift_name("of(elements:)")));
 @end
 
 @interface KotlinLongIterator : Base <KotlinIterator>

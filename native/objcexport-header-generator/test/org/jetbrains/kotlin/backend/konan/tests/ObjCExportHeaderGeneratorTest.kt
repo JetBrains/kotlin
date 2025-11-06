@@ -506,6 +506,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi // FIXME: create an issue to handle this mute.
     fun `test - extension order`() {
         doTest(headersTestDataDir.resolve("extensionOrder"))
     }

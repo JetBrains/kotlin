@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class KotlinCharArray, KotlinCharIterator, KotlinStringBuilder;
+@class KotlinCharArray, KotlinCharArrayCompanion, KotlinCharIterator, KotlinStringBuilder;
 
 @protocol KotlinAppendable, KotlinCharSequence, KotlinIterator;
 
@@ -322,10 +322,31 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)arrayWithSize:(int32_t)size init:(id (^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly, getter=companion) KotlinCharArrayCompanion *companion __attribute__((swift_name("companion")));
 - (unichar)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (KotlinCharIterator *)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(unichar)value __attribute__((swift_name("set(index:value:)")));
 @property (readonly) int32_t size __attribute__((swift_name("size")));
+@end
+
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinCharArray.Companion")))
+@interface KotlinCharArrayCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KotlinCharArrayCompanion *shared __attribute__((swift_name("shared")));
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+- (KotlinCharArray *)ofElements:(KotlinCharArray *)elements __attribute__((swift_name("of(elements:)")));
 @end
 
 @protocol KotlinIterator

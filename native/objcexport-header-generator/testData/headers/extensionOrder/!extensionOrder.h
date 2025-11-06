@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class KotlinLongArray, KotlinLongIterator;
+@class KotlinLongArray, KotlinLongArrayCompanion, KotlinLongIterator;
 
 @protocol KotlinIterator;
 
@@ -28,6 +28,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)arrayWithSize:(int32_t)size init:(Long *(^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly, getter=companion) KotlinLongArrayCompanion *companion __attribute__((swift_name("companion")));
 - (int64_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (KotlinLongIterator *)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(int64_t)value __attribute__((swift_name("set(index:value:)")));
@@ -37,6 +38,26 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
 @property (class, readonly) KotlinLongArray * _Nullable la __attribute__((swift_name("la")));
+@end
+
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinLongArray.Companion")))
+@interface KotlinLongArrayCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KotlinLongArrayCompanion *shared __attribute__((swift_name("shared")));
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+- (KotlinLongArray *)ofElements:(KotlinLongArray *)elements __attribute__((swift_name("of(elements:)")));
 @end
 
 @protocol KotlinIterator

@@ -34,7 +34,7 @@ class ForwardedClassesAndProtocolsDependenciesTest(
             val i: Array<Int>
             """,
             protocols = setOf("KotlinIterator"),
-            classes = setOf("KotlinArray")
+            classes = setOf("KotlinArray", "KotlinArrayCompanion")
         )
     }
 
@@ -45,7 +45,7 @@ class ForwardedClassesAndProtocolsDependenciesTest(
             val i: StringBuilder
             """,
             protocols = setOf("KotlinCharSequence", "KotlinAppendable", "KotlinIterator"),
-            classes = setOf("KotlinStringBuilder", "KotlinCharArray", "KotlinCharIterator")
+            classes = setOf("KotlinStringBuilder", "KotlinCharArray", "KotlinCharArrayCompanion", "KotlinCharIterator")
         )
     }
 

@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class AbstractCollectionSerializer<Element, Collection, Builder>, AbstractPolymorphicSerializer<T>, ClassSerialDescriptorBuilder, CompositeDecoderCompanion, KotlinArray<T>, KotlinBooleanCompanion, KotlinByteArray, KotlinByteCompanion, KotlinByteIterator, KotlinCharCompanion, KotlinDoubleCompanion, KotlinDurationCompanion, KotlinDurationUnit, KotlinEnum<E>, KotlinEnumCompanion, KotlinException, KotlinFloatCompanion, KotlinIllegalArgumentException, KotlinIntArray, KotlinIntCompanion, KotlinIntIterator, KotlinKTypeProjection, KotlinKTypeProjectionCompanion, KotlinKVariance, KotlinLongCompanion, KotlinNothing, KotlinRuntimeException, KotlinShortCompanion, KotlinStringCompanion, KotlinThrowable, KotlinUByteCompanion, KotlinUIntCompanion, KotlinULongCompanion, KotlinUShortCompanion, KotlinUnit, LongAsStringSerializer, PolymorphicKind, PolymorphicKindOPEN, PolymorphicKindSEALED, PolymorphicModuleBuilder<__contravariant Base_>, PrimitiveKind, PrimitiveKindBOOLEAN, PrimitiveKindBYTE, PrimitiveKindCHAR, PrimitiveKindDOUBLE, PrimitiveKindFLOAT, PrimitiveKindINT, PrimitiveKindLONG, PrimitiveKindSHORT, PrimitiveKindSTRING, SerialKind, SerialKindCONTEXTUAL, SerialKindENUM, SerializationException, SerializersModule, SerializersModuleBuilder, StructureKind, StructureKindCLASS, StructureKindLIST, StructureKindMAP, StructureKindOBJECT, TaggedDecoder<Tag>, TaggedEncoder<Tag>;
+@class AbstractCollectionSerializer<Element, Collection, Builder>, AbstractPolymorphicSerializer<T>, ClassSerialDescriptorBuilder, CompositeDecoderCompanion, KotlinArray<T>, KotlinArrayCompanion, KotlinBooleanCompanion, KotlinByteArray, KotlinByteArrayCompanion, KotlinByteCompanion, KotlinByteIterator, KotlinCharCompanion, KotlinDoubleCompanion, KotlinDurationCompanion, KotlinDurationUnit, KotlinEnum<E>, KotlinEnumCompanion, KotlinException, KotlinFloatCompanion, KotlinIllegalArgumentException, KotlinIntArray, KotlinIntArrayCompanion, KotlinIntCompanion, KotlinIntIterator, KotlinKTypeProjection, KotlinKTypeProjectionCompanion, KotlinKVariance, KotlinLongCompanion, KotlinNothing, KotlinRuntimeException, KotlinShortCompanion, KotlinStringCompanion, KotlinThrowable, KotlinUByteCompanion, KotlinUIntCompanion, KotlinULongCompanion, KotlinUShortCompanion, KotlinUnit, LongAsStringSerializer, PolymorphicKind, PolymorphicKindOPEN, PolymorphicKindSEALED, PolymorphicModuleBuilder<__contravariant Base_>, PrimitiveKind, PrimitiveKindBOOLEAN, PrimitiveKindBYTE, PrimitiveKindCHAR, PrimitiveKindDOUBLE, PrimitiveKindFLOAT, PrimitiveKindINT, PrimitiveKindLONG, PrimitiveKindSHORT, PrimitiveKindSTRING, SerialKind, SerialKindCONTEXTUAL, SerialKindENUM, SerializationException, SerializersModule, SerializersModuleBuilder, StructureKind, StructureKindCLASS, StructureKindLIST, StructureKindMAP, StructureKindOBJECT, TaggedDecoder<Tag>, TaggedEncoder<Tag>;
 
 @protocol BinaryFormat, CompositeDecoder, CompositeEncoder, Decoder, DeserializationStrategy, Encoder, KSerializer, KotlinAnnotation, KotlinComparable, KotlinIterator, KotlinKAnnotatedElement, KotlinKClass, KotlinKClassifier, KotlinKDeclarationContainer, KotlinKType, KotlinMapEntry, SerialDescriptor, SerialFormat, SerializationStrategy, SerializersModuleCollector, StringFormat;
 
@@ -1781,6 +1781,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)arrayWithSize:(int32_t)size init:(Byte *(^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly, getter=companion) KotlinByteArrayCompanion *companion __attribute__((swift_name("companion")));
 - (int8_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (KotlinByteIterator *)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(int8_t)value __attribute__((swift_name("set(index:value:)")));
@@ -1821,6 +1822,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)arrayWithSize:(int32_t)size init:(T _Nullable (^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly, getter=companion) KotlinArrayCompanion *companion __attribute__((swift_name("companion")));
 - (T _Nullable)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(T _Nullable)value __attribute__((swift_name("set(index:value:)")));
@@ -1907,10 +1909,31 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)arrayWithSize:(int32_t)size init:(Int *(^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly, getter=companion) KotlinIntArrayCompanion *companion __attribute__((swift_name("companion")));
 - (int32_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (KotlinIntIterator *)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(int32_t)value __attribute__((swift_name("set(index:value:)")));
 @property (readonly) int32_t size __attribute__((swift_name("size")));
+@end
+
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinByteArray.Companion")))
+@interface KotlinByteArrayCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KotlinByteArrayCompanion *shared __attribute__((swift_name("shared")));
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+- (KotlinByteArray *)ofElements:(KotlinByteArray *)elements __attribute__((swift_name("of(elements:)")));
 @end
 
 @interface KotlinByteIterator : Base <KotlinIterator>
@@ -1918,6 +1941,25 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (Byte *)next __attribute__((swift_name("next()")));
 - (int8_t)nextByte __attribute__((swift_name("nextByte()")));
+@end
+
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+__attribute__((objc_subclassing_restricted))
+@interface KotlinArrayCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KotlinArrayCompanion *shared __attribute__((swift_name("shared")));
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+- (KotlinArray<id> *)ofElements:(KotlinArray<id> *)elements __attribute__((swift_name("of(elements:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1943,6 +1985,26 @@ __attribute__((objc_subclassing_restricted))
 - (NSString *)description __attribute__((swift_name("description()")));
 @property (readonly) id<KotlinKType> _Nullable type __attribute__((swift_name("type")));
 @property (readonly) KotlinKVariance * _Nullable variance __attribute__((swift_name("variance")));
+@end
+
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinIntArray.Companion")))
+@interface KotlinIntArrayCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KotlinIntArrayCompanion *shared __attribute__((swift_name("shared")));
+
+/**
+ * @note annotations
+ *   kotlin.ExperimentalStdlibApi
+*/
+- (KotlinIntArray *)ofElements:(KotlinIntArray *)elements __attribute__((swift_name("of(elements:)")));
 @end
 
 @interface KotlinIntIterator : Base <KotlinIterator>
