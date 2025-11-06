@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isOptionalAnnotationClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.isMetadataCompilation
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -24,7 +26,7 @@ object FirOptionalExpectationTypeChecker : FirResolvedTypeRefChecker(MppCheckerK
         val classSymbol = typeRef.coneType.toRegularClassSymbol() ?: return
         if (!classSymbol.isOptionalAnnotationClass(context.session)) return
 
-        if (!context.session.moduleData.isCommon) {
+        if (!context.session.isMetadataCompilation && !context.session.moduleData.isCommon) {
             reporter.reportOn(source, FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE)
         }
 

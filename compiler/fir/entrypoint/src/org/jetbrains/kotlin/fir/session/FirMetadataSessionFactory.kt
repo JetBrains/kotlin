@@ -239,6 +239,9 @@ abstract class AbstractFirMetadataSessionFactory(
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
         get() = false
 
+    override val isFactoryForMetadataCompilation: Boolean
+        get() = true
+
     // ==================================== Common parts ====================================
 
     // ==================================== Utilities ====================================

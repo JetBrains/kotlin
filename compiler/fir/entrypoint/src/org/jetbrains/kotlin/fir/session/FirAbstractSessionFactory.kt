@@ -89,7 +89,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
         extensionRegistrars: List<FirExtensionRegistrar>
     ): FirSession {
         return FirCliSession(FirSession.Kind.Library).apply session@{
-            registerCliCompilerAndCommonComponents(languageVersionSettings)
+            registerCliCompilerAndCommonComponents(languageVersionSettings, isFactoryForMetadataCompilation)
             registerLibrarySessionComponents(context)
 
             val kotlinScopeProvider = createKotlinScopeProviderForLibrarySession()
@@ -156,7 +156,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 it.bindSession(this)
             }
 
-            registerCliCompilerAndCommonComponents(languageVersionSettings)
+            registerCliCompilerAndCommonComponents(languageVersionSettings, isFactoryForMetadataCompilation)
             registerLibrarySessionComponents(context)
             register(FirBuiltinSyntheticFunctionInterfaceProvider::class, sharedLibrarySession.syntheticFunctionInterfacesSymbolProvider)
 
@@ -236,7 +236,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             moduleData.bindSession(this@session)
             registerModuleData(moduleData)
             if (configuration.dumpInferenceLogs) register(FirInferenceLogger::class, FirInferenceLogger())
-            registerCliCompilerAndCommonComponents(languageVersionSettings)
+            registerCliCompilerAndCommonComponents(languageVersionSettings, isFactoryForMetadataCompilation)
             registerResolveComponents(
                 configuration.lookupTracker,
                 configuration.enumWhenTracker,
@@ -338,6 +338,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
     abstract fun FirSession.registerSourceSessionComponents(c: CONTEXT)
 
     protected abstract val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
+    protected abstract val isFactoryForMetadataCompilation: Boolean
 
     // ==================================== Common parts ====================================
 

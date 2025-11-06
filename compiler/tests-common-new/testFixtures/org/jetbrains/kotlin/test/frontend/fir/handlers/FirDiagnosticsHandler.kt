@@ -773,16 +773,23 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 @OptIn(SessionConfiguration::class)
 private fun FirSession.turnOnMetadataCompilationAnalysisFlag(body: () -> Unit) {
     val originalLv = languageVersionSettings
+    val oldIsMetadataCompilation = isMetadataCompilation
     val lv = object : LanguageVersionSettings by originalLv {
         override fun <T> getFlag(flag: AnalysisFlag<T>): T =
             @Suppress("UNCHECKED_CAST") // UNCHECKED_CAST is fine because metadataCompilation is boolean flag
             if (flag == AnalysisFlags.metadataCompilation) true as T else originalLv.getFlag(flag)
     }
-    register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(lv))
+    register(
+        FirLanguageSettingsComponent::class,
+        FirLanguageSettingsComponent(lv, isMetadataCompilation = true)
+    )
     try {
         body()
     } finally {
-        register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(originalLv))
+        register(
+            FirLanguageSettingsComponent::class,
+            FirLanguageSettingsComponent(originalLv, oldIsMetadataCompilation)
+        )
     }
 }
 

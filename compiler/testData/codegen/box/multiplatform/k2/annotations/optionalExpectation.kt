@@ -33,8 +33,8 @@ import a.B
 
 const val s = "OK"
 
-@<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>B<!>(s)
-@<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>B.C<!>(true)
+@B(s)
+@B.C(true)
 fun ok() = "OK"
 
 expect annotation class C()

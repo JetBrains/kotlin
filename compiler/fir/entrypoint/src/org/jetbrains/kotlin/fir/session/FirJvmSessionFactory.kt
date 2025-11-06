@@ -213,6 +213,9 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
         get() = true
 
+    override val isFactoryForMetadataCompilation: Boolean
+        get() = false
+
     // ==================================== Common parts ====================================
 
     // ==================================== Utilities ====================================

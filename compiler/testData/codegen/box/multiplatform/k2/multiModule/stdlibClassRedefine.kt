@@ -8,7 +8,7 @@
 
 package kotlin
 
-@<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE{METADATA}!>kotlin.jvm.JvmInline<!>
+@kotlin.jvm.JvmInline
 value class UIntArray(val delegate: IntArray) : Collection<UInt> {
     override val size: Int
         get() = delegate.size

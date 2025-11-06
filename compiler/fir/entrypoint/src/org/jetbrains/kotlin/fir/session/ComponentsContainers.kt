@@ -70,8 +70,8 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 // -------------------------- Required components --------------------------
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersionSettings) {
-    register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(languageVersionSettings))
+fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersionSettings, isMetadataCompilation: Boolean) {
+    register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(languageVersionSettings, isMetadataCompilation))
     register(TypeComponents::class, TypeComponents(this))
     register(InferenceComponents::class, InferenceComponents(this))
 
@@ -111,10 +111,10 @@ val firCachesFactoryForCliMode: FirCachesFactory
     get() = FirThreadUnsafeCachesFactory
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerCliCompilerAndCommonComponents(languageVersionSettings: LanguageVersionSettings) {
+fun FirSession.registerCliCompilerAndCommonComponents(languageVersionSettings: LanguageVersionSettings, isMetadataCompilation: Boolean) {
     register(FirCachesFactory::class, firCachesFactoryForCliMode)
 
-    registerCommonComponents(languageVersionSettings)
+    registerCommonComponents(languageVersionSettings, isMetadataCompilation)
 
     diagnosticRendererFactory.registerFactories(listOf(CliDiagnostics.getRendererFactory()))
 

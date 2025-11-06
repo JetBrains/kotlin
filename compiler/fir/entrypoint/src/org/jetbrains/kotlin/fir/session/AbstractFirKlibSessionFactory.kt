@@ -153,4 +153,7 @@ abstract class AbstractFirKlibSessionFactory<CONTEXT> : FirAbstractSessionFactor
 
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
         get() = true
+
+    override val isFactoryForMetadataCompilation: Boolean
+        get() = false
 }
