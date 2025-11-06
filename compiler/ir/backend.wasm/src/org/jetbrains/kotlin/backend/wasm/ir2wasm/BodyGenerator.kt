@@ -1178,6 +1178,28 @@ class BodyGenerator(
                 body.buildSuspend(contTagId, location)
             }
 
+            wasmSymbols.resumeWithIntrinsic -> {
+                val wasmContinuation = functionContext.referenceLocal(0)
+
+                val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
+                val kotlinAnyRefType = WasmRefNullType(WasmHeapType.Type(kotlinAny))
+                val zeroArgContType = WasmHeapType.Type(wasmFileCodegenContext.referenceContType(1))
+                val blockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContType)))
+                wasmFileCodegenContext.defineContBlockType(blockType)
+                val blockTypeSymbol = wasmFileCodegenContext.referenceContBlockType(blockType)
+                body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
+                    // result: Result<T>
+                    body.buildGetLocal(functionContext.referenceLocal(1), location)
+                    body.buildGetLocal(wasmContinuation, location)
+                    val contHandle = body.createNewContHandle(contTagId, idx)
+                    body.buildResume(zeroArgContType, contHandle, location)
+                    body.buildDrop(location)
+                    body.buildRefNull(WasmHeapType.Simple.None, location)
+                    body.buildInstr(WasmOp.RETURN, location)
+                }
+                body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildPair), location)
+            }
+
             in wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub -> {
                 when (function.symbol) {
                     wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0] -> {
@@ -1212,8 +1234,7 @@ class BodyGenerator(
                             body.buildResume(WasmHeapType.Type(contType), contHandle, location)
                             body.buildInstr(WasmOp.RETURN, location)
                         }
-                        body.buildDrop(location)
-//                        TODO("wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0]")
+                        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.setWasmContinuation), location)
                     }
                     else -> TODO("startCoroutineUninterceptedOrReturnIntrinsicsStub 1-2")
                 }
@@ -1675,5 +1696,6 @@ class BodyGenerator(
         private val exceptionTagId = WasmSymbol(0)
         private val contTagId = WasmSymbol(1)
         private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx(0)
+        val contBoxContFieldId = WasmSymbol(4)
     }
 }

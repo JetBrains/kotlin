@@ -53,27 +53,32 @@ internal class WasmContinuation<in T>(
 ) : Continuation<T> {
 
     override fun resumeWith(result: Result<T>) {
-        if (isResumed) throw Throwable()
+        if (isResumed) error("Continuation is already resumed")
         wasmContBox?.let { contBox ->
-            val (newCont, wasmContBox) = resumeWithImpl(contBox.cont, result)
-            newCont.wasmContBox = wasmContBox
             isResumed = true
-        } ?: throw Throwable()
+            val (newCont, wasmContBox) = resumeWithImpl(contBox.cont, result) ?: return
+            newCont.wasmContBox = wasmContBox
+        } ?: error("Continuation is not set")
     }
 }
 
-@Suppress("UNUSED")
-internal fun setWasmContinuation(receiver: WasmContinuation<*>, wasmContinuation: contref1) {
-    receiver.wasmContBox = WasmContinuationBox(wasmContinuation)
+internal fun resumeWithImpl(wasmContinuation: contref1, result: Result<*>): Pair<WasmContinuation<*>, WasmContinuationBox>? {
+    return resumeWithIntrinsic(wasmContinuation, result)
 }
 
-internal fun resumeWithImpl(wasmContinuation: contref1, result: Result<*>): Pair<WasmContinuation<*>, WasmContinuationBox> {
-    return resumeWithIntrinsic(wasmContinuation, result)
+@Suppress("UNUSED")
+internal fun buildPair(a: Any?, b: contref1) = Pair(a as WasmContinuation<*>, WasmContinuationBox(b))
+
+@Suppress("UNUSED")
+internal fun setWasmContinuation(a: Any?, b: contref1): Any? {
+    val cont = a as WasmContinuation<*>
+    cont.wasmContBox = WasmContinuationBox(b)
+    return cont
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun resumeWithIntrinsic(wasmContinuation: contref1, result: Result<*>): Pair<WasmContinuation<*>, WasmContinuationBox> {
+internal fun resumeWithIntrinsic(wasmContinuation: contref1, result: Result<*>): Pair<WasmContinuation<*>, WasmContinuationBox>? {
     implementedAsIntrinsic
 }
 
