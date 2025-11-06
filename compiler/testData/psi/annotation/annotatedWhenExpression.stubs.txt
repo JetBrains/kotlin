@@ -1,0 +1,29 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotatedWhenExpressionKt]]
+  facadeFqName: AnnotatedWhenExpressionKt
+  partSimpleName: "AnnotatedWhenExpressionKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
+    VALUE_PARAMETER_LIST
+  CLASS[classId=/Ann, fqName=Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[]]
+    MODIFIER_LIST[annotation]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
+              REFERENCE_EXPRESSION[referencedName=SOURCE]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Target]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+              REFERENCE_EXPRESSION[referencedName=EXPRESSION]

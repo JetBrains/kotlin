@@ -2580,6 +2580,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("annotatedWhenExpression.kt")
+      public void testAnnotatedWhenExpression() {
+        runTest("compiler/testData/diagnostics/tests/annotations/annotatedWhenExpression.kt");
+      }
+
+      @Test
       @TestMetadata("annotationArgumentOnCompanionResolvesToInner.kt")
       public void testAnnotationArgumentOnCompanionResolvesToInner() {
         runTest("compiler/testData/diagnostics/tests/annotations/annotationArgumentOnCompanionResolvesToInner.kt");

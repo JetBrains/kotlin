@@ -1408,6 +1408,12 @@ public class DecompiledJsTextTestGenerated extends AbstractDecompiledJsTextTest 
     }
 
     @Test
+    @TestMetadata("annotatedWhenExpression.kt")
+    public void testAnnotatedWhenExpression() {
+      runTest("compiler/testData/psi/annotation/annotatedWhenExpression.kt");
+    }
+
+    @Test
     @TestMetadata("Annotations.kt")
     public void testAnnotations() {
       runTest("compiler/testData/psi/annotation/Annotations.kt");

@@ -1188,6 +1188,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/annotation/annotatedTypeConstraint.kt");
       }
 
+      @TestMetadata("annotatedWhenExpression.kt")
+      public void testAnnotatedWhenExpression() {
+        runTest("compiler/testData/psi/annotation/annotatedWhenExpression.kt");
+      }
+
       @TestMetadata("Annotations.kt")
       public void testAnnotations() {
         runTest("compiler/testData/psi/annotation/Annotations.kt");

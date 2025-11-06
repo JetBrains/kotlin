@@ -1,0 +1,54 @@
+Ann.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Ann, fqName=Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+          valueArguments: [ value -> AnnotationRetention.SOURCE ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=Retention]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          valueArguments: [ allowedTargets -> [AnnotationTarget.EXPRESSION] ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=Target]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Ann]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+
+
+AnnotatedWhenExpressionKt.class:
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotatedWhenExpressionKt]]
+    facadeFqName: AnnotatedWhenExpressionKt
+    partSimpleName: "AnnotatedWhenExpressionKt"
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
+      origin: Facade(className=AnnotatedWhenExpressionKt, jvmClassName=null)
+      MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Unit]
