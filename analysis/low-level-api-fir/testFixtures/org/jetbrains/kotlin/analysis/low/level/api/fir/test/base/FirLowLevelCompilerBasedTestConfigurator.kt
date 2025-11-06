@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiIdeModeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -46,7 +47,7 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
     override fun createModules(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
-        project: Project
+        project: Project,
     ): KtTestModuleStructure {
         val mainModules = moduleStructure.modules.map { testModule ->
             val files = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
@@ -58,8 +59,10 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
                     TestModuleKind.ScriptSource,
                 )
             } else {
+                val scopeFileSystemItems = files + files.mapNotNull { it.parent }
+                val baseSearchScope = GlobalSearchScope.filesScope(project, scopeFileSystemItems.map { it.virtualFile })
                 Pair(
-                    KaSourceModuleByCompilerConfiguration(project, testModule, files, testServices),
+                    KaSourceModuleByCompilerConfiguration(project, testModule, files, testServices, baseSearchScope),
                     TestModuleKind.Source,
                 )
             }
