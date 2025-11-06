@@ -13,7 +13,7 @@ expect value class Some(val s: String)
 // FILE: intermediate.kt
 
 @kotlin.jvm.JvmInline
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT{JS}!>actual<!> value class Some(val s: String)
+actual value class Some(val s: String)
 
 // MODULE: platform()()(intermediate)
 // FILE: platform.kt
