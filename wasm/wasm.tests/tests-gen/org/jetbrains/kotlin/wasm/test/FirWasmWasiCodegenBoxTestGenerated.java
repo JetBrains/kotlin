@@ -12889,6 +12889,12 @@ public class FirWasmWasiCodegenBoxTestGenerated extends AbstractFirWasmWasiCodeg
       }
 
       @Test
+      @TestMetadata("simple3.kt")
+      public void testSimple3() {
+        runTest("compiler/testData/codegen/box/coroutines/simple3.kt");
+      }
+
+      @Test
       @TestMetadata("simpleException.kt")
       public void testSimpleException() {
         runTest("compiler/testData/codegen/box/coroutines/simpleException.kt");
