@@ -753,7 +753,7 @@ internal class DokkaSymbolVisitor(
         extra = PropertyContainer.withAll(
             valueParameterSymbol.additionalExtras()?.toSourceSetDependent()?.toAdditionalModifiers(),
             getDokkaAnnotationsFrom(valueParameterSymbol)?.toSourceSetDependent()?.toAnnotations(),
-            valueParameterSymbol.getDefaultValue()?.let { DefaultValue(it.toSourceSetDependent()) }
+            getDefaultValue(valueParameterSymbol, index)?.let { DefaultValue(it.toSourceSetDependent()) }
         )
     )
 
@@ -788,9 +788,29 @@ internal class DokkaSymbolVisitor(
         )
     )
 
-    private fun KaValueParameterSymbol.getDefaultValue(): Expression? =
-        if (origin == KaSymbolOrigin.SOURCE) (psi as? KtParameter)?.defaultValue?.toDefaultValueExpression()
-        else null
+    /**
+     * TODO https://youtrack.jetbrains.com/issue/KT-61254/Analysis-API-Add-a-default-value-for-KtValueParameterSymbol
+     * Retrieves the default value of a value parameter, if available from sources.
+     * It may be `null` if the owner function comes from a non-source file.
+     */
+    private fun KaSession.getDefaultValue(symbol: KaValueParameterSymbol, parameterIndex: Int): Expression? {
+        fun KaValueParameterSymbol.getExplicitDefaultValue(): Expression? =
+            if (origin == KaSymbolOrigin.SOURCE) (psi as? KtParameter)?.defaultValue?.toDefaultValueExpression() else null
+        fun KaDeclarationSymbol.findMatchingParameterWithDefaultValue(): Expression? =
+            (this as? KaFunctionSymbol)?.valueParameters?.getOrNull(parameterIndex)?.getExplicitDefaultValue()
+
+        val result = symbol.getExplicitDefaultValue()
+        return if (result != null)
+            result
+        else { // in the case of fake declarations
+            val ownerFunction = symbol.containingDeclaration as? KaNamedFunctionSymbol ?: return null
+
+            //overriding function
+            if (ownerFunction.isOverride)
+                ownerFunction.allOverriddenSymbols.firstNotNullOfOrNull { it.findMatchingParameterWithDefaultValue() }
+            else null
+        }
+    }
 
     @OptIn(KaExperimentalApi::class) // due to `KaPropertySymbol.initializer`
     private fun KaPropertySymbol.getDefaultValue(): Expression? =
