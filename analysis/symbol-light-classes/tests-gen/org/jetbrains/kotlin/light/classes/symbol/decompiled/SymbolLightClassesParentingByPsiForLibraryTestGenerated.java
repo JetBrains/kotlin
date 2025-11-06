@@ -637,6 +637,12 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
       }
 
       @Test
+      @TestMetadata("mutableMapOfCollectionOfStringToV.kt")
+      public void testMutableMapOfCollectionOfStringToV() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapOfCollectionOfStringToV.kt");
+      }
+
+      @Test
       @TestMetadata("mutableMapOfStringToV.kt")
       public void testMutableMapOfStringToV() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapOfStringToV.kt");

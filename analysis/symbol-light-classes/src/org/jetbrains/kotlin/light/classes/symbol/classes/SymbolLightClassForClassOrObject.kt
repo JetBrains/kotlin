@@ -159,7 +159,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 .filter { it.classId != StandardClassIds.Any }
                 .toList()
 
-            val filteredDeclarations = processMemberScopeMappedSpecialSignatures(visibleDeclarations, classSymbol, allSupertypes, result)
+            val filteredDeclarations = processMemberScopeMappedSpecialSignatures(visibleDeclarations, allSupertypes, result)
 
             val suppressStatic = classKind() == KaClassKind.COMPANION_OBJECT
             createMethods(this@SymbolLightClassForClassOrObject, filteredDeclarations, result, suppressStatic = suppressStatic)
@@ -180,7 +180,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     private fun KaSession.processMemberScopeMappedSpecialSignatures(
         visibleDeclarations: Sequence<KaCallableSymbol>,
-        classSymbol: KaNamedClassSymbol,
         allSupertypes: List<KaClassType>,
         result: MutableList<PsiMethod>
     ): Sequence<KaCallableSymbol> {
@@ -261,7 +260,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             javaCollectionPsiClass.typeParameters.zip(closestMappedSupertype.typeArguments).forEach { (javaParam, kotlinArg) ->
                 val psiType = kotlinArg.type?.asPsiType(useSitePosition = this@SymbolLightClassForClassOrObject, allowErrorTypes = true)
                     ?: return@forEach
-                put(javaParam, psiType)
+                put(javaParam, psiType.replaceWildcardsWithExtendsBoundsRecursively())
             }
         }
 
@@ -397,6 +396,47 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     private fun PsiType.isTypeParameter(): Boolean =
         this is PsiClassType && this.resolve() is PsiTypeParameter
 
+//    private fun PsiType.containsWildcardRecursively(): Boolean {
+//        return when (this) {
+//            is PsiWildcardType -> true
+//            is PsiClassType -> parameters.any { it.containsWildcardRecursively() }
+//            is PsiArrayType -> componentType.containsWildcardRecursively()
+//            else -> false
+//        }
+//    }
+
+    private fun PsiType.replaceWildcardsWithExtendsBoundsRecursively(): PsiType {
+        return when (this) {
+            is PsiWildcardType -> {
+                if (isExtends) {
+                    extendsBound.replaceWildcardsWithExtendsBoundsRecursively()
+                } else if (isSuper) {
+                    this
+                } else {
+                    PsiType.getJavaLangObject(manager, resolveScope)
+                }
+            }
+            is PsiClassType -> {
+                val resolvedClass = resolve() ?: return this
+                val newTypeArguments = parameters.map { it.replaceWildcardsWithExtendsBoundsRecursively() }
+                if (newTypeArguments == parameters.toList()) {
+                    this
+                } else {
+                    PsiElementFactory.getInstance(manager.project).createType(resolvedClass, *newTypeArguments.toTypedArray())
+                }
+            }
+            is PsiArrayType -> {
+                val newComponentType = componentType.replaceWildcardsWithExtendsBoundsRecursively()
+                if (newComponentType == componentType) {
+                    this
+                } else {
+                    newComponentType.createArrayType()
+                }
+            }
+            else -> this
+        }
+    }
+
     private fun javaUtilMapMethodWithSpecialSignature(method: PsiMethod, substitutor: PsiSubstitutor): KtLightMethodWrapper? {
         val typeParameters = substitutor.substitutionMap.keys
         val kOriginal = substitutor.substitutionMap[typeParameters.find { it.name == "K" }] ?: return null
@@ -411,12 +451,14 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         val k = substitutor.substitute(kOriginal) ?: kOriginal
         val v = substitutor.substitute(vOriginal) ?: vOriginal
 
+        val newK = k.replaceWildcardsWithExtendsBoundsRecursively()
+
         val signature = when (method.name) {
             "get" -> {
-                if (k.isTypeParameter()) return null
+                if (newK.isTypeParameter()) return null
 
                 MethodSignature(
-                    parameterTypes = listOf(k),
+                    parameterTypes = listOf(newK),
                     returnType = v
                 )
             }
@@ -428,10 +470,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             )*/
 
             "containsKey" -> {
-                if (k.isTypeParameter()) return null
+                if (newK.isTypeParameter()) return null
+//                if (k.containsWildcardRecursively()) return null
 
                 MethodSignature(
-                    parameterTypes = listOf(k),
+                    parameterTypes = listOf(newK),
                     returnType = PsiTypes.booleanType()
                 )
             }
@@ -446,12 +489,12 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             }
 
             "remove" -> {
-                if (k.isTypeParameter()) return null
+                if (newK.isTypeParameter()) return null
 
                 // only `remove(Object)` pair (i.e. `remove(K)`) is needed
                 if (method.parameterList.parametersCount == 1) {
                     MethodSignature(
-                        parameterTypes = listOf(k),
+                        parameterTypes = listOf(newK),
                         returnType = v
                     )
                 } else {
