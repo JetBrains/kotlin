@@ -175,7 +175,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(kotlinStdlib())
+                implementation(kotlinStdlib())
             }
         }
         val annotationsCommonMain by creating {
@@ -202,7 +202,7 @@ kotlin {
             kotlin.srcDir("junit/src/main/kotlin")
             resources.srcDir("junit/src/main/resources")
             dependencies {
-                api("junit:junit:4.13.2")
+                implementation("junit:junit:4.13.2")
             }
         }
         val jvmJUnitTest by getting {
@@ -230,7 +230,7 @@ kotlin {
             kotlin.srcDir("testng/src/main/kotlin")
             resources.srcDir("testng/src/main/resources")
             dependencies {
-                api("org.testng:testng:7.0.0")
+                implementation("org.testng:testng:7.0.0")
             }
         }
         val jvmTestNGTest by getting {
