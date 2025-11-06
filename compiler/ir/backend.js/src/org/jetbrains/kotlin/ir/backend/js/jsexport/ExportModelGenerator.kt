@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.jsexport
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.tsexport.Exportability
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
