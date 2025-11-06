@@ -289,13 +289,13 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             .toSet()
 
         val javaMethods = javaCollectionPsiClass.methods
-            // seems like there is no need to override default methods
+            .filterNot { it.name == "equals" || it.name == "hashCode" || it.name == "toString" }
             .filterNot { it.hasModifierProperty(PsiModifier.DEFAULT) }
 
         val candidateMethods = javaMethods.flatMap { method -> methodWrappers(method, javaCollectionPsiClass, kotlinNames, substitutor) }
-
         // TODO why PsiSubstitutor.EMPTY?
         val existingSignatures = result.map { it.getSignature(PsiSubstitutor.EMPTY) }.toSet()
+
         result += candidateMethods.filter { candidateMethod ->
             candidateMethod.getSignature(PsiSubstitutor.EMPTY) !in existingSignatures
         }
@@ -328,17 +328,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     ): List<PsiMethod> {
         val methodName = method.name
 
-        // TODO map method qualified name to Kotlin's FQN to avoid short name clashes (ex. `size`)
-        //  or just remove `StandardNames.FqNames.atomic` names from the original map
         javaGetterNameToKotlinGetterName[methodName]?.let { kotlinName ->
-            // TODO workaround for a (FIR?) bug
-            //listAbstractClass.kt:
-            //  abstract class CList2<Elem> : List<Elem> by emptyList<Elem>()
-            //  delegated property "size" has a getter -> we generate it normally as "getSize"
-            //
-            //mutableListClass.kt:
-            //  abstract class CMutableList2<Elem> : MutableList<Elem> by mutableListOf<Elem>()
-            //  delegated property "size" has NO getter -> we try to generate it as "abstract" from `methodWrappers` -> red code
             val hasImplementation = methodName == "size" && withClassSymbol { classSymbol ->
                 classSymbol.delegatedMemberScope.callables(Name.identifier("size")).toList().isNotEmpty()
             }
@@ -348,24 +338,19 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             return listOf(finalBridgeForJava, abstractKotlinGetter)
         }
 
-        // TODO filter out all overrides?
-        if (methodName == "equals" || methodName == "hashCode" || methodName == "toString") {
-            return emptyList()
-        }
-
         if (!method.isInKotlinInterface(javaCollectionPsiClass, kotlinNames)) {
             // compiler generates stub override
             return listOf(method.openBridge(substitutor))
         }
 
-        // TODO
         return methodsWithSpecializedSignature(method, javaCollectionPsiClass, substitutor)
     }
 
     private fun PsiMethod.isInKotlinInterface(javaCollectionPsiClass: PsiClass, kotlinNames: Set<Name>): Boolean {
         if (javaCollectionPsiClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP_ENTRY) {
-            when (name) {
-                "getValue", "getKey" -> return true
+            if (name == "getKey" || name == "getValue") {
+                // from properties "key" / "value"
+                return true
             }
         }
         return Name.identifier(name) in kotlinNames
