@@ -10,13 +10,13 @@ plugins {
 }
 
 dependencies {
-    api(kotlinStdlib())
+    implementation(kotlinStdlib())
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
-    api(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
+    implemen(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
 
-    api(platform(libs.junit.bom))
+    implementation(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
     compileOnly(libs.junit.jupiter.params)
 }
