@@ -109,10 +109,6 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                     // `DIAGNOSTIC_IN_TESTDATA_PATTERN` fails to correctly strip diagnostics from this file
                     return@compareBase true
                 }
-                "compiler/testData/diagnostics/tests/visibility/checkCastToInaccessibleInterface.kt" -> {
-                    // KT-73138
-                    return@compareBase true
-                }
             }
 
             val notEditedText = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()

@@ -18262,6 +18262,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("argumentPlaceholderVsClassName.kt")
+      public void testArgumentPlaceholderVsClassName() {
+        runTest("compiler/testData/diagnostics/tests/inference/argumentPlaceholderVsClassName.kt");
+      }
+
+      @Test
       @TestMetadata("argumentTypeMismatchWrongNumberOfTypeArgs.kt")
       public void testArgumentTypeMismatchWrongNumberOfTypeArgs() {
         runTest("compiler/testData/diagnostics/tests/inference/argumentTypeMismatchWrongNumberOfTypeArgs.kt");
