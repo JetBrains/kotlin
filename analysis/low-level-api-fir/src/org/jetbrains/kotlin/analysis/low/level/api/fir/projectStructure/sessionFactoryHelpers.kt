@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentScopeProvider
@@ -103,12 +102,8 @@ private fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensi
 }
 
 @SessionConfiguration
-internal fun LLFirSession.registerCompilerPluginServices(
-    project: Project,
-    module: KaSourceModule
-) {
-    val projectWithDependenciesScope = KaResolutionScopeProvider.getInstance(project).getResolutionScope(module)
-    val annotationsResolver = project.createAnnotationResolver(projectWithDependenciesScope)
+internal fun LLFirSession.registerCompilerPluginServices(project: Project, resolutionScope: GlobalSearchScope) {
+    val annotationsResolver = project.createAnnotationResolver(resolutionScope)
 
     // We need FirRegisteredPluginAnnotations and FirPredicateBasedProvider during extensions' registration process
     register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
