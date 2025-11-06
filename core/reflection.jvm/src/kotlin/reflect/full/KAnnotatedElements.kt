@@ -79,6 +79,7 @@ private object Java8RepeatableContainerLoader {
         val repeatableClass = try {
             Class.forName("java.lang.annotation.Repeatable") as Class<out Annotation>
         } catch (e: ClassNotFoundException) {
+            throw IllegalStateException("Found case of missing Java Repeatable!", e)
             return Cache(null, null)
         }
 

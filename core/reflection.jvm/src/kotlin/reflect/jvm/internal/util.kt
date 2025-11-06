@@ -205,10 +205,13 @@ fun List<Annotation>.unwrapKotlinRepeatableAnnotations(): List<Annotation> =
     if (any { it.annotationClass.java.simpleName == JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME })
         flatMap {
             val klass = it.annotationClass
-            if (isKotlinRepeatableContainer(klass))
+            if (isKotlinRepeatableContainer(klass)) {
+                if (!isJavaRepeatableContainer(klass)) {
+                    throw IllegalStateException("Found Kotlin container that is not Java repeatable: $klass.")
+                }
                 @Suppress("UNCHECKED_CAST")
                 (klass.java.getDeclaredMethod("value").invoke(it) as Array<out Annotation>).asList()
-            else
+            } else
                 listOf(it)
         }
     else
