@@ -107,7 +107,6 @@ kotlin {
         }
     }
     jvm {
-        withJava()
         compilations {
             val compileOnlyDeclarations by creating {
                 compileTaskProvider.configure {
@@ -353,7 +352,7 @@ kotlin {
         }
         commonTest {
             dependencies {
-                api(kotlinTest())
+                implementation(kotlinTest())
             }
             kotlin {
                 srcDir("common/test")
@@ -366,7 +365,7 @@ kotlin {
         val jvmMain by getting {
             project.configurations.getByName("jvmMainCompileOnly")
             dependencies {
-                api("org.jetbrains:annotations:13.0")
+                implementation("org.jetbrains:annotations:13.0")
             }
             val jvmSrcDirs = listOfNotNull(
                 "jvm/src",
@@ -390,7 +389,7 @@ kotlin {
                 optIn("kotlin.io.path.ExperimentalPathApi")
             }
             dependencies {
-                api(kotlinTest("junit"))
+                implementation(kotlinTest("junit"))
             }
             kotlin.srcDir("jvm/test")
             kotlin.srcDir("jdk7/test")
@@ -399,14 +398,14 @@ kotlin {
 
         val jvmLongRunningTest by getting {
             dependencies {
-                api(kotlinTest("junit"))
+                implementation(kotlinTest("junit"))
             }
             kotlin.srcDir("jvm/testLongRunning")
         }
 
         val jvmRecursiveDeletionTest by getting {
             dependencies {
-                api(kotlinTest("junit"))
+                implementation(kotlinTest("junit"))
             }
             kotlin.srcDir("jdk7/recursiveDeletionTest")
         }
