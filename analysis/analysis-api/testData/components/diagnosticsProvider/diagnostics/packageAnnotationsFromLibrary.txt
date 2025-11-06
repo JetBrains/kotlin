@@ -1,4 +1,2 @@
 Diagnostics from file:
-  for PSI element of type KtNameReferenceExpression at (35,14-18)
-    ARGUMENT_TYPE_MISMATCH      text ranges: [(122,126)]
-      PSI: KtNameReferenceExpression at (35,14-18)
+  <NO DIAGNOSTICS>

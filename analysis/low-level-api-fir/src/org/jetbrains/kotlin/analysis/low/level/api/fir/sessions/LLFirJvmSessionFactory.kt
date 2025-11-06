@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
+import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
@@ -119,7 +120,8 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
-            val firJavaFacade = LLFirJavaFacadeForBinaries(session, project.createJavaClassFinder(scope))
+            val javaClassFinder = project.createJavaClassFinder(scope, session.javaAnnotationProvider)
+            val firJavaFacade = LLFirJavaFacadeForBinaries(session, javaClassFinder)
             val deserializedSymbolProviderFactory = LLLibrarySymbolProviderFactory.fromSettings(project)
             addAll(
                 deserializedSymbolProviderFactory.createJvmLibrarySymbolProvider(

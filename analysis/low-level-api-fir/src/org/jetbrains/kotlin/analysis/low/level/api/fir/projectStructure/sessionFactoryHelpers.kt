@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLCheckersFac
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirNonEmptyResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
+import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirJavaAnnotationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLJumpingPhaseComputationSessionForLocalClassesProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
+import org.jetbrains.kotlin.fir.java.FirJavaAnnotationProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationSessionForLocalClassesProvider
@@ -38,7 +40,11 @@ import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSetti
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 
 @SessionConfiguration
-internal fun LLFirSession.registerIdeComponents(project: Project, languageVersionSettings: LanguageVersionSettings) {
+internal fun LLFirSession.registerIdeComponents(
+    project: Project,
+    languageVersionSettings: LanguageVersionSettings,
+    resolutionScope: GlobalSearchScope
+) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory(project))
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
     register(FirExceptionHandler::class, LLFirExceptionHandler)
@@ -55,6 +61,7 @@ internal fun LLFirSession.registerIdeComponents(project: Project, languageVersio
 
     @OptIn(FirImplementationDetail::class)
     register(FirJumpingPhaseComputationSessionForLocalClassesProvider::class, LLJumpingPhaseComputationSessionForLocalClassesProvider)
+    register(FirJavaAnnotationProvider::class, LLFirJavaAnnotationProvider(project, resolutionScope))
 }
 
 @SessionConfiguration
