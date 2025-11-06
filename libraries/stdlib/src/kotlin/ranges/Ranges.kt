@@ -14,7 +14,7 @@ package kotlin.ranges
 private open class ComparableRange<T : Comparable<T>>(
     override val start: T,
     override val endInclusive: T
-) : ClosedRange<T> {
+) : ClosedRange<T>, Serializable {
 
     override fun equals(other: Any?): Boolean {
         return other is ComparableRange<*> && (isEmpty() && other.isEmpty() ||
@@ -42,7 +42,7 @@ public operator fun <T : Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = Com
 private open class ComparableOpenEndRange<T : Comparable<T>>(
     override val start: T,
     override val endExclusive: T
-) : OpenEndRange<T> {
+) : OpenEndRange<T>, Serializable {
 
     override fun equals(other: Any?): Boolean {
         return other is ComparableOpenEndRange<*> && (isEmpty() && other.isEmpty() ||
@@ -94,7 +94,7 @@ public interface ClosedFloatingPointRange<T : Comparable<T>> : ClosedRange<T> {
 private class ClosedDoubleRange(
     start: Double,
     endInclusive: Double
-) : ClosedFloatingPointRange<Double> {
+) : ClosedFloatingPointRange<Double>, Serializable {
     private val _start = start
     private val _endInclusive = endInclusive
     override val start: Double get() = _start
@@ -134,7 +134,7 @@ public operator fun Double.rangeTo(that: Double): ClosedFloatingPointRange<Doubl
 private class OpenEndDoubleRange(
     start: Double,
     endExclusive: Double
-) : OpenEndRange<Double> {
+) : OpenEndRange<Double>, Serializable {
     private val _start = start
     private val _endExclusive = endExclusive
     override val start: Double get() = _start
@@ -216,7 +216,7 @@ public operator fun Float.rangeTo(that: Float): ClosedFloatingPointRange<Float> 
 private class OpenEndFloatRange(
     start: Float,
     endExclusive: Float
-) : OpenEndRange<Float> {
+) : OpenEndRange<Float>, Serializable {
     private val _start = start
     private val _endExclusive = endExclusive
     override val start: Float get() = _start
