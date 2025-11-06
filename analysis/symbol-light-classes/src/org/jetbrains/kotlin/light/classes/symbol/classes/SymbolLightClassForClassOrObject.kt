@@ -196,20 +196,13 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 is KaNamedFunctionSymbol -> {
                     val overriddenSymbol = findOverriddenCollectionSymbol(callableSymbol)
                     val javaMethod = mapMethodWithSpecialSignatureToJavaMethod(overriddenSymbol, allSupertypes)
-                    if (javaMethod == null) {
+                    if (overriddenSymbol == null || javaMethod == null) {
                         // Default case: method is not mapped to Java collections method - just create the delegate
                         filteredDeclarations += callableSymbol
                         continue
                     }
 
-                    //val javaReturnType = (javaMethod.returnType as? PsiClassReferenceType)?.resolve()
-                    //val defaultType = classSymbol.defaultType
-                    //supertype.symbol.typeParameters
-                    //val supertypeDefaultType = supertype.symbol?.defaultType
-                    //val allOverriddenSymbols = callableSymbol.allOverriddenSymbols
-
-                    // TODO what about indirect inheritance?
-                    val supertype = classSymbol.superTypes.firstOrNull() as? KaClassType
+                    val supertype = allSupertypes.find { it.classId == overriddenSymbol.callableId?.classId }
                     val typeParameters = javaMethod.containingClass?.typeParameters.orEmpty()
                     val typeArguments = supertype?.typeArguments.orEmpty()
                     val typeParameterMapping = buildMap<PsiTypeParameter, PsiType> {
@@ -607,14 +600,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                         return@forEach
                     }
 
-                    //val javaReturnType = (javaMethod.returnType as? PsiClassReferenceType)?.resolve()
-                    //val defaultType = classSymbol.defaultType
-                    //supertype.symbol.typeParameters
-                    //val supertypeDefaultType = supertype.symbol?.defaultType
-                    //val allOverriddenSymbols = callableSymbol.allOverriddenSymbols
-
-                    // TODO what about indirect inheritance?
-                    val supertype = classSymbol.superTypes.firstOrNull() as? KaClassType
+                    val supertype = allSupertypes.find { it.classId == original.callableId?.classId }
                     val typeParameters = javaMethod.containingClass?.typeParameters.orEmpty()
                     val typeArguments = supertype?.typeArguments.orEmpty()
                     val typeParameterMapping = buildMap<PsiTypeParameter, PsiType> {

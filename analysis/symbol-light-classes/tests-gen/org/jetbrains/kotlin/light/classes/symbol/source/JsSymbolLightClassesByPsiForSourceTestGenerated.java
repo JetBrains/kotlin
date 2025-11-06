@@ -499,6 +499,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("mutableCollectionInterfaceOfString.kt")
+      public void testMutableCollectionInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableCollectionInterfaceOfString.kt");
+      }
+
+      @Test
       @TestMetadata("mutableCollectionOfString.kt")
       public void testMutableCollectionOfString() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableCollectionOfString.kt");
@@ -514,6 +520,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("mutableIterableInterface.kt")
       public void testMutableIterableInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIterableInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableIterableInterfaceOfString.kt")
+      public void testMutableIterableInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIterableInterfaceOfString.kt");
       }
 
       @Test
@@ -535,6 +547,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("mutableIteratorInterfaceOfString.kt")
+      public void testMutableIteratorInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIteratorInterfaceOfString.kt");
+      }
+
+      @Test
       @TestMetadata("mutableIteratorOfString.kt")
       public void testMutableIteratorOfString() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIteratorOfString.kt");
@@ -550,6 +568,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("mutableListInterface.kt")
       public void testMutableListInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableListInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableListInterfaceOfString.kt")
+      public void testMutableListInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableListInterfaceOfString.kt");
       }
 
       @Test
@@ -577,6 +601,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("mutableMapEntryInterfaceOfString.kt")
+      public void testMutableMapEntryInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapEntryInterfaceOfString.kt");
+      }
+
+      @Test
       @TestMetadata("mutableMapEntryOfAToB.kt")
       public void testMutableMapEntryOfAToB() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapEntryOfAToB.kt");
@@ -592,6 +622,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("mutableMapInterface.kt")
       public void testMutableMapInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableMapInterfaceOfString.kt")
+      public void testMutableMapInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapInterfaceOfString.kt");
       }
 
       @Test
@@ -616,6 +652,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("mutableSetInterface.kt")
       public void testMutableSetInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableSetInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableSetInterfaceOfString.kt")
+      public void testMutableSetInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableSetInterfaceOfString.kt");
       }
 
       @Test
@@ -653,6 +695,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("collectionInterfaceOfString.kt")
+      public void testCollectionInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/collectionInterfaceOfString.kt");
+      }
+
+      @Test
       @TestMetadata("iterableAbstractClass.kt")
       public void testIterableAbstractClass() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iterableAbstractClass.kt");
@@ -668,6 +716,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("iterableInterface.kt")
       public void testIterableInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iterableInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("iterableInterfaceOfString.kt")
+      public void testIterableInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iterableInterfaceOfString.kt");
       }
 
       @Test
@@ -689,6 +743,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("iteratorInterfaceOfString.kt")
+      public void testIteratorInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iteratorInterfaceOfString.kt");
+      }
+
+      @Test
       @TestMetadata("listAbstractClass.kt")
       public void testListAbstractClass() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/listAbstractClass.kt");
@@ -704,6 +764,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("listInterface.kt")
       public void testListInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/listInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("listInterfaceOfString.kt")
+      public void testListInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/listInterfaceOfString.kt");
       }
 
       @Test
@@ -755,9 +821,21 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("mapEntryInterfaceOfString.kt")
+      public void testMapEntryInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapEntryInterfaceOfString.kt");
+      }
+
+      @Test
       @TestMetadata("mapInterface.kt")
       public void testMapInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mapInterfaceOfString.kt")
+      public void testMapInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapInterfaceOfString.kt");
       }
 
       @Test
@@ -776,6 +854,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("setInterface.kt")
       public void testSetInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/setInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("setInterfaceOfString.kt")
+      public void testSetInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/setInterfaceOfString.kt");
       }
     }
   }
