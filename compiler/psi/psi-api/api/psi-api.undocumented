@@ -643,7 +643,6 @@ org.jetbrains.kotlin.psi.KtFunctionType
 org.jetbrains.kotlin.psi.KtFunctionType:RETURN_TYPE_SEPARATOR
 org.jetbrains.kotlin.psi.KtFunctionType:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtFunctionType:constructor(KotlinFunctionTypeStub)
-org.jetbrains.kotlin.psi.KtFunctionType:getContextReceiverList()
 org.jetbrains.kotlin.psi.KtFunctionType:getContextReceiversTypeReferences()
 org.jetbrains.kotlin.psi.KtFunctionType:getParameterList()
 org.jetbrains.kotlin.psi.KtFunctionType:getParameters()
