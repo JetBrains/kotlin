@@ -136,7 +136,7 @@ abstract class SwiftImportExtension @Inject constructor(
     ) {
         spmDependencies.add(
             SwiftPMDependency.Local(
-                path = path.path,
+                path = path,
                 packageName = path.name,
                 products = products.map { SwiftPMDependency.Product(it) },
                 cinteropClangModules = importedModules.map {
@@ -158,7 +158,7 @@ abstract class SwiftImportExtension @Inject constructor(
     ) {
         spmDependencies.add(
             SwiftPMDependency.Local(
-                path = path.path,
+                path = path,
                 packageName = path.name,
                 products = products,
                 cinteropClangModules = importedModules.map {
@@ -242,7 +242,7 @@ sealed class SwiftPMDependency(
     }
 
     class Local internal constructor(
-        val path: String,
+        val path: File,
         products: List<Product>,
         cinteropClangModules: List<CinteropClangModule>,
         packageName: String,
