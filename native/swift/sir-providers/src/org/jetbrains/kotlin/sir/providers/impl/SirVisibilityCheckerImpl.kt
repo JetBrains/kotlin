@@ -48,7 +48,7 @@ public class SirVisibilityCheckerImpl(
     override fun KaDeclarationSymbol.sirAvailability(): SirAvailability = sirSession.withSessions {
         val ktSymbol = this@sirAvailability
 
-        if (ktSymbol is KaClassSymbol && ktSymbol.classId?.let { sirSession.customTypeTranslator.isClassIdSupported(it) } == true) {
+        if (ktSymbol is KaClassSymbol && ktSymbol.classId?.let { sirSession.isClassIdSupported(it) } == true) {
             return@withSessions SirAvailability.Available(SirVisibility.PUBLIC)
         }
 
@@ -85,7 +85,7 @@ public class SirVisibilityCheckerImpl(
             return@withSessions SirAvailability.Unavailable("Callables with context parameters are not supported yet")
         }
         if (ktSymbol is KaNamedFunctionSymbol && ktSymbol.allParameters.map { it.returnType.fullyExpandedType }
-                .filter { type -> !type.isFunctionType && !sirSession.customTypeTranslator.isTypeSupported(type) }
+                .filter { type -> !type.isFunctionType && !sirSession.isTypeSupported(type) }
                 .any { hasUnboundTypeParameters(it) }
         ) {
             return@withSessions SirAvailability.Unavailable("Callables with parameters unbound generic types are not supported yet")

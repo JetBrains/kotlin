@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.*
+import org.jetbrains.kotlin.sir.providers.toBridge
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
@@ -59,7 +60,7 @@ internal fun bridgeAsNSCollectionElement(type: SirType): Bridge = when (val brid
 
 context(session: SirSession)
 private fun bridgeNominalType(type: SirNominalType): Bridge {
-    val customTypeBridgeWrapper = with(session.customTypeTranslator) { type.toBridge() }
+    val customTypeBridgeWrapper = type.toBridge()
     if (customTypeBridgeWrapper != null) return customTypeBridgeWrapper.bridge
     return when (val subtype = type.typeDeclaration) {
         SirSwiftModule.unsafeMutableRawPointer -> AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)

@@ -78,8 +78,8 @@ public class SirTypeProviderImpl(
                         kaType.isNothingType -> SirNominalType(SirSwiftModule.never)
                         kaType.isAnyType -> ctx.anyRepresentativeType()
 
-                        sirSession.customTypeTranslator.isClassIdSupported(kaType.classId) -> {
-                            with(sirSession.customTypeTranslator) { kaType.toSirTypeBridge(ctx)?.bridge?.swiftType }
+                        sirSession.isClassIdSupported(kaType.classId) -> {
+                            kaType.toSirTypeBridge(ctx)?.bridge?.swiftType
                         }
 
                         else -> {

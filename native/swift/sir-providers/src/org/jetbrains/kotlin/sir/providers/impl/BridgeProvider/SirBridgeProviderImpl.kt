@@ -32,7 +32,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         swiftFqName: String,
         swiftSymbolName: String,
     ): SirTypeBindingBridge? {
-        if (kotlinFqName != null && session.customTypeTranslator.isFqNameSupported(kotlinFqName)) return null
+        if (kotlinFqName != null && session.isFqNameSupported(kotlinFqName)) return null
 
         val annotationName = "kotlin.native.internal.objc.BindClassToObjCName"
         val kotlinFqName = kotlinFqName?.asString() ?: ""

@@ -38,7 +38,8 @@ public interface SirSession :
     SirTypeProvider,
     SirVisibilityChecker,
     SirChildrenProvider,
-    SirBridgeProvider
+    SirBridgeProvider,
+    SirCustomTypeTranslator
 {
     public val sirSession: SirSession
         get() = this
@@ -108,6 +109,20 @@ public interface SirSession :
 
     override fun Sequence<KaDeclarationSymbol>.extractDeclarations(): Sequence<SirDeclaration> =
         with(childrenProvider) { this@extractDeclarations.extractDeclarations() }
+
+    override fun isFqNameSupported(fqName: FqName): Boolean =
+        with(customTypeTranslator) { isFqNameSupported(fqName) }
+
+    public fun isClassIdSupported(classId: ClassId): Boolean = isFqNameSupported(classId.asSingleFqName())
+
+    public fun isTypeSupported(type: KaType): Boolean = type is KaClassType && isClassIdSupported(type.classId)
+
+    context(kaSession: KaSession)
+    override fun KaUsualClassType.toSirTypeBridge(ctx: TypeTranslationCtx): SirCustomTypeTranslator.BridgeWrapper? =
+        with(customTypeTranslator) { toSirTypeBridge(ctx) }
+
+    override fun SirNominalType.toBridge(): SirCustomTypeTranslator.BridgeWrapper? =
+        with(customTypeTranslator) { toBridge() }
 
     override fun generateFunctionBridge(
         baseBridgeName: String,
@@ -377,12 +392,16 @@ public fun KaType.translateType(
     processTypeImports: (List<SirImport>) -> Unit,
 ): SirType = with(sir) { translateType(ka, position, reportErrorType, reportUnsupportedType, processTypeImports) }
 
+context(kaSession: KaSession, sir: SirSession)
+public fun KaUsualClassType.toSirTypeBridge(ctx: TypeTranslationCtx): SirCustomTypeTranslator.BridgeWrapper? =
+    with(sir) { toSirTypeBridge(ctx) }
+
+context(sir: SirSession)
+public fun SirNominalType.toBridge(): SirCustomTypeTranslator.BridgeWrapper? =
+    with(sir) { toBridge() }
+
 public interface SirCustomTypeTranslator {
     public fun isFqNameSupported(fqName: FqName): Boolean
-
-    public fun isClassIdSupported(classId: ClassId): Boolean = isFqNameSupported(classId.asSingleFqName())
-
-    public fun isTypeSupported(type: KaType): Boolean = type is KaClassType && isClassIdSupported(type.classId)
 
     context(kaSession: KaSession)
     public fun KaUsualClassType.toSirTypeBridge(ctx: TypeTranslationCtx): BridgeWrapper?
