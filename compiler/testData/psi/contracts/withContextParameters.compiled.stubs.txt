@@ -7,7 +7,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithContextParametersKt]]
     contract: [ effect:Returns(WILDCARD) -> param(0) != null ]
     origin: Facade(className=WithContextParametersKt, jvmClassName=null)
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
             NULLABLE_TYPE

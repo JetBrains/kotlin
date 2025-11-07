@@ -101,8 +101,8 @@ internal object KtStubBasedElementTypes {
         provider.valueParameterType
 
     @JvmField
-    val CONTEXT_RECEIVER_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtContextReceiverList>, KtContextReceiverList> =
-        provider.contextReceiverListType
+    val CONTEXT_PARAMETER_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtContextReceiverList>, KtContextReceiverList> =
+        provider.contextParameterListType
 
     @JvmField
     val CONTEXT_RECEIVER: KtStubElementType<out KotlinContextReceiverStub, KtContextReceiver> =

@@ -17,7 +17,7 @@ KtFile: differentTypes.kt
       PsiWhiteSpace('\n    ')
       FUN
         MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -99,7 +99,7 @@ KtFile: differentTypes.kt
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -184,7 +184,7 @@ KtFile: differentTypes.kt
       PsiWhiteSpace('\n\n    ')
       FUN
         MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -278,7 +278,7 @@ KtFile: differentTypes.kt
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -375,7 +375,7 @@ KtFile: differentTypes.kt
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -404,7 +404,7 @@ KtFile: differentTypes.kt
                   PsiElement(suspend)('suspend')
                 PsiWhiteSpace(' ')
                 FUNCTION_TYPE
-                  CONTEXT_RECEIVER_LIST
+                  CONTEXT_PARAMETER_LIST
                     PsiElement(context)('context')
                     PsiElement(LPAR)('(')
                     CONTEXT_RECEIVER
@@ -435,7 +435,7 @@ KtFile: differentTypes.kt
                   PsiElement(suspend)('suspend')
                 PsiWhiteSpace(' ')
                 FUNCTION_TYPE
-                  CONTEXT_RECEIVER_LIST
+                  CONTEXT_PARAMETER_LIST
                     PsiElement(context)('context')
                     PsiElement(LPAR)('(')
                     CONTEXT_RECEIVER
@@ -474,7 +474,7 @@ KtFile: differentTypes.kt
       PsiWhiteSpace('\n\n    ')
       FUN
         MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -503,7 +503,7 @@ KtFile: differentTypes.kt
                   PsiElement(suspend)('suspend')
                 PsiWhiteSpace(' ')
                 FUNCTION_TYPE
-                  CONTEXT_RECEIVER_LIST
+                  CONTEXT_PARAMETER_LIST
                     PsiElement(context)('context')
                     PsiElement(LPAR)('(')
                     CONTEXT_RECEIVER
@@ -534,7 +534,7 @@ KtFile: differentTypes.kt
                   PsiElement(suspend)('suspend')
                 PsiWhiteSpace(' ')
                 FUNCTION_TYPE
-                  CONTEXT_RECEIVER_LIST
+                  CONTEXT_PARAMETER_LIST
                     PsiElement(context)('context')
                     PsiElement(LPAR)('(')
                     CONTEXT_RECEIVER
@@ -586,7 +586,7 @@ KtFile: differentTypes.kt
             PsiElement(suspend)('suspend')
           PsiWhiteSpace(' ')
           FUNCTION_TYPE
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               PsiElement(context)('context')
               PsiElement(LPAR)('(')
               CONTEXT_RECEIVER

@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsKt]]
   IMPORT_LIST
   FUN[fqName=simple, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=simple]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=param1]
           TYPE_REFERENCE
             USER_TYPE
@@ -22,7 +22,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsKt]]
     VALUE_PARAMETER_LIST
   FUN[fqName=annotated, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=annotated]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter1]
           TYPE_REFERENCE
             MODIFIER_LIST[]
@@ -57,7 +57,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsKt]]
     VALUE_PARAMETER_LIST
   FUN[fqName=annotatedParameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=annotatedParameter]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]

@@ -49,7 +49,7 @@ FILE[kind=File[packageFqName=<root>]]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=isContextError, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=isContextError]
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE

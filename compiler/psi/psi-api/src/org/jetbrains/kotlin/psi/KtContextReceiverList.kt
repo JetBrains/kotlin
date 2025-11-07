@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 class KtContextReceiverList : KtElementImplStub<KotlinPlaceHolderStub<KtContextReceiverList>> {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinPlaceHolderStub<KtContextReceiverList>) : super(stub, KtStubBasedElementTypes.CONTEXT_RECEIVER_LIST)
+    constructor(stub: KotlinPlaceHolderStub<KtContextReceiverList>) : super(stub, KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST)
 
     override fun <R : Any?, D : Any?> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitContextReceiverList(this, data)

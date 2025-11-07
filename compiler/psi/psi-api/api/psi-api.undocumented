@@ -20,7 +20,7 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.classLiteralExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.classType
 org.jetbrains.kotlin.KotlinElementTypeProvider.collectionLiteralExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.constructorCalleeType
-org.jetbrains.kotlin.KotlinElementTypeProvider.contextReceiverListType
+org.jetbrains.kotlin.KotlinElementTypeProvider.contextParameterListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.contextReceiverType
 org.jetbrains.kotlin.KotlinElementTypeProvider.contractEffectListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.contractEffectType
@@ -2106,8 +2106,8 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CLASS_INITIALIZER
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CLASS_LITERAL_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:COLLECTION_LITERAL_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONSTRUCTOR_CALLEE
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTEXT_PARAMETER_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTEXT_RECEIVER
-org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTEXT_RECEIVER_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTRACT_EFFECT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTRACT_EFFECT_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:DELEGATED_SUPER_TYPE_ENTRY

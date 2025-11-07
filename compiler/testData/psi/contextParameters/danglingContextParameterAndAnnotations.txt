@@ -80,7 +80,7 @@ KtFile: danglingContextParameterAndAnnotations.kt
                 PsiElement(CLOSING_QUOTE)('"')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n    ')
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           VALUE_PARAMETER
@@ -216,7 +216,7 @@ KtFile: danglingContextParameterAndAnnotations.kt
                     PsiElement(CLOSING_QUOTE)('"')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n        ')
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               PsiElement(context)('context')
               PsiElement(LPAR)('(')
               VALUE_PARAMETER
@@ -335,7 +335,7 @@ KtFile: danglingContextParameterAndAnnotations.kt
             PsiElement(CLOSING_QUOTE)('"')
         PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
-    CONTEXT_RECEIVER_LIST
+    CONTEXT_PARAMETER_LIST
       PsiElement(context)('context')
       PsiElement(LPAR)('(')
       VALUE_PARAMETER

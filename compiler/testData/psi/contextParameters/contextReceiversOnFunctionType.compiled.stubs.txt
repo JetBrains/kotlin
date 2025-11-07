@@ -49,7 +49,7 @@ ContextReceiversOnFunctionTypeKt.class:
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=g]
           TYPE_REFERENCE
             FUNCTION_TYPE
-              CONTEXT_RECEIVER_LIST
+              CONTEXT_PARAMETER_LIST
                 CONTEXT_RECEIVER[label=null]
                   TYPE_REFERENCE
                     USER_TYPE
@@ -95,7 +95,7 @@ ContextReceiversOnFunctionTypeKt.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=MyAnnotation]
             FUNCTION_TYPE
-              CONTEXT_RECEIVER_LIST
+              CONTEXT_PARAMETER_LIST
                 CONTEXT_RECEIVER[label=null]
                   TYPE_REFERENCE
                     USER_TYPE
@@ -135,7 +135,7 @@ ContextReceiversOnFunctionTypeKt.class:
           TYPE_REFERENCE
             NULLABLE_TYPE
               FUNCTION_TYPE
-                CONTEXT_RECEIVER_LIST
+                CONTEXT_PARAMETER_LIST
                   CONTEXT_RECEIVER[label=null]
                     TYPE_REFERENCE
                       USER_TYPE
@@ -175,7 +175,7 @@ ContextReceiversOnFunctionTypeKt.class:
           TYPE_REFERENCE
             MODIFIER_LIST[suspend]
             FUNCTION_TYPE
-              CONTEXT_RECEIVER_LIST
+              CONTEXT_PARAMETER_LIST
                 CONTEXT_RECEIVER[label=null]
                   TYPE_REFERENCE
                     USER_TYPE

@@ -48,7 +48,7 @@ KtFile: contextParametersOnCallableMembers.kt
       PsiWhiteSpace('\n    ')
       FUN
         MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -108,7 +108,7 @@ KtFile: contextParametersOnCallableMembers.kt
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -171,7 +171,7 @@ KtFile: contextParametersOnCallableMembers.kt
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
             VALUE_PARAMETER

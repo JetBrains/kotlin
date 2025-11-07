@@ -166,7 +166,7 @@ abstract class CallableClsStubBuilder(
 
         val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextReceiverList>(
             modifierListStub,
-            KtStubElementTypes.CONTEXT_RECEIVER_LIST,
+            KtStubElementTypes.CONTEXT_PARAMETER_LIST,
         )
 
         typeStubBuilder.createValueParameterStubs(

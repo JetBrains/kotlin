@@ -48,7 +48,7 @@ ContextReceiversCallableMembers.class:
       CLASS_BODY
         PROPERTY[fqName=ContextReceiversCallableMembers.property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=property]
           MODIFIER_LIST[private final]
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               CONTEXT_RECEIVER[label=null]
                 TYPE_REFERENCE
                   USER_TYPE
@@ -78,7 +78,7 @@ ContextReceiversCallableMembers.class:
             VALUE_PARAMETER_LIST
         PROPERTY[fqName=ContextReceiversCallableMembers.propertyWithSetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=propertyWithSetter]
           MODIFIER_LIST[private final]
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               CONTEXT_RECEIVER[label=null]
                 TYPE_REFERENCE
                   USER_TYPE
@@ -117,7 +117,7 @@ ContextReceiversCallableMembers.class:
                     REFERENCE_EXPRESSION[referencedName=Int]
         FUN[fqName=ContextReceiversCallableMembers.function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=function]
           MODIFIER_LIST[private final]
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               CONTEXT_RECEIVER[label=null]
                 TYPE_REFERENCE
                   USER_TYPE

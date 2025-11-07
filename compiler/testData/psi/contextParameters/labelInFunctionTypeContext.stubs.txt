@@ -7,7 +7,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=LabelInFunctionTypeContextKt
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
         TYPE_REFERENCE
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             CONTEXT_RECEIVER[label=null]
               TYPE_REFERENCE
                 USER_TYPE

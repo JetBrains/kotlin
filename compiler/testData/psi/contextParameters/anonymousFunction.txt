@@ -14,7 +14,7 @@ KtFile: anonymousFunction.kt
     PsiWhiteSpace(' ')
     FUN
       MODIFIER_LIST
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           VALUE_PARAMETER
@@ -47,7 +47,7 @@ KtFile: anonymousFunction.kt
     PsiWhiteSpace(' ')
     FUN
       MODIFIER_LIST
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           VALUE_PARAMETER
@@ -94,7 +94,7 @@ KtFile: anonymousFunction.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Ann')
         PsiWhiteSpace(' ')
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           VALUE_PARAMETER
@@ -155,7 +155,7 @@ KtFile: anonymousFunction.kt
         CALL_EXPRESSION
           FUN
             MODIFIER_LIST
-              CONTEXT_RECEIVER_LIST
+              CONTEXT_PARAMETER_LIST
                 PsiElement(context)('context')
                 PsiElement(LPAR)('(')
                 VALUE_PARAMETER
@@ -224,7 +224,7 @@ KtFile: anonymousFunction.kt
           CALL_EXPRESSION
             FUN
               MODIFIER_LIST
-                CONTEXT_RECEIVER_LIST
+                CONTEXT_PARAMETER_LIST
                   PsiElement(context)('context')
                   PsiElement(LPAR)('(')
                   VALUE_PARAMETER
@@ -288,7 +288,7 @@ KtFile: anonymousFunction.kt
             CALL_EXPRESSION
               FUN
                 MODIFIER_LIST
-                  CONTEXT_RECEIVER_LIST
+                  CONTEXT_PARAMETER_LIST
                     PsiElement(context)('context')
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -357,7 +357,7 @@ KtFile: anonymousFunction.kt
           CALL_EXPRESSION
             FUN
               MODIFIER_LIST
-                CONTEXT_RECEIVER_LIST
+                CONTEXT_PARAMETER_LIST
                   PsiElement(context)('context')
                   PsiElement(LPAR)('(')
                   VALUE_PARAMETER
@@ -435,7 +435,7 @@ KtFile: anonymousFunction.kt
             CALL_EXPRESSION
               FUN
                 MODIFIER_LIST
-                  CONTEXT_RECEIVER_LIST
+                  CONTEXT_PARAMETER_LIST
                     PsiElement(context)('context')
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -497,7 +497,7 @@ KtFile: anonymousFunction.kt
           CALL_EXPRESSION
             FUN
               MODIFIER_LIST
-                CONTEXT_RECEIVER_LIST
+                CONTEXT_PARAMETER_LIST
                   PsiElement(context)('context')
                   PsiElement(LPAR)('(')
                   VALUE_PARAMETER
@@ -578,7 +578,7 @@ KtFile: anonymousFunction.kt
         PsiWhiteSpace(' ')
         FUN
           MODIFIER_LIST
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               PsiElement(context)('context')
               PsiElement(LPAR)('(')
               VALUE_PARAMETER

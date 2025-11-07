@@ -16,7 +16,7 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
   CLASS[classId=/ContextReceiversOnClass, fqName=ContextReceiversOnClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ContextReceiversOnClass, superNames=[]]
     MODIFIER_LIST[private open]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         CONTEXT_RECEIVER[label=null]
           TYPE_REFERENCE
             USER_TYPE

@@ -6,7 +6,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
   PROPERTY[fqName=foo, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     origin: Facade(className=TrailingCommaKt, jvmClassName=null)
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
@@ -24,7 +24,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
   PROPERTY[fqName=foo, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     origin: Facade(className=TrailingCommaKt, jvmClassName=null)
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
@@ -48,7 +48,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     origin: Facade(className=TrailingCommaKt, jvmClassName=null)
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
@@ -64,7 +64,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     origin: Facade(className=TrailingCommaKt, jvmClassName=null)
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE

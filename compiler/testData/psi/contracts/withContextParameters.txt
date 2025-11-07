@@ -39,7 +39,7 @@ KtFile: withContextParameters.kt
   PsiWhiteSpace('\n\n')
   FUN
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER

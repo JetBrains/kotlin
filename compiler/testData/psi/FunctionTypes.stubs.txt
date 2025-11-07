@@ -99,7 +99,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
   TYPEALIAS[classId=/f, fqName=f, isTopLevel=true, name=f]
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
@@ -126,7 +126,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
   TYPEALIAS[classId=/f, fqName=f, isTopLevel=true, name=f]
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
@@ -146,7 +146,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
   TYPEALIAS[classId=/f, fqName=f, isTopLevel=true, name=f]
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
@@ -162,7 +162,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
   TYPEALIAS[classId=/f, fqName=f, isTopLevel=true, name=f]
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
@@ -317,7 +317,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
   TYPEALIAS[classId=/f, fqName=f, isTopLevel=true, name=f]
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
@@ -333,7 +333,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
   TYPEALIAS[classId=/f, fqName=f, isTopLevel=true, name=f]
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
@@ -359,7 +359,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
   TYPEALIAS[classId=/f, fqName=f, isTopLevel=true, name=f]
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
@@ -427,7 +427,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
@@ -450,7 +450,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
@@ -483,7 +483,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE

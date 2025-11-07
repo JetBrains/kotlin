@@ -7,7 +7,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersAndAnnotati
     MODIFIER_LIST[annotation]
   FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
           TYPE_REFERENCE
             USER_TYPE
@@ -25,7 +25,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersAndAnnotati
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Ann]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
           TYPE_REFERENCE
             USER_TYPE
@@ -33,7 +33,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersAndAnnotati
     VALUE_PARAMETER_LIST
   FUN[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo3]
     MODIFIER_LIST[public private inline]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
           TYPE_REFERENCE
             USER_TYPE
@@ -43,7 +43,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersAndAnnotati
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Ann]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
           TYPE_REFERENCE
             USER_TYPE
@@ -51,7 +51,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersAndAnnotati
     VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo1]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
           TYPE_REFERENCE
             USER_TYPE
@@ -73,7 +73,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersAndAnnotati
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Ann]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
           TYPE_REFERENCE
             USER_TYPE
@@ -85,7 +85,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersAndAnnotati
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo3]
     MODIFIER_LIST[public private inline]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
           TYPE_REFERENCE
             USER_TYPE
@@ -95,7 +95,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersAndAnnotati
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Ann]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
           TYPE_REFERENCE
             USER_TYPE

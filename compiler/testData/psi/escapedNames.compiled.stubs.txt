@@ -202,7 +202,7 @@ Top Level Class.class:
                               REFERENCE_EXPRESSION[referencedName=Type Parameter]
         FUN[fqName=one two.three four.Top Level Class.member function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=member function]
           MODIFIER_LIST[public final]
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=context name]
                 TYPE_REFERENCE
                   USER_TYPE

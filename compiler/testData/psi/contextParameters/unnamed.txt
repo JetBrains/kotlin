@@ -5,7 +5,7 @@ KtFile: unnamed.kt
     <empty list>
   FUN
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -50,7 +50,7 @@ KtFile: unnamed.kt
   PsiWhiteSpace('\n\n')
   PROPERTY
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
