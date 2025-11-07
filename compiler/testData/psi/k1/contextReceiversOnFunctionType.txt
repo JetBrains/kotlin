@@ -43,7 +43,7 @@ KtFile: contextReceiversOnFunctionType.kt
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
           FUNCTION_TYPE
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               PsiElement(context)('context')
               PsiElement(LPAR)('(')
               CONTEXT_RECEIVER
@@ -108,7 +108,7 @@ KtFile: contextReceiversOnFunctionType.kt
                       PsiElement(IDENTIFIER)('MyAnnotation')
           PsiWhiteSpace(' ')
           FUNCTION_TYPE
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               PsiElement(context)('context')
               PsiElement(LPAR)('(')
               CONTEXT_RECEIVER
@@ -166,7 +166,7 @@ KtFile: contextReceiversOnFunctionType.kt
           NULLABLE_TYPE
             PsiElement(LPAR)('(')
             FUNCTION_TYPE
-              CONTEXT_RECEIVER_LIST
+              CONTEXT_PARAMETER_LIST
                 PsiElement(context)('context')
                 PsiElement(LPAR)('(')
                 CONTEXT_RECEIVER
@@ -227,7 +227,7 @@ KtFile: contextReceiversOnFunctionType.kt
             PsiElement(suspend)('suspend')
           PsiWhiteSpace(' ')
           FUNCTION_TYPE
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               PsiElement(context)('context')
               PsiElement(LPAR)('(')
               CONTEXT_RECEIVER

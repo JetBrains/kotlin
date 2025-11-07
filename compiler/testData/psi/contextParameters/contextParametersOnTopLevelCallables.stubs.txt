@@ -11,7 +11,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersOnTopLevelC
   CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
   FUN[fqName=function, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=function]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
             USER_TYPE
@@ -34,7 +34,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersOnTopLevelC
         REFERENCE_EXPRESSION[referencedName=Int]
   PROPERTY[fqName=property, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=property]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
             USER_TYPE
@@ -58,7 +58,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersOnTopLevelC
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=propertyWithSetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
             USER_TYPE

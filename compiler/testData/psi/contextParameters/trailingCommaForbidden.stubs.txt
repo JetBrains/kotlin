@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaForbiddenKt]]
   IMPORT_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
@@ -15,7 +15,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaForbiddenKt]]
     VALUE_PARAMETER_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
@@ -25,7 +25,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaForbiddenKt]]
     VALUE_PARAMETER_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
@@ -35,13 +35,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaForbiddenKt]]
     VALUE_PARAMETER_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         CONTEXT_RECEIVER[label=null]
           TYPE_REFERENCE
     VALUE_PARAMETER_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE

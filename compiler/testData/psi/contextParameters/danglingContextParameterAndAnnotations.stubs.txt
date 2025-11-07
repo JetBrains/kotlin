@@ -37,7 +37,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterAndA
             VALUE_ARGUMENT[isSpread=false]
               STRING_TEMPLATE
                 LITERAL_STRING_TEMPLATE_ENTRY[text=str]
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter1]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
@@ -93,7 +93,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterAndA
               VALUE_ARGUMENT[isSpread=false]
                 STRING_TEMPLATE
                   LITERAL_STRING_TEMPLATE_ENTRY[text=str]
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter1]
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
@@ -145,7 +145,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterAndA
         VALUE_ARGUMENT[isSpread=false]
           STRING_TEMPLATE
             LITERAL_STRING_TEMPLATE_ENTRY[text=str]
-    CONTEXT_RECEIVER_LIST
+    CONTEXT_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter1]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]

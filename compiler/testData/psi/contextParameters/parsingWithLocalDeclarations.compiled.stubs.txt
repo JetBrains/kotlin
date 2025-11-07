@@ -15,7 +15,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
   FUN[fqName=contextFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun]
     origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE
@@ -31,7 +31,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
   FUN[fqName=contextFun2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun2]
     origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE
@@ -56,7 +56,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
   FUN[fqName=contextFun3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun3]
     origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
             FUNCTION_TYPE
@@ -81,7 +81,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
   FUN[fqName=contextFun4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun4]
     origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE

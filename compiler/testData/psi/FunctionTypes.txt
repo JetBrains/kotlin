@@ -238,7 +238,7 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           CONTEXT_RECEIVER
@@ -296,7 +296,7 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           CONTEXT_RECEIVER
@@ -342,7 +342,7 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           CONTEXT_RECEIVER
@@ -379,7 +379,7 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           CONTEXT_RECEIVER
@@ -726,7 +726,7 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           CONTEXT_RECEIVER
@@ -762,7 +762,7 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           CONTEXT_RECEIVER
@@ -817,7 +817,7 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           CONTEXT_RECEIVER
@@ -941,7 +941,7 @@ KtFile: FunctionTypes.kt
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           CONTEXT_RECEIVER
@@ -989,7 +989,7 @@ KtFile: FunctionTypes.kt
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           CONTEXT_RECEIVER
@@ -1056,7 +1056,7 @@ KtFile: FunctionTypes.kt
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       FUNCTION_TYPE
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           CONTEXT_RECEIVER

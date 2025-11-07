@@ -74,8 +74,8 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     const val SUPER_TYPE_ENTRY_ID: Int = SUPER_TYPE_CALL_ENTRY_ID + 1
     const val CONSTRUCTOR_CALLEE_ID: Int = SUPER_TYPE_ENTRY_ID + 1
     const val CONTEXT_RECEIVER_ID: Int = CONSTRUCTOR_CALLEE_ID + 1
-    const val CONTEXT_RECEIVER_LIST_ID: Int = CONTEXT_RECEIVER_ID + 1
-    const val NULL_ID: Int = CONTEXT_RECEIVER_LIST_ID + 1
+    const val CONTEXT_PARAMETER_LIST_ID: Int = CONTEXT_RECEIVER_ID + 1
+    const val NULL_ID: Int = CONTEXT_PARAMETER_LIST_ID + 1
     const val BOOLEAN_CONSTANT_ID: Int = NULL_ID + 1
     const val FLOAT_CONSTANT_ID: Int = BOOLEAN_CONSTANT_ID + 1
     const val CHARACTER_CONSTANT_ID: Int = FLOAT_CONSTANT_ID + 1
@@ -235,7 +235,7 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     val CONSTRUCTOR_CALLEE: SyntaxElementType = register(CONSTRUCTOR_CALLEE_ID, "CONSTRUCTOR_CALLEE")
 
     val CONTEXT_RECEIVER: SyntaxElementType = register(CONTEXT_RECEIVER_ID, "CONTEXT_RECEIVER")
-    val CONTEXT_RECEIVER_LIST: SyntaxElementType = register(CONTEXT_RECEIVER_LIST_ID, "CONTEXT_RECEIVER_LIST")
+    val CONTEXT_RECEIVER_LIST: SyntaxElementType = register(CONTEXT_PARAMETER_LIST_ID, "CONTEXT_PARAMETER_LIST")
 
     val NULL: SyntaxElementType = register(NULL_ID, "NULL")
     val BOOLEAN_CONSTANT: SyntaxElementType = register(BOOLEAN_CONSTANT_ID, "BOOLEAN_CONSTANT")

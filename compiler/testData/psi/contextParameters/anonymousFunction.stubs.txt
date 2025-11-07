@@ -6,7 +6,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
   PROPERTY[fqName=t, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
       MODIFIER_LIST[]
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
               USER_TYPE
@@ -15,7 +15,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
   PROPERTY[fqName=t, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
       MODIFIER_LIST[]
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
               USER_TYPE
@@ -31,7 +31,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
               USER_TYPE
@@ -46,7 +46,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
             REFERENCE_EXPRESSION[referencedName=Boolean]
         FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
           MODIFIER_LIST[]
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
                 TYPE_REFERENCE
                   USER_TYPE
@@ -64,7 +64,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
               REFERENCE_EXPRESSION[referencedName=Boolean]
           FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
             MODIFIER_LIST[]
-              CONTEXT_RECEIVER_LIST
+              CONTEXT_PARAMETER_LIST
                 VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
                   TYPE_REFERENCE
                     USER_TYPE
@@ -77,7 +77,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
     VALUE_PARAMETER_LIST
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
       MODIFIER_LIST[]
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
               USER_TYPE
@@ -88,7 +88,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
           REFERENCE_EXPRESSION[referencedName=Boolean]
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
       MODIFIER_LIST[]
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
               USER_TYPE
@@ -99,7 +99,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
           REFERENCE_EXPRESSION[referencedName=Boolean]
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
       MODIFIER_LIST[]
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
               USER_TYPE
@@ -110,7 +110,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
           REFERENCE_EXPRESSION[referencedName=Boolean]
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
       MODIFIER_LIST[]
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
               USER_TYPE
@@ -127,7 +127,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
       VALUE_PARAMETER_LIST
       FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
         MODIFIER_LIST[]
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
               TYPE_REFERENCE
                 USER_TYPE

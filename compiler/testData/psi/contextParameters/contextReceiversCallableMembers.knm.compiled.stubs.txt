@@ -22,7 +22,7 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       PROPERTY[fqName=ContextReceiversCallableMembers.property, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=property]
         MODIFIER_LIST[private final]
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=A]
               TYPE_REFERENCE
                 USER_TYPE
@@ -52,7 +52,7 @@ FILE[kind=File[packageFqName=<root>]]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=ContextReceiversCallableMembers.propertyWithSetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=propertyWithSetter]
         MODIFIER_LIST[private final]
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=A]
               TYPE_REFERENCE
                 USER_TYPE
@@ -91,7 +91,7 @@ FILE[kind=File[packageFqName=<root>]]
                   REFERENCE_EXPRESSION[referencedName=Int]
       FUN[fqName=ContextReceiversCallableMembers.function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=function]
         MODIFIER_LIST[private final]
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=A]
               TYPE_REFERENCE
                 USER_TYPE

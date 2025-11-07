@@ -28,7 +28,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterKt]]
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     CLASS_BODY
       MODIFIER_LIST[]
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter1]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
@@ -75,7 +75,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterKt]]
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=Foo, superNames=[]]
       CLASS_BODY
         MODIFIER_LIST[]
-          CONTEXT_RECEIVER_LIST
+          CONTEXT_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter1]
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
@@ -118,7 +118,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterKt]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Unresolved]
   MODIFIER_LIST[]
-    CONTEXT_RECEIVER_LIST
+    CONTEXT_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter1]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]

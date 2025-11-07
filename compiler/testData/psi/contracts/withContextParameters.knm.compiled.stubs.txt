@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=<root>]]
   FUN[fqName=conditionInContext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=conditionInContext]
     contract: [ effect:Returns(WILDCARD) -> param(0) != null ]
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
             NULLABLE_TYPE

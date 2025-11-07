@@ -39,7 +39,7 @@
       CLASS_BODY
         PROPERTY[fqName=Foo.contextParameter2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=contextParameter2]
           MODIFIER_LIST[public final]
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -89,7 +89,7 @@
             VALUE_PARAMETER_LIST
         PROPERTY[fqName=Foo.dnnP, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=dnnP]
           MODIFIER_LIST[public final]
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   INTERSECTION_TYPE
@@ -130,7 +130,7 @@
             VALUE_PARAMETER_LIST
         PROPERTY[fqName=Foo.contextParameter3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=contextParameter3]
           MODIFIER_LIST[public final]
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -148,7 +148,7 @@
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Anno]
                   FUNCTION_TYPE
-                    CONTEXT_RECEIVER_LIST
+                    CONTEXT_PARAMETER_LIST
                       CONTEXT_RECEIVER[label=null]
                         TYPE_REFERENCE
                           USER_TYPE
@@ -165,7 +165,7 @@
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                   FUNCTION_TYPE
-                    CONTEXT_RECEIVER_LIST
+                    CONTEXT_PARAMETER_LIST
                       CONTEXT_RECEIVER[label=null]
                         TYPE_REFERENCE
                           USER_TYPE
@@ -197,7 +197,7 @@
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
             FUNCTION_TYPE
-              CONTEXT_RECEIVER_LIST
+              CONTEXT_PARAMETER_LIST
                 CONTEXT_RECEIVER[label=null]
                   TYPE_REFERENCE
                     USER_TYPE
@@ -215,7 +215,7 @@
             VALUE_PARAMETER_LIST
         FUN[fqName=Foo.contextParameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contextParameter]
           MODIFIER_LIST[public final]
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -263,7 +263,7 @@
               REFERENCE_EXPRESSION[referencedName=Unit]
         FUN[fqName=Foo.dnnF, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=dnnF]
           MODIFIER_LIST[public final]
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   INTERSECTION_TYPE
@@ -302,7 +302,7 @@
               REFERENCE_EXPRESSION[referencedName=Unit]
         FUN[fqName=Foo.contextParameter4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contextParameter4]
           MODIFIER_LIST[public final]
-            CONTEXT_RECEIVER_LIST
+            CONTEXT_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -320,7 +320,7 @@
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Anno]
                   FUNCTION_TYPE
-                    CONTEXT_RECEIVER_LIST
+                    CONTEXT_PARAMETER_LIST
                       CONTEXT_RECEIVER[label=null]
                         TYPE_REFERENCE
                           USER_TYPE
@@ -337,7 +337,7 @@
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                   FUNCTION_TYPE
-                    CONTEXT_RECEIVER_LIST
+                    CONTEXT_PARAMETER_LIST
                       CONTEXT_RECEIVER[label=null]
                         TYPE_REFERENCE
                           USER_TYPE

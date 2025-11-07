@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
   IMPORT_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
@@ -13,7 +13,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
     VALUE_PARAMETER_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
@@ -25,7 +25,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
     VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
@@ -37,7 +37,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     MODIFIER_LIST[]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE

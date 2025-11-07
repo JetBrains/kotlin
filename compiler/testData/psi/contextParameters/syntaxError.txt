@@ -7,7 +7,7 @@ KtFile: syntaxError.kt
   PsiWhiteSpace('\n\n')
   FUN
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         PsiErrorElement:Expecting ')'
@@ -27,7 +27,7 @@ KtFile: syntaxError.kt
   PsiWhiteSpace('\n\n')
   PROPERTY
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         PsiErrorElement:Expecting ')'
@@ -51,7 +51,7 @@ KtFile: syntaxError.kt
   PsiWhiteSpace('\n\n')
   PROPERTY
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         PsiErrorElement:Expecting ')'
@@ -81,7 +81,7 @@ KtFile: syntaxError.kt
   PsiWhiteSpace('\n\n')
   PROPERTY
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         PsiErrorElement:Expecting ')'
@@ -105,7 +105,7 @@ KtFile: syntaxError.kt
   PsiWhiteSpace('\n\n')
   PROPERTY
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         PsiErrorElement:Expecting ')'
@@ -135,7 +135,7 @@ KtFile: syntaxError.kt
   PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         PsiErrorElement:Expecting ')'
@@ -149,7 +149,7 @@ KtFile: syntaxError.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       MODIFIER_LIST
-        CONTEXT_RECEIVER_LIST
+        CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           PsiWhiteSpace('\n    ')
@@ -178,7 +178,7 @@ KtFile: syntaxError.kt
   PsiWhiteSpace('\n\n')
   FUN
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -215,7 +215,7 @@ KtFile: syntaxError.kt
   PsiWhiteSpace('\n\n')
   FUN
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         CONTEXT_RECEIVER

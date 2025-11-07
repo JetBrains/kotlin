@@ -11,7 +11,7 @@ FILE[kind=File[packageFqName=<root>]]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=contextFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun]
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE
@@ -26,7 +26,7 @@ FILE[kind=File[packageFqName=<root>]]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=contextFun2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun2]
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE
@@ -50,7 +50,7 @@ FILE[kind=File[packageFqName=<root>]]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=contextFun3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun3]
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
             FUNCTION_TYPE
@@ -74,7 +74,7 @@ FILE[kind=File[packageFqName=<root>]]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=contextFun4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun4]
     MODIFIER_LIST[public]
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE

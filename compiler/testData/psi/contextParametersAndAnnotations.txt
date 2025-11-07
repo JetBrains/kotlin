@@ -15,7 +15,7 @@ KtFile: contextParametersAndAnnotations.kt
   PsiWhiteSpace('\n\n')
   FUN
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -57,7 +57,7 @@ KtFile: contextParametersAndAnnotations.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Ann')
       PsiWhiteSpace('\n')
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -85,7 +85,7 @@ KtFile: contextParametersAndAnnotations.kt
     MODIFIER_LIST
       PsiElement(private)('private')
       PsiWhiteSpace('\n')
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -108,7 +108,7 @@ KtFile: contextParametersAndAnnotations.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Ann')
       PsiWhiteSpace('\n')
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -136,7 +136,7 @@ KtFile: contextParametersAndAnnotations.kt
   PsiWhiteSpace('\n\n')
   PROPERTY
     MODIFIER_LIST
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -189,7 +189,7 @@ KtFile: contextParametersAndAnnotations.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Ann')
       PsiWhiteSpace('\n')
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -228,7 +228,7 @@ KtFile: contextParametersAndAnnotations.kt
     MODIFIER_LIST
       PsiElement(private)('private')
       PsiWhiteSpace('\n')
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -251,7 +251,7 @@ KtFile: contextParametersAndAnnotations.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Ann')
       PsiWhiteSpace('\n')
-      CONTEXT_RECEIVER_LIST
+      CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER

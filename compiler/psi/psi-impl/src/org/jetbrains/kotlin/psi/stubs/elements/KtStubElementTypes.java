@@ -132,8 +132,8 @@ public interface KtStubElementTypes {
             new KtPlaceHolderStubElementType<>("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression.class);
 
     KtContextReceiverElementType CONTEXT_RECEIVER = new KtContextReceiverElementType("CONTEXT_RECEIVER");
-    KtPlaceHolderStubElementType<KtContextReceiverList> CONTEXT_RECEIVER_LIST =
-            new KtPlaceHolderStubElementType<>("CONTEXT_RECEIVER_LIST", KtContextReceiverList.class);
+    KtPlaceHolderStubElementType<KtContextReceiverList> CONTEXT_PARAMETER_LIST =
+            new KtPlaceHolderStubElementType<>("CONTEXT_PARAMETER_LIST", KtContextReceiverList.class);
 
     KtConstantExpressionElementType NULL                = new KtConstantExpressionElementType("NULL");
     KtConstantExpressionElementType BOOLEAN_CONSTANT    = new KtConstantExpressionElementType("BOOLEAN_CONSTANT");
