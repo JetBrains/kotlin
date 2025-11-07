@@ -1,6 +1,6 @@
 import org.junit.Test
 
-class SomeTests {
+class SomeTests : BaseTests() {
     @Test
     fun myTest() {
 

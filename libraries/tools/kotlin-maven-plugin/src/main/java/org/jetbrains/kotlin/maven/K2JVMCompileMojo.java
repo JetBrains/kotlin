@@ -357,19 +357,18 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                     );
                 }
             }
-            List<String> myArguments = ArgumentUtils.convertArgumentsToStringList(arguments);
-
-            Set<Consumer<CompilationResult>> resultHandlers = new HashSet<>();
 
             Path destination = getEffectiveDestinationDirectory(arguments);
             JvmCompilationOperation compilationOperation = jvmToolchain.createJvmCompilationOperation(allSources, destination);
 
+            Set<Consumer<CompilationResult>> resultHandlers = new HashSet<>();
             if (isIncremental()) {
                 resultHandlers.add(configureIncrementalCompilation(compilationOperation, arguments));
             }
 
             LegacyKotlinMavenLogger kotlinMavenLogger = new LegacyKotlinMavenLogger(messageCollector, getLog());
             try (KotlinToolchains.BuildSession buildSession = kotlinToolchains.createBuildSession()) {
+                List<String> myArguments = ArgumentUtils.convertArgumentsToStringList(arguments);
                 compilationOperation.getCompilerArguments().applyArgumentStrings(myArguments);
                 CompilationResult result = buildSession.executeOperation(compilationOperation, executionPolicy, kotlinMavenLogger);
                 resultHandlers.forEach(handler -> handler.accept(result));
