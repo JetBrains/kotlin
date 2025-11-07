@@ -237,16 +237,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val JVM_ABI_K1_K2_DIFF by stringDirective(
-        description = "Expect difference in JVM ABI between K1 and K2",
-        applicability = Global
-    )
-
-    val IGNORE_JVM_ABI_K1_K2 by stringDirective(
-        description = "Ignore failures when running pipelines when computing difference in JVM ABI between K1 and K2",
-        applicability = Global
-    )
-
     // TODO: Drop this directive and make the offset validation enabled by default when KT-81475 is fixed.
     val ENABLE_IR_NESTED_OFFSETS_CHECKS by stringDirective(
         description = "Enables validation of the nested IR elements offsets"

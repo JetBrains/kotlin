@@ -28,16 +28,6 @@ object JUnit5Assertions : AssertionsService() {
             fileNotFoundMessageLocal = { "Expected data file did not exist. Generating: $expectedFile" }).first
     }
 
-    override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
-        assertEqualsToFile(
-            expectedFile,
-            actual,
-            sanitizer,
-            differenceObtainedMessage = message,
-            fileNotFoundMessageTeamCity = { "Expected data file did not exist `$expectedFile`" },
-            fileNotFoundMessageLocal = { "Expected data file did not exist. Generating: $expectedFile" })
-    }
-
     private fun doesEqualToFile(
         expectedFile: File,
         actual: String,
@@ -64,19 +54,15 @@ object JUnit5Assertions : AssertionsService() {
         }
     }
 
-    fun assertEqualsToFile(
-        expectedFile: File,
-        actual: String,
-        sanitizer: (String) -> String,
-        differenceObtainedMessage: () -> String,
-        fileNotFoundMessageTeamCity: (File) -> String,
-        fileNotFoundMessageLocal: (File) -> String,
-    ) {
-        val (equalsToFile, expected) =
-            doesEqualToFile(expectedFile, actual, sanitizer, fileNotFoundMessageTeamCity, fileNotFoundMessageLocal)
+    override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
+        val (equalsToFile, expected) = doesEqualToFile(
+            expectedFile, actual, sanitizer,
+            fileNotFoundMessageTeamCity = { "Expected data file did not exist `$expectedFile`" },
+            fileNotFoundMessageLocal = { "Expected data file did not exist. Generating: $expectedFile" },
+        )
         if (!equalsToFile) {
             throw AssertionFailedError(
-                "${differenceObtainedMessage()}: ${expectedFile.name}",
+                "${message()}: ${expectedFile.name}",
                 FileInfo(expectedFile.absolutePath, expected.toByteArray(StandardCharsets.UTF_8)),
                 actual,
             )

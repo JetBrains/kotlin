@@ -10,11 +10,10 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.CLASSIC_FRONTEND_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.DESERIALIZED_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.FIR_HANDLERS_STEP_NAME
-import org.jetbrains.kotlin.test.builders.CompilerStepsNames.LOWERED_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JS_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
-import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.KLIB_ARTIFACTS_HANDLERS_STEP_NAME
+import org.jetbrains.kotlin.test.builders.CompilerStepsNames.LOWERED_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.RAW_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.WASM_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
@@ -48,7 +47,6 @@ object CompilerStepsNames {
     const val JS_ARTIFACTS_HANDLERS_STEP_NAME = "js artifacts handlers"
     const val WASM_ARTIFACTS_HANDLERS_STEP_NAME = "wasm artifacts handlers"
     const val KLIB_ARTIFACTS_HANDLERS_STEP_NAME = "klib artifacts handlers"
-    const val JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME = "jvm from K1 and K2 artifacts handlers"
 
 }
 
@@ -99,12 +97,6 @@ inline fun TestConfigurationBuilder.jvmArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.() -> Unit = {}
 ) {
     namedHandlersStep(JVM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Jvm, CompilationStage.FIRST, init)
-}
-
-inline fun TestConfigurationBuilder.jvmFromK1AndK2ArtifactsHandlersStep(
-    init: HandlersStepBuilder<BinaryArtifacts.JvmFromK1AndK2, ArtifactKinds.JvmFromK1AndK2>.() -> Unit = {},
-) {
-    namedHandlersStep(JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.JvmFromK1AndK2, CompilationStage.FIRST, init)
 }
 
 inline fun TestConfigurationBuilder.jsArtifactsHandlersStep(
@@ -179,10 +171,4 @@ inline fun TestConfigurationBuilder.configureKlibArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.KLib, ArtifactKinds.KLib>.() -> Unit = {}
 ) {
     configureNamedHandlersStep(KLIB_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.KLib, skipMissingStep = false, init)
-}
-
-inline fun TestConfigurationBuilder.configureJvmFromK1AndK2ArtifactHandlerStep(
-    init: HandlersStepBuilder<BinaryArtifacts.JvmFromK1AndK2, ArtifactKinds.JvmFromK1AndK2>.() -> Unit,
-) {
-    configureNamedHandlersStep(JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.JvmFromK1AndK2, skipMissingStep = false, init)
 }

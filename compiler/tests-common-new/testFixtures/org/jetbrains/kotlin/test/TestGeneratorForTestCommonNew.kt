@@ -89,22 +89,6 @@ fun main(args: Array<String>) {
                 model("codegen/box", excludeDirs = k2BoxTestDir)
             }
 
-
-            // We split JVM ABI tests into two parts, to avoid creation of a huge file, unable to analyze by IntelliJ with default settings
-            testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestBoxGenerated") {
-                model("codegen/box", excludeDirs = listOf("multiplatform"))
-            }
-
-            testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestRestGenerated") {
-                model("codegen/boxInline")
-                model("codegen/boxModernJdk")
-                model("codegen/bytecodeText")
-                model("codegen/bytecodeListing")
-                model("codegen/composeLike")
-                model("codegen/composeLikeBytecodeText")
-                model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
-            }
-
             testClass<AbstractIrSteppingTest> {
                 model("debug/stepping")
             }

@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.test.builders
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.model.BackendKind
-import org.jetbrains.kotlin.test.model.BackendKinds
-import org.jetbrains.kotlin.test.model.ArtifactKind
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.DefaultsDsl
 import org.jetbrains.kotlin.test.services.DefaultsProvider
 import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl.Companion.toArtifactKind
@@ -40,7 +36,7 @@ class DefaultsProviderBuilder {
             backendKind ?: BackendKinds.fromTargetBackend(targetBackend),
             languageVersionSettingsBuilder ?: LanguageVersionSettingsBuilder(),
             targetPlatform,
-            artifactKind ?: targetPlatform.toArtifactKind(frontend),
+            artifactKind ?: targetPlatform.toArtifactKind(),
             targetBackend,
             dependencyKind
         )
