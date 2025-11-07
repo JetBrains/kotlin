@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.internal.properties.propertiesService
 import java.io.File
 
 // Property used for tests.
-private const val FUS_STATISTICS_PATH = "kotlin.session.logger.root.path"
+internal const val FUS_STATISTICS_PATH = "kotlin.session.logger.root.path"
 
 internal fun Project.getFusDirectoryFromPropertyService() = getFusRootDirectoryFromPropertyService().resolve("kotlin-profile")
 private fun Project.getFusRootDirectoryFromPropertyService() = propertiesService.get().get(FUS_STATISTICS_PATH, project)
