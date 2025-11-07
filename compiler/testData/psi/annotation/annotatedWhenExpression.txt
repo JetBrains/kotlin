@@ -18,7 +18,7 @@ KtFile: annotatedWhenExpression.kt
         PsiElement(when)('when')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MODIFIER_LIST
+        ANNOTATED_EXPRESSION
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE
@@ -26,10 +26,10 @@ KtFile: annotatedWhenExpression.kt
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Ann')
-        PsiWhiteSpace(' ')
-        STRING_TEMPLATE
-          PsiElement(OPEN_QUOTE)('"')
-          PsiElement(CLOSING_QUOTE)('"')
+          PsiWhiteSpace(' ')
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            PsiElement(CLOSING_QUOTE)('"')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(LBRACE)('{')
