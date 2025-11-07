@@ -1480,6 +1480,7 @@ open class PsiRawFirBuilder(
                                 returnTypeRef = delegatedSelfType
                                 status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                                 dispatchReceiverType = currentDispatchReceiverType()
+                                isLocal = false
                                 symbol = constructorSymbol
                                 delegatedConstructor = buildDelegatedConstructorCall {
                                     source = constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
@@ -1516,12 +1517,12 @@ open class PsiRawFirBuilder(
             members: MutableList<FirDeclaration>,
             evalName: Name,
             resultFieldName: Name?,
-        ): FirSimpleFunction {
+        ): FirNamedFunction {
             val evalSymbol = FirNamedFunctionSymbol(callableIdForName(evalName))
             val evalTarget = FirFunctionTarget(labelName = null, isLambda = false)
 
             val evalFunction = withContainerSymbol(evalSymbol) {
-                buildSimpleFunction {
+                buildNamedFunction {
                     source = null
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.ReplCustomization.EvalFunction
@@ -1530,6 +1531,7 @@ open class PsiRawFirBuilder(
                     dispatchReceiverType = currentDispatchReceiverType()
                     status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                     returnTypeRef = implicitUnitType
+                    isLocal = false
 
                     context.firFunctionTargets += evalTarget
 
@@ -1538,7 +1540,7 @@ open class PsiRawFirBuilder(
                             this.statements += extractScriptStatements(script, classSymbol, resultFieldName).map { statement ->
                                 when (statement) {
                                     is FirProperty,
-                                    is FirSimpleFunction,
+                                    is FirNamedFunction,
                                     is FirRegularClass,
                                     is FirTypeAlias,
                                         -> {
@@ -1647,6 +1649,7 @@ open class PsiRawFirBuilder(
                             status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                             symbol = propertySymbol
                             dispatchReceiverType = currentDispatchReceiverType()
+                            isLocal = false
 
                             initializer = last
 
