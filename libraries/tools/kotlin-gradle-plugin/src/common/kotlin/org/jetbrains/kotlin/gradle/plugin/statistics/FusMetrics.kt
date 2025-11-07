@@ -414,6 +414,20 @@ internal object KotlinSourceSetMetrics : FusMetrics {
                         it.put(BooleanMetrics.KOTLIN_WEB_MAIN_SOURCES_USED, true)
                     }
                 }
+
+                listOf(
+                    it.apiConfigurationName,
+                    it.implementationConfigurationName,
+                    it.compileOnlyConfigurationName,
+                    it.runtimeOnlyConfigurationName,
+                ).map { project.configurations.getByName(it) }
+                    .forEach { configuration ->
+                        if (configuration.dependencies.isNotEmpty()) {
+                            project.addConfigurationMetrics {
+                                it.put(BooleanMetrics.KOTLIN_WEB_MAIN_DEPENDENCIES_PRESENT, true)
+                            }
+                        }
+                    }
             }
         }
     }
