@@ -77,16 +77,21 @@ class KtVisitorTest : KotlinTestWithEnvironment() {
 
     private fun doTestContextReceiverVisiting(code: String) {
         val ktElement = KtPsiFactory(project).createFile(code)
-        var visited = false
+        var contextParameterListVisited = false
+        var contextReceiverListVisited = false
         ktElement.accept(object : KtTreeVisitorVoid() {
+            override fun visitContextParameterList(contextParameterList: KtContextParameterList) {
+                contextParameterListVisited = true
+            }
+
             override fun visitContextReceiverList(contextReceiverList: KtContextReceiverList) {
-                visited = true
+                contextReceiverListVisited = true
             }
         })
 
-        assert(visited) {
+        assert(contextParameterListVisited && contextReceiverListVisited) {
             """
-            Context receiver list was not visited:
+            Context parameter list was not visited:
 
             $code
             
