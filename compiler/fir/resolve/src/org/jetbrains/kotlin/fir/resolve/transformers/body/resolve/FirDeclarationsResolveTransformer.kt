@@ -177,6 +177,11 @@ open class FirDeclarationsResolveTransformer(
 
         val cannotHaveDeepImplicitTypeRefs = property.backingField?.returnTypeRef !is FirImplicitTypeRef
         if (!property.isConst && implicitTypeOnly && property.returnTypeRef !is FirImplicitTypeRef && cannotHaveDeepImplicitTypeRefs) {
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
+                property.initializer !is FirAnonymousObjectExpression
+            ) {
+                property.replaceInitializer(null)
+            }
             return property
         }
 
@@ -186,6 +191,14 @@ open class FirDeclarationsResolveTransformer(
             val initializerIsAlreadyResolved = bodyResolveState >= FirPropertyBodyResolveState.INITIALIZER_RESOLVED
             if (!initializerIsAlreadyResolved) {
                 dataFlowAnalyzer.enterProperty(property)
+            }
+            else if (
+                session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
+                !property.isConst &&
+                property.returnTypeRef !is FirImplicitTypeRef &&
+                property.initializer !is FirAnonymousObjectExpression
+            ) {
+                property.replaceInitializer(null)
             }
 
             var backingFieldIsAlreadyResolved = false
@@ -293,6 +306,13 @@ open class FirDeclarationsResolveTransformer(
                 dataFlowAnalyzer.exitProperty(property)?.let {
                     property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
                 }
+            }
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
+                !property.isConst &&
+                property.returnTypeRef !is FirImplicitTypeRef &&
+                property.initializer !is FirAnonymousObjectExpression
+            ) {
+                property.replaceInitializer(null)
             }
 
             property

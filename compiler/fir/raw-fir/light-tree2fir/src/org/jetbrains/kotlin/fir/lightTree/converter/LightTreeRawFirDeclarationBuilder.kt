@@ -1431,7 +1431,7 @@ class LightTreeRawFirDeclarationBuilder(
                     BACKING_FIELD -> fieldDeclaration = it
                     else -> if (it.isExpression()) {
                         context.calleeNamesForLambda += null
-                        propertyInitializer = withForcedLocalContext {
+                        propertyInitializer = withForcedLocalContext(!isReturnType || modifiers?.isConst() == true) {
                             expressionConverter.getAsFirExpression(it, "Should have initializer")
                         }
                         context.calleeNamesForLambda.removeLast()
@@ -2075,8 +2075,9 @@ class LightTreeRawFirDeclarationBuilder(
                     }
 
                     val allowLegacyContractDescription = outerContractDescription == null
-                    val forceKeepingTheBodyInHeaderMode = context.forceKeepingTheBodyInHeaderMode || functionBuilder.status.isInline
-                    val bodyWithContractDescription = withForcedLocalContext(forceKeepingTheBodyInHeaderMode) {
+                    val bodyWithContractDescription = withForcedLocalContext(
+                        forceKeepingTheBodyInHeaderMode = functionBuilder.status.isInline || functionBuilder.returnTypeRef is FirImplicitTypeRef
+                    ) {
                         convertFunctionBody(block, expression, allowLegacyContractDescription)
                     }
                     this.body = bodyWithContractDescription.first
@@ -2135,9 +2136,12 @@ class LightTreeRawFirDeclarationBuilder(
                     block to contractDescription
                 }
             }
-            expression != null -> FirSingleExpressionBlock(
-                expressionConverter.getAsFirExpression<FirExpression>(expression, "Function has no body (but should)").toReturn()
-            ) to null
+            expression != null -> {
+                if (generateHeader) buildEmptyExpressionBlock() to null
+                else FirSingleExpressionBlock(
+                    expressionConverter.getAsFirExpression<FirExpression>(expression, "Function has no body (but should)").toReturn()
+                ) to null
+            }
             else -> null to null
         }
     }
