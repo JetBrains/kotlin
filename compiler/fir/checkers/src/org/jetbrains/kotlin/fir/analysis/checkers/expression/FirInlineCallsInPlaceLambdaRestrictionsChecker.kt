@@ -33,7 +33,16 @@ object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpres
 
         val containingLambda = context.containingDeclarations.filterIsInstance<FirAnonymousFunctionSymbol>().lastOrNull() ?: return
 
-        if (isAccessSafeInsideLambda(expression, variableSymbol, containingLambda)) return
+        // Case 1: the variable itself is declared inside the lambda
+        if (isDeclaredInsideLambda(variableSymbol, containingLambda)) return
+
+        val baseReceiverSymbol = leftmostReceiverVariableSymbol(expression)
+
+        // Case 2: the leftmost receiver in a qualified chain is a local val declared inside the lambda
+        if (baseReceiverSymbol != null) {
+            val declInsideLambda = isDeclaredInsideLambda(baseReceiverSymbol, containingLambda)
+            if (declInsideLambda) return
+        }
 
         if (!expression.partOfCall()) return
 
@@ -53,7 +62,7 @@ object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpres
                 containingLambda = containingLambda.name.asString(),
                 callName = calledFunctionSymbol.name.toString(),
                 variableName = variableSymbol.name.toString(),
-                varDeclaration = variableSymbol.fir.source?.lighterASTNode.toString()
+                leftmostReceiverName = baseReceiverSymbol?.name?.asString() ?: "no receiver",
             )
         )
     }
@@ -111,22 +120,8 @@ data class IEData(
     val containingLambda: String? = null,
     val callName: String? = null,
     val variableName: String? = null,
-    val varDeclaration: String? = null,
+    val leftmostReceiverName: String? = null,
 )
-
-private fun isAccessSafeInsideLambda(
-    expression: FirQualifiedAccessExpression,
-    variableSymbol: FirVariableSymbol<*>,
-    lambdaSymbol: FirAnonymousFunctionSymbol,
-): Boolean {
-    // Case 1: the variable itself is declared inside the lambda
-    if (isDeclaredInsideLambda(variableSymbol, lambdaSymbol)) return true
-
-    // Case 2: the leftmost receiver in a qualified chain is a local val declared inside the lambda
-    val baseReceiverSymbol = leftmostReceiverVariableSymbol(expression) ?: return false
-    if (!baseReceiverSymbol.isVal) return false
-    return isDeclaredInsideLambda(baseReceiverSymbol, lambdaSymbol)
-}
 
 private fun isDeclaredInsideLambda(
     symbol: FirVariableSymbol<*>,
