@@ -235,6 +235,10 @@ open annotation class kotlin/ExperimentalUnsignedTypes : kotlin/Annotation { // 
     constructor <init>() // kotlin/ExperimentalUnsignedTypes.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin/ExperimentalVersionOverloading : kotlin/Annotation { // kotlin/ExperimentalVersionOverloading|null[0]
+    constructor <init>() // kotlin/ExperimentalVersionOverloading.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin/ExposedCopyVisibility : kotlin/Annotation { // kotlin/ExposedCopyVisibility|null[0]
     constructor <init>() // kotlin/ExposedCopyVisibility.<init>|<init>(){}[0]
 }
@@ -247,9 +251,15 @@ open annotation class kotlin/IgnorableReturnValue : kotlin/Annotation { // kotli
     constructor <init>() // kotlin/IgnorableReturnValue.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin/IntroducedAt : kotlin/Annotation { // kotlin/IntroducedAt|null[0]
+    constructor <init>(kotlin/String) // kotlin/IntroducedAt.<init>|<init>(kotlin.String){}[0]
+
+    final val version // kotlin/IntroducedAt.version|{}version[0]
+        final fun <get-version>(): kotlin/String // kotlin/IntroducedAt.version.<get-version>|<get-version>(){}[0]
+}
+
 open annotation class kotlin/MustUseReturnValues : kotlin/Annotation { // kotlin/MustUseReturnValues|null[0]
     constructor <init>() // kotlin/MustUseReturnValues.<init>|<init>(){}[0]
-}
 
 open annotation class kotlin/OptIn : kotlin/Annotation { // kotlin/OptIn|null[0]
     constructor <init>(kotlin/Array<out kotlin.reflect/KClass<out kotlin/Annotation>>...) // kotlin/OptIn.<init>|<init>(kotlin.Array<out|kotlin.reflect.KClass<out|kotlin.Annotation>>...){}[0]

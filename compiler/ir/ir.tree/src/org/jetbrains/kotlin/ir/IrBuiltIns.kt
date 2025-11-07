@@ -184,6 +184,9 @@ abstract class IrBuiltIns {
 
     abstract val linkageErrorSymbol: IrSimpleFunctionSymbol
 
+    abstract val deprecatedSymbol: IrClassSymbol
+    abstract val deprecationLevelSymbol: IrClassSymbol
+
     abstract fun functionN(arity: Int): IrClass
     abstract fun kFunctionN(arity: Int): IrClass
     abstract fun suspendFunctionN(arity: Int): IrClass

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
@@ -391,6 +392,7 @@ internal object FirToKtConversionCreator {
         RelationToType::class,
         KotlinTarget::class,
         ReturnValueStatus::class,
+        MavenComparableVersion::class,
     )
 
     private val KType.kClass: KClass<*>

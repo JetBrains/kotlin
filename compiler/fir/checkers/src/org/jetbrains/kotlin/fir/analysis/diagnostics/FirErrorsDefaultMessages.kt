@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.VISIBILITY
 import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.CLASS_KIND
+import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.MAVEN_VERSION
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.NAME
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.RENDER_POSITION_VARIANCE
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
@@ -455,8 +456,18 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_WITH_SU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INT_LITERAL_OUT_OF_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_CHARACTERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_DEFAULT_VALUE_DEPENDENCY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_IF_AS_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_ANNOTATION_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_LOCAL_FUNCTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_NONFINAL_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_NONFINAL_FUNCTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_NON_OPTIONAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_VARARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_SETTER
@@ -545,6 +556,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ASCENDING_VERSION_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_OBJECT
@@ -862,6 +874,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_REQUIREMENT_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_REQUIREMENT_DEPRECATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HIDDEN
@@ -3651,6 +3664,61 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Unstable inference behaviour with multiple lambdas. Specify the type argument for generic parameter ''{0}'' of ''{1}'' explicitly.",
             TO_STRING,
             TO_STRING
+        )
+
+        // Version Overloads group
+        map.put(
+            INVALID_VERSIONING_ON_NON_OPTIONAL,
+            "'@IntroducedAt' annotation can only be added to parameters with default values."
+        )
+        map.put(
+            INVALID_VERSIONING_ON_NONFINAL_FUNCTION,
+            "'@IntroducedAt' annotation cannot be used in non-final methods."
+        )
+        map.put(
+            INVALID_VERSIONING_ON_NONFINAL_CLASS,
+            "'@IntroducedAt' annotation cannot be used in non-final classes."
+        )
+        map.put(
+            INVALID_VERSIONING_ON_LOCAL_FUNCTION,
+            "'@IntroducedAt' annotation cannot be used in local functions."
+        )
+        map.put(
+            INVALID_VERSIONING_ON_ANNOTATION_CLASS,
+            "'@IntroducedAt' annotation cannot be used on annotation constructor parameters."
+        )
+        map.put(
+            INVALID_DEFAULT_VALUE_DEPENDENCY,
+            "Parameter with version ''{1}'' is used in the default value of a parameter with a lower version ''{0}''.",
+            MAVEN_VERSION,
+            MAVEN_VERSION
+        )
+        map.put(
+            INVALID_NON_OPTIONAL_PARAMETER_POSITION,
+            "A required parameter appears after an optional parameter annotated with '@IntroducedAt', which may cause source-level incompatibility.",
+        )
+        map.put(
+            INVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION,
+            "'@IntroducedAt' annotation cannot be used in receiver or context parameter position.",
+        )
+        map.put(
+            INVALID_VERSIONING_ON_VARARG,
+            "'@IntroducedAt' annotation cannot be used in a function with 'vararg'.",
+        )
+        map.put(
+            INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER,
+            "'@IntroducedAt' annotation cannot be used in the (single) parameter of a value class constructor.",
+        )
+        map.put(
+            NON_ASCENDING_VERSION_ANNOTATION,
+            "Version ''{0}'' is lower than a previous one (''{1}'' from ''{2}''). This may cause source-level incompatibilities.",
+            MAVEN_VERSION,
+            MAVEN_VERSION,
+            SYMBOL,
+        )
+        map.put(
+            VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION,
+            "Not supported in combination with '@IntroducedAt'."
         )
     }
 }

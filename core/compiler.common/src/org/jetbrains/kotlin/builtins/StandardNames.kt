@@ -166,6 +166,7 @@ object StandardNames {
         @JvmField val accessibleLateinitPropertyLiteral: FqName = internalName("AccessibleLateinitPropertyLiteral")
         @JvmField val platformDependent: FqName = FqName("kotlin.internal.PlatformDependent")
         @JvmField val platformDependentClassId: ClassId = ClassId.topLevel(platformDependent)
+        @JvmField val introducedAt: FqName = fqName("IntroducedAt")
 
         @JvmField val iterator: FqName = collectionsFqName("Iterator")
         @JvmField val iterable: FqName = collectionsFqName("Iterable")

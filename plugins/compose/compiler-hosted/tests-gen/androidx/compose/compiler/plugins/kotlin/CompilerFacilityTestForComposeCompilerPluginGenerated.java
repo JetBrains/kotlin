@@ -202,4 +202,10 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   public void testValueArgumentForLibraryConstructor() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/valueArgumentForLibraryConstructor.kt");
   }
+
+  @Test
+  @TestMetadata("versionOverloads.kt")
+  public void testVersionOverloads() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/versionOverloads.kt");
+  }
 }

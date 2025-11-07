@@ -1,0 +1,48 @@
+@kotlin.Metadata
+public final class C$Companion {
+    // source: 'withJvmStatic.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic deprecated static method foo$default(p0: C$Companion, p1: int, p2: int, p3: java.lang.Object): java.lang.String
+    public synthetic static method foo$default(p0: C$Companion, p1: int, p2: java.lang.String, p3: boolean, p4: int, p5: java.lang.Object): java.lang.String
+    public synthetic deprecated static method foo$default(p0: C$Companion, p1: int, p2: java.lang.String, p3: int, p4: java.lang.Object): java.lang.String
+    public synthetic deprecated final @kotlin.jvm.JvmStatic @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method foo(p0: int): java.lang.String
+    public final @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method foo(p0: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+    public synthetic deprecated final @kotlin.jvm.JvmStatic @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method foo(p0: int, @kotlin.IntroducedAt(version="1") p1: java.lang.String): java.lang.String
+    public final inner class C$Companion
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'withJvmStatic.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: C$Companion
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic deprecated final static @kotlin.jvm.JvmStatic @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method foo(p0: int): java.lang.String
+    public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method foo(p0: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+    public synthetic deprecated final static @kotlin.jvm.JvmStatic @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method foo(p0: int, @kotlin.IntroducedAt(version="1") p1: java.lang.String): java.lang.String
+    public final inner class C$Companion
+}
+
+@kotlin.Metadata
+public final class D {
+    // source: 'withJvmStatic.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: D
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic deprecated static method foo$default(p0: int, p1: int, p2: java.lang.Object): java.lang.String
+    public synthetic static method foo$default(p0: int, p1: java.lang.String, p2: boolean, p3: int, p4: java.lang.Object): java.lang.String
+    public synthetic deprecated static method foo$default(p0: int, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
+    public synthetic deprecated final static @kotlin.jvm.JvmStatic @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method foo(p0: int): java.lang.String
+    public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method foo(p0: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+    public synthetic deprecated final static @kotlin.jvm.JvmStatic @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method foo(p0: int, @kotlin.IntroducedAt(version="1") p1: java.lang.String): java.lang.String
+}
+
+@kotlin.Metadata
+public final class WithJvmStaticKt {
+    // source: 'withJvmStatic.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test1(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test2(): java.lang.String
+    public final inner class C$Companion
+}

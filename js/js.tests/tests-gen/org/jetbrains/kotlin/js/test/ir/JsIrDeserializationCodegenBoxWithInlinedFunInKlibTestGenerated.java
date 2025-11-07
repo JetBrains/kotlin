@@ -63236,6 +63236,94 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/versionOverloads")
+    @TestDataPath("$PROJECT_ROOT")
+    public class VersionOverloads {
+      @Test
+      public void testAllFilesPresentInVersionOverloads() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/versionOverloads"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("constructor.kt")
+      public void testConstructor() {
+        runTest("compiler/testData/codegen/box/versionOverloads/constructor.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClass.kt")
+      public void testDataClass() {
+        runTest("compiler/testData/codegen/box/versionOverloads/dataClass.kt");
+      }
+
+      @Test
+      @TestMetadata("functions.kt")
+      public void testFunctions() {
+        runTest("compiler/testData/codegen/box/versionOverloads/functions.kt");
+      }
+
+      @Test
+      @TestMetadata("generics.kt")
+      public void testGenerics() {
+        runTest("compiler/testData/codegen/box/versionOverloads/generics.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineClass.kt")
+      public void testInlineClass() {
+        runTest("compiler/testData/codegen/box/versionOverloads/inlineClass.kt");
+      }
+
+      @Test
+      @TestMetadata("innerClass.kt")
+      public void testInnerClass() {
+        runTest("compiler/testData/codegen/box/versionOverloads/innerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("internal.kt")
+      public void testInternal() {
+        runTest("compiler/testData/codegen/box/versionOverloads/internal.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleCall.kt")
+      public void testSimpleCall() {
+        runTest("compiler/testData/codegen/box/versionOverloads/simpleCall.kt");
+      }
+
+      @Test
+      @TestMetadata("super.kt")
+      public void testSuper() {
+        runTest("compiler/testData/codegen/box/versionOverloads/super.kt");
+      }
+
+      @Test
+      @TestMetadata("withJvmOverloads.kt")
+      public void testWithJvmOverloads() {
+        runTest("compiler/testData/codegen/box/versionOverloads/withJvmOverloads.kt");
+      }
+
+      @Test
+      @TestMetadata("withJvmStatic.kt")
+      public void testWithJvmStatic() {
+        runTest("compiler/testData/codegen/box/versionOverloads/withJvmStatic.kt");
+      }
+
+      @Test
+      @TestMetadata("withLambda.kt")
+      public void testWithLambda() {
+        runTest("compiler/testData/codegen/box/versionOverloads/withLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("withLambdaDefaults.kt")
+      public void testWithLambdaDefaults() {
+        runTest("compiler/testData/codegen/box/versionOverloads/withLambdaDefaults.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/volatile")
     @TestDataPath("$PROJECT_ROOT")
     public class Volatile {

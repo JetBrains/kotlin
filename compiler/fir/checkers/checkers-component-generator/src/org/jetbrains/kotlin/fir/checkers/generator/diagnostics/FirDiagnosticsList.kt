@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
@@ -2267,6 +2268,28 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Name>("typeParameterName")
             parameter<Name>("containingDeclarationName")
         }
+    }
+
+    val VERSION_OVERLOADS by object : DiagnosticGroup("Version Overloads") {
+        val INVALID_VERSIONING_ON_NON_OPTIONAL by error<PsiElement>()
+        val INVALID_VERSIONING_ON_NONFINAL_FUNCTION by error<PsiElement>()
+        val INVALID_VERSIONING_ON_NONFINAL_CLASS by error<PsiElement>()
+        val INVALID_VERSIONING_ON_LOCAL_FUNCTION by error<PsiElement>()
+        val INVALID_VERSIONING_ON_ANNOTATION_CLASS by error<PsiElement>()
+        val INVALID_DEFAULT_VALUE_DEPENDENCY by error<PsiElement>() {
+            parameter<MavenComparableVersion?>("lowestVersion")
+            parameter<MavenComparableVersion?>("highestVersion")
+        }
+        val INVALID_NON_OPTIONAL_PARAMETER_POSITION by error<PsiElement>()
+        val INVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION by error<PsiElement>()
+        val INVALID_VERSIONING_ON_VARARG by error<PsiElement>()
+        val INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER by error<PsiElement>()
+        val NON_ASCENDING_VERSION_ANNOTATION by error<PsiElement> {
+            parameter<MavenComparableVersion?>("lowestVersion")
+            parameter<MavenComparableVersion?>("highestVersion")
+            parameter<FirCallableSymbol<*>>("sourceOfHighestVersion")
+        }
+        val VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION by error<PsiElement>()
     }
 }
 

@@ -502,4 +502,10 @@ public class WasmPartialLinkageNoICTestCaseGenerated extends AbstractWasmPartial
   public void testTypeAliasChanges() {
     runTest("compiler/testData/klib/partial-linkage/typeAliasChanges/");
   }
+
+  @Test
+  @TestMetadata("versionOverloads")
+  public void testVersionOverloads() {
+    runTest("compiler/testData/klib/partial-linkage/versionOverloads/");
+  }
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
+import org.jetbrains.kotlin.backend.common.lower.VersionOverloadsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.AvoidLocalFOsInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
@@ -31,6 +32,11 @@ private val avoidLocalFOsInInlineFunctionsLowering = makeIrModulePhase(
 private val lateinitPhase = makeIrModulePhase(
     ::LateinitLowering,
     name = "LateinitLowering",
+)
+
+private val versionOverloadsLowering = makeIrModulePhase(
+    ::VersionOverloadsLowering,
+    name = "VersionOverloadsLowering",
 )
 
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
@@ -140,6 +146,7 @@ fun loweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
     this += avoidLocalFOsInInlineFunctionsLowering
+    this += versionOverloadsLowering
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
         val inlineCrossModuleFunctions =
             languageVersionSettings.supportsFeature(LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization)

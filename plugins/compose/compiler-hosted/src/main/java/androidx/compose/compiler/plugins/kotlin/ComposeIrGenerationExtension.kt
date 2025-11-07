@@ -24,6 +24,7 @@ import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFr
 import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.lower.VersionOverloadsLowering
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -134,6 +135,10 @@ class ComposeIrGenerationExtension(
         if (!useK2) {
             CopyDefaultValuesFromExpectLowering(pluginContext).lower(moduleFragment)
         }
+
+        ProgressManager.checkCanceled()
+
+        ComposableVersionOverloadsLowering(pluginContext).lower(moduleFragment)
 
         ProgressManager.checkCanceled()
 

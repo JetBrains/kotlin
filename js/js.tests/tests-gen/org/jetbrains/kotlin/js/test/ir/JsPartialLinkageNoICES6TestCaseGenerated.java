@@ -504,4 +504,10 @@ public class JsPartialLinkageNoICES6TestCaseGenerated extends AbstractJsPartialL
   public void testTypeAliasChanges() {
     runTest("compiler/testData/klib/partial-linkage/typeAliasChanges/");
   }
+
+  @Test
+  @TestMetadata("versionOverloads")
+  public void testVersionOverloads() {
+    runTest("compiler/testData/klib/partial-linkage/versionOverloads/");
+  }
 }

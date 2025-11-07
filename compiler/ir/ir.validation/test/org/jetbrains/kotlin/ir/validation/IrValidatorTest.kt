@@ -3421,6 +3421,10 @@ private object TestIrBuiltins : IrBuiltIns() {
         get() = missingBuiltIn()
     override val linkageErrorSymbol: IrSimpleFunctionSymbol
         get() = missingBuiltIn()
+    override val deprecatedSymbol: IrClassSymbol
+        get() = missingBuiltIn()
+    override val deprecationLevelSymbol: IrClassSymbol
+        get() = missingBuiltIn()
 
     override fun functionN(arity: Int): IrClass {
         missingBuiltIn()

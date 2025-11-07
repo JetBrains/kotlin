@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
@@ -4495,6 +4496,59 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val containingDeclarationName: Name
     }
 
+    interface InvalidVersioningOnNonOptional : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnNonOptional::class
+    }
+
+    interface InvalidVersioningOnNonfinalFunction : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnNonfinalFunction::class
+    }
+
+    interface InvalidVersioningOnNonfinalClass : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnNonfinalClass::class
+    }
+
+    interface InvalidVersioningOnLocalFunction : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnLocalFunction::class
+    }
+
+    interface InvalidVersioningOnAnnotationClass : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnAnnotationClass::class
+    }
+
+    interface InvalidDefaultValueDependency : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidDefaultValueDependency::class
+        val lowestVersion: MavenComparableVersion?
+        val highestVersion: MavenComparableVersion?
+    }
+
+    interface InvalidNonOptionalParameterPosition : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidNonOptionalParameterPosition::class
+    }
+
+    interface InvalidVersioningOnReceiverOrContextParameterPosition : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnReceiverOrContextParameterPosition::class
+    }
+
+    interface InvalidVersioningOnVararg : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnVararg::class
+    }
+
+    interface InvalidVersioningOnValueClassParameter : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnValueClassParameter::class
+    }
+
+    interface NonAscendingVersionAnnotation : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NonAscendingVersionAnnotation::class
+        val lowestVersion: MavenComparableVersion?
+        val highestVersion: MavenComparableVersion?
+        val sourceOfHighestVersion: KaCallableSymbol
+    }
+
+    interface VersionOverloadsTooComplexExpression : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = VersionOverloadsTooComplexExpression::class
+    }
+
     interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverrideCannotBeStatic::class
     }
@@ -4611,6 +4665,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface PropertyHidesJavaField : KaFirDiagnostic<KtCallableDeclaration> {
         override val diagnosticClass get() = PropertyHidesJavaField::class
         val hidden: KaVariableSymbol
+    }
+
+    interface ConflictVersionAndJvmOverloadsAnnotation : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ConflictVersionAndJvmOverloadsAnnotation::class
     }
 
     interface JavaTypeMismatch : KaFirDiagnostic<KtExpression> {

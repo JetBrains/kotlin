@@ -35,7 +35,7 @@ class ExcludeSyntheticDeclarationsFromExportLowering(val context: JsIrBackendCon
     }
 
     private fun IrDeclaration.shouldBeExcludedFromExport(): Boolean {
-        return isExportedSyntheticEnumEntriesProperty() || isComponentMethodOfDataClass()
+        return isExportedSyntheticEnumEntriesProperty() || isComponentMethodOfDataClass() || isVersionOverloadWrapper()
     }
 
     private fun IrDeclaration.isComponentMethodOfDataClass(): Boolean {
@@ -51,6 +51,10 @@ class ExcludeSyntheticDeclarationsFromExportLowering(val context: JsIrBackendCon
         return this is IrSimpleFunction &&
                 parentEnumClassOrNull?.isExported(context) == true &&
                 (body as? IrSyntheticBody)?.kind == IrSyntheticBodyKind.ENUM_ENTRIES
+    }
+
+    private fun IrDeclaration.isVersionOverloadWrapper(): Boolean {
+        return this.origin == IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
     }
 
     private fun IrDeclaration.excludeFromJsExport() {

@@ -255,6 +255,9 @@ class IrBuiltInsOverFir(
 
     override val enumClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Enum) }
 
+    override val deprecatedSymbol: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Annotations.Deprecated) }
+    override val deprecationLevelSymbol: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.DeprecationLevel) }
+
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override val intPlusSymbol: IrSimpleFunctionSymbol
         get() = intClass.functions.single {
