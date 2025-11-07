@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// JVM_ABI_K1_K2_DIFF: KT-62845
 
 import kotlin.contracts.*
 import kotlin.coroutines.*

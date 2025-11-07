@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63984
 
 // FILE: Dummy.kt
 // Empty body to trigger multifile test mode

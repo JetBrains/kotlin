@@ -3,8 +3,6 @@
 // DUMP_IR
 // WITH_STDLIB
 
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
-
 annotation class Ann(@Ann(1) val e: Int)
 
 @MyRequiresOptIn("", MyRequiresOptIn.MyLevel.ERROR)

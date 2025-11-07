@@ -3,8 +3,6 @@
 // WITH_REFLECT
 // FULL_JDK
 
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
-
 annotation class Ann1(val value: UByte = 41u)
 annotation class Ann2(val value: UShort = 42u)
 annotation class Ann3(val value: UInt = 43u)

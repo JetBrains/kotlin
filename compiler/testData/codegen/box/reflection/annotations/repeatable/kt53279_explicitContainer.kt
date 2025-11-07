@@ -6,8 +6,6 @@
 // Android doesn't have @Repeatable before API level 24, so findAnnotations can't unpack repeatable annotations.
 // IGNORE_BACKEND: ANDROID
 
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
-
 import kotlin.test.assertEquals
 import kotlin.reflect.full.findAnnotations
 

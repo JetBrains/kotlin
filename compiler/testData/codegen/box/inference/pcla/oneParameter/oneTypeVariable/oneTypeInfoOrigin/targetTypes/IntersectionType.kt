@@ -1,5 +1,4 @@
 // CHECK_TYPE_WITH_EXACT
-// JVM_ABI_K1_K2_DIFF: KT-78111
 
 class Buildee<CT> {
     fun yield(arg: CT) {}

@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// JVM_ABI_K1_K2_DIFF: K2 uses "$" as a separator for inner local class instead of "." as in K1. See `FirJvmSerializerExtension.getLocalClassIdOracle`.
 
 import kotlin.reflect.KClass
 

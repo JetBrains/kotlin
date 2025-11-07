@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM_IR, WASM
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
-
 
 annotation class Inner(val i: Int = 1, val s: String = "")
 annotation class Outer(

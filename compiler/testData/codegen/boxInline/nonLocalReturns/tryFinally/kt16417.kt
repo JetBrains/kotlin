@@ -1,6 +1,5 @@
 // NO_CHECK_LAMBDA_INLINING
 // LANGUAGE: +ProperFinally
-// JVM_ABI_K1_K2_DIFF: KT-62464
 // WASM_FAILS_IN: WasmEdge
 
 // FILE: 1.kt

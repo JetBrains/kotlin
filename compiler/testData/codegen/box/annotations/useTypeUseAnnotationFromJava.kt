@@ -3,8 +3,6 @@
 // FULL_JDK
 // JVM_TARGET: 1.8
 
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
-
 // FILE: A.java
 import java.util.List;
 

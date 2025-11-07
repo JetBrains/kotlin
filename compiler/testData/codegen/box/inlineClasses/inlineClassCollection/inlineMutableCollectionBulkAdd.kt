@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
-// JVM_ABI_K1_K2_DIFF: KT-62817, KT-69522
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC1<T>(val list: MutableList<T>) : MutableList<T> by list

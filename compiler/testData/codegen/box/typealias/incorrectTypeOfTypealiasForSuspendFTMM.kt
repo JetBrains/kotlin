@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-68087
 // WITH_STDLIB
 // ISSUE: KT-50997 (multi-module variant)
 // MODULE: lib

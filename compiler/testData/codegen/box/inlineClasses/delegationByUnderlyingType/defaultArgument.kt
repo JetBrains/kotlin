@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // LANGUAGE: +InlineClassImplementationByDelegation
-// JVM_ABI_K1_K2_DIFF: KT-65534
 
 interface I {
     fun o(k: String = "K"): String = "O$k"

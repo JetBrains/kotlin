@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
 // ISSUE: KT-72356
 // STOP_EVALUATION_CHECKS
 // FILE: A.kt

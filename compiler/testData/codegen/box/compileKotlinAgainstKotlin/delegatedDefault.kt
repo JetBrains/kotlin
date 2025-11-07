@@ -1,5 +1,4 @@
 // MODULE: lib
-// JVM_ABI_K1_K2_DIFF: KT-65534
 // FILE: A.kt
 package lib
 

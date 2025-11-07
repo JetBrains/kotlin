@@ -1,8 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
-
 import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)

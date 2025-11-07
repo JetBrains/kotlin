@@ -1,5 +1,4 @@
 // ISSUE: KT-52838
-// JVM_ABI_K1_K2_DIFF: KT-64738
 
 fun box(): String {
     build {

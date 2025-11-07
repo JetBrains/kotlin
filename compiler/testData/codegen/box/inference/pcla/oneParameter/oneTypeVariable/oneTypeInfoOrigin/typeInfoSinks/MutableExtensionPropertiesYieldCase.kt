@@ -1,8 +1,6 @@
 // ISSUE: KT-61909
 // REASON: unexpected yellow code in K1 (see corresponding diagnostic test)
 
-// JVM_ABI_K1_K2_DIFF: KT-61909
-
 fun box(): String {
     testYield()
     return "OK"

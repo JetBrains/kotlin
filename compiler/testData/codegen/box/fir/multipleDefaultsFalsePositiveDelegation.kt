@@ -1,5 +1,4 @@
 // ISSUE: KT-64019
-// JVM_ABI_K1_K2_DIFF: KT-65534
 
 interface Foo {
     fun bar(x: Int, y: String? = null): String

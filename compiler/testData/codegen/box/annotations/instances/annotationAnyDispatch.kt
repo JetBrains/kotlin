@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR, WASM
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
 
 annotation class Ann(val x: Int = 1, val s: String = "k")
 

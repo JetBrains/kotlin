@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: SMAP differences after KT-63348
 // FILE: 1.kt
 
 package test

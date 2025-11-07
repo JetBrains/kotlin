@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // LANGUAGE: -SkipStandaloneScriptsInSourceRoots
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: KT-63963, KT-63960
 
 // Although this test works in K1 just fine, it is named with the suffix K2 to show that the demonstrated method is the only one
 // available so far to call a script from another module.

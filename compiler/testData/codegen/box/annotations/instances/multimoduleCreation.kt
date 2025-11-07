@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_DEXING
-// JVM_ABI_K1_K2_DIFF: K1 and K2 store annotation properties in the different order. Also, K2 serializes annotation parameter default values (KT-59526).
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
 

@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // JVM_TARGET: 1.8
-// JVM_ABI_K1_K2_DIFF: KT-64954
 
 // TODO: OSIP-190: when K1 mode is dropped -> drop the following test directive `DISABLE_IR_VARARG_TYPE_CHECKS: JVM_IR`
 // DISABLE_IR_VARARG_TYPE_CHECKS: JVM_IR

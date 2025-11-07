@@ -1,6 +1,5 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
-// JVM_ABI_K1_K2_DIFF: KT-69075
 
 // Please make sure that this test is consistent with the diagnostic test "annotationsTargetingLateinitAccessor.kt"
 
@@ -29,4 +28,3 @@ fun box(): String {
     LateinitProperties().test()
     return "OK"
 }
-

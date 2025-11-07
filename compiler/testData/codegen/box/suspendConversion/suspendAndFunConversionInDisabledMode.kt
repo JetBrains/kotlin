@@ -1,6 +1,5 @@
 // LANGUAGE: +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
-// JVM_ABI_K1_K2_DIFF: KT-62904
 
 fun interface Runnable {
     fun run()

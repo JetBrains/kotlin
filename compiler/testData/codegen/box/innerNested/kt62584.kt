@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND: ANDROID
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: KT-62584
 
 // For some reason, the tests fails on Android. Might be caused by obfuscation.
 

@@ -1,8 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // ISSUE: KT-62598
 
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
-
 // MODULE: m1
 // FILE: m1.kt
 interface Holder {

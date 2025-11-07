@@ -2,7 +2,6 @@
 
 // WITH_STDLIB
 // KT-5665
-// JVM_ABI_K1_K2_DIFF: KT-62470
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class First

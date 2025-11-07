@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// JVM_ABI_K1_K2_DIFF: KT-63984, KT-76258
 
 import kotlin.reflect.*
 import kotlin.test.assertEquals

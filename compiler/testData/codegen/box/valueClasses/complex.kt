@@ -3,7 +3,6 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND: ANDROID
 // LANGUAGE: +ValueClasses, +ValueClassesSecondaryConstructorWithBody
-// JVM_ABI_K1_K2_DIFF: KT-62582
 
 @JvmInline
 value class A<T : Any>(val x: List<T>)

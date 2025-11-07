@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// JVM_ABI_K1_K2_DIFF: K1 and K2 store annotation properties in the different order
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
 

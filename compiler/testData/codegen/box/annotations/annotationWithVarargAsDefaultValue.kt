@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM_IR
 
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
-
 annotation class MyReplaceWith(val x: String, vararg val y: String)
 
 annotation class MyDeprecated(

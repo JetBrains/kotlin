@@ -1,8 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
-// JVM_ABI_K1_K2_DIFF: KT-63984, KT-69075
-
 // MODULE: lib
 // FILE: A.kt
 package lib

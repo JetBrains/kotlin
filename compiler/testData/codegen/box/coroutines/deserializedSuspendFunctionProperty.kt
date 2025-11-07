@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// JVM_ABI_K1_K2_DIFF: KT-68087
 // MODULE: m1
 // FILE: m1.kt
 typealias GivenLambda<ParentGivenType, GivenType> =

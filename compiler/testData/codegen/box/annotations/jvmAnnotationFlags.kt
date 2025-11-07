@@ -3,8 +3,6 @@
 // WITH_STDLIB
 // FULL_JDK
 
-// JVM_ABI_K1_K2_DIFF: KT-63853, KT-63854
-
 import java.lang.reflect.Modifier
 import kotlin.reflect.KProperty
 
