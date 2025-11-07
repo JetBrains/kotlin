@@ -4,10 +4,10 @@ FILE: constructorDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val a: R|kotlin/String| = R|<local>/a|
+        public final val a: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val b: R|kotlin/Int| = R|<local>/b|
+        public final val b: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
         public constructor(e: R|kotlin/String|): R|A| {
@@ -24,10 +24,10 @@ FILE: constructorDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val a: R|kotlin/String| = R|<local>/a|
+        public final val a: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val b: R|kotlin/Int| = R|<local>/b|
+        public final val b: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
         public constructor(e: R|kotlin/String|): R|B| {

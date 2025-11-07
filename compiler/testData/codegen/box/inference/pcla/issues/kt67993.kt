@@ -1,6 +1,4 @@
 // ISSUE: KT-67993
-// IGNORE_HEADER_MODE: JVM_IR
-//   Reason: KT-82336
 
 fun box(): String {
     return Klass().buildee.produce()

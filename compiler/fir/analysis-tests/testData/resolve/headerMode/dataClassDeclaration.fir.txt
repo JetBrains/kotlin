@@ -4,10 +4,10 @@ FILE: dataClassDeclaration.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val name: R|kotlin/String| = R|<local>/name|
+        public final val name: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val age: R|kotlin/Int| = R|<local>/age|
+        public final val age: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
         public final operator fun component1(): R|kotlin/String|

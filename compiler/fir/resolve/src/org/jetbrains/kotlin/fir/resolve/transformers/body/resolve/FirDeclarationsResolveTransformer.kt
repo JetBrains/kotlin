@@ -297,6 +297,13 @@ open class FirDeclarationsResolveTransformer(
                     property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
                 }
             }
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
+                !property.isConst &&
+                property.returnTypeRef !is FirImplicitTypeRef &&
+                property.initializer !is FirAnonymousObjectExpression
+            ) {
+                property.replaceInitializer(null)
+            }
 
             property
         }
