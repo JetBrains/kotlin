@@ -125,4 +125,30 @@ public class IncrementalCompilationIT extends MavenITBase {
                 .filesExist(withJavaOutputPaths())
                 .compiledKotlin();
     }
+
+    @Test // Regression test for KT-82180
+    public void removeUsedClass() throws Exception {
+        MavenProject project = new MavenProject("kotlinSimple");
+        project.exec(executionStrategy, "package");
+
+        MavenTestUtils.deleteFile(project.file("src/main/kotlin/A.kt"));
+
+        project.exec(executionStrategy, "package", "-X")
+                .failed()
+                .contains("Unresolved reference 'A'")
+                .compiledKotlin("src/main/kotlin/useA.kt");
+    }
+
+    @Test // Regression test for KT-82180
+    public void renameUsedClassInTest() throws Exception {
+        MavenProject project = new MavenProject("kotlinWithTests");
+        project.exec(executionStrategy, "package");
+
+        MavenTestUtils.replaceFirstInFile(project.file("src/test/kotlin/BaseTests.kt"), "BaseTests", "MyBaseTests");
+
+        project.exec(executionStrategy, "package", "-X")
+                .failed()
+                .contains("Unresolved reference 'BaseTests'")
+                .compiledKotlin("src/test/kotlin/BaseTests.kt", "src/test/kotlin/SomeTests.kt");
+    }
 }
