@@ -238,7 +238,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
         val platform = platforms.get().first()
 
-        val nativeTargets = AppleSdk.defineNativeTargets(platform, archs.get())
+        val nativeTargets = AppleSdk.defineNativeTargets(platform, archs.get(), isCatalyst = false)
 
         check(nativeTargets.isNotEmpty()) { "Could not identify native targets for platform: '$platform' and architectures: '$archs'" }
 
