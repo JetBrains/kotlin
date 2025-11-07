@@ -412,6 +412,7 @@ internal object KotlinSourceSetMetrics : FusMetrics {
             project.reportSourceSetDependenciesUsage(
                 mapOf(
                     "webMain" to BooleanMetrics.KOTLIN_WEB_MAIN_DEPENDENCIES_PRESENT,
+                    "webTest" to BooleanMetrics.KOTLIN_WEB_TEST_DEPENDENCIES_PRESENT,
                 )
             )
         }
@@ -431,12 +432,11 @@ internal object KotlinSourceSetMetrics : FusMetrics {
         sourceSetNameToMetricMap: Map<String, BooleanMetrics>
     ) {
         project.kotlinExtension.awaitSourceSets().configureEach { sourceSet ->
-            if (sourceSetNameToMetricMap.keys.any { it == sourceSet.name }) {
+            val metric = sourceSetNameToMetricMap[sourceSet.name]
+            if (metric != null) {
                 if (!sourceSet.allKotlinSources.isEmpty) {
                     project.addConfigurationMetrics { metricsContainer ->
-                        sourceSetNameToMetricMap[sourceSet.name]?.let { metric ->
-                            metricsContainer.put(metric, true)
-                        }
+                        metricsContainer.put(metric, true)
                     }
                 }
             }
@@ -447,7 +447,8 @@ internal object KotlinSourceSetMetrics : FusMetrics {
         sourceSetNameToMetricMap: Map<String, BooleanMetrics>
     ) {
         project.kotlinExtension.awaitSourceSets().configureEach { sourceSet ->
-            if (sourceSetNameToMetricMap.keys.any { it == sourceSet.name }) {
+            val metric = sourceSetNameToMetricMap[sourceSet.name]
+            if (metric != null) {
                 listOf(
                     sourceSet.apiConfigurationName,
                     sourceSet.implementationConfigurationName,
@@ -456,10 +457,8 @@ internal object KotlinSourceSetMetrics : FusMetrics {
                 ).map { project.configurations.getByName(it) }
                     .forEach { configuration ->
                         if (configuration.dependencies.isNotEmpty()) {
-                            sourceSetNameToMetricMap[sourceSet.name]?.let { metric ->
-                                project.addConfigurationMetrics { metricsContainer ->
-                                    metricsContainer.put(metric, true)
-                                }
+                            project.addConfigurationMetrics { metricsContainer ->
+                                metricsContainer.put(metric, true)
                             }
                         }
                     }
