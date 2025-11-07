@@ -110,7 +110,6 @@ allprojects {
 generatedSourcesTask(
     taskName = "generateDiagnostics",
     generatorProject = ":analysis:analysis-api-fir:analysis-api-fir-generator",
-    generatorRoot = "analysis/analysis-api-fir/analysis-api-fir-generator/src/",
     generatorMainClass = "org.jetbrains.kotlin.analysis.api.fir.generator.MainKt",
     argsProvider = { generationRoot ->
         listOf(

@@ -1,5 +1,3 @@
-import okio.Path.Companion.toOkioPath
-import okio.Path.Companion.toPath
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import java.net.URI
 
@@ -77,8 +75,7 @@ dependencies {
 val skeletonVersion = "9fca651b6dc684ac340b45f5abf71cac6856aa45"
 val skeletonFilePath: String = layout.buildDirectory.file("idea-flex-kotlin-$skeletonVersion.skeleton").get().asFile.absolutePath
 val downloadSkeletonTaskName = "downloadSkeleton"
-val lexerGrammarsDirRelativeToRoot: okio.Path =
-    layout.projectDirectory.dir("common/src/org/jetbrains/kotlin/kmp/lexer").asFile.absolutePath.toPath().relativeTo(rootDir.toOkioPath())
+val lexerGrammarsDirRelativeToRoot = layout.projectDirectory.dir("common/src/org/jetbrains/kotlin/kmp/lexer")
 
 // TODO: KT-77206 (Get rid of the skeleton downloading or use JFlex version instead of the commit hash).
 // The usage of permalink is confusing and might be not reliable.
@@ -104,14 +101,15 @@ tasks.register(downloadSkeletonTaskName) {
 
 for (lexerName in listOf("KDoc", "Kotlin")) {
     val taskName = "generate${lexerName}Lexer"
+
+    val lexerFile = lexerGrammarsDirRelativeToRoot.file("$lexerName.flex")
     generatedSourcesTask(
         taskName = taskName,
         generatorClasspath = flexGeneratorClasspath,
-        generatorRoot = lexerGrammarsDirRelativeToRoot.toString(),
         generatorMainClass = "jflex.Main",
         argsProvider = { generationRoot ->
             listOf(
-                lexerGrammarsDirRelativeToRoot.resolve("$lexerName.flex").toString(),
+                lexerFile.asFile.absolutePath,
                 "-skel",
                 skeletonFilePath,
                 "-d",
@@ -122,7 +120,10 @@ for (lexerName in listOf("KDoc", "Kotlin")) {
             )
         },
         commonSourceSet = true,
-        inputFilesPattern = "**/${lexerName}.flex",
+        additionalInputsToTrack = { fileCollection ->
+            fileCollection.from(lexerFile)
+            fileCollection.from(skeletonFilePath)
+        }
     ).configure {
         dependsOn(downloadSkeletonTaskName)
     }

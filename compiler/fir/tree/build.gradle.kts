@@ -24,6 +24,5 @@ sourceSets {
 generatedSourcesTask(
     taskName = "generateTree",
     generatorProject = ":compiler:fir:tree:tree-generator",
-    generatorRoot = "compiler/fir/tree/tree-generator/src/",
     generatorMainClass = "org.jetbrains.kotlin.fir.tree.generator.MainKt",
 )

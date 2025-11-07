@@ -5,10 +5,12 @@
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.getByType
@@ -19,7 +21,6 @@ fun Project.generatedDiagnosticContainersAndCheckerComponents(): TaskProvider<Ja
     return generatedSourcesTask(
         taskName = "generateCheckersComponents",
         generatorProject = ":compiler:fir:checkers:checkers-component-generator",
-        generatorRoot = "compiler/fir/checkers/checkers-component-generator/src/",
         generatorMainClass = "org.jetbrains.kotlin.fir.checkers.generator.MainKt",
         argsProvider = { generationRoot -> listOf(project.name, generationRoot.toString()) },
     )
@@ -33,7 +34,6 @@ fun Project.generatedConfigurationKeys(containerName: String, vararg containerNa
     return generatedSourcesTask(
         taskName = "generateConfigurationKeys",
         generatorProject = ":compiler:config:configuration-keys-generator",
-        generatorRoot = "compiler/config/configuration-keys-generator/src/",
         generatorMainClass = "org.jetbrains.kotlin.config.keys.generator.MainKt",
         argsProvider = { generationRoot -> listOf(generationRoot.toString(), containerName, *containerNames) },
         dependOnTaskOutput = false
@@ -46,21 +46,22 @@ fun Project.generatedConfigurationKeys(containerName: String, vararg containerNa
  *
  * @param [taskName] name for the created task
  * @param [generatorProject] module of the code generator
- * @param [generatorRoot] path to the `src` directory of the code generator
  * @param [generatorMainClass] FQN of the generator main class
  * @param [argsProvider] used for specifying the CLI arguments to the generator.
  *   By default, it passes the pass to the generated sources (`./gen`)
  * @param [dependOnTaskOutput] set to false disable the gradle dependency between the generation task and the compilation of the current
  *   module. This is needed for cases when the module with generator depends on the module for which it generates new sources.
  *   Use it with caution
+ * @param [additionalInputsToTrack] add files used by generator as generator task input. On change in these files - generator task will re-run
+ * instead of being in 'UP-TO-DATE' state
  */
 fun Project.generatedSourcesTask(
     taskName: String,
     generatorProject: String,
-    generatorRoot: String,
     generatorMainClass: String,
     argsProvider: JavaExec.(generationRoot: Directory) -> List<String> = { listOf(it.toString()) },
-    dependOnTaskOutput: Boolean = true
+    dependOnTaskOutput: Boolean = true,
+    additionalInputsToTrack: (ConfigurableFileCollection) -> Unit = {},
 ): TaskProvider<JavaExec> {
     val generatorClasspath: Configuration by configurations.creating
 
@@ -71,10 +72,10 @@ fun Project.generatedSourcesTask(
     return generatedSourcesTask(
         taskName,
         generatorClasspath,
-        generatorRoot,
         generatorMainClass,
         argsProvider,
         dependOnTaskOutput = dependOnTaskOutput,
+        additionalInputsToTrack = additionalInputsToTrack,
     )
 }
 
@@ -85,12 +86,11 @@ fun Project.generatedSourcesTask(
 fun Project.generatedSourcesTask(
     taskName: String,
     generatorClasspath: Configuration,
-    generatorRoot: String,
     generatorMainClass: String,
     argsProvider: JavaExec.(generationRoot: Directory) -> List<String> = { listOf(it.toString()) },
     dependOnTaskOutput: Boolean = true,
     commonSourceSet: Boolean = false,
-    inputFilesPattern: String = "**/*.kt",
+    additionalInputsToTrack: (ConfigurableFileCollection) -> Unit = {},
 ): TaskProvider<JavaExec> {
     val genPath = if (commonSourceSet) {
         "common/src/gen"
@@ -105,13 +105,15 @@ fun Project.generatedSourcesTask(
         systemProperties["line.separator"] = "\n"
         args(argsProvider(generationRoot))
 
-        @Suppress("NAME_SHADOWING")
-        val generatorRoot = "$rootDir/$generatorRoot"
-        val generatorConfigurationFiles = fileTree(generatorRoot) {
-            include(inputFilesPattern)
-        }
+        val additionalInputFiles = objects.fileCollection()
+        inputs.files(additionalInputFiles)
+            .ignoreEmptyDirectories()
+            .normalizeLineEndings()
+            .optional()
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+            .withPropertyName("additionalInputFiles")
+        additionalInputsToTrack(additionalInputFiles)
 
-        inputs.files(generatorConfigurationFiles)
         outputs.dir(generationRoot)
     }
 

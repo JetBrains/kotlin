@@ -21,7 +21,6 @@ sourceSets {
 generatedSourcesTask(
     taskName = "generateTree",
     generatorProject = ":native:swift:sir:tree-generator",
-    generatorRoot = "native/swift/sir/tree-generator/src",
     generatorMainClass = "org.jetbrains.kotlin.sir.tree.generator.MainKt",
 )
 

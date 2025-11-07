@@ -37,7 +37,6 @@ tasks.getByName<Jar>("jar") {
 generatedSourcesTask(
     taskName = "generateCliArguments",
     generatorProject = ":compiler:cli:cli-arguments-generator",
-    generatorRoot = "compiler/cli/cli-argument-generator/src",
     generatorMainClass = "org.jetbrains.kotlin.cli.arguments.generator.MainKt",
     argsProvider = { generationRoot ->
         listOf(
