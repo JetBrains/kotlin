@@ -30,6 +30,10 @@ fun main(args: Array<String>) {
                 model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
             }
 
+            testClass<AbstractFirLightTreeHeaderModeCodegenTest> {
+                model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+            }
+
             testClass<AbstractFirPsiBlackBoxCodegenTest> {
                 model("codegen/box", excludeDirs = k1BoxTestDir)
             }
