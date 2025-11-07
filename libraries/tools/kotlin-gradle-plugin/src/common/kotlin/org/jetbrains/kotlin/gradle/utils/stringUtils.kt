@@ -32,10 +32,10 @@ internal fun String.decamelize(): String {
     return replace(upperCaseRegex) {
         val (first) = it.destructured
         "-${first.toLowerCaseAsciiOnly()}"
-    }
+    }.replaceFirstChar { it.lowercaseChar() }
 }
 
-private val upperCaseRegex = "([A-Z])".toRegex()
+private val upperCaseRegex = "(?<!^)([A-Z])".toRegex()
 
 private val invalidTaskNameCharacters = "[/\\\\:<>\"?*|]".toRegex()
 

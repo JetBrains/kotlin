@@ -55,10 +55,10 @@ class ProblemsApiIT : KGPBaseTest() {
                             problemDetails = listOf(TextWrapper("The `kotlin.internal.single.build.metrics.file` deprecated property is used in your build.")),
                             contextualLabel = "Deprecated Gradle Property 'kotlin.internal.single.build.metrics.file' Used",
                             problemId = listOf(
-                                ProblemIdentifier("KGP:DEPRECATION", "Kotlin Gradle Plugin Deprecation"),
-                                ProblemIdentifier("KOTLIN", "Kotlin"),
+                                ProblemIdentifier("kgp:deprecation", "Kotlin Gradle Plugin Deprecation"),
+                                ProblemIdentifier("kotlin", "Kotlin"),
                                 ProblemIdentifier(
-                                    "DeprecatedWarningGradleProperties",
+                                    "deprecated-warning-gradle-properties",
                                     "Deprecated Gradle Property 'kotlin.internal.single.build.metrics.file' Used"
                                 )
                             ),
@@ -74,10 +74,10 @@ class ProblemsApiIT : KGPBaseTest() {
                             problemDetails = listOf(TextWrapper("The `kotlin.build.report.dir` deprecated property is used in your build.")),
                             contextualLabel = "Deprecated Gradle Property 'kotlin.build.report.dir' Used",
                             problemId = listOf(
-                                ProblemIdentifier("KGP:DEPRECATION", "Kotlin Gradle Plugin Deprecation"),
-                                ProblemIdentifier("KOTLIN", "Kotlin"),
+                                ProblemIdentifier("kgp:deprecation", "Kotlin Gradle Plugin Deprecation"),
+                                ProblemIdentifier("kotlin", "Kotlin"),
                                 ProblemIdentifier(
-                                    "DeprecatedWarningGradleProperties",
+                                    "deprecated-warning-gradle-properties",
                                     "Deprecated Gradle Property 'kotlin.build.report.dir' Used"
                                 )
                             ),
@@ -93,10 +93,10 @@ class ProblemsApiIT : KGPBaseTest() {
                             problemDetails = listOf(TextWrapper("ATTENTION! This build uses the following Kotlin Gradle Plugin properties:\n\nkotlin.internal.compiler.arguments.log.level\nkotlin.internal.diagnostics.showStacktrace\nkotlin.internal.diagnostics.useParsableFormatting\n\nInternal properties are not recommended for production use.\nStability and future compatibility of the build is not guaranteed.")),
                             contextualLabel = "Usage of Internal Kotlin Gradle Plugin Properties Detected",
                             problemId = listOf(
-                                ProblemIdentifier("KGP:MISCONFIGURATION", "Kotlin Gradle Plugin Misconfiguration"),
-                                ProblemIdentifier("KOTLIN", "Kotlin"),
+                                ProblemIdentifier("kgp:misconfiguration", "Kotlin Gradle Plugin Misconfiguration"),
+                                ProblemIdentifier("kotlin", "Kotlin"),
                                 ProblemIdentifier(
-                                    "InternalKotlinGradlePluginPropertiesUsed",
+                                    "internal-kotlin-gradle-plugin-properties-used",
                                     "Usage of Internal Kotlin Gradle Plugin Properties Detected"
                                 )
                             ),

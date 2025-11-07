@@ -12,7 +12,9 @@ import org.gradle.api.problems.ProblemGroup
 import org.gradle.api.problems.ProblemReporter
 import org.gradle.api.problems.ProblemSpec
 import org.gradle.api.problems.Problems
+import org.jetbrains.kotlin.gradle.utils.decamelize
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
 internal abstract class ProblemsReporterG811 @Inject constructor(
@@ -34,7 +36,7 @@ internal abstract class ProblemsReporterG811 @Inject constructor(
         throwable: KotlinDiagnosticsException?
     ) {
         spec
-            .id(diagnostic.id, diagnostic.identifier.displayName, problemGroup(diagnostic.group))
+            .id(diagnostic.id.decamelize(), diagnostic.identifier.displayName, problemGroup(diagnostic.group))
             .contextualLabel(diagnostic.identifier.displayName)
             .defaultSpecConfiguration(diagnostic, severity)
             .apply {
@@ -65,7 +67,7 @@ internal abstract class ProblemsReporterG811 @Inject constructor(
 
 // Create own implementation of ProblemGroup as there is no factory method to create it
 internal class KgpProblemGroup(val group: DiagnosticGroup) : ProblemGroup {
-    override fun getName() = group.groupId
+    override fun getName() = group.groupId.toLowerCaseAsciiOnly()
     override fun getDisplayName() = group.displayName
     override fun getParent() = group.parent?.let { KgpProblemGroup(it) }
 
