@@ -75,27 +75,26 @@ dependencies {
     }
 }
 
-val skeletonVersion = "9fca651b6dc684ac340b45f5abf71cac6856aa45"
-val skeletonFilePath: String = layout.buildDirectory.file("idea-flex-kotlin-$skeletonVersion.skeleton").get().asFile.absolutePath
-val downloadSkeletonTaskName = "downloadSkeleton"
 val lexerGrammarsDirRelativeToRoot = layout.projectDirectory.dir("common/src/org/jetbrains/kotlin/kmp/lexer")
 
 // TODO: KT-77206 (Get rid of the skeleton downloading or use JFlex version instead of the commit hash).
 // The usage of permalink is confusing and might be not reliable.
 // It's blocked by https://github.com/JetBrains/intellij-deps-jflex/issues/9
-tasks.register(downloadSkeletonTaskName) {
-    val skeletonFile = File(skeletonFilePath)
+val skeletonDownloadTask = tasks.register("downloadSkeleton") {
+    val skeletonVersion = "9fca651b6dc684ac340b45f5abf71cac6856aa45"
+    val skeletonFile = layout.buildDirectory.file("idea-flex-kotlin-$skeletonVersion.skeleton")
 
-    onlyIf { !skeletonFile.exists() }
+    inputs.property("skeletonVersion", skeletonVersion)
+    outputs.file(skeletonFile)
 
-    val skeletonVersionString = skeletonVersion
     doFirst {
-        skeletonFile.parentFile.mkdirs()
+        val skeletonFileOutput = skeletonFile.get().asFile
+        skeletonFileOutput.parentFile.mkdirs()
         val skeletonUrl =
-            "https://raw.githubusercontent.com/JetBrains/intellij-community/$skeletonVersionString/tools/lexer/idea-flex-kotlin.skeleton"
+            "https://raw.githubusercontent.com/JetBrains/intellij-community/$skeletonVersion/tools/lexer/idea-flex-kotlin.skeleton"
         println("Downloading skeleton file $skeletonUrl")
         URI.create(skeletonUrl).toURL().openStream().use { input ->
-            skeletonFile.outputStream().use { output ->
+            skeletonFileOutput.outputStream().use { output ->
                 input.copyTo(output)
             }
         }
@@ -114,7 +113,7 @@ for (lexerName in listOf("KDoc", "Kotlin")) {
             listOf(
                 lexerFile.asFile.absolutePath,
                 "-skel",
-                skeletonFilePath,
+                skeletonDownloadTask.get().outputs.files.singleFile.absolutePath,
                 "-d",
                 generationRoot.asFile.absolutePath,
                 "--output-mode",
@@ -125,9 +124,7 @@ for (lexerName in listOf("KDoc", "Kotlin")) {
         commonSourceSet = true,
         additionalInputsToTrack = { fileCollection ->
             fileCollection.from(lexerFile)
-            fileCollection.from(skeletonFilePath)
+            fileCollection.from(skeletonDownloadTask)
         }
-    ).configure {
-        dependsOn(downloadSkeletonTaskName)
-    }
+    )
 }
