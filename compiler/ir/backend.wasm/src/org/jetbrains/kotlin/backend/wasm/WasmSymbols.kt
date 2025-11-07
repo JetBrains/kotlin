@@ -252,9 +252,6 @@ class WasmSymbols(
 
     val returnArgumentIfItIsKotlinAny = getInternalWasmFunction("returnArgumentIfItIsKotlinAny")
 
-    val startCoroutineUninterceptedOrReturnIntrinsics =
-        (0..2).map { getInternalWasmFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
-
     val startCoroutineUninterceptedOrReturnIntrinsicsStub =
         (0..2).map { getInternalWasmFunction("startCoroutineUninterceptedOrReturnIntrinsic${it}Stub") }
 

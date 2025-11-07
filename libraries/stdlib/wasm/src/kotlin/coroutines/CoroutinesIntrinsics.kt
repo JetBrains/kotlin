@@ -47,7 +47,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnImpl(
     receiver: R,
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic1Stub(
+): Any? = startCoroutineUninterceptedOrReturn1Impl(
     this, receiver, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
 )
 
@@ -56,7 +56,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
     receiver: R,
     param: P,
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic2Stub(
+): Any? = startCoroutineUninterceptedOrReturn2Impl(
     this, receiver, param, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
 )
 
@@ -150,6 +150,7 @@ internal fun <T> createSimpleCoroutineFromSuspendFunction(
     completion: Continuation<T>
 ): CoroutineImpl = object : CoroutineImpl(completion as Continuation<Any?>) {
     override fun doResume(): Any? {
+        println(123456)
         if (exception != null) throw exception as Throwable
         return result
     }

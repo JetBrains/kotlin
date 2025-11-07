@@ -54,6 +54,7 @@ internal class WasmContinuation<in T>(
 
     override fun resumeWith(result: Result<T>) {
         if (isResumed) error("Continuation is already resumed")
+        result.exceptionOrNull()?.let { isResumed = true; throw it }
         wasmContBox?.let { contBox ->
             isResumed = true
             val (newCont, wasmContBox) = resumeWithImpl(contBox.cont, result) ?: return
@@ -130,15 +131,13 @@ internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0Stub(
     implementedAsIntrinsic
 }
 
-@Suppress("UNUSED_PARAMETER")
-@ExcludedFromCodegen
 @PublishedApi
-internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1(
+internal fun <R, T> startCoroutineUninterceptedOrReturn1Impl(
     f: (suspend R.() -> T),
     receiver: R,
     completion: Continuation<T>
 ): Any? {
-    implementedAsIntrinsic
+    return startCoroutineUninterceptedOrReturnIntrinsic1Stub(f, receiver, completion)
 }
 
 @Suppress("UNUSED_PARAMETER")
@@ -152,16 +151,14 @@ internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1Stub(
     implementedAsIntrinsic
 }
 
-@Suppress("UNUSED_PARAMETER")
-@ExcludedFromCodegen
 @PublishedApi
-internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
+internal fun <R, P, T> startCoroutineUninterceptedOrReturn2Impl(
     f: (suspend R.(P) -> T),
     receiver: R,
     param: P,
     completion: Continuation<T>
 ): Any? {
-    implementedAsIntrinsic
+    return startCoroutineUninterceptedOrReturnIntrinsic2Stub(f, receiver, param, completion)
 }
 
 @Suppress("UNUSED_PARAMETER")
