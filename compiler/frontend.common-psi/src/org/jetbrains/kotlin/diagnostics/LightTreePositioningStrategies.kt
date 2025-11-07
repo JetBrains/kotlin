@@ -274,7 +274,7 @@ object LightTreePositioningStrategies {
             startOffset: Int,
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
-        ): List<TextRange> = tree.findDescendantByType(node, KtNodeTypes.CONTEXT_RECEIVER_LIST)?.getChildren(tree)?.firstOrNull()
+        ): List<TextRange> = tree.findDescendantByType(node, KtNodeTypes.CONTEXT_PARAMETER_LIST)?.getChildren(tree)?.firstOrNull()
             ?.let { markElement(it, startOffset, endOffset, tree, node) }
             ?: super.mark(node, startOffset, endOffset, tree)
     }

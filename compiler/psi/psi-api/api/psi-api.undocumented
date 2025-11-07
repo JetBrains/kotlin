@@ -114,8 +114,8 @@ org.jetbrains.kotlin.KtNodeTypes:CONDITION
 org.jetbrains.kotlin.KtNodeTypes:CONSTRUCTOR_CALLEE
 org.jetbrains.kotlin.KtNodeTypes:CONSTRUCTOR_DELEGATION_CALL
 org.jetbrains.kotlin.KtNodeTypes:CONSTRUCTOR_DELEGATION_REFERENCE
+org.jetbrains.kotlin.KtNodeTypes:CONTEXT_PARAMETER_LIST
 org.jetbrains.kotlin.KtNodeTypes:CONTEXT_RECEIVER
-org.jetbrains.kotlin.KtNodeTypes:CONTEXT_RECEIVER_LIST
 org.jetbrains.kotlin.KtNodeTypes:CONTINUE
 org.jetbrains.kotlin.KtNodeTypes:CONTRACT_EFFECT
 org.jetbrains.kotlin.KtNodeTypes:CONTRACT_EFFECT_LIST

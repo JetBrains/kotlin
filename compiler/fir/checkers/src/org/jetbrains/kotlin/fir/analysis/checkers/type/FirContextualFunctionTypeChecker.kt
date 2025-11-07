@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -80,7 +80,7 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
                     .findChildByType(this, KtTokenSets.TYPE_ELEMENT_TYPES)
                     ?.findContextReceiverListSource(tree)
                 KtNodeTypes.FUNCTION_TYPE -> tree
-                    .findChildByType(this, KtNodeTypes.CONTEXT_RECEIVER_LIST)
+                    .findChildByType(this, KtNodeTypes.CONTEXT_PARAMETER_LIST)
                     ?.toKtLightSourceElement(tree)
                 else -> null
             }

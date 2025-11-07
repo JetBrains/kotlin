@@ -878,7 +878,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             noError = valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET) { parseValueParameterOrTypeRef(inFunctionType) }
         }
 
-        contextReceiverList.done(KtNodeTypes.CONTEXT_RECEIVER_LIST)
+        contextReceiverList.done(KtNodeTypes.CONTEXT_PARAMETER_LIST)
         return noError
     }
 
