@@ -47,6 +47,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     KOTLIN_PROGRESSIVE_MODE(OVERRIDE, SAFE),
     KOTLIN_KTS_USED(OR, SAFE),
     KOTLIN_GENERATED_SOURCES_USED(OR, SAFE),
+    KOTLIN_WEB_MAIN_SOURCES_USED(OR, SAFE),
 
     // Disabled explicitly by the user
     KOTLIN_CROSS_COMPILATION_DISABLED(OR, SAFE),
@@ -126,6 +127,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 18
+        const val VERSION = 21
     }
 }
