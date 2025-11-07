@@ -403,6 +403,7 @@ internal object KotlinSourceSetMetrics : FusMetrics {
     internal fun collectMetrics(project: Project) {
         project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
             project.reportGeneratedSourcesUsage()
+            project.reportWebMainSourceSetUsage()
         }
     }
 
@@ -411,6 +412,18 @@ internal object KotlinSourceSetMetrics : FusMetrics {
             if (it.generatedKotlin.srcDirs.isNotEmpty()) {
                 project.addConfigurationMetrics {
                     it.put(BooleanMetrics.KOTLIN_GENERATED_SOURCES_USED, true)
+                }
+            }
+        }
+    }
+
+    private suspend fun Project.reportWebMainSourceSetUsage() {
+        project.kotlinExtension.awaitSourceSets().configureEach {
+            if (it.name == "webMain") {
+                if (!it.allKotlinSources.isEmpty) {
+                    project.addConfigurationMetrics {
+                        it.put(BooleanMetrics.KOTLIN_WEB_MAIN_SOURCES_USED, true)
+                    }
                 }
             }
         }
