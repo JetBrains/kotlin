@@ -157,6 +157,12 @@ public class LLScriptBlackBoxTestGenerated extends AbstractLLScriptBlackBoxTest 
   }
 
   @Test
+  @TestMetadata("referenceToDelegatedProperty.kts")
+  public void testReferenceToDelegatedProperty() {
+    runTest("compiler/testData/codegen/script/referenceToDelegatedProperty.kts");
+  }
+
+  @Test
   @TestMetadata("secondLevelFunction.kts")
   public void testSecondLevelFunction() {
     runTest("compiler/testData/codegen/script/secondLevelFunction.kts");

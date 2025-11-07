@@ -140,6 +140,11 @@ public class IrScriptCodegenTestGenerated extends AbstractIrScriptCodegenTest {
     runTest("compiler/testData/codegen/script/parameterLong.kts");
   }
 
+  @TestMetadata("referenceToDelegatedProperty.kts")
+  public void testReferenceToDelegatedProperty() {
+    runTest("compiler/testData/codegen/script/referenceToDelegatedProperty.kts");
+  }
+
   @TestMetadata("secondLevelFunction.kts")
   public void testSecondLevelFunction() {
     runTest("compiler/testData/codegen/script/secondLevelFunction.kts");
