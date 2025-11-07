@@ -71,12 +71,27 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
     }
 
     /**
-     * Experimental context parameter API.
+     * Returns the list of all {@link KtContextParameterList} declared in this modifier list.
+     * <p>
+     * This method is indented only for handling error cases since valid code cannot have more than one context parameter list.
+     * <p>
+     * Prefer {@link #getContextParameterList()} where it is possible.
      */
     @NotNull
+    public List<KtContextParameterList> getContextParameterLists() {
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+    }
+
+    /**
+     * Returns the list of all {@link KtContextParameterList} declared in this modifier list.
+     *
+     * @deprecated Use {@link #getContextParameterLists()} instead. This method is obsolete and exists for compatibility reasons only.
+     */
+    @NotNull
+    @Deprecated
     @SuppressWarnings("unchecked")
     public List<KtContextReceiverList> getContextReceiverLists() {
-        return (List<KtContextReceiverList>)(List<?>) getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+        return (List<KtContextReceiverList>)(List<?>) getContextParameterLists();
     }
 
     @Override
