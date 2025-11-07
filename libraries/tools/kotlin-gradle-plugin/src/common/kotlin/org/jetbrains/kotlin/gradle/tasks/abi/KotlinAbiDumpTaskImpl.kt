@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosti
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 
 @CacheableTask
-internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLegacyAbiDumpTask, UsesKotlinToolingDiagnostics {
+internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), KotlinLegacyAbiDumpTask, UsesKotlinToolingDiagnostics {
     @get:OutputDirectory
     abstract override val dumpDir: DirectoryProperty
 
@@ -183,7 +183,7 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
 
     companion object {
         fun nameForVariant(variantName: String): String {
-            return composeTaskName("dumpLegacyAbi", variantName)
+            return composeTaskName("internalDumpKotlinAbi", variantName)
         }
     }
 }

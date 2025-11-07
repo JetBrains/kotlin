@@ -33,13 +33,13 @@ class PublicMarkersTest : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.build().apply {
             println(output)
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -70,12 +70,12 @@ class PublicMarkersTest : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.withDebug(true).build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -99,12 +99,12 @@ class PublicMarkersTest : BaseKotlinGradleTest() {
                 resolve("/examples/classes/AnotherBuildConfig.kt")
             }
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
 
             assertTrue(rootProjectApiDump.exists(), "api dump file should exist")
 

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUM
 import org.jetbrains.kotlin.gradle.tasks.abi.AbiToolsTask.Companion.composeTaskName
 
 @DisableCachingByDefault(because = "File copy should not be cacheable")
-internal abstract class KotlinLegacyAbiUpdateTask : DefaultTask() {
+internal abstract class KotlinAbiUpdateTask : DefaultTask() {
     @get:OutputDirectory
     abstract val referenceDir: DirectoryProperty
 
@@ -57,7 +57,7 @@ internal abstract class KotlinLegacyAbiUpdateTask : DefaultTask() {
 
     companion object {
         fun nameForVariant(variantName: String): String {
-            return composeTaskName("updateLegacyAbi", variantName)
+            return composeTaskName("updateKotlinAbi", variantName)
         }
     }
 }

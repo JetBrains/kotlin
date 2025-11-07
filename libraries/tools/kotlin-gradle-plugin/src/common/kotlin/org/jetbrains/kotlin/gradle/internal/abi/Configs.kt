@@ -19,9 +19,10 @@ import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_ACTUAL_DUMP_DIR
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
-import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiCheckTaskImpl
-import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiDumpTaskImpl
-import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiUpdateTask
+import org.jetbrains.kotlin.gradle.tasks.abi.AbiToolsTask
+import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
+import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
+import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask
 import org.jetbrains.kotlin.gradle.utils.newInstance
 
 /**
@@ -102,7 +103,7 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
         layout.buildDirectory.dir(LEGACY_ACTUAL_DUMP_DIR + (if (variantName == MAIN_VARIANT_NAME) "" else "-$variantName"))
 
     val dumpTaskProvider =
-        tasks.register(KotlinLegacyAbiDumpTaskImpl.nameForVariant(variantName), KotlinLegacyAbiDumpTaskImpl::class.java) {
+        tasks.register(KotlinAbiDumpTaskImpl.nameForVariant(variantName), KotlinAbiDumpTaskImpl::class.java) {
             it.dumpDir.convention(dumpDir)
             it.referenceKlibDump.convention(referenceDir.map { dir -> dir.file(klibFileName) })
             it.keepUnsupportedTargets.convention(true)
@@ -124,7 +125,7 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
             it.onlyIf { isEnabled.get() }
         }
 
-    tasks.register(KotlinLegacyAbiCheckTaskImpl.nameForVariant(variantName), KotlinLegacyAbiCheckTaskImpl::class.java) {
+    val checkTaskProvider = tasks.register(KotlinAbiCheckTaskImpl.nameForVariant(variantName), KotlinAbiCheckTaskImpl::class.java) {
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
         it.variantName.convention(variantName)
@@ -136,7 +137,7 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
         it.onlyIf { isEnabled.get() }
     }
 
-    tasks.register(KotlinLegacyAbiUpdateTask.nameForVariant(variantName), KotlinLegacyAbiUpdateTask::class.java) {
+    val updateTaskProvider = tasks.register(KotlinAbiUpdateTask.nameForVariant(variantName), KotlinAbiUpdateTask::class.java) {
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
         it.variantName.convention(variantName)
@@ -146,5 +147,34 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
         it.group = LifecycleBasePlugin.VERIFICATION_GROUP
 
         it.onlyIf { isEnabled.get() }
+    }
+
+    /**
+     * Creating of the temporary tasks for backward compatibility with previous naming.
+     *
+     * Although BCV is still in an experimental state, some projects (for example, coroutines) use it,
+     * so it will be convenient if we implement a smooth migration method.
+     *
+     * Short deprecation cycle:
+     * - create tasks with old names and deprecation warnings (current state)
+     * - throw exception if tasks with old names are used
+     * - remove tasks with old names
+     */
+    val checkTaskName = checkTaskProvider.name
+    tasks.register(AbiToolsTask.composeTaskName("checkLegacyAbi", variantName)) { task ->
+        task.dependsOn(checkTaskProvider)
+        task.doFirst {
+            val projectPath = it.path.substringBeforeLast(":")
+            it.logger.warn("Task ${it.path} is deprecated, use $projectPath:$checkTaskName instead")
+        }
+    }
+
+    val updateTaskName = updateTaskProvider.name
+    tasks.register(AbiToolsTask.composeTaskName("updateLegacyAbi", variantName)) { task ->
+        task.dependsOn(updateTaskProvider)
+        task.doFirst {
+            val projectPath = it.path.substringBeforeLast(":")
+            it.logger.warn("Task ${it.path} is deprecated, use $projectPath:$updateTaskName instead")
+        }
     }
 }

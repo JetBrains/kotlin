@@ -26,12 +26,12 @@ internal class IgnoredClassesTests : BaseKotlinGradleTest() {
             emptyApiFile(projectName = rootProjectDir.name)
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -50,12 +50,12 @@ internal class IgnoredClassesTests : BaseKotlinGradleTest() {
             emptyApiFile(projectName = rootProjectDir.name)
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -74,12 +74,12 @@ internal class IgnoredClassesTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
 
             assertTrue(rootProjectApiDump.exists(), "api dump file should exist")
 
@@ -103,12 +103,12 @@ internal class IgnoredClassesTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
 
             assertTrue(rootProjectApiDump.exists(), "api dump file should exist")
 

@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_JVM_DUMP
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 
 @DisableCachingByDefault(because = "No output")
-internal abstract class KotlinLegacyAbiCheckTaskImpl : AbiToolsTask(), KotlinLegacyAbiCheckTask {
-    @get:InputFiles // InputFiles is used so as not to fall with an error if reference director does not exist https://github.com/gradle/gradle/issues/2016
+internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask(), KotlinLegacyAbiCheckTask {
+    @get:InputFiles // InputFiles is used so as not to fall with an error if the reference directory does not exist https://github.com/gradle/gradle/issues/2016
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract override val referenceDir: DirectoryProperty
 
@@ -76,7 +76,7 @@ internal abstract class KotlinLegacyAbiCheckTaskImpl : AbiToolsTask(), KotlinLeg
         }
 
         if (errorBuilder.isNotEmpty()) {
-            errorBuilder.append("You can run '$pathPrefix${KotlinLegacyAbiUpdateTask.nameForVariant(variantName.get())}' task to create or overwrite reference ABI declarations")
+            errorBuilder.append("You can run '$pathPrefix${KotlinAbiUpdateTask.nameForVariant(variantName.get())}' task to create or overwrite reference ABI declarations")
 
             error("ABI check failed for project $projectName\n\n$errorBuilder")
         }
@@ -84,7 +84,7 @@ internal abstract class KotlinLegacyAbiCheckTaskImpl : AbiToolsTask(), KotlinLeg
 
     companion object {
         fun nameForVariant(variantName: String): String {
-            return composeTaskName("checkLegacyAbi", variantName)
+            return composeTaskName("checkKotlinAbi", variantName)
         }
     }
 }

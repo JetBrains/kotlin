@@ -27,12 +27,12 @@ class MixedMarkersTest : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 }

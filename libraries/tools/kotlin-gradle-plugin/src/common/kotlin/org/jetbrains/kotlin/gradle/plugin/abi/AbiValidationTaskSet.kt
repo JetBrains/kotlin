@@ -9,9 +9,9 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
+import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
 import org.jetbrains.kotlin.abi.tools.KlibTarget
-import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiCheckTaskImpl
-import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiDumpTaskImpl
 import org.jetbrains.kotlin.gradle.utils.named
 
 /**
@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.gradle.utils.named
  */
 internal class AbiValidationTaskSet(project: Project, variantName: String) {
     private val legacyDumpTaskProvider =
-        project.tasks.named<KotlinLegacyAbiDumpTaskImpl>(KotlinLegacyAbiDumpTaskImpl.nameForVariant(variantName))
+        project.tasks.named<KotlinAbiDumpTaskImpl>(KotlinAbiDumpTaskImpl.nameForVariant(variantName))
     private val legacyCheckDumpTaskProvider =
-        project.tasks.named<KotlinLegacyAbiCheckTaskImpl>(KotlinLegacyAbiCheckTaskImpl.nameForVariant(variantName))
+        project.tasks.named<KotlinAbiCheckTaskImpl>(KotlinAbiCheckTaskImpl.nameForVariant(variantName))
 
     /**
      * Add declarations for the JVM target when no other JVM targets are present.
@@ -32,7 +32,7 @@ internal class AbiValidationTaskSet(project: Project, variantName: String) {
      */
     fun addSingleJvmTarget(classfiles: FileCollection) {
         legacyDumpTaskProvider.configure {
-            it.jvm.add(KotlinLegacyAbiDumpTaskImpl.JvmTargetInfo("", classfiles))
+            it.jvm.add(KotlinAbiDumpTaskImpl.JvmTargetInfo("", classfiles))
         }
     }
 
@@ -43,7 +43,7 @@ internal class AbiValidationTaskSet(project: Project, variantName: String) {
      */
     fun addJvmTarget(targetName: String, classfiles: FileCollection) {
         legacyDumpTaskProvider.configure {
-            it.jvm.add(KotlinLegacyAbiDumpTaskImpl.JvmTargetInfo(targetName, classfiles))
+            it.jvm.add(KotlinAbiDumpTaskImpl.JvmTargetInfo(targetName, classfiles))
         }
     }
 
@@ -55,7 +55,7 @@ internal class AbiValidationTaskSet(project: Project, variantName: String) {
      */
     fun addKlibTarget(klibTarget: KlibTarget, klibFiles: FileCollection) {
         legacyDumpTaskProvider.configure {
-            it.klibInput.add(KotlinLegacyAbiDumpTaskImpl.KlibTargetInfo(klibTarget.configurableName, klibTarget.targetName, klibFiles))
+            it.klibInput.add(KotlinAbiDumpTaskImpl.KlibTargetInfo(klibTarget.configurableName, klibTarget.targetName, klibFiles))
         }
     }
 
