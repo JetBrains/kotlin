@@ -2621,7 +2621,7 @@ open class PsiRawFirBuilder(
                             }
                         }
 
-                        val contextReceiverList = unwrappedElement.contextReceiverList
+                        val contextReceiverList = unwrappedElement.contextParameterList
                         contextReceiverList?.contextReceivers()?.mapNotNullTo(contextParameterTypeRefs) {
                             it.typeReference()?.toFirType()
                         }

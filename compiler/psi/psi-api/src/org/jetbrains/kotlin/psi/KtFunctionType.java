@@ -33,7 +33,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
     @NotNull
     @Override
     public List<KtTypeReference> getTypeArgumentsAsTypes() {
-        ArrayList<KtTypeReference> result = Lists.newArrayList();
+        List<KtTypeReference> result = Lists.newArrayList();
         List<KtTypeReference> contextReceiversTypeRefs = getContextReceiversTypeReferences();
         if (contextReceiversTypeRefs != null) {
             result.addAll(contextReceiversTypeRefs);
@@ -84,14 +84,39 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
         return receiverDeclaration.getTypeReference();
     }
 
+    /**
+     * Returns the context receiver list for this function type, if present.
+     *
+     * @return the context receiver list, or {@code null} if this function type has no context receivers
+     * @deprecated Use {@link #getContextParameterList()} instead. This method is obsolete and exists for compatibility reasons only.
+     */
+    @Deprecated
+    @Nullable
+    public KtContextReceiverList getContextReceiverList() {
+        return (KtContextReceiverList) getContextParameterList();
+    }
+
+    /**
+     * Returns the context parameter list for this function type, if present.
+     *
+     * <p><b>Example:</b></p>
+     * <pre>{@code
+     * // Function type with context parameters
+     * val executor: context(Logger, Database) (String) -> Unit = { }
+     * }</pre>
+     *
+     * @return the context parameter list, or {@code null} if this function type has no context parameters
+     *
+     * @see KtContextParameterList
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
-    public KtContextReceiverList getContextReceiverList() {
-        return (KtContextReceiverList) getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+    public KtContextParameterList getContextParameterList() {
+        return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
     }
 
     public List<KtTypeReference> getContextReceiversTypeReferences() {
-        KtContextParameterList contextReceiverList = getContextReceiverList();
+        KtContextParameterList contextReceiverList = getContextParameterList();
         if (contextReceiverList != null) {
             return contextReceiverList.typeReferences();
         } else {
@@ -111,7 +136,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
      */
     public int getTotalParameterCount() {
         int count = 0;
-        KtContextParameterList contextReceiverList = getContextReceiverList();
+        KtContextParameterList contextReceiverList = getContextParameterList();
         if (contextReceiverList != null) {
             count += contextReceiverList.contextReceivers().size();
         }

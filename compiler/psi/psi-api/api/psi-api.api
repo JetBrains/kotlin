@@ -1692,6 +1692,7 @@ public class org/jetbrains/kotlin/psi/KtFunctionType : org/jetbrains/kotlin/psi/
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinFunctionTypeStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun getContextParameterList ()Lorg/jetbrains/kotlin/psi/KtContextParameterList;
 	public fun getContextReceiverList ()Lorg/jetbrains/kotlin/psi/KtContextReceiverList;
 	public fun getContextReceiversTypeReferences ()Ljava/util/List;
 	public fun getParameterList ()Lorg/jetbrains/kotlin/psi/KtParameterList;
