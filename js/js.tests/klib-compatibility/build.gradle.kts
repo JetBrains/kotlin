@@ -6,6 +6,7 @@ plugins {
     id("java-test-fixtures")
     id("d8-configuration")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -97,6 +98,9 @@ fun Project.customCompilerTest(
         setUpJsBoxTests(tag)
         addClasspathProperty(customCompiler, "kotlin.internal.js.test.compat.customCompilerClasspath")
         addClasspathProperty(runtimeDependencies, "kotlin.internal.js.test.compat.runtimeDependencies")
+        inputs.dir(rootDir.resolve("dist"))
+        inputs.dir(rootDir.resolve("compiler/testData"))
+        inputs.dir(rootDir.resolve("js/js.translator/testData"))
         systemProperty("kotlin.internal.js.test.compat.customCompilerVersion", version.rawVersion)
     }
 }
