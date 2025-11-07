@@ -11,11 +11,11 @@ value class InlineClassTest(val a: UInt) {
 
 // METHOD : InlineClassTest.foo-2L4_mC8(IIIIIIII)V
 // VARIABLE : NAME=$context-Int TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$InlineClassTest$-this$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-$context-UInt$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-$this$foo$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-c2$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-y$0 TYPE=I INDEX=*
+// VARIABLE : NAME=$context-UInt TYPE=I INDEX=*
+// VARIABLE : NAME=$this$foo TYPE=I INDEX=*
+// VARIABLE : NAME=arg0 TYPE=I INDEX=*
 // VARIABLE : NAME=arg0 TYPE=I INDEX=*
 // VARIABLE : NAME=c1 TYPE=I INDEX=*
+// VARIABLE : NAME=c2 TYPE=I INDEX=*
 // VARIABLE : NAME=x TYPE=I INDEX=*
+// VARIABLE : NAME=y TYPE=I INDEX=*

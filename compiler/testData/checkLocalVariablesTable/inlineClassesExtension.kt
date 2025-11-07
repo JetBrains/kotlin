@@ -7,11 +7,9 @@ fun UInt.foo(x: Int, y: UInt) {
 }
 
 // METHOD : InlineClassesExtensionKt.foo-2L4_mC8(IIIIIII)V
-// VARIABLE : NAME=$context-Int TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-$context-UInt$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-$this$foo$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-c2$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-y$0 TYPE=I INDEX=*
+// VARIABLE : NAME=$this$foo_u2d2L4_mC8 TYPE=I INDEX=*
 // VARIABLE : NAME=arg0 TYPE=I INDEX=*
 // VARIABLE : NAME=c1 TYPE=I INDEX=*
+// VARIABLE : NAME=c2 TYPE=I INDEX=*
 // VARIABLE : NAME=x TYPE=I INDEX=*
+// VARIABLE : NAME=y TYPE=I INDEX=*

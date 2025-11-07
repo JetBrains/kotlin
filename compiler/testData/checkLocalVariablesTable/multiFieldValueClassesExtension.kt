@@ -12,17 +12,17 @@ fun ValueClassTest.foo(x: Int, y: UInt, z: ValueClassTest) {
 
 // METHOD : MultiFieldValueClassesExtensionKt.foo-09T95H0(IIIZIIIZIZIIIZ)V
 // VARIABLE : NAME=$context-Int TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-$context-ValueClassTest$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-$context-ValueClassTest$1 TYPE=Z INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-$this$foo$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-$this$foo$1 TYPE=Z INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-c3$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-c3$1 TYPE=Z INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-z$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-z$1 TYPE=Z INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-$context-UInt$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-c2$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-y$0 TYPE=I INDEX=*
+// VARIABLE : NAME=$context-UInt TYPE=I INDEX=*
+// VARIABLE : NAME=$context-ValueClassTest-a TYPE=I INDEX=*
+// VARIABLE : NAME=$context-ValueClassTest-boolean TYPE=Z INDEX=*
+// VARIABLE : NAME=$this$foo-a TYPE=I INDEX=*
+// VARIABLE : NAME=$this$foo-boolean TYPE=Z INDEX=*
 // VARIABLE : NAME=arg0 TYPE=I INDEX=*
 // VARIABLE : NAME=c1 TYPE=I INDEX=*
+// VARIABLE : NAME=c2 TYPE=I INDEX=*
+// VARIABLE : NAME=c3-a TYPE=I INDEX=*
+// VARIABLE : NAME=c3-boolean TYPE=Z INDEX=*
 // VARIABLE : NAME=x TYPE=I INDEX=*
+// VARIABLE : NAME=y TYPE=I INDEX=*
+// VARIABLE : NAME=z-a TYPE=I INDEX=*
+// VARIABLE : NAME=z-boolean TYPE=Z INDEX=*

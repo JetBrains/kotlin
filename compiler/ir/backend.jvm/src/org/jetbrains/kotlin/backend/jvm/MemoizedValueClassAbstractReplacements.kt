@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -15,13 +14,10 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
@@ -134,31 +130,6 @@ abstract class MemoizedValueClassAbstractReplacements(
         }
 
     protected fun IrSimpleFunction.overridesOnlyMethodsFromJava(): Boolean = allOverridden().all { it.isFromJava() }
-
-    private fun String.escape() = asIterable().joinToString("") {
-        when (it) {
-            '-' -> "--"
-            '$' -> "$$"
-            '.' -> "-"
-            else -> "$it"
-        }
-    }
-
-    protected fun Name.withValueClassParameterNameIfNeeded(bound: IrClass, index: Int): Name =
-        Name.identifier($$"$v$c$$${bound.fqNameWhenAvailable?.asString().orEmpty().escape()}$-$${asString()}$$$index")
-
-    protected fun IrValueParameter.addOrInheritInlineClassPropertyNameParts(oldParameter: IrValueParameter) {
-        when {
-            hasFixedName -> return
-            oldParameter.hasFixedName -> hasFixedName = true
-            type.isNullable() -> return
-            type.isInlineClassType() -> {
-                name = name.withValueClassParameterNameIfNeeded(type.erasedUpperBound, index = 0)
-                hasFixedName = true
-            }
-            else -> return
-        }
-    }
 }
 
 fun List<IrConstructorCall>.withoutJvmExposeBoxedAnnotation(): List<IrConstructorCall> =
@@ -190,6 +161,3 @@ fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclarat
         arguments.add(null)
     }
 }
-
-var IrValueParameter.hasFixedName: Boolean by irFlag(copyByDefault = true)
-    internal set

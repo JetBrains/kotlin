@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
-import org.jetbrains.kotlin.backend.jvm.hasFixedName
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
@@ -373,9 +372,7 @@ private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, config: JvmBackendConfig) {
     for (parameter in irFunction.parameters) {
-        val name = if (parameter.hasFixedName) {
-            parameter.name.asString()
-        } else when (parameter.kind) {
+        val name = when (parameter.kind) {
             IrParameterKind.DispatchReceiver -> continue
             IrParameterKind.Regular, IrParameterKind.Context -> parameter.name.asString()
             IrParameterKind.ExtensionReceiver -> irFunction.extensionReceiverName(config)
@@ -389,8 +386,7 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, co
             JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
             IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER -> Opcodes.ACC_MANDATED
             IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER -> Opcodes.ACC_SYNTHETIC
-            IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER -> Opcodes.ACC_MANDATED
-            else if parameter.kind == IrParameterKind.Context -> Opcodes.ACC_MANDATED
+            IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER -> Opcodes.ACC_SYNTHETIC
             else if origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
             else -> 0
         }
