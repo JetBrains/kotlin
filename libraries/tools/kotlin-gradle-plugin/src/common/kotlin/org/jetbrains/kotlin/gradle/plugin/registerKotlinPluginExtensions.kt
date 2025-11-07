@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UklibPublicatio
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.statistics.FinalizeConfigurationFusMetricAction
+import org.jetbrains.kotlin.gradle.plugin.statistics.ConfigurationTimeFusMetricsCollectorAction
 import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsReportSetupAction
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
 import org.jetbrains.kotlin.gradle.targets.*
@@ -66,6 +67,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, UserDefinedAttributesSetupAction)
         register(project, CustomizeKotlinDependenciesSetupAction)
         register(project, AddKotlinPlatformIntegersSupportLibrary)
+        register(project, ConfigurationTimeFusMetricsCollectorAction)
         register(project, FinalizeConfigurationFusMetricAction)
 
         if (isAbiValidationEnabled) {
