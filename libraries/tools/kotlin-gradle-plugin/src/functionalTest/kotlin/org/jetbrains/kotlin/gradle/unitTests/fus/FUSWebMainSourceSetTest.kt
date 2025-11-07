@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import kotlin.test.Test
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalWasmDsl::class)
 class FUSWebMainSourceSetTest {
@@ -26,7 +27,7 @@ class FUSWebMainSourceSetTest {
 
         project.evaluate()
 
-        assertNotNull(
+        assertTrue(
             project.collectedFusConfigurationTimeMetrics.booleanMetrics.keys.none {
                 it.name == BooleanMetrics.KOTLIN_WEB_MAIN_SOURCES_USED.name
             },
