@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.fus
 
-import org.gradle.kotlin.dsl.get
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -53,6 +52,116 @@ class FUSWebMainSourceSetTest {
         assertNotNull(
             project.collectedFusConfigurationTimeMetrics.booleanMetrics.entries.singleOrNull {
                 it.key == BooleanMetrics.KOTLIN_WEB_MAIN_SOURCES_USED && it.value
+            }
+        )
+    }
+
+    @Test
+    fun emptyWebMainDependenciesAreNotReported() {
+        val project = buildProjectWithMPP(preApplyCode = enableFusOnCI) {
+            with(multiplatformExtension) {
+                js { nodejs() }
+                wasmJs()
+            }
+        }
+
+        project.evaluate()
+
+        assertNotNull(
+            project.collectedFusConfigurationTimeMetrics.booleanMetrics.keys.none {
+                it.name == BooleanMetrics.KOTLIN_WEB_MAIN_DEPENDENCIES_PRESENT.name
+            }
+        )
+    }
+
+    @Test
+    fun explicitlyAddedWebMainApiDependencyIsReported() {
+        val project = buildProjectWithMPP(preApplyCode = enableFusOnCI) {
+            with(multiplatformExtension) {
+                js { browser() }
+                wasmJs { browser() }
+
+                applyDefaultHierarchyTemplate()
+
+                sourceSets.getByName("webMain").dependencies {
+                    api("com.example:some-dependency:0.1")
+                }
+            }
+        }
+        project.evaluate()
+
+        assertNotNull(
+            project.collectedFusConfigurationTimeMetrics.booleanMetrics.entries.singleOrNull {
+                it.key == BooleanMetrics.KOTLIN_WEB_MAIN_DEPENDENCIES_PRESENT && it.value
+            }
+        )
+    }
+
+    @Test
+    fun explicitlyAddedWebMainImplementationDependencyIsReported() {
+        val project = buildProjectWithMPP(preApplyCode = enableFusOnCI) {
+            with(multiplatformExtension) {
+                js { browser() }
+                wasmJs { browser() }
+
+                applyDefaultHierarchyTemplate()
+
+                sourceSets.getByName("webMain").dependencies {
+                    implementation("com.example:some-dependency:0.1")
+                }
+            }
+        }
+        project.evaluate()
+
+        assertNotNull(
+            project.collectedFusConfigurationTimeMetrics.booleanMetrics.entries.singleOrNull {
+                it.key == BooleanMetrics.KOTLIN_WEB_MAIN_DEPENDENCIES_PRESENT && it.value
+            }
+        )
+    }
+
+    @Test
+    fun explicitlyAddedWebMainCompileOnlyDependencyIsReported() {
+        val project = buildProjectWithMPP(preApplyCode = enableFusOnCI) {
+            with(multiplatformExtension) {
+                js { browser() }
+                wasmJs { browser() }
+
+                applyDefaultHierarchyTemplate()
+
+                sourceSets.getByName("webMain").dependencies {
+                    compileOnly("com.example:some-dependency:0.1")
+                }
+            }
+        }
+        project.evaluate()
+
+        assertNotNull(
+            project.collectedFusConfigurationTimeMetrics.booleanMetrics.entries.singleOrNull {
+                it.key == BooleanMetrics.KOTLIN_WEB_MAIN_DEPENDENCIES_PRESENT && it.value
+            }
+        )
+    }
+
+    @Test
+    fun explicitlyAddedWebMainRuntimeOnlyDependencyIsReported() {
+        val project = buildProjectWithMPP(preApplyCode = enableFusOnCI) {
+            with(multiplatformExtension) {
+                js { browser() }
+                wasmJs { browser() }
+
+                applyDefaultHierarchyTemplate()
+
+                sourceSets.getByName("webMain").dependencies {
+                    runtimeOnly("com.example:some-dependency:0.1")
+                }
+            }
+        }
+        project.evaluate()
+
+        assertNotNull(
+            project.collectedFusConfigurationTimeMetrics.booleanMetrics.entries.singleOrNull {
+                it.key == BooleanMetrics.KOTLIN_WEB_MAIN_DEPENDENCIES_PRESENT && it.value
             }
         )
     }
