@@ -1878,6 +1878,7 @@ public abstract class org/jetbrains/kotlin/psi/KtModifierList : org/jetbrains/ko
 	public fun deleteChildInternal (Lcom/intellij/lang/ASTNode;)V
 	public fun getAnnotationEntries ()Ljava/util/List;
 	public fun getAnnotations ()Ljava/util/List;
+	public fun getContextParameterList ()Lorg/jetbrains/kotlin/psi/KtContextParameterList;
 	public fun getContextReceiverList ()Lorg/jetbrains/kotlin/psi/KtContextReceiverList;
 	public fun getContextReceiverLists ()Ljava/util/List;
 	public fun getModifier (Lcom/intellij/psi/tree/TokenSet;)Lcom/intellij/psi/PsiElement;

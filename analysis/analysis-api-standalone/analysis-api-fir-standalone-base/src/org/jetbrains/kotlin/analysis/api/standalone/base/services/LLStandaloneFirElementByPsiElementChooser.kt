@@ -148,18 +148,18 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
     }
 
     private fun contextParametersMatch(psiCallable: KtCallableDeclaration, firCallable: FirCallableDeclaration): Boolean {
-        val contextReceiverList = psiCallable.modifierList?.contextReceiverList
+        val contextParameterList = psiCallable.modifierList?.contextParameterList
         val firContextParameters = firCallable.contextParameters
         return when {
-            contextReceiverList == null -> firContextParameters.isEmpty()
+            contextParameterList == null -> firContextParameters.isEmpty()
             firContextParameters.isEmpty() -> false
             else -> {
-                val contextParameters = contextReceiverList.contextParameters()
+                val contextParameters = contextParameterList.contextParameters()
                 if (contextParameters.isNotEmpty()) {
                     return parametersMatch(firContextParameters, contextParameters)
                 }
 
-                val contextReceivers = contextReceiverList.contextReceivers()
+                val contextReceivers = contextParameterList.contextReceivers()
                 if (firContextParameters.size != contextReceivers.size) {
                     return false
                 }

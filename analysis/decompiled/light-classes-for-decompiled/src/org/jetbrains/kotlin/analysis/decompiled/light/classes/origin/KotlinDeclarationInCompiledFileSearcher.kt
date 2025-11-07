@@ -164,9 +164,9 @@ class KotlinDeclarationInCompiledFileSearcher {
     }
 
     private fun KtCallableDeclaration.extractContextParameters(to: MutableList<KtTypeReference>) {
-        modifierList?.contextReceiverList?.let { contextReceiverList ->
-            contextReceiverList.contextReceivers().forEach { to.add(it.typeReference()!!) }
-            contextReceiverList.contextParameters().forEach { to.add(it.typeReference!!) }
+        modifierList?.contextParameterList?.let { contextParameterList ->
+            contextParameterList.contextReceivers().forEach { to.add(it.typeReference()!!) }
+            contextParameterList.contextParameters().forEach { to.add(it.typeReference!!) }
         }
 
         receiverTypeReference?.let { to.add(it) }

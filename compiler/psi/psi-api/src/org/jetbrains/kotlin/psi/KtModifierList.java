@@ -40,12 +40,34 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
     }
 
     /**
-     * Experimental context parameter API.
+     * Returns the context parameter list for this modifier list, if present.
+     *
+     * <p><b>Example:</b></p>
+     * <pre>{@code
+     * context(c: Context)
+     * fun foo() {}
+     * }</pre>
+     *
+     * @return the context parameter list, or {@code null} if this modifier list has no context parameters
+     *
+     * @see KtContextParameterList
      */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
+    public KtContextParameterList getContextParameterList() {
+        return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+    }
+
+    /**
+     * Returns the context receiver list for this modifier list, if present.
+     *
+     * @return the context receiver list, or {@code null} if this modifier list has no context receivers
+     * @deprecated Use {@link #getContextParameterList()} instead. This method is obsolete and exists for compatibility reasons only.
+     */
+    @Deprecated
+    @Nullable
     public KtContextReceiverList getContextReceiverList() {
-        return (KtContextReceiverList) getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+        return (KtContextReceiverList) getContextParameterList();
     }
 
     /**
