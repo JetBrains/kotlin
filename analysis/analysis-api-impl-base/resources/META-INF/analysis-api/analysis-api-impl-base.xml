@@ -12,6 +12,8 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <stubElementTypeHolder externalIdPrefix="kotlin." class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>
+
     <fileType name="ARCHIVE" extensions="klib"/>
 
     <fileType name="Kotlin" fieldName="INSTANCE" language="kotlin" extensions="kt;kts"
