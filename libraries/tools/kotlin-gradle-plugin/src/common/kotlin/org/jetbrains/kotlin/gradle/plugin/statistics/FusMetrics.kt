@@ -391,3 +391,9 @@ internal object KotlinCrossCompilationMetrics : FusMetrics {
         }
     }
 }
+
+internal object KotlinCompilerRefIndexMetrics : FusMetrics {
+    internal fun collectMetrics(enabled: Boolean, metricsConsumer: StatisticsValuesConsumer) {
+        metricsConsumer.report(BooleanMetrics.ENABLED_COMPILER_REFERENCE_INDEX, enabled)
+    }
+}

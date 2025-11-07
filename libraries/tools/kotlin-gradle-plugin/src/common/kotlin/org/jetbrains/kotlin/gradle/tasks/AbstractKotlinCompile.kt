@@ -196,7 +196,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                         daemonJvmArgs = normalizedKotlinDaemonJvmArguments.orNull,
                                         strategy = params.second,
                                         useDaemonFallbackStrategy = useDaemonFallbackStrategy.get(),
-                                        // TODO KT-81846 Add FUS for CRI usage in Gradle / Maven
                                         generateCompilerRefIndex = generateCompilerRefIndex.get(),
                                     ),
                                     params.first,
