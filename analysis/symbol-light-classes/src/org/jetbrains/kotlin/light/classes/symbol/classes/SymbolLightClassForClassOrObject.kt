@@ -159,7 +159,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 .filter { it.classId != StandardClassIds.Any }
                 .toList()
 
-            val filteredDeclarations = processMemberScopeMappedSpecialSignatures(visibleDeclarations, allSupertypes, result)
+            val filteredDeclarations = processOwnDeclarationsMappedSpecialSignaturesAware(visibleDeclarations, allSupertypes, result)
 
             val suppressStatic = classKind() == KaClassKind.COMPANION_OBJECT
             createMethods(this@SymbolLightClassForClassOrObject, filteredDeclarations, result, suppressStatic = suppressStatic)
@@ -178,56 +178,31 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
     }
 
-    private fun KaSession.processMemberScopeMappedSpecialSignatures(
+    private fun KaSession.processOwnDeclarationsMappedSpecialSignaturesAware(
         visibleDeclarations: Sequence<KaCallableSymbol>,
         allSupertypes: List<KaClassType>,
-        result: MutableList<PsiMethod>
+        result: MutableList<PsiMethod>,
     ): Sequence<KaCallableSymbol> {
         if (allSupertypes.none { it.classId.packageFqName.startsWith(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME) }) {
             // The class definitely doesn't have mapped signatures
             return visibleDeclarations
         }
 
-        val filteredDeclarations = mutableListOf<KaCallableSymbol>()
-
-        for (callableSymbol in visibleDeclarations) {
-            when (callableSymbol) {
-                is KaNamedFunctionSymbol -> {
-                    val overriddenSymbol = findOverriddenCollectionSymbol(callableSymbol)
-                    val javaMethod = mapMethodWithSpecialSignatureToJavaMethod(overriddenSymbol, allSupertypes)
-                    if (overriddenSymbol == null || javaMethod == null) {
-                        // Default case: method is not mapped to Java collections method - just create the delegate
-                        filteredDeclarations += callableSymbol
-                        continue
+        val filteredDeclarations = buildList {
+            for (callableSymbol in visibleDeclarations) {
+                if (callableSymbol is KaNamedFunctionSymbol) {
+                    val kotlinCollectionFunction = findOverriddenCollectionSymbol(callableSymbol)
+                    val shouldAddOriginal = processPossiblyMappedMethod(
+                        ownFunction = callableSymbol,
+                        kotlinCollectionFunction = kotlinCollectionFunction,
+                        allSupertypes = allSupertypes,
+                        result = result
+                    )
+                    if (shouldAddOriginal) {
+                        add(callableSymbol)
                     }
-
-                    val supertype = allSupertypes.find { it.classId == overriddenSymbol.callableId?.classId }
-                    val typeParameters = javaMethod.containingClass?.typeParameters.orEmpty()
-                    val typeArguments = supertype?.typeArguments.orEmpty()
-                    val typeParameterMapping = buildMap<PsiTypeParameter, PsiType> {
-                        typeParameters.zip(typeArguments).forEach { (typeParameter, typeArgument) ->
-                            val type = typeArgument.type?.asPsiType(
-                                useSitePosition = this@SymbolLightClassForClassOrObject,
-                                allowErrorTypes = true
-                            )
-                            if (type != null) put(typeParameter, type)
-                        }
-                    }
-
-                    val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
-                    val isErasedSignature = javaMethod.name in erasedCollectionParameterNames ||
-                            callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }
-
-                    if (isErasedSignature) {
-                        result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = false))
-                    } else {
-                        filteredDeclarations += callableSymbol
-                        result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = true))
-                    }
-                }
-
-                else -> {
-                    filteredDeclarations += callableSymbol
+                } else {
+                    add(callableSymbol)
                 }
             }
         }
@@ -235,6 +210,120 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         return filteredDeclarations.asSequence()
     }
 
+    /**
+     * Processes a Kotlin function that may be mapped to a Java collection method with special signature requirements.
+     *
+     * This method handles the complex interplay between Kotlin collection methods and their Java counterparts,
+     * particularly for methods like `contains`, `remove`, `get`, etc., which require special handling due to
+     * type erasure and signature differences between Kotlin and Java collections.
+     *
+     * When a Kotlin function overrides or delegates to a function from a `kotlin.collections` type that maps
+     * to a Java collection method (e.g., `java.util.Collection`, `java.util.List`, `java.util.Map`), this
+     * method determines how to generate the appropriate PSI methods:
+     *
+     * 1. **Non-mapped case** (returns `true`):
+     *    - The method is not mapped to a special Java collection method
+     *    - No bridge methods are generated
+     *    - The original Kotlin method should be generated normally
+     *
+     * 2. **Specialized signature case** (returns `true`):
+     *    - The method has specialized generic types (e.g., `remove(K)` where K is String)
+     *    - Generates a final bridge method with the specialized Java signature
+     *    - The original Kotlin method SHOULD still be generated with its Kotlin signature
+     *
+     * 3. **Erased signature case** (returns `false`):
+     *    - The method has type parameters that get erased (e.g., `contains(Object)` in Java)
+     *    - Generates a single non-final bridge method with the erased Java signature
+     *    - The original Kotlin method should NOT be generated separately
+     *
+     * @param ownFunction The Kotlin function symbol to process
+     * @param kotlinCollectionFunction The overridden symbol from Kotlin collections, or null if not overriding
+     * @param allSupertypes All supertypes of the containing class
+     * @param result Mutable list where generated PSI methods are added
+     * @return `true` if the caller should generate the original Kotlin method, `false` if it should be skipped
+     *
+     * @see tryToMapMethodToJavaMethod
+     * @see erasedCollectionParameterNames
+     */
+    private fun KaSession.processPossiblyMappedMethod(
+        ownFunction: KaNamedFunctionSymbol,
+        kotlinCollectionFunction: KaNamedFunctionSymbol?,
+        allSupertypes: List<KaClassType>,
+        result: MutableList<PsiMethod>
+    ): Boolean {
+        if (kotlinCollectionFunction == null) return true
+        val javaMethod = tryToMapMethodToJavaMethod(functionSymbol = kotlinCollectionFunction, allSupertypes) ?: return true
+
+        val collectionSupertype = allSupertypes.find { it.classId == kotlinCollectionFunction.callableId?.classId }
+        val typeParameters = javaMethod.containingClass?.typeParameters.orEmpty()
+        val typeArguments = collectionSupertype?.typeArguments.orEmpty()
+        val typeParameterMapping = buildMap<PsiTypeParameter, PsiType> {
+            typeParameters.zip(typeArguments).forEach { (typeParameter, typeArgument) ->
+                val type = typeArgument.type?.asPsiType(
+                    useSitePosition = this@SymbolLightClassForClassOrObject,
+                    allowErrorTypes = true
+                )
+                if (type != null) put(typeParameter, type)
+            }
+        }
+
+        val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
+        val isErasedSignature = javaMethod.name in erasedCollectionParameterNames ||
+                ownFunction.valueParameters.any { it.returnType is KaTypeParameterType }
+
+        result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = !isErasedSignature))
+        return !isErasedSignature
+    }
+
+    /**
+     * Generates stub methods from Java collection interfaces for the first non-interface Kotlin class
+     * that extends a mapped Kotlin collection type.
+     *
+     * This method is responsible for bridging the gap between Kotlin collection interfaces (like
+     * `kotlin.collections.List`, `kotlin.collections.Map`) and their Java counterparts (like
+     * `java.util.List`, `java.util.Map`) when a concrete class is defined.
+     *
+     * ## Why this is needed
+     *
+     * Kotlin collection interfaces are mapped to Java collection interfaces, but they don't declare
+     * all the methods from the Java interfaces. When a Kotlin class directly implements a Kotlin
+     * collection interface (e.g., `class MyList : List<String>`), it becomes the first concrete class
+     * in the inheritance hierarchy, and it must provide implementations for ALL methods from the
+     * corresponding Java interface.
+     *
+     * ## Conditions for stub generation
+     *
+     * Stubs are only generated when ALL the following conditions are met:
+     * 1. The class is a concrete class (not an interface or annotation)
+     * 2. All supertypes are interfaces (this class is the first non-interface subtype)
+     * 3. At least one supertype is a Kotlin collection that maps to a Java collection
+     *
+     * ## What gets generated
+     *
+     * For each method from the Java collection interface that isn't already present:
+     * - Methods that map to Kotlin properties (e.g., `size()` → `size` property): generates both
+     *   a final bridge method with the Java name and an abstract/concrete method with the Kotlin name (`getSize`)
+     * - Methods not in the Kotlin interface: generates open bridge methods
+     * - Methods in the Kotlin interface with specialized signatures: generates appropriate bridge methods with type substitution
+     *
+     * Generated stubs are added to the result list only if their signatures don't already exist.
+     *
+     * ## Example
+     *
+     * ```kotlin
+     * class MyList : List<String> { ... }
+     * ```
+     *
+     * This generates stubs for Java methods like `add(E)`, `remove(Object)`, `size()`, etc.,
+     * with appropriate type substitution (`Object` → `String`).
+     *
+     * @param result Mutable list where generated stub methods are added
+     * @param classSymbol The class symbol being processed
+     * @param allSupertypes All supertypes of the class, used to find the closest mapped collection type
+     *
+     * @see generateJavaCollectionMethodStubs
+     * @see mapKotlinClassToJava
+     */
     private fun KaSession.addJavaCollectionMethodStubsIfNeeded(
         result: MutableList<PsiMethod>,
         classSymbol: KaNamedClassSymbol,
@@ -264,7 +353,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
 
         val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
-        calcMethods(javaCollectionPsiClass, kotlinCollectionSymbol, substitutor, result)
+        generateJavaCollectionMethodStubs(javaCollectionPsiClass, kotlinCollectionSymbol, substitutor, result)
     }
 
     private fun mapKotlinClassToJava(classId: ClassId): ClassId? {
@@ -273,7 +362,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }?.javaClass
     }
 
-    private fun KaSession.calcMethods(
+    private fun KaSession.generateJavaCollectionMethodStubs(
         javaCollectionPsiClass: PsiClass,
         kotlinCollectionSymbol: KaClassSymbol,
         substitutor: PsiSubstitutor,
@@ -281,7 +370,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     ) {
         val kotlinNames = kotlinCollectionSymbol.memberScope.callables
             .filter { it is KaNamedFunctionSymbol }
-            // default methods in Java collection (ex. toArray() overload from Java 11, which blocks generation of 2 other overloads)
+            // skip default methods in Java collection
             .filter { it.origin != KaSymbolOrigin.JAVA_SOURCE && it.origin != KaSymbolOrigin.JAVA_LIBRARY }
             .mapNotNull { it.name }
             .toSet()
@@ -290,7 +379,9 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             .filterNot { it.name == "equals" || it.name == "hashCode" || it.name == "toString" }
             .filterNot { it.hasModifierProperty(PsiModifier.DEFAULT) }
 
-        val candidateMethods = javaMethods.flatMap { method -> methodWrappers(method, javaCollectionPsiClass, kotlinNames, substitutor) }
+        val candidateMethods = javaMethods.flatMap { method ->
+            createWrappersForJavaCollectionMethod(method, javaCollectionPsiClass, kotlinNames, substitutor)
+        }
         val existingSignatures = result.map { it.getSignature(substitutor) }.toSet()
 
         result += candidateMethods.filter { candidateMethod ->
@@ -317,7 +408,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     }
 
     // TODO check "go to base method", "go to declaration" in IDE
-    private fun methodWrappers(
+    private fun createWrappersForJavaCollectionMethod(
         method: PsiMethod,
         javaCollectionPsiClass: PsiClass,
         kotlinNames: Set<Name>,
@@ -398,13 +489,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         val typeParameters = substitutor.substitutionMap.keys
         val kOriginal = substitutor.substitutionMap[typeParameters.find { it.name == "K" }] ?: return null
         val vOriginal = substitutor.substitutionMap[typeParameters.find { it.name == "V" }] ?: return null
-
-        // Perform erasure: map all type parameters of k and v to java.lang.Object
-//        val erasureMapping = mutableMapOf<PsiTypeParameter, PsiType>()
-//        collectTypeParameters(kOriginal, erasureMapping)
-//        collectTypeParameters(vOriginal, erasureMapping)
-
-//        val erasureSubstitutor = PsiSubstitutor.createSubstitutor(erasureMapping)
         val k = substitutor.substitute(kOriginal) ?: kOriginal
         val v = substitutor.substitute(vOriginal) ?: vOriginal
 
@@ -568,36 +652,15 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbol.delegatedMemberScope.callables.forEach { callableSymbol ->
             when (callableSymbol) {
                 is KaNamedFunctionSymbol -> {
-                    val original = callableSymbol.fakeOverrideOriginal as KaNamedFunctionSymbol // TODO remove cast
-                    val javaMethod = mapMethodWithSpecialSignatureToJavaMethod(original, allSupertypes)
-                    if (javaMethod == null) {
-                        // Default case: method is not mapped to Java collections method - just create the delegate
+                    val kotlinCollectionFunction = callableSymbol.fakeOverrideOriginal as? KaNamedFunctionSymbol
+                    val shouldCreateOriginalDelegate = processPossiblyMappedMethod(
+                        ownFunction = callableSymbol,
+                        kotlinCollectionFunction = kotlinCollectionFunction,
+                        allSupertypes = allSupertypes,
+                        result = result
+                    )
+                    if (shouldCreateOriginalDelegate) {
                         createDelegateMethod(functionSymbol = callableSymbol)
-                        return@forEach
-                    }
-
-                    val supertype = allSupertypes.find { it.classId == original.callableId?.classId }
-                    val typeParameters = javaMethod.containingClass?.typeParameters.orEmpty()
-                    val typeArguments = supertype?.typeArguments.orEmpty()
-                    val typeParameterMapping = buildMap<PsiTypeParameter, PsiType> {
-                        typeParameters.zip(typeArguments).forEach { (typeParameter, typeArgument) ->
-                            val type = typeArgument.type?.asPsiType(
-                                useSitePosition = this@SymbolLightClassForClassOrObject,
-                                allowErrorTypes = true
-                            )
-                            if (type != null) put(typeParameter, type)
-                        }
-                    }
-
-                    val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
-                    val isErasedSignature = javaMethod.name in erasedCollectionParameterNames ||
-                            callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }
-
-                    if (isErasedSignature) {
-                        result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = false))
-                    } else {
-                        createDelegateMethod(functionSymbol = callableSymbol)
-                        result.add(javaMethod.wrap(substitutor, hasImplementation = true, makeFinal = true))
                     }
                 }
 
@@ -615,17 +678,17 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         }
     }
 
-    private fun KaSession.mapMethodWithSpecialSignatureToJavaMethod(
-        symbol: KaNamedFunctionSymbol?,
+    private fun KaSession.tryToMapMethodToJavaMethod(
+        functionSymbol: KaNamedFunctionSymbol?,
         allSupertypes: List<KaClassType>,
     ): PsiMethod? {
-        if (symbol == null) return null
-        if (!symbol.isFromKotlinCollections()) return null
-        val symbolName = symbol.name.asString()
+        if (functionSymbol == null) return null
+        if (!functionSymbol.isFromKotlinCollections()) return null
+        val symbolName = functionSymbol.name.asString()
 
         if (symbolName == "addAll") {
             // Special case: "addAll" has two overloads from different types
-            return if (symbol.valueParameters.size == 1) {
+            return if (functionSymbol.valueParameters.size == 1) {
                 getJavaCollectionClass(allSupertypes)?.methods?.find { it.name == symbolName }
             } else {
                 getJavaListClass(allSupertypes)?.methods?.find { it.name == symbolName && it.parameters.size == 2 }
@@ -637,7 +700,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             "indexOf", "lastIndexOf" -> getJavaListClass(allSupertypes)
             "get", "containsKey", "containsValue", "putAll" -> getJavaMapClass(allSupertypes)
             "remove" -> {
-                if (symbol.callableId?.classId == StandardClassIds.MutableMap) {
+                if (functionSymbol.callableId?.classId == StandardClassIds.MutableMap) {
                     getJavaMapClass(allSupertypes)
                 } else {
                     getJavaCollectionClass(allSupertypes)
