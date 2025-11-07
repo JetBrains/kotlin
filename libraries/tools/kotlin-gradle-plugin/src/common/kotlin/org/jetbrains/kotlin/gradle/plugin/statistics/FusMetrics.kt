@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -381,6 +382,24 @@ internal object KotlinCrossCompilationMetrics : FusMetrics {
             if (compilation.cinterops.isNotEmpty()) {
                 project.addConfigurationMetrics {
                     it.put(BooleanMetrics.KOTLIN_CROSS_COMPILATION_NOT_SUPPORTED, true)
+                }
+            }
+        }
+    }
+}
+
+internal object KotlinSourceSetMetrics : FusMetrics {
+    internal fun collectMetrics(project: Project) {
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
+            project.reportGeneratedSourcesUsage()
+        }
+    }
+
+    private suspend fun Project.reportGeneratedSourcesUsage() {
+        project.kotlinExtension.awaitSourceSets().configureEach {
+            if (it.generatedKotlin.srcDirs.isNotEmpty()) {
+                project.addConfigurationMetrics {
+                    it.put(BooleanMetrics.KOTLIN_GENERATED_SOURCES_USED, true)
                 }
             }
         }
