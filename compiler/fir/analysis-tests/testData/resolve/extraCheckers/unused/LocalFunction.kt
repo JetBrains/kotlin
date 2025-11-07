@@ -198,5 +198,28 @@ fun test13() {
     use(foo)
 }
 
+fun test14() {
+    var foo = 1
+
+    fun usage() {
+        use(foo)
+        try {
+            <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 2
+        } finally {
+            foo = 3
+        }
+    }
+}
+
+fun test15() {
+    invokeLater {
+        var foo = 1
+        use(foo)
+        invokeLater {
+            foo = 2
+        }
+    }
+}
+
 /* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral,
 localFunction, localProperty, nullableType, propertyDeclaration, tryExpression, unnamedLocalVariable */
