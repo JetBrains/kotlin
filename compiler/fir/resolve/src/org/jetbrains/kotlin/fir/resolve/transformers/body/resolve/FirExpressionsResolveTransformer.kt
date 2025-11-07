@@ -2079,18 +2079,18 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             // TODO replace with repl symbol in FirReplDeclarationReference?
             val classSymbol = symbol.getContainingClassSymbol()!!.fir as FirClass
             context.withScopesForClass(classSymbol, components) {
-                when (symbol) {
-                    is FirPropertySymbol -> {
-                        val variable = symbol.fir
-                        val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef
-                        dataFlowAnalyzer.enterLocalVariableDeclaration(variable)
-                        variable.transformSingle(transformer, data)
-                        dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
-                    }
-                    else -> {
-                        symbol.fir.transformSingle(transformer, data)
-                    }
+            when (symbol) {
+                is FirPropertySymbol -> {
+                    val variable = symbol.fir
+                    val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef
+                    dataFlowAnalyzer.enterLocalVariableDeclaration(variable)
+                    variable.transformSingle(transformer, data)
+                    dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
                 }
+                else -> {
+                    symbol.fir.transformSingle(transformer, data)
+                }
+            }
             }
         }
         return replDeclarationReference

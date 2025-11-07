@@ -1463,8 +1463,6 @@ open class PsiRawFirBuilder(
                             symbol = classSymbol
                             superTypeRefs += implicitAnyType
 
-                            context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
-
                             val delegatedSelfType = script.toDelegatedSelfType(this)
                             registerSelfType(delegatedSelfType)
 
@@ -1539,20 +1537,18 @@ open class PsiRawFirBuilder(
                         buildBlock {
                             this.statements += extractScriptStatements(script, classSymbol, resultFieldName).map { statement ->
                                 when (statement) {
+                                    is FirProperty if statement.isLocal -> statement
+
                                     is FirProperty,
                                     is FirNamedFunction,
                                     is FirRegularClass,
                                     is FirTypeAlias,
                                         -> {
-                                        if (statement is FirProperty && statement.isLocal) {
-                                            statement
-                                        } else {
-                                            members.add(statement)
-                                            statement.isReplSnippetDeclaration = true
-                                            buildReplDeclarationReference {
-                                                source = statement.source
-                                                symbol = statement.symbol
-                                            }
+                                        members.add(statement)
+                                        statement.isReplSnippetDeclaration = true
+                                        buildReplDeclarationReference {
+                                            source = statement.source
+                                            symbol = statement.symbol
                                         }
                                     }
 

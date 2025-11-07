@@ -280,15 +280,15 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 classifierStorage.preCacheTypeParameters(it)
                             }
                             createBackingField(
-                                this,
-                                property,
-                                IrDeclarationOrigin.PROPERTY_DELEGATE,
-                                symbols.backingFieldSymbol!!,
-                                c.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
-                                NameUtils.propertyDelegateName(property.name),
-                                true,
-                                delegate.takeIf { property.isReplSnippetDeclaration != true },
-                                delegate.resolvedType.toIrType(),
+                                irProperty = this,
+                                firProperty = property,
+                                origin = IrDeclarationOrigin.PROPERTY_DELEGATE,
+                                symbol = symbols.backingFieldSymbol!!,
+                                visibility = c.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
+                                name = NameUtils.propertyDelegateName(property.name),
+                                isFinal = true,
+                                firInitializerExpression = delegate.takeIf { property.isReplSnippetDeclaration != true },
+                                type = delegate.resolvedType.toIrType(),
                             )
                         } else {
                             val initializer = runIf(property.isReplSnippetDeclaration != true) {

@@ -451,15 +451,14 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
     inline fun resolveReplSnippet(
         replSnippet: FirReplSnippet,
-        transformChildren: () -> Unit,
+        block: () -> Unit,
     ) {
         if (!shouldTransformDeclaration(replSnippet)) return
 
         computationSession.recordThatAnnotationsAreResolved(replSnippet)
-        transformDeclaration(replSnippet, null).also {
-            transformChildren(replSnippet) {
-                transformChildren()
-            }
+        transformDeclaration(replSnippet, data = null)
+        transformChildren(replSnippet) {
+            block()
         }
     }
 

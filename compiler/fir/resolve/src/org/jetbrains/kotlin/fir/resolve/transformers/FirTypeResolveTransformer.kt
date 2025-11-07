@@ -131,7 +131,7 @@ open class FirTypeResolveTransformer(
     override fun transformReplSnippet(replSnippet: FirReplSnippet, data: Any?): FirReplSnippet {
         whileAnalysing(session, replSnippet) {
             return withReplSnippetScope(replSnippet) {
-                super.transformReplSnippet(replSnippet, data)
+                transformElement(replSnippet, data)
             }
         }
     }

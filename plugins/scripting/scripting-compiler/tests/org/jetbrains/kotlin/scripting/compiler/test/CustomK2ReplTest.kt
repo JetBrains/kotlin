@@ -25,7 +25,7 @@ import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.assertNull
 import kotlin.test.fail
 
 class ReplReceiver1 {
@@ -385,6 +385,9 @@ private val baseCompilationConfiguration: ScriptCompilationConfiguration =
             ?.mapNotNull { File(it).takeIf { file -> file.exists() } }.orEmpty()
         updateClasspath(classpath + ForTestCompileRuntime.runtimeJarForTests())
         compilerOptions("-Xrender-internal-diagnostic-names=true")
+        repl {
+            resultFieldPrefix("\$res")
+        }
     }
 
 private val baseEvaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration {}
@@ -422,9 +425,9 @@ private fun checkEvaluatedSnippetsResultVals(
         if (!expectedIter.hasNext()) break
         val expectedVal = expectedIter.next()
         when (val resVal = res.get().result) {
-            is ResultValue.Unit -> assertTrue(expectedVal == null, "Unexpected evaluation result: Unit")
+            is ResultValue.Unit -> assertNull(expectedVal, "Unexpected evaluation result: Unit")
             is ResultValue.Error -> fail("Unexpected evaluation result: runtime error: ${resVal.error.message}")
-            is ResultValue.Value -> assertTrue(expectedVal == resVal.value, "Unexpected evaluation result: ${resVal.value}")
+            is ResultValue.Value -> assertEquals(expectedVal, resVal.value, "Unexpected evaluation result: ${resVal.value}")
             is ResultValue.NotEvaluated -> fail("Unexpected evaluation result: NotEvaluated")
         }
     }

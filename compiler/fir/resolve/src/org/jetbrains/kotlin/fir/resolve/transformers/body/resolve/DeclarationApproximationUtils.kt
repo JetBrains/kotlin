@@ -18,7 +18,7 @@ fun FirResolvedTypeRef.approximateDeclarationType(
     isLocal: Boolean,
     isInlineFunction: Boolean = false,
     stripEnhancedNullability: Boolean = true,
-    approximateLocalTypes: Boolean = true,
+    approximateLocalTypes: Boolean = false,
 ): FirResolvedTypeRef {
     val approximatedType = coneType.approximateDeclarationType(
         session, containingCallableVisibility, isLocal, isInlineFunction, approximateLocalTypes
@@ -31,7 +31,7 @@ fun ConeKotlinType.approximateDeclarationType(
     containingCallableVisibility: Visibility?,
     isLocal: Boolean,
     isInlineFunction: Boolean = false,
-    approximateLocalTypes: Boolean = true,
+    approximateLocalTypes: Boolean = false,
 ): ConeKotlinType {
     val configuration = when (isLocal) {
         true -> TypeApproximatorConfiguration.LocalDeclaration
