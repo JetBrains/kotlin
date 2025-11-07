@@ -12,6 +12,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.fileProperty
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
@@ -99,7 +101,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
              *
              * Things to try in the future:
              * - Redo the entire integration using an .pbxproj instead of the Package and hack something up in this linkage project file
-             * - Reexport all potential libraries for dynamic K/N framework (was there an issue with "private extern" in public API of some Google library?)
+             * - Reexport all potential libraries for dynamic K/N framework from the linkage shim (was there an issue with "private extern" in public API of some Google library?)
              */
 //             SyntheticProductType.INFERRED
             SyntheticProductType.DYNAMIC
@@ -118,6 +120,16 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     }
 
     val transitiveSwiftPMDependenciesMap = swiftPMDependenciesMetadataClasspath()
+    val transitiveLocalSwiftPMDependencies = transitiveSwiftPMDependenciesMap.map {
+        it.values.flatMap { swiftPMDependencies ->
+            swiftPMDependencies.mapNotNull { dependency ->
+                when (dependency) {
+                    is SwiftPMDependency.Local -> dependency
+                    is SwiftPMDependency.Remote -> null
+                }
+            }
+        }
+    }
 
     val syntheticImportProjectGenerationTaskForEmbedAndSignLinkage = regenerateLinkageImportProjectTask(transitiveSwiftPMDependenciesMap)
     syntheticImportProjectGenerationTaskForEmbedAndSignLinkage.configure {
@@ -151,6 +163,16 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.xcodeprojPath.set(projectPathProvider)
     }
 
+    val computeLocalPackageDependencyInputFiles = project.locateOrRegisterTask<ComputeLocalPackageDependencyInputFiles>(
+        ComputeLocalPackageDependencyInputFiles.TASK_NAME,
+    ) {
+        it.localPackages.addAll(
+            transitiveLocalSwiftPMDependencies.map {
+                it.map { it.path }
+            }
+        )
+    }
+
     val syntheticImportProjectGenerationTaskForCinteropsAndLdDump = project.locateOrRegisterTask<GenerateSyntheticLinkageImportProject>(
         lowerCamelCaseName(
             GenerateSyntheticLinkageImportProject.TASK_NAME,
@@ -166,10 +188,17 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.syntheticProductType.set(SyntheticProductType.DYNAMIC)
     }
 
-    val packageFetchTask = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
+    val fetchSyntheticImportProjectPackages = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
         FetchSyntheticImportProjectPackages.TASK_NAME,
     ) {
         it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
+        it.localPackageManifests.from(
+            transitiveLocalSwiftPMDependencies.map {
+                it.map {
+                    it.path.resolve("Package.swift")
+                }
+            }
+        )
         it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
     }
 
@@ -201,16 +230,18 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             )
         ) {
             // FIXME: Remove this and fix input/outputs
-            it.dependsOn(packageFetchTask)
+            it.dependsOn(fetchSyntheticImportProjectPackages)
+            it.dependsOn(computeLocalPackageDependencyInputFiles)
             it.resolvedPackagesState.from(
-                packageFetchTask.map { it.inputManifests },
-                packageFetchTask.map { it.lockFile },
+                fetchSyntheticImportProjectPackages.map { it.inputManifests },
+                fetchSyntheticImportProjectPackages.map { it.lockFile },
             )
             it.xcodebuildPlatform.set(targetPlatform)
             it.xcodebuildSdk.set(targetSdk)
-            it.swiftPMDependenciesCheckout.set(packageFetchTask.map { it.swiftPMDependenciesCheckout.get() })
+            it.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
             it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
             it.discoverModulesImplicitly.set(swiftPMImportExtension.discoverModulesImplicitly)
+            it.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { it.filesToTrackFromLocalPackages })
         }
 
         tasks.configureEach { task ->
@@ -272,6 +303,20 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
         swiftPMImportExtension.spmDependencies.all { swiftPMDependency ->
             kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin = true
+            when (swiftPMDependency) {
+                is SwiftPMDependency.Local -> {
+                    computeLocalPackageDependencyInputFiles.configure {
+                        it.localPackages.add(swiftPMDependency.path)
+                    }
+                    fetchSyntheticImportProjectPackages.configure {
+                        it.localPackageManifests.from(
+                            swiftPMDependency.path.resolve("Package.swift")
+                        )
+                    }
+                }
+                is SwiftPMDependency.Remote -> Unit
+            }
+
             val mainCompilationCinterops = target.compilations.getByName("main").cinterops
             if (cinteropName !in mainCompilationCinterops.names) {
                 mainCompilationCinterops.create(cinteropName).definitionFile.set(
@@ -491,7 +536,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                         }
                     }
                     is SwiftPMDependency.Local -> {
-                        appendLine("  path: \"${importedPackage.path}\",")
+                        appendLine("  path: \"${importedPackage.path.path}\",")
                     }
                 }
                 if (importedPackage.traits.isNotEmpty()) {
@@ -598,11 +643,87 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
 }
 
 @DisableCachingByDefault(because = "...")
+internal abstract class ComputeLocalPackageDependencyInputFiles : DefaultTask() {
+
+    @get:Input
+    val localPackages: SetProperty<File> = project.objects.setProperty(File::class.java)
+
+    /**
+     * Recompute if the manifests change
+     */
+    @get:InputFiles
+    protected val manifests get() = localPackages.map { it.map { it.resolve("Package.swift") } }
+
+    @get:OutputFile
+    val filesToTrackFromLocalPackages: RegularFileProperty = project.objects.fileProperty().convention(
+        project.layout.buildDirectory.file("kotlin/swiftImportFilesToTrackFromLocalPackages")
+    )
+
+    @get:Inject
+    protected abstract val execOps: ExecOperations
+
+    @TaskAction
+    fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
+        // FIXME: Transitive local packages...
+        val localPackageFiles = localPackages.get().flatMap { packageRoot ->
+            listOf(
+                packageRoot.resolve("Package.swift")
+            ) + findLocalPackageSources(packageRoot)
+        }.map {
+            it.path
+        }
+        filesToTrackFromLocalPackages.getFile().writeText(
+            localPackageFiles.joinToString("\n")
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun findLocalPackageSources(path: File): List<File> {
+        val jsonBuffer = ByteArrayOutputStream()
+        execOps.exec {
+            it.workingDir(path)
+            it.standardOutput = jsonBuffer
+            it.commandLine("swift", "package", "describe", "--type", "json")
+        }
+        val packageJson = Gson().fromJson(
+            jsonBuffer.toString(), Map::class.java
+        ) as Map<String, Any>
+        val targets = packageJson["targets"] as List<Map<String, Any>>
+        val relativeSourceRootPaths = targets
+            .filter {
+                val moduleType = it["module_type"]
+                moduleType == "SwiftTarget" || moduleType == "ClangTarget"
+            }
+            .map {
+                it["path"] as String
+            }
+        return relativeSourceRootPaths.map {
+            path.resolve(it)
+        }
+    }
+
+    companion object {
+        const val TASK_NAME = "computeLocalPackageDependencyInputFiles"
+    }
+}
+
+@DisableCachingByDefault(because = "...")
 internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
+
+    /**
+     * Refetch when Package manifests of local SwiftPM dependencies change
+     */
+    @get:InputFiles
+    abstract val localPackageManifests: ConfigurableFileCollection
 
     @get:Internal
     val syntheticImportProjectRoot: DirectoryProperty = project.objects.directoryProperty()
 
+    /**
+     * These are own manifest and manifests from project/modular dependencies. Refetch when any of these Package manifests changed.
+     */
+    // For some reason FileTree still invalidates on random directories without this annotation even though directories are not tracked...
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     val inputManifests
         get() = syntheticImportProjectRoot
@@ -670,6 +791,11 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
     @get:Input
     abstract val discoverModulesImplicitly: Property<Boolean>
+
+    @get:InputFile
+    abstract val filesToTrackFromLocalPackages: RegularFileProperty
+    @get:InputFiles
+    protected val localPackageSources get() = filesToTrackFromLocalPackages.map { it.asFile.readLines().filter { it.isNotEmpty() }.map { File(it) } }
 
     @get:InputFiles
     abstract val resolvedPackagesState: ConfigurableFileCollection
@@ -917,6 +1043,11 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                     if (modules.isNotEmpty()) {
                         appendLine("modules = $modules")
                     }
+                    val invalidateDownstreamCinterops = UUID.randomUUID().toString()
+                    appendLine("""
+                        ---
+                        // $invalidateDownstreamCinterops
+                    """.trimIndent())
                 }
             )
 
