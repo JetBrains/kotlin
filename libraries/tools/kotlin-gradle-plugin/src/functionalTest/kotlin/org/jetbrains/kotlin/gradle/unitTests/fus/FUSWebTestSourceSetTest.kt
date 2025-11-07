@@ -56,4 +56,113 @@ class FUSWebTestSourceSetTest {
         )
     }
 
+    @Test
+    fun emptyWebTestDependenciesAreNotReported() {
+        val project = buildProjectWithMPP(preApplyCode = enableFusOnCI) {
+            with(multiplatformExtension) {
+                js { nodejs() }
+                wasmJs()
+            }
+        }
+
+        project.evaluate()
+
+        assertNotNull(
+            project.collectedFusConfigurationTimeMetrics.booleanMetrics.keys.none {
+                it.name == BooleanMetrics.KOTLIN_WEB_TEST_DEPENDENCIES_PRESENT.name
+            }
+        )
+    }
+
+    @Test
+    fun explicitlyAddedWebTestApiDependencyIsReported() {
+        val project = buildProjectWithMPP(preApplyCode = enableFusOnCI) {
+            with(multiplatformExtension) {
+                js { browser() }
+                wasmJs { browser() }
+
+                applyDefaultHierarchyTemplate()
+
+                sourceSets.getByName("webTest").dependencies {
+                    api("com.example:some-dependency:0.1")
+                }
+            }
+        }
+        project.evaluate()
+
+        assertNotNull(
+            project.collectedFusConfigurationTimeMetrics.booleanMetrics.entries.singleOrNull {
+                it.key == BooleanMetrics.KOTLIN_WEB_TEST_DEPENDENCIES_PRESENT && it.value
+            }
+        )
+    }
+
+    @Test
+    fun explicitlyAddedWebTestImplementationDependencyIsReported() {
+        val project = buildProjectWithMPP(preApplyCode = enableFusOnCI) {
+            with(multiplatformExtension) {
+                js { browser() }
+                wasmJs { browser() }
+
+                applyDefaultHierarchyTemplate()
+
+                sourceSets.getByName("webTest").dependencies {
+                    implementation("com.example:some-dependency:0.1")
+                }
+            }
+        }
+        project.evaluate()
+
+        assertNotNull(
+            project.collectedFusConfigurationTimeMetrics.booleanMetrics.entries.singleOrNull {
+                it.key == BooleanMetrics.KOTLIN_WEB_TEST_DEPENDENCIES_PRESENT && it.value
+            }
+        )
+    }
+
+    @Test
+    fun explicitlyAddedWebTestCompileOnlyDependencyIsReported() {
+        val project = buildProjectWithMPP(preApplyCode = enableFusOnCI) {
+            with(multiplatformExtension) {
+                js { browser() }
+                wasmJs { browser() }
+
+                applyDefaultHierarchyTemplate()
+
+                sourceSets.getByName("webTest").dependencies {
+                    compileOnly("com.example:some-dependency:0.1")
+                }
+            }
+        }
+        project.evaluate()
+
+        assertNotNull(
+            project.collectedFusConfigurationTimeMetrics.booleanMetrics.entries.singleOrNull {
+                it.key == BooleanMetrics.KOTLIN_WEB_TEST_DEPENDENCIES_PRESENT && it.value
+            }
+        )
+    }
+
+    @Test
+    fun explicitlyAddedWebTestRuntimeOnlyDependencyIsReported() {
+        val project = buildProjectWithMPP(preApplyCode = enableFusOnCI) {
+            with(multiplatformExtension) {
+                js { browser() }
+                wasmJs { browser() }
+
+                applyDefaultHierarchyTemplate()
+
+                sourceSets.getByName("webTest").dependencies {
+                    runtimeOnly("com.example:some-dependency:0.1")
+                }
+            }
+        }
+        project.evaluate()
+
+        assertNotNull(
+            project.collectedFusConfigurationTimeMetrics.booleanMetrics.entries.singleOrNull {
+                it.key == BooleanMetrics.KOTLIN_WEB_TEST_DEPENDENCIES_PRESENT && it.value
+            }
+        )
+    }
 }
