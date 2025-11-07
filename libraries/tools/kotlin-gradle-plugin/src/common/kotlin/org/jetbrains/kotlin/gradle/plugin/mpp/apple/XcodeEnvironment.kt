@@ -35,7 +35,8 @@ internal class XcodeEnvironment(private val project: Project) {
         get() {
             val sdk = readEnvVariable("SDK_NAME") ?: return emptyList()
             val archs = readEnvVariable("ARCHS")?.split(" ") ?: return emptyList()
-            return AppleSdk.defineNativeTargets(sdk, archs)
+            val isCatalyst = readEnvVariable("IS_MACCATALYST") == "YES"
+            return AppleSdk.defineNativeTargets(sdk, archs, isCatalyst)
         }
 
     val frameworkSearchDir: File?
