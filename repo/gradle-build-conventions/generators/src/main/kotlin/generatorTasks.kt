@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ResolvableConfiguration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.plugins.ExtensionAware
@@ -63,11 +64,12 @@ fun Project.generatedSourcesTask(
     dependOnTaskOutput: Boolean = true,
     additionalInputsToTrack: (ConfigurableFileCollection) -> Unit = {},
 ): TaskProvider<JavaExec> {
-    val generatorClasspath: Configuration by configurations.creating
-
-    dependencies {
-        generatorClasspath(project(generatorProject))
+    val generatorDependencies = configurations.dependencyScope("${taskName}GeneratorDependencies")
+    val generatorClasspath = configurations.resolvable("${taskName}GeneratorClasspath") {
+        extendsFrom(generatorDependencies.get())
     }
+
+    dependencies.add(generatorDependencies.name, dependencies.project(generatorProject))
 
     return generatedSourcesTask(
         taskName,
@@ -85,7 +87,7 @@ fun Project.generatedSourcesTask(
  */
 fun Project.generatedSourcesTask(
     taskName: String,
-    generatorClasspath: Configuration,
+    generatorClasspath: NamedDomainObjectProvider<ResolvableConfiguration>,
     generatorMainClass: String,
     argsProvider: JavaExec.(generationRoot: Directory) -> List<String> = { listOf(it.toString()) },
     dependOnTaskOutput: Boolean = true,
@@ -100,7 +102,7 @@ fun Project.generatedSourcesTask(
     val generationRoot = layout.projectDirectory.dir(genPath)
     val task = tasks.register<JavaExec>(taskName) {
         workingDir = rootDir
-        classpath = generatorClasspath
+        classpath(generatorClasspath)
         mainClass.set(generatorMainClass)
         systemProperties["line.separator"] = "\n"
         args(argsProvider(generationRoot))

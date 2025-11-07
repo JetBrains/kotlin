@@ -62,10 +62,13 @@ tasks.withType<Test> {
     systemProperty("idea.home.path", ideaHomePathForTests().get().asFile.canonicalPath)
 }
 
-val flexGeneratorClasspath: Configuration by configurations.creating
+val flexGeneratorDependencies = configurations.dependencyScope("flexGeneratorDependencies")
+val flexGeneratorClasspath = configurations.resolvable("flexGeneratorClasspath") {
+    extendsFrom(flexGeneratorDependencies.get())
+}
 
 dependencies {
-    flexGeneratorClasspath(commonDependency("org.jetbrains.intellij.deps.jflex", "jflex")) {
+    flexGeneratorDependencies.name(commonDependency("org.jetbrains.intellij.deps.jflex", "jflex")) {
         // Flex brings many unrelated dependencies, so we are dropping them because only a flex `.jar` file is needed.
         // It can be probably removed when https://github.com/JetBrains/intellij-deps-jflex/issues/10 is fixed.
         isTransitive = false
