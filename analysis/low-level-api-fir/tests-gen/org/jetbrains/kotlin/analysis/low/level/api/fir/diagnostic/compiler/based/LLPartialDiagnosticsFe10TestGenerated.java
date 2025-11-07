@@ -747,6 +747,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("falsePositiveSenselessNullInWhen.kt")
+    public void testFalsePositiveSenselessNullInWhen() {
+      runTest("compiler/testData/diagnostics/tests/falsePositiveSenselessNullInWhen.kt");
+    }
+
+    @Test
     @TestMetadata("falsePropertyAmongEnums.kt")
     public void testFalsePropertyAmongEnums() {
       runTest("compiler/testData/diagnostics/tests/falsePropertyAmongEnums.kt");
