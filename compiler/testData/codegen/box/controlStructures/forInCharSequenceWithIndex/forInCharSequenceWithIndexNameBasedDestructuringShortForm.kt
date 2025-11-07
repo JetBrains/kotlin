@@ -47,6 +47,12 @@ fun test7(cs: CharSequence) = buildString {
     }
 }
 
+fun test8(cs: CharSequence) = buildString {
+    for ((index) in cs.withIndex()) {
+        append("$index;")
+    }
+}
+
 fun box(): String {
     val s: CharSequence = "abc"
 
@@ -57,6 +63,7 @@ fun box(): String {
     assertEquals("0:0:a;1:1:b;2:2:c;", test5(s))
     assertEquals("0:a:a;1:b:b;2:c:c;", test6(s))
     assertEquals("a;b;c;", test7(s))
+    assertEquals("0;1;2;", test8(s))
 
     return "OK"
 }

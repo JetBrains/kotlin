@@ -47,6 +47,12 @@ fun test7(seq: Sequence<String>) = buildString {
     }
 }
 
+fun test8(seq: Sequence<String>) = buildString {
+    for ((index) in seq.withIndex()) {
+        append("$index;")
+    }
+}
+
 fun box(): String {
     val seq = sequenceOf("a", "b", "c")
 
@@ -57,6 +63,7 @@ fun box(): String {
     assertEquals("0:0:a;1:1:b;2:2:c;", test5(seq))
     assertEquals("0:a:a;1:b:b;2:c:c;", test6(seq))
     assertEquals("a;b;c;", test7(seq))
+    assertEquals("0;1;2;", test8(seq))
 
     return "OK"
 }
