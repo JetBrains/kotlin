@@ -159,7 +159,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 .filter { it.classId != StandardClassIds.Any }
                 .toList()
 
-            val filteredDeclarations = processMemberScopeMappedSpecialSignatures(visibleDeclarations, classSymbol, allSupertypes, result)
+            val filteredDeclarations = processMemberScopeMappedSpecialSignatures(visibleDeclarations, allSupertypes, result)
 
             val suppressStatic = classKind() == KaClassKind.COMPANION_OBJECT
             createMethods(this@SymbolLightClassForClassOrObject, filteredDeclarations, result, suppressStatic = suppressStatic)
@@ -180,7 +180,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     private fun KaSession.processMemberScopeMappedSpecialSignatures(
         visibleDeclarations: Sequence<KaCallableSymbol>,
-        classSymbol: KaNamedClassSymbol,
         allSupertypes: List<KaClassType>,
         result: MutableList<PsiMethod>
     ): Sequence<KaCallableSymbol> {
@@ -217,7 +216,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
                     val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
                     val isErasedSignature = javaMethod.name in erasedCollectionParameterNames ||
-                            // TODO recursively visit the parameter types?
                             callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }
 
                     if (isErasedSignature) {
@@ -293,11 +291,10 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             .filterNot { it.hasModifierProperty(PsiModifier.DEFAULT) }
 
         val candidateMethods = javaMethods.flatMap { method -> methodWrappers(method, javaCollectionPsiClass, kotlinNames, substitutor) }
-        // TODO why PsiSubstitutor.EMPTY?
-        val existingSignatures = result.map { it.getSignature(PsiSubstitutor.EMPTY) }.toSet()
+        val existingSignatures = result.map { it.getSignature(substitutor) }.toSet()
 
         result += candidateMethods.filter { candidateMethod ->
-            candidateMethod.getSignature(PsiSubstitutor.EMPTY) !in existingSignatures
+            candidateMethod.getSignature(substitutor) !in existingSignatures
         }
     }
 
@@ -420,12 +417,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                     returnType = v
                 )
             }
-
-            // TODO is it needed?
-/*            "getOrDefault" -> MethodSignature(
-                parameterTypes = listOf(k, v),
-                returnType = v
-            )*/
 
             "containsKey" -> {
                 if (k.isTypeParameter()) return null
@@ -600,7 +591,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
                     val substitutor = PsiSubstitutor.createSubstitutor(typeParameterMapping)
                     val isErasedSignature = javaMethod.name in erasedCollectionParameterNames ||
-                            // TODO recursively visit the parameter types?
                             callableSymbol.valueParameters.any { it.returnType is KaTypeParameterType }
 
                     if (isErasedSignature) {
@@ -779,7 +769,6 @@ private class KtLightMethodWrapper(
     }
 
     private fun isJavaLangObject(type: PsiType?): Boolean {
-        // TODO or equalsToText?
         return type is PsiClassType && type.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
     }
 
@@ -787,14 +776,11 @@ private class KtLightMethodWrapper(
 
     override val kotlinOrigin get() = null
 
-    override fun hasModifierProperty(name: String) =
-        when (name) {
-            // TODO PsiClassRenderer renders `abstract` everywhere
-//            PsiModifier.DEFAULT -> hasImplementation
-            PsiModifier.ABSTRACT -> !hasImplementation
-            PsiModifier.FINAL -> isFinal
-            else -> baseMethod.hasModifierProperty(name)
-        }
+    override fun hasModifierProperty(name: String): Boolean = when (name) {
+        PsiModifier.ABSTRACT -> !hasImplementation
+        PsiModifier.FINAL -> isFinal
+        else -> baseMethod.hasModifierProperty(name)
+    }
 
     override fun getParameterList(): PsiParameterList {
         return LightParameterListBuilder(manager, KotlinLanguage.INSTANCE).apply {
