@@ -123,12 +123,3 @@ internal fun consumeDoubleIntoVoid(a: Double): Void =
 @ExcludedFromCodegen
 internal fun getWasmAbiVersion(): Int =
     implementedAsIntrinsic
-
-// TODO remove after bootstrap (KT-81325)
-internal fun stringGetPoolSize(): Int = 0
-
-// TODO remove after bootstrap (KT-81325)
-@Suppress("DEPRECATION")
-@OptIn(ExperimentalStdlibApi::class)
-@EagerInitialization
-internal val stringPool: Array<String?> = Array(stringGetPoolSize())
