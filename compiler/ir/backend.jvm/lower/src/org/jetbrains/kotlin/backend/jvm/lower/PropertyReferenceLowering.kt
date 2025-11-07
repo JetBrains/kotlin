@@ -494,8 +494,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
      */
     private fun IrRichPropertyReference.getBoundValues(propertyReferenceTarget: PropertyReferenceTarget): List<Int> {
         val removeBoundReceiver = when (propertyReferenceTarget) {
-            GETTER -> originalGetter?.isJvmStaticInObject() == true
-            SETTER -> originalSetter?.isJvmStaticInObject() == true
+            GETTER -> false
+            SETTER -> false
             REFLECTED_PROPERTY -> {
                 val callee = if (isLocalDelegatedPropertyReference) localDelegatedProperty else property
                 // without this exception, the PropertyReferenceLowering generates `clinit` with an attempt to use script as receiver
