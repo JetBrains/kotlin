@@ -306,7 +306,7 @@ class ConeResolvedCallableReferenceAtom(
 
     val isPostponedBecauseOfAmbiguity: Boolean get() = state == State.POSTPONED_BECAUSE_OF_AMBIGUITY
 
-    val needsResolution: Boolean get() = state.needsResolution
+    override val needsResolution: Boolean get() = state.needsResolution
 
     var resultingReference: FirNamedReference? = null
         private set

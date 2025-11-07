@@ -95,7 +95,6 @@ class VariableFixationFinder(
         WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT, // Same as before but also has a constraint to types like `Long`, `Int`, etc.
         WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY, // Same as WITH_COMPLEX_DEPENDENCY but also has a constraint T = ... not dependent on others
         ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER, // proper trivial constraint from arguments, Nothing <: T
-        RELATED_TO_ANY_OUTPUT_TYPE,
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
 
         // We prefer LOWER T >: SomeRegularType to UPPER T <: SomeRegularType, KT-41934 is the only reason known
