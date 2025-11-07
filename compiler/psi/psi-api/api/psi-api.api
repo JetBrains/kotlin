@@ -1279,6 +1279,16 @@ public final class org/jetbrains/kotlin/psi/KtContainerNodeForControlStructureBo
 	public final fun getExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
 }
 
+public abstract class org/jetbrains/kotlin/psi/KtContextParameterList : org/jetbrains/kotlin/psi/KtElementImplStub {
+	public fun <init> (Lcom/intellij/lang/ASTNode;)V
+	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub;)V
+	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
+	public final fun contextParameters ()Ljava/util/List;
+	public final fun contextReceivers ()Ljava/util/List;
+	public final fun getOwnerDeclaration ()Lorg/jetbrains/kotlin/psi/KtDeclaration;
+	public final fun typeReferences ()Ljava/util/List;
+}
+
 public final class org/jetbrains/kotlin/psi/KtContextReceiver : org/jetbrains/kotlin/psi/KtElementImplStub {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinContextReceiverStub;)V
@@ -1291,14 +1301,10 @@ public final class org/jetbrains/kotlin/psi/KtContextReceiver : org/jetbrains/ko
 	public final fun typeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
 }
 
-public final class org/jetbrains/kotlin/psi/KtContextReceiverList : org/jetbrains/kotlin/psi/KtElementImplStub {
+public final class org/jetbrains/kotlin/psi/KtContextReceiverList : org/jetbrains/kotlin/psi/KtContextParameterList {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
-	public final fun contextParameters ()Ljava/util/List;
-	public final fun contextReceivers ()Ljava/util/List;
-	public final fun getOwnerDeclaration ()Lorg/jetbrains/kotlin/psi/KtDeclaration;
-	public final fun typeReferences ()Ljava/util/List;
 }
 
 public class org/jetbrains/kotlin/psi/KtContinueExpression : org/jetbrains/kotlin/psi/KtExpressionWithLabel, org/jetbrains/kotlin/psi/KtStatementExpression {
@@ -2953,6 +2959,7 @@ public class org/jetbrains/kotlin/psi/KtVisitor : com/intellij/psi/PsiElementVis
 	public fun visitConstructor (Lorg/jetbrains/kotlin/psi/KtConstructor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitConstructorCalleeExpression (Lorg/jetbrains/kotlin/psi/KtConstructorCalleeExpression;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitConstructorDelegationCall (Lorg/jetbrains/kotlin/psi/KtConstructorDelegationCall;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun visitContextParameterList (Lorg/jetbrains/kotlin/psi/KtContextParameterList;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitContextReceiver (Lorg/jetbrains/kotlin/psi/KtContextReceiver;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitContextReceiverList (Lorg/jetbrains/kotlin/psi/KtContextReceiverList;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitContinueExpression (Lorg/jetbrains/kotlin/psi/KtContinueExpression;Ljava/lang/Object;)Ljava/lang/Object;
@@ -3117,6 +3124,9 @@ public class org/jetbrains/kotlin/psi/KtVisitorVoid : org/jetbrains/kotlin/psi/K
 	public fun visitConstructorDelegationCall (Lorg/jetbrains/kotlin/psi/KtConstructorDelegationCall;)V
 	public synthetic fun visitConstructorDelegationCall (Lorg/jetbrains/kotlin/psi/KtConstructorDelegationCall;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun visitConstructorDelegationCall (Lorg/jetbrains/kotlin/psi/KtConstructorDelegationCall;Ljava/lang/Void;)Ljava/lang/Void;
+	public fun visitContextParameterList (Lorg/jetbrains/kotlin/psi/KtContextParameterList;)V
+	public synthetic fun visitContextParameterList (Lorg/jetbrains/kotlin/psi/KtContextParameterList;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun visitContextParameterList (Lorg/jetbrains/kotlin/psi/KtContextParameterList;Ljava/lang/Void;)Ljava/lang/Void;
 	public fun visitContextReceiver (Lorg/jetbrains/kotlin/psi/KtContextReceiver;)V
 	public synthetic fun visitContextReceiver (Lorg/jetbrains/kotlin/psi/KtContextReceiver;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitContextReceiver (Lorg/jetbrains/kotlin/psi/KtContextReceiver;Ljava/lang/Void;)Ljava/lang/Void;

@@ -167,8 +167,16 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitSuperTypeListEntry(specifier, data);
     }
 
+    /**
+     * The visitor returns null since {@link KtContextReceiverList} invoke both {@link #visitContextParameterList} and {@link #visitContextReceiverList}.
+     * Because of this, the visitor implementation must not implement both methods at the same time.
+     */
     public R visitContextReceiverList(@NotNull KtContextReceiverList contextReceiverList, D data) {
-        return visitKtElement(contextReceiverList, data);
+        return null;
+    }
+
+    public R visitContextParameterList(@NotNull KtContextParameterList contextParameterList, D data) {
+        return visitKtElement(contextParameterList, data);
     }
 
     public R visitContextReceiver(@NotNull KtContextReceiver contextReceiver, D data) {
