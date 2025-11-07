@@ -90,7 +90,7 @@ object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val valueParameterType: KtStubElementType<out KotlinParameterStub, KtParameter> =
         KtStubElementTypes.VALUE_PARAMETER
 
-    override val contextParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtContextReceiverList>, KtContextReceiverList> =
+    override val contextParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtContextParameterList>, KtContextParameterList> =
         KtStubElementTypes.CONTEXT_PARAMETER_LIST
 
     override val contextReceiverType: KtStubElementType<out KotlinContextReceiverStub, KtContextReceiver> =

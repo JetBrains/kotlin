@@ -522,7 +522,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     fun createContextReceiverStubs(parent: StubElement<*>, contextReceiverTypes: List<Type>) {
         if (contextReceiverTypes.isEmpty()) return
-        val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextReceiverList>(
+        val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
             parent,
             KtStubElementTypes.CONTEXT_PARAMETER_LIST,
         )

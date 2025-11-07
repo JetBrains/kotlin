@@ -105,7 +105,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     @NotNull
     @Override
     public List<KtContextReceiver> getContextReceivers() {
-        KtContextReceiverList contextReceiverList = getContextReceiverList();
+        KtContextParameterList contextReceiverList = getContextReceiverList();
         if (contextReceiverList != null) {
             return contextReceiverList.contextReceivers();
         }

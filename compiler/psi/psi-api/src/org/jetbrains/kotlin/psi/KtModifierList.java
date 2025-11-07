@@ -45,15 +45,16 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtContextReceiverList getContextReceiverList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+        return (KtContextReceiverList) getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
     }
 
     /**
      * Experimental context parameter API.
      */
     @NotNull
+    @SuppressWarnings("unchecked")
     public List<KtContextReceiverList> getContextReceiverLists() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+        return (List<KtContextReceiverList>)(List<?>) getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
     }
 
     @Override

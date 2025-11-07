@@ -160,7 +160,7 @@ object PositioningStrategies {
     @JvmField
     val CONTEXT_KEYWORD: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> =
-            element.descendants().firstIsInstanceOrNull<KtContextReceiverList>()?.firstChild?.textRange?.let(::markRange)
+            element.descendants().firstIsInstanceOrNull<KtContextParameterList>()?.firstChild?.textRange?.let(::markRange)
                 ?: DEFAULT.mark(element)
     }
 
