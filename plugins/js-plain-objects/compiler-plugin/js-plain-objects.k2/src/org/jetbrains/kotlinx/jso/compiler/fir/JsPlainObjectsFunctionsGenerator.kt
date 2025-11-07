@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlinx.jspo.compiler.fir
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
@@ -147,6 +149,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             name = classId.shortClassName
             symbol = FirRegularClassSymbol(classId)
             annotateWith(JsStandardClassIds.Annotations.JsExportIgnore)
+            source = owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
         }.symbol
     }
 
@@ -237,6 +240,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             origin = JsPlainObjectsPluginKey.origin
             symbol = functionalSymbol
             name = callableId.callableName
+            source = jsPlainObjectInterface.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
 
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
@@ -323,6 +327,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
                     containingDeclarationSymbol = this@buildNamedFunction.symbol
                     defaultValue = it.getParameterDefaultValueFromProperty()
+                    source = it.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
 
                     jsName?.let { name ->
                         annotateWith(JsStandardClassIds.Annotations.JsName) {

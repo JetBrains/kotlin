@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.jspo.compiler.fir.services
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -36,10 +37,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.jspo.compiler.fir.JsPlainObjectsPredicates
 import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsAnnotations
 
-data class ClassProperty(
+class ClassProperty(
     val name: Name,
     val resolvedTypeRef: FirResolvedTypeRef,
-    val jsName: String? = null
+    val source: KtSourceElement?,
+    val jsName: String? = null,
 )
 
 class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessionComponent(session) {
@@ -79,7 +81,8 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
                             ClassProperty(
                                 it.name,
                                 it.resolvedTypeRef.withReplacedConeType(substitutor.substituteOrNull(it.resolvedTypeRef.coneType)),
-                                it.jsName
+                                it.source,
+                                it.jsName,
                             )
                         )
                     }
@@ -89,7 +92,7 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
                     if (it.visibility == Visibilities.Public && !it.isOverride && it is FirPropertySymbol) {
                         add(
                             ClassProperty(
-                                it.name, it.resolvedReturnTypeRef, it.annotations.getAnnotationByClassId(
+                                it.name, it.resolvedReturnTypeRef, it.source, it.annotations.getAnnotationByClassId(
                                     JsStandardClassIds.Annotations.JsName, session
                                 )?.getStringArgument(StandardNames.NAME, session)
                             )
