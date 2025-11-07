@@ -510,9 +510,9 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
             )
         }
 
-        override fun visitContextReceiverList(contextReceiverList: KtContextReceiverList) {
-            val contextElements = contextReceiverList.contextParameters().ifEmpty {
-                contextReceiverList.contextReceivers()
+        override fun visitContextParameterList(contextParameterList: KtContextParameterList) {
+            val contextElements = contextParameterList.contextParameters().ifEmpty {
+                contextParameterList.contextReceivers()
             }
 
             printCollection(contextElements, prefix = "context(", postfix = ")") {

@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtContextParameterList
 import org.jetbrains.kotlin.psi.KtContextReceiver
-import org.jetbrains.kotlin.psi.KtContextReceiverList
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KaFe10PsiContextReceiverBasedContextParameterSymbol(
@@ -38,7 +38,7 @@ internal class KaFe10PsiContextReceiverBasedContextParameterSymbol(
     }
 
     override val descriptor: ReceiverParameterDescriptor? by cached {
-        val list = psi.parent as KtContextReceiverList
+        val list = psi.parent as KtContextParameterList
         val declaration = list.ownerDeclaration!!
         val bindingContext = analysisContext.analyze(declaration, AnalysisMode.PARTIAL)
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? CallableDescriptor

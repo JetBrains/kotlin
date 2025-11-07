@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.psi.KtContextReceiverList
+import org.jetbrains.kotlin.psi.KtContextParameterList
 import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -164,7 +164,7 @@ abstract class CallableClsStubBuilder(
             return typeStubBuilder.createContextReceiverStubs(modifierListStub, contextReceiverTypes)
         }
 
-        val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextReceiverList>(
+        val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
             modifierListStub,
             KtStubElementTypes.CONTEXT_PARAMETER_LIST,
         )

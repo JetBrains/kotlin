@@ -160,10 +160,10 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
      *
      * @return true whether this [KtParameter] is a context parameter.
      *
-     * @see KtContextReceiverList
+     * @see KtContextParameterList
      */
     public boolean isContextParameter() {
-        return getParent() instanceof KtContextReceiverList;
+        return getParent() instanceof KtContextParameterList;
     }
 
     /**
@@ -239,7 +239,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
 
     /**
      * @see KtParameterList#getOwnerFunction()
-     * @see KtContextReceiverList#getOwnerDeclaration()
+     * @see KtContextParameterList#getOwnerDeclaration()
      *
      * @return the parameter's owner declaration or null if it is from a functional type
      */
@@ -250,8 +250,8 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
             return ((KtParameterList) parent).getOwnerFunction();
         }
 
-        if (parent instanceof KtContextReceiverList) {
-            return ((KtContextReceiverList) parent).getOwnerDeclaration();
+        if (parent instanceof KtContextParameterList) {
+            return ((KtContextParameterList) parent).getOwnerDeclaration();
         }
 
         return null;

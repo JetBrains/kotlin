@@ -45,16 +45,16 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
 
     /**
      * Returns the owner declaration of the context receiver.
-     * The owner would be null in the case of context parameter on a functional type.
+     * The owner would be null in the case of a context parameter on a functional type.
      *
-     * @see KtContextReceiverList.ownerDeclaration
+     * @see KtContextParameterList.ownerDeclaration
      */
     val ownerDeclaration: KtDeclaration?
         get() {
             val contextReceiverList = parent
             requireWithAttachment(
-                contextReceiverList is KtContextReceiverList,
-                { "parent should be ${KtContextReceiverList::class.simpleName}" },
+                contextReceiverList is KtContextParameterList,
+                { "parent should be ${KtContextParameterList::class.simpleName}" },
             ) {
                 withPsiEntry("psi", this@KtContextReceiver)
                 withPsiEntry("parent", parent)

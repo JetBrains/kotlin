@@ -87,11 +87,11 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtContextReceiverList getContextReceiverList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+        return (KtContextReceiverList) getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
     }
 
     public List<KtTypeReference> getContextReceiversTypeReferences() {
-        KtContextReceiverList contextReceiverList = getContextReceiverList();
+        KtContextParameterList contextReceiverList = getContextReceiverList();
         if (contextReceiverList != null) {
             return contextReceiverList.typeReferences();
         } else {
@@ -111,7 +111,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
      */
     public int getTotalParameterCount() {
         int count = 0;
-        KtContextReceiverList contextReceiverList = getContextReceiverList();
+        KtContextParameterList contextReceiverList = getContextReceiverList();
         if (contextReceiverList != null) {
             count += contextReceiverList.contextReceivers().size();
         }
