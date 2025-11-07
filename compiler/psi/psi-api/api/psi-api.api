@@ -35,6 +35,7 @@ public abstract interface class org/jetbrains/kotlin/KtNodeTypes {
 	public static final field CONSTRUCTOR_CALLEE Lcom/intellij/psi/tree/IElementType;
 	public static final field CONSTRUCTOR_DELEGATION_CALL Lcom/intellij/psi/tree/IElementType;
 	public static final field CONSTRUCTOR_DELEGATION_REFERENCE Lcom/intellij/psi/tree/IElementType;
+	public static final field CONTEXT_PARAMETER_LIST Lcom/intellij/psi/tree/IElementType;
 	public static final field CONTEXT_RECEIVER Lcom/intellij/psi/tree/IElementType;
 	public static final field CONTEXT_RECEIVER_LIST Lcom/intellij/psi/tree/IElementType;
 	public static final field CONTINUE Lcom/intellij/psi/tree/IElementType;

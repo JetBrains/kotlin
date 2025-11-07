@@ -235,7 +235,7 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     val CONSTRUCTOR_CALLEE: SyntaxElementType = register(CONSTRUCTOR_CALLEE_ID, "CONSTRUCTOR_CALLEE")
 
     val CONTEXT_RECEIVER: SyntaxElementType = register(CONTEXT_RECEIVER_ID, "CONTEXT_RECEIVER")
-    val CONTEXT_RECEIVER_LIST: SyntaxElementType = register(CONTEXT_PARAMETER_LIST_ID, "CONTEXT_PARAMETER_LIST")
+    val CONTEXT_PARAMETER_LIST: SyntaxElementType = register(CONTEXT_PARAMETER_LIST_ID, "CONTEXT_PARAMETER_LIST")
 
     val NULL: SyntaxElementType = register(NULL_ID, "NULL")
     val BOOLEAN_CONSTANT: SyntaxElementType = register(BOOLEAN_CONSTANT_ID, "BOOLEAN_CONSTANT")

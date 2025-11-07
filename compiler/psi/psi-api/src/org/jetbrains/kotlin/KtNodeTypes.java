@@ -30,7 +30,14 @@ public interface KtNodeTypes {
     IElementType SECONDARY_CONSTRUCTOR  = KtStubBasedElementTypes.SECONDARY_CONSTRUCTOR;
     IElementType PRIMARY_CONSTRUCTOR    = KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR;
     IElementType CONTEXT_RECEIVER       = KtStubBasedElementTypes.CONTEXT_RECEIVER;
-    IElementType CONTEXT_RECEIVER_LIST  = KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST;
+    IElementType CONTEXT_PARAMETER_LIST = KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST;
+
+    /**
+     * @deprecated Use {@link #CONTEXT_PARAMETER_LIST} instead.
+     * This constant has been renamed to align the name with the context parameters feature.
+     */
+    @Deprecated
+    IElementType CONTEXT_RECEIVER_LIST = CONTEXT_PARAMETER_LIST;
 
     IElementType TYPE_PARAMETER_LIST                = KtStubBasedElementTypes.TYPE_PARAMETER_LIST;
     IElementType TYPE_PARAMETER                     = KtStubBasedElementTypes.TYPE_PARAMETER;
