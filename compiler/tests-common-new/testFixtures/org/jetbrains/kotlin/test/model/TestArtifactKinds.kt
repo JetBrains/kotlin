@@ -43,15 +43,4 @@ object ArtifactKinds {
     object Native : ArtifactKind<BinaryArtifacts.Native>("Native", CompilationStage.SECOND)
     object Wasm : ArtifactKind<BinaryArtifacts.Wasm>("Wasm", CompilationStage.SECOND)
     object KLib : ArtifactKind<BinaryArtifacts.KLib>("KLib", CompilationStage.FIRST)
-
-    fun fromString(string: String): ArtifactKind<*>? {
-        return when (string) {
-            "Jvm" -> Jvm
-            "Js" -> Js
-            "Native" -> Native
-            "Wasm" -> Wasm
-            "KLib" -> KLib
-            else -> null
-        }
-    }
 }

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.test.builders.CompilerStepsNames.KLIB_ARTIFACTS_HAND
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.LOWERED_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.RAW_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.WASM_ARTIFACTS_HANDLERS_STEP_NAME
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -27,11 +26,8 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
 
 object CompilerStepsNames {
-    const val FRONTEND_STEP_NAME = "frontend"
     const val CLASSIC_FRONTEND_HANDLERS_STEP_NAME = "classic frontend handlers"
     const val FIR_HANDLERS_STEP_NAME = "FIR frontend handlers"
-
-    const val CONVERTER_STEP_NAME = "converter"
 
     /** The IR that is the outcome of Psi2Ir or Fir2Ir. */
     const val RAW_IR_HANDLERS_STEP_NAME = "raw IR handlers"
@@ -42,7 +38,6 @@ object CompilerStepsNames {
     /** The IR that is the outcome of KLIB deserializer. */
     const val DESERIALIZED_IR_HANDLERS_STEP_NAME = "deserialized IR handlers"
 
-    const val JVM_BACKEND_STEP_NAME = "jvm backend"
     const val JVM_ARTIFACTS_HANDLERS_STEP_NAME = "jvm artifacts handlers"
     const val JS_ARTIFACTS_HANDLERS_STEP_NAME = "js artifacts handlers"
     const val WASM_ARTIFACTS_HANDLERS_STEP_NAME = "wasm artifacts handlers"
@@ -54,10 +49,6 @@ object CompilerStepsNames {
 
 fun TestConfigurationBuilder.classicFrontendStep() {
     facadeStep(::ClassicFrontendFacade)
-}
-
-fun TestConfigurationBuilder.psi2IrStep() {
-    facadeStep(::ClassicFrontend2IrConverter)
 }
 
 // --------------------- default handlers steps ---------------------
@@ -141,12 +132,6 @@ inline fun TestConfigurationBuilder.configureLoweredIrHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
     configureNamedHandlersStep(LOWERED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, skipMissingStep = false, init)
-}
-
-inline fun TestConfigurationBuilder.configureDeserializedIrHandlersStep(
-    init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
-) {
-    configureNamedHandlersStep(DESERIALIZED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, skipMissingStep = false, init)
 }
 
 inline fun TestConfigurationBuilder.configureJvmArtifactsHandlersStep(

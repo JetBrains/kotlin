@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.builders
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.*
@@ -23,18 +22,12 @@ class DefaultsProviderBuilder {
     var artifactKind: ArtifactKind<*>? = null
     lateinit var dependencyKind: DependencyKind
 
-    @PrivateForInline
-    var languageVersionSettings: LanguageVersionSettings? = null
-
-    @PrivateForInline
-    var languageVersionSettingsBuilder: LanguageVersionSettingsBuilder? = null
-
     @OptIn(PrivateForInline::class)
     fun build(): DefaultsProvider {
         return DefaultsProvider(
             frontend,
             backendKind ?: BackendKinds.fromTargetBackend(targetBackend),
-            languageVersionSettingsBuilder ?: LanguageVersionSettingsBuilder(),
+            LanguageVersionSettingsBuilder(),
             targetPlatform,
             artifactKind ?: targetPlatform.toArtifactKind(),
             targetBackend,

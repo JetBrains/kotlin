@@ -10,20 +10,20 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 abstract class AbstractKotlinCompilerWithTargetBackendTest(
-    override val targetBackend: TargetBackend
-) : AbstractKotlinCompilerTest(), RunnerWithTargetBackendForTestGeneratorMarker {
+    val targetBackend: TargetBackend,
+) : AbstractKotlinCompilerTest() {
     @TestInfrastructureInternals
     final override fun configureInternal(builder: TestConfigurationBuilder) {
+        val myTargetBackend = targetBackend
         configure(builder)
         with(builder) {
             globalDefaults {
-                val targetBackendFromMarker = this@AbstractKotlinCompilerWithTargetBackendTest.targetBackend
                 if (targetBackend == null) {
-                    targetBackend = this@AbstractKotlinCompilerWithTargetBackendTest.targetBackend
+                    targetBackend = myTargetBackend
                 } else {
-                    require(targetBackend == targetBackendFromMarker) {
+                    require(targetBackend == myTargetBackend) {
                         """Target backend in configuration specified to $targetBackend but in 
-                          |AbstractKotlinCompilerWithTargetBackendTest parent it is set to $targetBackendFromMarker""".trimMargin()
+                          |AbstractKotlinCompilerWithTargetBackendTest parent it is set to $myTargetBackend""".trimMargin()
                     }
                 }
             }
