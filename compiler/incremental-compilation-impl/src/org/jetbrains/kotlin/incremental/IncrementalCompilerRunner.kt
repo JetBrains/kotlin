@@ -555,8 +555,9 @@ abstract class IncrementalCompilerRunner<
                 updateCaches(services, caches, generatedFiles, changesCollector)
             }
 
-            // TODO KT-82167 Add BuildTimeMetric for the CRI data generation
-            generateCompilerRefIndexIfNeeded(services, icContext.pathConverterForSourceFiles, compilationMode)
+            reporter.measure(IC_GEN_COMPILER_REF_INDEX) {
+                generateCompilerRefIndexIfNeeded(services, icContext.pathConverterForSourceFiles, compilationMode)
+            }
 
             if (compilationMode is CompilationMode.Rebuild) {
                 if (icFeatures.withAbiSnapshot) {

@@ -247,7 +247,9 @@ object CLEAR_OUTPUT_ON_REBUILD :
     GradleBuildTimeMetric(INCREMENTAL_COMPILATION_DAEMON, "Clear outputs on rebuild", name = "CLEAR_OUTPUT_ON_REBUILD") {
     private fun readResolve(): Any = CLEAR_OUTPUT_ON_REBUILD
 }
-
+object IC_GEN_COMPILER_REF_INDEX : GradleBuildTimeMetric(INCREMENTAL_COMPILATION_DAEMON, "Generate compiler reference index", name = "IC_GEN_COMPILER_REF_INDEX") {
+    private fun readResolve(): Any = IC_GEN_COMPILER_REF_INDEX
+}
 object IC_UPDATE_CACHES : GradleBuildTimeMetric(INCREMENTAL_COMPILATION_DAEMON, "Update caches", name = "IC_UPDATE_CACHES") {
     private fun readResolve(): Any = IC_UPDATE_CACHES
 }
