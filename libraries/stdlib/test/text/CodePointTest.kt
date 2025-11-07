@@ -98,4 +98,30 @@ class CodePointTest {
         }
     }
 
+    @Test
+    fun arithmetics() {
+        for ([c1, c2, diff] in listOf(
+            Triple('a'.toCodePoint(), 'c'.toCodePoint(), 2),
+            Triple(0x1F600.toCodePoint(), 0x1FA00.toCodePoint(), 0x400),
+            Triple(CodePoint.MAX_VALUE, CodePoint.MIN_VALUE, -0x10FFFF),
+        )) {
+            assertEquals(c2, c1 + diff)
+            assertEquals(c1, c2 - diff)
+            assertEquals(diff, c2 - c1)
+            assertEquals(-diff, c1 - c2)
+
+            assertEquals(c2, c1 + (diff + (CodePoint.MAX_VALUE.code + 1)))
+            assertEquals(c2, c1 + (diff - (CodePoint.MAX_VALUE.code + 1)))
+        }
+
+        assertEquals(CodePoint.MIN_VALUE, CodePoint.MAX_VALUE + 1)
+        assertEquals(CodePoint.MAX_VALUE, CodePoint.MIN_VALUE - 1)
+
+        var c = CodePoint.MAX_VALUE
+        c++
+        assertEquals(CodePoint.MIN_VALUE, c)
+        c--
+        assertEquals(CodePoint.MAX_VALUE, c)
+    }
+
 }
