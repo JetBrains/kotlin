@@ -98,13 +98,17 @@ class WasmTypeTransformer(
                 WasmRefType(WasmHeapType.Simple.Extern)
             }
         } else if (isBuiltInWasmRefType(this)) {
-            when (val name = klass.name.identifier) {
+            val name = klass.name.identifier
+            if (name.startsWith("contref")) {
+                val arity = name.removePrefix("contref").toInt()
+                WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceContType(arity)))
+            } else when (name) {
                 "anyref" -> WasmAnyRef
                 "eqref" -> WasmEqRef
                 "structref" -> WasmRefNullType(WasmHeapType.Simple.Struct)
                 "i31ref" -> WasmI31Ref
                 "funcref" -> WasmRefNullType(WasmHeapType.Simple.Func)
-                "contref1" -> WasmContRefType
+                "contref" -> WasmContRefType
                 else -> error("Unknown reference type $name")
             }
         } else {

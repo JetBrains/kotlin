@@ -869,6 +869,7 @@ class BodyGenerator(
         }
     }
 
+    // TODO: ughhh it's so ugly
     private fun castAnyToInvokable(function: IrFunction, parentClass: IrClass, location: SourceLocation) {
         require(function is IrSimpleFunction && function.isOverridable)
         val realOverrideTargetClass = function.parentAsClass
