@@ -204,7 +204,7 @@ fun test14() {
     fun usage() {
         use(foo)
         try {
-            <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 2
+            foo = 2
         } finally {
             foo = 3
         }
@@ -216,7 +216,7 @@ fun test15() {
         var foo = 1
         use(foo)
         invokeLater {
-            foo = 2
+            <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 2
         }
     }
 }
