@@ -237,17 +237,14 @@ fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration()
 /**
  * Setups the backend-specific handlers and directives exclusively used by JVM box tests
  */
-fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandlers: Boolean) {
+fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandlers: Boolean, includeBytecodeTextHandler: Boolean = true) {
     configureJvmArtifactsHandlersStep {
         if (includeAllDumpHandlers) {
-            useHandlers(
-                ::BytecodeListingHandler,
-            )
+            useHandlers(::BytecodeListingHandler,)
         }
-
-        useHandlers(
-            ::BytecodeTextHandler.bind(true)
-        )
+        if (includeBytecodeTextHandler) {
+            useHandlers(::BytecodeTextHandler.bind(true))
+        }
     }
 
     defaultDirectives {
