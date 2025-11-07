@@ -8,9 +8,39 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+import kotlin.properties.PropertyDelegateProvider
 
+
+fun Project.generator(
+    fqName: String,
+    sourceSet: SourceSet? = null,
+    configure: JavaExec.() -> Unit = {}
+): PropertyDelegateProvider<Any?, TaskProvider<JavaExec>> = PropertyDelegateProvider { _, property ->
+    generator(property.name, fqName, sourceSet, configure)
+}
+
+fun Project.generator(
+    taskName: String,
+    fqName: String,
+    sourceSet: SourceSet? = null,
+    configure: JavaExec.() -> Unit = {}
+): TaskProvider<JavaExec> = smartJavaExec(
+    name = taskName,
+    classpath = (sourceSet ?: testSourceSet).runtimeClasspath,
+    mainClass = fqName
+) {
+    group = "Generate"
+    workingDir = rootDir
+    systemProperty("line.separator", "\n")
+    systemProperty("idea.ignore.disabled.plugins", "true")
+    if (kotlinBuildProperties.isTeamcityBuild) {
+        systemProperty("teamcity", "true")
+    }
+    configure()
+}
 
 fun Project.smartJavaExec(
     name: String,
