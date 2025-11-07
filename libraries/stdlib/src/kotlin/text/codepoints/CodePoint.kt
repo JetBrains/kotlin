@@ -62,6 +62,24 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
 
     override fun compareTo(other: CodePoint): Int = this.code compareTo other.code
 
+    /** Adds the other Int value to this value resulting a CodePoint. */
+    public operator fun plus(other: Int): CodePoint =
+        (this.code + other).toCodePoint()
+
+    /** Subtracts the other CodePoint value from this value resulting an Int. */
+    public operator fun minus(other: CodePoint): Int =
+        this.code - other.code
+
+    /** Subtracts the other Int value from this value resulting a CodePoint. */
+    public operator fun minus(other: Int): CodePoint =
+        (this.code - other).toCodePoint()
+
+    @kotlin.internal.InlineOnly
+    public inline operator fun inc(): CodePoint = this + 1
+
+    @kotlin.internal.InlineOnly
+    public inline operator fun dec(): CodePoint = this - 1
+
     public override fun toString(): String = toCharArray().concatToString()
 
     public companion object {
