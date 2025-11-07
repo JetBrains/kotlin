@@ -47,6 +47,12 @@ fun test7(list: List<String>) = buildString {
     }
 }
 
+fun test8(list: List<String>) = buildString {
+    for ((index) in list.withIndex()) {
+        append("$index;")
+    }
+}
+
 fun box(): String {
     val list = listOf("a", "b", "c")
 
@@ -57,6 +63,7 @@ fun box(): String {
     assertEquals("0:0:a;1:1:b;2:2:c;", test5(list))
     assertEquals("0:a:a;1:b:b;2:c:c;", test6(list))
     assertEquals("a;b;c;", test7(list))
+    assertEquals("0;1;2;", test8(list))
 
     return "OK"
 }

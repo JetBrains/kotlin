@@ -47,6 +47,12 @@ fun test7(arr: Array<String>) = buildString {
     }
 }
 
+fun test8(arr: Array<String>) = buildString {
+    for ((index) in arr.withIndex()) {
+        append("$index;")
+    }
+}
+
 fun box(): String {
     val arr = arrayOf("a", "b", "c")
 
@@ -57,6 +63,7 @@ fun box(): String {
     assertEquals("0:0:a;1:1:b;2:2:c;", test5(arr))
     assertEquals("0:a:a;1:b:b;2:c:c;", test6(arr))
     assertEquals("a;b;c;", test7(arr))
+    assertEquals("0;1;2;", test8(arr))
 
     return "OK"
 }
