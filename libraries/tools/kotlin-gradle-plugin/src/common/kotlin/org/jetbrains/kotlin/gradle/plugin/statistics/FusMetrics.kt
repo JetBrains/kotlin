@@ -403,7 +403,17 @@ internal object KotlinSourceSetMetrics : FusMetrics {
     internal fun collectMetrics(project: Project) {
         project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
             project.reportGeneratedSourcesUsage()
-            project.reportWebMainSourceSetUsage()
+            project.reportSourceSetSourcesUsage(
+                mapOf(
+                    "webMain" to BooleanMetrics.KOTLIN_WEB_MAIN_SOURCES_USED,
+                    "webTest" to BooleanMetrics.KOTLIN_WEB_TEST_SOURCES_USED,
+                )
+            )
+            project.reportSourceSetDependenciesUsage(
+                mapOf(
+                    "webMain" to BooleanMetrics.KOTLIN_WEB_MAIN_DEPENDENCIES_PRESENT,
+                )
+            )
         }
     }
 
@@ -417,25 +427,39 @@ internal object KotlinSourceSetMetrics : FusMetrics {
         }
     }
 
-    private suspend fun Project.reportWebMainSourceSetUsage() {
-        project.kotlinExtension.awaitSourceSets().configureEach {
-            if (it.name == "webMain") {
-                if (!it.allKotlinSources.isEmpty) {
-                    project.addConfigurationMetrics {
-                        it.put(BooleanMetrics.KOTLIN_WEB_MAIN_SOURCES_USED, true)
+    private suspend fun Project.reportSourceSetSourcesUsage(
+        sourceSetNameToMetricMap: Map<String, BooleanMetrics>
+    ) {
+        project.kotlinExtension.awaitSourceSets().configureEach { sourceSet ->
+            if (sourceSetNameToMetricMap.keys.any { it == sourceSet.name }) {
+                if (!sourceSet.allKotlinSources.isEmpty) {
+                    project.addConfigurationMetrics { metricsContainer ->
+                        sourceSetNameToMetricMap[sourceSet.name]?.let { metric ->
+                            metricsContainer.put(metric, true)
+                        }
                     }
                 }
+            }
+        }
+    }
 
+    private suspend fun Project.reportSourceSetDependenciesUsage(
+        sourceSetNameToMetricMap: Map<String, BooleanMetrics>
+    ) {
+        project.kotlinExtension.awaitSourceSets().configureEach { sourceSet ->
+            if (sourceSetNameToMetricMap.keys.any { it == sourceSet.name }) {
                 listOf(
-                    it.apiConfigurationName,
-                    it.implementationConfigurationName,
-                    it.compileOnlyConfigurationName,
-                    it.runtimeOnlyConfigurationName,
+                    sourceSet.apiConfigurationName,
+                    sourceSet.implementationConfigurationName,
+                    sourceSet.compileOnlyConfigurationName,
+                    sourceSet.runtimeOnlyConfigurationName,
                 ).map { project.configurations.getByName(it) }
                     .forEach { configuration ->
                         if (configuration.dependencies.isNotEmpty()) {
-                            project.addConfigurationMetrics {
-                                it.put(BooleanMetrics.KOTLIN_WEB_MAIN_DEPENDENCIES_PRESENT, true)
+                            sourceSetNameToMetricMap[sourceSet.name]?.let { metric ->
+                                project.addConfigurationMetrics { metricsContainer ->
+                                    metricsContainer.put(metric, true)
+                                }
                             }
                         }
                     }
