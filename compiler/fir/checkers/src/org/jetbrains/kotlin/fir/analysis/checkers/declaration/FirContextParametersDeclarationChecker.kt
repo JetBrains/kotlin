@@ -133,7 +133,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
     private fun KtSourceElement.findContextReceiverListSources(): List<KtSourceElement> {
         return when (this) {
             is KtPsiSourceElement ->
-                psi.getChildOfType<KtModifierList>()?.contextReceiverLists?.map { it.toKtPsiSourceElement() }.orEmpty()
+                psi.getChildOfType<KtModifierList>()?.contextParameterLists?.map { it.toKtPsiSourceElement() }.orEmpty()
             is KtLightSourceElement ->
                 treeStructure.findChildByType(lighterASTNode, KtNodeTypes.MODIFIER_LIST)
                     ?.let { treeStructure.findChildrenByType(it, KtNodeTypes.CONTEXT_PARAMETER_LIST) }

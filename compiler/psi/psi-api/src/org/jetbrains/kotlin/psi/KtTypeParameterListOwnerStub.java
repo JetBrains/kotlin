@@ -74,9 +74,12 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
      * @return a non-null list of {@link KtContextReceiverList} defined in the associated modifier list.
      * Returns an empty list if no context receiver lists are present.
      */
+    @SuppressWarnings("unchecked")
     @NotNull
     public List<KtContextReceiverList> getContextReceiverLists() {
         KtModifierList modifierList = getModifierList();
-        return modifierList == null ? Collections.emptyList() : modifierList.getContextReceiverLists();
+        return modifierList == null
+               ? Collections.emptyList()
+               : (List<KtContextReceiverList>) (List<?>) modifierList.getContextParameterLists();
     }
 }
