@@ -3,10 +3,9 @@
 
 class Sample
 
-fun <K> id(x: K): K = x
+fun <K> id(x: K): K = TODO()
 
 fun test() {
-    val f00: Sample.() -> Unit = id { val a = 1 }
     val f01: Sample.() -> Unit = id { s: Sample -> }
     val f02: Sample.() -> Unit = id<Sample.() -> Unit> { s: Sample -> }
 }
@@ -47,8 +46,8 @@ fun test1() { // to extension lambda 0
     val w11 = W1 <!ARGUMENT_TYPE_MISMATCH!>{ i: Int -> i }<!> // oi- ni-
     val i11: E0 = id { i: Int -> i } // o1+ ni+
     val w12 = W1 <!ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>i<!> -> i }<!> // oi- ni-
-    val i12: E0 = id <!ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>i<!> -> i }<!> // oi- ni-
-    val j12 = id<E0> <!ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>i<!> -> i }<!> // oi- ni-
+    val i12: E0 = id { i -> i } // oi- ni-
+    val j12 = id<E0> { i -> i } // oi- ni-
 
     // yet unsupported cases - considering lambdas as extension ones unconditionally
 //    val w13 = W1 { it } // this or it: oi- ni-

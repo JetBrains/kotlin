@@ -36,7 +36,9 @@ interface PostponedAtomWithRevisableExpectedType : PostponedResolvedAtomMarker {
     fun reviseExpectedType(expectedType: KotlinTypeMarker)
 }
 
-interface PostponedCallableReferenceMarker : PostponedAtomWithRevisableExpectedType
+interface PostponedCallableReferenceMarker : PostponedAtomWithRevisableExpectedType {
+    val needsResolution get() = !analyzed
+}
 
 interface LambdaWithTypeVariableAsExpectedTypeMarker : PostponedAtomWithRevisableExpectedType {
     val parameterTypesFromDeclaration: List<KotlinTypeMarker?>?

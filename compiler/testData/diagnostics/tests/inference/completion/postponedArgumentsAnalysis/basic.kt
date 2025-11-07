@@ -156,7 +156,7 @@ fun main() {
     select(id(id(fun(x: String, y: String) { }), <!TOO_MANY_ARGUMENTS!>fun String.(x: String) {}<!>), { x, y -> x })
     val x26: Int.(String) -> Int = <!TYPE_MISMATCH!>fun (x: String) = 10<!> // it must be error, see KT-38439
     // Receiver must be specified in anonymous function declaration
-    val x27: Int.(String) -> Int = id(<!TYPE_MISMATCH, TYPE_MISMATCH!>fun <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>)<!> = 10<!>)
+    val x27: Int.(String) -> Int = id(<!TYPE_MISMATCH, TYPE_MISMATCH!>fun <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>(x: String)<!> = 10<!>)
     select(id<Int.(String) -> Unit> {}, { x: Int, y: String -> x })
 
     // Inferring lambda parameter types by partially specified parameter types of other lambdas
@@ -230,7 +230,7 @@ fun main() {
     val x71: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String.() -> kotlin.Unit")!>id(fun String.() { })<!>, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String) -> kotlin.Unit")!>id(fun(x: String) {})<!>)
     val x72: String.() -> Unit = select(fun String.() { }, fun(x: String) {}) // must be error
     select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), fun (x, y) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x<!>;<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>y<!> })
-    select(id<Int.(String) -> Unit>(<!TYPE_MISMATCH!>fun (x, y) {}<!>), { x: Int, y: String -> x }) // receiver of anonymous function must be specified explicitly
+    select(id<Int.(String) -> Unit>(<!TYPE_MISMATCH, TYPE_MISMATCH!>fun (x, y) {}<!>), { x: Int, y: String -> x }) // receiver of anonymous function must be specified explicitly
     select(id<Int.(String) -> Unit>(fun Int.(y) {}), { x: Int, y: String -> x })
     <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Number) -> java.io.Serializable")!>select(A3(), fun (x) = "", { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>a<!> })<!>
 }

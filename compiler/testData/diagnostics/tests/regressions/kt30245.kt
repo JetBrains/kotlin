@@ -3,10 +3,9 @@
 
 class Sample
 
-fun <K> id(x: K): K = x
+fun <K> id(x: K): K = TODO()
 
 fun test() {
-    val f00: Sample.() -> Unit = id { val a = 1 }
     val f01: Sample.() -> Unit = id { s: Sample -> }
     val f02: Sample.() -> Unit = id<Sample.() -> Unit> { s: Sample -> }
 }

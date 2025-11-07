@@ -20718,6 +20718,22 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inference/fixationOrder")
+      @TestDataPath("$PROJECT_ROOT")
+      public class FixationOrder {
+        @Test
+        public void testAllFilesPresentInFixationOrder() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/fixationOrder"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("onesForOutputTypesPostponed.kt")
+        public void testOnesForOutputTypesPostponed() {
+          runTest("compiler/testData/diagnostics/tests/inference/fixationOrder/onesForOutputTypesPostponed.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/inference/forks")
       @TestDataPath("$PROJECT_ROOT")
       public class Forks {
