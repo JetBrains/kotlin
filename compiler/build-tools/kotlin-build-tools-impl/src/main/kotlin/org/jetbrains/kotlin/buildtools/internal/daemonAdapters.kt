@@ -128,9 +128,9 @@ internal fun KotlinLogger.debug(compileIterationResult: CompileIterationResult?,
                         return@map relativePath ?: it.normalize().absolutePath
                     }
                 }
-            debug("compile iteration: ${sourceFiles.joinToString()}")
+            debug("[KOTLIN] compile iteration: ${sourceFiles.joinToString()}")
         }
-        debug("compiler exit code: ${compileIterationResult.exitCode}")
+        debug("[KOTLIN] compiler exit code: ${compileIterationResult.exitCode}")
     }
 }
 

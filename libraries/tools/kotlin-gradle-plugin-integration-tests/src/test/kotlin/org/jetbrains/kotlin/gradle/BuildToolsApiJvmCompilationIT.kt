@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.deleteExisting
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.writeText
 
 @DisplayName("JVM compilation via the Build Tools API")
@@ -119,6 +119,20 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
     ) {
         assertOutputContains(KotlinCompilerExecutionStrategy.DAEMON.asFinishLogMessage)
         assertOutputContains(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
+    }
+
+    @GradleTest
+    @DisplayName("Test logging produces errors with e: prefix and no [KOTLIN] prefix")
+    fun compileErrorCorrectPrefix(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            kotlinSourcesDir().resolve("helloWorld.kt").writeText("fun f() = fffffffffffffffff")
+            buildAndFail("assemble", forwardBuildOutput = true) {
+                assertOutputContainsExactlyTimes(
+                    Regex("\ne: file://.*/src/main/kotlin/helloWorld.kt:1:11 Unresolved reference 'fffffffffffffffff'."),
+                    1
+                )
+            }
+        }
     }
 
     private fun testSimpleProject(gradleVersion: GradleVersion, buildOptions: BuildOptions, assertions: BuildResult.() -> Unit) {

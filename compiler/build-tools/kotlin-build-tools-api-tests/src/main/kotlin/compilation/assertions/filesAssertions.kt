@@ -28,6 +28,7 @@ fun CompilationOutcome.assertCompiledSources(module: Module, vararg expectedComp
 fun CompilationOutcome.assertCompiledSources(module: Module, expectedCompiledSources: Set<String>) {
     requireLogLevel(LogLevel.DEBUG)
     val actualCompiledSources = logLines.getValue(LogLevel.DEBUG)
+        .map { it.removePrefix("[KOTLIN] ") }
         .filter { it.startsWith("compile iteration") }
         .flatMap { it.replace("compile iteration: ", "").trim().split(", ") }
         .toSet()

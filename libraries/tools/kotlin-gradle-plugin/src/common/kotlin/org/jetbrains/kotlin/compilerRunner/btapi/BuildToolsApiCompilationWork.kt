@@ -63,8 +63,6 @@ import java.nio.file.Paths
 import javax.inject.Inject
 import kotlin.collections.orEmpty
 
-private const val LOGGER_PREFIX = "[KOTLIN] "
-
 internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     private val fileSystemOperations: FileSystemOperations,
 ) :
@@ -255,7 +253,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         metrics.addTimeMetric(START_WORKER_EXECUTION)
         metrics.startMeasure(RUN_COMPILATION_IN_WORKER)
         val exceptionReportingKotlinLogger = ExceptionReportingKotlinLogger()
-        val printingLogger = getTaskLogger(taskPath, LOGGER_PREFIX, BuildToolsApiCompilationWork::class.java.simpleName, true)
+        val printingLogger = getTaskLogger(taskPath, null, BuildToolsApiCompilationWork::class.java.simpleName, true)
         val log: KotlinLogger = CompositeKotlinLogger(
             setOf(
                 printingLogger,

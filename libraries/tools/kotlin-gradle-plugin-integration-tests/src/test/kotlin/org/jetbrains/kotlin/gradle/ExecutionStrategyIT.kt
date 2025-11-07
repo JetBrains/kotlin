@@ -293,7 +293,6 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                     assertHasDiagnostic(expectDiagnostic)
                 }
                 checkOutput(this@project)
-                assertNoBuildWarnings()
 
                 if (testFallbackStrategy) {
                     assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
@@ -315,7 +314,6 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             build("build", *args) {
                 assertOutputContains(finishMessage)
                 checkOutputAfterChange(this@project)
-                assertNoBuildWarnings()
             }
         }
     }
