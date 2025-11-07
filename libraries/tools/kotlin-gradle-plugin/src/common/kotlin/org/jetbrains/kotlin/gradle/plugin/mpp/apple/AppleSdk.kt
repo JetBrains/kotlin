@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal object AppleSdk {
-    fun defineNativeTargets(platform: String, archs: List<String>): List<KonanTarget> {
+    fun defineNativeTargets(platform: String, archs: List<String>, isCatalyst: Boolean = false): List<KonanTarget> {
         class UnknownArchitectureException(platform: String, arch: String) :
             IllegalArgumentException("Architecture $arch is not supported for platform $platform")
 
@@ -73,8 +73,9 @@ internal object AppleSdk {
             platform.startsWith("macosx") -> {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
-                        "arm64" -> KonanTarget.MACOS_ARM64
-                        "x86_64" -> KonanTarget.MACOS_X64
+                        // Experimental support for Mac Catalyst in Native backend is implemented via simulator targets.
+                        "arm64" -> if (isCatalyst) KonanTarget.IOS_SIMULATOR_ARM64 else KonanTarget.MACOS_ARM64
+                        "x86_64" -> if (isCatalyst) KonanTarget.IOS_X64 else KonanTarget.MACOS_X64
                         else -> throw UnknownArchitectureException(platform, arch)
                     }
                 })
