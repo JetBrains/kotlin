@@ -39,19 +39,23 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
         kotlinJvmExtensionOrNull != null -> {
             val extension = kotlinJvmExtension
             val target = extension.target
-
-            val isEnabled = abiValidation.enabled
             finalizeJvmVariant(this, abiClasspath, target)
-            addDependencyWithCheckTask(variant, isEnabled)
+
+            val abiValidation = extension.findExtension<AbiValidationExtensionImpl>(ABI_VALIDATION_EXTENSION_NAME)
+                ?: throw IllegalStateException("Kotlin extension not found: $ABI_VALIDATION_EXTENSION_NAME")
+            val isEnabled = abiValidation.enabled
+            addDependencyWithCheckTask(abiValidation, isEnabled)
         }
 
         kotlinAndroidExtensionOrNull != null -> {
             val extension = kotlinAndroidExtension
             val target = extension.target
-
-            val isEnabled = abiValidation.enabled
             finalizeAndroidVariant(this, abiClasspath, target)
-            addDependencyWithCheckTask(variant, isEnabled)
+
+            val abiValidation = extension.findExtension<AbiValidationExtensionImpl>(ABI_VALIDATION_EXTENSION_NAME)
+                ?: throw IllegalStateException("Kotlin extension not found: $ABI_VALIDATION_EXTENSION_NAME")
+            val isEnabled = abiValidation.enabled
+            addDependencyWithCheckTask(abiValidation, isEnabled)
         }
 
         multiplatformExtensionOrNull != null -> {
@@ -60,9 +64,10 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
                 ?: throw IllegalStateException("Kotlin extension not found: $ABI_VALIDATION_EXTENSION_NAME")
 
             val targets = extension.awaitTargets()
-            val isEnabled = abiValidation.enabled
             abiValidation.finalizeMultiplatformVariant(this, abiClasspath, targets)
-            addDependencyWithCheckTask(variant, isEnabled)
+
+            val isEnabled = abiValidation.enabled
+            addDependencyWithCheckTask(abiValidation, isEnabled)
         }
     }
 }
