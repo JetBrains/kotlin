@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import kotlin.properties.PropertyDelegateProvider
-import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 interface IrDeclarationOrigin {
@@ -158,10 +156,8 @@ interface IrDeclarationOrigin {
 class IrDeclarationOriginImpl(
     override val name: String,
     override val isSynthetic: Boolean = false
-) : IrDeclarationOrigin, ReadOnlyProperty<Any?, IrDeclarationOriginImpl> {
+) : IrDeclarationOrigin {
     override fun toString(): String = name
-    override fun getValue(thisRef: Any?, property: KProperty<*>): IrDeclarationOriginImpl = this
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is IrDeclarationOriginImpl) return false
@@ -173,13 +169,21 @@ class IrDeclarationOriginImpl(
 
     override fun hashCode(): Int = name.hashCode()
 
-    object Regular : PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, IrDeclarationOriginImpl>> {
-        override fun provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, IrDeclarationOriginImpl> =
-            IrDeclarationOriginImpl(property.name)
+    /**
+     * Lazy is required here to avoid initialization loop between this class and [IrDeclarationOrigin].
+     * Otherwise, if one thread tries to use this (or [Synthetic]) delegate or directly instantiate [IrDeclarationOriginImpl],
+     * while thread would try to access [IrDeclarationOrigin.Companion], it could lead to dead-lock, as one thread would
+     * wait while [IrDeclarationOriginImpl] is initialized to proceed with [IrDeclarationOrigin.Companion] initialization,
+     * and other would wait while [IrDeclarationOrigin] is initialized as it's super-interface of [IrDeclarationOrigin]
+     * which has default methods (and so must be initialized before class).
+     */
+    object Regular {
+        operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): Lazy<IrDeclarationOrigin> =
+            lazy { IrDeclarationOriginImpl(property.name) }
     }
 
-    object Synthetic : PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, IrDeclarationOriginImpl>> {
-        override fun provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, IrDeclarationOriginImpl> =
-            IrDeclarationOriginImpl(property.name, isSynthetic = true)
+    object Synthetic {
+        operator fun provideDelegate(thisRef: Any?, property: KProperty<*>) : Lazy<IrDeclarationOrigin> =
+            lazy { IrDeclarationOriginImpl(property.name, isSynthetic = true) }
     }
 }
