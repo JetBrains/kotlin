@@ -52866,6 +52866,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       }
 
       @Test
+      @TestMetadata("jvmInheritedAnnotations.kt")
+      public void testJvmInheritedAnnotations() {
+        runTest("compiler/testData/codegen/box/reflection/annotations/jvmInheritedAnnotations.kt");
+      }
+
+      @Test
       @TestMetadata("localClassLiteral.kt")
       public void testLocalClassLiteral() {
         runTest("compiler/testData/codegen/box/reflection/annotations/localClassLiteral.kt");
