@@ -14,5 +14,5 @@ import java.lang.annotation.Inherited
  * Makes the annotation class "inherited" in Java and Kotlin. An annotation declared on a class will be visible on sub-classes
  * unless overridden by another instance of the same annotation class.
  */
-@SinceKotlin("2.4")
+@SinceKotlin("2.3")
 public typealias JvmInherited = Inherited
