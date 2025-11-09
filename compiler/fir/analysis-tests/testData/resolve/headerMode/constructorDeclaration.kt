@@ -7,6 +7,9 @@ class A(val a: String, val b: Int) {
     constructor(): this("") {
         val message = "Secondary constructor body with delegated constructor call"
     }
+    init {
+        val message = "Init body"
+    }
 }
 
 class B private constructor(val a: String, val b: Int) {
