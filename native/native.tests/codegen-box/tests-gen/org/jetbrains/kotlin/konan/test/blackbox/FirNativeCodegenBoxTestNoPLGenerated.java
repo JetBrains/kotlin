@@ -55849,6 +55849,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         }
 
         @Test
+        @TestMetadata("inheritedAnnotations.kt")
+        public void testInheritedAnnotations() {
+          runTest("compiler/testData/codegen/box/reflection/annotations/inheritedAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("localClassLiteral.kt")
         public void testLocalClassLiteral() {
           runTest("compiler/testData/codegen/box/reflection/annotations/localClassLiteral.kt");
@@ -56008,6 +56014,30 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           }
 
           @Test
+          @TestMetadata("inheritedJavaRepeatableAnnotation.kt")
+          public void testInheritedJavaRepeatableAnnotation() {
+            runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/inheritedJavaRepeatableAnnotation.kt");
+          }
+
+          @Test
+          @TestMetadata("inheritedJavaRepeatableAnnotationWithManualContainerPlacement.kt")
+          public void testInheritedJavaRepeatableAnnotationWithManualContainerPlacement() {
+            runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/inheritedJavaRepeatableAnnotationWithManualContainerPlacement.kt");
+          }
+
+          @Test
+          @TestMetadata("inheritedJavaRepeatableAnnotationWithNonInheritedContainer.kt")
+          public void testInheritedJavaRepeatableAnnotationWithNonInheritedContainer() {
+            runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/inheritedJavaRepeatableAnnotationWithNonInheritedContainer.kt");
+          }
+
+          @Test
+          @TestMetadata("inheritedRepeatableAnnotation.kt")
+          public void testInheritedRepeatableAnnotation() {
+            runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/inheritedRepeatableAnnotation.kt");
+          }
+
+          @Test
           @TestMetadata("javaAnnotation.kt")
           public void testJavaAnnotation() {
             runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/javaAnnotation.kt");
@@ -56047,6 +56077,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @TestMetadata("kt53279_implicitContainer.kt")
           public void testKt53279_implicitContainer() {
             runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/kt53279_implicitContainer.kt");
+          }
+
+          @Test
+          @TestMetadata("nonInheritedJavaRepeatableAnnotationWithInheritedContainer.kt")
+          public void testNonInheritedJavaRepeatableAnnotationWithInheritedContainer() {
+            runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/nonInheritedJavaRepeatableAnnotationWithInheritedContainer.kt");
           }
 
           @Test

@@ -44,6 +44,7 @@ public final class JvmAnnotationNames {
     public static final FqName DEPRECATED_ANNOTATION = new FqName(Deprecated.class.getName());
     public static final FqName DOCUMENTED_ANNOTATION = new FqName(Documented.class.getName());
     public static final FqName REPEATABLE_ANNOTATION = new FqName("java.lang.annotation.Repeatable");
+    public static final FqName INHERITED_ANNOTATION = new FqName("java.lang.annotation.Inherited");
     public static final FqName OVERRIDE_ANNOTATION = new FqName(Override.class.getName());
 
     public static final FqName JETBRAINS_NOT_NULL_ANNOTATION = new FqName("org.jetbrains.annotations.NotNull");

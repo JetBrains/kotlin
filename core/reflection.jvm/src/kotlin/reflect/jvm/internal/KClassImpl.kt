@@ -103,7 +103,54 @@ internal class KClassImpl<T : Any>(
         }
 
         val annotations: List<Annotation> by ReflectProperties.lazySoft {
-            jClass.annotations.filterNot { it.annotationClass.java.name in SPECIAL_JVM_ANNOTATION_NAMES }.unwrapRepeatableAnnotations()
+            val allAnnotations = jClass.annotations
+            val declaredAnnotations = jClass.declaredAnnotations
+            val hasInheritedAnnotations = allAnnotations.size != declaredAnnotations.size
+
+            val filteredAnnotations = if (!hasInheritedAnnotations) {
+                allAnnotations.filterNot { it.annotationClass.java.name in SPECIAL_JVM_ANNOTATION_NAMES }
+            } else {
+                // For inherited annotations, the annotations declared on subclasses override ones on the base classes, and such "shadowed"
+                // annotations are usually not present in Java's getAnnotations().
+                // But if
+                // - an inherited annotation is also repeatable (either by Java's or Kotlin's @Repeatable),
+                // - some classes in super-class hierarchy contain multiple instances of that annotation (thus stored as a container),
+                // - some other classes contain single annotation instance (thus stored as is),
+                // then both container and single annotation may present in Java's getAnnotations() result, as this method does not
+                // unwrap containers for shadowing purposes.
+                // So, we need to collect declared annotations from the class and all superclasses, with filtering by "shadowing" rules.
+
+                // although there is no requirement to keep any order, it is still better to keep a logical order of Parent->...->Child
+                // as we iterate in reverse order (child to parents), the temporary result order is "reversed"
+                val resultReversed = mutableListOf<Annotation>()
+                val unwrappedAnnotationClassesHosts = mutableMapOf<KClass<out Annotation>, Class<out Any>>()
+                var currentClass: Class<out Any> = jClass
+                while (true) {
+                    val currentClassAnnotations = currentClass.declaredAnnotations
+                    for (i in currentClassAnnotations.size - 1 downTo 0) {
+                        val annotation = currentClassAnnotations[i]
+
+                        if (annotation.annotationClass.java.name !in SPECIAL_JVM_ANNOTATION_NAMES &&
+                            (currentClass === jClass || annotation.isInheritable)
+                        ) {
+                            val unwrappedAnnotationClass: KClass<out Annotation> = annotation.unwrappedAnnotationClass
+                            val prevHost = unwrappedAnnotationClassesHosts[unwrappedAnnotationClass]
+                            if (prevHost == null) {
+                                unwrappedAnnotationClassesHosts[unwrappedAnnotationClass] = currentClass
+                            }
+                            if (prevHost == null || prevHost == currentClass) {
+                                resultReversed.add(annotation)
+                            }
+                        }
+                    }
+
+                    currentClass = currentClass.superclass ?: break
+                }
+
+                resultReversed.reversed()
+            }
+
+            filteredAnnotations.unwrapKotlinRepeatableAnnotations()
         }
 
         val simpleName: String? by ReflectProperties.lazySoft {
@@ -127,6 +174,9 @@ internal class KClassImpl<T : Any>(
                 else -> classId.asSingleFqName().asString()
             }
         }
+
+        private val Annotation.isInheritable: Boolean
+            get() = hasInherited() && !isRepeatableContainerForNonInheritedAnnotation()
 
         private fun calculateLocalClassName(jClass: Class<*>): String {
             val name = jClass.simpleName
