@@ -50,7 +50,7 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
         ) return
 
         irClass.annotations +=
-            IrConstructorCallImpl.fromSymbolOwner(
+            IrAnnotationImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.documentedConstructor.returnType, symbols.documentedConstructor.symbol, 0
             )
     }
@@ -61,12 +61,13 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
         val javaRetentionPolicy = kotlinRetentionPolicy?.let { symbols.annotationRetentionMap[it] } ?: symbols.rpRuntime
 
         irClass.annotations +=
-            IrConstructorCallImpl.fromSymbolOwner(
+            IrAnnotationImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.retentionConstructor.returnType, symbols.retentionConstructor.symbol, 0
             ).apply {
                 arguments[0] = IrGetEnumValueImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.retentionPolicyEnum.defaultType, javaRetentionPolicy.symbol
                 )
+                // TODO(KT-74200): Should argumentMapping be filled here?
             }
     }
 
@@ -92,11 +93,12 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
         }
 
         irClass.annotations +=
-            IrConstructorCallImpl.fromSymbolOwner(
+            IrAnnotationImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.targetConstructor.returnType, symbols.targetConstructor.symbol, 0
             ).apply {
                 arguments[0] = vararg
             }
+        // TODO(KT-74200): Should argumentMapping be filled here?
     }
 
     private fun mapTarget(target: KotlinTarget): IrEnumEntry? =
@@ -120,11 +122,12 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
             containerClass.symbol, containerClass.defaultType
         )
         irClass.annotations +=
-            IrConstructorCallImpl.fromSymbolOwner(
+            IrAnnotationImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.repeatableConstructor.returnType, symbols.repeatableConstructor.symbol, 0
             ).apply {
                 arguments[0] = containerReference
             }
+        // TODO(KT-74200): Should argumentMapping be filled here?
     }
 
     private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {

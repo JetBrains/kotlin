@@ -145,7 +145,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     private fun addJvmInlineAnnotation(valueClass: IrClass) {
         if (valueClass.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) return
         val constructor = context.symbols.jvmInlineAnnotation.constructors.first()
-        valueClass.annotations = valueClass.annotations + IrConstructorCallImpl.fromSymbolOwner(
+        valueClass.annotations += IrAnnotationImpl.fromSymbolOwner(
             constructor.owner.returnType,
             constructor
         )
@@ -578,7 +578,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         }
     }
 
-    private fun List<IrConstructorCall>.withoutJvmNameAnnotation(): List<IrConstructorCall> =
+    private fun List<IrAnnotation>.withoutJvmNameAnnotation(): List<IrAnnotation> =
         this.toMutableList().apply {
             removeAll {
                 it.symbol.owner.returnType.classOrNull?.owner?.hasEqualFqName(JVM_NAME_ANNOTATION_FQ_NAME) == true

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGetField
@@ -65,7 +66,7 @@ internal class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweri
             context.createJvmIrBuilder(irClass.symbol).run {
                 publicInstanceField.annotations =
                     filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, publicInstanceField.annotations) +
-                            irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                            irAnnotation(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
             }
         }
 
