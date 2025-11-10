@@ -742,7 +742,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("source", type<SourceElement>())
         +field("constructorTypeArgumentsCount", int)
     }
-    val annotation: Element by element(Other) {
+    val annotation: Element by element(Expression) {
         parent(constructorCall)
         parent(type<AnnotationMarker>())
 
