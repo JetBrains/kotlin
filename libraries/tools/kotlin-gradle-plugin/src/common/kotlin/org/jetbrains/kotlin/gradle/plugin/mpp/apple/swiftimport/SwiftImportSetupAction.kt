@@ -905,6 +905,9 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 "ARCHS=${targetArchitectures.joinToString(" ")}",
                 // FIXME: Check how truly necessary this is
                 "CODE_SIGN_IDENTITY=",
+                // FIXME: Measure how much this impacts perf
+                "COMPILER_INDEX_STORE_ENABLE=NO",
+                "SWIFT_INDEX_STORE_ENABLE=NO",
                 // FIXME: This will force the .dylib to be created instead of the framework. We actually want to account for this?
                 // "-IDEPackageSupportCreateDylibsForDynamicProducts=YES"
             )
