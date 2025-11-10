@@ -154,6 +154,7 @@ fun loweringsOfTheFirstPhase(
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
     this += avoidLocalFOsInInlineFunctionsLowering
     this += versionOverloadsLowering
+    this += checkInlineCallCyclesPhase
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
         val inlineCrossModuleFunctions =
             languageVersionSettings.supportsFeature(LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization)
@@ -162,7 +163,6 @@ fun loweringsOfTheFirstPhase(
         this += sharedVariablesLoweringPhase
         this += localClassesInInlineLambdasPhase
         this += arrayConstructorPhase
-        this += checkInlineCallCyclesPhase
         this += inlineOnlyPrivateFunctionsPhase
         this += checkInlineDeclarationsAfterInliningOnlyPrivateFunctions
         this += outerThisSpecialAccessorInInlineFunctionsPhase
