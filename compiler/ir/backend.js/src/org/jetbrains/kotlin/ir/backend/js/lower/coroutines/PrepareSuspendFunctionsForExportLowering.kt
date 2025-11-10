@@ -174,7 +174,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
             bridgeFunc.parent = originalFunc.parent
 
             bridgeFunc.annotations = buildList {
-                add(JsIrBuilder.buildConstructorCall(jsExportIgnoreAnnotation.symbol))
+                add(JsIrBuilder.buildAnnotation(jsExportIgnoreAnnotation.symbol))
                 originalFunc.annotations.filterTo(this) { !it.isAnnotation(JsAnnotations.jsNameFqn) }
             }.compactIfPossible()
 
@@ -306,13 +306,13 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
     }
 
     private fun IrMutableAnnotationContainer.addJsName(name: String) {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsNameAnnotation.symbol).apply {
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsNameAnnotation.symbol).apply {
             arguments[0] = name.toIrConst(context.irBuiltIns.stringType)
         }
     }
 
     private fun IrMutableAnnotationContainer.addJsExport() {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsExportAnnotation.symbol)
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsExportAnnotation.symbol)
     }
 }
 
@@ -348,7 +348,7 @@ class IgnoreOriginalSuspendFunctionsThatWereExportedLowering(private val context
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrSimpleFunction && declaration.isExportedSuspendFunction(context)) {
             declaration.annotations =
-                declaration.annotations.filter { !it.isAnnotation(JsAnnotations.jsNameFqn) } memoryOptimizedPlus JsIrBuilder.buildConstructorCall(
+                declaration.annotations.filter { !it.isAnnotation(JsAnnotations.jsNameFqn) } memoryOptimizedPlus JsIrBuilder.buildAnnotation(
                     jsExportIgnoreAnnotation.symbol
                 )
         }

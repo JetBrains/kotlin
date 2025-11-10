@@ -66,7 +66,7 @@ class ExcludeSyntheticDeclarationsFromExportLowering(val context: JsIrBackendCon
     }
 
     private fun generateJsExportIgnoreCall(): IrConstructorCall {
-        return JsIrBuilder.buildConstructorCall(context.symbols.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol)
+        return JsIrBuilder.buildAnnotation(context.symbols.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol)
     }
 
     private fun IrSimpleFunction.getOriginalFunction(): IrSimpleFunction {

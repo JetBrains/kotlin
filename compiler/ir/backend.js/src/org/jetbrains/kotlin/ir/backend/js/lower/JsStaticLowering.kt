@@ -96,6 +96,6 @@ class JsStaticLowering(private val context: JsIrBackendContext) : DeclarationTra
     }
 
     private fun generateJsExportIgnoreCall(): IrConstructorCall {
-        return JsIrBuilder.buildConstructorCall(context.symbols.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol)
+        return JsIrBuilder.buildAnnotation(context.symbols.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol)
     }
 }
