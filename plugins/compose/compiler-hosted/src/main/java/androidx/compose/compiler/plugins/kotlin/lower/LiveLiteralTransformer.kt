@@ -150,7 +150,7 @@ open class LiveLiteralTransformer(
     private fun irLiveLiteralInfoAnnotation(
         key: String,
         offset: Int,
-    ): IrConstructorCall = IrAnnotationImpl(
+    ): IrAnnotation = IrAnnotationImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         liveLiteralInfoAnnotation.defaultType,
@@ -164,7 +164,7 @@ open class LiveLiteralTransformer(
 
     private fun irLiveLiteralFileInfoAnnotation(
         file: String,
-    ): IrConstructorCall = IrAnnotationImpl(
+    ): IrAnnotation = IrAnnotationImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         liveLiteralFileInfoAnnotation.defaultType,

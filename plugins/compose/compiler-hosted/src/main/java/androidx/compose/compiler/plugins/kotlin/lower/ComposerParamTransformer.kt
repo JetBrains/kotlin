@@ -548,7 +548,7 @@ class ComposerParamTransformer(
         return newInvoke
     }
 
-    private fun jvmNameAnnotation(name: String): IrConstructorCall {
+    private fun jvmNameAnnotation(name: String): IrAnnotation {
         val jvmName = getTopLevelClass(JvmStandardClassIds.Annotations.JvmName)
         val ctor = jvmName.constructors.first { it.owner.isPrimary }
         val type = jvmName.createType(false, emptyList())
