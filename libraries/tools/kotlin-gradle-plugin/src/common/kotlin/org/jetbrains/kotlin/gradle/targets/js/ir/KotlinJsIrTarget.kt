@@ -227,6 +227,7 @@ constructor(
         commonLazy
         addSubTarget(KotlinBrowserJsIr::class.java) {
             configureSubTarget()
+            subTargetConfigurators.add(SwcConfigurator(this))
             subTargetConfigurators.add(LibraryConfigurator(this))
             subTargetConfigurators.add(WebpackConfigurator(this))
         }
@@ -249,6 +250,7 @@ constructor(
 
         addSubTarget(KotlinNodeJsIr::class.java) {
             configureSubTarget()
+            subTargetConfigurators.add(SwcConfigurator(this))
             subTargetConfigurators.add(LibraryConfigurator(this))
             subTargetConfigurators.add(NodeJsEnvironmentConfigurator(this))
         }

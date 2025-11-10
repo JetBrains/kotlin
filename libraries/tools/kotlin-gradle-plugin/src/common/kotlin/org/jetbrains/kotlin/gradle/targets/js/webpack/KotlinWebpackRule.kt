@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import com.google.gson.GsonBuilder
 import org.gradle.api.Named
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -13,8 +12,8 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.json
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import java.io.StringWriter
 import javax.inject.Inject
 
 /**
@@ -139,10 +138,6 @@ constructor(
             """.trimIndent()
         )
     }
-
-    protected fun json(obj: Any) = StringWriter().also {
-        GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
-    }.toString()
 
     @Internal
     override fun getName(): String = name

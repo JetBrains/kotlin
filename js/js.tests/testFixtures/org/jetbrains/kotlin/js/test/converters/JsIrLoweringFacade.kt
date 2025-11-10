@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
+import org.jetbrains.kotlin.js.test.tools.SwcRunner
 import java.io.File
 
 class JsIrLoweringFacade(
@@ -192,6 +193,10 @@ class JsIrLoweringFacade(
 
         val generateDts = JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in module.directives
+        val delegateTranspilationToExternalTool =
+            JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION in module.directives &&
+                    JsEnvironmentConfigurationDirectives.ES6_MODE !in module.directives
+
 
         if (dontSkipRegularMode) {
             for ((mode, output) in compilerResult.outputs.entries) {
@@ -207,6 +212,10 @@ class JsIrLoweringFacade(
                     )
                 }
                 output.writeTo(outputFile, moduleId, moduleKind, mode.granularity)
+
+                if (delegateTranspilationToExternalTool) {
+                    SwcRunner.exec(outputFile.parentFile, moduleKind)
+                }
             }
         }
 

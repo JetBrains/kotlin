@@ -14,7 +14,9 @@ import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -75,6 +77,9 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Input
     val outputGranularity: KotlinJsIrOutputGranularity = propertiesProvider.jsIrOutputGranularity
 
+    @get:Input
+    internal val delegateTranspilationToExternalTool: Boolean = propertiesProvider.delegateTranspilationToExternalTool
+
     // Incremental stuff of link task is inside compiler
     @get:Internal
     override val taskBuildCacheableOutputDirectory: DirectoryProperty
@@ -133,6 +138,20 @@ abstract class KotlinJsIrLink @Inject constructor(
 
             if (isWasmPlatform && modeProperty.get() == DEVELOPMENT) {
                 args.debuggerCustomFormatters = true
+            }
+
+            if (delegateTranspilationToExternalTool) {
+                // If the delegated transpilation used, we should compile to the latest supported JS version
+                // so that the third-party transpilation tool (swc) will transpile it by the rules defined by users
+                if (args.target != ES_2015) {
+                    args.target = ES_2015
+                    // Also, right now the module system should be defined explicitly, until we introduce package information
+                    // saving for ES modules, so that it will be compatible with the other module systems,
+                    // and we can delegate module system transpilation to SWC too
+                    if (args.moduleKind == null) {
+                        args.moduleKind = JsModuleKind.MODULE_UMD.kind
+                    }
+                }
             }
         }
     }
