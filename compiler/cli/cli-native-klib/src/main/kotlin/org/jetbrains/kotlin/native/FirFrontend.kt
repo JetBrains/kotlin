@@ -31,7 +31,7 @@ private inline fun <F> PhaseContext.firFrontend(
         fileHasSyntaxErrors: (F) -> Boolean,
         noinline isCommonSource: (F) -> Boolean,
         noinline fileBelongsToModule: (F, String) -> Boolean,
-        buildResolveAndCheckFir: (FirSession, List<F>, BaseDiagnosticsCollector) -> ModuleCompilerAnalyzedOutput,
+        buildResolveAndCheckFir: (FirSession, List<F>, BaseDiagnosticsCollector) -> SingleModuleFrontendOutput,
 ): FirOutput {
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)

@@ -60,9 +60,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
-data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
+data class FirResult(val outputs: List<SingleModuleFrontendOutput>)
 
-data class ModuleCompilerAnalyzedOutput(
+data class SingleModuleFrontendOutput(
     val session: FirSession,
     val scopeSession: ScopeSession,
     val fir: List<FirFile>
@@ -77,7 +77,7 @@ data class Fir2IrActualizedResult(
     val symbolTable: SymbolTable,
 )
 
-fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnosticsCollector) {
+fun List<SingleModuleFrontendOutput>.runPlatformCheckers(reporter: BaseDiagnosticsCollector) {
     val platformModule = this.last()
     val session = platformModule.session
     // Skip checkers in header mode.
@@ -119,7 +119,7 @@ fun FirResult.convertToIrAndActualize(
 }
 
 private class Fir2IrPipeline(
-    val outputs: List<ModuleCompilerAnalyzedOutput>,
+    val outputs: List<SingleModuleFrontendOutput>,
     val fir2IrExtensions: Fir2IrExtensions,
     val fir2IrConfiguration: Fir2IrConfiguration,
     val irGeneratorExtensions: Collection<IrGenerationExtension>,

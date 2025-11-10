@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.makeLocalFirMetadataSerializerForMet
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -37,7 +37,7 @@ internal fun collectNewDirtySources(
     val changesCollector = ChangesCollector()
     val globalSerializationBindings = JvmSerializationBindings()
 
-    fun visitFirFiles(analyzedOutput: ModuleCompilerAnalyzedOutput) {
+    fun visitFirFiles(analyzedOutput: SingleModuleFrontendOutput) {
         for (file in analyzedOutput.fir) {
             file.accept(object : FirVisitor<Unit, MutableList<MetadataSerializer>>() {
                 inline fun withMetadataSerializer(

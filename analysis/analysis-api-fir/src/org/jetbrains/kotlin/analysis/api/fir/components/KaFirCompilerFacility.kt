@@ -74,7 +74,6 @@ import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
-import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
@@ -1087,7 +1086,7 @@ internal class KaFirCompilerFacility(
     ): Fir2IrActualizedResult {
         val fir2IrConfiguration =
             Fir2IrConfiguration.forAnalysisApi(effectiveConfiguration, session.languageVersionSettings, diagnosticReporter)
-        val firResult = FirResult(listOf(ModuleCompilerAnalyzedOutput(session, session.getScopeSession(), firFiles)))
+        val firResult = FirResult(listOf(SingleModuleFrontendOutput(session, session.getScopeSession(), firFiles)))
         val singleOutput = firResult.outputs.size == 1
         check(singleOutput) { "Single output invariant is used in the lambda below" }
 

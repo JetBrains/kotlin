@@ -179,7 +179,7 @@ fun TestModule.irGenerationExtensions(testServices: TestServices): Collection<Ir
 
 fun FirOutputArtifact.toFirResult(): FirResult {
     val outputs = partsForDependsOnModules.map {
-        ModuleCompilerAnalyzedOutput(it.session, it.scopeSession, it.firFiles.values.toList())
+        SingleModuleFrontendOutput(it.session, it.scopeSession, it.firFiles.values.toList())
     }
     return FirResult(outputs)
 }

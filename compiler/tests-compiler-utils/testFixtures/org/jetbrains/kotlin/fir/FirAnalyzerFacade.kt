@@ -33,7 +33,7 @@ class FirAnalyzerFacade(
         get() = _scopeSession!!
 
     override val result: FirResult
-        get() = FirResult(listOf(ModuleCompilerAnalyzedOutput(session, scopeSession, firFiles!!)))
+        get() = FirResult(listOf(SingleModuleFrontendOutput(session, scopeSession, firFiles!!)))
 
     private fun buildRawFir() {
         if (firFiles != null) return

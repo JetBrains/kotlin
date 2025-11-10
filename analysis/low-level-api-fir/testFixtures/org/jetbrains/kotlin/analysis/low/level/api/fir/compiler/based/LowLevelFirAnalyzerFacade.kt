@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.util.listMultimapOf
@@ -37,7 +37,7 @@ open class LowLevelFirAnalyzerFacade(
 
     override val result: FirResult
         get() {
-            val output = ModuleCompilerAnalyzedOutput(resolutionFacade.useSiteFirSession, scopeSession, allFirFiles.values.toList())
+            val output = SingleModuleFrontendOutput(resolutionFacade.useSiteFirSession, scopeSession, allFirFiles.values.toList())
             return FirResult(listOf(output))
         }
 
