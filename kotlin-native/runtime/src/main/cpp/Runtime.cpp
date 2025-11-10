@@ -5,6 +5,7 @@
 
 #include "std_support/Atomic.hpp"
 #include "CompilerConstants.hpp"
+#include "GlobalData.hpp"
 #include "Exceptions.h"
 #include "KAssert.h"
 #include "Memory.h"
@@ -13,6 +14,8 @@
 #include "Porting.h"
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
+#include "ThreadData.hpp"
+#include "ThreadRegistry.hpp"
 #include "Worker.h"
 #include "KString.h"
 #include "CrashHandler.hpp"
@@ -40,7 +43,7 @@ enum class RuntimeStatus {
 };
 
 struct RuntimeState {
-    MemoryState* memoryState;
+    mm::ThreadRegistry::Node* threadNode;
     Worker* worker;
     RuntimeStatus status = RuntimeStatus::kUninitialized;
 };
@@ -94,12 +97,13 @@ NO_INLINE RuntimeState* initRuntime() {
   ++aliveRuntimesCount;
 
   bool firstRuntime = initializeGlobalRuntimeIfNeeded();
-  result->memoryState= InitMemory();
-  auto& threadData = *FromMemoryState(result->memoryState);
+  mm::waitGlobalDataInitialized();
+  result->threadNode = mm::ThreadRegistry::Instance().RegisterCurrentThread();
+  auto& threadData = *result->threadNode->Get();
   // Switch thread state because worker and globals inits require the runnable state.
   // This call may block if GC requested suspending threads.
   ThreadStateGuard stateGuard(threadData, kotlin::ThreadState::kRunnable);
-  result->worker = WorkerInit(result->memoryState);
+  result->worker = WorkerInit(reinterpret_cast<MemoryState*>(result->threadNode));
 
   InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, &threadData);
   CommitTLSStorage(&threadData);
@@ -118,7 +122,7 @@ NO_INLINE RuntimeState* initRuntime() {
 }
 
 void deinitRuntime(RuntimeState* state) {
-  auto& threadData = *FromMemoryState(state->memoryState);
+  auto& threadData = *state->threadNode->Get();
   AssertThreadState(threadData, kotlin::ThreadState::kRunnable);
   RuntimeAssert(state->status == RuntimeStatus::kRunning, "Runtime must be in the running state");
   state->status = RuntimeStatus::kDestroying;
@@ -128,13 +132,17 @@ void deinitRuntime(RuntimeState* state) {
   --aliveRuntimesCount;
   ClearTLS(&threadData);
 
-  // Do not use ThreadStateGuard because `threadData` will be destroyed during DeinitMemory.
+  // Do not use ThreadStateGuard because `threadData` will be destroyed before the end of the function.
   kotlin::SwitchThreadState(threadData, kotlin::ThreadState::kNative);
 
   auto workerId = GetWorkerId(state->worker);
   WorkerDeinit(state->worker);
 
-  DeinitMemory(state->memoryState);
+  if (!konan::isOnThreadExitNotSetOrAlreadyStarted()) {
+      // we can clear reference in advance, as Unregister function can't use it anyway
+      mm::ThreadRegistry::ClearCurrentThreadData();
+  }
+  mm::ThreadRegistry::Instance().Unregister(state->threadNode);
   delete state;
   WorkerDestroyThreadDataIfNeeded(workerId);
   ::runtimeState = kInvalidRuntime;
@@ -142,7 +150,7 @@ void deinitRuntime(RuntimeState* state) {
 
 void Kotlin_deinitRuntimeCallback(void* argument) {
   auto* state = reinterpret_cast<RuntimeState*>(argument);
-  auto& threadData = *FromMemoryState(state->memoryState);
+  auto& threadData = *state->threadNode->Get();
   // This callback may be called from any state, make sure it runs in the runnable state.
   kotlin::SwitchThreadState(threadData, kotlin::ThreadState::kRunnable, /* reentrant = */ true);
   deinitRuntime(state);
@@ -198,7 +206,7 @@ void Kotlin_shutdownRuntime() {
 
     auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
     RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
-    auto& threadData = *FromMemoryState(runtime->memoryState);
+    auto& threadData = *runtime->threadNode->Get();
     // The main thread is not doing anything Kotlin anymore, but will stick around to cleanup C++ globals and the like.
     // Mark the thread native, and don't make the GC thread wait on it.
     kotlin::SwitchThreadState(threadData, kotlin::ThreadState::kNative);

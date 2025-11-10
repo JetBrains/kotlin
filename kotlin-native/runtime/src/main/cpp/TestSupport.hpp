@@ -11,6 +11,7 @@
 #include "Memory.h"
 #include "ObjectTestSupport.hpp"
 #include "ThreadData.hpp"
+#include "ThreadRegistry.hpp"
 #include "concurrent/ScopedThread.hpp"
 
 namespace kotlin {
@@ -25,13 +26,17 @@ constexpr int kDefaultThreadCount = 10;
 constexpr int kDefaultThreadCount = 100;
 #endif
 
-void DeinitMemoryForTests(MemoryState* memoryState);
+inline mm::ThreadRegistry::Node* InitMemoryForTests() {
+    mm::waitGlobalDataInitialized();
+    return mm::ThreadRegistry::Instance().RegisterCurrentThread();
+}
+void DeinitMemoryForTests(mm::ThreadRegistry::Node* threadNode);
 
 // Scopely initializes the memory subsystem of the current thread for tests.
 // TODO(KT-72132): consider dropping this class.
 class ScopedMemoryInit : private kotlin::Pinned {
 public:
-    ScopedMemoryInit() : memoryState_(InitMemory()) {
+    ScopedMemoryInit() : threadNode_(InitMemoryForTests()) {
         kotlin::SwitchThreadState(threadData(), ThreadState::kRunnable);
     }
     ~ScopedMemoryInit() {
@@ -40,13 +45,13 @@ public:
         ClearMemoryForTests(threadData());
         // Ensure that memory deinit is performed in the native state.
         SwitchThreadState(threadData(), ThreadState::kNative);
-        DeinitMemoryForTests(static_cast<MemoryState*>(memoryState_));
+        DeinitMemoryForTests(static_cast<mm::ThreadRegistry::Node*>(threadNode_));
     }
 
-    mm::ThreadData& threadData() { return *FromMemoryState(static_cast<MemoryState*>(memoryState_)); }
+    mm::ThreadData& threadData() { return *threadNode_->Get(); }
 
 private:
-    raw_ptr<MemoryState> memoryState_;
+    raw_ptr<mm::ThreadRegistry::Node> threadNode_;
 };
 
 // Runs the given function in a separate thread with minimally initialized runtime.

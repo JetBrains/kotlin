@@ -168,8 +168,6 @@ extern "C" {
 
 struct MemoryState;
 
-MemoryState* InitMemory();
-void DeinitMemory(MemoryState*);
 kotlin::mm::ThreadData* FromMemoryState(MemoryState*);
 
 //

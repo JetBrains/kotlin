@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+#include "ThreadRegistry.hpp"
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
@@ -57,8 +58,8 @@ extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
     alloc::test_support::assertClear(mm::GlobalData::Instance().allocator());
 }
 
-void kotlin::DeinitMemoryForTests(MemoryState* memoryState) {
-    DeinitMemory(memoryState);
+void kotlin::DeinitMemoryForTests(mm::ThreadRegistry::Node* threadNode) {
+    mm::ThreadRegistry::Instance().Unregister(threadNode);
     mm::ThreadRegistry::ClearCurrentThreadData();
 }
 
