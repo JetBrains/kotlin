@@ -9,9 +9,10 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.atMostOne
 
 private fun IrClass.isClassTypeWithSignature(signature: IdSignature.CommonSignature): Boolean {
@@ -50,18 +52,25 @@ fun IrValueParameter.isInlineParameter(): Boolean =
     !this.isNoinline && (this.type.isFunction() || this.type.isSuspendFunction()) && !this.type.isMarkedNullable()
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
-fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: Int,
-                          annotationClass: IrClass, vararg args: String): IrConstructorCall {
+fun buildSimpleAnnotation(
+    irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: Int,
+    annotationClass: IrClass, vararg args: String,
+): IrAnnotation {
     val constructor = annotationClass.constructors.let {
         it.singleOrNull() ?: it.single { ctor -> ctor.parameters.size == args.size }
     }
-    return IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, constructor.returnType, constructor.symbol).apply {
+    return IrAnnotationImpl.fromSymbolOwner(startOffset, endOffset, constructor.returnType, constructor.symbol).apply {
+        val mapping = mutableMapOf<Name, IrExpression>()
         args.forEachIndexed { index, arg ->
-            assert(constructor.parameters[index].type == irBuiltIns.stringType) {
+            val param = constructor.parameters[index]
+            assert(param.type == irBuiltIns.stringType) {
                 "String type expected but was ${constructor.parameters[index].type}"
             }
-            arguments[index] = IrConstImpl.string(startOffset, endOffset, irBuiltIns.stringType, arg)
+            val argument = IrConstImpl.string(startOffset, endOffset, irBuiltIns.stringType, arg)
+            arguments[index] = argument
+            mapping[param.name] = argument
         }
+        argumentMapping = mapping
     }
 }
 
