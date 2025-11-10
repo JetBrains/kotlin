@@ -25,7 +25,7 @@ class MainKtsIT {
     }
 
     @Test
-    @Ignore // Fails on TC most likely due to repo proxying
+//    @Ignore // Fails on TC most likely due to repo proxying
     fun testKotlinxHtml() {
         runWithK2JVMCompilerAndMainKts(
             "$TEST_DATA_ROOT/kotlinx-html.main.kts",
