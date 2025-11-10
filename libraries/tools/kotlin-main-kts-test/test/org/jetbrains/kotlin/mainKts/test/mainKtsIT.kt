@@ -34,6 +34,14 @@ class MainKtsIT {
     }
 
     @Test
+    fun testTeamcityFailure() {
+        runWithK2JVMCompilerAndMainKts(
+            "$TEST_DATA_ROOT/teamcity-failure.main.kts",
+            listOf("test")
+        )
+    }
+
+    @Test
     fun testImport() {
         val mainKtsJar = File("dist/kotlinc/lib/kotlin-main-kts.jar")
         Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${mainKtsJar.absolutePath}", mainKtsJar.exists())
