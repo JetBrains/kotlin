@@ -966,6 +966,7 @@ public class org/jetbrains/kotlin/psi/KtCallExpression : org/jetbrains/kotlin/ps
 
 public abstract interface class org/jetbrains/kotlin/psi/KtCallableDeclaration : org/jetbrains/kotlin/psi/KtDeclarationWithReturnType, org/jetbrains/kotlin/psi/KtNamedDeclaration, org/jetbrains/kotlin/psi/KtTypeParameterListOwner {
 	public abstract fun getColon ()Lcom/intellij/psi/PsiElement;
+	public fun getContextParameters ()Ljava/util/List;
 	public fun getContextReceivers ()Ljava/util/List;
 	public abstract fun getReceiverTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
 	public abstract fun getTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
