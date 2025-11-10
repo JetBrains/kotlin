@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -41,7 +41,7 @@ fun createLeafMfvcNode(
     type: IrType,
     methodFullNameMode: MethodFullNameMode,
     nameParts: List<Name>,
-    fieldAnnotations: List<IrConstructorCall>,
+    fieldAnnotations: List<IrAnnotation>,
     static: Boolean,
     overriddenNode: LeafMfvcNode?,
     defaultMethodsImplementationSourceNode: UnboxFunctionImplementation,
@@ -188,7 +188,7 @@ fun createNameableMfvcNodes(
     typeArguments: TypeArguments,
     methodFullNameMode: MethodFullNameMode,
     nameParts: List<Name>,
-    fieldAnnotations: List<IrConstructorCall>,
+    fieldAnnotations: List<IrAnnotation>,
     static: Boolean,
     overriddenNode: NameableMfvcNode?,
     defaultMethodsImplementationSourceNode: UnboxFunctionImplementation,
@@ -231,7 +231,7 @@ fun createIntermediateMfvcNode(
     typeArguments: TypeArguments,
     methodFullNameMode: MethodFullNameMode,
     nameParts: List<Name>,
-    fieldAnnotations: List<IrConstructorCall>,
+    fieldAnnotations: List<IrAnnotation>,
     static: Boolean,
     overriddenNode: IntermediateMfvcNode?,
     defaultMethodsImplementationSourceNode: UnboxFunctionImplementation?,
