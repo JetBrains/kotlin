@@ -87,7 +87,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedVariableDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -1306,7 +1306,7 @@ internal class KaFirCompilerFacility(
     private class CompilerFacilityJvmGeneratorExtensions(
         private val delegate: JvmGeneratorExtensions
     ) : StubGeneratorExtensions(), JvmGeneratorExtensions by delegate {
-        override fun generateRawTypeAnnotationCall(): IrConstructorCall? = delegate.generateRawTypeAnnotationCall()
+        override fun generateRawTypeAnnotationCall(): IrAnnotation? = delegate.generateRawTypeAnnotationCall()
 
         /**
          * This method is used from `org.jetbrains.kotlin.backend.jvm.lower.SpecialAccessLowering.visitCall`
