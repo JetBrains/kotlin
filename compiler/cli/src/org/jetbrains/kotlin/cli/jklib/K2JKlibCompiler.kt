@@ -74,7 +74,10 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.getNameWithAssert
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -97,8 +100,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
-import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
@@ -217,8 +218,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 klib,
                 strategyResolver,
                 libraryAbiVersion,
-                klib.libContainsErrorCode,
-                stubGenerator
+                klib.libContainsErrorCode
             )
         }
 
@@ -308,7 +308,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             strategyResolver: (String) -> DeserializationStrategy,
             libraryAbiVersion: KotlinAbiVersion,
             allowErrorCode: Boolean,
-            stubGenerator: DeclarationStubGenerator,
         ) :
             BasicIrModuleDeserializer(
                 this,
@@ -344,7 +343,10 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 }
         }
 
-        override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
+        override fun createCurrentModuleDeserializer(
+            moduleFragment: IrModuleFragment,
+            dependencies: Collection<IrModuleDeserializer>
+        ): IrModuleDeserializer =
             JvmCurrentModuleDeserializer(moduleFragment, dependencies)
 
         private inner class JvmCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>) :
@@ -388,19 +390,8 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             it
         })
         val outputKind = OutputKind.valueOf((arguments.produce ?: "ir").uppercase())
-//        val klibDestination = if (outputKind == OutputKind.LIBRARY) destination else
-//            File(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
-//                require(!it.exists) { "Collision writing intermediate KLib $it" }
-//                it.deleteOnExit()
-//            }
-//         DEBUG
-//         val klibDestination = File(System.getProperty("java.io.tmpdir"), "test.klib")
-        val klibDestination = destination
-        println(destination)
-        val exitCodeKlib = compileLibrary(arguments, rootDisposable, paths, klibDestination)
+        val exitCodeKlib = compileLibrary(arguments, rootDisposable, paths, destination)
         if (outputKind == OutputKind.LIBRARY || exitCodeKlib != ExitCode.OK) return exitCodeKlib
-//        DEBUG
-//        compileIr(arguments, rootDisposable, klibDestination)
         return ExitCode.OK
     }
 
@@ -458,11 +449,13 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         return dependenciesContext.module
     }
 
+    @Suppress("UNUSED")
     class CompilationResult(
         val pluginContext: IrPluginContext,
         val mainModuleFragment: IrModuleFragment
     )
 
+    @Suppress("UNUSED")
     fun experimentalHookToCompileKlibAndDeserializeIr(
         arguments: K2JKlibCompilerArguments,
         configuration: CompilerConfiguration,
@@ -474,11 +467,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             require(!it.exists) { "Collision writing intermediate KLib $it" }
             it.deleteOnExit()
         }
-//         DEBUG
-//		 val klibDestination = File(System.getProperty("java.io.tmpdir"), "test.klib")
         compileLibrary(arguments, rootDisposable, paths, klibDestination)
-        println(klibDestination)
-//         DEBUG
         if (!klibDestination.exists) {
             error("Failed to compile KLIB $klibDestination")
         }
@@ -503,14 +492,13 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             )
 
         val klibFiles = configuration.getList(JVMConfigurationKeys.KLIB_PATHS) + klib.absolutePath
-        val friendFiles = configuration.getList(JVMConfigurationKeys.FRIEND_PATHS).map { File(it) }.toSet()
 
         val projectContext = ProjectContext(projectEnvironment.project, "TopDownAnalyzer for JKlib")
         storageManager = projectContext.storageManager
         val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
 
         klibFactories = KlibMetadataFactories(
-            { storageManager -> builtIns },
+            { builtIns },
             JavaFlexibleTypeDeserializer
         )
         val trace = BindingTraceContext(projectContext.project)
@@ -538,11 +526,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             MainFunctionDetector(trace.bindingContext, configuration.languageVersionSettings)
         )
         val symbolTable = SymbolTable(IdSignatureDescriptor(mangler), IrFactoryImpl)
-        val translator = Psi2IrTranslator(
-            configuration.languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors = false, false),
-            messageCollector::checkNoUnboundSymbols
-        )
         val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, mainModule)
         val irBuiltIns = IrBuiltInsOverDescriptors(mainModule.builtIns, typeTranslator, symbolTable).apply {
             listOf(
@@ -650,9 +633,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 
         linker.checkNoUnboundSymbols(symbolTable, "Found unbound symbol")
 
-//        DEBUG
-//        error("DON'T REACH")
-        println("Files in deserialized module: ${mainModuleFragment.files.size}")
         return CompilationResult(pluginContext, mainModuleFragment)
     }
 
@@ -808,7 +788,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 friendDependencies(module.getFriendPaths())
             }
 
-            var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
+            val librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
 
 
             val sessionsWithSources = prepareJKlibSessions(
