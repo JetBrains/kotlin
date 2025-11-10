@@ -56,7 +56,7 @@ class Fir2KlibMetadataSerializer(
     /**
      * The list of source files whose metadata is to be serialized.
      */
-    val sourceFiles: List<KtSourceFile> = firFilesAndSessions.keys.map { it.sourceFile!! }
+    val sourceFiles: List<KtSourceFile> = firFilesAndSessions.keys.mapNotNull { it.sourceFile }
 
     override val numberOfSourceFiles: Int
         get() = firFilesAndSessions.size
@@ -95,9 +95,9 @@ class Fir2KlibMetadataSerializer(
         )
     }
 
-    override fun forEachFile(block: (Int, FirFile, KtSourceFile, FqName) -> Unit) {
+    override fun forEachFile(block: (Int, FirFile, KtSourceFile?, FqName) -> Unit) {
         firFilesAndSessions.keys.forEachIndexed { i, firFile ->
-            block(i, firFile, firFile.sourceFile!!, firFile.packageFqName)
+            block(i, firFile, firFile.sourceFile, firFile.packageFqName)
         }
     }
 }
