@@ -294,18 +294,42 @@ class IrBodyDeserializer(
         }
     }
 
-    fun deserializeAnnotation(proto: ProtoConstructorCall): IrConstructorCall {
+    fun deserializeAnnotation(proto: ProtoConstructorCall): IrAnnotation {
         // TODO: use real coordinates
         val startOffset = 0
         val endOffset = 0
 
         if (settings.useNullableAnyAsAnnotationConstructorCallType)
-            return deserializeConstructorCall(proto, startOffset, endOffset, builtIns.anyNType)
+            return deserializeAnnotation(proto, startOffset, endOffset, builtIns.anyNType)
         else {
             val irType = IrAnnotationType()
-            return deserializeConstructorCall(proto, startOffset, endOffset, irType).also { irType.irConstructorCall = it }
+            return deserializeAnnotation(proto, startOffset, endOffset, irType).also { irType.irConstructorCall = it }
         }
     }
+
+    private fun deserializeAnnotation(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrAnnotation {
+        val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
+        return IrAnnotationImplRaw(
+            start,
+            end,
+            type,
+            symbol,
+            proto.constructorTypeArgumentsCount,
+            deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName },
+            SourceElement.NO_SOURCE,
+        ).also {
+            deserializeMemberAccessCommon(it, proto.memberAccess)
+
+            // TODO(KT-74200): Code below surely doesn't work, it just shows a concept what should be done here.
+            // Problems:
+            // 1. `symbol.owner.parameters` assumes that symbol is bound, but I'm not sure about that.
+            // 2. names and arguments lists might not be of the same size, also I don't think that just the order of appearance is enough to match names to arguments, but we don't have any other information here.
+            val arguments = proto.memberAccess.argumentList.mapNotNull { arg -> if (arg.hasExpression()) deserializeExpression(arg.expression) else null }
+            val names = symbol.owner.parameters.map { parameter -> parameter.name }
+            it.argumentMapping = names.zip(arguments).toMap()
+        }
+    }
+
 
     private fun deserializeConstructorCall(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrConstructorCall {
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
