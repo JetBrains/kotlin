@@ -8,8 +8,8 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -104,7 +104,7 @@ fun BaseIrGenerator?.findTypeSerializerOrContextUnchecked(
 
 fun analyzeSpecialSerializers(
     context: SerializationBaseContext,
-    annotations: List<IrConstructorCall>
+    annotations: List<IrAnnotation>
 ): IrClassSymbol? = when {
     annotations.hasAnnotation(SerializationAnnotations.contextualFqName) || annotations.hasAnnotation(SerializationAnnotations.contextualOnPropertyFqName) ->
         context.referenceClassId(contextSerializerId)
@@ -227,7 +227,7 @@ fun findStandardKotlinTypeSerializer(context: SerializationBaseContext, type: Ir
 }
 
 // @Serializable(X::class) -> X
-internal fun List<IrConstructorCall>.serializableWith(): IrClassSymbol? {
+internal fun List<IrAnnotation>.serializableWith(): IrClassSymbol? {
     val annotation = findAnnotation(SerializationAnnotations.serializableAnnotationFqName) ?: return null
     val arg = annotation.arguments[0] as? IrClassReference ?: return null
     return arg.symbol as? IrClassSymbol
