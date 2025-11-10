@@ -37,6 +37,7 @@ include(":gradle-plugins-common")
 include(":d8-configuration")
 // TODO: uncomment after bootstrap
 // include(":swc-configuration")
+include(":foreign-class-usage-checker")
 include(":binaryen-configuration")
 include(":nodejs-configuration")
 include(":utilities")
