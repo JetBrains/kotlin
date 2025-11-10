@@ -14,7 +14,7 @@ dependencies {
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
-    implemen(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
+    implementation(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
 
     implementation(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
