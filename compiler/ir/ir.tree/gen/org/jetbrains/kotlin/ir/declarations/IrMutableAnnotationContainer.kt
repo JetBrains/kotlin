@@ -9,11 +9,11 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.mutableAnnotationContainer]
  */
 interface IrMutableAnnotationContainer : IrElement, IrAnnotationContainer {
-    override var annotations: List<IrConstructorCall>
+    override var annotations: List<IrAnnotation>
 }
