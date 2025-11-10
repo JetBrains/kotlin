@@ -38,18 +38,8 @@ public:
 
         Value* Get() noexcept { return &value_; }
 
-        static Node& from(Value& value) noexcept {
-            return *reinterpret_cast<Node*>(reinterpret_cast<intptr_t>(&value) - valueOffset());
-        }
-
     private:
         friend class SingleLockList;
-
-        static constexpr intptr_t valueOffset() {
-            Node* base = nullptr;
-            Value* value = &base->value_;
-            return reinterpret_cast<intptr_t>(value) - reinterpret_cast<intptr_t>(base);
-        }
 
         Value value_;
         NodeOwner next_;

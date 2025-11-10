@@ -145,8 +145,6 @@ ALWAYS_INLINE inline bool isNullOrMarker(const ObjHeader* obj) noexcept {
 
 struct FrameOverlay;
 
-kotlin::mm::ThreadData& InitMemory();
-void DeinitMemory(kotlin::mm::ThreadData&);
 void ClearMemoryForTests(kotlin::mm::ThreadData&);
 
 #ifdef __cplusplus
@@ -167,6 +165,12 @@ extern "C" {
     ObjHeader* __result = name(__VA_ARGS__, OBJ_RESULT);  \
     return __result;                                      \
   }
+
+struct MemoryState;
+
+MemoryState* InitMemory();
+void DeinitMemory(MemoryState*);
+kotlin::mm::ThreadData* FromMemoryState(MemoryState*);
 
 //
 // Object allocation.
@@ -357,6 +361,9 @@ ThreadState SwitchThreadState(mm::ThreadData& threadData, ThreadState newState, 
 
 // Asserts that the given thread is in the given state.
 void AssertThreadState(mm::ThreadData& threadData, ThreadState expected) noexcept;
+inline void AssertThreadState(MemoryState* memoryState, ThreadState expected) noexcept {
+    AssertThreadState(*FromMemoryState(memoryState), expected);
+}
 void AssertThreadState(mm::ThreadData& threadData, std::initializer_list<ThreadState> expected) noexcept;
 
 // Asserts that the current thread is in the the given state.
@@ -384,6 +391,9 @@ public:
     ThreadStateGuard(mm::ThreadData& threadData, ThreadState state, bool reentrant = false) noexcept : threadData_(&threadData), reentrant_(reentrant) {
         oldState_ = SwitchThreadState(threadData, state, reentrant_);
     }
+
+    // Set the state for the given thread.
+    ThreadStateGuard(MemoryState* memoryState, ThreadState state, bool reentrant = false) noexcept : ThreadStateGuard(*FromMemoryState(memoryState), state, reentrant) {}
 
     // Sets the state for the current thread.
     explicit ThreadStateGuard(ThreadState state, bool reentrant = false) noexcept

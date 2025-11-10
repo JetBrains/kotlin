@@ -75,26 +75,30 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
     alloc::destroyExtraObjectData(extraObject);
 }
 
-mm::ThreadData& InitMemory() {
+mm::ThreadData* FromMemoryState(MemoryState* memoryState) {
+    return reinterpret_cast<mm::ThreadRegistry::Node*>(memoryState)->Get();
+}
+
+MemoryState* InitMemory() {
     mm::waitGlobalDataInitialized();
-    return *mm::ThreadRegistry::Instance().RegisterCurrentThread()->Get();
+    return reinterpret_cast<MemoryState*>(mm::ThreadRegistry::Instance().RegisterCurrentThread());
 }
 
 void kotlin::initGlobalMemory() noexcept {
     mm::GlobalData::init();
 }
 
-void DeinitMemory(mm::ThreadData& threadData) {
+void DeinitMemory(MemoryState* memoryState) {
+    auto& threadData = *FromMemoryState(memoryState);
     // We need the native state to avoid a deadlock on unregistering the thread.
     // The deadlock is possible if we are in the runnable state and the GC already locked
     // the thread registery and waits for threads to suspend or go to the native state.
     AssertThreadState(threadData, ThreadState::kNative);
-    auto& node = mm::ThreadRegistry::Node::from(threadData);
     if (!konan::isOnThreadExitNotSetOrAlreadyStarted()) {
         // we can clear reference in advance, as Unregister function can't use it anyway
         mm::ThreadRegistry::ClearCurrentThreadData();
     }
-    mm::ThreadRegistry::Instance().Unregister(&node);
+    mm::ThreadRegistry::Instance().Unregister(reinterpret_cast<mm::ThreadRegistry::Node*>(memoryState));
 }
 
 void ClearMemoryForTests(mm::ThreadData& threadData) {
