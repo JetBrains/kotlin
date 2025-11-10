@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.*
@@ -127,10 +127,10 @@ fun <S : IrSymbol> IrOverridableDeclaration<S>.overrides(other: IrOverridableDec
     return false
 }
 
-private val IrConstructorCall.annotationClass
+private val IrAnnotation.annotationClass
     get() = this.symbol.owner.constructedClass
 
-fun IrConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
+fun IrAnnotation.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
     if (symbol.isBound) {
         annotationClass.hasEqualFqName(fqName)
     } else {
@@ -171,12 +171,12 @@ fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String
     }
 }
 
-fun List<IrConstructorCall>.hasAnnotation(classId: ClassId): Boolean = hasAnnotation(classId.asSingleFqName())
+fun List<IrAnnotation>.hasAnnotation(classId: ClassId): Boolean = hasAnnotation(classId.asSingleFqName())
 
-fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
+fun List<IrAnnotation>.hasAnnotation(fqName: FqName): Boolean =
     any { it.isAnnotationWithEqualFqName(fqName) }
 
-fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
+fun List<IrAnnotation>.findAnnotation(fqName: FqName): IrAnnotation? =
     firstOrNull { it.isAnnotationWithEqualFqName(fqName) }
 
 val IrDeclaration.fileEntry: IrFileEntry
@@ -311,7 +311,7 @@ fun IrClassSymbol.getPropertyGetter(name: String): IrSimpleFunctionSymbol? = own
 @UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertySetter(name)
 
-fun filterOutAnnotations(fqName: FqName, annotations: List<IrConstructorCall>): List<IrConstructorCall> {
+fun filterOutAnnotations(fqName: FqName, annotations: List<IrAnnotation>): List<IrAnnotation> {
     return annotations.filterNot { it.isAnnotationWithEqualFqName(fqName) }
 }
 
