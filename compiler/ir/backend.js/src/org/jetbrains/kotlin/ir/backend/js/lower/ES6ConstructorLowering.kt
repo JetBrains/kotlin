@@ -371,6 +371,6 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
     private fun IrDeclaration.excludeFromExport() {
         val jsExportIgnoreClass = context.symbols.jsExportIgnoreAnnotationSymbol.owner
         val jsExportIgnoreCtor = jsExportIgnoreClass.primaryConstructor ?: return
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsExportIgnoreCtor.symbol)
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsExportIgnoreCtor.symbol)
     }
 }

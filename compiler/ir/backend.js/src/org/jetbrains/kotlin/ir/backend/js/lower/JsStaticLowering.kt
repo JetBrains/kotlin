@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.JsStandardClassIds
@@ -94,7 +95,7 @@ class JsStaticLowering(private val context: JsIrBackendContext) : DeclarationTra
         annotations += generateJsExportIgnoreCall()
     }
 
-    private fun generateJsExportIgnoreCall(): IrConstructorCall {
-        return JsIrBuilder.buildConstructorCall(context.symbols.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol)
+    private fun generateJsExportIgnoreCall(): IrAnnotation {
+        return JsIrBuilder.buildAnnotation(context.symbols.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol)
     }
 }

@@ -130,12 +130,13 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
         if (couldBeConvertedToExplicitExport() == true) {
             annotations = annotations.memoryOptimizedMap {
                 if (it.isAnnotation(JsAnnotations.jsImplicitExportFqn)) {
-                    JsIrBuilder.buildConstructorCall(jsExportCtor)
+                    JsIrBuilder.buildAnnotation(jsExportCtor)
                 } else it
             }
         } else if (strictImplicitExport) {
-            annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsImplicitExportCtor).apply {
+            annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsImplicitExportCtor).apply {
                 arguments[0] = false.toIrConst(context.irBuiltIns.booleanType)
+                // TODO(KT-74200): Should argumentMapping be filled here?
             }
 
             parentClassOrNull?.takeIf { it.shouldBeMarkedWithImplicitExportOrUpgraded() }?.markWithJsImplicitExportOrUpgrade()

@@ -68,13 +68,13 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
     }
 
     private fun IrSimpleFunction.addJsGeneratorAnnotation() {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(
             context.symbols.jsGeneratorAnnotationSymbol.owner.primaryConstructor!!.symbol
         )
     }
 
     private fun IrSimpleFunction.addJsExportIgnoreAnnotation() {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(
             context.symbols.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol
         )
     }
