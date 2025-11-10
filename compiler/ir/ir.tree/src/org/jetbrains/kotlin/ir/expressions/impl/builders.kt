@@ -929,6 +929,37 @@ fun IrCallImplRaw(
 
 /**
  * Note: This functions requires [symbol] to be bound.
+ * If it may be not, use [IrAnnotationImplWithShape].
+ */
+fun IrAnnotationImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    typeArgumentsCount: Int,
+    constructorTypeArgumentsCount: Int,
+    origin: IrStatementOrigin? = null,
+    source: SourceElement = SourceElement.NO_SOURCE,
+): IrAnnotationImpl = IrAnnotationImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+    constructorTypeArgumentsCount = constructorTypeArgumentsCount,
+    source = source,
+    // TODO(KT-74200): `classId` is nullable (that's where this temporary !! come from).
+    classId = symbol.owner.parentAsClass.classId!!,
+    // TODO(KT-74200): Should map be populated by the caller?
+    argumentMapping = mapOf(),
+).apply {
+    initializeTargetShapeFromSymbol()
+    initializeEmptyTypeArguments(typeArgumentsCount)
+}
+
+/**
+ * Note: This functions requires [symbol] to be bound.
  * If it may be not, use [IrConstructorCallImplWithShape].
  */
 fun IrConstructorCallImpl(
@@ -951,6 +982,42 @@ fun IrConstructorCallImpl(
     source = source,
 ).apply {
     initializeTargetShapeFromSymbol()
+    initializeEmptyTypeArguments(typeArgumentsCount)
+}
+
+fun IrAnnotationImplWithShape(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    typeArgumentsCount: Int,
+    constructorTypeArgumentsCount: Int,
+    valueArgumentsCount: Int,
+    contextParameterCount: Int,
+    hasDispatchReceiver: Boolean,
+    hasExtensionReceiver: Boolean,
+    origin: IrStatementOrigin? = null,
+    source: SourceElement = SourceElement.NO_SOURCE,
+): IrAnnotationImpl = IrAnnotationImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+    constructorTypeArgumentsCount = constructorTypeArgumentsCount,
+    source = source,
+    // TODO(KT-74200): There are two problems here: 1st - symbol might be unbound, 2nd - `classId` is nullable (that's where this temporary !! come from).
+    classId = symbol.owner.parentAsClass.classId!!,
+    // TODO(KT-74200): Should map be populated by the caller?
+    argumentMapping = mapOf(),
+).apply {
+    initializeTargetShapeExplicitly(
+        hasDispatchReceiver = hasDispatchReceiver,
+        hasExtensionReceiver = hasExtensionReceiver,
+        contextParameterCount = contextParameterCount,
+        regularParameterCount = valueArgumentsCount - contextParameterCount
+    )
     initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
@@ -988,6 +1055,29 @@ fun IrConstructorCallImplWithShape(
     )
     initializeEmptyTypeArguments(typeArgumentsCount)
 }
+
+fun IrAnnotationImplRaw(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    constructorTypeArgumentsCount: Int,
+    origin: IrStatementOrigin?,
+    source: SourceElement,
+): IrAnnotationImpl = IrAnnotationImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+    constructorTypeArgumentsCount = constructorTypeArgumentsCount,
+    source = source,
+    // TODO(KT-74200): There are two problems here: 1st - symbol might be unbound, 2nd - `classId` is nullable (that's where this temporary !! come from).
+    classId = symbol.owner.parentAsClass.classId!!,
+    // TODO(KT-74200): Should map be populated by the caller?
+    argumentMapping = mapOf(),
+)
 
 /**
  * Does not initialize arguments (in neither new and old API).
