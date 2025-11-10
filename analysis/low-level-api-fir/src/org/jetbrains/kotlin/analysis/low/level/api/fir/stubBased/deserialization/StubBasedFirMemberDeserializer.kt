@@ -440,11 +440,11 @@ internal class StubBasedFirMemberDeserializer(
                 isFromAnnotation,
             )
 
-            property.contextReceiverList?.contextReceivers()?.mapTo(contextParameters) {
+            property.contextReceivers.mapTo(contextParameters) {
                 local.memberDeserializer.loadContextReceiver(it, symbol)
             }
 
-            property.contextReceiverList?.contextParameters()?.mapTo(contextParameters) {
+            property.contextParameters.mapTo(contextParameters) {
                 local.memberDeserializer.loadContextParameter(it, symbol)
             }
         }.apply {
@@ -585,11 +585,11 @@ internal class StubBasedFirMemberDeserializer(
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
             this.containerSource = c.containerSource
 
-            function.contextReceiverList?.contextReceivers()?.mapTo(contextParameters) {
+            function.contextReceivers.mapTo(contextParameters) {
                 local.memberDeserializer.loadContextReceiver(it, symbol)
             }
 
-            function.contextReceiverList?.contextParameters()?.mapTo(contextParameters) {
+            function.contextParameters.mapTo(contextParameters) {
                 local.memberDeserializer.loadContextParameter(it, symbol)
             }
         }.apply {

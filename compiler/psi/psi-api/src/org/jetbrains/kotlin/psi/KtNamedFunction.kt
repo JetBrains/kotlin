@@ -121,9 +121,6 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
             return null
         }
 
-    override fun getContextReceivers(): List<KtContextReceiver> =
-        contextReceiverList?.contextReceivers().orEmpty()
-
     override fun getTypeReference(): KtTypeReference? {
         val stub = greenStub ?: return getTypeReference(declaration = this)
 

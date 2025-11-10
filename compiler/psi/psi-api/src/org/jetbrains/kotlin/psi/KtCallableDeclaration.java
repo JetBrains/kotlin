@@ -24,7 +24,17 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclaration
 
     @NotNull
     default List<KtContextReceiver> getContextReceivers() {
-        return Collections.emptyList();
+        KtModifierList modifierList = getModifierList();
+        if (modifierList == null) {
+            return Collections.emptyList();
+        }
+
+        KtContextParameterList contextParameterList = modifierList.getContextParameterList();
+        if (contextParameterList == null) {
+            return Collections.emptyList();
+        }
+
+        return contextParameterList.contextReceivers();
     }
 
     /**

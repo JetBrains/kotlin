@@ -58,6 +58,10 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
         return list.getParameters();
     }
 
+    /**
+     * @deprecated Use {@link KtModifierList#getContextParameterList()} (via {@link #getModifierList()}) instead. This method is obsolete and exists for compatibility reasons only.
+     */
+    @Deprecated
     @Nullable
     public KtContextReceiverList getContextReceiverList() {
         KtModifierList modifierList = getModifierList();
