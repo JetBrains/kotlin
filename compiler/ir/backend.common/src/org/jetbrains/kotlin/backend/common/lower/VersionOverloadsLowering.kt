@@ -177,7 +177,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
             .single { it.name.toString() == "HIDDEN" }.symbol
     }
 
-    fun buildDeprecationCall(version: MavenComparableVersion?): IrConstructorCall = IrConstructorCallImpl.fromSymbolOwner(
+    fun buildDeprecationCall(version: MavenComparableVersion?): IrAnnotation = IrAnnotationImpl.fromSymbolOwner(
         SYNTHETIC_OFFSET,
         SYNTHETIC_OFFSET,
         irBuiltIns.deprecatedSymbol.defaultType,
@@ -198,6 +198,8 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
                 irBuiltIns.deprecationLevelSymbol.defaultType,
                 deprecationLevelHiddenSymbol
             )
+
+        // TODO(KT-74200): Should argumentMapping be filled here?
     }
 
     protected open fun IrFunction.generateWrapperCall(original: IrFunction, includedParams: BooleanArray): IrFunctionAccessExpression {
