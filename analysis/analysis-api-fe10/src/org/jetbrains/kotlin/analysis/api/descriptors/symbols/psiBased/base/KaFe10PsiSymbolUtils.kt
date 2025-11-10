@@ -159,6 +159,6 @@ internal fun KtTypeParameterListOwnerStub<*>.contextParameters(analysisContext: 
     return modifierList?.contextParameterLists?.flatMap { list ->
         val contextReceivers = list.contextReceivers().takeIf { it.isNotEmpty() }
         contextReceivers?.map { KaFe10PsiContextReceiverBasedContextParameterSymbol(it, analysisContext) }
-            ?: list.contextParameters().map { KaFe10PsiContextParameterSymbol(it, analysisContext) }
+            ?: list.contextParameters.map { KaFe10PsiContextParameterSymbol(it, analysisContext) }
     }.orEmpty()
 }

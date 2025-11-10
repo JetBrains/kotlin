@@ -511,7 +511,7 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
         }
 
         override fun visitContextParameterList(contextParameterList: KtContextParameterList) {
-            val contextElements = contextParameterList.contextParameters().ifEmpty {
+            val contextElements = contextParameterList.contextParameters.ifEmpty {
                 contextParameterList.contextReceivers()
             }
 

@@ -154,7 +154,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
             contextParameterList == null -> firContextParameters.isEmpty()
             firContextParameters.isEmpty() -> false
             else -> {
-                val contextParameters = contextParameterList.contextParameters()
+                val contextParameters = contextParameterList.contextParameters
                 if (contextParameters.isNotEmpty()) {
                     return parametersMatch(firContextParameters, contextParameters)
                 }

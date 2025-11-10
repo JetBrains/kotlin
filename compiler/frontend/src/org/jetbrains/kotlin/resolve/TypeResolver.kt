@@ -370,7 +370,7 @@ class TypeResolver(
                 val contextReceiverList = type.contextParameterList as? KtContextReceiverList
 
                 val contextReceiversTypes = if (contextReceiverList != null) {
-                    if (contextReceiverList.contextParameters().isNotEmpty()) {
+                    if (contextReceiverList.contextParameters.isNotEmpty()) {
                         c.trace.report(CONTEXT_PARAMETERS_UNSUPPORTED.on(contextReceiverList))
                     }
                     checkContextReceiversAreEnabled(c.trace, languageVersionSettings, contextReceiverList)

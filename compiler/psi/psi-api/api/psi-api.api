@@ -1286,6 +1286,7 @@ public abstract class org/jetbrains/kotlin/psi/KtContextParameterList : org/jetb
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun contextParameters ()Ljava/util/List;
 	public final fun contextReceivers ()Ljava/util/List;
+	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getOwnerDeclaration ()Lorg/jetbrains/kotlin/psi/KtDeclaration;
 	public final fun typeReferences ()Ljava/util/List;
 }

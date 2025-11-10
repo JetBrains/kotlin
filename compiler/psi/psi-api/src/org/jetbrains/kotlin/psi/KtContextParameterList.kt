@@ -41,7 +41,16 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
      *
      * Note that [KtFunctionType] still uses [contextReceivers] for compatibility with K1.
      */
-    fun contextParameters(): List<KtParameter> = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.VALUE_PARAMETER)
+    @Deprecated("Use 'contextParameters' instead", ReplaceWith("contextParameters"))
+    fun contextParameters(): List<KtParameter> = contextParameters
+
+    /**
+     * Returns the context parameters within the list.
+     *
+     * Note that [KtFunctionType] still uses [contextReceivers] for compatibility with K1.
+     */
+    val contextParameters: List<KtParameter>
+        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.VALUE_PARAMETER)
 
     /**
      * Returns the context receiver within the list.
@@ -57,6 +66,11 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
 
     /**
      * Return the list of type references from context receivers.
+     *
+     * This is API is obsolete for declarations ([contextParameters] has to be used instead),
+     * but it is still used for [KtFunctionType] for compatibility with K1.
+     *
+     * This API will be removed in the future (together with [KtContextReceiver]).
      *
      * @see contextReceivers
      */
