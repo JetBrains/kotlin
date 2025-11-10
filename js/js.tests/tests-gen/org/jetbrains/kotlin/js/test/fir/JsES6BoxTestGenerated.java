@@ -7519,6 +7519,12 @@ public class JsES6BoxTestGenerated extends AbstractJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("anyChecks.kt")
+    public void testAnyChecks() {
+      runTest("js/js.translator/testData/box/jsAstOptimizations/anyChecks.kt");
+    }
+
+    @Test
     @TestMetadata("deadCodeElimination.kt")
     public void testDeadCodeElimination() {
       runTest("js/js.translator/testData/box/jsAstOptimizations/deadCodeElimination.kt");
@@ -7534,6 +7540,12 @@ public class JsES6BoxTestGenerated extends AbstractJsES6BoxTest {
     @TestMetadata("logicalOperators.kt")
     public void testLogicalOperators() {
       runTest("js/js.translator/testData/box/jsAstOptimizations/logicalOperators.kt");
+    }
+
+    @Test
+    @TestMetadata("nullableAnyChecks.kt")
+    public void testNullableAnyChecks() {
+      runTest("js/js.translator/testData/box/jsAstOptimizations/nullableAnyChecks.kt");
     }
 
     @Test
