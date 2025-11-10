@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.caches
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.SpecialBridge
+import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.copyTo
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -46,16 +48,20 @@ class BridgeLoweringCache(private val context: JvmBackendContext) {
         }
     }
 
+    // A fast check for whether a function can potentially have special bridges.
+    // If `false`, then `computeSpecialBridge` will definitely return `null`
+    fun isPotentialSpecialBridgeTarget(function: IrSimpleFunction): Boolean {
+        val correspondingProperty = function.correspondingPropertySymbol
+        return if (correspondingProperty != null) {
+            correspondingProperty.owner.name in specialBridgeMethods.specialPropertyNames
+        } else {
+            canHaveSpecialBridge(function)
+        }
+    }
+
     fun computeSpecialBridge(function: IrSimpleFunction): SpecialBridge? {
         // Optimization: do not try to compute special bridge for irrelevant methods.
-        val correspondingProperty = function.correspondingPropertySymbol
-        if (correspondingProperty != null) {
-            if (correspondingProperty.owner.name !in specialBridgeMethods.specialPropertyNames) return null
-        } else {
-            if (!canHaveSpecialBridge(function)) {
-                return null
-            }
-        }
+        if (!isPotentialSpecialBridgeTarget(function)) return null
 
         val specialMethodInfo = specialBridgeMethods.getSpecialMethodInfo(function)
         if (specialMethodInfo != null)

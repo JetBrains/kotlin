@@ -75,6 +75,7 @@ fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode,
     if (!implementation.hasInterfaceParent()
         || DescriptorVisibilities.isPrivate(implementation.visibility)
         || implementation.isMethodOfAny()
+        || implementation.isBridge()
     ) {
         return null
     }

@@ -141,7 +141,7 @@ public interface I2 {
     public synthetic static method access$contains$jd(p0: I2, p1: java.lang.String): boolean
     public synthetic static method access$containsAll$jd(p0: I2, p1: java.util.Collection): boolean
     public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
-    public bridge method contains(p0: java.lang.Object): boolean
+    public synthetic bridge method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public final inner class I2$DefaultImpls
 }
