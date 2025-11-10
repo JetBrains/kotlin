@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.name.ClassId
 
-internal class LLFirJavaSymbolProvider private constructor(
+internal class LLFirJavaSymbolProvider(
     session: LLFirSession,
     javaFacade: FirJavaFacade,
     val searchScope: GlobalSearchScope
