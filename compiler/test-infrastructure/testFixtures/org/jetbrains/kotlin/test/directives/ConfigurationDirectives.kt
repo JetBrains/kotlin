@@ -25,4 +25,6 @@ object ConfigurationDirectives : SimpleDirectivesContainer() {
 
     val TARGET_BACKEND by enumDirective<TargetBackend>("If specified then test will be skipped on any non-specified backends")
     val DONT_TARGET_EXACT_BACKEND by enumDirective<TargetBackend>("If specified then test will be skipped on specified backends")
+
+    val METADATA_TARGET_PLATFORMS by stringDirective("List of platforms for which metadata should be generated")
 }

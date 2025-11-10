@@ -109,20 +109,32 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
         }
     }
 
-    private fun computeTargetPlatform(platformsFromArg: List<String>, collector: MessageCollector): TargetPlatform {
+    fun computeTargetPlatform(
+        platformsFromArg: List<String>,
+        onUnknownPlatform: (String) -> Unit,
+        onEmptyPlatforms: () -> Unit,
+    ): TargetPlatform {
         val platforms = buildSet {
             for (platformArg in platformsFromArg) {
                 val simplePlatform = platformMap[platformArg] ?: run {
-                    collector.report(ERROR, "Unknown target platform: $platformArg. Possible values are: ${platformMap.keys}")
+                    onUnknownPlatform(platformArg)
                     continue
                 }
                 add(simplePlatform)
             }
         }
         if (platforms.isEmpty()) {
-            collector.report(WARNING, "No target platform specified, using default")
+            onEmptyPlatforms()
             return CommonPlatforms.defaultCommonPlatform
         }
         return TargetPlatform(platforms)
+    }
+
+    private fun computeTargetPlatform(platformsFromArg: List<String>, collector: MessageCollector): TargetPlatform {
+        return computeTargetPlatform(
+            platformsFromArg,
+            onUnknownPlatform = { collector.report(ERROR, "Unknown target platform: $it. Possible values are: ${platformMap.keys}") },
+            onEmptyPlatforms = { collector.report(WARNING, "No target platform specified, using default") }
+        )
     }
 }

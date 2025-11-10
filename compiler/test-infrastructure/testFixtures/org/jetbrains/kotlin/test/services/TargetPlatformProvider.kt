@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.test.services
 
+import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataConfigurationUpdater
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.METADATA_ONLY_COMPILATION
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.METADATA_TARGET_PLATFORMS
 import org.jetbrains.kotlin.test.model.TestModule
 
 /**
@@ -28,6 +31,15 @@ fun TestModule.targetPlatform(testServices: TestServices): TargetPlatform =
 
 class TargetPlatformProviderForCompilerTests(val testServices: TestServices) : TargetPlatformProvider() {
     override fun getTargetPlatform(module: TestModule): TargetPlatform {
+        val directives = module.directives
+        if (METADATA_ONLY_COMPILATION in directives) {
+            return MetadataConfigurationUpdater.computeTargetPlatform(
+                directives[METADATA_TARGET_PLATFORMS],
+                onUnknownPlatform = { error("Unknown target platform: $it") },
+                onEmptyPlatforms = {},
+            )
+        }
+
         @OptIn(TestInfrastructureInternals::class)
         return testServices.defaultsProvider.targetPlatform
     }
