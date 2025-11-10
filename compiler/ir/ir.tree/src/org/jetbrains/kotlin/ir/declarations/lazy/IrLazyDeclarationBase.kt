@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import kotlin.properties.ReadWriteProperty
 
 interface IrLazyDeclarationBase : IrDeclaration {
-    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>>
+    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrAnnotation>>
 }
