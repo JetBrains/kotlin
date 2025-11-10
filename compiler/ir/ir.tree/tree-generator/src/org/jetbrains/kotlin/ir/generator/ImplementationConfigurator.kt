@@ -390,6 +390,15 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             recordTargetShapeOnSymbolChange()
         }
 
+        impl(annotation) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+
+            recordTargetShapeOnSymbolChange()
+        }
+
         impl(functionReference) {
             implementation.generationCallback = {
                 println()
