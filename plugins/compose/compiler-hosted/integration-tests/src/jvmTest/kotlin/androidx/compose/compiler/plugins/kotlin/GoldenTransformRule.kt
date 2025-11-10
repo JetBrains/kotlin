@@ -27,7 +27,7 @@ import java.nio.file.Files
 
 private const val ENV_GENERATE_GOLDEN = "GENERATE_GOLDEN"
 private const val GOLDEN_FILE_TYPE = "txt"
-private fun env(name: String): Boolean = (System.getenv(name) ?: "false").toBoolean()
+internal fun env(name: String): Boolean = System.getenv(name)?.toBoolean() ?: false
 private fun envList(name: String): List<String> = (System.getenv(name) ?: "").quotedSplit()
 
 /**
