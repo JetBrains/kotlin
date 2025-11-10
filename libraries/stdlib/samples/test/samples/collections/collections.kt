@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -456,6 +456,47 @@ class Collections {
             assertEquals(3, list.lastIndexOf('a'))
             assertEquals(1, list.lastIndexOf('b'))
             assertEquals(-1, list.lastIndexOf('e'))
+        }
+
+        class ArrayList {
+
+            @Sample
+            fun trimToSize() {
+                val list = ArrayList<Int>(1000)
+                // Add only a few elements
+                list.addAll(listOf(1, 2, 3))
+                assertPrints(list, "[1, 2, 3]")
+
+                // The list has capacity for 1000 elements, but only 3 are used.
+                // trimToSize() can help reduce memory usage by resizing the backing storage
+                // to fit the actual number of elements.
+                list.trimToSize()
+
+                // The list content remains the same
+                assertPrints(list, "[1, 2, 3]")
+                assertEquals(3, list.size)
+            }
+
+            @Sample
+            fun ensureCapacity() {
+                // Suppose we have an existing list with unknown current capacity
+                val list = arrayListOf(1, 2, 3, 4, 5)
+
+                // When we know in advance that we'll add many elements,
+                // we can pre-allocate capacity to avoid multiple reallocations
+                val elementsToAdd = 1000
+                list.ensureCapacity(list.size + elementsToAdd)
+
+                // Now adding elements won't trigger internal array resizing
+                // until we exceed the ensured capacity
+                for (i in 1..elementsToAdd) {
+                    list.add(i)
+                }
+
+                assertEquals(1005, list.size)
+                assertEquals(1, list.first())
+                assertEquals(1000, list.last())
+            }
         }
     }
 
