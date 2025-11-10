@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.types.impl
 
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 
 class IrErrorTypeImpl(
     override val originalKotlinType: KotlinType?,
-    override val annotations: List<IrConstructorCall>,
+    override val annotations: List<IrAnnotation>,
     override val variance: Variance,
     isMarkedNullable: Boolean = false
 ) : IrErrorType(IrErrorClassImpl.symbol, isMarkedNullable) {
@@ -28,7 +29,7 @@ class IrErrorTypeImpl(
 }
 
 open class IrDynamicTypeImpl(
-    override val annotations: List<IrConstructorCall>,
+    override val annotations: List<IrAnnotation>,
     override val variance: Variance,
 ) : IrDynamicType() {
     override fun equals(other: Any?): Boolean = other is IrDynamicTypeImpl
@@ -51,7 +52,7 @@ class IrCapturedType(
     projection: IrTypeArgument,
     typeParameter: IrTypeParameter,
     override val nullability: SimpleTypeNullability,
-    override val annotations: List<IrConstructorCall>,
+    override val annotations: List<IrAnnotation>,
 ) : IrSimpleType(), CapturedTypeMarker {
     class Constructor(val argument: IrTypeArgument, val typeParameter: IrTypeParameter) : CapturedTypeConstructorMarker {
         var superTypes: List<IrType> = emptyList()
