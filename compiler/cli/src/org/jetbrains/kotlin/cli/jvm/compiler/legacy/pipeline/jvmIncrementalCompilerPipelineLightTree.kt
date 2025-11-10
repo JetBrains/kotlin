@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -36,7 +36,7 @@ fun compileModuleToAnalyzedFirViaLightTreeIncrementally(
     input: ModuleCompilerInput,
     diagnosticsReporter: BaseDiagnosticsCollector,
     incrementalExcludesScope: AbstractProjectFileSearchScope?,
-): FirResult {
+): AllModulesFrontendOutput {
     return MinimizedFrontendContext(
         projectEnvironment,
         messageCollector,
@@ -58,7 +58,7 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
     previousStepsSymbolProviders: List<FirSymbolProvider>,
     incrementalExcludesScope: AbstractProjectFileSearchScope?,
     friendPaths: List<String>,
-): FirResult {
+): AllModulesFrontendOutput {
     val performanceManager = configuration.perfManager
     return performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) {
         var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
@@ -99,6 +99,6 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
             buildResolveAndCheckFirViaLightTree(session, sources, diagnosticsReporter, countFilesAndLines)
         }
         outputs.runPlatformCheckers(diagnosticsReporter)
-        FirResult(outputs)
+        AllModulesFrontendOutput(outputs)
     }
 }

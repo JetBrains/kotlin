@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 
 class FirAnalysisResult(
-    val firResult: FirResult,
+    val frontendOutput: AllModulesFrontendOutput,
     override val files: List<KtFile>,
     val reporter: BaseDiagnosticsCollector,
 ) : AnalysisResult {
@@ -173,7 +173,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             buildResolveAndCheckFirFromKtFiles(platformSession, platformKtFiles, reporter)
 
         return FirAnalysisResult(
-            FirResult(listOf(commonAnalysis, platformAnalysis)),
+            AllModulesFrontendOutput(listOf(commonAnalysis, platformAnalysis)),
             commonKtFiles + platformKtFiles,
             reporter
         )
@@ -195,7 +195,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             JvmIrDeserializerImpl(),
         )
 
-        val fir2IrResult = analysisResult.firResult.convertToIrAndActualizeForJvm(
+        val fir2IrResult = analysisResult.frontendOutput.convertToIrAndActualizeForJvm(
             fir2IrExtensions,
             configuration,
             analysisResult.reporter,

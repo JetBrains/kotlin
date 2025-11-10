@@ -88,7 +88,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
             moduleDescriptor
         }
 
-        val firResult = FirResult(firOutputs)
+        val firResult = AllModulesFrontendOutput(firOutputs)
         return firResult.convertToIrAndActualize(
             fir2IrExtensions,
             Fir2IrConfiguration.forKlibCompilation(moduleStructure.compilerConfiguration, diagnosticsReporter),

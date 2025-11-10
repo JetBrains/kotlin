@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
@@ -66,13 +66,13 @@ import java.io.File
 fun convertAnalyzedFirToIr(
     configuration: CompilerConfiguration,
     targetId: TargetId,
-    analysisResults: FirResult,
+    frontendOutput: AllModulesFrontendOutput,
     environment: ModuleCompilerEnvironment
 ): ModuleCompilerIrBackendInput {
     val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
 
     val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
-        analysisResults.convertToIrAndActualizeForJvm(
+        frontendOutput.convertToIrAndActualizeForJvm(
             extensions, configuration, environment.diagnosticsReporter,
             IrGenerationExtension.getInstances(environment.projectEnvironment.project),
         )
@@ -89,7 +89,7 @@ fun convertAnalyzedFirToIr(
     )
 }
 
-fun FirResult.convertToIrAndActualizeForJvm(
+fun AllModulesFrontendOutput.convertToIrAndActualizeForJvm(
     fir2IrExtensions: Fir2IrExtensions,
     configuration: CompilerConfiguration,
     diagnosticsReporter: BaseDiagnosticsCollector,

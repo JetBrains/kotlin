@@ -86,7 +86,7 @@ private inline fun <F> PhaseContext.firFrontend(
     return if (syntaxErrors || diagnosticsReporter.hasErrors) {
         throw KonanCompilationException("Compilation failed: there were frontend errors")
     } else {
-        FirOutput.Full(FirResult(outputs))
+        FirOutput.Full(AllModulesFrontendOutput(outputs))
     }
 }
 

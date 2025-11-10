@@ -1086,11 +1086,11 @@ internal class KaFirCompilerFacility(
     ): Fir2IrActualizedResult {
         val fir2IrConfiguration =
             Fir2IrConfiguration.forAnalysisApi(effectiveConfiguration, session.languageVersionSettings, diagnosticReporter)
-        val firResult = FirResult(listOf(SingleModuleFrontendOutput(session, session.getScopeSession(), firFiles)))
-        val singleOutput = firResult.outputs.size == 1
+        val frontendOutput = AllModulesFrontendOutput(listOf(SingleModuleFrontendOutput(session, session.getScopeSession(), firFiles)))
+        val singleOutput = frontendOutput.outputs.size == 1
         check(singleOutput) { "Single output invariant is used in the lambda below" }
 
-        return firResult.convertToIrAndActualize(
+        return frontendOutput.convertToIrAndActualize(
             fir2IrExtensions = fir2IrExtensions,
             fir2IrConfiguration = fir2IrConfiguration,
             irGeneratorExtensions = irGeneratorExtensions,

@@ -60,7 +60,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
-data class FirResult(val outputs: List<SingleModuleFrontendOutput>)
+@JvmInline
+value class AllModulesFrontendOutput(val outputs: List<SingleModuleFrontendOutput>)
 
 data class SingleModuleFrontendOutput(
     val session: FirSession,
@@ -88,7 +89,7 @@ fun List<SingleModuleFrontendOutput>.runPlatformCheckers(reporter: BaseDiagnosti
     session.runCheckers(scopeSession, allFiles, reporter, MppCheckerKind.Platform)
 }
 
-fun FirResult.convertToIrAndActualize(
+fun AllModulesFrontendOutput.convertToIrAndActualize(
     fir2IrExtensions: Fir2IrExtensions,
     fir2IrConfiguration: Fir2IrConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,

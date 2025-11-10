@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsFor
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -35,10 +35,10 @@ open class LowLevelFirAnalyzerFacade(
     override val scopeSession: ScopeSession
         get() = ScopeSession()
 
-    override val result: FirResult
+    override val frontendOutput: AllModulesFrontendOutput
         get() {
             val output = SingleModuleFrontendOutput(resolutionFacade.useSiteFirSession, scopeSession, allFirFiles.values.toList())
-            return FirResult(listOf(output))
+            return AllModulesFrontendOutput(listOf(output))
         }
 
     private var resolved: Boolean = false

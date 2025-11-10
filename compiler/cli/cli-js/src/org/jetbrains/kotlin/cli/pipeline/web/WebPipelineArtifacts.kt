@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import java.io.File
 
 data class WebFrontendPipelineArtifact(
-    override val result: FirResult,
+    override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
     override val diagnosticCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
@@ -31,7 +31,7 @@ data class WebFrontendPipelineArtifact(
 
 data class JsFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
-    val firResult: FirResult,
+    val frontendOutput: AllModulesFrontendOutput,
     val configuration: CompilerConfiguration,
     override val diagnosticCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,

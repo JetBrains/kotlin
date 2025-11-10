@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.jvm.makeLocalFirMetadataSerializerForMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 
 internal fun collectNewDirtySources(
-    analysisResults: FirResult,
+    frontendOutput: AllModulesFrontendOutput,
     targetId: TargetId,
     configuration: CompilerConfiguration,
     caches: IncrementalJvmCachesManager,
@@ -129,7 +129,7 @@ internal fun collectNewDirtySources(
         }
     }
 
-    for (output in analysisResults.outputs) {
+    for (output in frontendOutput.outputs) {
         visitFirFiles(output)
     }
 

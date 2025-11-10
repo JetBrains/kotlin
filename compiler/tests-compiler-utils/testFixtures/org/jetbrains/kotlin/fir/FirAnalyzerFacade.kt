@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.FirParser
 
 abstract class AbstractFirAnalyzerFacade {
     abstract val scopeSession: ScopeSession
-    abstract val result: FirResult
+    abstract val frontendOutput: AllModulesFrontendOutput
 
     abstract fun runResolution(): List<FirFile>
 }
@@ -32,8 +32,8 @@ class FirAnalyzerFacade(
     override val scopeSession: ScopeSession
         get() = _scopeSession!!
 
-    override val result: FirResult
-        get() = FirResult(listOf(SingleModuleFrontendOutput(session, scopeSession, firFiles!!)))
+    override val frontendOutput: AllModulesFrontendOutput
+        get() = AllModulesFrontendOutput(listOf(SingleModuleFrontendOutput(session, scopeSession, firFiles!!)))
 
     private fun buildRawFir() {
         if (firFiles != null) return

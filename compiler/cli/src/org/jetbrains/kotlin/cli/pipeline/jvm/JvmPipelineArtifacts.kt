@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.name.FqName
 
 class JvmScriptPipelineArtifact(override val exitCode: ExitCode) : PipelineArtifactWithExitCode()
 
 data class JvmFrontendPipelineArtifact(
-    override val result: FirResult,
+    override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
     override val diagnosticCollector: BaseDiagnosticsCollector,
