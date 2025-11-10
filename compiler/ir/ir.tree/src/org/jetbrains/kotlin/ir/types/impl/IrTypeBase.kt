@@ -39,7 +39,7 @@ open class IrDynamicTypeImpl(
 
 class IrDynamicTypeWithOriginalKotlinTypeImpl(
     override val originalKotlinType: KotlinType,
-    annotations: List<IrConstructorCall>,
+    annotations: List<IrAnnotation>,
     variance: Variance,
 ) : IrDynamicTypeImpl(annotations, variance)
 
