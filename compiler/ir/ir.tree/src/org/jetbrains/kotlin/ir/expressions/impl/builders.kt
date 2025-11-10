@@ -1469,6 +1469,27 @@ fun IrCallImpl.Companion.fromSymbolOwner(
         superQualifierSymbol = null
     )
 
+fun IrAnnotationImpl.Companion.fromSymbolOwner(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    constructorSymbol: IrConstructorSymbol,
+    classTypeParametersCount: Int,
+    origin: IrStatementOrigin? = null,
+): IrAnnotationImpl {
+    val constructor = constructorSymbol.owner
+    val constructorTypeParametersCount = constructor.typeParameters.size
+    val totalTypeParametersCount = classTypeParametersCount + constructorTypeParametersCount
+
+    return IrAnnotationImpl(
+        startOffset, endOffset,
+        type,
+        constructorSymbol,
+        totalTypeParametersCount,
+        constructorTypeParametersCount,
+        origin = origin,
+    )
+}
 
 fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     startOffset: Int,
@@ -1492,6 +1513,18 @@ fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     )
 }
 
+fun IrAnnotationImpl.Companion.fromSymbolOwner(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    constructorSymbol: IrConstructorSymbol,
+    origin: IrStatementOrigin? = null,
+): IrAnnotationImpl {
+    val constructedClass = constructorSymbol.owner.parentAsClass
+    val classTypeParametersCount = constructedClass.typeParameters.size
+    return fromSymbolOwner(startOffset, endOffset, type, constructorSymbol, classTypeParametersCount, origin)
+}
+
 fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     startOffset: Int,
     endOffset: Int,
@@ -1503,6 +1536,16 @@ fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     val classTypeParametersCount = constructedClass.typeParameters.size
     return fromSymbolOwner(startOffset, endOffset, type, constructorSymbol, classTypeParametersCount, origin)
 }
+
+fun IrAnnotationImpl.Companion.fromSymbolOwner(
+    type: IrType,
+    constructorSymbol: IrConstructorSymbol,
+    origin: IrStatementOrigin? = null,
+): IrAnnotationImpl =
+    fromSymbolOwner(
+        UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, constructorSymbol.owner.parentAsClass.typeParameters.size,
+        origin
+    )
 
 fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     type: IrType,
