@@ -84,6 +84,44 @@ object JsIrBuilder {
         }
     }
 
+    fun buildAnnotation(
+        target: IrConstructorSymbol,
+        typeArguments: List<IrType?>? = null,
+        constructorTypeArguments: List<IrType?>? = null,
+        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
+    ): IrAnnotation {
+        val owner = target.owner
+        val irClass = owner.parentAsClass
+
+        return IrAnnotationImpl(
+            startOffset,
+            endOffset,
+            owner.returnType,
+            target,
+            typeArgumentsCount = irClass.typeParameters.size,
+            constructorTypeArgumentsCount = owner.typeParameters.size,
+            origin = origin
+        ).apply {
+            typeArguments?.let {
+                assert(it.size == this.typeArguments.size)
+                it.withIndex().forEach { (i, t) ->
+                    this.typeArguments[i] = t
+                }
+            }
+
+            constructorTypeArguments?.let {
+                assert(it.size == this.typeArguments.size)
+                it.withIndex().forEach { (i, t) ->
+                    this.typeArguments[i] = t
+                }
+            }
+
+            // TODO(KT-74200): Should argumentMapping be filled here?
+        }
+    }
+
     fun buildConstructorCall(
         target: IrConstructorSymbol,
         typeArguments: List<IrType?>? = null,
