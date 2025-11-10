@@ -36,4 +36,6 @@ class IrAnnotationImpl internal constructor(
     override var attributeOwnerId: IrElement = this
 
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
+
+    companion object
 }
