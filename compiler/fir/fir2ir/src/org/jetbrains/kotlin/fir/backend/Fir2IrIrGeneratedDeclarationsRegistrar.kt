@@ -48,15 +48,15 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
     private val implicitType: FirImplicitTypeRef
         get() = FirImplicitTypeRefImplWithoutSource
 
-    private val annotationsStorage = mutableMapOf<FirDeclaration, MutableList<IrConstructorCall>>()
-    private val annotationsOnParametersStorage = mutableMapOf<FirDeclaration, MutableMap<ChildDeclarationKind, MutableList<IrConstructorCall>>>()
+    private val annotationsStorage = mutableMapOf<FirDeclaration, MutableList<IrAnnotation>>()
+    private val annotationsOnParametersStorage = mutableMapOf<FirDeclaration, MutableMap<ChildDeclarationKind, MutableList<IrAnnotation>>>()
 
     private sealed class ChildDeclarationKind {
         data class ValueParameter(val name: Name) : ChildDeclarationKind()
         data class TypeParameter(val name: Name) : ChildDeclarationKind()
     }
 
-    override fun getMetadataVisibleAnnotationsForElement(declaration: IrDeclaration): MutableList<IrConstructorCall> {
+    override fun getMetadataVisibleAnnotationsForElement(declaration: IrDeclaration): MutableList<IrAnnotation> {
         require(declaration.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
             "FAKE_OVERRIDE declarations are not preserved in metadata and should not be marked with annotations: ${declaration.render()}"
         }
@@ -70,7 +70,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
     }
 
-    override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
+    override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrAnnotation>) {
         require(annotations.all { it.typeArguments.isEmpty() }) {
             "Saving annotations with type arguments from IR to metadata is not supported: ${declaration.render()}"
         }

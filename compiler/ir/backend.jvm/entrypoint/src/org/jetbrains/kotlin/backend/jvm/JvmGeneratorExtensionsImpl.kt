@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.psi2ir.descriptors.fromSymbolDescriptor
@@ -152,16 +152,16 @@ open class JvmGeneratorExtensionsImpl(
     override val shouldPreventDeprecatedIntegerValueTypeLiteralConversion: Boolean
         get() = true
 
-    override fun generateFlexibleNullabilityAnnotationCall(): IrConstructorCall =
+    override fun generateFlexibleNullabilityAnnotationCall(): IrAnnotation =
         JvmIrSpecialAnnotationSymbolProvider.generateFlexibleNullabilityAnnotationCall()
 
-    override fun generateFlexibleMutabilityAnnotationCall(): IrConstructorCall =
+    override fun generateFlexibleMutabilityAnnotationCall(): IrAnnotation =
         JvmIrSpecialAnnotationSymbolProvider.generateFlexibleMutabilityAnnotationCall()
 
-    override fun generateEnhancedNullabilityAnnotationCall(): IrConstructorCall =
+    override fun generateEnhancedNullabilityAnnotationCall(): IrAnnotation =
         JvmIrSpecialAnnotationSymbolProvider.generateEnhancedNullabilityAnnotationCall()
 
-    override fun generateRawTypeAnnotationCall(): IrConstructorCall =
+    override fun generateRawTypeAnnotationCall(): IrAnnotation =
         JvmIrSpecialAnnotationSymbolProvider.generateRawTypeAnnotationCall()
 
     override fun unwrapSyntheticJavaProperty(descriptor: PropertyDescriptor): Pair<FunctionDescriptor, FunctionDescriptor?>? {
