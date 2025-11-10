@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 
 class DataFlowAnalyzerContext private constructor(
     private val session: FirSession,
@@ -276,17 +277,23 @@ abstract class FirDataFlowAnalyzer(
         variable: DataFlowVariable,
         typeStatement: TypeStatement?,
     ): SmartCastStatement? {
+        val unwrapped = flow.unwrapVariable(variable)
         val upperTypes = typeStatement?.upperTypes
         val upperTypesStability = when {
             upperTypes != null -> variable.getStability(flow, targetTypes = upperTypes)
+                // Normally, aliases are only created to stable values, but an implicit when subject variable
+                // may alias an unstable target, so all the `FirSmartCastExpression`-s created for its
+                // `FirWhenSubjectExpression`-s must accurately reflect the target's stability.
+                .butIf(variable != unwrapped) { maxOf(it, unwrapped.getStability(flow, targetTypes = upperTypes)) }
             else -> SmartcastStability.STABLE_VALUE
         }
         // If there are any assignments to local variables, we can no longer guarantee
         // that the lower type bound is correct.
         val stabilityWithNoTargetTypes = variable.getStability(flow, targetTypes = null)
+            .butIf(variable != unwrapped) { maxOf(it, unwrapped.getStability(flow, targetTypes = null)) }
         val lowerTypes = typeStatement?.lowerTypes
-        val lowerTypesFromVariable = when (val unwrapped = flow.unwrapVariable(variable)) {
-            variable -> null // Stay conservative and don't infer anything for literal accesses to enums - only to variables aliasing them
+        val lowerTypesFromVariable = when {
+            unwrapped == variable -> null // Stay conservative and don't infer anything for literal accesses to enums - only to variables aliasing them
             else -> inferLowerTypesFromVariable(unwrapped)
         }
         return if (
