@@ -56,7 +56,7 @@ class Fir2IrLazyPropertyAccessor(
 
     override var annotations: List<IrAnnotation> by when {
         firAccessor != null -> createLazyAnnotations()
-        else -> lazyVar<List<IrConstructorCall>>(lock) { emptyList() }
+        else -> lazyVar<List<IrAnnotation>>(lock) { emptyList() }
     }
 
     override var name: Name
