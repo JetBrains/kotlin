@@ -13,6 +13,7 @@ public final class org/jetbrains/kotlin/abi/tools/AbiFilters$Companion {
 }
 
 public abstract interface class org/jetbrains/kotlin/abi/tools/AbiTools {
+	public static final field Companion Lorg/jetbrains/kotlin/abi/tools/AbiTools$Companion;
 	public abstract fun createKlibDump ()Lorg/jetbrains/kotlin/abi/tools/KlibDump;
 	public abstract fun extractKlibAbi (Ljava/io/File;Lorg/jetbrains/kotlin/abi/tools/KlibTarget;Lorg/jetbrains/kotlin/abi/tools/AbiFilters;)Lorg/jetbrains/kotlin/abi/tools/KlibDump;
 	public static synthetic fun extractKlibAbi$default (Lorg/jetbrains/kotlin/abi/tools/AbiTools;Ljava/io/File;Lorg/jetbrains/kotlin/abi/tools/KlibTarget;Lorg/jetbrains/kotlin/abi/tools/AbiFilters;ILjava/lang/Object;)Lorg/jetbrains/kotlin/abi/tools/KlibDump;
@@ -22,10 +23,9 @@ public abstract interface class org/jetbrains/kotlin/abi/tools/AbiTools {
 	public abstract fun printJvmDump (Ljava/lang/Appendable;Ljava/lang/Iterable;Lorg/jetbrains/kotlin/abi/tools/AbiFilters;)V
 }
 
-public final class org/jetbrains/kotlin/abi/tools/AbiTools$SpiLoader {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/abi/tools/AbiTools$SpiLoader;
+public final class org/jetbrains/kotlin/abi/tools/AbiTools$Companion {
 	public final fun getInstance (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/abi/tools/AbiTools;
-	public static synthetic fun getInstance$default (Lorg/jetbrains/kotlin/abi/tools/AbiTools$SpiLoader;Ljava/lang/ClassLoader;ILjava/lang/Object;)Lorg/jetbrains/kotlin/abi/tools/AbiTools;
+	public static synthetic fun getInstance$default (Lorg/jetbrains/kotlin/abi/tools/AbiTools$Companion;Ljava/lang/ClassLoader;ILjava/lang/Object;)Lorg/jetbrains/kotlin/abi/tools/AbiTools;
 }
 
 public abstract interface class org/jetbrains/kotlin/abi/tools/AbiToolsFactory {

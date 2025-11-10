@@ -1012,6 +1012,8 @@ tasks {
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
         dependsOn(":tools:ide-plugin-dependencies-validator:test")
         dependsOn(":tools:stats-analyser:test")
+        dependsOn(":libraries:tools:abi-validation:abi-tools:check")
+        dependsOn(":libraries:tools:abi-validation:abi-tools-api:check")
     }
 
     register("examplesTest") {

@@ -47,6 +47,7 @@ dependencies {
     testImplementation(kotlinTest("junit"))
     testImplementation(libs.junit4)
     testImplementation(kotlinStdlib())
+    testImplementation(libs.intellij.asm)
     // using `KonanTarget` class
     testImplementation(project(":native:kotlin-native-utils"))
 }
