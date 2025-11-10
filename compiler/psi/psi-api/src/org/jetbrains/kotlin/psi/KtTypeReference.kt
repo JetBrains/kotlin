@@ -97,6 +97,9 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
                 }
             }
             is KtFunctionType -> buildString {
+                if (hasModifier(KtTokens.SUSPEND_KEYWORD)) {
+                    append("suspend ")
+                }
                 val contextReceivers = typeElement.contextReceiversTypeReferences
                 if (contextReceivers.isNotEmpty()) {
                     append(contextReceivers.joinToString(", ", "context(", ")") { getTypeText(it.typeElement, nameFunction) ?: "" })
