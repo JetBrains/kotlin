@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.generators.gradle.targets.js
 
 val npmPackages = listOf(
+    NpmPackage("@swc/cli"),
+    NpmPackage("@swc/core"),
+    NpmPackage("@swc/helpers"),
     NpmPackage("webpack"),
     NpmPackage("webpack-cli"),
     NpmPackage("webpack-dev-server"),
     NpmPackage("source-map-loader"),
     NpmPackage("source-map-support"),
+    NpmPackage("swc-loader"),
     NpmPackage("css-loader"),
     NpmPackage("style-loader"),
     NpmPackage("sass-loader"),

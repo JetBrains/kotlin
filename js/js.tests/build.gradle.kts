@@ -169,11 +169,21 @@ fun Test.setupNodeJs() {
     )
 }
 
+fun Test.setupSwc() {
+    systemProperty(
+        "swc.path",
+        node.nodeProjectDir.file("node_modules/@swc/cli/bin/swc.js")
+            .map { it.asFile.absolutePath }
+            .get()
+    )
+}
+
 fun Test.setUpJsBoxTests(tags: String?) {
     with(d8KotlinBuild) {
         setupV8()
     }
 
+    setupSwc()
     setupNodeJs()
     dependsOn(npmInstall)
 

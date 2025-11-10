@@ -1,0 +1,20 @@
+{
+    "$schema": "https://swc.rs/schema.json",
+    "jsc": {
+        "parser": {
+            "syntax": "ecmascript",
+            "dynamicImport": true,
+            "functionBind": true,
+            "importMeta": true
+        },
+    },
+    "module": {
+        "resolveFully": true,
+        "type": "nodenext",
+        "outFileExtension": "mjs"
+    },
+    "env": {
+        "targets": {}
+    },
+    "sourceMaps": true
+}

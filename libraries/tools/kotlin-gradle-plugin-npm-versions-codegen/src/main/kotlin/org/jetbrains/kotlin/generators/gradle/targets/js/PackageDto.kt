@@ -14,7 +14,8 @@ data class Package(
     @Suppress("unused")
     fun camelize(): String =
         displayName
-            .split("-")
+            .removePrefix("@")
+            .split("-", "/")
             .mapIndexed { index, item ->
                 if (index == 0) item else item.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
             }
