@@ -112,10 +112,9 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             ?: return true // Should not happen though.
 
         if (throwsAnnotation?.source != null && decodeThrowsFilter(throwsAnnotation, context.session) != overriddenThrows) {
-            val containingClassSymbol = overriddenMember.containingClassLookupTag()?.toRegularClassSymbol()
-            if (containingClassSymbol != null) {
-                reporter.reportOn(throwsAnnotation.source, FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE, containingClassSymbol)
-            }
+            val containingClassSymbol = overriddenMember.containingClassLookupTag()?.toRegularClassSymbol() ?: return true
+            if (containingClassSymbol.isExpect) return true
+            reporter.reportOn(throwsAnnotation.source, FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE, containingClassSymbol)
             return false
         }
 

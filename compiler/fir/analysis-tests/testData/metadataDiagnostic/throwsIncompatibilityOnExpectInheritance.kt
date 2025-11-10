@@ -5,6 +5,6 @@ expect interface Closeable {
 }
 
 interface SdkSink : Closeable {
-    <!INCOMPATIBLE_THROWS_OVERRIDE!>@Throws(MyException::class)<!>
+    @Throws(MyException::class)
     override fun close()
 }
