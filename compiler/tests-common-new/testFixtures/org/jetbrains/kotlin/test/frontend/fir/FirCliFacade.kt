@@ -46,7 +46,7 @@ abstract class FirCliFacade<Phase, OutputPipelineArtifact>(
         val output = phase.executePhase(input)
             ?: return processErrorFromCliPhase(configuration.messageCollector, testServices)
 
-        val firOutputs = output.result.outputs
+        val firOutputs = output.frontendOutput.outputs
         val testFirOutputs = getPartsForDependsOnModules(module, firOutputs)
         return FirCliBasedOutputArtifact(output, testFirOutputs)
     }

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.native
 
-import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 
 sealed class FirOutput {
     object ShouldNotGenerateCode : FirOutput()
 
-    data class Full(val firResult: FirResult) : FirOutput()
+    data class Full(val firResult: AllModulesFrontendOutput) : FirOutput()
 }

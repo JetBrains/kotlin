@@ -326,14 +326,14 @@ private fun compileImpl(
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Common)
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Platform)
 
-    val analysisResults = FirResult(listOf(SingleModuleFrontendOutput(session, scopeSession, fir)))
+    val frontendOutput = AllModulesFrontendOutput(listOf(SingleModuleFrontendOutput(session, scopeSession, fir)))
 
     if (diagnosticsReporter.hasErrors) {
         diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
         return failure(messageCollector)
     }
 
-    val irInput = convertAnalyzedFirToIr(compilerConfiguration, targetId, analysisResults, compilerEnvironment)
+    val irInput = convertAnalyzedFirToIr(compilerConfiguration, targetId, frontendOutput, compilerEnvironment)
 
     val generationState = generateCodeFromIr(irInput, compilerEnvironment)
 

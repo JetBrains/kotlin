@@ -182,8 +182,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         if (!kotlinPackageUsageIsFine) return null
 
-        val firResult = FirResult(outputs)
-        return JvmFrontendPipelineArtifact(firResult, configuration, environment, diagnosticsCollector, allSources)
+        val frontendOutput = AllModulesFrontendOutput(outputs)
+        return JvmFrontendPipelineArtifact(frontendOutput, configuration, environment, diagnosticsCollector, allSources)
     }
 
     private data class EnvironmentAndSources(val environment: VfsBasedProjectEnvironment, val sources: () -> GroupedKtSources)

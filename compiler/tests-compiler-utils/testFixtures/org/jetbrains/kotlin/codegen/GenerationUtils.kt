@@ -109,7 +109,7 @@ object GenerationUtils {
         val diagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector)
         firAnalyzerFacade.runResolution()
         val irGenerationExtensions = IrGenerationExtension.Companion.getInstances(project)
-        val (moduleFragment, components, pluginContext, _, _, symbolTable) = firAnalyzerFacade.result.convertToIrAndActualizeForJvm(
+        val (moduleFragment, components, pluginContext, _, _, symbolTable) = firAnalyzerFacade.frontendOutput.convertToIrAndActualizeForJvm(
             fir2IrExtensions,
             configuration,
             diagnosticReporter,

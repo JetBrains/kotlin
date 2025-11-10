@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.util.PerformanceManager
 
 abstract class PipelineArtifact
@@ -40,7 +40,7 @@ data class ConfigurationPipelineArtifact(
 ) : PipelineArtifact()
 
 abstract class FrontendPipelineArtifact : PipelineArtifact() {
-    abstract val result: FirResult
+    abstract val frontendOutput: AllModulesFrontendOutput
     abstract val diagnosticCollector: BaseDiagnosticsCollector
     abstract val configuration: CompilerConfiguration
     abstract fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): FrontendPipelineArtifact

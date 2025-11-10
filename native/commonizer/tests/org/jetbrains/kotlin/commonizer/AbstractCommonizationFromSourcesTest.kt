@@ -338,7 +338,7 @@ object TestPatchingPipelinePhase : PipelinePhase<MetadataFrontendPipelineArtifac
     name = "TestPatchingPipelinePhase",
 ) {
     override fun executePhase(input: MetadataFrontendPipelineArtifact) = input.also {
-        for (output in input.result.outputs) {
+        for (output in input.frontendOutput.outputs) {
             for (firFile in output.fir) {
                 firFile.accept(TestPatchingFirVisitor)
             }

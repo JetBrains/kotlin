@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
-import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -62,7 +62,7 @@ object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, Js
     private fun processIncrementalCompilationRoundIfNeeded(
         configuration: CompilerConfiguration,
         moduleStructure: ModulesStructure,
-        firResult: FirResult,
+        frontendOutput: AllModulesFrontendOutput,
         fir2IrResult: Fir2IrActualizedResult,
     ) {
         if (!configuration.incrementalCompilation) return
@@ -75,7 +75,7 @@ object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, Js
         val shouldGoToNextIcRound = shouldGoToNextIcRound(moduleStructure.compilerConfiguration) {
             Fir2KlibMetadataSerializer(
                 moduleStructure.compilerConfiguration,
-                firResult.outputs,
+                frontendOutput.outputs,
                 fir2IrResult,
                 exportKDoc = false,
                 produceHeaderKlib = false,

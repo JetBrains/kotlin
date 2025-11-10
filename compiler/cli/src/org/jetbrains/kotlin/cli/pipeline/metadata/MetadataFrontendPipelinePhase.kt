@@ -163,7 +163,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
         return MetadataFrontendPipelineArtifact(
-            FirResult(outputs),
+            AllModulesFrontendOutput(outputs),
             configuration,
             diagnosticsReporter,
             sourceFiles
