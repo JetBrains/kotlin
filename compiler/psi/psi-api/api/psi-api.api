@@ -1946,7 +1946,6 @@ public class org/jetbrains/kotlin/psi/KtNamedFunction : org/jetbrains/kotlin/psi
 	public fun getBodyBlockExpression ()Lorg/jetbrains/kotlin/psi/KtBlockExpression;
 	public fun getBodyExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
 	public fun getColon ()Lcom/intellij/psi/PsiElement;
-	public fun getContextReceivers ()Ljava/util/List;
 	public fun getContractDescription ()Lorg/jetbrains/kotlin/psi/KtContractEffectList;
 	public fun getEqualsToken ()Lcom/intellij/psi/PsiElement;
 	public fun getFunKeyword ()Lcom/intellij/psi/PsiElement;
@@ -2136,7 +2135,6 @@ public class org/jetbrains/kotlin/psi/KtProperty : org/jetbrains/kotlin/psi/KtTy
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getAccessors ()Ljava/util/List;
 	public fun getColon ()Lcom/intellij/psi/PsiElement;
-	public fun getContextReceivers ()Ljava/util/List;
 	public fun getDelegate ()Lorg/jetbrains/kotlin/psi/KtPropertyDelegate;
 	public fun getDelegateExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
 	public fun getDelegateExpressionOrInitializer ()Lorg/jetbrains/kotlin/psi/KtExpression;

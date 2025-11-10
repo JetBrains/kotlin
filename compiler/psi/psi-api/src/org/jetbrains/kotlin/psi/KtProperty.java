@@ -102,18 +102,6 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         return getReceiverTypeRefByTree();
     }
 
-    @NotNull
-    @Override
-    public List<KtContextReceiver> getContextReceivers() {
-        KtContextParameterList contextReceiverList = getContextReceiverList();
-        if (contextReceiverList != null) {
-            return contextReceiverList.contextReceivers();
-        }
-        else {
-            return Collections.emptyList();
-        }
-    }
-
     @Nullable
     private KtTypeReference getReceiverTypeRefByTree() {
         ASTNode node = getNode().getFirstChildNode();

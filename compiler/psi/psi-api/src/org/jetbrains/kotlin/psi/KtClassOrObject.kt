@@ -169,7 +169,7 @@ abstract class KtClassOrObject :
                 getClassId() == another.getClassId()
 
     override fun getContextReceivers(): List<KtContextReceiver> =
-        contextReceiverList?.let { return it.contextReceivers() } ?: emptyList()
+        modifierList?.contextParameterList?.contextReceivers().orEmpty()
 }
 
 

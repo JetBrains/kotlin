@@ -1259,7 +1259,6 @@ org.jetbrains.kotlin.psi.KtTypeParameterListOwner:getTypeParameters()
 org.jetbrains.kotlin.psi.KtTypeParameterListOwnerStub
 org.jetbrains.kotlin.psi.KtTypeParameterListOwnerStub:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtTypeParameterListOwnerStub:constructor(T, IStubElementType)
-org.jetbrains.kotlin.psi.KtTypeParameterListOwnerStub:getContextReceiverList()
 org.jetbrains.kotlin.psi.KtTypeProjection
 org.jetbrains.kotlin.psi.KtTypeProjection:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtTypeProjection:constructor(KotlinTypeProjectionStub)

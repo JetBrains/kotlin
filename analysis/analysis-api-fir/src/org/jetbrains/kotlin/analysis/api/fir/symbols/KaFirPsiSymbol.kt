@@ -133,7 +133,7 @@ internal fun KaFirKtBasedSymbol<KtAnnotated, *>.psiOrSymbolAnnotationList(): KaA
 
 internal fun KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.createContextReceivers(): List<KaContextReceiver> {
     val psi = backingPsi
-    if (psi != null && (psi !is KtTypeParameterListOwnerStub<*> || psi.contextReceiverList == null)) return emptyList()
+    if (psi != null && psi.modifierList?.contextParameterList == null) return emptyList()
 
     return firSymbol.createContextReceivers(builder)
 }
