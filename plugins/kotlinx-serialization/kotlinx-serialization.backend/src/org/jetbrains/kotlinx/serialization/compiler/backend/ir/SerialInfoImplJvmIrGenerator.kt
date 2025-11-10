@@ -41,13 +41,14 @@ class SerialInfoImplJvmIrGenerator(
             parent = createClass(createPackage("kotlin.jvm"), "JvmClassMappingKt", ClassKind.CLASS).owner
             addGetter().apply {
                 annotations = listOf(
-                    IrConstructorCallImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
+                    IrAnnotationImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
                         arguments[0] = IrConstImpl.string(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
                             context.irBuiltIns.stringType,
                             "getJavaClass"
                         )
+                        // TODO(KT-74200): Should argumentMapping be filled here?
                     }
                 )
                 parameters += createExtensionReceiver(context.irBuiltIns.kClassClass.starProjectedType)
