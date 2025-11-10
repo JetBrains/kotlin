@@ -1480,6 +1480,18 @@ object ArrayOps : TemplateGroupBase() {
             body { """return ArrayList<T>(this.unsafeCast<Array<Any?>>())""" }
         }
 
+        val iteratorWithSizeField = if (target == KotlinTarget.Native || target == KotlinTarget.WASM) """
+                override fun iterator(): Iterator<T> = object : Iterator<T> {
+                    val size_ = size
+                    var index = 0
+                    override fun next(): T {
+                        if (index >= size_) throw NoSuchElementException()
+                        return this@asList[index++]
+                    }
+                    override fun hasNext(): Boolean = index < size_
+                }
+        """ else ""
+
         val objectLiteralImpl = if (primitive in PrimitiveType.floatingPointPrimitives) """
             return object : AbstractList<T>(), RandomAccess {
                 override val size: Int get() = this@asList.size
@@ -1488,6 +1500,7 @@ object ArrayOps : TemplateGroupBase() {
                 override fun get(index: Int): T = this@asList[index]
                 override fun indexOf(element: T): Int = this@asList.indexOfFirst { it.toBits() == element.toBits() }
                 override fun lastIndexOf(element: T): Int = this@asList.indexOfLast { it.toBits() == element.toBits() }
+                $iteratorWithSizeField
             }
             """
         else """
@@ -1498,6 +1511,7 @@ object ArrayOps : TemplateGroupBase() {
                 override fun get(index: Int): T = this@asList[index]
                 override fun indexOf(element: T): Int = this@asList.indexOf(element)
                 override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
+                $iteratorWithSizeField
             }
             """
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) {

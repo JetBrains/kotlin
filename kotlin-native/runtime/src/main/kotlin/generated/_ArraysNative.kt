@@ -114,6 +114,16 @@ public actual fun <T> Array<out T>.asList(): List<T> {
         override fun get(index: Int): T = this@asList[index]
         override fun indexOf(element: T): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
+        
+        override fun iterator(): Iterator<T> = object : Iterator<T> {
+            val size_ = size
+            var index = 0
+            override fun next(): T {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 
@@ -128,6 +138,16 @@ public actual fun ByteArray.asList(): List<Byte> {
         override fun get(index: Int): Byte = this@asList[index]
         override fun indexOf(element: Byte): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Byte): Int = this@asList.lastIndexOf(element)
+        
+        override fun iterator(): Iterator<Byte> = object : Iterator<Byte> {
+            val size_ = size
+            var index = 0
+            override fun next(): Byte {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 
@@ -142,6 +162,16 @@ public actual fun ShortArray.asList(): List<Short> {
         override fun get(index: Int): Short = this@asList[index]
         override fun indexOf(element: Short): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Short): Int = this@asList.lastIndexOf(element)
+        
+        override fun iterator(): Iterator<Short> = object : Iterator<Short> {
+            val size_ = size
+            var index = 0
+            override fun next(): Short {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 
@@ -156,6 +186,16 @@ public actual fun IntArray.asList(): List<Int> {
         override fun get(index: Int): Int = this@asList[index]
         override fun indexOf(element: Int): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Int): Int = this@asList.lastIndexOf(element)
+        
+        override fun iterator(): Iterator<Int> = object : Iterator<Int> {
+            val size_ = size
+            var index = 0
+            override fun next(): Int {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 
@@ -170,6 +210,16 @@ public actual fun LongArray.asList(): List<Long> {
         override fun get(index: Int): Long = this@asList[index]
         override fun indexOf(element: Long): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Long): Int = this@asList.lastIndexOf(element)
+        
+        override fun iterator(): Iterator<Long> = object : Iterator<Long> {
+            val size_ = size
+            var index = 0
+            override fun next(): Long {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 
@@ -184,6 +234,16 @@ public actual fun FloatArray.asList(): List<Float> {
         override fun get(index: Int): Float = this@asList[index]
         override fun indexOf(element: Float): Int = this@asList.indexOfFirst { it.toBits() == element.toBits() }
         override fun lastIndexOf(element: Float): Int = this@asList.indexOfLast { it.toBits() == element.toBits() }
+        
+        override fun iterator(): Iterator<Float> = object : Iterator<Float> {
+            val size_ = size
+            var index = 0
+            override fun next(): Float {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 
@@ -198,6 +258,16 @@ public actual fun DoubleArray.asList(): List<Double> {
         override fun get(index: Int): Double = this@asList[index]
         override fun indexOf(element: Double): Int = this@asList.indexOfFirst { it.toBits() == element.toBits() }
         override fun lastIndexOf(element: Double): Int = this@asList.indexOfLast { it.toBits() == element.toBits() }
+        
+        override fun iterator(): Iterator<Double> = object : Iterator<Double> {
+            val size_ = size
+            var index = 0
+            override fun next(): Double {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 
@@ -212,6 +282,16 @@ public actual fun BooleanArray.asList(): List<Boolean> {
         override fun get(index: Int): Boolean = this@asList[index]
         override fun indexOf(element: Boolean): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Boolean): Int = this@asList.lastIndexOf(element)
+        
+        override fun iterator(): Iterator<Boolean> = object : Iterator<Boolean> {
+            val size_ = size
+            var index = 0
+            override fun next(): Boolean {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 
@@ -226,6 +306,16 @@ public actual fun CharArray.asList(): List<Char> {
         override fun get(index: Int): Char = this@asList[index]
         override fun indexOf(element: Char): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Char): Int = this@asList.lastIndexOf(element)
+        
+        override fun iterator(): Iterator<Char> = object : Iterator<Char> {
+            val size_ = size
+            var index = 0
+            override fun next(): Char {
+                if (index >= size_) throw NoSuchElementException()
+                return this@asList[index++]
+            }
+            override fun hasNext(): Boolean = index < size_
+        }
     }
 }
 

@@ -145,6 +145,7 @@ public actual fun ByteArray.asList(): List<Byte> {
         override fun get(index: Int): Byte = this@asList[index]
         override fun indexOf(element: Byte): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Byte): Int = this@asList.lastIndexOf(element)
+        
     }
 }
 
@@ -159,6 +160,7 @@ public actual fun ShortArray.asList(): List<Short> {
         override fun get(index: Int): Short = this@asList[index]
         override fun indexOf(element: Short): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Short): Int = this@asList.lastIndexOf(element)
+        
     }
 }
 
@@ -173,6 +175,7 @@ public actual fun IntArray.asList(): List<Int> {
         override fun get(index: Int): Int = this@asList[index]
         override fun indexOf(element: Int): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Int): Int = this@asList.lastIndexOf(element)
+        
     }
 }
 
@@ -187,6 +190,7 @@ public actual fun LongArray.asList(): List<Long> {
         override fun get(index: Int): Long = this@asList[index]
         override fun indexOf(element: Long): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Long): Int = this@asList.lastIndexOf(element)
+        
     }
 }
 
@@ -201,6 +205,7 @@ public actual fun FloatArray.asList(): List<Float> {
         override fun get(index: Int): Float = this@asList[index]
         override fun indexOf(element: Float): Int = this@asList.indexOfFirst { it.toBits() == element.toBits() }
         override fun lastIndexOf(element: Float): Int = this@asList.indexOfLast { it.toBits() == element.toBits() }
+        
     }
 }
 
@@ -215,6 +220,7 @@ public actual fun DoubleArray.asList(): List<Double> {
         override fun get(index: Int): Double = this@asList[index]
         override fun indexOf(element: Double): Int = this@asList.indexOfFirst { it.toBits() == element.toBits() }
         override fun lastIndexOf(element: Double): Int = this@asList.indexOfLast { it.toBits() == element.toBits() }
+        
     }
 }
 
@@ -229,6 +235,7 @@ public actual fun BooleanArray.asList(): List<Boolean> {
         override fun get(index: Int): Boolean = this@asList[index]
         override fun indexOf(element: Boolean): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Boolean): Int = this@asList.lastIndexOf(element)
+        
     }
 }
 
@@ -243,6 +250,7 @@ public actual fun CharArray.asList(): List<Char> {
         override fun get(index: Int): Char = this@asList[index]
         override fun indexOf(element: Char): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Char): Int = this@asList.lastIndexOf(element)
+        
     }
 }
 

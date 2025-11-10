@@ -78,6 +78,7 @@ public actual fun UIntArray.asList(): List<UInt> {
         override fun get(index: Int): UInt = this@asList[index]
         override fun indexOf(element: UInt): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: UInt): Int = this@asList.lastIndexOf(element)
+        
     }
 }
 
@@ -94,6 +95,7 @@ public actual fun ULongArray.asList(): List<ULong> {
         override fun get(index: Int): ULong = this@asList[index]
         override fun indexOf(element: ULong): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: ULong): Int = this@asList.lastIndexOf(element)
+        
     }
 }
 
@@ -110,6 +112,7 @@ public actual fun UByteArray.asList(): List<UByte> {
         override fun get(index: Int): UByte = this@asList[index]
         override fun indexOf(element: UByte): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: UByte): Int = this@asList.lastIndexOf(element)
+        
     }
 }
 
@@ -126,6 +129,7 @@ public actual fun UShortArray.asList(): List<UShort> {
         override fun get(index: Int): UShort = this@asList[index]
         override fun indexOf(element: UShort): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: UShort): Int = this@asList.lastIndexOf(element)
+        
     }
 }
 
