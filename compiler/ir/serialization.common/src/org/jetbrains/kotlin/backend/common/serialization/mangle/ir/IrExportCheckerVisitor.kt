@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
@@ -83,7 +83,7 @@ abstract class IrExportCheckerVisitor(private val compatibleMode: Boolean) : Kot
      * Is used to link libraries with ABI level <= 1.5.0
      */
     private inner class CompatibleChecker : IrVisitor<Boolean, Nothing?>() {
-        private fun IrDeclaration.isExported(annotations: List<IrConstructorCall>, visibility: DescriptorVisibility?): Boolean {
+        private fun IrDeclaration.isExported(annotations: List<IrAnnotation>, visibility: DescriptorVisibility?): Boolean {
             val speciallyExported = annotations.hasAnnotation(publishedApiAnnotation) || isPlatformSpecificExported()
 
             val selfExported = speciallyExported || visibility == null || visibility.isPubliclyVisible()

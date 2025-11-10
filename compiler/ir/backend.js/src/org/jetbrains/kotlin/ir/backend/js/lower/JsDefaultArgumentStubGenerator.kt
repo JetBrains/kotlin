@@ -212,7 +212,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         }
     }
 
-    private fun IrFunction.generateJsNameAnnotationCall(): IrConstructorCall {
+    private fun IrFunction.generateJsNameAnnotationCall(): IrAnnotation {
         val builder = context.createIrBuilder(symbol, startOffset, endOffset)
 
         return with(context) {
