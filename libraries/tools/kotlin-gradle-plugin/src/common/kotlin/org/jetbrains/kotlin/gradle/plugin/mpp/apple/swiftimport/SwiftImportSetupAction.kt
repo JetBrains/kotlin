@@ -193,9 +193,14 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.syntheticProductType.set(SyntheticProductType.DYNAMIC)
     }
 
+    val hasDirectSwiftPMDependencies = project.provider { swiftPMImportExtension.spmDependencies.isNotEmpty() }
+    val hasSwiftPMDependencies = transitiveSwiftPMDependenciesMap.map { transitiveDependencies ->
+        hasDirectSwiftPMDependencies.get() || transitiveDependencies.values.any { it.dependencies.isNotEmpty() }
+    }
     val fetchSyntheticImportProjectPackages = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
         FetchSyntheticImportProjectPackages.TASK_NAME,
     ) {
+        it.onlyIf { hasSwiftPMDependencies.get() }
         it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
         it.localPackageManifests.from(
             transitiveLocalSwiftPMDependencies.map {
@@ -212,6 +217,13 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         syntheticImportProjectGenerationTaskForLinkageForCli,
         syntheticImportProjectGenerationTaskForEmbedAndSignLinkage,
     )
+    syntheticImportTasks.forEach {
+        it.configure {
+            it.onlyIf {
+                hasSwiftPMDependencies.get()
+            }
+        }
+    }
 
     kotlinExtension.targets.matching {
         val targetSupportsSwiftPMImport = it is KotlinNativeTarget && it.konanTarget.family.isAppleFamily
@@ -247,6 +259,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
             it.discoverModulesImplicitly.set(swiftPMImportExtension.discoverModulesImplicitly)
             it.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { it.filesToTrackFromLocalPackages })
+            it.hasSwiftPMDependencies.set(hasSwiftPMDependencies)
         }
 
         tasks.configureEach { task ->
@@ -296,7 +309,8 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                         // Fight eager CC provider: fetch dump path eagerly, but read the file only when the task has executed
                         it.outputs.files.elements
                     }.map {
-                        ldArgDumpPath.get().asFile.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR)
+                        val ldDumpFile = ldArgDumpPath.get().asFile
+                        ldDumpFile.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR)
                     }
                 )
             }
@@ -324,11 +338,18 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
             val mainCompilationCinterops = target.compilations.getByName("main").cinterops
             if (cinteropName !in mainCompilationCinterops.names) {
-                mainCompilationCinterops.create(cinteropName).definitionFile.set(
-                    defFilesAndLdDumpGenerationTask.map {
-                        it.defFilePath(target.konanTarget.appleArchitecture).get()
+                val defFile = defFilesAndLdDumpGenerationTask.map {
+                    it.defFilePath(target.konanTarget.appleArchitecture).get()
+                }
+                val swiftPMImportCinterop = mainCompilationCinterops.create(cinteropName)
+                tasks.configureEach {
+                    if (it.name == swiftPMImportCinterop.interopProcessingTaskName) {
+                        it.onlyIf {
+                            hasSwiftPMDependencies.get()
+                        }
                     }
-                )
+                }
+                swiftPMImportCinterop.definitionFile.set(defFile)
             }
 
             syntheticImportTasks.forEach { it.configure { it.directlyImportedSpmModules.add(swiftPMDependency) } }
@@ -392,7 +413,7 @@ internal fun Project.regenerateLinkageImportProjectTask(swiftPMDependencies: Pro
         it.configure {
             it.failOnNonIdempotentChanges.set(true)
             it.onlyIf {
-                swiftPMDependencies.get().isNotEmpty() || hasDirectlyDeclaredSwiftPMDependencies.get()
+                hasDirectlyDeclaredSwiftPMDependencies.get() || swiftPMDependencies.get().values.any { it.dependencies.isNotEmpty() }
             }
         }
     }
@@ -704,7 +725,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
         const val IOS_DEPLOYMENT_VERSION_DEFAULT = "15.0"
         const val MACOS_DEPLOYMENT_VERSION_DEFAULT = "10.15"
         const val WATCHOS_DEPLOYMENT_VERSION_DEFAULT = "15.0"
-        const val TVOS_DEPLOYMENT_VERSION_DEFAULT = "7.0"
+        const val TVOS_DEPLOYMENT_VERSION_DEFAULT = "9.0"
     }
 }
 
@@ -858,6 +879,9 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     @get:Input
     abstract val discoverModulesImplicitly: Property<Boolean>
 
+    @get:Input
+    abstract val hasSwiftPMDependencies: Property<Boolean>
+
     @get:InputFile
     abstract val filesToTrackFromLocalPackages: RegularFileProperty
     @get:InputFiles
@@ -905,6 +929,26 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
     @TaskAction
     fun generateDefFiles() {
+        if (!hasSwiftPMDependencies.get()) {
+            architectures.get().forEach { architecture ->
+                /**
+                 * Stub out all these to ensure correctness on incremental runs.
+                 *
+                 * FIXME: Find a proper way to avoid doing this
+                 */
+                defFilePath(architecture).getFile().writeText(
+                    """
+                        language = Objective-C
+                        package = $cinteropNamespace
+                    """.trimIndent()
+                )
+                ldFilePath(architecture).getFile().writeText("\n")
+                frameworkSearchpathFilePath(architecture).getFile().writeText("\n")
+                librarySearchpathFilePath(architecture).getFile().writeText("\n")
+            }
+            return
+        }
+
         val dumpIntermediates = xcodebuildSdk.flatMap { sdk ->
             layout.buildDirectory.dir("kotlin/swiftImportClangDump/${sdk}")
         }.get().asFile.also {
