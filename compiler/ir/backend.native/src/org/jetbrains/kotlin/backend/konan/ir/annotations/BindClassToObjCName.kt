@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.ir.annotations
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.getClass
@@ -20,12 +21,12 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
  * A representation of `@BindClassToObjCName` annotation.
  */
 class BindClassToObjCName(
-        val annotationElement: IrConstructorCall,
+        val annotationElement: IrAnnotation,
         val kotlinClass: IrClass,
         val objCName: String,
 )
 
-private val IrConstructorCall.bindClassToObjCName: BindClassToObjCName?
+private val IrAnnotation.bindClassToObjCName: BindClassToObjCName?
     get() {
         if (!isAnnotation(NativeRuntimeNames.Annotations.BindClassToObjCName.asSingleFqName())) {
             return null
