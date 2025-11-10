@@ -17,9 +17,9 @@ import kotlin.test.assertTrue
 @JvmInherited
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Anno(val value: String = "myDefaultValue")
+annotation class Anno(val value: String)
 
-@Anno
+@Anno("base")
 open class BaseClass
 
 class ChildClass: BaseClass()
