@@ -86,7 +86,7 @@ fun SingleModuleFrontendOutput.toTestOutputPart(
         session = session,
         scopeSession = scopeSession,
         firAnalyzerFacade = null,
-        firFiles = testFilePerFirFile.toMap()
+        firFilesByTestFile = testFilePerFirFile.toMap()
     )
 }
 

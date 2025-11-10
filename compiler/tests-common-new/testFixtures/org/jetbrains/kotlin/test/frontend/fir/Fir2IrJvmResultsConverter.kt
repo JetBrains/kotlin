@@ -85,7 +85,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
     ): IrBackendInput {
         // TODO: handle fir from light tree
-        val sourceFiles = inputArtifact.mainFirFiles.mapNotNull { it.value.sourceFile }
+        val sourceFiles = inputArtifact.mainFirFilesByTestFile.mapNotNull { it.value.sourceFile }
 
         val backendInput = JvmIrCodegenFactory.BackendInput(
             fir2IrResult.irModuleFragment,
