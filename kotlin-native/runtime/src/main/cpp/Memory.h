@@ -166,10 +166,6 @@ extern "C" {
     return __result;                                      \
   }
 
-struct MemoryState;
-
-kotlin::mm::ThreadData* FromMemoryState(MemoryState*);
-
 //
 // Object allocation.
 //
@@ -359,8 +355,8 @@ ThreadState SwitchThreadState(mm::ThreadData& threadData, ThreadState newState, 
 
 // Asserts that the given thread is in the given state.
 void AssertThreadState(mm::ThreadData& threadData, ThreadState expected) noexcept;
-inline void AssertThreadState(MemoryState* memoryState, ThreadState expected) noexcept {
-    AssertThreadState(*FromMemoryState(memoryState), expected);
+inline void AssertThreadState(mm::ThreadData* threadData, ThreadState expected) noexcept {
+    AssertThreadState(*threadData, expected);
 }
 void AssertThreadState(mm::ThreadData& threadData, std::initializer_list<ThreadState> expected) noexcept;
 
@@ -391,7 +387,7 @@ public:
     }
 
     // Set the state for the given thread.
-    ThreadStateGuard(MemoryState* memoryState, ThreadState state, bool reentrant = false) noexcept : ThreadStateGuard(*FromMemoryState(memoryState), state, reentrant) {}
+    ThreadStateGuard(mm::ThreadData* threadData, ThreadState state, bool reentrant = false) noexcept : ThreadStateGuard(*threadData, state, reentrant) {}
 
     // Sets the state for the current thread.
     explicit ThreadStateGuard(ThreadState state, bool reentrant = false) noexcept

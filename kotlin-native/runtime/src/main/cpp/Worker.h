@@ -3,6 +3,8 @@
 
 #include "Types.h"
 
+using MemoryState = kotlin::mm::ThreadData;
+
 class Worker;
 
 KInt GetWorkerId(Worker* worker);

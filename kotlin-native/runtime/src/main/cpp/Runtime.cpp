@@ -103,7 +103,7 @@ NO_INLINE RuntimeState* initRuntime() {
   // Switch thread state because worker and globals inits require the runnable state.
   // This call may block if GC requested suspending threads.
   ThreadStateGuard stateGuard(threadData, kotlin::ThreadState::kRunnable);
-  result->worker = WorkerInit(reinterpret_cast<MemoryState*>(result->threadNode));
+  result->worker = WorkerInit(&threadData);
 
   InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, &threadData);
   CommitTLSStorage(&threadData);
