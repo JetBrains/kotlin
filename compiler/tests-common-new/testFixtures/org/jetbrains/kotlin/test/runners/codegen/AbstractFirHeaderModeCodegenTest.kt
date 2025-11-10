@@ -5,50 +5,51 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
-import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
-import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
-import org.jetbrains.kotlin.test.configuration.configureDumpHandlersForCodegenTest
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
+import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
+import org.jetbrains.kotlin.test.configuration.configureJvmBoxCodegenSettings
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_HEADER_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MODE
-import org.jetbrains.kotlin.test.configuration.configureBlackBoxTestSettings
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 
 abstract class AbstractFirHeaderModeCodegenTestBase(
     val parser: FirParser
-) : AbstractJvmBlackBoxCodegenTestBase<FirOutputArtifact>(FrontendKinds.FIR) {
-    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirCliJvmFacade
+) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+    override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
+        configureFirParser(parser)
 
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrCliJvmFacade
-
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
-        get() = ::BackendCliJvmFacade
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            configureFirParser(parser)
-
-            defaultDirectives {
-                +HEADER_MODE
-            }
+        defaultDirectives {
+            +HEADER_MODE
         }
+
+        commonConfigurationForJvmTest(
+            FrontendKinds.FIR,
+            ::FirCliJvmFacade,
+            ::Fir2IrCliJvmFacade,
+            ::BackendCliJvmFacade,
+        )
+
+        configureFirHandlersStep {
+            useHandlers(
+                ::FirDiagnosticsHandler
+            )
+        }
+
+        useAfterAnalysisCheckers(
+            { BlackBoxCodegenSuppressor(it, customIgnoreDirective = IGNORE_HEADER_MODE) },
+        )
+
+        configureJvmBoxCodegenSettings(includeAllDumpHandlers = false, includeBytecodeTextHandler = false)
     }
 }
 
