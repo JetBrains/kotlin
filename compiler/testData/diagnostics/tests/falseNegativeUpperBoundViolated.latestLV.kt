@@ -22,8 +22,8 @@ fun main() {
     Container<<!UPPER_BOUND_VIOLATED!>Alpha<!>, BetaKey>()
     Container<<!UPPER_BOUND_VIOLATED!>Alpha<!>, <!UPPER_BOUND_VIOLATED!>String<!>>()
 
-    TA<<!UPPER_BOUND_VIOLATED!>Alpha<!>, BetaKey>()
-    TA<<!UPPER_BOUND_VIOLATED!>Alpha<!>, <!UPPER_BOUND_VIOLATED!>String<!>>()
+    TA<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Alpha<!>, BetaKey>()
+    TA<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Alpha<!>, <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>String<!>>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, sealed, typeConstraint,

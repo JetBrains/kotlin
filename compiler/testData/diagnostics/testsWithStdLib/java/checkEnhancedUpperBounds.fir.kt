@@ -28,13 +28,13 @@ typealias A<A> = MapLike<A, Int>
 typealias A2<B> = Foo<MapLike<B, Int>>
 typealias A3<C> = ListLike<List<C>>
 
-fun main1(x: A<<!UPPER_BOUND_VIOLATED!>Int?<!>>) {}
+fun main1(x: A<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Int?<!>>) {}
 fun main2(x: A2<<!UPPER_BOUND_VIOLATED!>Int?<!>>) {}
 fun main3(x: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?><!>) {}
 fun main3() {
-    val x = <!UPPER_BOUND_VIOLATED!>A3<Int?>()<!> // TODO: support reporting errors on typealias constructor calls
-    val x2 = A<<!UPPER_BOUND_VIOLATED!>Int?<!>>() // TODO: support reporting errors on typealias constructor calls
-    val y: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?><!> = <!UPPER_BOUND_VIOLATED!>A3<Int?>()<!>
+    val x = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?>()<!> // TODO: support reporting errors on typealias constructor calls
+    val x2 = A<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Int?<!>>() // TODO: support reporting errors on typealias constructor calls
+    val y: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?><!> = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?>()<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, localProperty, nullableType, propertyDeclaration,

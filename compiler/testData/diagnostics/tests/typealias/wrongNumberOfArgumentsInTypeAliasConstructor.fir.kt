@@ -31,7 +31,7 @@ typealias N<T> = Num<T>
 
 val testN0 = <!CANNOT_INFER_PARAMETER_TYPE!>N<!>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 val testN1 = N<Int>(1)
-val testN1a = <!INAPPLICABLE_CANDIDATE!>N<!><<!UPPER_BOUND_VIOLATED!>String<!>>("")
+val testN1a = <!INAPPLICABLE_CANDIDATE!>N<!><<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>String<!>>("")
 val testN2 = N<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>(1)
 
 class MyPair<T1 : CharSequence, T2 : Number>(val string: T1, val number: T2)
@@ -39,7 +39,7 @@ typealias MP<T1> = MyPair<String, T1>
 
 val testMP0 = MP<Int>("", 1)
 val testMP1 = <!CANNOT_INFER_PARAMETER_TYPE!>MP<!>(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
-val testMP2 = <!INAPPLICABLE_CANDIDATE!>MP<!><<!UPPER_BOUND_VIOLATED!>String<!>>("", "")
+val testMP2 = <!INAPPLICABLE_CANDIDATE!>MP<!><<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>String<!>>("", "")
 
 /* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, intersectionType, nullableType, outProjection,
 primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,

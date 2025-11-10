@@ -72,6 +72,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
             // the argument with the true source element arbitrarily deep, so we may end up
             // with "source must not be null".
             fallbackSource = lhs.source,
+            isTypealiasExpansion = correspondingDeclaration is FirTypeAliasSymbol,
         )
     }
 }
