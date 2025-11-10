@@ -30,7 +30,6 @@ object JsAnnotations {
     val jsNativeSetter = FqName("kotlin.js.nativeSetter")
     val jsNativeInvoke = FqName("kotlin.js.nativeInvoke")
     val JsPolyfillFqn = FqName("kotlin.js.JsPolyfill")
-    val jsGeneratorFqn = FqName("kotlin.js.JsGenerator")
 }
 
 fun IrConstructorCall.getSingleConstStringArgument() =

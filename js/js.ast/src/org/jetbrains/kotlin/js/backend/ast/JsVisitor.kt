@@ -63,6 +63,9 @@ abstract class JsVisitor {
     open fun visitYield(x: JsYield): Unit =
         visitElement(x)
 
+    open fun visitYieldStar(x: JsYieldStar): Unit =
+        visitElement(x)
+
     open fun visitDebugger(x: JsDebugger): Unit =
             visitElement(x)
 

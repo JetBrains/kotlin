@@ -230,7 +230,10 @@ internal fun jsContextfulRef(context: dynamic, fn: dynamic): dynamic
 internal fun jsIsEs6(): Boolean
 
 @JsIntrinsic
-internal fun <T> jsYield(suspendFunction: () -> T): T
+internal fun <T> jsYield(value: T): T
+
+@JsIntrinsic
+internal fun <T> jsYieldStar(value: T): T
 
 /**
  * Depending on the target ES edition, calls transforms either

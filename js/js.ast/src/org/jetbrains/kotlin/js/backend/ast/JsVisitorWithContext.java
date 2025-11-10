@@ -104,6 +104,9 @@ public abstract class JsVisitorWithContext {
     public void endVisit(@NotNull JsYield x, @NotNull JsContext ctx) {
     }
 
+    public void endVisit(@NotNull JsYieldStar x, @NotNull JsContext ctx) {
+    }
+
     public void endVisit(@NotNull JsDebugger x, @NotNull JsContext ctx) {
     }
 
@@ -278,6 +281,10 @@ public abstract class JsVisitorWithContext {
     }
 
     public boolean visit(@NotNull JsYield x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsYieldStar x, @NotNull JsContext ctx) {
         return true;
     }
 

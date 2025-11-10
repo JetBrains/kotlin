@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6ConstructorLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6PrimaryConstructorOptimizationLowering
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
+import org.jetbrains.kotlin.js.config.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 private typealias IrCallTransformer<T> = (T, context: JsGenerationContext) -> JsExpression
@@ -97,6 +97,10 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(symbols.jsYieldFunctionSymbol) { call, context ->
                 JsYield(translateCallArguments(call, context).single())
+            }
+
+            add(symbols.jsYieldStarFunctionSymbol) { call, context ->
+                JsYieldStar(translateCallArguments(call, context).single())
             }
 
             add(symbols.jsObjectCreateSymbol) { call, context ->
@@ -310,16 +314,6 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(symbols.void.owner.getter!!.symbol) { _, context ->
                 val backingField = context.getNameForField(symbols.void.owner.backingField!!)
                 JsNameRef(backingField)
-            }
-
-            add(symbols.suspendOrReturnFunctionSymbol) { call, context ->
-                val (generatorCall, continuation) = translateCallArguments(call, context)
-                val jsInvokeFunName = context.getNameForStaticFunction(call.symbol.owner)
-                val VOID = context.getNameForField(symbols.void.owner.backingField!!)
-                val generatorBindCall = (generatorCall as JsInvocation).let {
-                    JsInvocation(JsNameRef(Namer.BIND_FUNCTION, it.qualifier), listOf(JsNameRef(VOID)) + it.arguments.dropLast(1))
-                }
-                JsInvocation(JsNameRef(jsInvokeFunName), generatorBindCall, continuation)
             }
         }
     }

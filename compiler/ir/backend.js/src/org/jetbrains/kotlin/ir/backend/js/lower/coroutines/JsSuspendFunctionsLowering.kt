@@ -97,6 +97,28 @@ class JsSuspendFunctionsLowering(
         }
     }
 
+    /**
+     * For the delegating type of suspend functions we just compile them as a regular function (not generator), so it doesn't break semantic.
+     * For the following Kotlin code:
+     * ```kotlin
+     * suspend fun bar() = 42
+     * suspend fun foo() = bar()
+     * ```
+     *
+     * Instead of
+     * ```javascript
+     * function* foo() {
+     *   return yield* bar()
+     * }
+     * ```
+     *
+     * We generate the following, so it minimizes the output size:
+     * ```javascript
+     * function foo() {
+     *   return bar()
+     * }
+     * ```
+     */
     private fun removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {
         val returnValue =
             if (delegatingCall.isReturnIfSuspendedCall(context))
@@ -357,7 +379,8 @@ internal fun getSuspendFunctionKind(
     context: CommonBackendContext,
     function: IrSimpleFunction,
     body: IrBody,
-    includeSuspendLambda: Boolean = true
+    includeSuspendLambda: Boolean = true,
+    suspensionIntrinsic: IrSimpleFunctionSymbol? = null
 ): SuspendFunctionKind {
 
     fun IrSimpleFunction.isSuspendLambda() =
@@ -374,7 +397,7 @@ internal fun getSuspendFunctionKind(
 
         override fun visitCall(expression: IrCall) {
             expression.acceptChildrenVoid(this)
-            if (expression.isSuspend)
+            if (expression.isSuspend || expression.symbol == suspensionIntrinsic)
                 ++numberOfSuspendCalls
         }
     })

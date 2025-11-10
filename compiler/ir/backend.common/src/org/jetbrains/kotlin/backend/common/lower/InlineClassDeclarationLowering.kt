@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 private const val INLINE_CLASS_IMPL_SUFFIX = "-impl"
 
-class InlineClassLowering(val context: CommonBackendContext) {
+open class InlineClassLowering(val context: CommonBackendContext) {
     private fun isClassInlineLike(irClass: IrClass): Boolean = context.inlineClassesUtils.isClassInlineLike(irClass)
+
+    protected open fun processDelegatedInlineClassMember(declaration: IrDeclaration) {}
 
     val inlineClassDeclarationLowering = object : DeclarationTransformer {
 
@@ -64,6 +66,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
             val staticMethod = getOrCreateStaticMethod(function)
 
             transformMethodBodyFlat(function, staticMethod)
+            processDelegatedInlineClassMember(function)
             function.body = delegateToStaticMethod(function, staticMethod)
 
             if (function.overriddenSymbols.isEmpty())  // Function is used only in unboxed context

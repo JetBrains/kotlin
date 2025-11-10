@@ -234,7 +234,7 @@ internal inline fun <T> createCoroutineFromGeneratorFunction(
     crossinline generatorFunction: (Continuation<T>) -> dynamic,
 ): Continuation<Any?> {
     val continuation = GeneratorCoroutineImpl(completion.unsafeCast<Continuation<Any?>>())
-    continuation.addNewIterator(dummyGenerator(COROUTINE_SUSPENDED) { generatorFunction(continuation) })
+    continuation.generator = generatorFunction(continuation)
     return continuation
 }
 
@@ -244,11 +244,9 @@ internal inline fun <T> startCoroutineFromGeneratorFunction(
     crossinline generatorFunction: (Continuation<T>) -> dynamic,
 ): Any? {
     val continuation = GeneratorCoroutineImpl(completion.unsafeCast<Continuation<Any?>>())
-    continuation.isRunning = true
-    val result = generatorFunction(continuation)
-    continuation.isRunning = false
-    if (continuation.shouldResumeImmediately()) continuation.resume(result)
-    return result
+    val generator = generatorFunction(continuation)
+    continuation.generator = generator
+    return continuation.runGenerator()
 }
 
 @UsedFromCompilerGeneratedCode
@@ -332,27 +330,8 @@ internal suspend fun <T> await(promise: Promise<T>): T = suspendCoroutine { cont
     )
 }
 
+// TODO: remove after bootstrapping
 @UsedFromCompilerGeneratedCode
 internal fun suspendOrReturn(generator: (continuation: Continuation<Any?>) -> dynamic, continuation: Continuation<Any?>): Any? {
-    val generatorCoroutineImpl = if (continuation.asDynamic().constructor === GeneratorCoroutineImpl::class.js) {
-        continuation.unsafeCast<GeneratorCoroutineImpl>()
-    } else {
-        GeneratorCoroutineImpl(continuation)
-    }
-
-    val value = generator(generatorCoroutineImpl)
-
-    if (!isGeneratorSuspendStep(value)) return value
-
-    val iterator = value.unsafeCast<JsIterator<Any?>>()
-
-    generatorCoroutineImpl.addNewIterator(iterator)
-    try {
-        val iteratorStep = iterator.next()
-        if (iteratorStep.done) generatorCoroutineImpl.dropLastIterator()
-        return iteratorStep.value
-    } catch (e: Throwable) {
-        generatorCoroutineImpl.dropLastIterator()
-        throw e
-    }
+    TODO("SHOULD NOT BE USED")
 }

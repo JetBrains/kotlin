@@ -63,6 +63,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
         }.also {
             it.parent = function.parent
             it.annotations = function.annotations
+            it.copyAttributes(function)
         }
 
         function.correspondingStatic = staticFunction

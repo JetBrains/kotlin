@@ -86,9 +86,6 @@ object JsStandardClassIds {
         val JsOutlinedFunction = "JsOutlinedFunction".jsId()
 
         @JvmField
-        val JsGenerator = "JsGenerator".jsId()
-
-        @JvmField
         val DoNotIntrinsify = "DoNotIntrinsify".jsId()
 
         @JvmField

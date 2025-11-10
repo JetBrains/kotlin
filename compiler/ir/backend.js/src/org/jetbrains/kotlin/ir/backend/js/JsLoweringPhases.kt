@@ -594,12 +594,12 @@ private val constLoweringPhase = makeIrModulePhase(
     name = "ConstLowering",
 )
 private val inlineClassDeclarationLoweringPhase = makeIrModulePhase<JsIrBackendContext>(
-    { InlineClassLowering(it).inlineClassDeclarationLowering },
+    { JsInlineClassLowering(it).inlineClassDeclarationLowering },
     name = "InlineClassDeclarationLowering",
 )
 
 private val inlineClassUsageLoweringPhase = makeIrModulePhase(
-    { InlineClassLowering(it).inlineClassUsageLowering },
+    { JsInlineClassLowering(it).inlineClassUsageLowering },
     name = "InlineClassUsageLowering",
     prerequisite = setOf(
         // Const lowering generates inline class constructors for unsigned integers

@@ -307,6 +307,7 @@ class JsSymbols(
     // Coroutines
 
     val jsYieldFunctionSymbol = CallableIds.jsYield.functionSymbol()
+    val jsYieldStarFunctionSymbol = CallableIds.jsYieldStar.functionSymbol()
 
     val jsInvokeSuspendSuperType: IrSimpleFunctionSymbol = CallableIds.invokeSuspendSuperType.functionSymbol()
     val jsInvokeSuspendSuperTypeWithReceiver: IrSimpleFunctionSymbol = CallableIds.invokeSuspendSuperTypeWithReceiver.functionSymbol()
@@ -441,7 +442,6 @@ class JsSymbols(
     val jsNameAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsName.classSymbol()
     val jsStaticAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsStatic.classSymbol()
     val jsExportAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsExport.classSymbol()
-    val jsGeneratorAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsGenerator.classSymbol()
 
     val jsExportIgnoreAnnotationSymbol = JsStandardClassIds.Annotations.JsExportIgnore.classSymbol()
 
@@ -630,6 +630,7 @@ private object CallableIds {
     val booleanInExternalException = "booleanInExternalException".jsCallableId
     val jsNewAnonymousClass = "jsNewAnonymousClass".jsCallableId
     val jsYield = "jsYield".jsCallableId
+    val jsYieldStar = "jsYieldStar".jsCallableId
     val numberRangeToNumber = "numberRangeToNumber".jsCallableId
     val numberRangeToLong = "numberRangeToLong".jsCallableId
     val longRangeToNumber = "longRangeToNumber".jsCallableId
