@@ -17,7 +17,11 @@ class MyIteratorImpl : MyIterator() {
 
 fun box(): String = iterate(MyIteratorImpl())
 
+// There are 2 `INVOKEVIRTUAL MyIterator.next ()Ljava/lang/String;` instructions:
+// * one in the bridge 'MyIterator.next()Ljava/lang/Object'
+// * one in the 'iterate' fun
+
 // CHECK_BYTECODE_TEXT
 // 0 java/util/Iterator.next
-// 1 MyIterator.next
+// 2 MyIterator.next
 // 1 MyIteratorImpl.next

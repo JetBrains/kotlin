@@ -84,4 +84,7 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     val USE_LEGACY_REFLECTION_IMPLEMENTATION by directive("Use legacy reflection implementation")
+
+    val ENABLE_INTERFACE_BRIDGES by directive("Enable generation of bridge methods as default methods in interfaces")
+    val DISABLE_INTERFACE_BRIDGES by directive("Disable generation of bridge methods as default methods in interfaces")
 }

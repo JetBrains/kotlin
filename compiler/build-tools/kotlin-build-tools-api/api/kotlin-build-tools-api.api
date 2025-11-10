@@ -310,6 +310,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Jv
 	public static final field X_FRIEND_PATHS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_GENERATE_STRICT_METADATA_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_INDY_ALLOW_ANNOTATED_LAMBDAS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
+	public static final field X_INTERFACE_BRIDGES Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_IR_DO_NOT_CLEAR_BINDING_CONTEXT Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_IR_INLINER Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_JAVA_PACKAGE_PREFIX Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;

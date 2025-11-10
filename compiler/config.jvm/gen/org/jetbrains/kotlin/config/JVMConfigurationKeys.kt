@@ -158,6 +158,9 @@ object JVMConfigurationKeys {
     @JvmField
     val WHEN_GENERATION_SCHEME = CompilerConfigurationKey.create<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions")
 
+    @JvmField
+    val ENABLE_INTERFACE_BRIDGES = CompilerConfigurationKey.create<Boolean>("Enables generation of bridge methods as default methods in interfaces")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -347,4 +350,8 @@ var CompilerConfiguration.expressionToEvaluate: String?
 var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
     get() = get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME)
     set(value) { put(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.enableInterfaceBridges: Boolean
+    get() = getBoolean(JVMConfigurationKeys.ENABLE_INTERFACE_BRIDGES)
+    set(value) { put(JVMConfigurationKeys.ENABLE_INTERFACE_BRIDGES, value) }
 

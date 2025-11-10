@@ -98,4 +98,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val EXPRESSION_TO_EVALUATE by key<String>("Expression to evaluate in script mode", throwOnNull = false)
 
     val WHEN_GENERATION_SCHEME by key<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions")
+
+    val ENABLE_INTERFACE_BRIDGES by key<Boolean>("Enables generation of bridge methods as default methods in interfaces")
 }

@@ -1,7 +1,8 @@
 // JVM_DEFAULT_MODE: disable
+// ENABLE_INTERFACE_BRIDGES
 
 // This test is checking that:
-// 1) Test2 does not have the bridge (with Any in the signature)
+// 1) Test2 has the bridge with Any in the signature
 // 2) Test2 has a DefaultImpls class with a static version of the specialized method (with String), but not the bridge
 // 3) TestClass has both the specialized method and the bridge
 

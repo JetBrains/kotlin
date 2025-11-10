@@ -1,4 +1,5 @@
 // WITH_SIGNATURES
+// ENABLE_INTERFACE_BRIDGES
 
 class B<T>(val a: T)
 

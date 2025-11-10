@@ -4577,6 +4577,37 @@
                                 }
                             },
                             {
+                                "name": "Xinterface-bridges",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Enables generation of bridge methods as default methods in interfaces",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.3.20",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                }
+                            },
+                            {
                                 "name": "Xir-do-not-clear-binding-context",
                                 "shortName": null,
                                 "deprecatedName": null,
