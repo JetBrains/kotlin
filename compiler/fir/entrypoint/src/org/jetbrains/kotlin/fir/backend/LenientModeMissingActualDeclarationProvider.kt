@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -120,7 +121,7 @@ class LenientModeMissingActualDeclarationProvider(
         )
         clazz.superTypes = owner.superTypes
         clazz.thisReceiver = owner.thisReceiver?.copyAsStub(clazz)
-        clazz.annotations = owner.annotations.map(IrConstructorCall::deepCopyWithoutPatchingParents)
+        clazz.annotations = owner.annotations.map(IrAnnotation::deepCopyWithoutPatchingParents)
         clazz.parent = parent
         clazz.declarations.addAll(owner.declarations.mapNotNull { buildStub(it.symbol, clazz)?.owner as IrDeclaration? })
 
@@ -180,7 +181,7 @@ class LenientModeMissingActualDeclarationProvider(
             function.correspondingPropertySymbol = symbol
             function
         }
-        property.annotations = owner.annotations.map(IrConstructorCall::deepCopyWithoutPatchingParents)
+        property.annotations = owner.annotations.map(IrAnnotation::deepCopyWithoutPatchingParents)
         property.parent = parent
 
         return symbol
@@ -292,7 +293,7 @@ class LenientModeMissingActualDeclarationProvider(
     private fun addThrowsAnnotation(function: IrSimpleFunction) {
         throwsConstructorSymbol?.let { throwsConstructorSymbol ->
             function.annotations +=
-                IrConstructorCallImpl(
+                IrAnnotationImpl(
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,
                     type = throwsConstructorSymbol.owner.returnType,
@@ -316,6 +317,7 @@ class LenientModeMissingActualDeclarationProvider(
                             )
                         )
                     )
+                    // TODO(KT-74200): Should argumentMapping be filled here?
                 }
         }
     }
@@ -380,7 +382,7 @@ class LenientModeMissingActualDeclarationProvider(
     private fun fillFunction(function: IrFunction, owner: IrFunction, parent: IrDeclarationParent) {
         function.parameters = owner.parameters.map { it.copyAsStub(function) }
         function.typeParameters = owner.typeParameters.map { it.copyAsStub(function) }
-        function.annotations = owner.annotations.map(IrConstructorCall::deepCopyWithoutPatchingParents)
+        function.annotations = owner.annotations.map(IrAnnotation::deepCopyWithoutPatchingParents)
         function.parent = parent
     }
 
@@ -400,7 +402,7 @@ class LenientModeMissingActualDeclarationProvider(
             isHidden = isHidden
         ).also {
             it.parent = parent
-            it.annotations = annotations.map(IrConstructorCall::deepCopyWithoutPatchingParents)
+            it.annotations = annotations.map(IrAnnotation::deepCopyWithoutPatchingParents)
         }
     }
 
@@ -416,7 +418,7 @@ class LenientModeMissingActualDeclarationProvider(
             isReified = isReified
         ).also {
             it.parent = parent
-            it.annotations = annotations.map(IrConstructorCall::deepCopyWithoutPatchingParents)
+            it.annotations = annotations.map(IrAnnotation::deepCopyWithoutPatchingParents)
         }
     }
 }
