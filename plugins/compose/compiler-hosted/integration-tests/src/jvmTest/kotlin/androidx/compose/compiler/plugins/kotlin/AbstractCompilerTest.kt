@@ -45,7 +45,13 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "useFir = {0}")
-        fun data() = arrayOf<Any>(false, true)
+        fun data() =
+            if (env("CI")) {
+                // todo(b/458234821): K1 tests are disabled because of flaking classpath issues
+                arrayOf(true)
+            } else {
+                arrayOf<Any>(false, true)
+            }
 
         private fun File.applyExistenceCheck(): File = apply {
             if (!exists()) throw NoSuchFileException(this)
