@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
@@ -179,7 +179,7 @@ class ClassStabilityTransformer(
             marked = false,
             stability = stability
         )
-        val annotation = IrConstructorCallImpl(
+        val annotation = IrAnnotationImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             StabilityInferredClass.defaultType,
@@ -189,6 +189,7 @@ class ClassStabilityTransformer(
             origin = null
         ).also {
             it.arguments[0] = irConst(parameterMask)
+            // TODO(KT-74200): Should argumentMapping be filled here?
         }
 
         if (useK2 && cls.hasFirDeclaration()) {

@@ -150,7 +150,7 @@ open class LiveLiteralTransformer(
     private fun irLiveLiteralInfoAnnotation(
         key: String,
         offset: Int,
-    ): IrConstructorCall = IrConstructorCallImpl(
+    ): IrAnnotation = IrAnnotationImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         liveLiteralInfoAnnotation.defaultType,
@@ -160,11 +160,12 @@ open class LiveLiteralTransformer(
     ).apply {
         arguments[0] = irConst(key)
         arguments[1] = irConst(offset)
+        // TODO(KT-74200): Should argumentMapping be filled here?
     }
 
     private fun irLiveLiteralFileInfoAnnotation(
         file: String,
-    ): IrConstructorCall = IrConstructorCallImpl(
+    ): IrAnnotation = IrAnnotationImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         liveLiteralFileInfoAnnotation.defaultType,
@@ -173,6 +174,7 @@ open class LiveLiteralTransformer(
         constructorTypeArgumentsCount = 0
     ).apply {
         arguments[0] = irConst(file)
+        // TODO(KT-74200): Should argumentMapping be filled here?
     }
 
     @OptIn(IrImplementationDetail::class)
