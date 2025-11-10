@@ -1,0 +1,5 @@
+// METADATA_TARGET_PLATFORMS: JS, WasmJs
+
+expect interface Base
+
+internal external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE, EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE!>Derived<!> : Base
