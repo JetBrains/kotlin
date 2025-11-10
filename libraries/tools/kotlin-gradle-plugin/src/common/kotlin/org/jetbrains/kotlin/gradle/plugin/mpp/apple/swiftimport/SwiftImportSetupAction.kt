@@ -1,3 +1,5 @@
+@file:Suppress("SENSELESS_COMPARISON")
+
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import com.google.gson.Gson
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependenc
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.property
 import org.jetbrains.kotlin.gradle.plugin.testTaskName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.konan.target.Family
@@ -112,7 +115,9 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
     val swiftPMDependenciesMetadata = project.registerTask<SerializeSwiftPMDependenciesMetadata>(
         SerializeSwiftPMDependenciesMetadata.TASK_NAME,
-    )
+    ) {
+        it.configureWithExtension(swiftPMImportExtension)
+    }
     project.configurations.createConsumable("swiftPMDependenciesMetadataElements") {
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(SWIFTPM_DEPENDENCIES_METADATA_USAGE))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
@@ -122,7 +127,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     val transitiveSwiftPMDependenciesMap = swiftPMDependenciesMetadataClasspath()
     val transitiveLocalSwiftPMDependencies = transitiveSwiftPMDependenciesMap.map {
         it.values.flatMap { swiftPMDependencies ->
-            swiftPMDependencies.mapNotNull { dependency ->
+            swiftPMDependencies.dependencies.mapNotNull { dependency ->
                 when (dependency) {
                     is SwiftPMDependency.Local -> dependency
                     is SwiftPMDependency.Remote -> null
@@ -376,7 +381,7 @@ private fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (th
  * - should emit the linkage structure at specific sites, e.g. for embedAndSign, for internal linkage, etc
  */
 // FIXME: Rearrange this task so that it only runs after linkage package detection
-internal fun Project.regenerateLinkageImportProjectTask(swiftPMDependencies: Provider<Map<String, Set<SwiftPMDependency>>>): TaskProvider<GenerateSyntheticLinkageImportProject> {
+internal fun Project.regenerateLinkageImportProjectTask(swiftPMDependencies: Provider<Map<String, SwiftPMImport>>): TaskProvider<GenerateSyntheticLinkageImportProject> {
     val hasDirectlyDeclaredSwiftPMDependencies = provider { swiftPMDependenciesExtension().spmDependencies.isNotEmpty() }
     return locateOrRegisterTask<GenerateSyntheticLinkageImportProject>(
         lowerCamelCaseName(
@@ -400,7 +405,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
     abstract val directlyImportedSpmModules: SetProperty<SwiftPMDependency>
 
     @get:Input
-    abstract val dependencyIdentifierToImportedSwiftPMDependencies: MapProperty<String, Set<SwiftPMDependency>>
+    abstract val dependencyIdentifierToImportedSwiftPMDependencies: MapProperty<String, SwiftPMImport>
 
     @get:Internal
     val syntheticImportProjectRoot: DirectoryProperty = project.objects.directoryProperty().convention(
@@ -416,15 +421,19 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
     @get:Input
     abstract val konanTargets: SetProperty<KonanTarget>
 
+    @get:Optional
     @get:Input
     abstract val iosDeploymentVersion: Property<String>
 
+    @get:Optional
     @get:Input
     abstract val macosDeploymentVersion: Property<String>
 
+    @get:Optional
     @get:Input
     abstract val watchosDeploymentVersion: Property<String>
 
+    @get:Optional
     @get:Input
     abstract val tvosDeploymentVersion: Property<String>
 
@@ -485,7 +494,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                  * Also all the project/modular dependencies will litter embedAndSign integration with useless dylibs
                  */
                 syntheticProductType = SyntheticProductType.INFERRED,
-                directlyImportedSwiftPMDependencies = swiftPMDependencies,
+                directlyImportedSwiftPMDependencies = swiftPMDependencies.dependencies,
                 localSyntheticPackages = setOf(),
             )
         }
@@ -566,10 +575,38 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
 
         val platforms = konanTargets.get().map { it.family }.toSet().map {
             when (it) {
-                Family.OSX -> ".macOS(\"${macosDeploymentVersion.get()}\"),"
-                Family.IOS -> ".iOS(\"${iosDeploymentVersion.get()}\"),"
-                Family.TVOS -> ".tvOS(\"${tvosDeploymentVersion.get()}\"),"
-                Family.WATCHOS -> ".watchOS(\"${watchosDeploymentVersion.get()}\"),"
+                Family.OSX -> {
+                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
+                        macosDeploymentVersion,
+                        MACOS_DEPLOYMENT_VERSION_DEFAULT,
+                        dependencyIdentifierToImportedSwiftPMDependencies.get().values.mapNotNull { it.macosDeploymentVersion },
+                    )
+                    ".macOS(\"${deploymentTarget}\"),"
+                }
+                Family.IOS -> {
+                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
+                        iosDeploymentVersion,
+                        IOS_DEPLOYMENT_VERSION_DEFAULT,
+                        dependencyIdentifierToImportedSwiftPMDependencies.get().values.mapNotNull { it.iosDeploymentVersion },
+                    )
+                    ".iOS(\"${deploymentTarget}\"),"
+                }
+                Family.TVOS -> {
+                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
+                        tvosDeploymentVersion,
+                        TVOS_DEPLOYMENT_VERSION_DEFAULT,
+                        dependencyIdentifierToImportedSwiftPMDependencies.get().values.mapNotNull { it.tvosDeploymentVersion },
+                    )
+                    ".tvOS(\"${deploymentTarget}\"),"
+                }
+                Family.WATCHOS -> {
+                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
+                        watchosDeploymentVersion,
+                        WATCHOS_DEPLOYMENT_VERSION_DEFAULT,
+                        dependencyIdentifierToImportedSwiftPMDependencies.get().values.mapNotNull { it.watchosDeploymentVersion },
+                    )
+                    ".watchOS(\"${deploymentTarget}\"),"
+                }
                 Family.LINUX,
                 Family.MINGW,
                 Family.ANDROID
@@ -634,11 +671,40 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
         }.writeText("")
     }
 
+    @Suppress("SENSELESS_COMPARISON")
+    private fun explicitOrMaximumDeploymentTarget(
+        deploymentVersionProperty: Provider<String>,
+        deploymentVersionDefault: String,
+        transitivelyImportedDeploymentVersions: List<String>,
+    ): String {
+        val explicitlySpecifiedDeploymentVersion = deploymentVersionProperty.orNull
+        if (explicitlySpecifiedDeploymentVersion != null) {
+            return explicitlySpecifiedDeploymentVersion
+        }
+        val maximumDeploymentTarget = transitivelyImportedDeploymentVersions.fold(
+            SemVer.from(deploymentVersionDefault, loose = true),
+        ) { max, current ->
+            val other = SemVer.from(current, loose = true)
+            if (max >= other) {
+                max
+            } else {
+                other
+            }
+        }
+        return "${maximumDeploymentTarget.major}.${maximumDeploymentTarget.minor}"
+    }
+
     companion object {
         const val TASK_NAME = "generateSyntheticLinkageSwiftPMImportProject"
         const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "_internal_linkage_SwiftPMImport"
         const val SUBPACKAGES = "subpackages"
         const val MANIFEST_NAME = "Package.swift"
+
+        // FIXME: Maybe tests against CI RECOMMENDED_ version to keep up to date?
+        const val IOS_DEPLOYMENT_VERSION_DEFAULT = "15.0"
+        const val MACOS_DEPLOYMENT_VERSION_DEFAULT = "10.15"
+        const val WATCHOS_DEPLOYMENT_VERSION_DEFAULT = "15.0"
+        const val TVOS_DEPLOYMENT_VERSION_DEFAULT = "7.0"
     }
 }
 
@@ -1283,8 +1349,31 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : DefaultTask() {
     @get:Input
     abstract val importedSpmModules: SetProperty<SwiftPMDependency>
 
+    @get:Optional
+    @get:Input
+    abstract val iosDeploymentVersion: Property<String>
+
+    @get:Optional
+    @get:Input
+    abstract val macosDeploymentVersion: Property<String>
+
+    @get:Optional
+    @get:Input
+    abstract val watchosDeploymentVersion: Property<String>
+
+    @get:Optional
+    @get:Input
+    abstract val tvosDeploymentVersion: Property<String>
+
     @get:OutputFile
     val serializationFile: Provider<RegularFile> = project.layout.buildDirectory.file("kotlin/importedSpmModules")
+
+    fun configureWithExtension(swiftPMImportExtension: SwiftImportExtension) {
+        iosDeploymentVersion.set(swiftPMImportExtension.iosDeploymentVersion)
+        macosDeploymentVersion.set(swiftPMImportExtension.macosDeploymentVersion)
+        watchosDeploymentVersion.set(swiftPMImportExtension.watchosDeploymentVersion)
+        tvosDeploymentVersion.set(swiftPMImportExtension.tvosDeploymentVersion)
+    }
 
     @TaskAction
     fun serialize() {
@@ -1293,7 +1382,15 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : DefaultTask() {
             .map { it }.toSet()
         serializationFile.get().asFile.outputStream().use { file ->
             ObjectOutputStream(file).use { objects ->
-                objects.writeObject(spmDependencies)
+                objects.writeObject(
+                    SwiftPMImport(
+                        iosDeploymentVersion = iosDeploymentVersion.orNull,
+                        macosDeploymentVersion = macosDeploymentVersion.orNull,
+                        watchosDeploymentVersion = watchosDeploymentVersion.orNull,
+                        tvosDeploymentVersion = tvosDeploymentVersion.orNull,
+                        dependencies = spmDependencies,
+                    )
+                )
             }
         }
     }
@@ -1320,7 +1417,7 @@ fun isLinkageProductReferencedInPBXObjects(projectJson: Map<String, Any>): Boole
 }
 
 @Suppress("UNCHECKED_CAST")
-private fun swiftPMDependencies(swiftPmDependenciesMetadataClasspath: ArtifactView): Provider<Map<String, Set<SwiftPMDependency>>> {
+private fun swiftPMDependencies(swiftPmDependenciesMetadataClasspath: ArtifactView): Provider<Map<String, SwiftPMImport>> {
     return swiftPmDependenciesMetadataClasspath
         .artifacts.resolvedArtifacts
         .map { artifacts ->
@@ -1331,7 +1428,7 @@ private fun swiftPMDependencies(swiftPmDependenciesMetadataClasspath: ArtifactVi
                     else -> error("Unexpected componentId: $componentId")
                 }
                 swiftPMPackageIdentifier to resolvedArtifact.file.inputStream().use {
-                    ObjectInputStream(it).readObject() as Set<SwiftPMDependency>
+                    ObjectInputStream(it).readObject() as SwiftPMImport
                 }
             }
         }

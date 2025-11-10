@@ -14,13 +14,9 @@ abstract class SwiftImportExtension @Inject constructor(
 ) {
     // FIXME: Maybe tests against CI RECOMMENDED_ version to keep up to date?
     val iosDeploymentVersion: Property<String> = objects.property(String::class.java)
-        .convention("15.0")
     val macosDeploymentVersion: Property<String> = objects.property(String::class.java)
-        .convention("10.15")
     val watchosDeploymentVersion: Property<String> = objects.property(String::class.java)
-        .convention("15.0")
     val tvosDeploymentVersion: Property<String> = objects.property(String::class.java)
-        .convention("7.0")
 
     val discoverModulesImplicitly: Property<Boolean> = objects.property(Boolean::class.java)
         .convention(false)
@@ -180,6 +176,14 @@ abstract class SwiftImportExtension @Inject constructor(
         const val EXTENSION_NAME = "swiftPMDependencies"
     }
 }
+
+class SwiftPMImport(
+    val iosDeploymentVersion: String?,
+    val macosDeploymentVersion: String?,
+    val watchosDeploymentVersion: String?,
+    val tvosDeploymentVersion: String?,
+    val dependencies: Set<SwiftPMDependency>
+) : Serializable
 
 sealed class SwiftPMDependency(
     val packageName: String,
