@@ -26,16 +26,6 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   }
 
   @Nested
-  @TestMetadata("js/js.translator/testData/typescript-export/wasm/default")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Default {
-    @Test
-    public void testAllFilesPresentInDefault() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/default"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-  }
-
-  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/wasm/externalDeclarations")
   @TestDataPath("$PROJECT_ROOT")
   public class ExternalDeclarations {
