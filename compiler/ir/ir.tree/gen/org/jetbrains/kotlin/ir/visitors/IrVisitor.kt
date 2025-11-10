@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.ir.visitors
 
-import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -104,8 +103,8 @@ abstract class IrVisitor<out R, in D> {
     open fun visitConstructorCall(expression: IrConstructorCall, data: D): R =
         visitFunctionAccess(expression, data)
 
-    open fun visitAnnotation(element: IrAnnotation, data: D): R =
-        visitConstructorCall(element, data)
+    open fun visitAnnotation(expression: IrAnnotation, data: D): R =
+        visitConstructorCall(expression, data)
 
     open fun visitSingletonReference(expression: IrGetSingletonValue, data: D): R =
         visitDeclarationReference(expression, data)

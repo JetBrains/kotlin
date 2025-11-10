@@ -8,20 +8,21 @@
 
 @file:Suppress("DuplicatedCode")
 
-package org.jetbrains.kotlin.ir.impl
+package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrImplementationDetail
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-class IrAnnotationImpl @IrImplementationDetail constructor(
+class IrAnnotationImpl internal constructor(
+    @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override var startOffset: Int,
     override var endOffset: Int,
     override var type: IrType,

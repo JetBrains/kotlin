@@ -6,10 +6,8 @@
 // This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
-package org.jetbrains.kotlin.ir
+package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
