@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 
-fun referenceAllCommonDependencies(outputs: List<ModuleCompilerAnalyzedOutput>) {
+fun referenceAllCommonDependencies(outputs: List<SingleModuleFrontendOutput>) {
     val platformSession = outputs.last().session
     if (!platformSession.languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation)) return
     val visitor = Visitor(platformSession)

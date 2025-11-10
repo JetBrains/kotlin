@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
@@ -46,7 +46,7 @@ import java.io.File
 
 object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = "MetadataLegacySerializerPhase") {
     override fun serialize(
-        analysisResult: List<ModuleCompilerAnalyzedOutput>,
+        analysisResult: List<SingleModuleFrontendOutput>,
         destDir: File,
         metadataVersion: BuiltInsBinaryVersion,
     ): OutputInfo {
@@ -93,7 +93,7 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
 
 object MetadataBuiltinsSerializerPhase : MetadataLegacySerializerPhaseBase(name = "MetadataBuiltinsSerializerPhase") {
     override fun serialize(
-        analysisResult: List<ModuleCompilerAnalyzedOutput>,
+        analysisResult: List<SingleModuleFrontendOutput>,
         destDir: File,
         metadataVersion: BuiltInsBinaryVersion,
     ): OutputInfo? {
@@ -144,7 +144,7 @@ abstract class MetadataLegacySerializerPhaseBase(
     }
 
     protected abstract fun serialize(
-        analysisResult: List<ModuleCompilerAnalyzedOutput>,
+        analysisResult: List<SingleModuleFrontendOutput>,
         destDir: File,
         metadataVersion: BuiltInsBinaryVersion,
     ): OutputInfo?

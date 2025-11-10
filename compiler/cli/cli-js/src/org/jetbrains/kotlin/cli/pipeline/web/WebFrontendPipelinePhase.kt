@@ -204,9 +204,9 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         lookupTracker: LookupTracker?,
         noinline isCommonSource: (F) -> Boolean,
         noinline fileBelongsToModule: (F, String) -> Boolean,
-        buildResolveAndCheckFir: (FirSession, List<F>) -> ModuleCompilerAnalyzedOutput,
+        buildResolveAndCheckFir: (FirSession, List<F>) -> SingleModuleFrontendOutput,
         useWasmPlatform: Boolean,
-    ): List<ModuleCompilerAnalyzedOutput> {
+    ): List<SingleModuleFrontendOutput> {
         // FIR
         val extensionRegistrars = FirExtensionRegistrar.getInstances(moduleStructure.project)
 

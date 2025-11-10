@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
  */
 class Fir2KlibMetadataSerializer(
     compilerConfiguration: CompilerConfiguration,
-    private val firOutputs: List<ModuleCompilerAnalyzedOutput>,
+    private val firOutputs: List<SingleModuleFrontendOutput>,
     private val fir2IrActualizedResult: Fir2IrActualizedResult?,
     private val exportKDoc: Boolean,
     private val produceHeaderKlib: Boolean,
