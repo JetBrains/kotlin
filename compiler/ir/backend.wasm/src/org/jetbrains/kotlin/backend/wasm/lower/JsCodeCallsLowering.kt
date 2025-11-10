@@ -95,8 +95,9 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
         }
 
         val builder = context.createIrBuilder(function.symbol)
-        function.annotations += builder.irCallConstructor(jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
+        function.annotations += builder.irAnnotation(jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
             it.arguments[0] = builder.irString(jsFunCode)
+            // TODO(KT-74200): Should argumentMapping be filled here?
         }
         function.body = null
         return null
