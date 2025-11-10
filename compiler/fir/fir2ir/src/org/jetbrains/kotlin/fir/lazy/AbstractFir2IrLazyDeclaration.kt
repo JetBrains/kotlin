@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import kotlin.properties.ReadWriteProperty
 
@@ -39,7 +40,7 @@ interface AbstractFir2IrLazyDeclaration<F> :
         fir.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
         fir.annotations.mapNotNull { annotation ->
             val effectiveAnnotation = evaluateAnnotationArguments(annotation)
-            callGenerator.convertToIrConstructorCall(effectiveAnnotation) as? IrConstructorCall
+            callGenerator.convertToIrAnnotation(effectiveAnnotation) as? IrAnnotation
         }
     }
 

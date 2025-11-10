@@ -886,7 +886,7 @@ class CallAndReferenceGenerator(
         }
     }
 
-    fun convertToIrConstructorCall(annotation: FirAnnotation): IrExpression {
+    fun convertToIrAnnotation(annotation: FirAnnotation): IrExpression {
         val coneType = annotation.annotationTypeRef.coneType.fullyExpandedType()
         val type = coneType.toIrType()
         if (configuration.skipBodies && type is IrErrorType) {
@@ -894,11 +894,13 @@ class CallAndReferenceGenerator(
             // "correct error types" mode.
             return annotation.convertWithOffsets { startOffset, endOffset ->
                 @OptIn(UnsafeDuringIrConstructionAPI::class) // Error class constructor is already created, see IrErrorClassImpl.
-                IrConstructorCallImpl(
+                IrAnnotationImpl(
                     startOffset, endOffset, type, type.symbol.owner.primaryConstructor!!.symbol,
                     typeArgumentsCount = 0, constructorTypeArgumentsCount = 0,
                     source = FirAnnotationSourceElement(annotation),
-                )
+                ).also {
+                    it.argumentMapping = annotation.argumentMapping.toIrAnnotationArgumentMapping()
+                }
             }
         }
         val annotationIsAccessible = coneType.toRegularClassSymbol() != null
@@ -915,11 +917,11 @@ class CallAndReferenceGenerator(
                 }
                 constructorSymbol
             }
-        val irConstructorCall = annotation.convertWithOffsets { startOffset, endOffset ->
+        val irAnnotation = annotation.convertWithOffsets { startOffset, endOffset ->
             when {
                 // In compiler facility (debugger) scenario it's possible that annotation call is resolved in the session
                 //  where this annotation was applied, but invisible in the current session.
-                // In that case we shouldn't generate `IrConstructorCall`, as it will point to non-existing constructor
+                // In that case we shouldn't generate `IrAnnotation`, as it will point to non-existing constructor
                 //  of stub IR for not found class
                 symbol !is IrClassSymbol || !annotationIsAccessible -> IrErrorCallExpressionImpl(
                     startOffset, endOffset, type, "Unresolved reference: ${annotation.render()}"
@@ -940,7 +942,7 @@ class CallAndReferenceGenerator(
                     }
                     val irConstructor = declarationStorage.getIrConstructorSymbol(fullyExpandedConstructorSymbol)
 
-                    IrConstructorCallImplWithShape(
+                    IrAnnotationImplWithShape(
                         startOffset, endOffset, type, irConstructor,
                         // Get the number of value arguments from FIR because of a possible cycle where an annotation constructor
                         // parameter is annotated with the same annotation.
@@ -954,17 +956,22 @@ class CallAndReferenceGenerator(
                         typeArgumentsCount = fullyExpandedConstructorSymbol.typeParameterSymbols.size,
                         constructorTypeArgumentsCount = 0,
                         source = FirAnnotationSourceElement(annotation),
-                    )
+                    ).also {
+                        it.argumentMapping = annotation.argumentMapping.toIrAnnotationArgumentMapping()
+                    }
                 }
             }
         }
         return visitor.withAnnotationMode {
             val annotationCall = annotation.toAnnotationCall()
-            irConstructorCall
+            irAnnotation
                 .applyReceiversAndArguments(annotationCall, declarationSiteSymbol = firConstructorSymbol, explicitReceiverExpression = null)
                 .applyTypeArgumentsWithTypealiasConstructorRemapping(firConstructorSymbol?.fir, annotationCall?.typeArguments.orEmpty())
         }
     }
+
+    private fun FirAnnotationArgumentMapping.toIrAnnotationArgumentMapping(): Map<Name, IrExpression> =
+        this.mapping.mapValues { (_, value) -> visitor.convertToIrExpression(value) }
 
     private fun FirAnnotation.toAnnotationCall(): FirAnnotationCall? {
         if (this is FirAnnotationCall) return this
