@@ -9,7 +9,6 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.constant.AnnotationValue
 import org.jetbrains.kotlin.constant.ErrorValue
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.unwrapOr
@@ -165,7 +163,7 @@ class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         val results = buildMap {
             info.partsForDependsOnModules.forEach {
-                it.firFiles.forEach { (testFile, firFile) ->
+                it.firFilesByTestFile.forEach { (testFile, firFile) ->
                     putAll(processFile(testFile, firFile, it.session))
                 }
             }

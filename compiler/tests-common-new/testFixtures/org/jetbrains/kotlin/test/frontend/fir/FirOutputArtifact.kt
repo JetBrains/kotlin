@@ -20,16 +20,16 @@ data class FirOutputPartForDependsOnModule(
     val session: FirSession,
     val scopeSession: ScopeSession,
     val firAnalyzerFacade: AbstractFirAnalyzerFacade?, // used only in AA tests
-    val firFiles: Map<TestFile, FirFile>
+    val firFilesByTestFile: Map<TestFile, FirFile>
 )
 
 abstract class FirOutputArtifact(val partsForDependsOnModules: List<FirOutputPartForDependsOnModule>) : ResultingArtifact.FrontendOutput<FirOutputArtifact>() {
-    val allFirFiles: Map<TestFile, FirFile> = partsForDependsOnModules.fold(emptyMap()) { acc, part -> acc + part.firFiles }
+    val allFirFilesByTestFile: Map<TestFile, FirFile> = partsForDependsOnModules.fold(emptyMap()) { acc, part -> acc + part.firFilesByTestFile }
 
     override val kind: FrontendKinds.FIR
         get() = FrontendKinds.FIR
 
-    val mainFirFiles: Map<TestFile, FirFile> by lazy { allFirFiles.filterKeys { !it.isAdditional } }
+    val mainFirFilesByTestFile: Map<TestFile, FirFile> by lazy { allFirFilesByTestFile.filterKeys { !it.isAdditional } }
 }
 
 class FirOutputArtifactImpl(parts: List<FirOutputPartForDependsOnModule>) : FirOutputArtifact(parts)

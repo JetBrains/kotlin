@@ -73,7 +73,7 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         if (FirDiagnosticsDirectives.DISABLE_GENERATED_FIR_TAGS in module.directives || shouldSkip) return
-        for (file in info.allFirFiles.values) {
+        for (file in info.allFirFilesByTestFile.values) {
             val session = file.moduleData.session
             val visitor = TagsCollectorVisitor(session)
             file.accept(visitor)

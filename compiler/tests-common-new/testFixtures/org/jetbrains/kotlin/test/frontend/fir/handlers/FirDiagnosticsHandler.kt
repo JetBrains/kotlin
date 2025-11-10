@@ -161,7 +161,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             val forceRenderArguments = FirDiagnosticsDirectives.RENDER_DIAGNOSTICS_MESSAGES in currentModule.directives
 
             for (file in currentModule.files) {
-                val firFile = info.mainFirFiles[file] ?: continue
+                val firFile = info.mainFirFilesByTestFile[file] ?: continue
                 var diagnostics = frontendDiagnosticsPerFile[firFile]
                 if (AdditionalFilesDirectives.CHECK_TYPE in currentModule.directives) {
                     diagnostics = diagnostics.filter { it.diagnostic.factory.name != FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
@@ -641,7 +641,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
     }
 
     private fun computeDiagnostics(info: FirOutputArtifact): ListMultimap<FirFile, DiagnosticWithKmpCompilationMode> {
-        val allFiles = info.partsForDependsOnModules.flatMap { it.firFiles.values }
+        val allFiles = info.partsForDependsOnModules.flatMap { it.firFilesByTestFile.values }
         val platformPart = info.partsForDependsOnModules.last()
         val lazyDeclarationResolver = platformPart.session.lazyDeclarationResolver
         val result = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()
@@ -686,7 +686,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                         if (!part.session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
                             result += part.session.runCheckers(
                                 part.scopeSession,
-                                part.firFiles.values,
+                                part.firFilesByTestFile.values,
                                 DiagnosticReporterFactory.createPendingReporter(messageCollector),
                                 mppCheckerKind = MppCheckerKind.Common
                             ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
@@ -704,7 +704,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                     part.session.turnOnMetadataCompilationAnalysisFlag {
                         result += part.session.runCheckers(
                             part.scopeSession,
-                            part.firFiles.values,
+                            part.firFilesByTestFile.values,
                             DiagnosticReporterFactory.createPendingReporter(messageCollector),
                             mppCheckerKind = MppCheckerKind.Platform
                         ).convertToTestDiagnostics(KmpCompilationMode.METADATA)
@@ -746,7 +746,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         part: FirOutputPartForDependsOnModule,
         destination: ListMultimap<FirFile, DiagnosticWithKmpCompilationMode>,
     ) {
-        for ((testFile, firFile) in part.firFiles) {
+        for ((testFile, firFile) in part.firFilesByTestFile) {
             val syntaxErrors = if (firFile.psi != null) {
                 AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).map {
                     @OptIn(InternalDiagnosticFactoryMethod::class)

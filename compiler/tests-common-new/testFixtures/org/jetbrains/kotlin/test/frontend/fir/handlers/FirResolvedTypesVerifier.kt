@@ -28,7 +28,7 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         val visitor = Visitor()
-        for (firFile in info.mainFirFiles.values) {
+        for (firFile in info.mainFirFilesByTestFile.values) {
             firFile.acceptChildren(visitor, firFile)
         }
         val ignored = IGNORE_LEAKED_INTERNAL_TYPES in module.directives

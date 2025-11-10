@@ -55,7 +55,7 @@ class FirDumpHandler(
             if (!isFirDumpEnabled) return
 
             val builderForModule = dumper.builderForModule(currentModule)
-            val firFiles = info.mainFirFiles
+            val firFiles = info.mainFirFilesByTestFile
 
             val allFiles = buildList {
                 addAll(firFiles.values)

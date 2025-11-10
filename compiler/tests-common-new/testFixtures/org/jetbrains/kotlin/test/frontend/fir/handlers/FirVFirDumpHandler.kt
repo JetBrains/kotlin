@@ -28,7 +28,7 @@ class FirVFirDumpHandler(
             val currentModule = part.module
             if (FirDiagnosticsDirectives.DUMP_VFIR !in currentModule.directives) return
             val builderForModule = dumper.builderForModule(currentModule)
-            val firFiles = info.mainFirFiles
+            val firFiles = info.mainFirFilesByTestFile
 
             val allFiles = buildList {
                 addAll(firFiles.values)

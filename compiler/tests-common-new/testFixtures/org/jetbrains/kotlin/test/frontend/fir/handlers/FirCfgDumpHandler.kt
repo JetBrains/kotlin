@@ -32,7 +32,7 @@ class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testSer
         if (alreadyDumped || DUMP_CFG !in module.directives) return
         val options = module.directives[DUMP_CFG].map { it.uppercase() }
 
-        val file = info.mainFirFiles.values.first()
+        val file = info.mainFirFilesByTestFile.values.first()
         val renderLevels = DumpCfgOption.LEVELS in options
         val renderFlow = DumpCfgOption.FLOW in options
         file.renderControlFlowGraphTo(builder, ControlFlowGraphRenderOptions(renderLevels, renderFlow))
