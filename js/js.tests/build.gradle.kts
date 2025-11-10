@@ -146,11 +146,21 @@ val generateTypeScriptTests by parallel(
         .map { generateTypeScriptTestFor(it.name) }
 )
 
+fun Test.setupSwc() {
+    systemProperty(
+        "swc.path",
+        node.nodeProjectDir.file("node_modules/@swc/cli/bin/swc.js")
+            .map { it.asFile.absolutePath }
+            .get()
+    )
+}
+
 fun Test.setUpJsBoxTests(tags: String?) {
     with(d8KotlinBuild) {
         setupV8()
     }
 
+    setupSwc()
     dependsOn(npmInstall)
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {

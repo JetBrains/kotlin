@@ -1,0 +1,15 @@
+{
+    "$schema": "https://swc.rs/schema.json",
+    "jsc": {
+        "parser": {
+            "syntax": "ecmascript",
+            "dynamicImport": true,
+            "functionBind": true,
+            "importMeta": true
+        },
+    },
+    "env": {
+        "targets": {}
+    },
+    "sourceMaps": true
+}

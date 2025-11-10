@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import com.google.gson.GsonBuilder
 import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import java.io.File
+import java.io.StringWriter
 import org.jetbrains.kotlin.gradle.targets.js.internal.appendConfigsFromDir as appendConfigsFromDirInternal
 import org.jetbrains.kotlin.gradle.targets.js.internal.calculateDirHash as calculateDirHashInternal
 import org.jetbrains.kotlin.gradle.targets.js.internal.toHex as toHexInternal
@@ -117,3 +119,10 @@ internal fun <T> KotlinJsIrTarget.webTargetVariant(
 } else {
     wasmVariant
 }
+
+/**
+ * Default JSON emitter
+ */
+internal fun json(obj: Any) = StringWriter().also {
+    GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
+}.toString()

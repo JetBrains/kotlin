@@ -155,6 +155,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property("kotlin.js.ir.output.granularity").orNull?.let { KotlinJsIrOutputGranularity.byArgument(it) }
             ?: KotlinJsIrOutputGranularity.PER_MODULE
 
+    val delegateTranspilationToExternalTool: Boolean
+        get() = booleanProperty("kotlin.js.delegated.transpilation") ?: false
+
     val jsIrGeneratedTypeScriptValidationDevStrategy: KotlinIrJsGeneratedTSValidationStrategy
         get() = property("kotlin.js.ir.development.typescript.validation.strategy")
             .orNull?.let {

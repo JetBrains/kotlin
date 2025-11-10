@@ -12,6 +12,7 @@ import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssRule
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackRule
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackScssRule
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackSwcRule
 import org.jetbrains.kotlin.gradle.utils.newInstance
 
 /**
@@ -78,6 +79,7 @@ interface WebpackRulesDsl {
             val delegate = polymorphicDomainObjectContainer(KotlinWebpackRule::class.java).also {
                 bindTo<KotlinWebpackCssRule>(it)
                 bindTo<KotlinWebpackScssRule>(it)
+                bindTo<KotlinWebpackSwcRule>(it)
             }
             return KotlinWebpackRulesContainer(delegate, this)
         }
