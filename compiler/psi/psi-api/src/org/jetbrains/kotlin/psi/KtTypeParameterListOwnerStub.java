@@ -71,9 +71,12 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
      * Valid code may have only either empty or one {@link KtContextReceiverList},
      * so {@link #getContextReceiverList } is preferable.
      *
+     * @deprecated Use {@link KtModifierList#getContextParameterLists()} (via {@link #getModifierList()}) instead. This method is obsolete and exists for compatibility reasons only.
+     *
      * @return a non-null list of {@link KtContextReceiverList} defined in the associated modifier list.
      * Returns an empty list if no context receiver lists are present.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     @NotNull
     public List<KtContextReceiverList> getContextReceiverLists() {

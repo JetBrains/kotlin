@@ -156,9 +156,9 @@ internal fun KaFe10Symbol.createErrorType(): KaType {
 }
 
 internal fun KtTypeParameterListOwnerStub<*>.contextParameters(analysisContext: Fe10AnalysisContext): List<KaContextParameterSymbol> {
-    return contextReceiverLists.flatMap { list ->
+    return modifierList?.contextParameterLists?.flatMap { list ->
         val contextReceivers = list.contextReceivers().takeIf { it.isNotEmpty() }
         contextReceivers?.map { KaFe10PsiContextReceiverBasedContextParameterSymbol(it, analysisContext) }
             ?: list.contextParameters().map { KaFe10PsiContextParameterSymbol(it, analysisContext) }
-    }
+    }.orEmpty()
 }
