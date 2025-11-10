@@ -31,5 +31,5 @@ interface KlibSingleFileMetadataSerializer<SourceFile> {
      * @param block A closure that accepts the index of the file in the list of source files, the source file, its corresponding
      *   [KtSourceFile], and the fully qualified name of the package containing the file.
      */
-    fun forEachFile(block: (Int, SourceFile, KtSourceFile, FqName) -> Unit)
+    fun forEachFile(block: (Int, SourceFile, KtSourceFile?, FqName) -> Unit)
 }

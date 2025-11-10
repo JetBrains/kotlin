@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JS_IR, NATIVE
-// IGNORE_HMPP: JS_IR
+// IGNORE_BACKEND: NATIVE
 // FILE: foo/some.kt
 package foo
 

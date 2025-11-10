@@ -79,7 +79,7 @@ class KlibMetadataIncrementalSerializer(
     override val numberOfSourceFiles: Int
         get() = ktFiles.size
 
-    override fun forEachFile(block: (Int, KtFile, KtSourceFile, FqName) -> Unit) {
+    override fun forEachFile(block: (Int, KtFile, KtSourceFile?, FqName) -> Unit) {
         ktFiles.forEachIndexed { i, ktFile ->
             block(i, ktFile, KtPsiSourceFile(ktFile), ktFile.packageFqName)
         }

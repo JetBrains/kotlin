@@ -571,11 +571,11 @@ fun serializeModuleIntoKlib(
                     )
                 }.takeIf { builtInsPlatform == BuiltInsPlatform.WASM }
             ),
-            processCompiledFileData = { ioFile, compiledFile ->
-                incrementalResultsConsumer?.run {
-                    processPackagePart(ioFile, compiledFile.metadata, empty, empty)
+            processCompiledFileData = incrementalResultsConsumer?.let { icConsumer ->
+                { ioFile, compiledFile ->
+                    icConsumer.processPackagePart(ioFile, compiledFile.metadata, empty, empty)
                     with(compiledFile.irData!!) {
-                        processIrFile(
+                        icConsumer.processIrFile(
                             ioFile,
                             fileData,
                             types,
@@ -649,7 +649,7 @@ fun <SourceFile> shouldGoToNextIcRound(
             val protoBuf = serializeSingleFileMetadata(sourceFile)
             // to minimize the number of IC rounds, we should inspect all proto for changes first,
             // then go to the next round if needed, with all new dirty files
-            nextRoundChecker.checkProtoChanges(ktSourceFile.toIoFileOrNull()!!, protoBuf.toByteArray())
+            nextRoundChecker.checkProtoChanges(ktSourceFile!!.toIoFileOrNull()!!, protoBuf.toByteArray())
         }
     }
     return nextRoundChecker.shouldGoToNextRound()
