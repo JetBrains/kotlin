@@ -10,7 +10,7 @@ expect interface Dummy {
     interface ExternalInterface
 }
 
-external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE{METADATA}!>ExternalClass<!>: Dummy.ExternalInterface
+external class ExternalClass: Dummy.ExternalInterface
 
 // MODULE: main-js()()(common)
 

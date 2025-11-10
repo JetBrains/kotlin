@@ -56,6 +56,7 @@ sealed class FirWasmExternalInheritanceChecker(mppKind: MppCheckerKind) : FirCla
                 // External enum and annotation classes are prohibited, but they add implicit non-external super types. Skip reporting errors for them.
                 if (declaration.classKind == ClassKind.ANNOTATION_CLASS && superClass.classId == StandardClassIds.Annotation) continue
                 if (declaration.classKind == ClassKind.ENUM_CLASS && superClass.classId == StandardClassIds.Enum) continue
+                if (superClass.isExpect) continue
 
                 reporter.reportOn(
                     declaration.source,

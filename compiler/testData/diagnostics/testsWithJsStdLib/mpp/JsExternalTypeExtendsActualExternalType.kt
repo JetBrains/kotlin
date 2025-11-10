@@ -5,7 +5,7 @@
 
 expect interface ExternalInterface
 
-external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE{METADATA}!>ExternalClass<!>: ExternalInterface
+external class ExternalClass: ExternalInterface
 
 // MODULE: js()()(commonjs)
 // FILE: js.kt
