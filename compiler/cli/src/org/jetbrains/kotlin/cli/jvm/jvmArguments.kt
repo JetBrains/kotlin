@@ -344,6 +344,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
         messageCollector.report(LOGGING, "Running backend in parallel with $nThreads threads")
     }
     put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, nThreads)
+    put(JVMConfigurationKeys.SIMPLIFY_DOWNCAST_MESSAGES, arguments.simplifiedDowncastMessages)
 }
 
 private fun parseBackendThreads(stringValue: String, messageCollector: MessageCollector): Int {

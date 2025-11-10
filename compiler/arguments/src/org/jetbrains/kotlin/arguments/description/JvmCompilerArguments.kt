@@ -962,4 +962,14 @@ The default value is 'inline'.""".asReleaseDependent()
             introducedVersion = KotlinReleaseVersion.v2_2_20
         )
     }
+
+    compilerArgument {
+        name = "Xsimplified-downcast-messages"
+        description = "Simplified error messages when performing a downcast.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
 }

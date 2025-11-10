@@ -73,6 +73,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.scriptResolverEnvironment = from.scriptResolverEnvironment?.copyOf()
     to.scriptTemplates = from.scriptTemplates?.copyOf()
     to.serializeIr = from.serializeIr
+    to.simplifiedDowncastMessages = from.simplifiedDowncastMessages
     to.strictMetadataVersionSemantics = from.strictMetadataVersionSemantics
     to.stringConcat = from.stringConcat
     to.supportCompatqualCheckerFrameworkAnnotations = from.supportCompatqualCheckerFrameworkAnnotations

@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.codegen.fir
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.ir.AbstractIrCheckLocalVariablesTableTest
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.FirParser.LightTree
 
@@ -122,6 +121,14 @@ class FirLightTreeGenerateNotNullAssertionsTest : GenerateNotNullAssertionsTest(
 }
 
 class FirLightTreeSourceInfoGenTest : SourceInfoGenTest() {
+    override val useFir: Boolean
+        get() = true
+
+    override val firParser: FirParser
+        get() = LightTree
+}
+
+class FirLightTreeSimplifiedMessagesOnDowncastTest : SimplifiedMessagesOnDowncastTest() {
     override val useFir: Boolean
         get() = true
 

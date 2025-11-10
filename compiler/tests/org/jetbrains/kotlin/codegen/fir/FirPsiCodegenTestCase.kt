@@ -127,3 +127,11 @@ class FirPsiSourceInfoGenTest : SourceInfoGenTest() {
     override val firParser: FirParser
         get() = Psi
 }
+
+class FirPsiSimplifiedMessagesOnDowncastTest : SimplifiedMessagesOnDowncastTest() {
+    override val useFir: Boolean
+        get() = true
+
+    override val firParser: FirParser
+        get() = Psi
+}

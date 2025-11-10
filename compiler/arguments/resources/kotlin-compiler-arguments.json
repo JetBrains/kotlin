@@ -378,6 +378,12 @@
             "major": 2,
             "minor": 3,
             "patch": 20
+        },
+        {
+            "name": "2.4.0",
+            "major": 2,
+            "minor": 4,
+            "patch": 0
         }
     ],
     "types": {
@@ -5544,6 +5550,37 @@
                                 },
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "1.6.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                }
+                            },
+                            {
+                                "name": "Xsimplified-downcast-messages",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Simplified error messages when performing a downcast.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.4.0",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
                                     "removedVersion": null
