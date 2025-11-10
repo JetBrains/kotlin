@@ -301,6 +301,32 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testSanitizedBundleId() {
+        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().testTarget.family == Family.OSX)
+        val testName = "sanitizedBundleId"
+        val moduleName = "S@nitizedВundle Id" // NOTE: uses cyrillic В.
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR,
+            extras,
+            moduleName,
+            listOf(testSuiteDir.resolve(testName).resolve("lib.kt")),
+        )
+        val objCFrameworkCompilation = testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
+
+        val expectedBundleId = "sp-aces.da-sh-es.S-nitized-undle-Id"
+        val buildDir = testRunSettings.get<Binaries>().testBinariesDir
+        val infoPlist = buildDir.resolve("$moduleName.framework/Resources/Info.plist")
+        val infoPlistContents = infoPlist.readText()
+        listOf(
+            "<key>CFBundleIdentifier</key>\\s*<string>$expectedBundleId</string>",
+        ).forEach {
+            assertTrue(infoPlistContents.contains(Regex(it))) {
+                "${infoPlist.absolutePath} does not contain pattern `$it`:\n$infoPlistContents"
+            }
+        }
+    }
+
+    @Test
     fun testForwardDeclarations() {
         val testName = "forwardDeclarations"
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
