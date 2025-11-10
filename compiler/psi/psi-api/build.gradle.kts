@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
+
 plugins {
     kotlin("jvm")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
     id("java-test-fixtures")
     id("project-tests-convention")
 }
@@ -33,12 +36,14 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+private val stableNonPublicMarkers = listOf(
+    "org.jetbrains.kotlin.psi.KtImplementationDetail",
+    "org.jetbrains.kotlin.psi.KtNonPublicApi",
+    "org.jetbrains.kotlin.psi.KtExperimentalApi",
+)
+
 apiValidation {
-    nonPublicMarkers += listOf(
-        "org.jetbrains.kotlin.psi.KtImplementationDetail",
-        "org.jetbrains.kotlin.psi.KtNonPublicApi",
-        "org.jetbrains.kotlin.psi.KtExperimentalApi",
-    )
+    nonPublicMarkers += stableNonPublicMarkers
 }
 
 testsJar()
@@ -47,4 +52,9 @@ projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
         workingDir = rootDir
     }
+}
+
+val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+    outputFile = file("api/psi-api.foreign")
+    nonPublicMarkers.addAll(stableNonPublicMarkers)
 }

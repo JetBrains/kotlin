@@ -1,5 +1,8 @@
+import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
+
 plugins {
     kotlin("jvm")
+    id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
 }
 
 dependencies {
@@ -19,4 +22,13 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {}
+}
+
+private val stableNonPublicMarkers = listOf(
+    "org.jetbrains.kotlin.psi.KtImplementationDetail",
+)
+
+val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+    outputFile = file("api/psi-utils-api.foreign")
+    nonPublicMarkers.addAll(stableNonPublicMarkers)
 }
