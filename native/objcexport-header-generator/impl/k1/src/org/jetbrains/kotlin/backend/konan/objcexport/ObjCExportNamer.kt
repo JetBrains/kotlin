@@ -101,9 +101,9 @@ interface ObjCExportNamer {
 
     // Null means no NSEnum function.
     fun getNSEnumFunctionTypeName(descriptor: ClassDescriptor): String? =
-        descriptor.annotations.findAnnotation(FqName("kotlin.native.ObjCEnum"))?.let {
+        descriptor.annotations.findAnnotation(KonanFqNames.objCEnum)?.let {
             val name = it.allValueArguments.entries.find { it.key.asString() == "name" }?.value?.value?.toString()
-            name ?: "${getClassOrProtocolName(descriptor).objCName}_Enum"
+            name ?: "${getClassOrProtocolName(descriptor).objCName}NSEnum"
         }
 
     companion object {

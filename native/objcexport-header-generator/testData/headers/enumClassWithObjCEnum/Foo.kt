@@ -3,7 +3,7 @@ import kotlin.experimental.ExperimentalObjCEnum
 
 @file:OptIn(ExperimentalObjCEnum::class)
 
-@ObjCEnum("OBJCFoo")
+@ObjCEnum
 enum class Foo {
-    A, B, C
+    ALPHA, BAR_FOO, COPY
 }

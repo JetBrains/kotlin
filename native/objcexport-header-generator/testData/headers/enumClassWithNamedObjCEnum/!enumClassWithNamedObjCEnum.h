@@ -39,9 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 typedef NS_ENUM(int32_t, OBJCFoo) {
-  OBJCFooA NS_SWIFT_NAME(a) = 0,
-  OBJCFooB NS_SWIFT_NAME(b) = 1,
-  OBJCFooC NS_SWIFT_NAME(c) = 2,
+  OBJCFooAlpha NS_SWIFT_NAME(alpha) = 0,
+  OBJCFooBarFoo NS_SWIFT_NAME(barFoo) = 1,
+  OBJCFooTheCopy NS_SWIFT_NAME(theCopy) = 2,
 };
 
 
@@ -56,9 +56,9 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (readonly) OBJCFoo nsEnum;
-@property (class, readonly) Foo *a __attribute__((swift_name("a")));
-@property (class, readonly) Foo *b __attribute__((swift_name("b")));
-@property (class, readonly) Foo *c __attribute__((swift_name("c")));
+@property (class, readonly) Foo *alpha __attribute__((swift_name("alpha")));
+@property (class, readonly) Foo *barFoo __attribute__((swift_name("barFoo")));
+@property (class, readonly) Foo *theCopy __attribute__((swift_name("theCopy")));
 + (KotlinArray<Foo *> *)values __attribute__((swift_name("values()")));
 @property (class, readonly) NSArray<Foo *> *entries __attribute__((swift_name("entries")));
 @end

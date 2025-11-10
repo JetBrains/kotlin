@@ -1,10 +1,9 @@
-package nativeEnum
-
 import kotlin.native.ObjCEnum
 import kotlin.experimental.ExperimentalObjCEnum
 
-@OptIn(kotlin.experimental.ExperimentalObjCEnum::class)
+@file:OptIn(ExperimentalObjCEnum::class)
+
 @ObjCEnum("OBJCFoo")
-enum class MyKotlinEnum {
+enum class Foo {
     ALPHA, BAR_FOO, COPY
 }

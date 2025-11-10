@@ -2,13 +2,13 @@ import Kt
 
 
 private func testNativeEnumValues() throws {
-    let ktEnum = MyKotlinEnum.a
+    let ktEnum = MyKotlinEnum.alpha
     let nsEnum = ktEnum.nsEnum
 
     switch(nsEnum) {
-        case .a: try assertEquals(actual: nsEnum, expected: ktEnum.nsEnum)
-        case .b: try fail()
-        case .c: try fail()
+        case .alpha: try assertEquals(actual: nsEnum, expected: ktEnum.nsEnum)
+        case .barFoo: try fail()
+        case .theCopy: try fail()
     }
 }
 

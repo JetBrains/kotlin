@@ -17,7 +17,7 @@ fun ObjCExportContext.getNSEnumType(symbol: KaClassSymbol): String? {
     return if (annotation == null) {
         null
     } else if (annotation.arguments.isEmpty()) {
-        getObjCClassOrProtocolName(symbol).toString()
+        getObjCClassOrProtocolName(symbol).objCName + "NSEnum"
     } else {
         (annotation.arguments[0].expression as KaAnnotationValue.ConstantValue).value.value as String
     }

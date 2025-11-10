@@ -74,9 +74,9 @@ public expect annotation class ObjCName(val name: String = "", val swiftName: St
 
 /**
  * Instructs the Kotlin compiler to generate a NS_ENUM typedef for the annotated enum class. The name of the generated type will
- * be the name of the enum type with "Enum" appended. This name can be overridden with the "name" parameter, which is treated
+ * be the name of the enum type with "NSEnum" appended. This name can be overridden with the "name" parameter, which is treated
  * as an exact name. The enum literals will be prefixed with the type name, as they live in a global namespace.
- * Swift naming will automatically remove these disambiguation prefixes.
+ * Swift naming will automatically remove these disambiguation prefixes. The native values are accessible via the "nsEnum" property.
  */
 @Target(
     AnnotationTarget.CLASS,
