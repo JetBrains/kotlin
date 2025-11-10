@@ -4,15 +4,21 @@
  */
 package kotlin.wasm.internal
 
-// Based on the AssemblyScript implementation [https://github.com/AssemblyScript/assemblyscript/blob/1e0466ef94fa5cacd0984e4f31a0087de51538a8/std/assembly/util/number.ts]
+internal expect fun itoa32(inputValue: Int): String
+
+internal expect fun utoa32(inputValue: UInt): String
+
+internal expect fun itoa64(inputValue: Long): String
+
+internal expect fun utoa64(inputValue: ULong): String
 
 private enum class CharCodes(val code: Int) {
-//  PERCENT(0x25),
+    //  PERCENT(0x25),
     PLUS(0x2B),
     MINUS(0x2D),
     DOT(0x2E),
     _0(0x30),
-//  _1(0x31),
+    //  _1(0x31),
 //  _2(0x32),
 //  _3(0x33),
 //  _4(0x34),
@@ -37,122 +43,6 @@ private enum class CharCodes(val code: Int) {
 //  u(0x75),
 //  x(0x78),
 //  z(0x7A)
-}
-
-private fun digitToChar(input: Int): Char {
-    assert(input in 0..9)
-    return (CharCodes._0.code + input).toChar()
-}
-
-internal fun itoa32(inputValue: Int): String {
-    if (inputValue == 0) return "0"
-
-    val isNegative = inputValue < 0
-    val absValue = if (isNegative) -inputValue else inputValue
-    val absValueString = utoa32(absValue.toUInt())
-
-    return if (isNegative) "-$absValueString" else absValueString
-}
-
-internal fun utoa32(inputValue: UInt): String {
-    if (inputValue == 0U) return "0"
-
-    val decimals = decimalCount32(inputValue)
-    val buf = WasmCharArray(decimals)
-
-    utoaDecSimple(buf, inputValue, decimals)
-
-    return buf.createString()
-}
-
-private fun utoaDecSimple(buffer: WasmCharArray, numInput: UInt, offsetInput: Int) {
-    assert(numInput != 0U)
-    assert(buffer.len() > 0)
-    assert(offsetInput > 0 && offsetInput <= buffer.len())
-
-    var num = numInput
-    var offset = offsetInput
-    do {
-        val t = num / 10U
-        val r = num % 10U
-        num = t
-        offset--
-        buffer.set(offset, digitToChar(r.toInt()))
-    } while (num > 0U)
-}
-
-private fun utoaDecSimple64(buffer: WasmCharArray, numInput: ULong, offsetInput: Int) {
-    assert(numInput != 0UL)
-    assert(buffer.len() > 0)
-    assert(offsetInput > 0 && offsetInput <= buffer.len())
-
-    var num = numInput
-    var offset = offsetInput
-    do {
-        val t = num / 10U
-        val r = num % 10U
-        num = t
-        offset--
-        buffer.set(offset, digitToChar(r.toInt()))
-    } while (num > 0U)
-}
-
-
-private fun Boolean.toULong() = toInt().toULong()
-
-private fun decimalCount32(value: UInt): Int {
-    if (value < 100000u) {
-        if (value < 100u) {
-            return 1 + (value >= 10u).toInt()
-        } else {
-            return 3 + (value >= 10000u).toInt() + (value >= 1000u).toInt()
-        }
-    } else {
-        if (value < 10000000u) {
-            return 6 + (value >= 1000000u).toInt()
-        } else {
-            return 8 + (value >= 1000000000u).toInt() + (value >= 100000000u).toInt()
-        }
-    }
-}
-
-internal fun itoa64(inputValue: Long): String {
-    if (inputValue in Int.MIN_VALUE..Int.MAX_VALUE)
-        return itoa32(inputValue.toInt())
-
-    val isNegative = inputValue < 0
-    val absValue = if (isNegative) -inputValue else inputValue
-    val absValueString = utoa64(absValue.toULong())
-
-    return if (isNegative) "-$absValueString" else absValueString
-}
-
-internal fun utoa64(inputValue: ULong): String {
-    if (inputValue <= UInt.MAX_VALUE) return utoa32(inputValue.toUInt())
-    val decimals = decimalCount64High(inputValue)
-    val buf = WasmCharArray(decimals)
-
-    utoaDecSimple64(buf, inputValue, decimals)
-
-    return buf.createString()
-}
-
-// Count number of decimals for u64 values
-// In our case input value always greater than 2^32-1 so we can skip some parts
-private fun decimalCount64High(value: ULong): Int {
-    if (value < 1000000000000000UL) {
-        if (value < 1000000000000UL) {
-            return 10 + (value >= 100000000000UL).toInt() + (value >= 10000000000UL).toInt()
-        } else {
-            return 13 + (value >= 100000000000000UL).toInt() + (value >= 10000000000000UL).toInt()
-        }
-    } else {
-        if (value < 100000000000000000UL) {
-            return 16 + (value >= 10000000000000000UL).toInt()
-        } else {
-            return 18 + (value >= 10000000000000000000UL).toInt() + (value >= 1000000000000000000UL).toInt()
-        }
-    }
 }
 
 private const val MAX_DOUBLE_LENGTH = 28
@@ -244,6 +134,8 @@ private const val DOUBLE_EXPONENT_MASK = 0x7FF0000000000000L
 private const val DOUBLE_SIGNIFICANT_SIZE = 52  // Excluding hidden bit
 private const val DOUBLE_EXPONENT_BIAS = 0x3FF + DOUBLE_SIGNIFICANT_SIZE
 
+private fun Boolean.toULong() = toInt().toULong()
+
 private fun grisu2(value: Double, buffer: WasmCharArray, sign: Int, isSinglePrecision: Boolean): Int {
     var frc: ULong
     var exp: Int
@@ -333,6 +225,27 @@ private fun getCachedPower(minExp: Int) {
     _K = 348 - (index shl 3)    // decimal exponent no need lookup table
     _frc_pow = FRC_POWERS[index].toULong()
     _exp_pow = EXP_POWERS[index].toInt()
+}
+
+internal fun digitToChar(input: Int): Char {
+    assert(input in 0..9)
+    return (CharCodes._0.code + input).toChar()
+}
+
+internal fun decimalCount32(value: UInt): Int {
+    if (value < 100000u) {
+        if (value < 100u) {
+            return 1 + (value >= 10u).toInt()
+        } else {
+            return 3 + (value >= 10000u).toInt() + (value >= 1000u).toInt()
+        }
+    } else {
+        if (value < 10000000u) {
+            return 6 + (value >= 1000000u).toInt()
+        } else {
+            return 8 + (value >= 1000000000u).toInt() + (value >= 100000000u).toInt()
+        }
+    }
 }
 
 private fun genDigits(buffer: WasmCharArray, w_frc: ULong, mp_frc: ULong, mp_exp: Int, deltaInp: ULong, sign: Int): Int {
@@ -449,6 +362,17 @@ private class BufferWithOffset(val buf: WasmCharArray, val off: Int) {
     fun offsetABitMore(anotherOff: Int) = BufferWithOffset(buf, off + anotherOff)
 }
 
+private fun genExponent(buffer: BufferWithOffset, kInp: Int): Int {
+    var k = kInp
+    val sign = k < 0
+    if (sign) k = -k
+    val kStr = k.toString()
+    for (i in kStr.indices)
+        buffer[i + 1] = kStr[i]
+    buffer[0] = if (sign) CharCodes.MINUS.code.toChar() else CharCodes.PLUS.code.toChar()
+    return kStr.length + 1
+}
+
 private fun prettify(buffer: BufferWithOffset, lengthInp: Int, k: Int): Int {
     var length = lengthInp
     if (k == 0) {
@@ -494,15 +418,4 @@ private fun prettify(buffer: BufferWithOffset, lengthInp: Int, k: Int): Int {
         length += genExponent(buffer.offsetABitMore(len + 2), kk - 1)
         return length + 2
     }
-}
-
-private fun genExponent(buffer: BufferWithOffset, kInp: Int): Int {
-    var k = kInp
-    val sign = k < 0
-    if (sign) k = -k
-    val kStr = k.toString()
-    for (i in kStr.indices)
-        buffer[i + 1] = kStr[i]
-    buffer[0] = if (sign) CharCodes.MINUS.code.toChar() else CharCodes.PLUS.code.toChar()
-    return kStr.length + 1
 }

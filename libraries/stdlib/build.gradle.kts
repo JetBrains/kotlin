@@ -542,6 +542,7 @@ kotlin {
             dependsOn(wasmCommonMain)
             kotlin {
                 srcDir("wasm/wasi/builtins")
+                srcDir("wasm/wasi/internal")
                 srcDir("wasm/wasi/src")
             }
             languageSettings {

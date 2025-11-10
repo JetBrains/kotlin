@@ -17,8 +17,6 @@ import kotlin.wasm.internal.*
 public actual class String internal @WasmPrimitiveConstructor constructor(
     internal val internalStr: JsString,
     @kotlin.internal.IntrinsicConstEvaluation
-    private var _chars: WasmCharArray?,
-    @kotlin.internal.IntrinsicConstEvaluation
     public actual override val length: Int,
 ) : Comparable<String>, CharSequence {
     public actual companion object {}
@@ -31,7 +29,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun plus(other: Any?): String {
         val right = other.toString()
-        return String(jsConcat(this.internalStr, right.internalStr).unsafeCast(), null, this.length + right.length)
+        return String(jsConcat(this.internalStr, right.internalStr).unsafeCast(), this.length + right.length)
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -40,21 +38,9 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
         return jsCharCodeAt(this.internalStr, index).reinterpretAsChar()
     }
 
-    @Suppress("RETURN_VALUE_NOT_USED")
-    @kotlin.internal.IntrinsicConstEvaluation
-    internal val chars: WasmCharArray
-        get() {
-            if (_chars == null) {
-                val copy = WasmCharArray(length)
-                jsIntoCharCodeArray(internalStr, copy, 0)
-                _chars = copy
-            }
-            return _chars!!
-        }
-
     public actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
         checkStringBounds(startIndex, endIndex, length)
-        return String(jsSubstring(this.internalStr, startIndex, endIndex).unsafeCast(), null, endIndex - startIndex)
+        return String(jsSubstring(this.internalStr, startIndex, endIndex).unsafeCast(), endIndex - startIndex)
     }
 
     private fun checkStringBounds(startIndex: Int, endIndex: Int, length: Int) {
@@ -110,7 +96,14 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     }
 }
 
-internal actual fun WasmCharArray.createString(): String =
-    String(jsFromCharCodeArray(this, 0, this.len()).unsafeCast(), this, this.len())
+internal actual fun WasmCharArray.createString(): String {
+    val size = this.len()
+    return String(jsFromCharCodeArray(this, 0, size).unsafeCast(), size)
+}
 
-internal actual fun String.getChars() = this.chars
+@Suppress("RETURN_VALUE_NOT_USED")
+internal actual fun String.getChars(): WasmCharArray {
+    val copy = WasmCharArray(length)
+    jsIntoCharCodeArray(internalStr, copy, 0)
+    return copy
+}

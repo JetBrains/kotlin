@@ -6,7 +6,6 @@
 package kotlin
 
 import kotlin.wasm.internal.*
-import kotlin.math.min
 
 /**
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
@@ -153,7 +152,11 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     }
 }
 
-internal actual fun WasmCharArray.createString(): String =
-    String(null, this.len(), this)
+internal actual fun WasmCharArray.createString(): String {
+    val size = this.len()
+    val copy = WasmCharArray(size)
+    copyWasmArray(this, copy, 0, 0, size)
+    return String(null, size, copy)
+}
 
 internal actual fun String.getChars() = this.chars
