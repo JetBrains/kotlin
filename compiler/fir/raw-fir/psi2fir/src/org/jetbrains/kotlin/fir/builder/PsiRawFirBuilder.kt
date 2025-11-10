@@ -1692,7 +1692,7 @@ open class PsiRawFirBuilder(
             containingDeclarationSymbol: FirBasedSymbol<*>,
         ) {
             for (contextList in contextLists) {
-                contextList.contextParameters().mapTo(this) { contextParameterElement ->
+                contextList.contextParameters.mapTo(this) { contextParameterElement ->
                     contextParameterElement.toFirValueParameter(
                         defaultTypeRef = null,
                         containingDeclarationSymbol = containingDeclarationSymbol,
@@ -2625,7 +2625,7 @@ open class PsiRawFirBuilder(
                         contextReceiverList?.contextReceivers()?.mapNotNullTo(contextParameterTypeRefs) {
                             it.typeReference()?.toFirType()
                         }
-                        contextReceiverList?.contextParameters()?.mapNotNullTo(contextParameterTypeRefs) {
+                        contextReceiverList?.contextParameters?.mapNotNullTo(contextParameterTypeRefs) {
                             it.typeReference?.toFirType()
                         }
                     }

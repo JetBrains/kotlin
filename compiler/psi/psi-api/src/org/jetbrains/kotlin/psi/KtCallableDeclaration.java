@@ -65,7 +65,7 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclaration
             return Collections.emptyList();
         }
 
-        return contextParameterList.contextParameters();
+        return contextParameterList.getContextParameters();
     }
 
     @Override

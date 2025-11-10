@@ -1072,7 +1072,7 @@ class DeclarationsChecker(
     private fun checkContextParameters(modifierList: KtModifierList?) {
         val contextReceiverLists = modifierList?.contextParameterLists ?: return
         contextReceiverLists.forEach { contextReceiverList ->
-            if (contextReceiverList.contextParameters().isNotEmpty()) {
+            if (contextReceiverList.contextParameters.isNotEmpty()) {
                 trace.report(CONTEXT_PARAMETERS_UNSUPPORTED.on(contextReceiverList))
             }
         }

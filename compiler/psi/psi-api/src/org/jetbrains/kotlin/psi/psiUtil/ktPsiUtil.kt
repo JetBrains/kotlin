@@ -377,7 +377,7 @@ fun PsiElement.parameterIndex(): Int {
     val parent = parent
     return when (this) {
         is KtParameter if parent is KtParameterList -> parent.parameters.indexOf(this)
-        is KtParameter if parent is KtContextParameterList -> parent.contextParameters().indexOf(this)
+        is KtParameter if parent is KtContextParameterList -> parent.contextParameters.indexOf(this)
         is PsiParameter if parent is PsiParameterList -> parent.getParameterIndex(this)
         else -> -1
     }

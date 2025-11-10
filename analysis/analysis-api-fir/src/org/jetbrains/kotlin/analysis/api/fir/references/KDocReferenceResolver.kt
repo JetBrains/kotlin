@@ -229,7 +229,7 @@ internal object KDocReferenceResolver {
             }
         }
 
-        owner.modifierList?.contextParameterLists?.flatMap { it.contextParameters() }?.forEach { contextParameter ->
+        owner.modifierList?.contextParameterLists?.flatMap { it.contextParameters }?.forEach { contextParameter ->
             if (contextParameter.nameAsName == name) {
                 add(contextParameter.symbol)
             }

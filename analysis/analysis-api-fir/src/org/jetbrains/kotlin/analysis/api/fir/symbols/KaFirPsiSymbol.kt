@@ -292,7 +292,7 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaContextParamet
 
         with(analysisSession) {
             lists.flatMap { list ->
-                val contextParameters = list.contextParameters()
+                val contextParameters = list.contextParameters
                 if (contextParameters.isNotEmpty()) {
                     contextParameters.map { it.symbol as KaContextParameterSymbol }
                 } else {
