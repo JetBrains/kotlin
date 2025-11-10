@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -71,7 +70,7 @@ fun generateValuesFunction(
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ): FirNamedFunction {
-    return FirNamedFunction {
+    return buildNamedFunction {
         val sourceElement = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.EnumValuesFunction)
 
         source = sourceElement
