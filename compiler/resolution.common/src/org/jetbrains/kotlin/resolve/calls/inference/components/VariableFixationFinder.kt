@@ -100,7 +100,6 @@ class VariableFixationFinder(
 
         // *** The following block constitutes what "ready for fixation" used to mean in the old fixation code ***
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
-        HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE,
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS, // A proper trivial constraint from arguments, except for `Nothing(?) <: T`
         HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES,
         HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT,
@@ -171,7 +170,6 @@ class VariableFixationFinder(
             it[Q.HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT] = it[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased
             it[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables()
             it[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS] = !allConstraintsTrivialOrNonProper()
-            it[Q.HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE] = !dependencyProvider.isVariableRelatedToAnyOutputType(this)
             it[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] = !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
 
             it[Q.REIFIED] = isReified()
