@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CoreSymbolicationImageListType
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
-import org.jetbrains.kotlin.config.nativeBinaryOptions.MacAbi
 import org.jetbrains.kotlin.config.nativeBinaryOptions.ObjCExportSuspendFunctionLaunchThreadRestriction
 import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeLinkageStrategy
@@ -53,28 +52,34 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
      * Determine if we compile for iOS target with Mac ABI (Catalyst).
      * Avoid using this property if possible. Instead, use [TargetTriple.isMacabi] as it is more direct.
      */
-    val macabi: MacAbi? = run {
-        val macabi = configuration.get(BinaryOptions.macabi)
+    val macabi: Boolean = run {
+        val macabi = configuration.getBoolean(BinaryOptions.macabi)
         // We can't access `target` property due to circular dependency.
-        if (macabi != null && configuration.get(KonanConfigKeys.TARGET) != "ios_arm64") {
+        val target = configuration.get(KonanConfigKeys.TARGET)
+        if (macabi && target !in setOf("ios_simulator_arm64", "ios_x64")) {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, "macabi is only supported for iosArm64 target")
-            null
+            false
         } else macabi
     }
 
     internal val distribution = run {
         val overridenProperties = mutableMapOf<String, String>().apply {
-            if (macabi != null) {
-                val arch = when (macabi) {
-                    MacAbi.X64 -> "x86_64"
-                    MacAbi.ARM64 -> "arm64"
-                }
-                // Overriding target-triple via properties is a bit better alternative than
-                // Tracking all usages of `configurables.targeTriple` and making adjustments on call-site.
+            if (macabi) {
+                val target = configuration.get(KonanConfigKeys.TARGET)
+                // Overriding properties is a bit better alternative than
+                // Tracking all usages of `configurables` in code and making adjustments on call-site.
                 // Still ugly, of course.
-                put("targetTriple.ios_arm64", "$arch-apple-ios-macabi")
-                // macabi implies usage of macOS sysroot.
-                put("targetSysRoot.ios_arm64", "\$targetSysRoot.macos_arm64")
+                when (target) {
+                    "ios_x64" -> {
+                        put("targetTriple.$target", "x86_64-apple-ios-macabi")
+                        put("targetSysRoot.$target", "\$targetSysRoot.macos_x64")
+                    }
+                    "ios_simulator_arm64" -> {
+                        // macabi implies usage of macOS sysroot.
+                        put("targetTriple.$target", "arm64-apple-ios-macabi")
+                        put("targetSysRoot.$target", "\$targetSysRoot.macos_arm64")
+                    }
+                }
             }
             configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let(this::putAll)
             configuration.get(KonanConfigKeys.LLVM_VARIANT)?.getKonanPropertiesEntry()?.let { (key, value) ->
@@ -535,10 +540,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (genericSafeCasts != defaultGenericSafeCasts)
             append("-generic_safe_casts${if (genericSafeCasts) "ENABLE" else "DISABLE"}")
         // Ideally, we would like to use targetTriple instead, but this requires a lot of changes in our test infrastructure.
-        when (macabi) {
-            MacAbi.X64 -> append("-macabi_x64")
-            MacAbi.ARM64 -> append("-macabi_arm64")
-            null -> {}
+        if (macabi) {
+            append("-macabi")
         }
     }
 
