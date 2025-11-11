@@ -1,0 +1,33 @@
+Restored type is the same as the original one
+
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: NestedExample
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: NestedExample
+      symbol: KaNamedClassSymbol(NestedExample)
+      typeArguments: [
+        KaCapturedType:
+          abbreviation: null
+          annotations: []
+          projection: *
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(NestedExample)
+  typeArguments: [
+    KaCapturedType:
+      abbreviation: null
+      annotations: []
+      projection: *
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false

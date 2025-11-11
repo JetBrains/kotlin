@@ -244,6 +244,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypePointerConsistencyTestGe
   }
 
   @Test
+  @TestMetadata("recursiveType.kt")
+  public void testRecursiveType() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/recursiveType.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveTypeCaptured.kt")
+  public void testRecursiveTypeCaptured() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/recursiveTypeCaptured.kt");
+  }
+
+  @Test
   @TestMetadata("symbolNotFound.kt")
   public void testSymbolNotFound() {
     runTest("analysis/analysis-api/testData/types/typePointers/consistency/symbolNotFound.kt");
