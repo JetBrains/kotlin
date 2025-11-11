@@ -942,16 +942,6 @@ public class FirJsTypeScriptExportTestGenerated extends AbstractFirJsTypeScriptE
   }
 
   @Nested
-  @TestMetadata("js/js.translator/testData/typescript-export/js/suspend-functions-in-exported-file")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Suspend_functions_in_exported_file {
-    @Test
-    public void testAllFilesPresentInSuspend_functions_in_exported_file() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/suspend-functions-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
-    }
-  }
-
-  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/tuples")
   @TestDataPath("$PROJECT_ROOT")
   public class Tuples {
