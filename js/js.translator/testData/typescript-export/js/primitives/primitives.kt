@@ -152,6 +152,21 @@ val _array_n_array_string: Array<Array<String>?> = arrayOf(arrayOf(":)"))
 val _fun_n_int_unit: (Int?) -> Unit = { x -> }
 
 @JsExport
+val _fun_n_int_unit_class: Function1<Int?, Unit> = { x -> }
+
+@JsExport
+val _kfun_n_int_unit: kotlin.reflect.KFunction1<Int?, Unit> = _fun_n_int_unit_class::invoke
+
+@JsExport
+val _fun_n_int_unit_suspend: suspend (Int?) -> Unit = { x -> }
+
+@JsExport
+val _fun_n_int_unit_suspend_class: kotlin.coroutines.SuspendFunction1<Int?, Unit> = { x -> }
+
+@JsExport
+val _kfun_n_int_unit_suspend: kotlin.reflect.KSuspendFunction1<Int?, Unit> = _fun_n_int_unit_suspend::invoke
+
+@JsExport
 val _fun_n_boolean_n_int_n_string_n_intarray: (Boolean?, Int?, String?) -> IntArray? =
     { b, i, s -> null }
 

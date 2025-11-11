@@ -68,6 +68,7 @@ assert(x instanceof Array);
 assert(x == null ? false : (x[0] === ":)"));
 
 foo._fun_n_int_unit(null);
+foo._fun_n_int_unit_class(null);
 
 assert(foo._fun_n_boolean_n_int_n_string_n_intarray(false, undefined, "ZZZ") == null);
 assert(foo._n_curried_fun(10)(null)(30) === 40);
