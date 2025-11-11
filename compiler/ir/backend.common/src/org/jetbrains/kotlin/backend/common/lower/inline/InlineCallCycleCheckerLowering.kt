@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
@@ -15,40 +16,55 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 internal data class CallNode(val function: IrFunction, val callLocation: IrBody)
 
 internal data class CallEdge(val call: IrCall?, val callNode: CallNode)
 
-class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(val context: Context) : ModuleLoweringPass {
+class InlineCallCycleCheckerLowering<Context : LoweringContext>(val context: Context) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         val callGraph = mutableMapOf<CallNode, MutableSet<CallEdge>>()
 
         irModule.accept(IrInlineCallGraphBuilder(callGraph), null)
-        traverseCallGraph(callGraph, context.diagnosticReporter)
+        val diagnosticReporter = (context as? PreSerializationLoweringContext)?.diagnosticReporter
+        traverseCallGraph(callGraph, diagnosticReporter)
     }
 
     private fun traverseCallGraph(
         callGraph: MutableMap<CallNode, MutableSet<CallEdge>>,
-        diagnosticReporter: IrDiagnosticReporter,
+        diagnosticReporter: IrDiagnosticReporter?,
     ) {
         val visited = mutableSetOf<CallNode>()
         val completed = mutableSetOf<CallNode>()
         val inlineCallsStack = mutableListOf<CallEdge>()
 
-        fun reportInlineCallCycle(caller: IrFunction, callee: CallEdge) = callee.call?.let { call ->
-            diagnosticReporter.at(call, caller.file).report(CommonBackendErrors.INLINE_CALL_CYCLE, callee.callNode.function)
-
+        fun reportInlineCallCycle(edgesInCycle: List<CallEdge>) {
+            if (diagnosticReporter != null) {
+                (edgesInCycle + edgesInCycle.first()).zipWithNext().forEach { (callerEdge, calleeEdge) ->
+                    calleeEdge.call?.let { call ->
+                        diagnosticReporter
+                            .at(call, callerEdge.callNode.function.file)
+                            .report(CommonBackendErrors.INLINE_CALL_CYCLE, calleeEdge.callNode.function)
+                    }
+                }
+            } else {
+                val errorMessage = buildString {
+                    appendLine("Inline cycle detected:")
+                    for (edge in edgesInCycle) {
+                        appendLine("The '${edge.callNode.function.fqNameWhenAvailable}' invocation is a part of inline cycle",)
+                    }
+                }
+                error(errorMessage)
+            }
         }
 
         fun CallNode.dfs(call: IrCall?) {
             if (visited.contains(this)) {
                 if (!completed.contains(this)) {
                     val edgesInCycle = inlineCallsStack.takeLastWhile { (_, callNode) -> callNode != this } + CallEdge(call, this)
-                    (edgesInCycle + edgesInCycle.first()).zipWithNext().forEach { (callerEdge, calleeEdge) ->
-                        reportInlineCallCycle(callerEdge.callNode.function, calleeEdge)
-                    }
+                    reportInlineCallCycle(edgesInCycle)
                 }
                 return
             }
