@@ -1,7 +1,8 @@
 public abstract class CIterator /* test.CIterator*/<Elem>  implements java.util.Iterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
-  public  CIterator();//  .ctor()
-
+  @java.lang.Override()
   public void remove();//  remove()
+
+  public  CIterator();//  .ctor()
 }
 
 public abstract class CIterator2 /* test.CIterator2*/<Elem>  implements java.util.Iterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
@@ -11,9 +12,10 @@ public abstract class CIterator2 /* test.CIterator2*/<Elem>  implements java.uti
   @java.lang.Override()
   public boolean hasNext();//  hasNext()
 
-  public  CIterator2();//  .ctor()
-
+  @java.lang.Override()
   public void remove();//  remove()
+
+  public  CIterator2();//  .ctor()
 }
 
 public class CIterator3 /* test.CIterator3*/<Elem>  implements java.util.Iterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
@@ -23,7 +25,8 @@ public class CIterator3 /* test.CIterator3*/<Elem>  implements java.util.Iterato
   @java.lang.Override()
   public boolean hasNext();//  hasNext()
 
-  public  CIterator3();//  .ctor()
-
+  @java.lang.Override()
   public void remove();//  remove()
+
+  public  CIterator3();//  .ctor()
 }
