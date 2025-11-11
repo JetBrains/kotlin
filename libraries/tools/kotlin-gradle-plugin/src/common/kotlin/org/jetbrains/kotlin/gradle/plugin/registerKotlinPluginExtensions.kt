@@ -68,9 +68,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, AddKotlinPlatformIntegersSupportLibrary)
         register(project, FinalizeConfigurationFusMetricAction)
 
-        if (isAbiValidationEnabled) {
-            register(project, AbiValidationSetupAction)
-        }
+        register(project, AbiValidationSetupAction)
 
         if (isJvm || isMultiplatform) {
             register(project, ScriptingGradleSubpluginSetupAction)
@@ -207,8 +205,6 @@ internal fun Project.registerKotlinPluginExtensions() {
 }
 
 private val Project.isKmpProjectIsolationEnabled get() = PropertiesProvider(project).kotlinKmpProjectIsolationEnabled
-
-private val Project.isAbiValidationEnabled get() = !PropertiesProvider(project).abiValidationDisabled
 
 /* Helper functions to make configuration code above easier to read */
 

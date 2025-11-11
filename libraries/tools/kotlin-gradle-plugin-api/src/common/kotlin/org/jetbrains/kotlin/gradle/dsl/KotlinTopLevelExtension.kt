@@ -12,6 +12,8 @@ import org.gradle.api.provider.Property
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 
 /**
@@ -81,6 +83,18 @@ interface KotlinTopLevelExtension : KotlinTopLevelExtensionConfig, KotlinSourceS
     @ExperimentalKotlinGradlePluginApi
     fun <T : Named> NamedDomainObjectContainer<T>.invokeWhenCreated(
         name: String,
-        configure: T.() -> Unit
+        configure: T.() -> Unit,
     )
+
+    /**
+     * TODO
+     */
+    @ExperimentalAbiValidation
+    val abiValidation: AbiValidationExtension
+
+    /**
+     * TODO
+     */
+    @ExperimentalAbiValidation
+    fun abiValidation(action: Action<AbiValidationExtension>)
 }

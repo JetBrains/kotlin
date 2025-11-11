@@ -9,8 +9,6 @@ package org.jetbrains.kotlin.gradle.abi
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.abi.utils.*
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -26,7 +24,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         androidProject(gradleVersion, agpVersion, jdkVersion, applyBcvPlugin = true) {
-            abiValidation<AbiValidationExtension> {
+            abiValidation {
                 enabled.set(true)
             }
 
@@ -47,7 +45,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         kmpWithAndroidProject(gradleVersion, agpVersion, jdkVersion, applyBcvPlugin = true) {
-            abiValidation<AbiValidationMultiplatformExtension> {
+            abiValidation {
                 enabled.set(true)
             }
 
