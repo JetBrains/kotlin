@@ -23,24 +23,21 @@ internal data class CallEdge(val call: IrCall?, val callNode: CallNode)
 
 class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(val context: Context) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
-        val callsInInlineCycle = mutableSetOf<IrCall>()
         val callGraph = mutableMapOf<CallNode, MutableSet<CallEdge>>()
 
         irModule.accept(IrInlineCallGraphBuilder(callGraph), null)
-        traverseCallGraph(callGraph, context.diagnosticReporter, callsInInlineCycle)
+        traverseCallGraph(callGraph, context.diagnosticReporter)
     }
 
     private fun traverseCallGraph(
         callGraph: MutableMap<CallNode, MutableSet<CallEdge>>,
         diagnosticReporter: IrDiagnosticReporter,
-        callsInInlineCycle: MutableSet<IrCall>,
     ) {
         val visited = mutableSetOf<CallNode>()
         val completed = mutableSetOf<CallNode>()
         val inlineCallsStack = mutableListOf<CallEdge>()
 
         fun reportInlineCallCycle(caller: IrFunction, callee: CallEdge) = callee.call?.let { call ->
-            callsInInlineCycle.add(call)
             diagnosticReporter.at(call, caller.file).report(CommonBackendErrors.INLINE_CALL_CYCLE, callee.callNode.function)
 
         }
