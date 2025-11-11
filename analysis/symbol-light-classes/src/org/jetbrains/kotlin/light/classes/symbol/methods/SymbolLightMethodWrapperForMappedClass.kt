@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightIdentifier
+import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.impl.light.LightParameter
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.javadoc.PsiDocComment
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.psi.KtDeclaration
 import javax.swing.Icon
 
@@ -111,7 +113,32 @@ internal class SymbolLightMethodWrapperForMappedClass(
 
     override fun getDocComment(): PsiDocComment? = javaMethod.docComment
 
-    override fun getModifierList(): PsiModifierList = javaMethod.modifierList
+    private val _modifierList: PsiModifierList by lazyPub {
+        object : LightModifierList(manager, language) {
+            override fun getParent(): PsiElement = this@SymbolLightMethodWrapperForMappedClass
+
+            private val overrideAnnotation by lazy {
+                SymbolLightSimpleAnnotation(fqName = CommonClassNames.JAVA_LANG_OVERRIDE, parent = this)
+            }
+
+            private val allAnnotations: Array<PsiAnnotation> by lazy { arrayOf(overrideAnnotation) }
+
+            override fun hasModifierProperty(name: String): Boolean =
+                this@SymbolLightMethodWrapperForMappedClass.hasModifierProperty(name)
+
+            override fun hasExplicitModifier(name: String): Boolean = hasModifierProperty(name)
+
+            override fun getAnnotations(): Array<PsiAnnotation> = allAnnotations
+
+            override fun findAnnotation(qualifiedName: String): PsiAnnotation? =
+                if (qualifiedName == CommonClassNames.JAVA_LANG_OVERRIDE) overrideAnnotation else null
+
+            override fun hasAnnotation(qualifiedName: String): Boolean =
+                qualifiedName == CommonClassNames.JAVA_LANG_OVERRIDE
+        }
+    }
+
+    override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun isDeprecated(): Boolean = javaMethod.isDeprecated
 

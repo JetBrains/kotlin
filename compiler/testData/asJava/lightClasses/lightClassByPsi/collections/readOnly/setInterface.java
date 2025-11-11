@@ -1,25 +1,35 @@
 public abstract class CSet /* test.CSet*/<Elem>  implements test.ISet<Elem> {
-  public  CSet();//  .ctor()
-
+  @java.lang.Override()
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
+  @java.lang.Override()
   public abstract int getSize();//  getSize()
 
+  @java.lang.Override()
   public boolean add(Elem);//  add(Elem)
 
+  @java.lang.Override()
   public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
 
+  @java.lang.Override()
   public boolean remove(java.lang.Object);//  remove(java.lang.Object)
 
+  @java.lang.Override()
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
+  @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
+  @java.lang.Override()
   public final int size();//  size()
 
+  @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
 
+  @java.lang.Override()
   public void clear();//  clear()
+
+  public  CSet();//  .ctor()
 }
 
 public abstract class CSet2 /* test.CSet2*/<Elem>  implements test.ISet<Elem> {
@@ -28,34 +38,45 @@ public abstract class CSet2 /* test.CSet2*/<Elem>  implements test.ISet<Elem> {
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
   @java.lang.Override()
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  @java.lang.Override()
+  public boolean add(Elem);//  add(Elem)
+
+  @java.lang.Override()
+  public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
+
+  @java.lang.Override()
+  public boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
+
+  @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public final int size();//  size()
 
   @java.lang.Override()
   public int getSize();//  getSize()
 
-  public  CSet2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.ISet<Elem>);//  .ctor(@org.jetbrains.annotations.NotNull() test.ISet<Elem>)
-
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
-
-  public boolean add(Elem);//  add(Elem)
-
-  public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
-
-  public boolean contains(java.lang.Object);//  contains(java.lang.Object)
-
-  public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
-
-  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
-
-  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
-
-  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
-
-  public final int size();//  size()
-
+  @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
 
+  @java.lang.Override()
   public void clear();//  clear()
+
+  public  CSet2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.ISet<Elem>);//  .ctor(@org.jetbrains.annotations.NotNull() test.ISet<Elem>)
 }
 
 public class CSet3 /* test.CSet3*/<Elem>  implements test.ISet<Elem> {
@@ -64,34 +85,45 @@ public class CSet3 /* test.CSet3*/<Elem>  implements test.ISet<Elem> {
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
   @java.lang.Override()
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  @java.lang.Override()
+  public boolean add(Elem);//  add(Elem)
+
+  @java.lang.Override()
+  public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
+
+  @java.lang.Override()
+  public boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
+
+  @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public final int size();//  size()
 
   @java.lang.Override()
   public int getSize();//  getSize()
 
-  public  CSet3();//  .ctor()
-
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
-
-  public boolean add(Elem);//  add(Elem)
-
-  public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
-
-  public boolean contains(java.lang.Object);//  contains(java.lang.Object)
-
-  public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
-
-  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
-
-  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
-
-  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
-
-  public final int size();//  size()
-
+  @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
 
+  @java.lang.Override()
   public void clear();//  clear()
+
+  public  CSet3();//  .ctor()
 }
 
 public abstract interface ISet /* test.ISet*/<Elem>  extends java.util.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {

@@ -1,7 +1,8 @@
 public abstract class CMapEntry /* test.CMapEntry*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
-  public  CMapEntry();//  .ctor()
-
+  @java.lang.Override()
   public VElem setValue(VElem);//  setValue(VElem)
+
+  public  CMapEntry();//  .ctor()
 }
 
 public abstract class CMapEntry2 /* test.CMapEntry2*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
@@ -11,9 +12,10 @@ public abstract class CMapEntry2 /* test.CMapEntry2*/<KElem, VElem>  implements 
   @java.lang.Override()
   public VElem getValue();//  getValue()
 
-  public  CMapEntry2();//  .ctor()
-
+  @java.lang.Override()
   public VElem setValue(VElem);//  setValue(VElem)
+
+  public  CMapEntry2();//  .ctor()
 }
 
 public class CMapEntry3 /* test.CMapEntry3*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
@@ -23,7 +25,8 @@ public class CMapEntry3 /* test.CMapEntry3*/<KElem, VElem>  implements java.util
   @java.lang.Override()
   public VElem getValue();//  getValue()
 
-  public  CMapEntry3();//  .ctor()
-
+  @java.lang.Override()
   public VElem setValue(VElem);//  setValue(VElem)
+
+  public  CMapEntry3();//  .ctor()
 }

@@ -1,7 +1,8 @@
 public abstract class CMapEntry /* test.CMapEntry*/ implements test.IMapEntry {
-  public  CMapEntry();//  .ctor()
-
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.String setValue(@org.jetbrains.annotations.NotNull() java.lang.String);//  setValue(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  public  CMapEntry();//  .ctor()
 }
 
 public abstract class CMapEntry2 /* test.CMapEntry2*/ implements test.IMapEntry {
@@ -13,9 +14,10 @@ public abstract class CMapEntry2 /* test.CMapEntry2*/ implements test.IMapEntry 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getValue();//  getValue()
 
-  public  CMapEntry2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMapEntry);//  .ctor(@org.jetbrains.annotations.NotNull() test.IMapEntry)
-
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.String setValue(@org.jetbrains.annotations.NotNull() java.lang.String);//  setValue(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  public  CMapEntry2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMapEntry);//  .ctor(@org.jetbrains.annotations.NotNull() test.IMapEntry)
 }
 
 public class CMapEntry3 /* test.CMapEntry3*/ implements test.IMapEntry {
@@ -27,9 +29,10 @@ public class CMapEntry3 /* test.CMapEntry3*/ implements test.IMapEntry {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getValue();//  getValue()
 
-  public  CMapEntry3();//  .ctor()
-
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.String setValue(@org.jetbrains.annotations.NotNull() java.lang.String);//  setValue(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  public  CMapEntry3();//  .ctor()
 }
 
 public abstract interface IMapEntry /* test.IMapEntry*/ extends java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
