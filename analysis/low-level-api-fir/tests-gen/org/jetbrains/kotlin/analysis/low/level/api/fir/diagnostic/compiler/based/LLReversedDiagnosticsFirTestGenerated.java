@@ -6933,6 +6933,18 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     @TestDataPath("$PROJECT_ROOT")
     public class Multiplatform {
       @Test
+      @TestMetadata("actualizationToKotlinCompiledAnnotation.kt")
+      public void testActualizationToKotlinCompiledAnnotation() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/multiplatform/actualizationToKotlinCompiledAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("actualizationToKotlinCompiledAnnotation_pre22Library.kt")
+      public void testActualizationToKotlinCompiledAnnotation_pre22Library() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/multiplatform/actualizationToKotlinCompiledAnnotation_pre22Library.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInMultiplatform() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/multiplatform"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
