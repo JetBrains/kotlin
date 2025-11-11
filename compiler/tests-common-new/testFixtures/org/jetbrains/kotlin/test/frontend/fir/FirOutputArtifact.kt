@@ -30,6 +30,11 @@ abstract class FirOutputArtifact(val partsForDependsOnModules: List<FirOutputPar
         get() = FrontendKinds.FIR
 
     val mainFirFilesByTestFile: Map<TestFile, FirFile> by lazy { allFirFilesByTestFile.filterKeys { !it.isAdditional } }
+
+    abstract val allFirFiles: Collection<FirFile>
 }
 
-class FirOutputArtifactImpl(parts: List<FirOutputPartForDependsOnModule>) : FirOutputArtifact(parts)
+class FirOutputArtifactImpl(parts: List<FirOutputPartForDependsOnModule>) : FirOutputArtifact(parts) {
+    override val allFirFiles: Collection<FirFile>
+        get() = allFirFilesByTestFile.values
+}

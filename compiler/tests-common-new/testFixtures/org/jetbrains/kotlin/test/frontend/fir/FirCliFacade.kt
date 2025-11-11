@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
@@ -67,7 +68,10 @@ abstract class FirCliFacade<Phase, OutputPipelineArtifact>(
 class FirCliBasedOutputArtifact<A : FrontendPipelineArtifact>(
     val cliArtifact: A,
     partsForDependsOnModules: List<FirOutputPartForDependsOnModule>,
-) : FirOutputArtifact(partsForDependsOnModules)
+) : FirOutputArtifact(partsForDependsOnModules) {
+    override val allFirFiles: Collection<FirFile>
+        get() = cliArtifact.frontendOutput.outputs.flatMap { it.fir }
+}
 
 fun SingleModuleFrontendOutput.toTestOutputPart(
     correspondingModule: TestModule,
