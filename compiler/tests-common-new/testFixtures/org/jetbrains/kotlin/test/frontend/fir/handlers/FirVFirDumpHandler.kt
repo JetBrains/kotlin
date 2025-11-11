@@ -29,7 +29,7 @@ class FirVFirDumpHandler(
             if (FirDiagnosticsDirectives.DUMP_VFIR !in currentModule.directives) return
             val builderForModule = dumper.builderForModule(currentModule)
 
-            val allFiles = collectFilesForRendering(info, part)
+            val allFiles = collectFilesForRendering(module, info, part)
 
             part.session.lazyDeclarationResolver.startResolvingPhase(FirResolvePhase.BODY_RESOLVE)
 

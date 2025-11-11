@@ -25,8 +25,13 @@ data class WebFrontendPipelineArtifact(
     val moduleStructure: ModulesStructure,
     val hasErrors: Boolean,
 ) : FrontendPipelineArtifact() {
-    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector) =
-        copy(diagnosticCollector = newDiagnosticsCollector)
+    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): WebFrontendPipelineArtifact {
+        return copy(diagnosticCollector = newDiagnosticsCollector)
+    }
+
+    override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
+        return copy(frontendOutput = newFrontendOutput)
+    }
 }
 
 data class JsFir2IrPipelineArtifact(

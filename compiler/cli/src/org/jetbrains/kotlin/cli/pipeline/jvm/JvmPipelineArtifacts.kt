@@ -28,8 +28,13 @@ data class JvmFrontendPipelineArtifact(
     override val diagnosticCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
 ) : FrontendPipelineArtifact() {
-    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector) =
-        copy(diagnosticCollector = newDiagnosticsCollector)
+    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): JvmFrontendPipelineArtifact {
+        return copy(diagnosticCollector = newDiagnosticsCollector)
+    }
+
+    override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
+        return copy(frontendOutput = newFrontendOutput)
+    }
 }
 
 data class JvmFir2IrPipelineArtifact(

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.addDeclarationToParent
 import org.jetbrains.kotlin.fir.backend.generators.setParent
 import org.jetbrains.kotlin.fir.backend.utils.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded
-import org.jetbrains.kotlin.fir.backend.utils.createFilesWithGeneratedDeclarations
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -688,9 +687,12 @@ class Fir2IrConverter(
             val allFirFiles = buildList {
                 addAll(session.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded())
                 addAll(firFiles)
-                val generatedFiles = session.createFilesWithGeneratedDeclarations()
-                addAll(generatedFiles)
-                generatedFiles.forEach { components.firProvider.recordFile(it) }
+            }
+
+            for (firFile in firFiles) {
+                if (firFile.origin == FirDeclarationOrigin.Synthetic.PluginFile) {
+                    components.firProvider.recordFile(firFile)
+                }
             }
 
             components.converter.runSourcesConversion(allFirFiles, irModuleFragment, components.fir2IrVisitor)

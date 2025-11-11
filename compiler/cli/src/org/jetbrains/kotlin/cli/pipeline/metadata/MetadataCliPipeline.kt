@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.PipelineContext
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -17,6 +18,7 @@ class MetadataCliPipeline(override val defaultPerformanceManager: PerformanceMan
     override fun createCompoundPhase(arguments: K2MetadataCompilerArguments): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2MetadataCompilerArguments>, *> {
         return MetadataConfigurationPipelinePhase then
                 MetadataFrontendPipelinePhase then
+                FrontendFilesForPluginsGenerationPipelinePhase() then
                 serializerPhase(arguments)
     }
 

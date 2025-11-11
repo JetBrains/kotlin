@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.native.firFrontendWithLightTree
 import org.jetbrains.kotlin.native.firFrontendWithPsi
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 
@@ -20,11 +21,15 @@ internal val FIRPhase = createSimpleNamedCompilerPhase(
         "FirFrontend",
         outputIfNotEnabled = { _, _, _, _ -> FirOutput.ShouldNotGenerateCode }
 ) { context: PhaseContext, input: KotlinCoreEnvironment ->
-    if (input.configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)) {
+    var output = if (input.configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)) {
         context.firFrontendWithLightTree(input)
     } else {
         context.firFrontendWithPsi(input)
     }
+    if (output is FirOutput.Full) {
+        output = FirOutput.Full(FrontendFilesForPluginsGenerationPipelinePhase.createFilesWithGeneratedDeclarations(output.firResult))
+    }
+    output
 }
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runFirFrontend(environment: KotlinCoreEnvironment): FirOutput {
