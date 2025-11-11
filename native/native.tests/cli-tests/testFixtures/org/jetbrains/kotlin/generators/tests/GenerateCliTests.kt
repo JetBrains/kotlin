@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.konan.test.cli.AbstractNativeCliTest
 
-fun main() {
+fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     val mainClassName = TestGeneratorUtil.getMainClassName()
 
-    generateTestGroupSuiteWithJUnit4(arrayOf(), mainClassName) {
-        testGroup("native/native.tests/cli-tests/tests-gen", "native/native.tests/cli-tests/testData") {
+    val testsRoot = args[0]
+    generateTestGroupSuiteWithJUnit4(args, mainClassName) {
+        testGroup(testsRoot, "native/native.tests/cli-tests/testData") {
             testClass<AbstractNativeCliTest> {
                 model("cli", extension = "args", testMethod = "doNativeTest", recursive = false)
             }
