@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmJsSingleModuleOnlyConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendSingleModuleFacade
@@ -93,3 +94,15 @@ open class AbstractFirWasmJsCodegenSingleModuleInteropTest : AbstractWasmJsCodeg
     pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop",
     testGroupOutputDirPrefix = "codegen/wasmJsSingleModuleInterop"
 )
+
+open class AbstractFirWasmTypeScriptExportSingleModuleTest : AbstractWasmJsCodegenSingleModuleTest(
+    "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/wasm/",
+    "typescript-export-single-module/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS
+        }
+    }
+}

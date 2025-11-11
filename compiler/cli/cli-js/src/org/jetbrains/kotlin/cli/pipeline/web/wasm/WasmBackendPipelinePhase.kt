@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.backend.js.loadIrForSingleModule
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -285,6 +286,8 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
 
         val performanceManager = configuration.perfManager
 
+        val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
+
         val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
 
         val irModuleInfo = loadIrForSingleModule(
@@ -292,13 +295,13 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             irFactory = irFactory,
         )
 
-        val (allModules, backendContext, _) = compileToLoweredIr(
+        val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
             irModuleInfo,
             module.mainModule,
             configuration,
             performanceManager,
             exportedDeclarations = setOf(FqName("main")),
-            generateTypeScriptFragment = false,
+            generateTypeScriptFragment = generateDts,
             propertyLazyInitialization = configuration.propertyLazyInitialization,
             disableCrossFileOptimisations = true,
         )
@@ -314,6 +317,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
                 wasmDebug = wasmDebug,
                 dependencyResolutionMap = dependencyResolutionMap,
+                typeScriptFragment = typeScriptFragment,
             )
 
             writeCompilationResult(
@@ -335,6 +339,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
     stdlibIsMainModule: Boolean,
     generateWat: Boolean,
     wasmDebug: Boolean,
+    typeScriptFragment: TypeScriptFragment?,
     outputFileNameBase: String? = null,
     dependencyResolutionMap: Map<String, String>,
 ): WasmCompilerResult {
@@ -393,7 +398,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
         wasmCompiledFileFragments = wasmCompiledFileFragments,
         moduleName = moduleName,
         configuration = configuration,
-        typeScriptFragment = null,
+        typeScriptFragment = typeScriptFragment,
         baseFileName = outputFileNameBase ?: mainModuleFragment.outputFileName,
         emitNameSection = wasmDebug,
         generateWat = generateWat,
