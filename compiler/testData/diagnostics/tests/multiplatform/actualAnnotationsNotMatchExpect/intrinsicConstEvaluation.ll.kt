@@ -20,7 +20,7 @@ expect fun nonMatching()
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 @Ann(MyEnum.FOO.name)
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>matching<!>() {}
+actual fun matching() {}
 
 @Ann(MyEnum.FOO.name)
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>nonMatching<!>() {}
