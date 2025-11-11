@@ -19,7 +19,7 @@ abstract class SwiftImportExtension @Inject constructor(
     val tvosDeploymentVersion: Property<String> = objects.property(String::class.java)
 
     val discoverModulesImplicitly: Property<Boolean> = objects.property(Boolean::class.java)
-        .convention(false)
+        .convention(true)
 
     internal abstract val spmDependencies: DomainObjectSet<SwiftPMDependency>
 
