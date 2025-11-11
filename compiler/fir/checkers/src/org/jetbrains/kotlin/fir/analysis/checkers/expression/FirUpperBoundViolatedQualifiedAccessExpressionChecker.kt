@@ -5,14 +5,21 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.typeChangeRelatedTo
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
@@ -70,11 +77,50 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
             context.session,
         )
 
-        checkUpperBoundViolated(
-            typeParameters,
-            typeArguments,
-            substitutor,
-            fallbackSource = expression.source,
+        val typeArgumentsAfterArgumentInteractionsFix = when {
+            LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions.isDisabled() -> typeArguments.map {
+                val projectionType = it.type ?: return@map it
+                val typeChange = projectionType.typeChangeRelatedTo(LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions)
+                typeChange?.newType?.withAttributes(projectionType.attributes)?.let(it::replaceType) ?: it
+            }
+            else -> null
+        }
+        val substitutorAfterArgumentInteractionsFix = typeArgumentsAfterArgumentInteractionsFix?.let {
+            createSubstitutorForUpperBoundViolationCheck(
+                typeParameters,
+                typeArgumentsAfterArgumentInteractionsFix,
+                context.session,
+            )
+        }
+
+        context(reporter: DiagnosticReporter)
+        fun runTheCheck(
+            substitutor: ConeSubstitutor,
+            typeArguments: List<ConeTypeProjection>,
+            mustRelaxDueToArgumentInteractionsBug: Boolean,
+        ) {
+            checkUpperBoundViolated(
+                typeParameters,
+                typeArguments,
+                substitutor,
+                fallbackSource = expression.source,
+                mustRelaxDueToArgumentInteractionsBug = mustRelaxDueToArgumentInteractionsBug,
+            )
+        }
+
+        if (substitutorAfterArgumentInteractionsFix == null) {
+            runTheCheck(substitutor, typeArguments, mustRelaxDueToArgumentInteractionsBug = false)
+            return
+        }
+
+        val wereAnyErrors = detectErrorDiagnosticsReported {
+            runTheCheck(substitutor, typeArguments, mustRelaxDueToArgumentInteractionsBug = false)
+        }
+
+        runTheCheck(
+            substitutorAfterArgumentInteractionsFix,
+            typeArgumentsAfterArgumentInteractionsFix,
+            mustRelaxDueToArgumentInteractionsBug = !wereAnyErrors,
         )
     }
 
@@ -94,3 +140,20 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
         }
     }
 }
+
+private class ErrorDiagnosticDetector : DiagnosticReporter() {
+    override var hasErrors = false
+        private set
+
+    override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
+        if (diagnostic?.severity == Severity.ERROR) {
+            hasErrors = true
+        }
+    }
+}
+
+private inline fun detectErrorDiagnosticsReported(block: context(DiagnosticReporter) () -> Unit): Boolean =
+    with(ErrorDiagnosticDetector()) {
+        block()
+        hasErrors
+    }

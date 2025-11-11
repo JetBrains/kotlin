@@ -1,7 +1,19 @@
-/falseNegativeUpperBoundViolated.fir.kt:(400,409): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(474,483): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
 
-/falseNegativeUpperBoundViolated.fir.kt:(432,441): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(484,489): warning: Type argument is not within its bounds: must be subtype of 'Element<BetaKey>'. This will become an error in future releases.
 
-/falseNegativeUpperBoundViolated.fir.kt:(464,466): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(506,515): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
 
-/falseNegativeUpperBoundViolated.fir.kt:(489,491): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(516,521): warning: Type argument is not within its bounds: must be subtype of 'Element<String>'. This will become an error in future releases.
+
+/falseNegativeUpperBoundViolated.fir.kt:(523,529): warning: Type argument is not within its bounds: must be subtype of 'Key'. This will become an error in future releases.
+
+/falseNegativeUpperBoundViolated.fir.kt:(538,540): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+
+/falseNegativeUpperBoundViolated.fir.kt:(541,546): warning: Type argument is not within its bounds: must be subtype of 'Element<BetaKey>'. This will become an error in future releases.
+
+/falseNegativeUpperBoundViolated.fir.kt:(563,565): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+
+/falseNegativeUpperBoundViolated.fir.kt:(566,571): warning: Type argument is not within its bounds: must be subtype of 'Element<String>'. This will become an error in future releases.
+
+/falseNegativeUpperBoundViolated.fir.kt:(573,579): warning: Type argument is not within its bounds: must be subtype of 'Key'. This will become an error in future releases.

@@ -597,6 +597,9 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.isNothingConstructor(): Boolean
     fun TypeConstructorMarker.isArrayConstructor(): Boolean
 
+    // TODO: Consider making `LanguageFeature` accessible from this module.
+    fun KotlinTypeMarker.withNewTypeSince(languageFeature: Any, newType: KotlinTypeMarker): KotlinTypeMarker = this
+
     /**
      *
      * SingleClassifierType is one of the following types:

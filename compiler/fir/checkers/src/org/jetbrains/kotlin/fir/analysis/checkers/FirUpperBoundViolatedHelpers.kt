@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.explicitTypeArgumentIfMadeFlexibleSynthetically
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -46,6 +47,7 @@ private fun checkUpperBoundViolated(
     isIgnoreTypeParameters: Boolean = false,
     fallbackSource: KtSourceElement?,
     isInsideTypeOperatorOrParameterBounds: Boolean = false,
+    mustRelaxDueToArgumentInteractionsBug: Boolean = false,
 ) {
     // If we have FirTypeRef information, add KtSourceElement information to each argument of the type and fully expand.
     val type = if (typeRef != null) {
@@ -79,6 +81,7 @@ private fun checkUpperBoundViolated(
         isIgnoreTypeParameters,
         fallbackSource,
         isInsideTypeOperatorOrParameterBounds,
+        mustRelaxDueToArgumentInteractionsBug = mustRelaxDueToArgumentInteractionsBug,
     )
 }
 
@@ -110,6 +113,12 @@ fun checkUpperBoundViolated(
     isIgnoreTypeParameters: Boolean = false,
     fallbackSource: KtSourceElement?,
     isInsideTypeOperatorOrParameterBounds: Boolean = false,
+    /**
+     * Relax the diagnostics caused by non-trivial bound violations
+     * involving multiple argument substitutions dependent on one another.
+     * See [LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions].
+     */
+    mustRelaxDueToArgumentInteractionsBug: Boolean = false,
 ) {
     val count = minOf(typeParameters.size, typeArguments.size)
     val typeSystemContext = context.session.typeContext
@@ -123,14 +132,16 @@ fun checkUpperBoundViolated(
         val argumentSource = sourceAttribute?.source
 
         if (argumentType != null) {
-            val beStrict = context.languageVersionSettings.supportsFeature(LanguageFeature.DontIgnoreUpperBoundViolatedOnImplicitArguments)
+            val mustRelax =
+                !isExplicitTypeArgumentSource(argumentSource) && LanguageFeature.DontIgnoreUpperBoundViolatedOnImplicitArguments.isDisabled()
+                        || mustRelaxDueToArgumentInteractionsBug
             val regularDiagnostic = when {
-                isExplicitTypeArgumentSource(argumentSource) || beStrict -> FirErrors.UPPER_BOUND_VIOLATED
-                else -> FirErrors.UPPER_BOUND_VIOLATED_DEPRECATION_WARNING
+                mustRelax -> FirErrors.UPPER_BOUND_VIOLATED_DEPRECATION_WARNING
+                else -> FirErrors.UPPER_BOUND_VIOLATED
             }
             val typealiasDiagnostic = when {
-                isExplicitTypeArgumentSource(argumentSource) || beStrict -> FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
-                else -> FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_DEPRECATION_WARNING
+                mustRelax -> FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_DEPRECATION_WARNING
+                else -> FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
             }
             if (!isIgnoreTypeParameters || (argumentType.typeArguments.isEmpty() && argumentType !is ConeTypeParameterType)) {
                 val intersection =

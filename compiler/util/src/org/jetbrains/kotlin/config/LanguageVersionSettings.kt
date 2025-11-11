@@ -469,6 +469,7 @@ enum class LanguageFeature(
     ProhibitExtendingAnnotationClasses(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-374"),
     RefinedVarargConversionRulesForCallableReferences(KOTLIN_2_4, enabledInProgressiveMode = false, "KT-39697"), // And KT-81841
     CheckOptInOnPureEnumEntries(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-359"),
+    ReportUpperBoundViolatedInCallArgumentInteractions(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-373"),
     CheckPackageInfoNullnessAnnotations(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-77729"),
     ForbidTypeAliasWithMissingDependencyType(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-79781"),
     ForbidImplicitTypeAnnotationWithMissingDependency(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-80247"),

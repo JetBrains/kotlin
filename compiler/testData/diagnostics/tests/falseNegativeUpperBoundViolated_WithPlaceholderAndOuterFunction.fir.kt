@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80588
 
@@ -14,14 +15,14 @@ typealias TA<A, B, C> = Container<A, B, C>
 fun someFunc(it: Any?) {}
 
 fun main() {
-    Container<Alpha, BetaKey, _>()
-    Container<Alpha, String, _>()
+    Container<<!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Alpha<!>, BetaKey, _>()
+    Container<<!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Alpha<!>, <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>String<!>, _>()
 
-    TA<Alpha, BetaKey, _>()
-    TA<Alpha, String, _>()
+    TA<<!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Alpha<!>, BetaKey, _>()
+    TA<<!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Alpha<!>, <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>String<!>, _>()
 
-    <!INAPPLICABLE_CANDIDATE!>someFunc<!>(TA<Alpha, BetaKey, _>())
-    <!INAPPLICABLE_CANDIDATE!>someFunc<!>(TA<Alpha, String, _>())
+    <!INAPPLICABLE_CANDIDATE!>someFunc<!>(TA<<!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Alpha<!>, BetaKey, _>())
+    <!INAPPLICABLE_CANDIDATE!>someFunc<!>(TA<<!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Alpha<!>, <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>String<!>, _>())
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, sealed, typeConstraint,

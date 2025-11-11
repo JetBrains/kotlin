@@ -504,20 +504,21 @@ class ResultTypeResolver(
             it.kind == ConstraintKind.EQUALITY && it.isProperConstraint()
         }
 
-        return representativeFromEqualityConstraints(properEqualityConstraints, isStrictMode)
+        return representativeFromEqualityConstraints(variableWithConstraints, properEqualityConstraints, isStrictMode)
     }
 
     // Discriminate integer literal types as they are less specific than separate integer types (Int, Short...)
     context(c: Context)
     private fun representativeFromEqualityConstraints(
-        constraints: List<Constraint>,
+        variableWithConstraints: VariableWithConstraints,
+        properEqualityConstraints: List<Constraint>,
         // Allow only types not-containing ILT and which might work as a representative of other ones from EQ constraints
         // TODO: Consider making it always `true` (see KT-70062)
         isStrictMode: Boolean
     ): KotlinTypeMarker? {
-        if (constraints.isEmpty()) return null
+        if (properEqualityConstraints.isEmpty()) return null
 
-        val constraintTypes = constraints.map { it.type }
+        val constraintTypes = properEqualityConstraints.map { it.type }
         val nonLiteralTypes = constraintTypes.filter { constraintType ->
             if (isStrictMode)
                 !constraintType.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
@@ -529,7 +530,44 @@ class ResultTypeResolver(
 
         if (isStrictMode) return null
 
-        return constraintTypes.singleBestRepresentative()
-            ?: constraintTypes.first() // seems like constraint system has contradiction
+        constraintTypes.singleBestRepresentative()?.let { return it }
+        // At this point, it seems like the constraint system has found a contradiction.
+
+        val typeVariable = variableWithConstraints.typeVariable
+        // If there's a contradiction, it's best if we fix the variable to exactly
+        // the type argument the user has provided for it, so that the diagnostics
+        // remain accurate.
+        return LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions.chooseType(
+            createFutureType = { properEqualityConstraints.findExplicitTypeArgumentConstraintFor(typeVariable)?.type },
+            createFallbackType = { constraintTypes.first() },
+        )
     }
+
+    /**
+     * Returns the future type if the language feature is enabled, or
+     * the fallback with a `TypeWillChangeAttribute` containing the future type.
+     * If the future one is `null`, returns the fallback.
+     */
+    context(c: Context)
+    private inline fun LanguageFeature.chooseType(
+        createFutureType: () -> KotlinTypeMarker?,
+        createFallbackType: () -> KotlinTypeMarker,
+    ): KotlinTypeMarker = when (val futureType = createFutureType()) {
+        null -> createFallbackType()
+        else if languageVersionSettings.supportsFeature(this) -> futureType
+        else -> when (val fallbackType = createFallbackType()) {
+            futureType -> futureType
+            else -> fallbackType.withNewTypeSince(this, futureType)
+        }
+    }
+
+    /**
+     * If there's a contradiction, type argument variables should be fixed to the explicit arguments
+     * to make sure the error diagnostics and further checks in checkers remain accurate.
+     */
+    context(c: Context)
+    private fun List<Constraint>.findExplicitTypeArgumentConstraintFor(typeVariable: TypeVariableMarker): Constraint? =
+        firstOrNull {
+            it.position.from is ExplicitTypeParameterConstraintPosition<*> && it.position.initialConstraint.a == typeVariable.defaultType()
+        }
 }
