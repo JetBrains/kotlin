@@ -1966,7 +1966,7 @@ internal object KotlinToolingDiagnostics {
         ) = build {
             title("Deprecated 'org.jetbrains.kotlin.android' plugin usage")
                 .description("The 'org.jetbrains.kotlin.android' plugin in project '$projectPath' is no longer required for Kotlin support since AGP 9.0.")
-                .solution("Set `android.builtInKotlin=true` and remove `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin. For more information, see https://kotl.in/gradle/agp-built-in-kotlin.")
+                .solution("Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.")
                 .documentationLink(URI("https://kotl.in/gradle/agp-built-in-kotlin"))
         }
     }
