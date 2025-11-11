@@ -28,7 +28,6 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
     ) {
         protected val arrayClassName = "${kind?.capitalized ?: ""}Array"
         protected val arrayTypeName = arrayClassName + if (kind == null) "<T>" else ""
-        protected val arrayOfFunctionName = "${arrayClassName.replaceFirstChar { it.lowercase() }}Of"
         protected val elementTypeName = kind?.capitalized ?: "T"
         protected val iteratorClassName = "${kind?.capitalized ?: ""}Iterator"
         protected val arrayIteratorImplClassName = "${kind?.capitalized ?: ""}ArrayIterator"
@@ -227,7 +226,8 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
 
         protected fun MethodBuilder.defaultOperatorOfImplementation() {
             val body = if (kind == null) {
-                "$arrayOfFunctionName(*$parameterName)"
+                annotations += "Suppress(\"UNCHECKED_CAST\")"
+                "$parameterName as $arrayTypeName"
             } else {
                 parameterName
             }

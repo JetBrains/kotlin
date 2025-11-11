@@ -44,8 +44,9 @@ public actual class Array<T> {
         /** Returns an array containing the specified elements. */
         @ExperimentalStdlibApi
         @kotlin.internal.InlineOnly
+        @Suppress("UNCHECKED_CAST")
         public actual inline operator fun <reified T> of(vararg elements: T): Array<T> =
-            arrayOf(*elements)
+            elements as Array<T>
     }
 
     @PublishedApi
