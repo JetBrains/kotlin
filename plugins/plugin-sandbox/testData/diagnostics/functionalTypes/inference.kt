@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // INFERENCE_HELPERS
 import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
@@ -15,3 +16,7 @@ fun test_1() {
 fun test_2() {
     <!DEBUG_INFO_EXPRESSION_TYPE("some.MyInlineableFunction0<kotlin.String>")!>select(@MyInlineable { "a" }, { "b" })<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, stringLiteral, suspend, typeConstraint,
+typeParameter, vararg */

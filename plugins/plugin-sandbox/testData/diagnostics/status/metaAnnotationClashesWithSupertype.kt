@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import org.jetbrains.kotlin.plugin.sandbox.AllOpen
 
 @AllOpen
@@ -17,3 +18,5 @@ class Derived : Base() {
 }
 
 class ShouldBeAnError : Derived.ShouldBeFinal()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, nestedClass */

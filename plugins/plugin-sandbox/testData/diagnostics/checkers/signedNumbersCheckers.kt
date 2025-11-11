@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import org.jetbrains.kotlin.plugin.sandbox.Positive
 import org.jetbrains.kotlin.plugin.sandbox.Negative
 
@@ -29,3 +30,5 @@ fun test(
     takePositive(<!ILLEGAL_NUMBER_SIGN!>select(positiveInt, negativeDouble)<!>) // error
     takeNegative(<!ILLEGAL_NUMBER_SIGN!>select(positiveInt, negativeDouble)<!>) // error
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, intersectionType, nullableType, typeParameter */

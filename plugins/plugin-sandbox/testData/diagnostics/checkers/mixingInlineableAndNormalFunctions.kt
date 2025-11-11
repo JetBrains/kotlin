@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 import kotlin.reflect.*
 
@@ -6,3 +7,5 @@ abstract class OurClass: <!MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES!>@MyInlineable 
 
 abstract class YourClass: @MyInlineable KFunction1<Boolean, Unit>, () -> Unit
 abstract class Their: <!MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES!>KSuspendFunction1<Boolean, Unit>, () -> Unit<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionalType */

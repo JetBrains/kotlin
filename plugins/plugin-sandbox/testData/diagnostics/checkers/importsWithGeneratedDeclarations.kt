@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: test_NestedClassAndMaterializeMember.kt
 package test
 
@@ -33,5 +34,4 @@ import test.MyClassWithCompanion.<!CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON!>Compa
 @CompanionWithFoo
 class MyClassWithCompanion
 
-
-
+/* GENERATED_FIR_TAGS: classDeclaration */
