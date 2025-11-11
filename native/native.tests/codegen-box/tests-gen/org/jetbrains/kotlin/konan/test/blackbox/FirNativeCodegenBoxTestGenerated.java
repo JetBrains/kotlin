@@ -58969,6 +58969,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("kt82316_topLevelCallableContainer.kt")
+        public void testKt82316_topLevelCallableContainer() {
+          runTest("compiler/testData/codegen/box/reflection/typeParameters/kt82316_topLevelCallableContainer.kt");
+        }
+
+        @Test
         @TestMetadata("typeParametersAndNames.kt")
         public void testTypeParametersAndNames() {
           runTest("compiler/testData/codegen/box/reflection/typeParameters/typeParametersAndNames.kt");

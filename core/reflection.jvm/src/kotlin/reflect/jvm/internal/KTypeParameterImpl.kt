@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import kotlin.jvm.internal.Reflection
 import kotlin.jvm.internal.TypeParameterReference
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -97,7 +98,7 @@ private fun TypeParameterDescriptor.toContainer(): KTypeParameterOwnerImpl =
                 else -> {
                     val deserializedMember = declaration as? DeserializedMemberDescriptor
                         ?: throw KotlinReflectionInternalError("Non-class callable descriptor must be deserialized: $declaration")
-                    deserializedMember.getContainerClass().kotlin as KClassImpl<*>
+                    Reflection.getOrCreateKotlinPackage(deserializedMember.getContainerClass()) as KPackageImpl
                 }
             }
             declaration.accept(CreateKCallableVisitor(callableContainerClass), Unit)
