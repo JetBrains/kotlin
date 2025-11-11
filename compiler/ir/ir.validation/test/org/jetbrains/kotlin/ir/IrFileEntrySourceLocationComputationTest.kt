@@ -62,26 +62,10 @@ class IrFileEntrySourceLocationComputationTest {
     fun `Compressed file entry with one offset`() {
         val fileEntry = compressedFileEntry(firstLineIndex = 2, 20, 30)
 
-        // TODO(KT-80814): need to be fixed
-        fileEntry.assertExpectedLineNumber(LineAndColumn(line = 1, column = -1), offset = 0)
-        fileEntry.assertExpectedColumnNumber(LineAndColumn(line = 1, column = -1), offset = 0)
-        fileEntry.assertExpectedLineAndColumnNumbers(UNDEFINED_LINE_AND_COLUMN, offset = 0)
-
-        // TODO(KT-80814): need to be fixed
-        fileEntry.assertExpectedLineNumber(LineAndColumn(line = 1, column = -1), offset = 1)
-        fileEntry.assertExpectedColumnNumber(LineAndColumn(line = 1, column = -1), offset = 1)
-        fileEntry.assertExpectedLineAndColumnNumbers(UNDEFINED_LINE_AND_COLUMN, offset = 1)
-
-        // TODO(KT-80814): need to be fixed
-        fileEntry.assertExpectedLineNumber(LineAndColumn(line = 1, column = -1), offset = 10)
-        fileEntry.assertExpectedColumnNumber(LineAndColumn(line = 1, column = -1), offset = 10)
-        fileEntry.assertExpectedLineAndColumnNumbers(UNDEFINED_LINE_AND_COLUMN, offset = 10)
-
-        // TODO(KT-80814): need to be fixed
-        fileEntry.assertExpectedLineNumber(LineAndColumn(line = 1, column = -1), offset = 19)
-        fileEntry.assertExpectedColumnNumber(LineAndColumn(line = 1, column = -1), offset = 19)
-        fileEntry.assertExpectedLineAndColumnNumbers(UNDEFINED_LINE_AND_COLUMN, offset = 19)
-
+        fileEntry.assertSourceLocationComputation(UNDEFINED_LINE_AND_COLUMN, offset = 0)
+        fileEntry.assertSourceLocationComputation(UNDEFINED_LINE_AND_COLUMN, offset = 1)
+        fileEntry.assertSourceLocationComputation(UNDEFINED_LINE_AND_COLUMN, offset = 10)
+        fileEntry.assertSourceLocationComputation(UNDEFINED_LINE_AND_COLUMN, offset = 19)
         fileEntry.assertSourceLocationComputation(LineAndColumn(line = 2, column = 0), offset = 20)
         fileEntry.assertSourceLocationComputation(LineAndColumn(line = 2, column = 1), offset = 21)
         fileEntry.assertSourceLocationComputation(LineAndColumn(line = 2, column = 2), offset = 22)
@@ -162,7 +146,6 @@ class IrFileEntrySourceLocationComputationTest {
             )
         }
 
-        private val UNDEFINED_LINE_AND_COLUMN = LineAndColumn(UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
         private val ZERO_LINE_AND_COLUMN = LineAndColumn(0, 0)
     }
 }

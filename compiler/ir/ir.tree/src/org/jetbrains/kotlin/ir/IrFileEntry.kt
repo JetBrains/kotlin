@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir
 const val UNDEFINED_OFFSET: Int = -1
 const val UNDEFINED_LINE_NUMBER: Int = UNDEFINED_OFFSET
 const val UNDEFINED_COLUMN_NUMBER: Int = UNDEFINED_OFFSET
+val UNDEFINED_LINE_AND_COLUMN = LineAndColumn(UNDEFINED_COLUMN_NUMBER, UNDEFINED_COLUMN_NUMBER)
 
 data class SourceRangeInfo(
     val filePath: String,
@@ -42,23 +43,24 @@ abstract class AbstractIrFileEntry : IrFileEntry {
 
     override fun getLineNumber(offset: Int): Int {
         if (offset < 0) return UNDEFINED_LINE_NUMBER
-        val index = lineStartOffsets.binarySearch(offset)
-        return firstRelevantLineIndex + if (index >= 0) index else index.inv() - 1
+        val binarySearchResult: Int = lineStartOffsets.binarySearch(offset)
+        val lineIndex = if (binarySearchResult >= 0) binarySearchResult else binarySearchResult.inv() - 1
+        if (lineIndex < 0) return UNDEFINED_LINE_NUMBER
+        return firstRelevantLineIndex + lineIndex
     }
 
     override fun getColumnNumber(offset: Int): Int {
         if (offset < 0) return UNDEFINED_COLUMN_NUMBER
-        val lineNumber = getLineNumber(offset)
-        val lineIndex = lineNumber - firstRelevantLineIndex
-        if (lineIndex < 0) return UNDEFINED_COLUMN_NUMBER
+        val lineIndex = getLineNumber(offset) - firstRelevantLineIndex
+        if (lineIndex !in lineStartOffsets.indices) return UNDEFINED_COLUMN_NUMBER
         return offset - lineStartOffsets[lineIndex]
     }
 
     override fun getLineAndColumnNumbers(offset: Int): LineAndColumn {
-        if (offset < 0) return LineAndColumn(UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
+        if (offset < 0) return UNDEFINED_LINE_AND_COLUMN
         val lineNumber = getLineNumber(offset)
         val lineIndex = lineNumber - firstRelevantLineIndex
-        if (lineIndex < 0) return LineAndColumn(lineIndex, UNDEFINED_COLUMN_NUMBER)
+        if (lineIndex !in lineStartOffsets.indices) return UNDEFINED_LINE_AND_COLUMN
         val columnNumber = offset - lineStartOffsets[lineIndex]
         return LineAndColumn(lineNumber, columnNumber)
     }
