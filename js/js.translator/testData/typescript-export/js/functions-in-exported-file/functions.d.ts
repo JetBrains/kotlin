@@ -18,7 +18,13 @@ declare namespace JS_TESTS {
     }
     namespace foo {
         function sum(x: number, y: number): number;
+        function varargByte(x: Int8Array): number;
+        function varargShort(x: Int16Array): number;
         function varargInt(x: Int32Array): number;
+        function varargFloat(x: Float32Array): number;
+        function varargDouble(x: Float64Array): number;
+        function varargBoolean(x: any /*BooleanArray*/): number;
+        function varargChar(x: any /*CharArray*/): number;
         function varargNullableInt(x: Array<Nullable<number>>): number;
         function varargWithOtherParameters(x: string, y: Array<string>, z: string): number;
         function varargWithComplexType(x: Array<(p0: Array<Int32Array>) => Array<Int32Array>>): number;

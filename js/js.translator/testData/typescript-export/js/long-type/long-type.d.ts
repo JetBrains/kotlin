@@ -11,6 +11,7 @@ declare namespace JS_TESTS {
         let myVar: bigint;
         function funWithLongParameters(a: bigint, b: bigint): bigint;
         function funWithLongDefaultParameters(a?: bigint, b?: bigint): bigint;
+        function varargLong(x: BigInt64Array): number;
         function funWithTypeParameter<T extends bigint>(a: T, b: T): bigint;
         function funWithTypeParameterWithTwoUpperBounds<T extends unknown/* kotlin.Comparable<T> */ & bigint>(a: T, b: T): bigint;
         function funWithContextParameter(long: bigint): bigint;

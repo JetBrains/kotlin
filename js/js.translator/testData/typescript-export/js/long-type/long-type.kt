@@ -34,6 +34,10 @@ fun funWithLongParameters(a: Long, b: Long) = a + b
 fun funWithLongDefaultParameters(a: Long = 1L, b: Long = a) = a + b
 
 @JsExport
+fun varargLong(vararg x: Long): Int =
+    x.size
+
+@JsExport
 fun <T : Long> funWithTypeParameter(a: T, b: T) = a + b
 
 @JsExport

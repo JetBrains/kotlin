@@ -16,6 +16,7 @@ assert(foo.myVar === 2n);
 assert(foo.funWithLongParameters(1n, 1n) === 2n);
 assert(foo.funWithLongDefaultParameters() === 2n);
 assert(foo.funWithLongDefaultParameters(2n, 1n) === 3n);
+assert(foo.varargLong(new BigInt64Array([1n, 2n, 3n])) === 3);
 assert(foo.funWithTypeParameter(1n, 1n) === 2n);
 assert(foo.funWithTypeParameterWithTwoUpperBounds(1n, 1n) === 2n);
 assert(foo.funWithContextParameter(1n) === 1n);

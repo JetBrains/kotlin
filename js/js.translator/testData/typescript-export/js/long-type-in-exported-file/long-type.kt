@@ -39,6 +39,10 @@ fun funWithLongParameters(a: Long, b: Long) = a + b
 fun funWithLongDefaultParameters(a: Long = 1L, b: Long = a) = a + b
 
 
+fun varargLong(vararg x: Long): Int =
+    x.size
+
+
 fun <T : Long> funWithTypeParameter(a: T, b: T) = a + b
 
 

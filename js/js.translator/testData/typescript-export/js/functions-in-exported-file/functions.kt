@@ -22,7 +22,31 @@ fun sum(x: Int, y: Int): Int =
     x + y
 
 
+fun varargByte(vararg x: Byte): Int =
+    x.size
+
+
+fun varargShort(vararg x: Short): Int =
+    x.size
+
+
 fun varargInt(vararg x: Int): Int =
+    x.size
+
+
+fun varargFloat(vararg x: Float): Int =
+    x.size
+
+
+fun varargDouble(vararg x: Double): Int =
+    x.size
+
+
+fun varargBoolean(vararg x: Boolean): Int =
+    x.size
+
+
+fun varargChar(vararg x: Char): Int =
     x.size
 
 

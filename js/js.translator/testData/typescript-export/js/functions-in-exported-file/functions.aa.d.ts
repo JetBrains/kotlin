@@ -28,6 +28,12 @@ declare namespace JS_TESTS {
         /* ErrorDeclaration: Top level function declarations are not implemented yet */
         /* ErrorDeclaration: Top level function declarations are not implemented yet */
         /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        /* ErrorDeclaration: Top level function declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */

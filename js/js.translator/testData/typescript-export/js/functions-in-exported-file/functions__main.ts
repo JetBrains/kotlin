@@ -3,7 +3,13 @@ import generic1 = JS_TESTS.foo.generic1;
 import generic2 = JS_TESTS.foo.generic2;
 import generic3 = JS_TESTS.foo.generic3;
 import inlineFun = JS_TESTS.foo.inlineFun;
+import varargByte = JS_TESTS.foo.varargByte;
+import varargShort = JS_TESTS.foo.varargShort;
 import varargInt = JS_TESTS.foo.varargInt;
+import varargFloat = JS_TESTS.foo.varargFloat;
+import varargDouble = JS_TESTS.foo.varargDouble;
+import varargBoolean = JS_TESTS.foo.varargBoolean;
+import varargChar = JS_TESTS.foo.varargChar;
 import sumNullable = JS_TESTS.foo.sumNullable;
 import defaultParameters = JS_TESTS.foo.defaultParameters;
 import varargNullableInt = JS_TESTS.foo.varargNullableInt;
@@ -31,7 +37,13 @@ function assert(condition: boolean) {
 function box(): string {
     assert(sum(10, 20) === 30);
 
+    assert(varargByte(new Int8Array([1, 2, 3])) === 3);
+    assert(varargShort(new Int16Array([1, 2, 3])) === 3);
     assert(varargInt(new Int32Array([1, 2, 3])) === 3);
+    assert(varargFloat(new Float32Array([1, 2, 3])) === 3);
+    assert(varargDouble(new Float64Array([1, 2, 3])) === 3);
+    assert(varargBoolean([true, false, true]) === 3);
+    assert(varargChar(new Uint16Array([1, 2, 3])) === 3);
     assert(varargNullableInt([10, 20, 30, null, undefined, 40]) === 6);
     assert(varargWithOtherParameters("1234", ["1", "2", "3"], "12") === 9);
     assert(varargWithComplexType([]) === 0);

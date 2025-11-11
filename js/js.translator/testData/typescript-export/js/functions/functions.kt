@@ -17,7 +17,31 @@ fun sum(x: Int, y: Int): Int =
     x + y
 
 @JsExport
+fun varargByte(vararg x: Byte): Int =
+    x.size
+
+@JsExport
+fun varargShort(vararg x: Short): Int =
+    x.size
+
+@JsExport
 fun varargInt(vararg x: Int): Int =
+    x.size
+
+@JsExport
+fun varargFloat(vararg x: Float): Int =
+    x.size
+
+@JsExport
+fun varargDouble(vararg x: Double): Int =
+    x.size
+
+@JsExport
+fun varargBoolean(vararg x: Boolean): Int =
+    x.size
+
+@JsExport
+fun varargChar(vararg x: Char): Int =
     x.size
 
 @JsExport
