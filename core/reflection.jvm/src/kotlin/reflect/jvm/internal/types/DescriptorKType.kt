@@ -59,7 +59,7 @@ internal class DescriptorKType(
 
                 return KClassImpl(jClass)
             }
-            is TypeParameterDescriptor -> return KTypeParameterImpl(null, descriptor)
+            is TypeParameterDescriptor -> return KTypeParameterImpl(descriptor.toContainer(), descriptor)
             else -> return null
         }
     }
