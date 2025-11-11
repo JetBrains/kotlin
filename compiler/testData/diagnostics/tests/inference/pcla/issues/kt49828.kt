@@ -176,7 +176,7 @@ fun main() {
     val map1 = buildMap {
         put(1, "one")
 
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo11<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("MutableSet<MutableMap.MutableEntry<Int, String>>; K, V; Int, String")!>entries<!>)
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo11<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("MutableSet<MutableMap.MutableEntry<Int, String>>; V, K; String, Int")!>entries<!>)
     }
 
     // There aren't specific errors below as casting value arguments doesn't make a resolve successful
