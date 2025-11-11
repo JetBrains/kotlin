@@ -9436,6 +9436,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("JavaMethodWithTypeParameterAndContinuation.kt")
+      public void testJavaMethodWithTypeParameterAndContinuation() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaMethodWithTypeParameterAndContinuation.kt");
+      }
+
+      @Test
       @TestMetadata("JavaSyntheticProperty.kt")
       public void testJavaSyntheticProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaSyntheticProperty.kt");
