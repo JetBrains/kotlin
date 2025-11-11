@@ -52,11 +52,14 @@ open class AbstractCustomJsCompilerSecondPhaseTest : AbstractKotlinCompilerWithT
     }
 
     override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
-        return object : KotlinStandardLibrariesPathProvider by StandardLibrariesPathProviderForKotlinProject {
-            override fun fullJsStdlib(): File = customJsCompilerSettings.stdlib
-            override fun defaultJsStdlib(): File = customJsCompilerSettings.stdlib
-            override fun kotlinTestJsKLib(): File = customJsCompilerSettings.kotlinTest
-        }
+        return if (customJsCompilerSettings.defaultLanguageVersion >= LanguageVersion.LATEST_STABLE)
+            StandardLibrariesPathProviderForKotlinProject
+        else
+            object : KotlinStandardLibrariesPathProvider by StandardLibrariesPathProviderForKotlinProject {
+                override fun fullJsStdlib(): File = customJsCompilerSettings.stdlib
+                override fun defaultJsStdlib(): File = customJsCompilerSettings.stdlib
+                override fun kotlinTestJsKLib(): File = customJsCompilerSettings.kotlinTest
+            }
     }
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
