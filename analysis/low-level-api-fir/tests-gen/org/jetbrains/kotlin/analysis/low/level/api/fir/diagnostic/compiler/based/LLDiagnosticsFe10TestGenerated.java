@@ -38094,12 +38094,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
-      @TestMetadata("implicitPropertyTypeThatMakesBehaviorOrderDependantAAResolve.kt")
-      public void testImplicitPropertyTypeThatMakesBehaviorOrderDependantAAResolve() {
-        runTest("compiler/testData/diagnostics/tests/resolve/implicitPropertyTypeThatMakesBehaviorOrderDependantAAResolve.kt");
-      }
-
-      @Test
       @TestMetadata("implicitPropertyTypeThatMakesBehaviorOrderDependantComplexLoops.kt")
       public void testImplicitPropertyTypeThatMakesBehaviorOrderDependantComplexLoops() {
         runTest("compiler/testData/diagnostics/tests/resolve/implicitPropertyTypeThatMakesBehaviorOrderDependantComplexLoops.kt");

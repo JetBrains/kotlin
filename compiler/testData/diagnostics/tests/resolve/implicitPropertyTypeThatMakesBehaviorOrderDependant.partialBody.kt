@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76240
-// DIAGNOSTICS: -TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM
-// Reason of diagnostics suppression: different diagnostics with normal and AA reversed/partial resolve
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 // FILE: NewWarnings.kt
 
@@ -10,7 +9,7 @@ val Int.p: String
     get() = "ext prop"
 
 class Foo {
-    val f = f()
+    val f = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f()<!>
     fun f() = 42.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>f<!>() // New warning even if `f` is declared above and seems like resolved.
 
     val p = p()
@@ -21,7 +20,7 @@ fun String.g(): Boolean = false
 
 class Bar {
     fun g() = "s2".<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>g<!>() // New warning
-    val g = g()
+    val g = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>g()<!>
 }
 
 // FILE: NoWarningsInCaseOfLocalProperty.kt
@@ -38,8 +37,8 @@ fun test() {
 fun Int.f3(): String = "ext func"
 
 class Foo3 {
-    val f3 = f3()
-    fun f3() = f3()
+    val f3 = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f3()<!>
+    fun f3() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f3()<!>
 }
 
 // FILE: NoWarningsInCaseOfResolveToInvoke.kt
