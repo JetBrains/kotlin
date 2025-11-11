@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 class NativeForwardDeclarationsSymbolProvider(
     session: FirSession,
-    private val forwardDeclarationsModuleData: FirModuleData,
+    val forwardDeclarationsModuleData: FirModuleData,
     private val kotlinScopeProvider: FirKotlinScopeProvider,
     private val kotlinLibraries: Collection<KotlinLibrary>,
 ) : FirSymbolProvider(session) {

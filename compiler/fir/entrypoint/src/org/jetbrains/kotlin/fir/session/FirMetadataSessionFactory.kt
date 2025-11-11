@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
+typealias AdditionalProvidersSupplier = (FirSession, ModuleDataProvider, FirKotlinScopeProvider, List<KotlinLibrary>) -> List<FirSymbolProvider>
+
 @OptIn(SessionConfiguration::class)
 abstract class AbstractFirMetadataSessionFactory(
     val targetPlatform: TargetPlatform,
@@ -85,6 +87,7 @@ abstract class AbstractFirMetadataSessionFactory(
         resolvedKLibs: List<KotlinLibrary>,
         languageVersionSettings: LanguageVersionSettings,
         context: Context,
+        additionalProviders: AdditionalProvidersSupplier? = null,
     ): FirSession {
         return createLibrarySession(
             context,
@@ -94,25 +97,28 @@ abstract class AbstractFirMetadataSessionFactory(
             extensionRegistrars,
             createSeparateSharedProvidersInHmppCompilation,
             createProviders = { session, kotlinScopeProvider ->
-                listOfNotNull(
+                buildList {
                     jarMetadataProviderComponents?.let { (packageAndMetadataPartProvider, librariesScope, projectEnvironment) ->
-                        MetadataSymbolProvider(
+                        this += MetadataSymbolProvider(
                             session,
                             moduleDataProvider,
                             kotlinScopeProvider,
                             packageAndMetadataPartProvider,
                             projectEnvironment.getKotlinClassFinder(librariesScope)
                         )
-                    },
+                    }
                     runIf(resolvedKLibs.isNotEmpty()) {
-                        KlibBasedSymbolProvider(
+                        this += KlibBasedSymbolProvider(
                             session,
                             moduleDataProvider,
                             kotlinScopeProvider,
                             resolvedKLibs
                         )
-                    },
-                )
+                    }
+
+                    additionalProviders?.invoke(session, moduleDataProvider, kotlinScopeProvider, resolvedKLibs)
+                        ?.let { this += it }
+                }
             }
         )
     }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCommonDeclarationsMappingSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.session.NativeForwardDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.session.structuredProviders
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -73,6 +74,13 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
             val process = { dependencyModuleData: FirModuleData ->
                 if (dependencyModuleData.session.kind == FirSession.Kind.Library) {
                     put(dependencyModuleData, sourceSession)
+
+                    // NativeForwardDeclarationsSymbolProviders have their own moduleData that we need to collect separately
+                    dependencyModuleData.session.structuredProviders.dependencyProviders
+                        .filterIsInstance<NativeForwardDeclarationsSymbolProvider>()
+                        .forEach {
+                            put(it.forwardDeclarationsModuleData, sourceSession)
+                        }
                 }
             }
 

@@ -224,7 +224,10 @@ private fun <F> prepareKlibSessions(
                 icData = icData,
                 init = sessionConfigurator,
             )
-        }
+        },
+        additionalProvidersForMetadataLibrarySessionsInHmppMode = { session, moduleDataProvider, scopeProvider, libraries ->
+            sessionFactory.createAdditionalDependencyProviders(session, moduleDataProvider, scopeProvider, libraries)
+        },
     )
 }
 
@@ -337,6 +340,7 @@ object SessionConstructionUtils {
         createSharedLibrarySession: () -> FirSession,
         createLibrarySession: (sharedLibrarySession: FirSession) -> FirSession,
         createSourceSession: FirSessionProducer<F>,
+        additionalProvidersForMetadataLibrarySessionsInHmppMode: AdditionalProvidersSupplier? = null,
     ): List<SessionWithSources<F>> {
         val languageVersionSettings = configuration.languageVersionSettings
         val (scripts, nonScriptFiles) = when (configuration.dontCreateSeparateSessionForScripts) {
@@ -381,7 +385,8 @@ object SessionConstructionUtils {
             languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) -> createSessionsForHierarchicalMppProject(
                 nonScriptFiles, rootModuleName, hmppModuleStructure, libraryList, configuration,
                 extensionRegistrars, sharedLibrarySession, targetPlatform,
-                sessionConfigurator, fileBelongsToModule, createMetadataSessionFactoryContextForHmppCommonLibrarySession, createSourceSession,
+                sessionConfigurator, fileBelongsToModule, createMetadataSessionFactoryContextForHmppCommonLibrarySession,
+                createSourceSession, additionalProvidersForMetadataLibrarySessionsInHmppMode,
             )
 
             else -> createSessionsForMppProject(
@@ -550,6 +555,7 @@ object SessionConstructionUtils {
         fileBelongsToModule: (F, String) -> Boolean,
         createMetadataSessionFactoryContextForHmppCommonLibrarySession: () -> AbstractFirMetadataSessionFactory.Context,
         createFirSession: FirSessionProducer<F>,
+        additionalProvidersForMetadataLibrarySessions: AdditionalProvidersSupplier?,
     ): List<SessionWithSources<F>> {
         val moduleDataForHmppModule = LinkedHashMap<HmppCliModule, FirModuleData>()
 
@@ -606,6 +612,7 @@ object SessionConstructionUtils {
                         klibs,
                         configuration.languageVersionSettings,
                         metadataSessionFactoryContext,
+                        additionalProvidersForMetadataLibrarySessions,
                     )
                 }
             }
