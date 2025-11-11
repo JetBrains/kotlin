@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import org.jetbrains.kotlin.plugin.sandbox.AllPublic
 import org.jetbrains.kotlin.plugin.sandbox.Visibility
 
@@ -28,3 +29,5 @@ class B {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, propertyDeclaration, stringLiteral */

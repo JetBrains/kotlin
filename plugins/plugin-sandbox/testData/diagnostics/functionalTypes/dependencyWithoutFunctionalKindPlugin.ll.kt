@@ -1,6 +1,7 @@
 // LL_FIR_DIVERGENCE
 // The library session cannot have compiler plugins: KT-75139
 // LL_FIR_DIVERGENCE
+// RUN_PIPELINE_TILL: FRONTEND
 import org.jetbrains.kotlin.plugin.sandbox.*
 
 fun consumeRegularFunction(block: () -> Unit) {}
@@ -32,3 +33,5 @@ fun test_3() {
     consumeOurInlineableFunction(block)
     consumeInlineableFunction(block)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, localProperty, propertyDeclaration, suspend */

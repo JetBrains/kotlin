@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package foo
 
 import org.jetbrains.kotlin.plugin.sandbox.SupertypeWithTypeArgument
@@ -41,3 +42,6 @@ fun test_2(x: Derived.TypeFromSupertype) {
 fun test_3(x: Derived.QualifiedType) {
     takeInnerNested(x.generate())
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, classReference, functionDeclaration, interfaceDeclaration,
+nestedClass, nullableType, typeParameter */

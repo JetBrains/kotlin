@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 typealias MyTypeAlias = org.jetbrains.kotlin.plugin.sandbox.AllOpen
 
 @MyTypeAlias
@@ -13,3 +14,5 @@ class B : A() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, override, typeAliasDeclaration */

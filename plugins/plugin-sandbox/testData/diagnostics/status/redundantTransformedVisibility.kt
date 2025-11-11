@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_EXTRA_CHECKERS
 // ISSUE: KT-54496
 
@@ -25,3 +26,5 @@ class B {
     public fun publicFun() {}
     <!REDUNDANT_VISIBILITY_MODIFIER!>private<!> fun redundantPrivateFun() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, propertyDeclaration, stringLiteral */

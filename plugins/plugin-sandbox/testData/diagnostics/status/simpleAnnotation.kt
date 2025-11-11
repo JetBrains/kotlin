@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import org.jetbrains.kotlin.plugin.sandbox.AllOpen
 
 @AllOpen
@@ -13,3 +14,5 @@ class B : A() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, override */

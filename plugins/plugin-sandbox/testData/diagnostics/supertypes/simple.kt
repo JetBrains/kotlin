@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package foo
 
 import org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
@@ -40,3 +41,5 @@ fun test_2(x: FinalClassWithOverride) {
 fun test_3(x: FinalClassWithoutOverride) {
     x.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

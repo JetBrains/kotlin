@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 import org.jetbrains.kotlin.plugin.sandbox.MyNotInlineable
 
@@ -39,3 +40,6 @@ fun testReturns(b: Boolean) {
         if (b) <!RETURN_NOT_ALLOWED!>return<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, inline, integerLiteral,
+lambdaLiteral, noinline, nullableType, whenExpression, whenWithSubject */

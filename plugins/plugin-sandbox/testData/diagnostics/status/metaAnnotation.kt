@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: first.kt
 
 @Open
@@ -19,3 +20,5 @@ import org.jetbrains.kotlin.plugin.sandbox.AllOpen
 
 @AllOpen
 annotation class Open
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, override */

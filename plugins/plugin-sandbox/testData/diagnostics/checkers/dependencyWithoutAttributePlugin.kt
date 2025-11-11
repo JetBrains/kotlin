@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import org.jetbrains.kotlin.plugin.sandbox.*
 
 fun takePositive(x: @Positive Number) {}
@@ -27,3 +28,5 @@ fun test_3() {
     takeNegative(<!ILLEGAL_NUMBER_SIGN!>x<!>) // should be error
     takeAny(x)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration */

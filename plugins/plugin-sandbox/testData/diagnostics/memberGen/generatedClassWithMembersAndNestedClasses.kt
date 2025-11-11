@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package bar
 
 import foo.AllOpenGenerated
@@ -25,3 +26,4 @@ fun testNestedClasses() {
     nestedBar.materialize().bar()
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR2IR
 package foo
 
 import org.jetbrains.kotlin.plugin.sandbox.DummyFunction
@@ -11,3 +12,5 @@ class MySuperClass {
 }
 
 fun takeString(s: String) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration, thisExpression */

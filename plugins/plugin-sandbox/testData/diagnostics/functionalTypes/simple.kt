@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
 fun runUsual(block: () -> Unit) {}
@@ -29,3 +30,5 @@ fun runInlineable2(block: some.MyInlineableFunction1<String, Int>) {}
 fun test_2() {
     runInlineable2 { it.length }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, propertyDeclaration */

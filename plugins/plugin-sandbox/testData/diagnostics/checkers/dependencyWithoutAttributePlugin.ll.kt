@@ -1,6 +1,7 @@
 // LL_FIR_DIVERGENCE
 // The library session cannot have compiler plugins: KT-75138
 // LL_FIR_DIVERGENCE
+// RUN_PIPELINE_TILL: FRONTEND
 import org.jetbrains.kotlin.plugin.sandbox.*
 
 fun takePositive(x: @Positive Number) {}
@@ -30,3 +31,5 @@ fun test_3() {
     takeNegative(<!ILLEGAL_NUMBER_SIGN!>x<!>) // should be error
     takeAny(x)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration */
