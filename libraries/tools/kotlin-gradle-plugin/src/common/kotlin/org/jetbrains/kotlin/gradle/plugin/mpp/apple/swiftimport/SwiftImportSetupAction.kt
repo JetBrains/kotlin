@@ -68,6 +68,7 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import kotlin.io.readLines
+import kotlin.text.startsWith
 
 internal fun Project.swiftPMDependenciesExtension(): SwiftImportExtension {
     val existingExtension = kotlinExtension.extensions.findByName(SwiftImportExtension.EXTENSION_NAME)
@@ -739,6 +740,7 @@ internal abstract class ComputeLocalPackageDependencyInputFiles : DefaultTask() 
      * Recompute if the manifests change
      */
     @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     protected val manifests get() = localPackages.map { it.map { it.resolve("Package.swift") } }
 
     @get:OutputFile
@@ -807,6 +809,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
      * Refetch when Package manifests of local SwiftPM dependencies change
      */
     @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val localPackageManifests: ConfigurableFileCollection
 
     @get:Internal
@@ -818,6 +821,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     // For some reason FileTree still invalidates on random directories without this annotation even though directories are not tracked...
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     val inputManifests
         get() = syntheticImportProjectRoot
             .asFileTree
@@ -889,11 +893,14 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     abstract val hasSwiftPMDependencies: Property<Boolean>
 
     @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val filesToTrackFromLocalPackages: RegularFileProperty
     @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     protected val localPackageSources get() = filesToTrackFromLocalPackages.map { it.asFile.readLines().filter { it.isNotEmpty() }.map { File(it) } }
 
     @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val resolvedPackagesState: ConfigurableFileCollection
 
     @get:OutputDirectory
@@ -1397,6 +1404,7 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
     }
 }
 
+@DisableCachingByDefault(because = "...")
 internal abstract class SerializeSwiftPMDependenciesMetadata : DefaultTask() {
 
     @get:Input
