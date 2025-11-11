@@ -996,28 +996,29 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         // FIXME: For some reason reusing dd in parallel xcodebuild calls explodes something in Xcode
         val dd = syntheticImportDd.get().asFile.resolve("dd_${xcodebuildSdk.get()}")
 
-        if (discoverModulesImplicitly.get()) {
-            val intermediates = dd.resolve("Build/Intermediates.noindex")
-            // Nuke all intermediates to discover c++ modules...
-            if (intermediates.exists()) {
-                intermediates.listFiles()
-                    .filter { it.name.endsWith(".build") }
-                    .forEach {
-                        it.deleteRecursively()
-                    }
-            }
-            val products = dd.resolve("Build/Products")
-            // Also nuke products to avoid discovering stale modulemaps in the products directory
-            if (products.exists()) {
-                products.deleteRecursively()
-            }
-            // FIXME: Why not just "clean"?
-        } else {
-            val forceClangToReexecute = dd.resolve("Build/Intermediates.noindex/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME.build")
-            if (forceClangToReexecute.exists()) {
-                forceClangToReexecute.deleteRecursively()
-            }
+        // FIXME: Come back to this later. For now keep intermediates for faster incremental runs
+//        if (discoverModulesImplicitly.get()) {
+//            val intermediates = dd.resolve("Build/Intermediates.noindex")
+//            // Nuke all intermediates to discover c++ modules...
+//            if (intermediates.exists()) {
+//                intermediates.listFiles()
+//                    .filter { it.name.endsWith(".build") }
+//                    .forEach {
+//                        it.deleteRecursively()
+//                    }
+//            }
+//            val products = dd.resolve("Build/Products")
+//            // Also nuke products to avoid discovering stale modulemaps in the products directory
+//            if (products.exists()) {
+//                products.deleteRecursively()
+//            }
+//            // FIXME: Why not just "clean"?
+//        } else {
+        val forceClangToReexecute = dd.resolve("Build/Intermediates.noindex/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME.build")
+        if (forceClangToReexecute.exists()) {
+            forceClangToReexecute.deleteRecursively()
         }
+//        }
 
         execOps.exec { exec ->
             exec.workingDir(projectRoot)
