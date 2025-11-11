@@ -17,10 +17,13 @@
 package org.jetbrains.kotlin.konan.util
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
+import org.jetbrains.kotlin.konan.util.DefFileProperty.NullableStringProperty.*
+import org.jetbrains.kotlin.konan.util.DefFileProperty.BooleanProperty.*
+import org.jetbrains.kotlin.konan.util.DefFileProperty.StringListProperty.*
 import java.io.File
 import java.io.StringReader
 import java.util.*
+import kotlin.reflect.KProperty
 
 class DefFile(val file: File?, val config: DefFileConfig, val manifestAddendProperties: Properties, val defHeaderLines: List<String>) {
     private constructor(file: File?, triple: Triple<Properties, Properties, List<String>>) : this(
@@ -37,124 +40,47 @@ class DefFile(val file: File?, val config: DefFileConfig, val manifestAddendProp
     }
 
     class DefFileConfig(private val properties: Properties) {
-        val headers: List<String> by lazy {
-            properties.getSpaceSeparated("headers")
-        }
+        private operator fun <T> DefFileProperty<T>.getValue(thisRef: DefFileConfig, property: KProperty<*>): T =
+            parse(thisRef.properties.getProperty(propertyName))
 
-        val modules: List<String> by lazy {
-            properties.getSpaceSeparated("modules")
-        }
-
-        val language: String? by lazy {
-            properties.getProperty("language")
-        }
-
-        val compilerOpts: List<String> by lazy {
-            properties.getSpaceSeparated("compilerOpts")
-        }
-
-        val excludeSystemLibs: Boolean by lazy {
-            properties.getProperty("excludeSystemLibs")?.toBoolean() ?: false
-        }
-
-        val excludeDependentModules: Boolean by lazy {
-            properties.getProperty("excludeDependentModules")?.toBoolean() ?: false
-        }
-
-        val entryPoints: List<String> by lazy {
-            properties.getSpaceSeparated("entryPoint")
-        }
-
-        val linkerOpts: List<String> by lazy {
-            properties.getSpaceSeparated("linkerOpts")
-        }
-
-        val linker: String? by lazy {
-            properties.getProperty("linker", "clang")
-        }
-
-        val excludedFunctions: List<String> by lazy {
-            properties.getSpaceSeparated("excludedFunctions")
-        }
-
-        val excludedMacros: List<String> by lazy {
-            properties.getSpaceSeparated("excludedMacros")
-        }
-
-        val staticLibraries: List<String> by lazy {
-            properties.getSpaceSeparated("staticLibraries")
-        }
-
-        val libraryPaths: List<String> by lazy {
-            properties.getSpaceSeparated("libraryPaths")
-        }
-
-        val packageName: String? by lazy {
-            properties.getProperty("package")
-        }
+        val headers: List<String> by Headers
+        val modules: List<String> by Modules
+        val language: String? by Language
+        val compilerOpts: List<String> by CompilerOpts
+        val excludeSystemLibs: Boolean by ExcludeSystemLibs
+        val excludeDependentModules: Boolean by ExcludeDependentModules
+        val entryPoints: List<String> by EntryPoints
+        val linkerOpts: List<String> by LinkerOpts
+        val linker: String? by Linker
+        val excludedFunctions: List<String> by ExcludedFunctions
+        val excludedMacros: List<String> by ExcludedMacros
+        val staticLibraries: List<String> by StaticLibraries
+        val libraryPaths: List<String> by LibraryPaths
+        val packageName: String? by PackageName
 
         /**
          * Header inclusion globs.
          */
-        val headerFilter: List<String> by lazy {
-            properties.getSpaceSeparated("headerFilter")
-        }
+        val headerFilter: List<String> by HeaderFilter
 
         /**
          * Header exclusion globs. Have higher priority than [headerFilter].
          */
-        val excludeFilter: List<String> by lazy {
-            properties.getSpaceSeparated("excludeFilter")
-        }
+        val excludeFilter: List<String> by ExcludeFilter
 
-        val strictEnums: List<String> by lazy {
-            properties.getSpaceSeparated("strictEnums")
-        }
-
-        val nonStrictEnums: List<String> by lazy {
-            properties.getSpaceSeparated("nonStrictEnums")
-        }
-
-        val noStringConversion: List<String> by lazy {
-            properties.getSpaceSeparated("noStringConversion")
-        }
-
-        val depends: List<String> by lazy {
-            properties.getSpaceSeparated("depends")
-        }
-
-        val exportForwardDeclarations: List<String> by lazy {
-            properties.getSpaceSeparated("exportForwardDeclarations")
-        }
-
-        val allowedOverloadsForCFunctions: List<String> by lazy {
-            properties.getSpaceSeparated("allowedOverloadsForCFunctions")
-        }
-
-        val disableDesignatedInitializerChecks: Boolean by lazy {
-            properties.getProperty("disableDesignatedInitializerChecks")?.toBoolean() ?: false
-        }
-
-        val foreignExceptionMode: String? by lazy {
-            properties.getProperty("foreignExceptionMode")
-        }
-
-        val objcClassesIncludingCategories: List<String> by lazy {
-            properties.getSpaceSeparated("objcClassesIncludingCategories")
-        }
-
-        val allowIncludingObjCCategoriesFromDefFile: Boolean by lazy {
-            properties.getProperty("allowIncludingObjCCategoriesFromDefFile")?.toBoolean() ?: false
-        }
-
-        val userSetupHint: String? by lazy {
-            properties.getProperty("userSetupHint")
-        }
+        val strictEnums: List<String> by StrictEnums
+        val nonStrictEnums: List<String> by NonStrictEnums
+        val noStringConversion: List<String> by NoStringConversion
+        val depends: List<String> by Depends
+        val exportForwardDeclarations: List<String> by ExportForwardDeclarations
+        val allowedOverloadsForCFunctions: List<String> by AllowedOverloadsForCFunctions
+        val disableDesignatedInitializerChecks: Boolean by DisableDesignatedInitializerChecks
+        val foreignExceptionMode: String? by ForeignExceptionMode
+        val objcClassesIncludingCategories: List<String> by ObjcClassesIncludingCategories
+        val allowIncludingObjCCategoriesFromDefFile: Boolean by AllowIncludingObjCCategoriesFromDefFile
+        val userSetupHint: String? by UserSetupHint
     }
 }
-
-private fun Properties.getSpaceSeparated(name: String): List<String> =
-    this.getProperty(name)?.let { parseSpaceSeparatedArgs(it) } ?: emptyList()
 
 private fun parseDefFile(file: File?, substitutions: Map<String, String>): Triple<Properties, Properties, List<String>> {
     val properties = Properties()
