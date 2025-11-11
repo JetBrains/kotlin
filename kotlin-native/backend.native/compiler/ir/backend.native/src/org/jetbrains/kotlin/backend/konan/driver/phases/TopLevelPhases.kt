@@ -149,6 +149,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             // (like IR visibility checks).
             // This is what we call a 'lowering synchronization point'.
             fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrBeforeLowering) }
+            fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, checkInlineCallCyclesPhase) }
 
             run {
                 // This is a so-called "KLIB Common Lowerings Prefix".
