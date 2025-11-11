@@ -256,7 +256,9 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
                 project.layout.dir(
                     project.provider { File(it).parentFile.resolve(SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) }
                 )
-            }
+            }.orElse(
+                project.layout.buildDirectory.dir("stub")
+            )
         )
     }
     val syntheticLinkageImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated()
