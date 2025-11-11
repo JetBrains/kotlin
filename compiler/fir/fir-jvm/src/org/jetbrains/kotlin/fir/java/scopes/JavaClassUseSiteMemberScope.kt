@@ -417,25 +417,14 @@ class JavaClassUseSiteMemberScope(
 
         val fir = fir
         val returnType = continuationParameterType.typeArguments[0].type ?: return this
-        val builder: FirFunctionBuilder.() -> Unit = {
+        val symbol = FirNamedFunctionSymbol(callableId)
+        return buildMaybeJavaFunctionCopy(fir, symbol) {
             valueParameters.clear()
             valueParameters.addAll(fir.valueParameters.dropLast(1))
             returnTypeRef = buildResolvedTypeRef {
                 coneType = returnType
             }
             (status as FirDeclarationStatusImpl).isSuspend = true
-        }
-        val symbol = FirNamedFunctionSymbol(callableId)
-        return if (fir is FirJavaMethod) {
-            buildJavaMethodCopy(fir) {
-                builder()
-                this.symbol = symbol
-            }
-        } else {
-            buildNamedFunctionCopy(fir) {
-                builder()
-                this.symbol = symbol
-            }
         }.symbol
     }
 
@@ -1125,9 +1114,7 @@ class JavaClassUseSiteMemberScope(
         ): FirNamedFunctionSymbol {
             val newSymbol = FirNamedFunctionSymbol(accidentalOverrideWithDeclaredFunction.callableId)
             val original = accidentalOverrideWithDeclaredFunction.fir
-            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildNamedFunctionCopy(original) {
-                this.name = name
-                symbol = newSymbol
+            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildMaybeJavaFunctionCopy(original, newSymbol, name) {
                 dispatchReceiverType = klass.defaultType()
             }.apply {
                 initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
@@ -1142,15 +1129,35 @@ class JavaClassUseSiteMemberScope(
             klass: FirJavaClass
         ): FirNamedFunctionSymbol {
             val newSymbol = FirNamedFunctionSymbol(relevantFunctionFromSupertypes.callableId)
-            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildNamedFunctionCopy(relevantFunctionFromSupertypes.fir) {
-                this.name = name
-                symbol = newSymbol
-                dispatchReceiverType = klass.defaultType()
-            }.apply {
-                isHiddenToOvercomeSignatureClash = true
-            }
+            val accidentalOverrideWithDeclaredFunctionHiddenCopy =
+                buildMaybeJavaFunctionCopy(relevantFunctionFromSupertypes.fir, newSymbol, name) {
+                    dispatchReceiverType = klass.defaultType()
+                }.apply {
+                    isHiddenToOvercomeSignatureClash = true
+                }
             // Collect synthetic function which is a hidden copy of inherited one with unerased parameters
             return accidentalOverrideWithDeclaredFunctionHiddenCopy.symbol
+        }
+
+        private fun buildMaybeJavaFunctionCopy(
+            original: FirNamedFunction,
+            newSymbol: FirNamedFunctionSymbol,
+            newName: Name = original.name,
+            builder: FirFunctionBuilder.() -> Unit,
+        ): FirNamedFunction {
+            return if (original is FirJavaMethod) {
+                buildJavaMethodCopy(original) {
+                    this.symbol = newSymbol
+                    name = newName
+                    builder()
+                }
+            } else {
+                buildNamedFunctionCopy(original) {
+                    this.symbol = newSymbol
+                    name = newName
+                    builder()
+                }
+            }
         }
     }
 }
