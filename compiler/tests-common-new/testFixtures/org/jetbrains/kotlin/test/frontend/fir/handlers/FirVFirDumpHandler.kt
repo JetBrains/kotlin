@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.backend.utils.createFilesWithGeneratedDeclarations
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler.Companion.collectFilesForRendering
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -28,12 +28,9 @@ class FirVFirDumpHandler(
             val currentModule = part.module
             if (FirDiagnosticsDirectives.DUMP_VFIR !in currentModule.directives) return
             val builderForModule = dumper.builderForModule(currentModule)
-            val firFiles = info.mainFirFilesByTestFile
 
-            val allFiles = buildList {
-                addAll(firFiles.values)
-                addAll(part.session.createFilesWithGeneratedDeclarations())
-            }
+            val allFiles = collectFilesForRendering(info, part)
+
             part.session.lazyDeclarationResolver.startResolvingPhase(FirResolvePhase.BODY_RESOLVE)
 
             val renderer = FirVerboseRenderer(FirVerbosePrinter(builderForModule))

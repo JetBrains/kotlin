@@ -4,22 +4,7 @@ FILE: module_lib-common_mppDependencyWithActualTypealiasAnnotation.kt
 
     public final expect annotation class MyAnnotation : R|kotlin/Annotation| {
     }
-FILE: module_lib-jvm_mppDependencyWithActualTypealiasAnnotation.kt
-    package foo
-
-    public final annotation class RealState : R|kotlin/Annotation| {
-        public constructor(): R|foo/RealState| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-    public final actual typealias MyAnnotation = R|foo/RealState|
 Module: lib-jvm
-FILE: module_lib-common_mppDependencyWithActualTypealiasAnnotation.kt
-    package foo
-
-    public final expect annotation class MyAnnotation : R|kotlin/Annotation| {
-    }
 FILE: module_lib-jvm_mppDependencyWithActualTypealiasAnnotation.kt
     package foo
 

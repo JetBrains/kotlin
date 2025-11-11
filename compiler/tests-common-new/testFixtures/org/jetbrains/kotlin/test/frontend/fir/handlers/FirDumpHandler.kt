@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.createFilesWithGeneratedDeclarations
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.renderer.FirClassMemberRenderer
 import org.jetbrains.kotlin.fir.renderer.FirPackageDirectiveRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -55,12 +58,8 @@ class FirDumpHandler(
             if (!isFirDumpEnabled) return
 
             val builderForModule = dumper.builderForModule(currentModule)
-            val firFiles = info.mainFirFilesByTestFile
 
-            val allFiles = buildList {
-                addAll(firFiles.values)
-                addAll(part.session.createFilesWithGeneratedDeclarations())
-            }
+            val allFiles = collectFilesForRendering(info, part)
             part.session.lazyDeclarationResolver.startResolvingPhase(FirResolvePhase.BODY_RESOLVE)
 
             val renderer = FirRenderer(
@@ -120,5 +119,20 @@ class FirDumpHandler(
         // there is no need to duplicate dumps for them (and they may differ from regular ones, as
         // types in resolved type ref won't be expanded)
         return DISABLE_TYPEALIAS_EXPANSION in this || USE_LATEST_LANGUAGE_VERSION in this || DISABLE_FIR_DUMP_HANDLER in this
+    }
+
+    companion object {
+        fun collectFilesForRendering(info: FirOutputArtifact, part: FirOutputPartForDependsOnModule): List<FirFile> {
+            return buildList {
+                // collect only files belonging to the specific parts and exclude additional test files
+                info.allFirFiles.filterTo(this) { file ->
+                    file.moduleData == part.session.moduleData &&
+                            info.allFirFilesByTestFile.entries.none {
+                                it.value == file && it.key.isAdditional
+                            }
+                }
+                addAll(part.session.createFilesWithGeneratedDeclarations())
+            }
+        }
     }
 }
