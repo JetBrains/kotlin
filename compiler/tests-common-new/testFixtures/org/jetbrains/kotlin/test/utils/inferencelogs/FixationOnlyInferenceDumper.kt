@@ -65,8 +65,8 @@ class FixationOnlyInferenceLogsDumper() : FirInferenceLogsDumper() {
         return lines.joinToString("\n")
     }
 
-    private fun InferenceLogger.FixationLogVariableInfo.render(): String {
-        val lines = listOf(readiness.toString("    ")) + constraints.mapIndexed { index, constraint ->
+    private fun InferenceLogger.FixationLogVariableInfo<*>.render(): String {
+        val lines = listOf(renderReadiness(4)) + constraints.mapIndexed { index, constraint ->
             val operator = when (constraint.kind) {
                 ConstraintKind.LOWER -> ">:"
                 ConstraintKind.UPPER -> "<:"
