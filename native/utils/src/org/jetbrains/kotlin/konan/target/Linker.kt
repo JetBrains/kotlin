@@ -191,7 +191,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
 
     override fun provideCompilerRtLibrary(libraryName: String, isDynamic: Boolean): String? {
         val prefix = when (target.family) {
-            Family.IOS -> "ios"
+            Family.IOS -> if (targetTriple.isMacabi) "osx" else "ios"
             Family.WATCHOS -> "watchos"
             Family.TVOS -> "tvos"
             Family.OSX -> "osx"
