@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
+import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isPromisifiedWrapper
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
@@ -650,7 +653,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             nonNullType.isFunction() -> ExportedType.Function(
                 parameters = nonNullType.arguments.dropLast(1).memoryOptimizedMap {
                     ExportedParameter(
-                        name = null,
+                        name = (it as? IrTypeProjection)?.type?.getAnnotationArgumentValue(StandardNames.FqNames.parameterName, "name"),
                         type = exportTypeArgument(it, typeOwner),
                     )
                 },

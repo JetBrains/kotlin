@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.export
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -206,7 +207,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             nonNullType.isFunction() -> ExportedType.Function(
                 parameters = nonNullType.arguments.dropLast(1).memoryOptimizedMap {
                     ExportedParameter(
-                        name = null,
+                        name = (it as? IrTypeProjection)?.type?.getAnnotationArgumentValue(StandardNames.FqNames.parameterName, "name"),
                         type = exportTypeArgument(it),
                     )
                 },

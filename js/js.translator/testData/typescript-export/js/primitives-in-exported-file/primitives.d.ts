@@ -53,8 +53,8 @@ declare namespace JS_TESTS {
         const _array_n_int: Array<Nullable<number>>;
         const _n_array_n_int: Nullable<Array<Nullable<number>>>;
         const _array_n_array_string: Array<Nullable<Array<string>>>;
-        const _fun_n_int_unit: (p0: Nullable<number>) => void;
-        const _fun_n_int_unit_class: (p0: Nullable<number>) => void;
+        const _fun_n_int_unit: (int: Nullable<number>) => void;
+        const _fun_n_int_unit_class: (int: Nullable<number>) => void;
         const _kfun_n_int_unit: any/* kotlin.reflect.KFunction1<Nullable<number>, void> */;
         const _fun_n_int_unit_suspend: any /*Suspend functions are not supported*/;
         const _fun_n_int_unit_suspend_class: any /*Suspend functions are not supported*/;

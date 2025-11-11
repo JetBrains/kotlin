@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Array
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Function
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 internal class TypeExporter(private val config: TypeScriptExportConfig) {
@@ -101,22 +101,22 @@ internal class TypeExporter(private val config: TypeScriptExportConfig) {
                     parameters = buildList {
                         type.contextReceivers.mapTo(this) {
                             ExportedParameter(
-                                name = null,
+                                name = it.label?.asString(),
                                 type = exportType(it.type),
                             )
                         }
                         type.receiverType?.let {
                             add(
                                 ExportedParameter(
-                                    name = null,
+                                    name = SpecialNames.THIS.asString(),
                                     type = exportType(it),
                                 )
                             )
                         }
-                        type.parameterTypes.mapTo(this) {
+                        type.parameters.mapTo(this) {
                             ExportedParameter(
-                                name = null,
-                                type = exportType(it),
+                                name = it.name?.asString(),
+                                type = exportType(it.type),
                             )
                         }
                     },

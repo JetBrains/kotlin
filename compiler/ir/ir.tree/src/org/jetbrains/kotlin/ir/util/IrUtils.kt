@@ -363,11 +363,11 @@ internal fun IrConstructorCall.getAnnotationValueOrNullImpl(name: String): Any? 
     return (argument as IrConst?)?.value
 }
 
-inline fun <reified T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? =
+inline fun <reified T> IrAnnotationContainer.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? =
     getAnnotationArgumentValueImpl(fqName, argumentName) as T?
 
 @PublishedApi
-internal fun IrDeclaration.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
+internal fun IrAnnotationContainer.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
     val annotation = this.annotations.findAnnotation(fqName) ?: return null
     for (parameter in annotation.symbol.owner.parameters) {
         if (parameter.name.asString() == argumentName) {

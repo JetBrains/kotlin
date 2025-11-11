@@ -9,4 +9,4 @@ export declare function consumeUByte(x: number): string;
 export declare function consumeUShort(x: number): string;
 export declare function consumeUInt(x: number): string;
 export declare function consumeULong(x: bigint): string;
-export declare function consumeFunction(fn: (p0: string) => number): number;
+export declare function consumeFunction(fn: (string: string) => number): number;

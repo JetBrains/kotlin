@@ -17,4 +17,4 @@ export declare function consumeInt(x: number): string;
 export declare function consumeLong(x: bigint): string;
 export declare function consumeChar(x: number): string;
 export declare function consumeString(x: string): string;
-export declare function consumeFunction(fn: (p0: string) => number): number;
+export declare function consumeFunction(fn: (string: string) => number): number;

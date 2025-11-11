@@ -9,4 +9,4 @@ export declare function consumeUByte(x: Nullable<number>): Nullable<string>;
 export declare function consumeUShort(x: Nullable<number>): Nullable<string>;
 export declare function consumeUInt(x: Nullable<number>): Nullable<string>;
 export declare function consumeULong(x: Nullable<bigint>): Nullable<string>;
-export declare function consumeFunction(fn: (p0: string) => Nullable<number>): Nullable<number>;
+export declare function consumeFunction(fn: (string: string) => Nullable<number>): Nullable<number>;
