@@ -1,9 +1,0 @@
-MODULE main
-	CLASS test/Anno.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(Lkotlin/Array;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(klasses: kotlin/Array<kotlin/reflect/KClass<*>> /* = ... */)
-					K2
-						(klasses: kotlin/Array<kotlin/reflect/KClass<*>> = [kotlin/String::class, kotlin/Int::class])

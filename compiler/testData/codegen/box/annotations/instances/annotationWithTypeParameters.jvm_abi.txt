@@ -1,9 +1,0 @@
-MODULE main
-	CLASS test/Nesting.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(Ltest/One;Ltest/Two;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(a1: test/One<kotlin/Int> /* = ... */, a2: test/Two<kotlin/String, kotlin/collections/List<kotlin/String>> /* = ... */)
-					K2
-						(a1: test/One<kotlin/Int> = test/One(), a2: test/Two<kotlin/String, kotlin/collections/List<kotlin/String>> = test/Two(s = "two"))

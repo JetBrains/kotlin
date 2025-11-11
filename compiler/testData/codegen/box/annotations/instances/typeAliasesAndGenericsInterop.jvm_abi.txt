@@ -1,9 +1,0 @@
-MODULE main
-	CLASS AnnAlias.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(Lkotlin/Array;Lkotlin/reflect/KClass;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(s: kotlin/Array<kotlin/String /* = Str^ */> /* = StrArr^ */, k: kotlin/reflect/KClass<*> /* = ... */)
-					K2
-						(s: kotlin/Array<kotlin/String /* = Str^ */> /* = StrArr^ */, k: kotlin/reflect/KClass<*> = kotlin/Any::class)

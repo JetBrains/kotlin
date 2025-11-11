@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Inner.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(ILjava/lang/String;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(i: kotlin/Int /* = ... */, s: kotlin/String /* = ... */)
-					K2
-						(i: kotlin/Int = 1, s: kotlin/String = "")

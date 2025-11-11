@@ -1,9 +1,0 @@
-MODULE lib
-	CLASS a/Nesting.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(La/Two;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(a2: a/Two<kotlin/String, kotlin/collections/List<kotlin/String>> /* = ... */)
-					K2
-						(a2: a/Two<kotlin/String, kotlin/collections/List<kotlin/String>> = a/Two(s = "two"))

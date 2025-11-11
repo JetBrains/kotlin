@@ -1,9 +1,0 @@
-MODULE main
-	CLASS test/SetparamKt.class
-		PACKAGE METADATA
-			PROPERTY getDefaultSetter()Ljava/lang/String;
-				Property: class.metadata.property.setterValueParameter
-					K1
-						<set-?>: kotlin/String
-					K2
-						value: kotlin/String

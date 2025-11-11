@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Bar.class
-		CLASS METADATA
-			PROPERTY getFoo()LMFunction;
-				Property: class.metadata.property.returnType
-					K1
-						MFunction<kotlin/String!, Foo.Requester!>
-					K2
-						MFunction<@kotlin/ParameterName(name = "dealToBeOffered") kotlin/String!, Foo.Requester!>

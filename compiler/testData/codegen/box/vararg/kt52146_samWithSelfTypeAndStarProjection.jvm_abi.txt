@@ -1,3 +1,0 @@
-MODULE main
-	Missing in K1
-		BoxKt$test$2.class

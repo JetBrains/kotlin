@@ -1,9 +1,0 @@
-MODULE lib1
-	CLASS MyConfig.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(Lkotlin/Array;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(vararg profiles: kotlin/String /* kotlin/Array<out kotlin/String> */ /* = ... */)
-					K2
-						(vararg profiles: kotlin/String /* kotlin/Array<out kotlin/String> */ = [])

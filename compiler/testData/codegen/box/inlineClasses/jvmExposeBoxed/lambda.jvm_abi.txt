@@ -1,9 +1,0 @@
-MODULE main
-	CLASS ICKt.class
-		PACKAGE METADATA
-			PROPERTY getLambda()Lkotlin/jvm/functions/Function0;
-				Property: class.metadata.property.getterModifiers
-					K1
-						public final /* non-default */
-					K2
-						public final

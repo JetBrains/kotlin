@@ -1,9 +1,0 @@
-MODULE main
-	CLASS AnnArrays.class
-		CLASS METADATA
-			CONSTRUCTOR <init>([ILkotlin/Array;LInner;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(ints: kotlin/IntArray /* = ... */, strs: kotlin/Array<kotlin/String> /* = ... */, inn: Inner /* = ... */)
-					K2
-						(ints: kotlin/IntArray = [], strs: kotlin/Array<kotlin/String> = [], inn: Inner = Inner(v = "x"))

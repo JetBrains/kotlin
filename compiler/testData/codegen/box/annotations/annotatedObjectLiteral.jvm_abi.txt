@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Ann.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(Ljava/lang/String;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(v: kotlin/String /* = ... */)
-					K2
-						(v: kotlin/String = "???")

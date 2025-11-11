@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Ann.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(ILjava/lang/String;LAnn2;LMyEnum;Lkotlin/reflect/KClass;[ILkotlin/Array;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(i: kotlin/Int /* = ... */, s: kotlin/String /* = ... */, a: Ann2 /* = ... */, e: MyEnum /* = ... */, c: kotlin/reflect/KClass<*> /* = ... */, ia: kotlin/IntArray /* = ... */, sa: kotlin/Array<kotlin/String> /* = ... */)
-					K2
-						(i: kotlin/Int = 1, s: kotlin/String = "a", a: Ann2 = Ann2(), e: MyEnum = MyEnum.A, c: kotlin/reflect/KClass<*> = A::class, ia: kotlin/IntArray = [1, 2], sa: kotlin/Array<kotlin/String> = ["a", "b"])

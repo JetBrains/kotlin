@@ -1,9 +1,0 @@
-MODULE m1
-	CLASS HolderWithDefault$Annotation.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(Lkotlin/Array;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(value: kotlin/Array<kotlin/String> /* = ... */)
-					K2
-						(value: kotlin/Array<kotlin/String> = [""])

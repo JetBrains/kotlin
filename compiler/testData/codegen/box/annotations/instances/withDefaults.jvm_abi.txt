@@ -1,9 +1,0 @@
-MODULE main
-	CLASS C.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(ILjava/lang/String;[ILE;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(i: kotlin/Int /* = ... */, s: kotlin/String /* = ... */, a: kotlin/IntArray /* = ... */, e: E /* = ... */)
-					K2
-						(i: kotlin/Int = 1, s: kotlin/String = "", a: kotlin/IntArray = [], e: E = E.A)

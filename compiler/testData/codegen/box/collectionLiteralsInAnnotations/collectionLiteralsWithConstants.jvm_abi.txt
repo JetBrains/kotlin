@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Foo.class
-		CLASS METADATA
-			CONSTRUCTOR <init>([ILkotlin/Array;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(a: kotlin/IntArray /* = ... */, b: kotlin/Array<kotlin/String> /* = ... */)
-					K2
-						(a: kotlin/IntArray = [], b: kotlin/Array<kotlin/String> = [])
