@@ -7,8 +7,15 @@ function assert(condition: boolean) {
 }
 
 assert(foo._long === 1n);
+assert(foo._ulong === -1n);
 assert(foo._long_array instanceof BigInt64Array);
+assert(foo._long_array[0] === 1n);
+assert(foo._ulong_array instanceof BigInt64Array);
+assert(foo._ulong_array[0] === -1n);
 assert(foo._array_long instanceof Array);
+assert(foo._array_long[0] === 1n);
+assert(foo._array_ulong instanceof Array);
+assert(typeof foo._array_ulong[0] !== "bigint"); // Should be bigint, see KT-82320
 assert(foo._n_long === 1n);
 foo.myVar = 1n
 assert(foo.myVar === 2n);

@@ -3,8 +3,11 @@ declare namespace JS_TESTS {
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
         const _long: bigint;
+        const _ulong: bigint;
         const _long_array: BigInt64Array;
+        const _ulong_array: any/* kotlin.ULongArray */;
         const _array_long: Array<bigint>;
+        const _array_ulong: Array<bigint>;
         const _n_long: Nullable<bigint>;
         const funInterfaceInheritor1: foo.funInterface;
         const funInterfaceInheritor2: foo.funInterface;
@@ -12,6 +15,7 @@ declare namespace JS_TESTS {
         function funWithLongParameters(a: bigint, b: bigint): bigint;
         function funWithLongDefaultParameters(a?: bigint, b?: bigint): bigint;
         function varargLong(x: BigInt64Array): number;
+        function varargULong(x: any/* kotlin.ULongArray */): number;
         function funWithTypeParameter<T extends bigint>(a: T, b: T): bigint;
         function funWithTypeParameterWithTwoUpperBounds<T extends unknown/* kotlin.Comparable<T> */ & bigint>(a: T, b: T): bigint;
         function funWithContextParameter(long: bigint): bigint;

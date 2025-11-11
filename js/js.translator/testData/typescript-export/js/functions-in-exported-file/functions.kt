@@ -50,6 +50,18 @@ fun varargChar(vararg x: Char): Int =
     x.size
 
 
+fun varargUByte(vararg x: UByte): Int =
+    x.size
+
+
+fun varargUShort(vararg x: UShort): Int =
+    x.size
+
+
+fun varargUInt(vararg x: UInt): Int =
+    x.size
+
+
 fun varargNullableInt(vararg x: Int?): Int =
     x.size
 

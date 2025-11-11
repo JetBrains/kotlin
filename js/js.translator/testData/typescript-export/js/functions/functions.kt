@@ -45,6 +45,18 @@ fun varargChar(vararg x: Char): Int =
     x.size
 
 @JsExport
+fun varargUByte(vararg x: UByte): Int =
+    x.size
+
+@JsExport
+fun varargUShort(vararg x: UShort): Int =
+    x.size
+
+@JsExport
+fun varargUInt(vararg x: UInt): Int =
+    x.size
+
+@JsExport
 fun varargNullableInt(vararg x: Int?): Int =
     x.size
 

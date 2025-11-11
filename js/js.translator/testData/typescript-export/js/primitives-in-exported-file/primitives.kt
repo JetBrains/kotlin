@@ -6,6 +6,7 @@
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
+// WITH_STDLIB
 // FILE: primitives.kt
 
 @file:JsExport
@@ -40,6 +41,13 @@ val _double: Double = 1.0
 // TODO: Char and Long
 
 
+val _ubyte: UByte = UByte.MAX_VALUE
+
+val _ushort: UShort = UShort.MAX_VALUE
+
+val _uint: UInt = UInt.MAX_VALUE
+
+
 val _byte_array: ByteArray = byteArrayOf()
 
 val _short_array: ShortArray = shortArrayOf()
@@ -53,6 +61,13 @@ val _double_array: DoubleArray = doubleArrayOf()
 val _boolean_array: BooleanArray = booleanArrayOf()
 
 val _char_array: CharArray = charArrayOf()
+
+
+val _ubyte_array: UByteArray = ubyteArrayOf(_ubyte)
+
+val _ushort_array: UShortArray = ushortArrayOf(_ushort)
+
+val _uint_array: UIntArray = uintArrayOf(_uint)
 
 
 val _array_byte: Array<Byte> = emptyArray()
@@ -72,6 +87,13 @@ val _array_boolean: Array<Boolean> = emptyArray()
 val _array_array_string: Array<Array<String>> = arrayOf(emptyArray())
 
 val _array_array_int_array: Array<Array<IntArray>> = arrayOf(arrayOf(intArrayOf()))
+
+
+val _array_ubyte: Array<UByte> = emptyArray()
+
+val _array_ushort: Array<UShort> = emptyArray()
+
+val _array_uint: Array<UInt> = emptyArray()
 
 
 val _fun_unit: () -> Unit = { }

@@ -8,6 +8,7 @@
 // INFER_MAIN_MODULE
 // LANGUAGE: +ContextParameters
 // MODULE: JS_TESTS
+// WITH_STDLIB
 // FILE: long-type.kt
 
 @file:JsExport
@@ -17,10 +18,19 @@ package foo
 val _long: Long = 1L
 
 
-val _long_array: LongArray = longArrayOf()
+val _ulong: ULong = ULong.MAX_VALUE
 
 
-val _array_long: Array<Long> = emptyArray()
+val _long_array: LongArray = longArrayOf(1L)
+
+
+val _ulong_array: ULongArray = ulongArrayOf(ULong.MAX_VALUE)
+
+
+val _array_long: Array<Long> = arrayOf(1L)
+
+
+val _array_ulong: Array<ULong> = arrayOf(ULong.MAX_VALUE)
 
 
 <!MUST_BE_INITIALIZED!>var myVar: Long<!>
@@ -40,6 +50,10 @@ fun funWithLongDefaultParameters(a: Long = 1L, b: Long = a) = a + b
 
 
 fun varargLong(vararg x: Long): Int =
+    x.size
+
+
+fun varargULong(vararg x: ULong): Int =
     x.size
 
 

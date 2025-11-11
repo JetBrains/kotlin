@@ -11,6 +11,9 @@ declare namespace JS_TESTS {
         const _int: number;
         const _float: number;
         const _double: number;
+        const _ubyte: any/* kotlin.UByte */;
+        const _ushort: any/* kotlin.UShort */;
+        const _uint: any/* kotlin.UInt */;
         const _byte_array: Int8Array;
         const _short_array: Int16Array;
         const _int_array: Int32Array;
@@ -18,6 +21,9 @@ declare namespace JS_TESTS {
         const _double_array: Float64Array;
         const _boolean_array: any /*BooleanArray*/;
         const _char_array: any /*CharArray*/;
+        const _ubyte_array: any/* kotlin.UByteArray */;
+        const _ushort_array: any/* kotlin.UShortArray */;
+        const _uint_array: any/* kotlin.UIntArray */;
         const _array_byte: Array<number>;
         const _array_short: Array<number>;
         const _array_int: Array<number>;
@@ -27,6 +33,9 @@ declare namespace JS_TESTS {
         const _array_boolean: Array<boolean>;
         const _array_array_string: Array<Array<string>>;
         const _array_array_int_array: Array<Array<Int32Array>>;
+        const _array_ubyte: Array<any/* kotlin.UByte */>;
+        const _array_ushort: Array<any/* kotlin.UShort */>;
+        const _array_uint: Array<any/* kotlin.UInt */>;
         const _fun_unit: () => void;
         const _fun_int_unit: (p0: number) => void;
         const _fun_boolean_int_string_intarray: (p0: boolean, p1: number, p2: string) => Int32Array;

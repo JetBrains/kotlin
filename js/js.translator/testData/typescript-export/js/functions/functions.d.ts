@@ -25,6 +25,9 @@ declare namespace JS_TESTS {
         function varargDouble(x: Float64Array): number;
         function varargBoolean(x: any /*BooleanArray*/): number;
         function varargChar(x: any /*CharArray*/): number;
+        function varargUByte(x: any/* kotlin.UByteArray */): number;
+        function varargUShort(x: any/* kotlin.UShortArray */): number;
+        function varargUInt(x: any/* kotlin.UIntArray */): number;
         function varargNullableInt(x: Array<Nullable<number>>): number;
         function varargWithOtherParameters(x: string, y: Array<string>, z: string): number;
         function varargWithComplexType(x: Array<(p0: Array<Int32Array>) => Array<Int32Array>>): number;

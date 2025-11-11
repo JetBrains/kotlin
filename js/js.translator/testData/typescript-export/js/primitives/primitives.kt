@@ -3,6 +3,7 @@
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
+// WITH_STDLIB
 // FILE: primitives.kt
 
 package foo
@@ -35,6 +36,13 @@ val _double: Double = 1.0
 // TODO: Char and Long
 
 @JsExport
+val _ubyte: UByte = UByte.MAX_VALUE
+@JsExport
+val _ushort: UShort = UShort.MAX_VALUE
+@JsExport
+val _uint: UInt = UInt.MAX_VALUE
+
+@JsExport
 val _byte_array: ByteArray = byteArrayOf()
 @JsExport
 val _short_array: ShortArray = shortArrayOf()
@@ -48,6 +56,13 @@ val _double_array: DoubleArray = doubleArrayOf()
 val _boolean_array: BooleanArray = booleanArrayOf()
 @JsExport
 val _char_array: CharArray = charArrayOf()
+
+@JsExport
+val _ubyte_array: UByteArray = ubyteArrayOf(_ubyte)
+@JsExport
+val _ushort_array: UShortArray = ushortArrayOf(_ushort)
+@JsExport
+val _uint_array: UIntArray = uintArrayOf(_uint)
 
 @JsExport
 val _array_byte: Array<Byte> = emptyArray()
@@ -67,6 +82,13 @@ val _array_boolean: Array<Boolean> = emptyArray()
 val _array_array_string: Array<Array<String>> = arrayOf(emptyArray())
 @JsExport
 val _array_array_int_array: Array<Array<IntArray>> = arrayOf(arrayOf(intArrayOf()))
+
+@JsExport
+val _array_ubyte: Array<UByte> = emptyArray()
+@JsExport
+val _array_ushort: Array<UShort> = emptyArray()
+@JsExport
+val _array_uint: Array<UInt> = emptyArray()
 
 @JsExport
 val _fun_unit: () -> Unit = { }
