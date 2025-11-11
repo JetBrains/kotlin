@@ -204,7 +204,12 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             nonNullType == jsRelatedSymbols.jsAnyType -> ExportedType.Primitive.Unknown
             nonNullType.isUnit() || nonNullType == context.wasmSymbols.voidType -> ExportedType.Primitive.Unit
             nonNullType.isFunction() -> ExportedType.Function(
-                parameterTypes = nonNullType.arguments.dropLast(1).memoryOptimizedMap { exportTypeArgument(it) },
+                parameters = nonNullType.arguments.dropLast(1).memoryOptimizedMap {
+                    ExportedParameter(
+                        name = null,
+                        type = exportTypeArgument(it),
+                    )
+                },
                 returnType = exportTypeArgument(nonNullType.arguments.last())
             )
             nonNullType.isNothing() -> ExportedType.Primitive.Nothing

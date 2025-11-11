@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedParameter
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Array
@@ -97,10 +98,27 @@ internal class TypeExporter(private val config: TypeScriptExportConfig) {
                 ErrorType("Suspend function types are not supported")
             } else {
                 Function(
-                    parameterTypes = buildList {
-                        type.contextReceivers.mapTo(this) { exportType(it.type) }
-                        type.receiverType?.let { add(exportType(it)) }
-                        type.parameterTypes.mapTo(this) { exportType(it) }
+                    parameters = buildList {
+                        type.contextReceivers.mapTo(this) {
+                            ExportedParameter(
+                                name = null,
+                                type = exportType(it.type),
+                            )
+                        }
+                        type.receiverType?.let {
+                            add(
+                                ExportedParameter(
+                                    name = null,
+                                    type = exportType(it),
+                                )
+                            )
+                        }
+                        type.parameterTypes.mapTo(this) {
+                            ExportedParameter(
+                                name = null,
+                                type = exportType(it),
+                            )
+                        }
                     },
                     returnType = exportType(type.returnType),
                 )

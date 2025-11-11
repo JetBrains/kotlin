@@ -648,7 +648,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             nonNullType.isArray() -> ExportedType.Array(exportTypeArgument(nonNullType.arguments[0], typeOwner))
             nonNullType.isSuspendFunction() -> ExportedType.ErrorType("Suspend functions are not supported")
             nonNullType.isFunction() -> ExportedType.Function(
-                parameterTypes = nonNullType.arguments.dropLast(1).memoryOptimizedMap { exportTypeArgument(it, typeOwner) },
+                parameters = nonNullType.arguments.dropLast(1).memoryOptimizedMap {
+                    ExportedParameter(
+                        name = null,
+                        type = exportTypeArgument(it, typeOwner),
+                    )
+                },
                 returnType = exportTypeArgument(nonNullType.arguments.last(), typeOwner)
             )
 

@@ -119,7 +119,7 @@ public data class ExportedObject(
 ) : ExportedClass()
 
 public class ExportedParameter(
-    public val name: String,
+    public val name: String?,
     public val type: ExportedType,
     public val hasDefaultValue: Boolean = false
 )
@@ -162,7 +162,7 @@ public sealed class ExportedType {
     }
 
     public class Function(
-        public val parameterTypes: List<ExportedType>,
+        public val parameters: List<ExportedParameter>,
         public val returnType: ExportedType
     ) : ExportedType()
 
