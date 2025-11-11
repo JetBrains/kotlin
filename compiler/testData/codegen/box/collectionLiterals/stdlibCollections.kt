@@ -3,7 +3,7 @@
 // WITH_STDLIB
 // ISSUE: KT-81722
 
-@file:OptIn(ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalCollectionLiterals::class)
 
 fun Collection<*>.checkEquals(vararg es: Any?): Boolean {
     return size == es.size && zip(es).all { (a, b) -> a == b }

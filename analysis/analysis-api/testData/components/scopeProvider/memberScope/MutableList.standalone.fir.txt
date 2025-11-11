@@ -1958,7 +1958,9 @@ KaNamedFunctionSymbol:
 
 KaNamedClassSymbol:
   annotations: [
-    kotlin/ExperimentalStdlibApi()
+    kotlin/ExperimentalCollectionLiterals()
+      psi: null
+    kotlin/SinceKotlin(version = "2.3")
       psi: null
   ]
   classId: kotlin/collections/MutableList.Companion

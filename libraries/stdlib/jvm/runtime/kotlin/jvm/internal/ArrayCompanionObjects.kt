@@ -5,29 +5,38 @@
 
 package kotlin.jvm.internal
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 internal object ArrayCompanionObject
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 internal object IntArrayCompanionObject
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 internal object LongArrayCompanionObject
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 internal object ShortArrayCompanionObject
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 internal object ByteArrayCompanionObject
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 internal object CharArrayCompanionObject
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 internal object BooleanArrayCompanionObject
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 internal object FloatArrayCompanionObject
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 internal object DoubleArrayCompanionObject

@@ -3,7 +3,8 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Array modality:FINAL visibility:pu
   TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
   CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
     annotations:
-      ExperimentalStdlibApi
+      ExperimentalCollectionLiterals
+      SinceKotlin(version = "2.3")
     thisReceiver: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> type:kotlin.Array.Companion
     CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private returnType:kotlin.Array.Companion [primary]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
@@ -24,7 +25,8 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Array modality:FINAL visibility:pu
       VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Array.Companion
       VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:elements index:1 type:kotlin.Array<out T of kotlin.Array.Companion.of> varargElementType:T of kotlin.Array.Companion.of [vararg]
       annotations:
-        ExperimentalStdlibApi
+        ExperimentalCollectionLiterals
+        SinceKotlin(version = "2.3")
   CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public returnType:kotlin.Array<T of kotlin.Array>
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:size index:0 type:kotlin.Int
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:init index:1 type:kotlin.Function1<kotlin.Int, T of kotlin.Array>

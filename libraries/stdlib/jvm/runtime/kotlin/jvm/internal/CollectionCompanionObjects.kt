@@ -6,54 +6,70 @@
 package kotlin.jvm.internal
 
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
 internal object ListCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(): List<T> = listOf()
 
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(element: T): List<T> = listOf(element)
 
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(vararg elements: T): List<T> = listOf(*elements)
 }
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
 internal object MutableListCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(): MutableList<T> = mutableListOf()
 
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(element: T): MutableList<T> = mutableListOf(element)
 
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(vararg elements: T): MutableList<T> = mutableListOf(*elements)
 }
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
 internal object SetCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(): Set<T> = setOf()
 
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(element: T): Set<T> = setOf(element)
 
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(vararg elements: T): Set<T> = setOf(*elements)
 }
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
 internal object MutableSetCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(): MutableSet<T> = mutableSetOf()
 
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(element: T): MutableSet<T> = mutableSetOf(element)
 
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     operator fun <T> of(vararg elements: T): MutableSet<T> = mutableSetOf(*elements)
 }

@@ -31,10 +31,12 @@ public expect class Array<T> {
     public inline constructor(size: Int, init: (Int) -> T)
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public companion object {
         /** Returns an array containing the specified elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public inline operator fun <reified T> of(vararg elements: T): Array<T>
     }
 

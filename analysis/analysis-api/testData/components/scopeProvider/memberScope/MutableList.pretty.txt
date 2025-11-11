@@ -58,5 +58,6 @@ override fun getFirst(): E
 
 override fun getLast(): E
 
-@kotlin.ExperimentalStdlibApi
+@kotlin.ExperimentalCollectionLiterals
+@kotlin.SinceKotlin(version = "2.3")
 companion object

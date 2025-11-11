@@ -20,14 +20,16 @@ package kotlin.sequences
  */
 public interface Sequence<out T> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public companion object {
         /**
          * Creates an empty [Sequence].
          *
          * @return an empty sequence.
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public inline operator fun <T> of(): Sequence<T> = sequenceOf()
 
@@ -37,14 +39,16 @@ public interface Sequence<out T> {
          * @param element the single element to be contained in the resulting sequence.
          * @return a sequence containing only the specified [element].
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public inline operator fun <T> of(element: T): Sequence<T> = sequenceOf(element)
 
         /**
          * Creates a sequence that returns the specified values.
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public inline operator fun <T> of(vararg elements: T): Sequence<T> = sequenceOf(*elements)
     }

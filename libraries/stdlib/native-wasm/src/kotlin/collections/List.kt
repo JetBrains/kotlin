@@ -38,13 +38,15 @@ package kotlin.collections
  */
 public actual interface List<out E> : Collection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /**
          * Returns an empty read-only list. The returned list is serializable (JVM).
          */
         @kotlin.internal.InlineOnly
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public actual inline operator fun <T> of(): List<T> = listOf()
 
         /**
@@ -53,14 +55,16 @@ public actual interface List<out E> : Collection<E> {
          * The returned list is serializable (JVM).
          */
         @kotlin.internal.InlineOnly
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public actual inline operator fun <T> of(element: T): List<T> = listOf(element)
 
         /**
          * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
          */
         @kotlin.internal.InlineOnly
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public actual inline operator fun <T> of(vararg elements: T): List<T> = listOf(*elements)
     }
 
@@ -152,27 +156,31 @@ public actual interface List<out E> : Collection<E> {
  */
 public actual interface MutableList<E> : List<E>, MutableCollection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /**
          * Returns an empty new [MutableList].
          */
         @kotlin.internal.InlineOnly
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public actual inline operator fun <T> of(): MutableList<T> = mutableListOf()
 
         /**
          * Returns a new [MutableList] containing only the specified object [element].
          */
         @kotlin.internal.InlineOnly
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public actual inline operator fun <T> of(element: T): MutableList<T> = mutableListOf(element)
 
         /**
          * Returns a new [MutableList] with the given elements.
          */
         @kotlin.internal.InlineOnly
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public actual inline operator fun <T> of(vararg elements: T): MutableList<T> = mutableListOf(*elements)
     }
 
