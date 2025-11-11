@@ -39,6 +39,8 @@ fun generate(): String {
     generateBinaryOp(p, binaryOperationsMap)
     generateBinaryOpCheck(p, binaryOperationsMap)
 
+    generateCanEvalOpFunction(p, unaryOperationsMap + binaryOperationsMap)
+
     return sb.toString()
 }
 
@@ -136,6 +138,7 @@ private fun generateHeader(p: Printer) {
     p.println()
     p.println("package org.jetbrains.kotlin.resolve.constants.evaluate")
     p.println()
+    p.println("import org.jetbrains.kotlin.name.CallableId")
     p.println("import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType.*")
     p.println("import java.math.BigInteger")
     p.println()
@@ -206,6 +209,25 @@ private fun generateBinaryOp(
     p.popIndent()
     p.println("}")
     p.println()
+}
+
+private fun generateCanEvalOpFunction(p: Printer, operations: List<Operation>) {
+    p.println("private val knownOps = mapOf(")
+    p.pushIndent()
+    for ((callableId, ops) in operations.groupBy { it.callableId }) {
+        val types = ops.map {operation ->
+           "listOf(${operation.parameterTypes.map{ it.toCompilTimeTypeFormat()} .joinToString(", ")})"
+        }.joinToString( "," )
+        p.println("\"${callableId}\" to listOf($types),")
+    }
+    p.popIndent()
+    p.println(")")
+
+    p.println("fun canEvalOp(callableId: CallableId, typeA: CompileTimeType, typeB: CompileTimeType?): Boolean {")
+    p.pushIndent()
+    p.println("return knownOps[callableId.toString()]?.any { it.first() == typeA && it.getOrNull(1) == typeB } ?: false")
+    p.popIndent()
+    p.println("}")
 }
 
 // TODO, KT-75372: Can be dropped with K1
