@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.EXPLICITLY_GENERATE_PLUGIN_FILES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -89,6 +90,7 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
 
         defaultDirectives {
             FIR_PARSER with FirParser.Psi
+            +EXPLICITLY_GENERATE_PLUGIN_FILES
         }
 
         FirLowLevelCompilerBasedTestConfigurator.configureTest(this, disposable)

@@ -23,8 +23,13 @@ data class MetadataFrontendPipelineArtifact(
     val sourceFiles: List<KtSourceFile>,
 ) : FrontendPipelineArtifact() {
     val metadataVersion: BuiltInsBinaryVersion = configuration.metadataVersion as? BuiltInsBinaryVersion ?: BuiltInsBinaryVersion.INSTANCE
-    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector) =
-        copy(diagnosticCollector = newDiagnosticsCollector)
+    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): MetadataFrontendPipelineArtifact {
+        return copy(diagnosticCollector = newDiagnosticsCollector)
+    }
+
+    override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
+        return copy(frontendOutput = newFrontendOutput)
+    }
 }
 
 data class MetadataInMemorySerializationArtifact(

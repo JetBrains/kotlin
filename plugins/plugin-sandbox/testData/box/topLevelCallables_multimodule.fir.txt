@@ -1,0 +1,75 @@
+Module: lib
+FILE: some.kt
+    package foo
+
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(first.kt)) public final class First : R|kotlin/Any| {
+        public constructor(): R|foo/First| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(first)) public final class OtherFirst : R|kotlin/Any| {
+        public constructor(): R|foo/OtherFirst| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(second)) public final class Second : R|kotlin/Any| {
+        public constructor(): R|foo/Second| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|() public final class Third : R|kotlin/Any| {
+        public constructor(): R|foo/Third| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: other.kt
+    package bar
+
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(first.kt)) public final class First : R|kotlin/Any| {
+        public constructor(): R|bar/First| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: foo/first.kt
+    package foo
+
+    public final fun dummyFirst(value: R|foo/First|): R|kotlin/String|
+    public final fun dummyOtherFirst(value: R|foo/OtherFirst|): R|kotlin/String|
+FILE: foo/second.kt
+    package foo
+
+    public final fun dummySecond(value: R|foo/Second|): R|kotlin/String|
+FILE: foo/__GENERATED__CALLABLES__.kt
+    package foo
+
+    public final fun dummyThird(value: R|foo/Third|): R|kotlin/String|
+FILE: bar/first.kt
+    package bar
+
+    public final fun dummyFirst(value: R|bar/First|): R|kotlin/String|
+Module: main
+FILE: main.kt
+    package foo
+
+    public final fun box(): R|kotlin/String| {
+        lval result1: R|kotlin/String| = R|foo/dummyFirst|(R|foo/First.First|())
+        when () {
+            !=(R|<local>/result1|, String(foo.First)) ->  {
+                ^box <strcat>(String(Error: ), R|<local>/result1|)
+            }
+        }
+
+        lval result2: R|kotlin/String| = R|foo/dummySecond|(R|foo/Second.Second|())
+        when () {
+            !=(R|<local>/result2|, String(foo.Second)) ->  {
+                ^box <strcat>(String(Error: ), R|<local>/result2|)
+            }
+        }
+
+        ^box String(OK)
+    }

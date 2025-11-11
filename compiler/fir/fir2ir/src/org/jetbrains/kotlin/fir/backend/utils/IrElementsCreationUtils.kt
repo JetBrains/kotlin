@@ -15,12 +15,7 @@ import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
-import org.jetbrains.kotlin.fir.declarations.utils.fileNameForPluginGeneratedCallable
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
-import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
-import org.jetbrains.kotlin.fir.extensions.declarationGenerators
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -156,56 +151,6 @@ fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): Va
     }
 }
 
-@OptIn(FirExtensionApiInternals::class)
-fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
-    val symbolProvider = generatedDeclarationsSymbolProvider ?: return emptyList()
-    val declarationGenerators = extensionService.declarationGenerators
-
-    val fileModuleData = this@createFilesWithGeneratedDeclarations.moduleData
-
-    return buildList {
-        val generatedClasses = declarationGenerators.flatMap { it.topLevelClassIdsCache.getValue() }
-            .mapNotNull { symbolProvider.getClassLikeSymbolByClassId(it)?.fir }
-
-        // classes go to a specific file each
-        for (firClass in generatedClasses) {
-            val classId = firClass.symbol.classId
-            this += createSyntheticFile(
-                fileName = "${classId.packageFqName.toPath()}/${classId.relativeClassName.asString()}.kt",
-                packageFqName = classId.packageFqName,
-                fileModuleData,
-                FirDeclarationOrigin.Synthetic.PluginFile,
-            ) {
-                declarations += firClass
-            }
-        }
-
-        // callables are grouped per package
-        val generatedCallables = declarationGenerators.flatMap { it.topLevelCallableIdsCache.getValue() }
-            .flatMap { symbolProvider.getTopLevelCallableSymbols(it.packageName, it.callableName) }
-
-        val generatedCallablesPerPackage = generatedCallables.groupBy { it.callableId.packageName }
-        for ((packageName, packageGeneratedCallables) in generatedCallablesPerPackage) {
-            val callablesPerFileName = packageGeneratedCallables.groupBy {
-                val name = it.fir.fileNameForPluginGeneratedCallable ?: "__GENERATED__CALLABLES__.kt"
-                if (name.endsWith(".kt")) name else "$name.kt"
-            }
-            for ((fileName, callables) in callablesPerFileName) {
-                this += createSyntheticFile(
-                    fileName = "${packageName.toPath()}/$fileName",
-                    packageFqName = packageName,
-                    fileModuleData,
-                    FirDeclarationOrigin.Synthetic.PluginFile,
-                ) {
-                    declarations += callables.map { it.fir }
-                }
-            }
-        }
-    }
-}
-
-private fun FqName.toPath(): String = this.asString().replace('.', '/')
-
 const val generatedBuiltinsDeclarationsFileName: String = "__GENERATED BUILTINS DECLARATIONS__.kt"
 
 fun FirSession.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded(): List<FirFile> {
@@ -219,7 +164,7 @@ fun FirSession.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded(): List<FirF
     val symbolProvider = syntheticFunctionInterfacesSymbolProvider
 
     return symbolProvider.generatedClassIds.groupBy { it.packageFqName }.map { (packageFqName, classIds) ->
-        createSyntheticFile(
+        createSyntheticFirFileForFir2Ir(
             fileName = generatedBuiltinsDeclarationsFileName,
             packageFqName = packageFqName,
             fileModuleData = moduleData,
@@ -230,7 +175,7 @@ fun FirSession.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded(): List<FirF
     }
 }
 
-private fun createSyntheticFile(
+fun createSyntheticFirFileForFir2Ir(
     fileName: String,
     packageFqName: FqName,
     fileModuleData: FirModuleData,

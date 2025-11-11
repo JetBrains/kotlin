@@ -180,6 +180,12 @@ public class LLReversedSandboxBackBoxTestGenerated extends AbstractLLReversedSan
   }
 
   @Test
+  @TestMetadata("topLevelCallables_multimodule.kt")
+  public void testTopLevelCallables_multimodule() {
+    runTest("plugins/plugin-sandbox/testData/box/topLevelCallables_multimodule.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelPrivateSuspendFun.kt")
   public void testTopLevelPrivateSuspendFun() {
     runTest("plugins/plugin-sandbox/testData/box/topLevelPrivateSuspendFun.kt");
