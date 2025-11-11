@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
@@ -23,12 +24,9 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.test.PrecompileSetup
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
-import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestNewExceptionsOutputDir
-import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestOutputDir
 import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestOutputName
-import org.jetbrains.kotlin.wasm.test.precompiledStdlibNewExceptionsOutputDir
-import org.jetbrains.kotlin.wasm.test.precompiledStdlibOutputDir
 import org.jetbrains.kotlin.wasm.test.precompiledStdlibOutputName
 import java.io.File
 
@@ -40,15 +38,9 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         return true
     }
 
-    private fun getModuleResolutionMap(): Map<String, String> {
-        val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
-        val (stdlibOutputDir, testOutputDir) = when (useNewExceptionProposal) {
-            true -> precompiledStdlibNewExceptionsOutputDir to precompiledKotlinTestNewExceptionsOutputDir
-            false -> precompiledStdlibOutputDir to precompiledKotlinTestOutputDir
-        }
-
-        val stdlibInitFile = File(stdlibOutputDir, "$precompiledStdlibOutputName.mjs")
-        val kotlinTestInitFile = File(testOutputDir, "$precompiledKotlinTestOutputName.mjs")
+    private fun getModuleResolutionMap(currentSetup: PrecompileSetup): Map<String, String> {
+        val stdlibInitFile = File(currentSetup.stdlibOutputDir, "$precompiledStdlibOutputName.mjs")
+        val kotlinTestInitFile = File(currentSetup.kotlinTestOutputDir, "$precompiledKotlinTestOutputName.mjs")
 
         val outputDir = testServices.getWasmTestOutputDirectory()
 
@@ -80,6 +72,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val generateWat = debugMode >= DebugMode.DEBUG || configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT)
         val generateDts = WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS in testServices.moduleStructure.allDirectives
+        val generateSourceMaps = WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in testServices.moduleStructure.allDirectives
 
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
             moduleInfo,
@@ -92,9 +85,16 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             disableCrossFileOptimisations = true,
         )
 
+        val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
+        val debugFriendlyCompilation = FORCE_DEBUG_FRIENDLY_COMPILATION in testServices.moduleStructure.allDirectives
 
-        val moduleResolutionMap = getModuleResolutionMap()
+        val currentSetup = when {
+            debugFriendlyCompilation -> PrecompileSetup.DEBUG_FRIENDLY
+            useNewExceptionProposal -> PrecompileSetup.NEW_EXCEPTION_PROPOSAL
+            else -> PrecompileSetup.REGULAR
+        }
 
+        val moduleResolutionMap = getModuleResolutionMap(currentSetup)
         val outputName = "index".takeIf { WasmEnvironmentConfigurator.isMainModule(module, testServices) }
 
         val compilerResult = compileWasmLoweredFragmentsForSingleModule(
@@ -108,6 +108,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             outputFileNameBase = outputName,
             dependencyResolutionMap = moduleResolutionMap,
             typeScriptFragment = typeScriptFragment,
+            generateSourceMaps = generateSourceMaps,
         )
 
         return BinaryArtifacts.Wasm(
