@@ -44,6 +44,10 @@ val _int_array: IntArray = intArrayOf()
 val _float_array: FloatArray = floatArrayOf()
 @JsExport
 val _double_array: DoubleArray = doubleArrayOf()
+@JsExport
+val _boolean_array: BooleanArray = booleanArrayOf()
+@JsExport
+val _char_array: CharArray = charArrayOf()
 
 @JsExport
 val _array_byte: Array<Byte> = emptyArray()

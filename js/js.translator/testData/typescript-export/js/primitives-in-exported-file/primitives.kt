@@ -50,6 +50,10 @@ val _float_array: FloatArray = floatArrayOf()
 
 val _double_array: DoubleArray = doubleArrayOf()
 
+val _boolean_array: BooleanArray = booleanArrayOf()
+
+val _char_array: CharArray = charArrayOf()
+
 
 val _array_byte: Array<Byte> = emptyArray()
 

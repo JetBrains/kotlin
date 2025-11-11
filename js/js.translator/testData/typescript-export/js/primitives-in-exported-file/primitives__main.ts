@@ -18,6 +18,8 @@ assert(foo._short_array instanceof Int16Array);
 assert(foo._int_array instanceof Int32Array);
 assert(foo._float_array instanceof Float32Array);
 assert(foo._double_array instanceof Float64Array);
+assert(foo._boolean_array instanceof Array);
+assert(foo._char_array instanceof Uint16Array);
 assert(foo._array_byte instanceof Array);
 assert(foo._array_short instanceof Array);
 assert(foo._array_int instanceof Array);

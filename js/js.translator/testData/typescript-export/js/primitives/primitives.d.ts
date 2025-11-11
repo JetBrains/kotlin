@@ -16,6 +16,8 @@ declare namespace JS_TESTS {
         const _int_array: Int32Array;
         const _float_array: Float32Array;
         const _double_array: Float64Array;
+        const _boolean_array: any /*BooleanArray*/;
+        const _char_array: any /*CharArray*/;
         const _array_byte: Array<number>;
         const _array_short: Array<number>;
         const _array_int: Array<number>;
