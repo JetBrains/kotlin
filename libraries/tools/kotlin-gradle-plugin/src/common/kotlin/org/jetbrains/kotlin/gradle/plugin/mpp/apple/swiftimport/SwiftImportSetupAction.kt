@@ -767,10 +767,16 @@ internal abstract class ComputeLocalPackageDependencyInputFiles : DefaultTask() 
     @Suppress("UNCHECKED_CAST")
     private fun findLocalPackageSources(path: File): List<File> {
         val jsonBuffer = ByteArrayOutputStream()
-        execOps.exec {
-            it.workingDir(path)
-            it.standardOutput = jsonBuffer
-            it.commandLine("swift", "package", "describe", "--type", "json")
+        execOps.exec { exec ->
+            exec.workingDir(path)
+            exec.standardOutput = jsonBuffer
+            exec.commandLine("swift", "package", "describe", "--type", "json")
+            exec.environment.keys.filter {
+                // Swift CLIs try to compile the manifest for iphonesimulator... with these envs
+                it.startsWith("SDK")
+            }.forEach {
+                exec.environment.remove(it)
+            }
         }
         val packageJson = Gson().fromJson(
             jsonBuffer.toString(), Map::class.java
