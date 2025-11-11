@@ -8,60 +8,78 @@
 #include <string>
 #include <vector>
 #include <deque>
+#include <atomic>
 
 #include "main/cpp/Memory.h"
 
-#include "SafePoint.hpp"
+#include "hot/HotReloadServer.hpp"
+#include "hot/LightClassTable.hpp"
 
 namespace kotlin::hot {
-class HotReloader : private Pinned {
+
+class HotReloader : Pinned {
 public:
-
-    class SymbolManager : private Pinned {
+    class SymbolLoader : Pinned {
         friend class HotReloader;
-        using LibraryHandle = void*;
-    private:
-        void LoadLibraryFromPath(const std::string& fileName);
 
-        TypeInfo* LookForTypeInfo(const std::string& mangledClassName);
+        struct LibraryHandle {
+            uint64_t epoch; // when the library was loaded (debugging purposes)
+            void* handle;
+            std::string path;
+
+            LibraryHandle(uint64_t epoch, void* handle, const std::string& path) : epoch(epoch), handle(handle), path(path) {}
+        };
+
+        void loadLibraryFromPath(const std::string& fileName);
+
+        [[nodiscard]] TypeInfo* lookForTypeInfo(const std::string& mangledClassName, int startingFrom) const;
 
         std::deque<LibraryHandle> handles{};
     };
 
+    struct ReloadRequest {
+        friend class HotReloader;
+        std::vector<std::string> artifactOutputs;
+        explicit ReloadRequest(const std::vector<std::string>& artifact_outputs) : artifactOutputs(artifact_outputs) {}
+    };
+
     static HotReloader& Instance() noexcept;
-    static void Init() noexcept;
+    HotReloader();
+    static void InitModule() noexcept;
 
     /// Start checking if a hot-reload request is pending.
     /// If that's the case, perform class hot-reloading, preserving the existing state.
-    void Perform(ObjHeader* knHotReloaderObject) noexcept;
+    void performIfNeeded(ObjHeader* _) noexcept;
 
-    std::string WaitForRecompilation();
+private:
+
+    void interposeNewFunctionSymbols(const LightClassTable& newClassTable) const;
+    void invlidateGroupsWithKey(const LightClassTable& newClassTable, const ir::Klib& klib);
 
     /// Given an instance provided by <code>existingObject</code>, create a new class of the
     /// type provided by <code>newTypeInfo</code>, while preserving existing properties.
-    ObjHeader* StateTransfer(ObjHeader* existingObject, const TypeInfo* newTypeInfo);
+    static ObjHeader* stateTransfer(ObjHeader* existingObject, const TypeInfo* newTypeInfo, const LightClassTable& classTable);
 
     /// Search for all the classes with instance <code>oldTypeInfo</code> and create
     /// new instances provided by <code>newTypeInfo</code>.
-    std::vector<ObjHeader*> FindObjectsToReload(const TypeInfo* oldTypeInfo);
+    std::vector<ObjHeader*> findObjectsToReload(const TypeInfo* oldTypeInfo) const;
 
     /// Perform a BFS on the GlobalRootSet and ThreadLocalSet to update the existing references
     /// to point at <code>newObject</code>.
-    int UpdateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject) const;
+    static int updateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject);
 
-    void UpdateShadowStackReferences(const ObjHeader *oldObject, ObjHeader *newObject);
+    static void updateShadowStackReferences(const ObjHeader* oldObject, ObjHeader* newObject);
 
-private:
-    class HotReloadSafePointActivator final : public mm::ExtraSafePointActionActivator<HotReloadSafePointActivator> {};
+    SymbolLoader _reloader{};
+    HotReloadServer _server{};
 
-    SymbolManager _symbolManager{};
+    std::deque<ReloadRequest> _requests{};
+    std::atomic_bool _processing{};
 };
 } // namespace kotlin::hot
 
 extern "C" {
-    void Kotlin_native_internal_HotReload_perform(ObjHeader*);
-    ObjHeader* Kotlin_native_internal_HotReload_forceReloadOf(ObjHeader* /*ignored*/, void*, void*);
+void Kotlin_native_internal_HotReload_perform(ObjHeader*);
 }
 
-
-#endif //HOTRELOAD_HPP
+#endif // HOTRELOAD_HPP
