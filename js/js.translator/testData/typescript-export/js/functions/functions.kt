@@ -135,4 +135,4 @@ fun Scope2.concatWithExtensionAndContextParameter() = scope1.getA() + getA()
 fun Scope1.getWithExtension() = getA()
 
 @JsExport
-fun <A, B, R> context(a: A, b: B, block: context(A, B) () -> R): R = block(a, b)
+fun <A, B, C, D, R> allParameters(a: A, b: B, c: C, d: D, block: context(A, B) C.(d: D) -> R): R = block(a, b, c, d)

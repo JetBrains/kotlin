@@ -36,7 +36,7 @@ declare namespace JS_TESTS {
         function concatWithContextParameters(scope1: foo.Scope1, scope2: foo.Scope2): string;
         function concatWithExtensionAndContextParameter(scope1: foo.Scope1, _this_: foo.Scope2): string;
         function getWithExtension(_this_: foo.Scope1): string;
-        function context<A, B, R>(a: A, b: B, block: (p0: A, p1: B) => R): R;
+        function allParameters<A, B, C, D, R>(a: A, b: B, c: C, d: D, block: (p0: A, p1: B, p2: C, p3: D) => R): R;
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
