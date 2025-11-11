@@ -314,6 +314,11 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                         ldDumpFile.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR)
                     }
                 )
+
+                linkTask.toolOptions.freeCompilerArgs.add(
+                    // FIXME: Fix this properly by extracting the "explicitOrMaximumDeploymentTarget" logic. This is just a hack to combat libswift_Concurrency linkage
+                    "-Xoverride-konan-properties=minVersion.ios=15.0"
+                )
             }
         }
 
