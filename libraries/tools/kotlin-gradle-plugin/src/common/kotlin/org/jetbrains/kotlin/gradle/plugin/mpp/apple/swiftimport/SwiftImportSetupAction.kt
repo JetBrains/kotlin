@@ -1161,6 +1161,9 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                         appendLine("modules = $modules")
                     }
                     val invalidateDownstreamCinterops = UUID.randomUUID().toString()
+                    if (discoverModulesImplicitly.get()) {
+                        appendLine("skipNonImportableModules = true")
+                    }
                     appendLine("""
                         ---
                         // $invalidateDownstreamCinterops
