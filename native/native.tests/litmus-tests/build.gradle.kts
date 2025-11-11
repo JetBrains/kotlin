@@ -6,7 +6,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 repositories {
@@ -62,22 +64,31 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testImplementation(testFixtures(project(":native:native.tests")))
+    testFixturesImplementation(testFixtures(project(":native:native.tests")))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
 projectTests {
+    testData(isolated, "testData")
+
     nativeTestTask(
         taskName = "test",
         tag = "litmuskt-native", // Include all tests with the "litmuskt-native" tag.
         requirePlatformLibs = true,
         customTestDependencies = listOf(litmusKt),
         allowParallelExecution = false,
-    )
+    ) {
+        extensions.configure<TestInputsCheckExtension> {
+            isNative.set(true)
+        }
+    }
+
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateLitmusTestsKt", generateTestsInBuildDirectory = true) {
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+    }
 }

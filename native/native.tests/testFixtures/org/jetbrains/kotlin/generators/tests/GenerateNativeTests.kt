@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.konan.test.blackbox.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
@@ -17,18 +16,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
 import org.junit.jupiter.api.Tag
-import java.io.File
 
-fun main() {
+fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
-    val k1BoxTestDir = listOf("multiplatform/k1")
-    val k2BoxTestDir = listOf("multiplatform/k2")
 
-    generateSources()
-
-    generateTestGroupSuiteWithJUnit5 {
+    val testsRoot = args[0]
+    generateTestGroupSuiteWithJUnit5(args) {
         // Former konan local tests
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/codegen") {
+        testGroup(testsRoot, "native/native.tests/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenLocalTestGenerated",
                 annotations = listOf(
@@ -48,33 +43,8 @@ fun main() {
             }
         }
 
-        // Codegen box tests.
-        testGroup("native/native.tests/codegen-box/tests-gen", "compiler/testData/codegen") {
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
-                annotations = listOf(
-                    provider<UseExtTestCaseGroupProvider>(),
-                    codegenBox(),
-                )
-            ) {
-                model("box", excludeDirs = k1BoxTestDir)
-                model("boxInline")
-            }
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",
-                annotations = listOf(
-                    provider<UseExtTestCaseGroupProvider>(),
-                    *noPartialLinkage(),
-                    codegenBox(),
-                )
-            ) {
-                model("box", excludeDirs = k1BoxTestDir)
-                model("boxInline")
-            }
-        }
-
         // Samples (how to utilize the abilities of new test infrastructure).
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+        testGroup(testsRoot, "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "FirInfrastructureTestGenerated",
                 annotations = listOf(
@@ -88,7 +58,7 @@ fun main() {
         }
 
         // Partial linkage tests.
-        testGroup("native/native.tests/tests-gen", "compiler/testData/klib/partial-linkage") {
+        testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
             testClass<AbstractNativePartialLinkageTest>(
                 suiteTestClassName = "NativePartialLinkageTestGenerated",
             ) {
@@ -97,7 +67,7 @@ fun main() {
         }
 
         // CInterop tests.
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/CInterop") {
+        testGroup(testsRoot, "native/native.tests/testData/CInterop") {
             testClass<AbstractNativeCInteropFModulesTest>(
                 suiteTestClassName = "CInteropFModulesTestGenerated",
             ) {
@@ -135,7 +105,7 @@ fun main() {
         }
 
         // ObjCExport tests.
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/ObjCExport") {
+        testGroup(testsRoot, "native/native.tests/testData/ObjCExport") {
             testClass<AbstractNativeObjCExportTest>(
                 suiteTestClassName = "FirObjCExportTestGenerated",
             ) {
@@ -144,7 +114,7 @@ fun main() {
         }
 
         // LLDB integration tests.
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/lldb") {
+        testGroup(testsRoot, "native/native.tests/testData/lldb") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "FirLldbTestGenerated",
                 annotations = listOf(
@@ -158,32 +128,16 @@ fun main() {
             }
         }
 
-        // LitmusKt tests.
-        testGroup("native/native.tests/litmus-tests/tests-gen", "native/native.tests/litmus-tests/testData") {
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirLitmusKtTestsGenerated",
-                annotations = listOf(
-                    litmusktNative(),
-                    provider<UseStandardTestCaseGroupProvider>(),
-                    forceHostTarget(),
-                )
+        testGroup(testsRoot, "compiler/testData/klib/dump-abi/cinterop") {
+            testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
+                suiteTestClassName = "FirNativeCInteropLibraryAbiReaderTest",
             ) {
-                model("standalone")
-            }
-        }
-
-        generateTestGroupSuiteWithJUnit5 {
-            testGroup("native/native.tests/tests-gen", "compiler/testData/klib/dump-abi/cinterop") {
-                testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
-                    suiteTestClassName = "FirNativeCInteropLibraryAbiReaderTest",
-                ) {
-                    model()
-                }
+                model()
             }
         }
 
         // Plain executable tests
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/standalone") {
+        testGroup(testsRoot, "native/native.tests/testData/standalone") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "FirNativeStandaloneTestGenerated",
                 annotations = listOf(
@@ -209,7 +163,7 @@ fun main() {
             "Dynamic" to binaryLibraryKind("DYNAMIC"),
         )
         // C Export
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/CExport") {
+        testGroup(testsRoot, "native/native.tests/testData/CExport") {
             val cinterfaceModes = mapOf(
                 "InterfaceV1" to cinterfaceMode("V1"),
                 "InterfaceNone" to cinterfaceMode("NONE")
@@ -234,20 +188,8 @@ fun main() {
                 model("InterfaceV1HeaderTests")
             }
         }
-        // Stress tests
-        testGroup("native/native.tests/stress/tests-gen", "native/native.tests/stress/testData") {
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirNativeStressTestGenerated",
-                annotations = listOf(
-                    *stress(),
-                    provider<UseStandardTestCaseGroupProvider>(),
-                )
-            ) {
-                model()
-            }
-        }
         // GC tests
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/gc") {
+        testGroup(testsRoot, "native/native.tests/testData/gc") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "FirNativeGCTestGenerated",
                 annotations = listOf(
@@ -261,92 +203,6 @@ fun main() {
     }
 }
 
-private fun generateSources() {
-    generateKt62920StressTest()
-}
-
-private fun generateKt62920StressTest() {
-    val rootDir = File("native/native.tests/stress/testData")
-    rootDir.resolve("kt62920.kt").writeText(buildString {
-        val maxStage = 1000
-        val threadsCount = 10
-        // workaround hack: please keep the string below indented, otherwise the `testCompareAll()` incorrectly handles the "// FILE:" directive
-        appendLine(
-            """
-            // This file is generated by ${TestGeneratorUtil.getMainClassName()}. DO NOT MODIFY MANUALLY
-            // KIND: STANDALONE_NO_TR
-            // MODULE: cinterop
-            // FILE: objclib.def
-            language = Objective-C
-            ---
-            #include <objc/NSObject.h>
-
-            void useObject(id) {}
-
-            // MODULE: main(cinterop)
-            // FILE: main.kt
-            @file:OptIn(kotlin.ExperimentalStdlibApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
-
-            import objclib.*
-
-            import kotlin.concurrent.AtomicInt
-            import kotlin.concurrent.AtomicIntArray
-            import kotlin.native.concurrent.*
-            """.trimIndent()
-        )
-
-        // Define all the classes
-        (1..maxStage).forEach {
-            appendLine("class C$it")
-        }
-
-        // Actual test procedure
-        appendLine(
-            """
-            const val MAX_STAGE = $maxStage
-
-            val canRunStage = AtomicInt(0)
-            val hasRunStage = AtomicIntArray(MAX_STAGE + 1)
-
-            fun test() {
-                hasRunStage.getAndIncrement(0)
-            """.trimIndent()
-        )
-
-        // Define all test cases
-        (1..maxStage).forEach {
-            appendLine(
-                """
-
-                while (canRunStage.value != $it) {}
-                useObject(C$it())
-                hasRunStage.getAndIncrement($it)
-                """.replaceIndent("    ")
-            )
-        }
-
-        // Close the test procedure. And define test entry point.
-        appendLine(
-            """
-            }
-
-            fun main() {
-                val workers = Array($threadsCount) { Worker.start() }
-
-                workers.forEach { it.executeAfter(0, ::test) }
-
-                while (hasRunStage[0] != workers.size) {}
-                (1..MAX_STAGE).forEach { stage ->
-                    canRunStage.value = stage
-                    while (hasRunStage[stage] != workers.size) {}
-                }
-
-                workers.forEach { it.requestTermination().result }
-            }
-            """.trimIndent()
-        )
-    })
-}
 
 inline fun <reified T : Annotation> provider() = annotation(T::class.java)
 
@@ -356,13 +212,7 @@ private fun forceDebugMode() = annotation(
     "propertyValue" to "DEBUG"
 )
 
-private fun forceHostTarget() = annotation(EnforcedHostTarget::class.java)
-
-private fun noPartialLinkage() = arrayOf(
-    annotation(UsePartialLinkage::class.java, "mode" to UsePartialLinkage.Mode.DISABLED),
-    // This is a special tag to mark codegen box tests with disabled partial linkage that may be skipped in slow TC configurations:
-    annotation(Tag::class.java, "no-partial-linkage-may-be-skipped")
-)
+fun forceHostTarget() = annotation(EnforcedHostTarget::class.java)
 
 // The concrete tests disabled in one-stage mode.
 @Suppress("SameParameterValue")
@@ -379,7 +229,6 @@ private fun TestGroup.disabledInOneStageMode(vararg unexpandedPaths: String): An
 
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
-private fun litmusktNative() = annotation(Tag::class.java, "litmuskt-native")
 fun standalone() = arrayOf(
     annotation(Tag::class.java, "standalone"),
     annotation(
@@ -402,13 +251,4 @@ private fun cinterfaceMode(mode: String = "V1") = annotation(
 private fun gc() = arrayOf(
     annotation(Tag::class.java, "gc"),
 )
-private fun stress() = arrayOf(
-    annotation(Tag::class.java, "stress"),
-    annotation(
-        EnforcedProperty::class.java,
-        "property" to ClassLevelProperty.EXECUTION_TIMEOUT,
-        "propertyValue" to "15m"
-    )
-)
-private fun codegenBox() = annotation(Tag::class.java, "codegen-box")
 fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
