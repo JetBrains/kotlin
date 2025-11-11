@@ -13,7 +13,7 @@ public final annotation class Ann : R|kotlin/Annotation| {
     public final val b: R|test/MyRequiresOptIn.MyLevel|
         public get(): R|test/MyRequiresOptIn.MyLevel|
 
-    public constructor(a: R|kotlin/String| = STUB, @R|test/MyRequiresOptIn|(a = String(), b = test/MyRequiresOptIn.MyLevel.WARNING) b: R|test/MyRequiresOptIn.MyLevel| = STUB): R|test/MyRequiresOptIn|
+    public constructor(a: R|kotlin/String| = String(), @R|test/MyRequiresOptIn|(a = String(), b = test/MyRequiresOptIn.MyLevel.WARNING) b: R|test/MyRequiresOptIn.MyLevel| = test/MyRequiresOptIn.MyLevel.ERROR): R|test/MyRequiresOptIn|
 
     public final enum class MyLevel : R|kotlin/Enum<test/MyRequiresOptIn.MyLevel>| {
         private constructor(): R|test/MyRequiresOptIn.MyLevel|

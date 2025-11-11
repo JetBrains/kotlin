@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-82313
 
@@ -9,7 +9,7 @@ annotation class Other(val x: Boolean = true)
 expect annotation class Some(val x: Boolean = true)
 
 // MODULE: platform(lib)()(common)
-<!ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE!>actual<!> typealias Some = Other
+actual typealias Some = Other
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, primaryConstructor, propertyDeclaration,
 typeAliasDeclaration */

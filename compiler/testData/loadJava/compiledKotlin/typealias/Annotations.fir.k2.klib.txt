@@ -6,6 +6,6 @@
     public final val value: R|kotlin/String|
         public get(): R|kotlin/String|
 
-    public constructor(value: R|kotlin/String| = STUB): R|test/Ann|
+    public constructor(value: R|kotlin/String| = String()): R|test/Ann|
 
 }

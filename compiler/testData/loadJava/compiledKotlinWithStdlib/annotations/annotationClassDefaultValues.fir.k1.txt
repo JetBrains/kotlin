@@ -23,7 +23,7 @@ public final annotation class A : R|kotlin/Annotation| {
     public final val s: R|kotlin/String| = String(foo)
         public get(): R|kotlin/String|
 
-    public constructor(i: R|kotlin/Int| = STUB, s: R|kotlin/String| = STUB, kClass: R|kotlin/reflect/KClass<*>| = STUB, kClassArray: R|kotlin/Array<kotlin/reflect/KClass<*>>| = STUB, e: R|test/E| = STUB, anno: R|test/Empty| = STUB, aS: R|kotlin/Array<kotlin/String>| = STUB, aI: R|kotlin/IntArray| = STUB): R|test/A|
+    public constructor(i: R|kotlin/Int| = Int(42), s: R|kotlin/String| = String(foo), kClass: R|kotlin/reflect/KClass<*>| = <getClass>(<getClass>(R|kotlin/Int|)), kClassArray: R|kotlin/Array<kotlin/reflect/KClass<*>>| = <collectionLiteralCall>(<getClass>(<getClass>(R|test/A|))), e: R|test/E| = test/E.E0, anno: R|test/Empty| = @R|test/Empty|() , aS: R|kotlin/Array<kotlin/String>| = <collectionLiteralCall>(String(a), String(b)), aI: R|kotlin/IntArray| = <collectionLiteralCall>(Int(1), Int(2))): R|test/A|
 
 }
 
@@ -60,7 +60,7 @@ public final annotation class OtherArrays : R|kotlin/Annotation| {
     public final val namesArray: R|kotlin/Array<kotlin/jvm/JvmName>| = <collectionLiteralCall>(@R|kotlin/jvm/JvmName|(name = String(foo)) )
         public get(): R|kotlin/Array<kotlin/jvm/JvmName>|
 
-    public constructor(doublesArray: R|kotlin/DoubleArray| = STUB, enumArray: R|kotlin/Array<kotlin/text/RegexOption>| = STUB, annotationsArray: R|kotlin/Array<kotlin/jvm/JvmStatic>| = STUB, namesArray: R|kotlin/Array<kotlin/jvm/JvmName>| = STUB): R|test/OtherArrays|
+    public constructor(doublesArray: R|kotlin/DoubleArray| = <collectionLiteralCall>(Double(1.5)), enumArray: R|kotlin/Array<kotlin/text/RegexOption>| = <collectionLiteralCall>(kotlin/text/RegexOption.IGNORE_CASE), annotationsArray: R|kotlin/Array<kotlin/jvm/JvmStatic>| = <collectionLiteralCall>(), namesArray: R|kotlin/Array<kotlin/jvm/JvmName>| = <collectionLiteralCall>(@R|kotlin/jvm/JvmName|(name = String(foo)) )): R|test/OtherArrays|
 
 }
 
@@ -68,6 +68,6 @@ public final annotation class UnsignedValue : R|kotlin/Annotation| {
     public final val uint: R|kotlin/UInt| = UInt(-2147483639)
         public get(): R|kotlin/UInt|
 
-    public constructor(uint: R|kotlin/UInt| = STUB): R|test/UnsignedValue|
+    public constructor(uint: R|kotlin/UInt| = UInt(-2147483639)): R|test/UnsignedValue|
 
 }
