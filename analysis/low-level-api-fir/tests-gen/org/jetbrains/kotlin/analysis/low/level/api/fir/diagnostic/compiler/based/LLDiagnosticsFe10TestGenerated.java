@@ -38100,6 +38100,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("implicitPropertyTypeThatMakesBehaviorOrderDependantIdeMode.kt")
+      public void testImplicitPropertyTypeThatMakesBehaviorOrderDependantIdeMode() {
+        runTest("compiler/testData/diagnostics/tests/resolve/implicitPropertyTypeThatMakesBehaviorOrderDependantIdeMode.kt");
+      }
+
+      @Test
       @TestMetadata("implicitReceiverProperty.kt")
       public void testImplicitReceiverProperty() {
         runTest("compiler/testData/diagnostics/tests/resolve/implicitReceiverProperty.kt");
