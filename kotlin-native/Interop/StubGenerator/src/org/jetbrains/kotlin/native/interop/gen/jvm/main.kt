@@ -563,7 +563,7 @@ internal fun buildNativeLibrary(
         require(headerFiles.isEmpty()) { "cinterop doesn't support having headers and modules specified at the same time" }
         require(def.config.headerFilter.isEmpty()) { "cinterop doesn't support 'headerFilter' with 'modules'" }
 
-        val modulesInfo = getModulesInfo(compilation, modules)
+        val modulesInfo = getModulesInfo(compilation, modules, def.config.skipNonImportableModules)
 
         headerFilter = NativeLibraryHeaderFilter.Predefined(modulesInfo.ownHeaders, modulesInfo.modules)
         includes = modulesInfo.topLevelHeaders

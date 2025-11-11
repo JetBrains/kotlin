@@ -38,6 +38,10 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
             properties.getSpaceSeparated("modules")
         }
 
+        val skipNonImportableModules by lazy {
+            properties.getProperty("skipNonImportableModules")?.toBoolean() ?: false
+        }
+
         val language by lazy {
             properties.getProperty("language")
         }
