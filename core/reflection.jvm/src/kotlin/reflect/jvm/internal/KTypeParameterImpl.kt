@@ -98,7 +98,7 @@ private fun TypeParameterDescriptor.toContainer(): KTypeParameterOwnerImpl =
                 else -> {
                     val deserializedMember = declaration as? DeserializedMemberDescriptor
                         ?: throw KotlinReflectionInternalError("Non-class callable descriptor must be deserialized: $declaration")
-                    Reflection.getOrCreateKotlinPackage(deserializedMember.getContainerClass()) as KPackageImpl
+                    deserializedMember.getContainerClass()
                 }
             }
             declaration.accept(CreateKCallableVisitor(callableContainerClass), Unit)
@@ -110,8 +110,11 @@ private fun ClassDescriptor.toKClassImpl(): KClassImpl<*> =
     toJavaClass()?.kotlin as KClassImpl<*>?
         ?: throw KotlinReflectionInternalError("Type parameter container is not resolved: $containingDeclaration")
 
-private fun DeserializedMemberDescriptor.getContainerClass(): Class<*> {
-    val jvmPackagePartSource = containerSource as? JvmPackagePartSource
-    return (jvmPackagePartSource?.knownJvmBinaryClass as? ReflectKotlinClass)?.klass
-        ?: throw KotlinReflectionInternalError("Container of deserialized member is not resolved: $this")
-}
+private fun DeserializedMemberDescriptor.getContainerClass(): KDeclarationContainerImpl =
+    when (val containerSource = containerSource) {
+        is JvmPackagePartSource -> (containerSource.knownJvmBinaryClass as? ReflectKotlinClass)?.klass?.let {
+            Reflection.getOrCreateKotlinPackage(it) as KPackageImpl
+        }
+        is LocalDelegatedPropertyFakeContainerSource -> containerSource.container
+        else -> null
+    } ?: throw KotlinReflectionInternalError("Container of deserialized member is not resolved: $this")

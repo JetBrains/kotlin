@@ -102,7 +102,7 @@ internal class KPackageImpl(
         val packageProto = scope.proto
         return packageProto.getExtensionOrNull(JvmProtoBuf.packageLocalVariable, index)?.let { proto ->
             deserializeToDescriptor(
-                jClass, proto, scope.c.nameResolver, TypeTable(packageProto.typeTable), scope.c.metadataVersion
+                jClass, this, proto, scope.c.nameResolver, TypeTable(packageProto.typeTable), scope.c.metadataVersion,
             ) { proto -> loadProperty(proto, loadAnnotationsFromMetadata = true) }
         }
     }
