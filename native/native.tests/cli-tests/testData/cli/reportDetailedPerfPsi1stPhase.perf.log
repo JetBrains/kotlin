@@ -6,6 +6,7 @@ Kotlin to Native compiler performance report
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (UpgradeCallableReferences)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (AvoidLocalFOsInInlineFunctionsLowering)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (VersionOverloadsLowering)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineCallCycleChecker)
     IR SERIALIZATION        $UINT>>$ ms            $REAL>>$ loc/s
         KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
 GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
