@@ -432,19 +432,40 @@ internal class RTTIGenerator(
             Struct(runtime.extendedTypeInfoType,
                     llvm.constInt32(-runtimeElementType),
                     NullPointer(llvm.int32Type), NullPointer(llvm.int8Type), NullPointer(llvm.int8PtrType),
+                    NullPointer(llvm.int8PtrType),
                     debugOperationsSize, debugOperations)
         } else {
-            class FieldRecord(val offset: Int, val type: Int, val name: String)
+            class FieldRecord(val offset: Int, val type: Int, val name: String, val packageName: String?, val relativeName: String?)
 
             val objectFieldIndices = llvmDeclarations.bodyType.sortedIndicesOfObjectFields.toSet()
 
             val fields = context.getLayoutBuilder(irClass).getFields(llvm).map {
                 val index = llvmDeclarations.fieldIndices[it.irFieldSymbol]!!
                 val isObjectType = index in objectFieldIndices
-                FieldRecord(
-                        LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt(),
-                        mapRuntimeType(LLVMStructGetTypeAtIndex(bodyType, index)!!, isObjectType),
-                        it.name)
+
+                val mappedRuntimeType = mapRuntimeType(LLVMStructGetTypeAtIndex(bodyType, index)!!, isObjectType)
+                val extendedRuntimeType = when (mappedRuntimeType) {
+                    0 -> error("Invalid type")
+                    RT_OBJECT -> {
+                        val field = it.irFieldSymbol.owner
+                        val containingClass = field.parentAsClass
+                        val reflectionInfo = getReflectionInfo(containingClass)
+                        reflectionInfo.packageName to reflectionInfo.relativeName
+                    }
+                    2 -> "kotlin" to "Byte"
+                    3 -> "kotlin" to "Char"
+                    4 -> "kotlin" to "Short"
+                    5 -> "kotlin" to "Int"
+                    6 -> "kotlin" to "Long"
+                    7 -> "kotlin" to "Float"
+                    8 -> "kotlin" to "Double"
+                    9 -> "kotlin" to "Boolean"
+                    10 -> "kotlin" to "String"
+                    else -> "kotlin" to "Any" // last-resort fallback
+                }
+
+                FieldRecord(LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt(), mappedRuntimeType,
+                        it.name, extendedRuntimeType.first, extendedRuntimeType.second)
             }
             val offsetsPtr = staticData.placeGlobalConstArray("kextoff:$className", llvm.int32Type,
                     fields.map { llvm.constInt32(it.offset) })
@@ -452,8 +473,11 @@ internal class RTTIGenerator(
                     fields.map { llvm.constInt8(it.type.toByte()) })
             val namesPtr = staticData.placeGlobalConstArray("kextname:$className", llvm.int8PtrType,
                     fields.map { staticData.placeCStringLiteral(it.name) })
+            val extendedFieldTypesPtr = staticData.placeGlobalConstArray("kexttypefields:$className", llvm.int8PtrType,
+                    fields
+                            .flatMap { listOf(kotlinStringLiteral(it.packageName), kotlinStringLiteral(it.relativeName)) })
 
-            Struct(runtime.extendedTypeInfoType, llvm.constInt32(fields.size), offsetsPtr, typesPtr, namesPtr,
+            Struct(runtime.extendedTypeInfoType, llvm.constInt32(fields.size), offsetsPtr, typesPtr, namesPtr, extendedFieldTypesPtr,
                     debugOperationsSize, debugOperations)
         }
 

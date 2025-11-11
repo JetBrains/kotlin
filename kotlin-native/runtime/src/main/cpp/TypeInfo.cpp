@@ -80,3 +80,23 @@ std::string TypeInfo::fqName() const {
     }
     return fqName;
 }
+
+std::vector<std::string> ExtendedTypeInfo::getFieldTypes() const {
+    std::vector<std::string> fieldTypes;
+    for (int i = 0; i < fieldsCount_; i++) {
+        std::string fqName;
+        auto packageName = fieldExtendedTypes_[i * 2];
+        auto relativeName = fieldExtendedTypes_[(i * 2) + 1];
+        if (packageName) {
+            fqName += kotlin::to_string<KStringConversionMode::UNCHECKED>(packageName);
+            fqName += ".";
+        }
+        if (relativeName) {
+            fqName += kotlin::to_string<KStringConversionMode::UNCHECKED>(relativeName);
+        } else {
+            fqName += "<anonymous>";
+        }
+        fieldTypes.push_back(fqName);
+    }
+    return fieldTypes;
+}

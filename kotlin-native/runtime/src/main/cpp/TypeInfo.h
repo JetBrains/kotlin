@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 #include "Common.h"
 
@@ -65,10 +66,14 @@ struct ExtendedTypeInfo {
   const uint8_t* fieldTypes_;
   // Names of all fields.
   const char** fieldNames_;
+  // Extended type info of all fields.
+  ObjHeader** fieldExtendedTypes_;
   // Number of supported debug operations.
   int32_t debugOperationsCount_;
   // Table of supported debug operations functions.
   void** debugOperations_;
+
+  std::vector<std::string> getFieldTypes() const;
 };
 
 typedef void const* VTableElement;
