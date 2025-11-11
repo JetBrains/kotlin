@@ -107,6 +107,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         protected open fun shouldBeIncluded(declaration: D, headerId: HeaderId): Boolean =
                 !library.headerExclusionPolicy.excludeAll(headerId)
 
+        inline fun get(cursor: CValue<CXCursor>): D? = all.get(getDeclarationId(cursor))
+        inline fun remove(cursor: CValue<CXCursor>) = all.remove(getDeclarationId(cursor))
+
         inline fun getOrPut(cursor: CValue<CXCursor>, create: () -> D) = getOrPut(cursor, create, configure = {})
 
         inline fun getOrPut(cursor: CValue<CXCursor>, create: () -> D, configure: (D) -> Unit): D {
@@ -424,11 +427,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             }
         }
 
-        visitChildren(cursor) { child, _ ->
-            if (child.kind == CXCursorKind.CXCursor_TemplateTypeParameter) {
-                parameters += getCursorSpelling(child)
-            }
-            CXChildVisitResult.CXChildVisit_Continue
+        if (objCClassRegistry.get(cursor)?.isForwardDeclaration == true) {
+            objCClassRegistry.remove(cursor)
         }
 
         return objCClassRegistry.getOrPut(cursor, {
@@ -504,7 +504,11 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 }
             }
         }
-        val binaryName = clang_Cursor_getObjCProtocolRuntimeName(cursor).convertAndDispose()
+
+        if (objCProtocolRegistry.get(cursor)?.isForwardDeclaration == true) {
+            objCProtocolRegistry.remove(cursor)
+        }
+
         return objCProtocolRegistry.getOrPut(cursor, {
             ObjCProtocolImpl(
                     name = name,
