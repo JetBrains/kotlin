@@ -24,18 +24,14 @@ import org.jetbrains.kotlin.test.services.configuration.WasmJsSingleModuleOnlyCo
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendSingleModuleFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerWithPrecompiled
+import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunnerWithPrecompiled
+import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 import org.junit.jupiter.api.BeforeAll
 
-
-abstract class AbstractWasmJsCodegenSingleModuleTest(
+abstract class AbstractWasmJsCodegenSingleModuleRegularStdTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-) : AbstractFirWasmTest(
-    targetBackend = TargetBackend.WASM_JS,
-    targetPlatform = WasmPlatforms.wasmJs,
-    pathToTestDir = pathToTestDir,
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix
-) {
+) : AbstractWasmJsCodegenSingleModuleTestBase(pathToTestDir, testGroupOutputDirPrefix) {
     companion object {
         @JvmStatic
         private var precompileIsDone = false
@@ -45,12 +41,23 @@ abstract class AbstractWasmJsCodegenSingleModuleTest(
         @Synchronized
         fun precompileTestDependencies() {
             if (!precompileIsDone) {
-                precompileWasmModules()
+                precompileWasmModules(PrecompileSetup.REGULAR)
+                precompileWasmModules(PrecompileSetup.NEW_EXCEPTION_PROPOSAL)
                 precompileIsDone = true
             }
         }
     }
+}
 
+abstract class AbstractWasmJsCodegenSingleModuleTestBase(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+) : AbstractFirWasmTest(
+    targetBackend = TargetBackend.WASM_JS,
+    targetPlatform = WasmPlatforms.wasmJs,
+    pathToTestDir = pathToTestDir,
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
+) {
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmBoxRunnerWithPrecompiled
 
@@ -85,17 +92,17 @@ abstract class AbstractWasmJsCodegenSingleModuleTest(
 
 open class AbstractFirWasmJsCodegenSingleModuleBoxTest(
     testGroupOutputDirPrefix: String = "codegen/singleModuleBox/"
-) : AbstractWasmJsCodegenSingleModuleTest(
+) : AbstractWasmJsCodegenSingleModuleRegularStdTest(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
 
-open class AbstractFirWasmJsCodegenSingleModuleInteropTest : AbstractWasmJsCodegenSingleModuleTest(
+open class AbstractFirWasmJsCodegenSingleModuleInteropTest : AbstractWasmJsCodegenSingleModuleRegularStdTest(
     pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop",
     testGroupOutputDirPrefix = "codegen/wasmJsSingleModuleInterop"
 )
 
-open class AbstractFirWasmTypeScriptExportSingleModuleTest : AbstractWasmJsCodegenSingleModuleTest(
+open class AbstractFirWasmTypeScriptExportSingleModuleTest : AbstractWasmJsCodegenSingleModuleRegularStdTest(
     "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/wasm/",
     "typescript-export-single-module/"
 ) {
@@ -103,6 +110,43 @@ open class AbstractFirWasmTypeScriptExportSingleModuleTest : AbstractWasmJsCodeg
         super.configure(builder)
         builder.defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS
+        }
+    }
+}
+
+open class AbstractFirWasmJsSteppingSingleFileTest(
+    testGroupOutputDirPrefix: String = "debug/stepping/firBoxSingleModule"
+) : AbstractWasmJsCodegenSingleModuleTestBase(
+    "compiler/testData/debug/stepping/",
+    testGroupOutputDirPrefix
+) {
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmDebugRunnerWithPrecompiled
+
+    companion object {
+        @JvmStatic
+        private var precompileIsDone = false
+
+        @BeforeAll
+        @JvmStatic
+        @Synchronized
+        fun precompileTestDependencies() {
+            if (!precompileIsDone) {
+                precompileWasmModules(PrecompileSetup.DEBUG_FRIENDLY)
+                precompileIsDone = true
+            }
+        }
+    }
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            useAdditionalSourceProviders(::WasmJsSteppingTestAdditionalSourceProvider)
+            defaultDirectives {
+                +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
+                +WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
+                +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
+            }
         }
     }
 }

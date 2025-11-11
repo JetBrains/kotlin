@@ -287,6 +287,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         val performanceManager = configuration.perfManager
 
         val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
+        val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
 
         val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
 
@@ -318,6 +319,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 wasmDebug = wasmDebug,
                 dependencyResolutionMap = dependencyResolutionMap,
                 typeScriptFragment = typeScriptFragment,
+                generateSourceMaps = generateSourceMaps,
             )
 
             writeCompilationResult(
@@ -340,6 +342,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
     generateWat: Boolean,
     wasmDebug: Boolean,
     typeScriptFragment: TypeScriptFragment?,
+    generateSourceMaps: Boolean,
     outputFileNameBase: String? = null,
     dependencyResolutionMap: Map<String, String>,
 ): WasmCompilerResult {
@@ -402,7 +405,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
         baseFileName = outputFileNameBase ?: mainModuleFragment.outputFileName,
         emitNameSection = wasmDebug,
         generateWat = generateWat,
-        generateSourceMaps = false,
+        generateSourceMaps = generateSourceMaps,
         generateDwarf = false,
         useDebuggerCustomFormatters = useDebuggerCustomFormatters,
         stdlibModuleNameForImport = stdlibModuleNameForImport,
