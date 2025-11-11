@@ -115,44 +115,44 @@ private fun createArgumentMapping(
         if (proto.argumentCount == 0) return@build
         proto.argumentList.mapNotNull {
             val name = nameResolver.getName(it.nameId)
-            val value = resolveValue(session, it.value, nameResolver)
+            val value = it.value.toFirExpression(session, nameResolver)
             name to value
         }.toMap(mapping)
     }
 }
 
-private fun resolveValue(session: FirSession, value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver): FirExpression {
-    val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
+internal fun ProtoBuf.Annotation.Argument.Value.toFirExpression(session: FirSession, nameResolver: NameResolver): FirExpression {
+    val isUnsigned = Flags.IS_UNSIGNED.get(this.flags)
 
-    return when (value.type) {
+    return when (this.type) {
         BYTE -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedByte else ConstantValueKind.Byte
-            const(kind, value.intValue.toByte(), session.builtinTypes.byteType)
+            const(kind, this.intValue.toByte(), session.builtinTypes.byteType)
         }
 
         SHORT -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedShort else ConstantValueKind.Short
-            const(kind, value.intValue.toShort(), session.builtinTypes.shortType)
+            const(kind, this.intValue.toShort(), session.builtinTypes.shortType)
         }
 
         INT -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedInt else ConstantValueKind.Int
-            const(kind, value.intValue.toInt(), session.builtinTypes.intType)
+            const(kind, this.intValue.toInt(), session.builtinTypes.intType)
         }
 
         LONG -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedLong else ConstantValueKind.Long
-            const(kind, value.intValue, session.builtinTypes.longType)
+            const(kind, this.intValue, session.builtinTypes.longType)
         }
 
-        CHAR -> const(ConstantValueKind.Char, value.intValue.toInt().toChar(), session.builtinTypes.charType)
-        FLOAT -> const(ConstantValueKind.Float, value.floatValue, session.builtinTypes.floatType)
-        DOUBLE -> const(ConstantValueKind.Double, value.doubleValue, session.builtinTypes.doubleType)
-        BOOLEAN -> const(ConstantValueKind.Boolean, (value.intValue != 0L), session.builtinTypes.booleanType)
-        STRING -> const(ConstantValueKind.String, nameResolver.getString(value.stringValue), session.builtinTypes.stringType)
-        ANNOTATION -> deserializeAnnotation(session, value.annotation, nameResolver)
+        CHAR -> const(ConstantValueKind.Char, this.intValue.toInt().toChar(), session.builtinTypes.charType)
+        FLOAT -> const(ConstantValueKind.Float, this.floatValue, session.builtinTypes.floatType)
+        DOUBLE -> const(ConstantValueKind.Double, this.doubleValue, session.builtinTypes.doubleType)
+        BOOLEAN -> const(ConstantValueKind.Boolean, (this.intValue != 0L), session.builtinTypes.booleanType)
+        STRING -> const(ConstantValueKind.String, nameResolver.getString(this.stringValue), session.builtinTypes.stringType)
+        ANNOTATION -> deserializeAnnotation(session, this.annotation, nameResolver)
         CLASS -> buildGetClassCall {
-            val classId = nameResolver.getClassId(value.classId)
+            val classId = nameResolver.getClassId(this@toFirExpression.classId)
             val lookupTag = classId.toLookupTag()
             val referencedType = lookupTag.constructType()
             val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
@@ -165,8 +165,8 @@ private fun resolveValue(session: FirSession, value: ProtoBuf.Annotation.Argumen
             coneTypeOrNull = resolvedType
         }
         ENUM -> buildEnumEntryDeserializedAccessExpression {
-            enumClassId = nameResolver.getClassId(value.classId)
-            enumEntryName = nameResolver.getName(value.enumValueId)
+            enumClassId = nameResolver.getClassId(this@toFirExpression.classId)
+            enumEntryName = nameResolver.getName(this@toFirExpression.enumValueId)
         }
         ARRAY -> buildCollectionLiteral {
             // For the array literal type, we use `Array<Any>` as an approximation. Later FIR2IR will calculate a more precise
@@ -175,10 +175,10 @@ private fun resolveValue(session: FirSession, value: ProtoBuf.Annotation.Argumen
             // non-empty ones.
             coneTypeOrNull = StandardTypes.Any.createOutArrayType()
             argumentList = buildArgumentList {
-                value.arrayElementList.mapTo(arguments) { resolveValue(session, it, nameResolver) }
+                this@toFirExpression.arrayElementList.mapTo(arguments) { it.toFirExpression(session, nameResolver) }
             }
         }
-        else -> error("Unsupported annotation argument type: ${value.type}")
+        else -> error("Unsupported annotation argument type: ${this.type}")
     }
 }
 
