@@ -491,13 +491,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val abiValidationBannedTargets: String?
         get() = property(PropertyNames.ABI_VALIDATION_BANNED_TARGETS).orNull
 
-    /**
-     * Application Binary Interface (ABI) validation:
-     * Disable extension and task creation.
-     */
-    val abiValidationDisabled: Boolean
-        get() = booleanProperty(PropertyNames.ABI_VALIDATION_DISABLED) ?: false
-
 
     /**
      * Allows suppressing the diagnostic [KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency].
@@ -795,7 +788,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_USE_NON_PACKED_KLIBS = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.non-packed")
         val KOTLIN_CLASSLOADER_CACHE_TIMEOUT = property("$KOTLIN_INTERNAL_NAMESPACE.classloaderCache.timeoutSeconds")
         val ABI_VALIDATION_BANNED_TARGETS = property(ABI_VALIDATION_BANNED_TARGETS_NAME)
-        val ABI_VALIDATION_DISABLED = property(ABI_VALIDATION_DISABLED_NAME)
         val KOTLIN_PARSE_INLINED_LOCAL_CLASSES = property("$KOTLIN_INTERNAL_NAMESPACE.classpathSnapshot.parseInlinedLocalClasses")
 
         val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
@@ -812,8 +804,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         internal const val KOTLIN_INTERNAL_NAMESPACE = "kotlin.internal"
 
         internal const val ABI_VALIDATION_BANNED_TARGETS_NAME = "$KOTLIN_INTERNAL_NAMESPACE.abi.validation.klib.targets.disabled.for.testing"
-
-        internal const val ABI_VALIDATION_DISABLED_NAME = "kotlin.abi.validation.disabled"
 
         operator fun invoke(project: Project): PropertiesProvider =
             with(project.extensions.extraProperties) {

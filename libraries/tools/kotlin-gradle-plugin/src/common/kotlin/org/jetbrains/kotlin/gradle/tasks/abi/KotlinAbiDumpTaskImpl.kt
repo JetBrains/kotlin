@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosti
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 
 @CacheableTask
-internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), KotlinLegacyAbiDumpTask, UsesKotlinToolingDiagnostics {
+internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolingDiagnostics {
     @get:OutputDirectory
-    abstract override val dumpDir: DirectoryProperty
+    abstract val dumpDir: DirectoryProperty
 
     @get:InputFiles // don't fail the task if file does not exist https://github.com/gradle/gradle/issues/2016
     @get:Optional

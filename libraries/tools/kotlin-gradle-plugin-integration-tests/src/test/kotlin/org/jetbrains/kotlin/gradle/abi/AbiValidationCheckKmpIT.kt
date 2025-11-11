@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.abi
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.abi.utils.*
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
 
@@ -39,7 +38,7 @@ class AbiValidationCheckKmpIT : KGPBaseTest() {
                 kotlinMultiplatform.jvm()
             }
 
-            abiValidation<AbiValidationMultiplatformExtension> {
+            abiValidation {
                 enabled.set(true)
             }
 

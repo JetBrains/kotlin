@@ -15,13 +15,10 @@ import org.gradle.api.tasks.PathSensitivity
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 /**
- * A task to check the Applicaton Binary Interface (ABI) from dump files located in [referenceDir] with ABI in dump files in [actualDir].
- *
- * The files are compared as text files. If the contents differ, the task fails with an error.
- *
- * @since 2.1.20
+ * @deprecated This interface was removed.
  */
 @ExperimentalAbiValidation
+@Deprecated("The interface 'KotlinLegacyAbiCheckTask' was removed.", level = DeprecationLevel.ERROR)
 interface KotlinLegacyAbiCheckTask : Task {
     /**
      * A directory containing ABI dumps for the previous project version.

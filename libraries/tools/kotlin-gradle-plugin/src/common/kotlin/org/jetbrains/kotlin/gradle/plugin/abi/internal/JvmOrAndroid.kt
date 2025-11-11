@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.abi.internal
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
-import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationVariantSpec
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 
 /**
@@ -52,14 +50,14 @@ private fun finalizeVariant(
     }
 }
 
-internal fun Project.addDependencyWithCheckTask(variant: AbiValidationVariantSpec, isEnabled: Provider<Boolean>) {
+internal fun Project.addDependencyWithCheckTask(extension: AbiValidationExtension) {
     // extract the task provider to pass it into the mapping lambda instead of the variant overall
-    val legacyCheckTaskProvider = variant.legacyDump.legacyCheckTaskProvider
+    val checkTaskProvider = extension.checkTaskProvider
 
     // add dependency on checkLegacyAbi task only if ABI validation is enabled
-    val dependencyTasks = isEnabled.map {
+    val dependencyTasks = extension.enabled.map {
         if (it) {
-            listOf(legacyCheckTaskProvider)
+            listOf(checkTaskProvider)
         } else {
             emptyList()
         }

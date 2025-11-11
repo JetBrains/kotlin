@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.gradle.abi.utils
 
-import org.gradle.api.plugins.ExtensionAware
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationVariantSpec
+import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.GradleProject
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import java.io.File
 
 /**
- * Configures ABI validation in specified in [T] extension.
+ * Configures ABI validation in Kotlin extension.
  */
-internal fun <T : AbiValidationVariantSpec> GradleProject.abiValidation(configuration: T.() -> Unit) {
+@OptIn(ExperimentalAbiValidation::class)
+internal fun GradleProject.abiValidation(configuration: AbiValidationExtension.() -> Unit) {
     buildScriptInjection {
         @Suppress("UNCHECKED_CAST")
-        ((project.extensions.getByName("kotlin") as ExtensionAware).extensions.getByName("abiValidation") as T).configuration()
+        (project.extensions.getByName("kotlin") as KotlinBaseExtension).abiValidation.configuration()
     }
 }
 
