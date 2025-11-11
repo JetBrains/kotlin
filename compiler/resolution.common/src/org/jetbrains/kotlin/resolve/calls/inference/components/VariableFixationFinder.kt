@@ -89,7 +89,7 @@ class VariableFixationFinder(
 
         // *** "ready for fixation" kinds ***
         // Prefer `LOWER` `T :> SomeRegularType` to `UPPER` `T <: SomeRegularType` for KT-41934.
-        HAS_PROPER_NON_NOTHING_LOWER_CONSTRAINT,
+        HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT,
 
         // K1 used this for reified type parameters, mainly to get `discriminateNothingForReifiedParameter.kt` working.
         // KT-55691 lessens the need for this readiness kind in K2, however it still needs it for, e.g., `reifiedToNothing.kt`.
@@ -175,7 +175,7 @@ class VariableFixationFinder(
             it[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] = !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
 
             it[Q.REIFIED] = isReified()
-            it[Q.HAS_PROPER_NON_NOTHING_LOWER_CONSTRAINT] = hasLowerNonNothingProperConstraint()
+            it[Q.HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT] = hasLowerNonNothingNonIltProperConstraint()
 
             computeIltConstraintsRelatedFlags(it)
         }
@@ -370,11 +370,14 @@ class VariableFixationFinder(
         c.notFixedTypeVariables[this]?.typeVariable?.let { c.isReified(it) } ?: false
 
     context(c: Context)
-    private fun TypeConstructorMarker.hasLowerNonNothingProperConstraint(): Boolean {
+    private fun TypeConstructorMarker.hasLowerNonNothingNonIltProperConstraint(): Boolean {
         val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
 
-        return constraints.any {
-            it.kind.isLower() && it.isProperArgumentConstraint() && !it.type.typeConstructor().isNothingConstructor()
+        return constraints.any { constraint ->
+            constraint.kind.isLower()
+                    && constraint.isProperArgumentConstraint()
+                    && !constraint.type.typeConstructor().isNothingConstructor()
+                    && !constraint.type.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
         }
     }
 
