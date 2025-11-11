@@ -34,12 +34,14 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
 
 public actual interface List<out E> : Collection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /**
          * Returns an empty read-only list. The returned list is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(): List<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
@@ -48,14 +50,16 @@ public actual interface List<out E> : Collection<E> {
          *
          * The returned list is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(element: T): List<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
         /**
          * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(vararg elements: T): List<T> = TODO("Use WITH_STDLIB pragma to use this function")
     }
@@ -75,26 +79,30 @@ public actual interface List<out E> : Collection<E> {
 
 public actual interface MutableList<E> : List<E>, MutableCollection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /**
          * Returns an empty new [MutableList].
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(): MutableList<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
         /**
          * Returns a new [MutableList] containing only the specified object [element].
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(element: T): MutableList<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
         /**
          * Returns a new [MutableList] with the given elements.
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(vararg elements: T): MutableList<T> = TODO("Use WITH_STDLIB pragma to use this function")
     }
@@ -121,7 +129,8 @@ public actual interface Set<out E> : Collection<E> {
         /**
          * Returns an empty read-only set.  The returned set is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(): Set<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
@@ -130,7 +139,8 @@ public actual interface Set<out E> : Collection<E> {
          *
          * The returned set is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(element: T): Set<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
@@ -139,7 +149,8 @@ public actual interface Set<out E> : Collection<E> {
          * Elements of the set are iterated in the order they were specified.
          * The returned set is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(vararg elements: T): Set<T> = TODO("Use WITH_STDLIB pragma to use this function")
     }
@@ -153,21 +164,24 @@ public actual interface Set<out E> : Collection<E> {
 
 public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /**
          * Returns an empty new [MutableSet].
          *
          * The returned set preserves the element iteration order.
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(): MutableSet<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
         /**
          * Returns a new [MutableSet] containing only the specified object [element].
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(element: T): MutableSet<T> = TODO("Use WITH_STDLIB pragma to use this function")
 
@@ -175,7 +189,8 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
          * Returns a new [MutableSet] with the given elements.
          * Elements of the set are iterated in the order they were specified.
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(vararg elements: T): MutableSet<T> = TODO("Use WITH_STDLIB pragma to use this function")
     }

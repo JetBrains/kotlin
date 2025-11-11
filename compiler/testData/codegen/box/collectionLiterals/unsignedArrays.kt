@@ -3,7 +3,7 @@
 // WITH_STDLIB
 // ISSUE: KT-81722
 
-@file:OptIn(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
+@file:OptIn(ExperimentalCollectionLiterals::class, ExperimentalUnsignedTypes::class)
 
 fun box(): String {
     val ubyte0: UByteArray = []

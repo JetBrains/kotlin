@@ -2,7 +2,7 @@
 // ISSUE: KT-81722
 // LANGUAGE: +CollectionLiterals
 
-@OptIn(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalCollectionLiterals::class)
 fun test() {
     val a: List<String> = List.of()
     val b: List<Any?> = List.of(null)

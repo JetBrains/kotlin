@@ -7,7 +7,8 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntArray modality:FINAL visibility
       correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size visibility:public modality:FINAL [val]
   CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
     annotations:
-      ExperimentalStdlibApi
+      ExperimentalCollectionLiterals
+      SinceKotlin(version = "2.3")
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:kotlin.IntArray.Companion
     CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private returnType:kotlin.IntArray.Companion [primary]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
@@ -27,7 +28,8 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntArray modality:FINAL visibility
       VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.IntArray.Companion
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
       annotations:
-        ExperimentalStdlibApi
+        ExperimentalCollectionLiterals
+        SinceKotlin(version = "2.3")
   CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public returnType:kotlin.IntArray [primary]
     VALUE_PARAMETER kind:Regular name:size index:0 type:kotlin.Int
   CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public returnType:kotlin.IntArray

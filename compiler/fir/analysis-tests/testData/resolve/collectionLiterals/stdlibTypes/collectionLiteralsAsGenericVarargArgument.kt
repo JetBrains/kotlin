@@ -2,7 +2,7 @@
 // ISSUE: KT-81722
 // LANGUAGE: +CollectionLiterals
 
-@file:OptIn(ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalCollectionLiterals::class)
 
 fun <T> takeTs(vararg ts: T) { }
 

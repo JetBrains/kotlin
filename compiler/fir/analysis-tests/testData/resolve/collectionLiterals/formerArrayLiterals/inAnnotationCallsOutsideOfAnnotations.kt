@@ -23,7 +23,7 @@ annotation class StringArrayAnno(val arg: Array<String>)
 annotation class FooArrayAnno(val arg: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<Foo><!>)
 annotation class AnnoFooArrayAnno(val arg: Array<AnnoFoo>)
 
-@OptIn(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalCollectionLiterals::class)
 fun test(foo: Foo, annoFoo: AnnoFoo) {
     MyListAnno([])
     MyListAnno(["1", "2", "3"])

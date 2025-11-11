@@ -7,74 +7,92 @@
 
 package kotlin.js.internal
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @kotlin.internal.UsedFromCompilerGeneratedCode
 internal object ArrayCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     @kotlin.internal.InlineOnly
     inline operator fun <T> of(vararg elements: T): Array<T> = arrayOf(*elements)
 }
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @kotlin.internal.UsedFromCompilerGeneratedCode
 internal object IntArrayCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     @kotlin.internal.InlineOnly
     inline operator fun of(vararg elements: Int): IntArray = elements
 }
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @kotlin.internal.UsedFromCompilerGeneratedCode
 internal object LongArrayCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     @kotlin.internal.InlineOnly
     inline operator fun of(vararg elements: Long): LongArray = elements
 }
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @kotlin.internal.UsedFromCompilerGeneratedCode
 internal object ShortArrayCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     @kotlin.internal.InlineOnly
     inline operator fun of(vararg elements: Short): ShortArray = elements
 }
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @kotlin.internal.UsedFromCompilerGeneratedCode
 internal object ByteArrayCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     @kotlin.internal.InlineOnly
     inline operator fun of(vararg elements: Byte): ByteArray = elements
 }
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @kotlin.internal.UsedFromCompilerGeneratedCode
 internal object CharArrayCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     @kotlin.internal.InlineOnly
     inline operator fun of(vararg elements: Char): CharArray = elements
 }
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @kotlin.internal.UsedFromCompilerGeneratedCode
 internal object BooleanArrayCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     @kotlin.internal.InlineOnly
     inline operator fun of(vararg elements: Boolean): BooleanArray = elements
 }
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @kotlin.internal.UsedFromCompilerGeneratedCode
 internal object FloatArrayCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     @kotlin.internal.InlineOnly
     inline operator fun of(vararg elements: Float): FloatArray = elements
 }
 
-@ExperimentalStdlibApi
+@ExperimentalCollectionLiterals
+@SinceKotlin("2.3")
 @kotlin.internal.UsedFromCompilerGeneratedCode
 internal object DoubleArrayCompanionObject {
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     @kotlin.internal.InlineOnly
     inline operator fun of(vararg elements: Double): DoubleArray = elements
 }

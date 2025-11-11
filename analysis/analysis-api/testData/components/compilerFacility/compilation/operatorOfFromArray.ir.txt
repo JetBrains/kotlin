@@ -2,7 +2,7 @@ MODULE_FRAGMENT
   FILE fqName:<root> fileName:operatorOfFromArray.kt
     FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
       annotations:
-        OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+        OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalCollectionLiterals modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalCollectionLiterals>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
       BLOCK_BODY
         VAR name:it type:kotlin.Array<kotlin.Long> [val]
           CALL 'public final fun of <T> (vararg elements: T of kotlin.Array.Companion.of): kotlin.Array<T of kotlin.Array.Companion.of> [inline,operator] declared in kotlin.Array.Companion' type=kotlin.Array<kotlin.Long> origin=null
