@@ -57,7 +57,7 @@ internal class TypeExporter(private val config: TypeScriptExportConfig) {
     }
 
     context(_: KaSession)
-    internal fun exportArrayWithElementType(type: KaType): ExportedType = with(type) {
+    internal fun exportSpecializedArrayWithElementType(type: KaType): ExportedType = with(type) {
         when {
             isMarkedNullable -> Array(exportType(type))
             isByteType -> Primitive.ByteArray
@@ -89,13 +89,17 @@ internal class TypeExporter(private val config: TypeScriptExportConfig) {
         if (type.isNothingType)
             return Primitive.Nothing
         type.arrayElementType?.let {
-            return exportArrayWithElementType(it)
+            return if (type.isClassType(StandardClassIds.Array)) {
+                Array(exportType(it))
+            } else {
+                exportSpecializedArrayWithElementType(it)
+            }
         }
         if (type.isClassType(StandardClassIds.Throwable))
             return Primitive.Throwable
-        if (type is KaFunctionType) {
+        if (type is KaFunctionType && !type.isKFunctionType && !type.isKSuspendFunctionType) {
             return if (type.isSuspend) {
-                ErrorType("Suspend function types are not supported")
+                ErrorType("Suspend functions are not supported")
             } else {
                 Function(
                     parameters = buildList {
@@ -127,7 +131,7 @@ internal class TypeExporter(private val config: TypeScriptExportConfig) {
         if (type is KaTypeParameterType) {
             return TypeParameter(type.name.identifier)
         }
-        if (type is KaUsualClassType) {
+        if (type is KaClassType) {
             val symbol = type.symbol
             val isExported = shouldDeclarationBeExportedImplicitlyOrExplicitly(symbol)
             return when (symbol) {

@@ -11,7 +11,7 @@ declare namespace JS_TESTS {
         const _ulong: bigint;
         const _long_array: BigInt64Array;
         const _ulong_array: Array<bigint>;
-        const _array_long: BigInt64Array;
+        const _array_long: Array<bigint>;
         const _array_ulong: Array<bigint>;
         let myVar: bigint;
         const _n_long: Nullable<bigint>;

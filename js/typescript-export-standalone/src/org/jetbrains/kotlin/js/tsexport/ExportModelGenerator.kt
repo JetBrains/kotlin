@@ -129,7 +129,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             }
             for (parameter in function.valueParameters) {
                 val type = if (parameter.isVararg) {
-                    TypeExporter(config).exportArrayWithElementType(parameter.returnType)
+                    TypeExporter(config).exportSpecializedArrayWithElementType(parameter.returnType)
                 } else {
                     exportType(parameter.returnType)
                 }
