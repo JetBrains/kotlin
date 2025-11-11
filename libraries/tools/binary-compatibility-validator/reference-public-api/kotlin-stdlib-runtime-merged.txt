@@ -53,6 +53,9 @@ public final class kotlin/ExceptionsKt {
 	public static final fun stackTraceToString (Ljava/lang/Throwable;)Ljava/lang/String;
 }
 
+public abstract interface annotation class kotlin/ExperimentalCollectionLiterals : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ExperimentalContextParameters : java/lang/annotation/Annotation {
 }
 

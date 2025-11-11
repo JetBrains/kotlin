@@ -31,9 +31,9 @@ public final class Array</*0*/ T> {
     public final operator fun iterator(): kotlin.collections.Iterator<T>
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: T): kotlin.Unit
 
-    public companion object Companion {
+    @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final inline operator fun </*0*/ reified T> of(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.Array<T>
+        @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public final inline operator fun </*0*/ reified T> of(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.Array<T>
     }
 }
 
@@ -59,9 +59,9 @@ public final class BooleanArray {
     public final operator fun iterator(): kotlin.collections.BooleanIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Boolean): kotlin.Unit
 
-    public companion object Companion {
+    @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final operator fun of(/*0*/ vararg elements: kotlin.Boolean /*kotlin.BooleanArray*/): kotlin.BooleanArray
+        @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public final operator fun of(/*0*/ vararg elements: kotlin.Boolean /*kotlin.BooleanArray*/): kotlin.BooleanArray
     }
 }
 
@@ -145,9 +145,9 @@ public final class ByteArray {
     public final operator fun iterator(): kotlin.collections.ByteIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Byte): kotlin.Unit
 
-    public companion object Companion {
+    @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final operator fun of(/*0*/ vararg elements: kotlin.Byte /*kotlin.ByteArray*/): kotlin.ByteArray
+        @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public final operator fun of(/*0*/ vararg elements: kotlin.Byte /*kotlin.ByteArray*/): kotlin.ByteArray
     }
 }
 
@@ -203,9 +203,9 @@ public final class CharArray {
     public final operator fun iterator(): kotlin.collections.CharIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Char): kotlin.Unit
 
-    public companion object Companion {
+    @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final operator fun of(/*0*/ vararg elements: kotlin.Char /*kotlin.CharArray*/): kotlin.CharArray
+        @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public final operator fun of(/*0*/ vararg elements: kotlin.Char /*kotlin.CharArray*/): kotlin.CharArray
     }
 }
 
@@ -344,9 +344,9 @@ public final class DoubleArray {
     public final operator fun iterator(): kotlin.collections.DoubleIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Double): kotlin.Unit
 
-    public companion object Companion {
+    @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final operator fun of(/*0*/ vararg elements: kotlin.Double /*kotlin.DoubleArray*/): kotlin.DoubleArray
+        @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public final operator fun of(/*0*/ vararg elements: kotlin.Double /*kotlin.DoubleArray*/): kotlin.DoubleArray
     }
 }
 
@@ -366,6 +366,10 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     public companion object Companion {
         /*primary*/ private constructor Companion()
     }
+}
+
+@kotlin.RequiresOptIn(level = Level.ERROR) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "2.3") public final annotation class ExperimentalCollectionLiterals : kotlin.Annotation {
+    /*primary*/ public constructor ExperimentalCollectionLiterals()
 }
 
 @kotlin.RequiresOptIn(level = Level.ERROR) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.3") public final annotation class ExperimentalStdlibApi : kotlin.Annotation {
@@ -458,9 +462,9 @@ public final class FloatArray {
     public final operator fun iterator(): kotlin.collections.FloatIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Float): kotlin.Unit
 
-    public companion object Companion {
+    @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final operator fun of(/*0*/ vararg elements: kotlin.Float /*kotlin.FloatArray*/): kotlin.FloatArray
+        @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public final operator fun of(/*0*/ vararg elements: kotlin.Float /*kotlin.FloatArray*/): kotlin.FloatArray
     }
 }
 
@@ -558,9 +562,9 @@ public final class IntArray {
     public final operator fun iterator(): kotlin.collections.IntIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
 
-    public companion object Companion {
+    @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final operator fun of(/*0*/ vararg elements: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
+        @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public final operator fun of(/*0*/ vararg elements: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
     }
 }
 
@@ -651,9 +655,9 @@ public final class LongArray {
     public final operator fun iterator(): kotlin.collections.LongIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Long): kotlin.Unit
 
-    public companion object Companion {
+    @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final operator fun of(/*0*/ vararg elements: kotlin.Long /*kotlin.LongArray*/): kotlin.LongArray
+        @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public final operator fun of(/*0*/ vararg elements: kotlin.Long /*kotlin.LongArray*/): kotlin.LongArray
     }
 }
 
@@ -808,9 +812,9 @@ public final class ShortArray {
     public final operator fun iterator(): kotlin.collections.ShortIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Short): kotlin.Unit
 
-    public companion object Companion {
+    @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final operator fun of(/*0*/ vararg elements: kotlin.Short /*kotlin.ShortArray*/): kotlin.ShortArray
+        @kotlin.ExperimentalCollectionLiterals @kotlin.SinceKotlin(version = "2.3") public final operator fun of(/*0*/ vararg elements: kotlin.Short /*kotlin.ShortArray*/): kotlin.ShortArray
     }
 }
 

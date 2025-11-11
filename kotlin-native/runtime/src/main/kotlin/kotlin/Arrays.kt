@@ -42,10 +42,12 @@ public actual constructor(size: Int) {
     }
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /** Returns an array containing the specified `Byte` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun of(vararg elements: Byte): ByteArray =
             elements
@@ -131,10 +133,12 @@ public actual constructor(size: Int) {
     }
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /** Returns an array containing the specified `Char` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun of(vararg elements: Char): CharArray =
             elements
@@ -220,10 +224,12 @@ public actual constructor(size: Int) {
     }
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /** Returns an array containing the specified `Short` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun of(vararg elements: Short): ShortArray =
             elements
@@ -309,10 +315,12 @@ public actual constructor(size: Int) {
     }
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /** Returns an array containing the specified `Int` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun of(vararg elements: Int): IntArray =
             elements
@@ -398,10 +406,12 @@ public actual constructor(size: Int) {
     }
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /** Returns an array containing the specified `Long` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun of(vararg elements: Long): LongArray =
             elements
@@ -487,10 +497,12 @@ public actual constructor(size: Int) {
     }
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /** Returns an array containing the specified `Float` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun of(vararg elements: Float): FloatArray =
             elements
@@ -576,10 +588,12 @@ public actual constructor(size: Int) {
     }
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /** Returns an array containing the specified `Double` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun of(vararg elements: Double): DoubleArray =
             elements
@@ -665,10 +679,12 @@ public actual constructor(size: Int) {
     }
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /** Returns an array containing the specified `Boolean` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun of(vararg elements: Boolean): BooleanArray =
             elements

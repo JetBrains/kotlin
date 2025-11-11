@@ -3,7 +3,7 @@
 // LANGUAGE: +CollectionLiterals
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
-@OptIn(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
+@OptIn(ExperimentalCollectionLiterals::class, ExperimentalUnsignedTypes::class)
 fun test() {
     val a: List<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> [1, null, 3]
     val b: MutableList<Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> [null]

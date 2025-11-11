@@ -4,7 +4,7 @@
 
 fun takeLongs(vararg longs: Long) { }
 
-@OptIn(kotlin.ExperimentalStdlibApi::class)
+@OptIn(kotlin.ExperimentalCollectionLiterals::class)
 fun main() {
     val it: LongArray = LongArray.of(1, 2, 3)
     takeLongs(*LongArray.of(1, 2, 3))

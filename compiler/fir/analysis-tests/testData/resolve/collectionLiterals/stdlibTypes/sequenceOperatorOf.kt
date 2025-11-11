@@ -4,7 +4,7 @@
 
 import kotlin.sequences.*
 
-@OptIn(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalCollectionLiterals::class)
 fun test() {
     val a: Sequence<String> = Sequence.of()
     val b: Sequence<Any?> = Sequence.of(null)

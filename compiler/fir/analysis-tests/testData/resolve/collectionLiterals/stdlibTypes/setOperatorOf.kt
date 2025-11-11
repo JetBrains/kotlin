@@ -2,7 +2,7 @@
 // ISSUE: KT-81722
 // LANGUAGE: +CollectionLiterals
 
-@OptIn(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalCollectionLiterals::class)
 fun test() {
     val a: Set<String> = Set.of()
     val b: Set<Any?> = Set.of(null)

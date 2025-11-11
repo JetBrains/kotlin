@@ -226,12 +226,14 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
  */
 public actual interface List<out E> : Collection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /**
          * Returns an empty read-only list. The returned list is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(): List<T> = listOf()
 
@@ -240,14 +242,16 @@ public actual interface List<out E> : Collection<E> {
          *
          * The returned list is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(element: T): List<T> = listOf(element)
 
         /**
          * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(vararg elements: T): List<T> = listOf(*elements)
     }
@@ -353,26 +357,30 @@ public actual interface List<out E> : Collection<E> {
  */
 public actual interface MutableList<E> : List<E>, MutableCollection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /**
          * Returns an empty new [MutableList].
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(): MutableList<T> = mutableListOf()
 
         /**
          * Returns a new [MutableList] containing only the specified object [element].
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(element: T): MutableList<T> = mutableListOf(element)
 
         /**
          * Returns a new [MutableList] with the given elements.
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(vararg elements: T): MutableList<T> = mutableListOf(*elements)
     }
@@ -533,12 +541,14 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
  */
 public actual interface Set<out E> : Collection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /**
          * Returns an empty read-only set.  The returned set is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(): Set<T> = setOf()
 
@@ -547,7 +557,8 @@ public actual interface Set<out E> : Collection<E> {
          *
          * The returned set is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(element: T): Set<T> = setOf(element)
 
@@ -556,7 +567,8 @@ public actual interface Set<out E> : Collection<E> {
          * Elements of the set are iterated in the order they were specified.
          * The returned set is serializable (JVM).
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(vararg elements: T): Set<T> = setOf(*elements)
     }
@@ -602,21 +614,24 @@ public actual interface Set<out E> : Collection<E> {
  */
 public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /**
          * Returns an empty new [MutableSet].
          *
          * The returned set preserves the element iteration order.
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(): MutableSet<T> = mutableSetOf()
 
         /**
          * Returns a new [MutableSet] containing only the specified object [element].
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(element: T): MutableSet<T> = mutableSetOf(element)
 
@@ -624,7 +639,8 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
          * Returns a new [MutableSet] with the given elements.
          * Elements of the set are iterated in the order they were specified.
          */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public actual inline operator fun <T> of(vararg elements: T): MutableSet<T> = mutableSetOf(*elements)
     }

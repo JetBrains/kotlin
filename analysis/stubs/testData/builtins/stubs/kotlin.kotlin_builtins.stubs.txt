@@ -346,25 +346,41 @@ FILE[kind=File[packageFqName=kotlin]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=kotlin/Array.Companion, fqName=kotlin.Array.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "2.3" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
         CLASS_BODY
           FUN[fqName=kotlin.Array.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[public final inline operator MustUseReturnValue]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
                 valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
-                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+                valueArguments: [ version -> "2.3" ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=SinceKotlin]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=T]
                 MODIFIER_LIST[reified]
@@ -668,25 +684,41 @@ FILE[kind=File[packageFqName=kotlin]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=kotlin/BooleanArray.Companion, fqName=kotlin.BooleanArray.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "2.3" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
         CLASS_BODY
           FUN[fqName=kotlin.BooleanArray.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[public final operator MustUseReturnValue]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
                 valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
-                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+                valueArguments: [ version -> "2.3" ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=SinceKotlin]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
                 MODIFIER_LIST[vararg]
@@ -2217,25 +2249,41 @@ FILE[kind=File[packageFqName=kotlin]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=kotlin/ByteArray.Companion, fqName=kotlin.ByteArray.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "2.3" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
         CLASS_BODY
           FUN[fqName=kotlin.ByteArray.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[public final operator MustUseReturnValue]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
                 valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
-                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+                valueArguments: [ version -> "2.3" ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=SinceKotlin]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
                 MODIFIER_LIST[vararg]
@@ -2934,25 +2982,41 @@ FILE[kind=File[packageFqName=kotlin]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=kotlin/CharArray.Companion, fqName=kotlin.CharArray.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "2.3" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
         CLASS_BODY
           FUN[fqName=kotlin.CharArray.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[public final operator MustUseReturnValue]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
                 valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
-                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+                valueArguments: [ version -> "2.3" ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=SinceKotlin]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
                 MODIFIER_LIST[vararg]
@@ -4658,25 +4722,41 @@ FILE[kind=File[packageFqName=kotlin]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=kotlin/DoubleArray.Companion, fqName=kotlin.DoubleArray.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "2.3" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
         CLASS_BODY
           FUN[fqName=kotlin.DoubleArray.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[public final operator MustUseReturnValue]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
                 valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
-                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+                valueArguments: [ version -> "2.3" ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=SinceKotlin]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
                 MODIFIER_LIST[vararg]
@@ -4936,6 +5016,65 @@ FILE[kind=File[packageFqName=kotlin]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=kotlin/ExperimentalCollectionLiterals, fqName=kotlin.ExperimentalCollectionLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ExperimentalCollectionLiterals, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=RequiresOptIn]
+        valueArguments: [ level -> Level.ERROR ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=RequiresOptIn]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS, AnnotationTarget.FUNCTION] ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        valueArguments: [ value -> AnnotationRetention.BINARY ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        valueArguments: [ ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        valueArguments: [ version -> "2.3" ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ExperimentalCollectionLiterals]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
   CLASS[classId=kotlin/ExperimentalStdlibApi, fqName=kotlin.ExperimentalStdlibApi, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ExperimentalStdlibApi, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=RequiresOptIn]
@@ -6398,25 +6537,41 @@ FILE[kind=File[packageFqName=kotlin]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=kotlin/FloatArray.Companion, fqName=kotlin.FloatArray.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "2.3" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
         CLASS_BODY
           FUN[fqName=kotlin.FloatArray.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[public final operator MustUseReturnValue]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
                 valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
-                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+                valueArguments: [ version -> "2.3" ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=SinceKotlin]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
                 MODIFIER_LIST[vararg]
@@ -8134,25 +8289,41 @@ FILE[kind=File[packageFqName=kotlin]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=kotlin/IntArray.Companion, fqName=kotlin.IntArray.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "2.3" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
         CLASS_BODY
           FUN[fqName=kotlin.IntArray.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[public final operator MustUseReturnValue]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
                 valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
-                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+                valueArguments: [ version -> "2.3" ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=SinceKotlin]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
                 MODIFIER_LIST[vararg]
@@ -9845,25 +10016,41 @@ FILE[kind=File[packageFqName=kotlin]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=kotlin/LongArray.Companion, fqName=kotlin.LongArray.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "2.3" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
         CLASS_BODY
           FUN[fqName=kotlin.LongArray.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[public final operator MustUseReturnValue]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
                 valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
-                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+                valueArguments: [ version -> "2.3" ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=SinceKotlin]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
                 MODIFIER_LIST[vararg]
@@ -11890,25 +12077,41 @@ FILE[kind=File[packageFqName=kotlin]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=kotlin/ShortArray.Companion, fqName=kotlin.ShortArray.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "2.3" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
         CLASS_BODY
           FUN[fqName=kotlin.ShortArray.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[public final operator MustUseReturnValue]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiterals]
                 valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
-                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiterals]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+                valueArguments: [ version -> "2.3" ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=SinceKotlin]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
                 MODIFIER_LIST[vararg]

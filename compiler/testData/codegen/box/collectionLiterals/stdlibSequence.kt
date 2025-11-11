@@ -3,7 +3,7 @@
 // WITH_STDLIB
 // ISSUE: KT-81722
 
-@file:OptIn(ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalCollectionLiterals::class)
 
 fun Sequence<*>.checkEquals(vararg es: Any?): Boolean {
     return joinToString() == es.joinToString()

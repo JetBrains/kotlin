@@ -2,7 +2,7 @@
 // ISSUE: KT-81722
 // LANGUAGE: +CollectionLiterals
 
-@OptIn(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalCollectionLiterals::class)
 fun test() {
     val a: MutableSet<String> = MutableSet.of()
     val b: MutableSet<Any?> = MutableSet.of(null)

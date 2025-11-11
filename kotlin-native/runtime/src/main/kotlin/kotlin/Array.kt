@@ -39,10 +39,12 @@ public actual class Array<T> {
     }
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public actual companion object {
         /** Returns an array containing the specified elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         @Suppress("UNCHECKED_CAST")
         public actual inline operator fun <reified T> of(vararg elements: T): Array<T> =

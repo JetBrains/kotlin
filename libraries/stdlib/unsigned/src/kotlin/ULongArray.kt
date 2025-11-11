@@ -18,10 +18,12 @@ public value class ULongArray
 internal constructor(@PublishedApi internal val storage: LongArray) : Collection<ULong> {
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public companion object {
         /** Returns an array containing the specified `ULong` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         @kotlin.internal.InlineOnly
         public inline operator fun of(vararg elements: ULong): ULongArray = elements
     }

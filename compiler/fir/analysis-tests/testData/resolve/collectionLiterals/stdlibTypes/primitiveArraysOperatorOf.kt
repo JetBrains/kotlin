@@ -2,7 +2,7 @@
 // ISSUE: KT-81722
 // LANGUAGE: +CollectionLiterals
 
-@file:OptIn(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
+@file:OptIn(ExperimentalCollectionLiterals::class, ExperimentalUnsignedTypes::class)
 
 fun <T> take(vararg t: T) {
 }

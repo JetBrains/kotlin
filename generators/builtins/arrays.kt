@@ -113,10 +113,10 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                         transform = { "\"$it\"" }
                     )
                 annotations += suppress
-                annotations += "ExperimentalStdlibApi"
+                annotations += listOf("ExperimentalCollectionLiterals", "SinceKotlin(\"2.3\")")
 
                 method {
-                    annotations += "ExperimentalStdlibApi"
+                    annotations += listOf("ExperimentalCollectionLiterals", "SinceKotlin(\"2.3\")")
                     signature {
                         isOperator = true
                         returnType = arrayTypeName

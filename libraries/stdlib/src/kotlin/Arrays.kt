@@ -34,10 +34,12 @@ public constructor(size: Int) {
     public inline constructor(size: Int, init: (Int) -> Byte)
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public companion object {
         /** Returns an array containing the specified `Byte` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public operator fun of(vararg elements: Byte): ByteArray
     }
 
@@ -104,10 +106,12 @@ public constructor(size: Int) {
     public inline constructor(size: Int, init: (Int) -> Char)
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public companion object {
         /** Returns an array containing the specified `Char` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public operator fun of(vararg elements: Char): CharArray
     }
 
@@ -174,10 +178,12 @@ public constructor(size: Int) {
     public inline constructor(size: Int, init: (Int) -> Short)
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public companion object {
         /** Returns an array containing the specified `Short` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public operator fun of(vararg elements: Short): ShortArray
     }
 
@@ -244,10 +250,12 @@ public constructor(size: Int) {
     public inline constructor(size: Int, init: (Int) -> Int)
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public companion object {
         /** Returns an array containing the specified `Int` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public operator fun of(vararg elements: Int): IntArray
     }
 
@@ -314,10 +322,12 @@ public constructor(size: Int) {
     public inline constructor(size: Int, init: (Int) -> Long)
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public companion object {
         /** Returns an array containing the specified `Long` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public operator fun of(vararg elements: Long): LongArray
     }
 
@@ -384,10 +394,12 @@ public constructor(size: Int) {
     public inline constructor(size: Int, init: (Int) -> Float)
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public companion object {
         /** Returns an array containing the specified `Float` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public operator fun of(vararg elements: Float): FloatArray
     }
 
@@ -454,10 +466,12 @@ public constructor(size: Int) {
     public inline constructor(size: Int, init: (Int) -> Double)
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public companion object {
         /** Returns an array containing the specified `Double` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public operator fun of(vararg elements: Double): DoubleArray
     }
 
@@ -524,10 +538,12 @@ public constructor(size: Int) {
     public inline constructor(size: Int, init: (Int) -> Boolean)
 
     @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
-    @ExperimentalStdlibApi
+    @ExperimentalCollectionLiterals
+    @SinceKotlin("2.3")
     public companion object {
         /** Returns an array containing the specified `Boolean` elements. */
-        @ExperimentalStdlibApi
+        @ExperimentalCollectionLiterals
+        @SinceKotlin("2.3")
         public operator fun of(vararg elements: Boolean): BooleanArray
     }
 

@@ -3,7 +3,7 @@
 // WITH_STDLIB
 // ISSUE: KT-81722
 
-@file:OptIn(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
+@file:OptIn(ExperimentalCollectionLiterals::class, ExperimentalUnsignedTypes::class)
 
 inline fun <reified T, R> runOnTwoArgs(a: T, b: T, ref: (Array<T>) -> R): R = ref(arrayOf(a, b))
 
