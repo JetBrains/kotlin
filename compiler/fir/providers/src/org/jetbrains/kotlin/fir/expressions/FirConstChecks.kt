@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType
+import org.jetbrains.kotlin.resolve.constants.evaluate.canEvalOp
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun ConeKotlinType.canBeUsedForConstVal(): Boolean = with(lowerBoundIfFlexible()) { isPrimitive || isString || isUnsignedType }
@@ -366,7 +368,16 @@ private class FirConstCheckVisitor(
             exp.accept(this, null).ifNotValidConst { return it }
         }
 
-        return ConstantArgumentKind.VALID_CONST
+        val argumentTypes = listOf(symbol.dispatchReceiverType, symbol.resolvedReceiverType)
+            .plus(symbol.valueParameterSymbols.map { it.resolvedReturnType })
+            .filterNotNull()
+            .map { it.toCompileTimeType() }
+
+        if (argumentTypes.any {it == null} || argumentTypes.isEmpty() || argumentTypes.size > 2) return ConstantArgumentKind.NOT_CONST
+        val inBuiltinMap = canEvalOp(symbol.callableId, argumentTypes.first()!!, argumentTypes.getOrNull(1))
+
+        // FIXME: This is a hack to allow some test that only want to run the backend evaluator but still use const val
+        return if (inBuiltinMap || intrinsicConstEvaluation) ConstantArgumentKind.VALID_CONST else ConstantArgumentKind.NOT_CONST
     }
 
     private fun visitConstructorCall(constructorCall: FirFunctionCall, symbol: FirConstructorSymbol): ConstantArgumentKind {
@@ -434,6 +445,12 @@ private class FirConstCheckVisitor(
     // --- Utils ---
     private fun FirBasedSymbol<*>.canBeEvaluated(): Boolean {
         return intrinsicConstEvaluation && this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
+    }
+
+
+    private fun ConeKotlinType.toCompileTimeType(): CompileTimeType? {
+        if (this.classId == StandardClassIds.Any) return CompileTimeType.ANY
+        return this.classId?.toConstantValueKind()?.toCompileTimeType()
     }
 
     private fun FirExpression.hasAllowedCompileTimeType(): Boolean {

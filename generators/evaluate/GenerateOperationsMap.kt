@@ -39,6 +39,8 @@ fun generate(): String {
     generateBinaryOp(p, binaryOperationsMap)
     generateBinaryOpCheck(p, binaryOperationsMap)
 
+    generateCanEvalOpFunction(p, unaryOperationsMap + binaryOperationsMap)
+
     return sb.toString()
 }
 
@@ -220,6 +222,23 @@ private fun generateBinaryOp(
     p.popIndent()
     p.println("}")
     p.println()
+}
+
+private fun generateCanEvalOpFunction(p: Printer, operations: List<Operation>) {
+    p.println("private val knownOps = setOf(")
+    p.pushIndent()
+    for (operation in operations) {
+        p.println("\"${operation.callableId}(${operation.parameterTypes.joinToString(", ") { it.toCompilTimeTypeFormat() }})\",")
+    }
+    p.popIndent()
+    p.println(")")
+
+    p.println("fun canEvalOp(callableId: CallableId, typeA: CompileTimeType, typeB: CompileTimeType?): Boolean {")
+    p.pushIndent()
+    p.println("val types = if (typeB != null) \"\$typeA, \$typeB\" else typeA.toString()")
+    p.println("return knownOps.contains(\"\${callableId}(\$types)\")")
+    p.popIndent()
+    p.println("}")
 }
 
 // TODO, KT-75372: Can be dropped with K1
