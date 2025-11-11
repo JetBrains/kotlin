@@ -8,12 +8,12 @@
 
 fun Int.foo() {
     A<Int>()
-    <!NO_CONTEXT_ARGUMENT!>A<!><String>()
+    A<String>()
 }
 
 fun Collection<Int>.bar() {
     B<Int>()
-    <!NO_CONTEXT_ARGUMENT!>B<!><String>()
+    B<String>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, typeParameter */

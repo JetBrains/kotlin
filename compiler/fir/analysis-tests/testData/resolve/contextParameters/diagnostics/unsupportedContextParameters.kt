@@ -69,7 +69,7 @@ fun contextReceiverSyntax() {}
 context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>, _: Int)
 fun mixedSyntax() {}
 
-<!UNSUPPORTED!>context(<!CONTEXT_PARAMETER_WITHOUT_NAME, CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)<!>
+<!UNSUPPORTED!>context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)<!>
 class ClassWithContextReceiverSyntax {
     <!UNSUPPORTED!>context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)<!>
     constructor() {}

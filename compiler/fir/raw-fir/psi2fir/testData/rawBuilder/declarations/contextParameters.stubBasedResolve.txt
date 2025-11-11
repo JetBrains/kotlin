@@ -1,7 +1,7 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] contextParameters.kt
     context([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : R|kotlin/Any| {
-        context([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|)
+        context([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|)
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] constructor(): R|C| { LAZY_BLOCK }
 
     }

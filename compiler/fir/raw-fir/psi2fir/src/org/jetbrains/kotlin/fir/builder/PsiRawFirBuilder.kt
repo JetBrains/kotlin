@@ -1254,7 +1254,6 @@ open class PsiRawFirBuilder(
                         this.contextParameters.addContextParameters(it, constructorSymbol)
                     }
 
-                    this.contextParameters.addContextParameters(owner.contextReceiverLists, constructorSymbol)
                     this@toFirConstructor?.extractAnnotationsTo(this)
                     this@toFirConstructor?.extractValueParametersTo(this, symbol, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
                     this.body = null
@@ -2246,7 +2245,6 @@ open class PsiRawFirBuilder(
                     }
                     isLocal = this@PsiRawFirBuilder.context.inLocalContext
                     dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
-                    contextParameters.addContextParameters(owner.contextReceiverLists, symbol)
                     contextParameters.addContextParameters(this@toFirConstructor.modifierList?.contextReceiverLists.orEmpty(), symbol)
                     if (!owner.hasModifier(EXTERNAL_KEYWORD) && !status.isExpect || isExplicitDelegationCall()) {
                         delegatedConstructor = buildOrLazyDelegatedConstructorCall(

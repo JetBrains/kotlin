@@ -18,7 +18,7 @@ var varProp: Int
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
 val valProp: Int get() = 42
 
-<!CONTEXT_CLASS_OR_CONSTRUCTOR, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
+<!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(A)
 class Clazz {
     <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
     fun memberFun() {}
@@ -37,7 +37,7 @@ class Clazz {
 
 <!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(A)
 class Clazz2 {
-    <!CONTEXT_CLASS_OR_CONSTRUCTOR!>constructor()<!>
+    constructor()
 }
 
 class Clazz3 {
@@ -69,13 +69,13 @@ var Clazz.extVar: Int
 <!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(A)
 interface I {}
 
-<!CONTEXT_CLASS_OR_CONSTRUCTOR, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A, B)
+<!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(A, B)
 class ClazzTwoReceivers {}
 
-<!CONTEXT_CLASS_OR_CONSTRUCTOR, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
+<!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(A)
 enum class E
 
-<!CONTEXT_CLASS_OR_CONSTRUCTOR, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
+<!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(A)
 object O
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, funWithExtensionReceiver, functionDeclaration,

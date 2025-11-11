@@ -39,7 +39,7 @@ fun useWithContextReceivers() {
             f({}, 42)
             <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>sameAsFWithoutNonContextualCounterpart<!>({}, 42)
             <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>p<!>
-            val a = <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>A<!>()
+            val a = A()
             a.<!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>p<!>
             a.<!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>m<!>()
         }

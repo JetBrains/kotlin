@@ -15,7 +15,7 @@ FILE: contextParameterOnErrorPrimaryConstructor.kt
     }
     context(@SharedAnno() <unused var>: @SharedTypeAnno() Clazz)
     public final? class OneMore : R|kotlin/Any| {
-        context(c: Another, @SharedAnno() <unused var>: @SharedTypeAnno() Clazz)
+        context(c: Another)
         @Anno(LAZY_EXPRESSION) public? constructor(s: String): R|OneMore| {
             LAZY_super<R|kotlin/Any|>
         }

@@ -13,7 +13,7 @@ class Inner(arg: Any) {
 }
 
 fun f(outer: Outer) {
-    <!NO_CONTEXT_ARGUMENT!>Inner<!>(1)
+    Inner(1)
     with(outer) {
         Inner(3)
     }
