@@ -35,8 +35,7 @@ import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal class KTypeParameterImpl private constructor(
     descriptor: TypeParameterDescriptor?,
-    private val _container: KTypeParameterOwnerImpl?,
-    private val computeContainer: (() -> KTypeParameterOwnerImpl)?,
+    private val container: KTypeParameterOwnerImpl,
     override val name: String,
     override val variance: KVariance,
     override val isReified: Boolean,
@@ -46,12 +45,11 @@ internal class KTypeParameterImpl private constructor(
         name: String,
         variance: KVariance,
         isReified: Boolean,
-    ) : this(descriptor = null, container, null, name, variance, isReified)
+    ) : this(descriptor = null, container, name, variance, isReified)
 
-    constructor(container: KTypeParameterOwnerImpl?, descriptor: TypeParameterDescriptor) : this(
+    constructor(container: KTypeParameterOwnerImpl, descriptor: TypeParameterDescriptor) : this(
         descriptor,
         container,
-        ReflectProperties.lazySoft { descriptor.toContainer() },
         descriptor.name.asString(),
         descriptor.variance.toKVariance(),
         descriptor.isReified,
@@ -65,9 +63,6 @@ internal class KTypeParameterImpl private constructor(
 
     @Volatile
     override lateinit var upperBounds: List<KType>
-
-    private val container: KTypeParameterOwnerImpl
-        get() = _container ?: computeContainer!!()
 
     override fun equals(other: Any?) =
         other is KTypeParameterImpl && container == other.container && name == other.name
@@ -86,7 +81,7 @@ private fun Variance.toKVariance(): KVariance =
         Variance.OUT_VARIANCE -> KVariance.OUT
     }
 
-private fun TypeParameterDescriptor.toContainer(): KTypeParameterOwnerImpl =
+internal fun TypeParameterDescriptor.toContainer(): KTypeParameterOwnerImpl =
     when (val declaration = containingDeclaration) {
         is ClassDescriptor -> {
             declaration.toKClassImpl()
