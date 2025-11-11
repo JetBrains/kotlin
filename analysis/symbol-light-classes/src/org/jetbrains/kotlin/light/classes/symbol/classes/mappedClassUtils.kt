@@ -412,15 +412,15 @@ private fun PsiMethod.wrap(
     substituteObjectWith: PsiType? = null,
     signature: MethodSignature? = null,
 ) = SymbolLightMethodWrapperForMappedClass(
+    lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     javaMethod = this,
     substitutor = substitutor,
-    lightMemberOrigin = lightMemberOrigin,
-    isFinal = makeFinal,
     name = name,
+    isFinal = makeFinal,
+    hasImplementation = hasImplementation,
     substituteObjectWith = substituteObjectWith,
-    providedSignature = signature,
-    hasImplementation = hasImplementation
+    providedSignature = signature
 )
 
 @Suppress("UnstableApiUsage")
