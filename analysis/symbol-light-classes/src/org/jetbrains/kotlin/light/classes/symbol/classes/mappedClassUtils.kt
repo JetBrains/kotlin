@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
+import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.light.classes.symbol.methods.MethodSignature
@@ -20,6 +22,8 @@ import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
 private val javaGetterNameToKotlinGetterName: Map<String, String> = buildMap {
     BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.forEach { (propertyFqName, javaGetterShortName) ->
@@ -59,7 +63,8 @@ internal fun KaSession.processOwnDeclarationsMappedSpecialSignaturesAware(
                     ownFunction = callableSymbol,
                     kotlinCollectionFunction = kotlinCollectionFunction,
                     allSupertypes = allSupertypes,
-                    result = result
+                    result = result,
+                    originKind = JvmDeclarationOriginKind.OTHER
                 )
                 if (shouldCreateRegularDeclaration) {
                     add(callableSymbol)
@@ -104,6 +109,7 @@ internal fun KaSession.processOwnDeclarationsMappedSpecialSignaturesAware(
  * @param kotlinCollectionFunction The overridden symbol from Kotlin collections, or null if not overriding
  * @param allSupertypes All supertypes of the containing class
  * @param result Mutable list where generated PSI methods are added
+ * @param originKind The origin kind of the original Kotlin function symbol
  * @return `true` if the caller should generate the original Kotlin method, `false` if it should be skipped
  *
  * @see tryToMapKotlinCollectionMethodToJavaMethod
@@ -115,6 +121,7 @@ internal fun KaSession.processPossiblyMappedMethod(
     kotlinCollectionFunction: KaNamedFunctionSymbol?,
     allSupertypes: List<KaClassType>,
     result: MutableList<PsiMethod>,
+    originKind: JvmDeclarationOriginKind
 ): Boolean {
     if (kotlinCollectionFunction == null) return true
     val javaMethod = tryToMapKotlinCollectionMethodToJavaMethod(kotlinCollectionFunction, allSupertypes) ?: return true
@@ -133,7 +140,17 @@ internal fun KaSession.processPossiblyMappedMethod(
     val isErasedSignature = javaMethod.name in erasedCollectionParameterNames ||
             ownFunction.valueParameters.any { it.returnType is KaTypeParameterType }
 
-    val wrappedMethod = javaMethod.wrap(containingClass, substitutor, hasImplementation = true, makeFinal = !isErasedSignature)
+    val lightMemberOrigin = (ownFunction.psi as? KtDeclaration)?.let { originalElement ->
+        LightMemberOriginForDeclaration(originalElement, originKind)
+    }
+    val wrappedMethod = javaMethod.wrap(
+        containingClass,
+        substitutor,
+        lightMemberOrigin,
+        hasImplementation = true,
+        makeFinal = !isErasedSignature
+    )
+
     result.add(wrappedMethod)
     return !isErasedSignature
 }
@@ -255,7 +272,6 @@ private fun KaSession.generateJavaCollectionMethodStubs(
     }
 }
 
-// TODO check "go to base method", "go to declaration" in IDE
 private fun createWrappersForJavaCollectionMethod(
     containingClass: SymbolLightClassForClassOrObject,
     method: PsiMethod,
@@ -389,6 +405,7 @@ private fun PsiMethod.openBridge(
 private fun PsiMethod.wrap(
     containingClass: SymbolLightClassForClassOrObject,
     substitutor: PsiSubstitutor,
+    lightMemberOrigin: LightMemberOrigin? = null,
     makeFinal: Boolean = false,
     hasImplementation: Boolean = false,
     name: String = this.name,
@@ -398,6 +415,7 @@ private fun PsiMethod.wrap(
     containingClass = containingClass,
     javaMethod = this,
     substitutor = substitutor,
+    lightMemberOrigin = lightMemberOrigin,
     isFinal = makeFinal,
     name = name,
     substituteObjectWith = substituteObjectWith,
