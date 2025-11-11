@@ -291,12 +291,12 @@ private fun createWrappersForJavaCollectionMethod(
         return listOf(finalBridgeForJava, abstractKotlinGetter)
     }
 
-    if (!method.isInKotlinInterface(javaCollectionPsiClass, kotlinNames)) {
-        // compiler generates stub override
-        return listOf(method.openBridge(containingClass, substitutor))
+    return if (method.isInKotlinInterface(javaCollectionPsiClass, kotlinNames)) {
+        createMethodsWithSpecialSignature(containingClass, method, javaCollectionPsiClass, substitutor)
+    } else {
+        // generate a stub override
+        listOf(method.openBridge(containingClass, substitutor))
     }
-
-    return createMethodsWithSpecialSignature(containingClass, method, javaCollectionPsiClass, substitutor)
 }
 
 private fun PsiMethod.isInKotlinInterface(javaCollectionPsiClass: PsiClass, kotlinNames: Set<String>): Boolean {
