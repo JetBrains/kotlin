@@ -57204,6 +57204,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           }
 
           @Test
+          @TestMetadata("contextParameters.kt")
+          public void testContextParameters() {
+            runTest("compiler/testData/codegen/box/reflection/mapping/types/contextParameters.kt");
+          }
+
+          @Test
           @TestMetadata("createType.kt")
           public void testCreateType() {
             runTest("compiler/testData/codegen/box/reflection/mapping/types/createType.kt");

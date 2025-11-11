@@ -55,10 +55,8 @@ fun box(): String {
     assertEquals("[]",          Z3.privateXBoundRef.getJavaTypesOfParams())
     assertEquals("int",         Z3.privateXBoundRef.getJavaTypeOfResult())
 
-
     assertEquals("[class test.ZZ]",  ZZ::x.getJavaTypesOfParams())
 
-    // KT-28170
     assertEquals("int",         ZZ::x.getJavaTypeOfResult())
 
     return "OK"
