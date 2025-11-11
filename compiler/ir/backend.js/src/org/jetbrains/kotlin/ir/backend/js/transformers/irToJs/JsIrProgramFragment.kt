@@ -299,7 +299,7 @@ class CrossModuleReferences(
 
     private fun CrossModuleImport.generateImportVariableDeclaration(importedAs: JsName): JsStatement {
         val exportRef = JsNameRef(exportedAs, ReservedJsNames.makeCrossModuleNameRef(moduleExporter.internalName))
-        return JsVars(JsVars.JsVar(importedAs, exportRef))
+        return JsVars(JsVars.Variant.Var, JsVars.JsVar(importedAs, exportRef))
     }
 
     private fun CrossModuleImport.generateJsImportStatement(importedAs: JsName): JsStatement {
@@ -317,7 +317,7 @@ class CrossModuleReferences(
 fun JsStatement.renameImportedSymbolInternalName(newName: JsName): JsStatement {
     return when (this) {
         is JsImport -> JsImport(module, JsImport.Element((target as JsImport.Target.Elements).elements.single().name, newName.makeRef()))
-        is JsVars -> JsVars(JsVars.JsVar(newName, vars.single().initExpression))
+        is JsVars -> JsVars(JsVars.Variant.Var, JsVars.JsVar(newName, vars.single().initExpression))
         else -> error("Unexpected cross-module import statement ${this::class.qualifiedName}")
     }
 }

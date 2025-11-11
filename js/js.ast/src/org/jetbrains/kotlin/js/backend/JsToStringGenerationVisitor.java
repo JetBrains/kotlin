@@ -54,6 +54,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_TRUE = "true".toCharArray();
     private static final char[] CHARS_TRY = "try".toCharArray();
     private static final char[] CHARS_VAR = "var".toCharArray();
+    private static final char[] CHARS_LET = "let".toCharArray();
+    private static final char[] CHARS_CONST = "const".toCharArray();
     private static final char[] CHARS_WHILE = "while".toCharArray();
     private static final char[] HEX_DIGITS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -1301,7 +1303,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         pushSourceInfo(vars.getSource());
         printCommentsBeforeNode(vars);
 
-        var();
+        switch (vars.getVariant()) {
+            case Var: var(); break;
+            case Let: let(); break;
+            case Const: _const(); break;
+        }
+
         space();
         boolean sep = false;
         for (JsVar var : vars) {
@@ -1831,6 +1838,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     private void var() {
         p.print(CHARS_VAR);
+    }
+
+    private void let() {
+        p.print(CHARS_LET);
+    }
+
+    private void _const() {
+        p.print(CHARS_CONST);
     }
 
     private void _while() {

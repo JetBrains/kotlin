@@ -7824,6 +7824,12 @@ public class JsES6BoxTestGenerated extends AbstractJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("varDeclaration.kt")
+    public void testVarDeclaration() {
+      runTest("js/js.translator/testData/box/jsCode/varDeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("while.kt")
     public void testWhile() {
       runTest("js/js.translator/testData/box/jsCode/while.kt");

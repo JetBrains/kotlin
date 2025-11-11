@@ -335,7 +335,7 @@ class Merger(
         if (name == null) return this
 
         return when (this) {
-            is JsVars -> JsVars(JsVars.JsVar(name, vars.single().initExpression))
+            is JsVars -> JsVars(JsVars.Variant.Var, JsVars.JsVar(name, vars.single().initExpression))
             is JsImport -> JsImport(
                 module,
                 when (target) {

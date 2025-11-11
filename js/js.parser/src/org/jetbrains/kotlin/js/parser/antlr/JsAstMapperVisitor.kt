@@ -115,7 +115,15 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitVariableDeclarationList(ctx: JavaScriptParser.VariableDeclarationListContext): JsVars {
-        return JsVars().apply {
+        val modifier = ctx.varModifier()
+        val variant = when {
+            modifier.Var() != null -> JsVars.Variant.Var
+            modifier.let_() != null -> JsVars.Variant.Let
+            modifier.Const() != null -> JsVars.Variant.Const
+            else -> reportError("Invalid variable declaration statement: ${ctx.text}", ctx)
+        }
+
+        return JsVars(variant).apply {
             ctx.variableDeclaration().forEach {
                 add(visitNode<JsVars.JsVar>(it))
             }

@@ -196,7 +196,7 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
                             synthetic = removedVar.synthetic
                             source = x.expression.source
                         }
-                        val vars = JsVars(varDeclarationWithInit).apply { synthetic = removedVar.synthetic }
+                        val vars = JsVars(JsVars.Variant.Var, varDeclarationWithInit).apply { synthetic = removedVar.synthetic }
                         ctx.replaceMe(vars)
                     }
                     accept(initExpr)

@@ -10,6 +10,21 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 
 internal class AntlrJsValidationVisitor(private val reporter: ErrorReporter) : AntlrJsBaseVisitor<ParserRuleContext?>() {
+    override fun visitVariableDeclarationList(ctx: JavaScriptParser.VariableDeclarationListContext): ParserRuleContext? {
+        if (ctx.varModifier().Const() != null)
+            ctx.variableDeclaration()?.forEach {
+                if (it.singleExpression() == null) {
+                    reporter.error(
+                        "Immutable variable declaration should have an initializer.",
+                        it.assignable().startPosition,
+                        it.assignable().stopPosition
+                    )
+                }
+            }
+
+        return super.visitVariableDeclarationList(ctx)
+    }
+
     override fun visitAssignmentExpression(ctx: JavaScriptParser.AssignmentExpressionContext): ParserRuleContext? {
         if (ctx.lhs is JavaScriptParser.ThisExpressionContext)
             reporter.error("Invalid assignment left-hand side.", ctx.lhs.startPosition, ctx.lhs.stopPosition)

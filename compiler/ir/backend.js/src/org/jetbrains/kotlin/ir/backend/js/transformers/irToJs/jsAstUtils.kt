@@ -81,7 +81,7 @@ fun jsElementAccess(name: String, receiver: JsExpression?): JsExpression =
     jsElementAccess(JsName(name, false), receiver)
 
 fun JsExpression.putIntoVariableWitName(name: JsName): JsVars {
-    return JsVars(JsVars.JsVar(name, this))
+    return JsVars(JsVars.Variant.Var, JsVars.JsVar(name, this))
 }
 
 fun jsElementAccess(name: JsName, computedName: JsExpression?, receiver: JsExpression?): JsExpression =
@@ -379,7 +379,7 @@ fun translateCall(
                 val iifeFun = JsFunction(
                     emptyScope,
                     JsBlock(
-                        JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
+                        JsVars(JsVars.Variant.Var, JsVars.JsVar(receiverName, jsDispatchReceiver)),
                         JsReturn(
                             JsInvocation(
                                 JsNameRef("apply", jsElementAccess(functionName.ident, receiverRef)),
@@ -598,7 +598,7 @@ object JsAstUtils {
     }
 
     fun newVar(name: JsName, expr: JsExpression?): JsVars {
-        return JsVars(JsVars.JsVar(name, expr))
+        return JsVars(JsVars.Variant.Var, JsVars.JsVar(name, expr))
     }
 }
 

@@ -51,7 +51,7 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
             initializerBlock.statements += jsAssignment(fieldName.makeRef(), initializer).makeStmt()
         }
 
-        return JsVars(JsVars.JsVar(fieldName))
+        return JsVars(JsVars.Variant.Var, JsVars.JsVar(fieldName))
     }
 
     override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {

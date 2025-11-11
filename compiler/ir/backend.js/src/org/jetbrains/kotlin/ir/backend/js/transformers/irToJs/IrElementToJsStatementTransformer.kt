@@ -171,7 +171,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             }
 
             SwitchOptimizer(context, isExpression = true, transformer).tryOptimize(value)?.let {
-                return JsBlock(JsVars(JsVars.JsVar(varName)), it).withSource(declaration, context)
+                return JsBlock(JsVars(JsVars.Variant.Var, JsVars.JsVar(varName)), it).withSource(declaration, context)
             }
         }
 
@@ -189,7 +189,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             synthetic = syntheticVariable
             wasMovedFromItsDeclarationPlace = declaration.wasMovedFromItsDeclarationPlace
         }
-        return JsVars(variable).apply { synthetic = syntheticVariable }
+        return JsVars(JsVars.Variant.Var, variable).apply { synthetic = syntheticVariable }
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsStatement {

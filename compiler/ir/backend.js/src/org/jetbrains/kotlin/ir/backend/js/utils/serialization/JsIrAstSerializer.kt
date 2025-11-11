@@ -604,6 +604,7 @@ private class JsIrAstSerializer {
     }
 
     private fun DataWriter.writeVars(vars: JsVars) {
+        writeInt(vars.variant.ordinal)
         writeBoolean(vars.isMultiline)
         writeCollection(vars.vars) { varDecl ->
             withLocation(varDecl) {

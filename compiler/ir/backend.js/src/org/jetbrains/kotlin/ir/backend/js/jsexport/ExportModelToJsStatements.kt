@@ -60,6 +60,7 @@ class ExportModelToJsStatements(
                         val varName = JsName(declareNewNamespace(newNamespace), false)
                         val namespaceRef = jsElementAccess(element, currentRef)
                         statements += JsVars(
+                            JsVars.Variant.Var,
                             JsVars.JsVar(
                                 varName,
                                 JsAstUtils.or(
@@ -107,7 +108,7 @@ class ExportModelToJsStatements(
                             JsExport(property.name.makeRef(), JsName(declaration.name, false))
                         }
 
-                        listOf(JsVars(property), exportStatement)
+                        listOf(JsVars(JsVars.Variant.Var, property), exportStatement)
                     }
                     else -> {
                         val getter = declaration.irGetter?.let { staticContext.getNameForStaticDeclaration(it) }
@@ -234,7 +235,10 @@ class ExportModelToJsStatements(
         val bindConstructor = JsName("__bind_constructor_", false)
 
         val blockStatements = mutableListOf<JsStatement>(
-            JsVars(JsVars.JsVar(bindConstructor, innerClassRef.bindToThis(innerClassRef)))
+            JsVars(
+                JsVars.Variant.Var,
+                JsVars.JsVar(bindConstructor, innerClassRef.bindToThis(innerClassRef))
+            )
         )
 
         if (companionObject != null) {
@@ -280,7 +284,7 @@ class ExportModelToJsStatements(
             is JsNameRef -> classRef.name!! to null
             else -> {
                 val stableName = JsName(makeValidES5Identifier(name), true)
-                stableName to JsVars(JsVars.JsVar(stableName, classRef))
+                stableName to JsVars(JsVars.Variant.Var, JsVars.JsVar(stableName, classRef))
             }
         }
     }

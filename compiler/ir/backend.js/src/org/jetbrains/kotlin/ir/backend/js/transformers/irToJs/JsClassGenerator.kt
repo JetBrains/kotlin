@@ -93,7 +93,12 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             }
         }
 
-        return JsCompositeBlock(interfaceDefaultsBlock.statements + listOf(JsVars(classHolder), functionWrapper.makeStmt())).also {
+        return JsCompositeBlock(
+            interfaceDefaultsBlock.statements + listOf(
+                JsVars(JsVars.Variant.Var, classHolder),
+                functionWrapper.makeStmt()
+            )
+        ).also {
             classModel.preDeclarationBlock.statements.clear()
             classModel.postDeclarationBlock.statements.clear()
         }

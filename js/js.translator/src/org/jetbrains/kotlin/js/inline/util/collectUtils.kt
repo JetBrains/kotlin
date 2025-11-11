@@ -127,7 +127,7 @@ private fun collectNamedFunctionsAndMetadata(scope: JsNode): Map<JsName, Pair<Fu
         override fun visit(x: JsVars.JsVar) {
             val initializer = x.initExpression
             val name = x.name
-            if (initializer != null && name != null) {
+            if (initializer != null) {
                 extractFunction(initializer)?.let { function ->
                     namedFunctions[name] = Pair(function, initializer)
                 }
