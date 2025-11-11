@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-80549
 // WITH_COROUTINES
 // FILE: FooFunc.java
@@ -17,3 +17,8 @@ object FooFuncKotlinUser {
         return myDelegate.foo(myParam)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, companionObject,
+flexibleType, functionDeclaration, functionalType, javaFunction, javaType, lambdaLiteral, localProperty, nullableType,
+objectDeclaration, override, primaryConstructor, propertyDeclaration, safeCall, suspend, thisExpression, typeConstraint,
+typeParameter */
