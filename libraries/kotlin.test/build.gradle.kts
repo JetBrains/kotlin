@@ -440,38 +440,8 @@ configurations {
         }
     }
 
-    for (configurationName in listOf("kotlinTestCommon", "kotlinTestAnnotationsCommon")) {
-        val legacyConfigurationDeps = create("${configurationName}Dependencies") {
-            isCanBeResolved = true
-            isCanBeConsumed = false
-        }
-        val legacyConfiguration = create("${configurationName}Elements") {
-            isCanBeResolved = false
-            isCanBeConsumed = true
-            attributes {
-                attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-            }
-            extendsFrom(legacyConfigurationDeps)
-        }
-        dependencies {
-            legacyConfigurationDeps(project)
-        }
-    }
-
     val jvmMainApi by getting
     val nativeApiElements by creating
-    for (artifactName in listOf("kotlin-test-common", "kotlin-test-annotations-common")) {
-        dependencies {
-            constraints {
-                val artifactCoordinates = "$group:$artifactName:$version"
-                // there is no dependency anymore from kotlin-test to kotlin-test-common and -annotations-common,
-                // but use this constraint to align it if another library brings it transitively
-                jvmMainApi(artifactCoordinates)
-                metadataApiElements(artifactCoordinates)
-                nativeApiElements(artifactCoordinates)
-            }
-        }
-    }
 }
 
 
@@ -552,23 +522,6 @@ publishing {
             variant("wasmWasiSourcesElements")
         }
 
-        module("testCommonModule") {
-            mavenPublication {
-                artifactId = "$artifactBaseName-common"
-                configureKotlinPomAttributes(project, "Legacy artifact of Kotlin Test library. Use kotlin-test instead", packaging = "pom")
-                (this as PublicationInternal<*>).isAlias = true
-            }
-            variant("kotlinTestCommonElements")
-        }
-        module("testAnnotationsCommonModule") {
-            mavenPublication {
-                artifactId = "$artifactBaseName-annotations-common"
-                configureKotlinPomAttributes(project, "Legacy artifact of Kotlin Test library. Use kotlin-test instead", packaging = "pom")
-                (this as PublicationInternal<*>).isAlias = true
-            }
-            variant("kotlinTestAnnotationsCommonElements")
-        }
-
         // Makes all variants from accompanying artifacts visible through `available-at`
         rootModule.include(js, *frameworkModules.toTypedArray(), wasmJs, wasmWasi)
     }
@@ -579,8 +532,6 @@ publishing {
             listOf("jsModule", "Js", "kotlin-test-js", "jsRuntimeClasspath"),
             listOf("wasmJsModule", "Wasm-Js", "kotlin-test-wasm-js", "wasmJsRuntimeClasspath"),
             listOf("wasmWasiModule", "Wasm-Wasi", "kotlin-test-wasm-wasi", "wasmWasiRuntimeClasspath"),
-            listOf("testCommonModule", "Common", "kotlin-test-common", "kotlinTestCommonDependencies"),
-            listOf("testAnnotationsCommonModule", "AnnotationsCommon", "kotlin-test-annotations-common", "kotlinTestAnnotationsCommonDependencies"),
         ) + jvmTestFrameworks.map { framework ->
             listOf("${framework.lowercase()}Module", "$framework", "kotlin-test-${framework.lowercase()}", "jvm${framework}RuntimeDependencies")
         }).forEach { (module, sbomTarget, sbomDocument, classpath) ->
