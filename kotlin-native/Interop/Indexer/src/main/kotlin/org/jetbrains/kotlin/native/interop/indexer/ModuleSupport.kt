@@ -6,13 +6,16 @@ import java.nio.file.Files
 
 data class ModulesInfo(val topLevelHeaders: List<IncludeInfo>, val ownHeaders: Set<String>, val modules: List<String>)
 
-fun getModulesInfo(compilation: Compilation, modules: List<String>): ModulesInfo {
+fun getModulesInfo(compilation: Compilation, modules: List<String>, skipNonImportableModules: Boolean): ModulesInfo {
     if (modules.isEmpty()) return ModulesInfo(emptyList(), emptySet(), emptyList())
 
     val areModulesEnabled = compilation.compilerArgs.contains("-fmodules")
     withIndex(excludeDeclarationsFromPCH = false) { index ->
         ModularCompilation(compilation).use {
-            val modulesASTFiles = getModulesASTFiles(index, it, modules)
+            val modulesASTFiles = if (skipNonImportableModules) {
+                getModulesASTFilesLenient(index, it, modules)
+            } else getModulesASTFiles(index, it, modules)
+
             return buildModulesInfo(index, modules, modulesASTFiles, areModulesEnabled)
         }
     }
@@ -90,6 +93,39 @@ private fun getModulesASTFiles(index: CXIndex, compilation: ModularCompilation, 
     } finally {
         clang_disposeTranslationUnit(translationUnit)
     }
+    return result.toList()
+}
+
+private fun getModulesASTFilesLenient(index: CXIndex, compilation: ModularCompilation, modules: List<String>): List<String> {
+    val result = linkedSetOf<String>()
+    modules.forEach { module ->
+        val compilationWithImports = compilation.copy(
+                additionalPreambleLines = listOf("@import $module;") + compilation.additionalPreambleLines
+        )
+        val errors = mutableListOf<Diagnostic>()
+        val translationUnit = compilationWithImports.parse(
+                index,
+                options = CXTranslationUnit_DetailedPreprocessingRecord,
+                diagnosticHandler = { if (it.isError()) errors.add(it) }
+        )
+        try {
+            if (errors.isNotEmpty()) {
+                val errorMessage = errors.take(10).joinToString("\n") { it.format }
+                println(Error(errorMessage))
+            }
+
+            if (!translationUnit.hasCompileErrors()) {
+                indexTranslationUnit(index, translationUnit, 0, object : Indexer {
+                    override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
+                        result += info.getFile()!!.canonicalPath
+                    }
+                })
+            }
+        } finally {
+            clang_disposeTranslationUnit(translationUnit)
+        }
+    }
+
     return result.toList()
 }
 
