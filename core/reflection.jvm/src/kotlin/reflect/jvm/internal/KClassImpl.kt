@@ -459,7 +459,7 @@ internal class KClassImpl<T : Any>(
         return (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
             descriptor.classProto.getExtensionOrNull(JvmProtoBuf.classLocalVariable, index)?.let { proto ->
                 deserializeToDescriptor(
-                    jClass, proto, descriptor.c.nameResolver, descriptor.c.typeTable, descriptor.metadataVersion
+                    jClass, this, proto, descriptor.c.nameResolver, descriptor.c.typeTable, descriptor.metadataVersion,
                 ) { proto -> loadProperty(proto, loadAnnotationsFromMetadata = true) }
             }
         }
