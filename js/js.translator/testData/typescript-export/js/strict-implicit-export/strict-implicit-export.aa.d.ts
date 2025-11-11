@@ -10,18 +10,18 @@ declare namespace JS_TESTS {
         /* ErrorDeclaration: Top level property declarations are not implemented yet */
         /* ErrorDeclaration: Top level property declarations are not implemented yet */
         /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        function producer(value: number): any/* foo.NonExportedType */;
+        function consumer(value: any/* foo.NonExportedType */): number;
+        function childProducer(value: number): any/* foo.NotExportedChildClass */;
+        function childConsumer(value: any/* foo.NotExportedChildClass */): number;
+        function genericChildProducer<T extends unknown/* foo.NonExportedGenericType<number> */>(value: T): any/* foo.NotExportedChildGenericClass<T> */;
+        function genericChildConsumer<T extends unknown/* foo.NonExportedGenericType<number> */>(value: any/* foo.NotExportedChildGenericClass<T> */): T;
+        function baz(a: number): Promise<number>;
+        function bazVoid(a: number): Promise<void>;
+        function bar(): Error;
+        function pep<T extends unknown/* foo.NonExportedInterface */ & unknown/* foo.NonExportedGenericInterface<number> */>(x: T): void;
+        function acceptForthLike<T extends unknown/* foo.Forth */>(forth: T): void;
+        function acceptMoreGenericForthLike<T extends unknown/* foo.IB */ & unknown/* foo.IC */ & foo.Third>(forth: T): void;
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */

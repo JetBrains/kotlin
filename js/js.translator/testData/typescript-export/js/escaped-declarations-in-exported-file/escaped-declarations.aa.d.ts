@@ -5,8 +5,8 @@ declare namespace JS_TESTS {
     namespace foo {
         /* ErrorDeclaration: Top level property declarations are not implemented yet */
         /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+
+        function invalid_args_name_sum(first_value: number, second_value: number): number;
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */

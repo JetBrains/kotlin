@@ -3,11 +3,11 @@ declare namespace JS_TESTS {
     function KtSingleton<T>(): T & (abstract new() => any);
 
     namespace foo {
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        function takesO(o: typeof foo.O): number;
+        function getParent(): typeof foo.Parent;
+        function createNested1(): typeof foo.Parent.Nested1;
+        function createNested2(): foo.Parent.Nested1.Nested2;
+        function createNested3(): foo.Parent.Nested1.Nested2.Companion.Nested3;
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */

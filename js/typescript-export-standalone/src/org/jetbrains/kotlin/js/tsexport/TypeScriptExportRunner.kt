@@ -22,7 +22,8 @@ import java.io.File
 
 public data class TypeScriptExportConfig(
     public val targetPlatform: TargetPlatform,
-    public val artifactConfiguration: WebArtifactConfiguration
+    public val artifactConfiguration: WebArtifactConfiguration,
+    public val compileLongAsBigInt: Boolean,
 )
 
 public typealias InputModule = KlibInputModule<TypeScriptModuleConfig>
@@ -108,5 +109,5 @@ private fun generateExportModelForModule(
     config: TypeScriptExportConfig,
 ): ProcessedModule = analyze(kaModules.useSiteModule) {
     val library = kaModules.mainModules.single { it.libraryName == klib.name }
-    ExportModelGenerator(config.artifactConfiguration.moduleKind).generateExport(library, klib.config)
+    ExportModelGenerator(config).generateExport(library, klib.config)
 }

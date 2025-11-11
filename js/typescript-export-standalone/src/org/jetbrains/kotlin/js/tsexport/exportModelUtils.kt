@@ -1,0 +1,193 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+@file:OptIn(KaContextParameterApi::class)
+
+package org.jetbrains.kotlin.js.tsexport
+
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.components.allOverriddenSymbols
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JsStandardClassIds
+import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExport
+import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportDefault
+import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportIgnore
+import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsImplicitExport
+import org.jetbrains.kotlin.name.Name
+
+private val reservedWords = setOf(
+    "break",
+    "case",
+    "catch",
+    "class",
+    "const",
+    "continue",
+    "debugger",
+    "default",
+    "delete",
+    "do",
+    "else",
+    "enum",
+    "export",
+    "extends",
+    "false",
+    "finally",
+    "for",
+    "function",
+    "if",
+    "import",
+    "in",
+    "instanceof",
+    "new",
+    "null",
+    "return",
+    "super",
+    "switch",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "typeof",
+    "var",
+    "void",
+    "while",
+    "with"
+)
+
+private val strictModeReservedWords = setOf(
+    "as",
+    "implements",
+    "interface",
+    "let",
+    "package",
+    "private",
+    "protected",
+    "public",
+    "static",
+    "yield"
+)
+
+internal val allReservedWords = reservedWords + strictModeReservedWords
+
+private fun KaAnnotated.getSingleAnnotationArgumentString(annotationClassId: ClassId): String? {
+    val annotation = annotations[annotationClassId].singleOrNull() ?: return null
+    return ((annotation.arguments[0].expression as? KaAnnotationValue.ConstantValue)?.value as? KaConstantValue.StringValue)?.value
+}
+
+private fun KaAnnotated.getJsQualifier(): String? =
+    getSingleAnnotationArgumentString(JsStandardClassIds.Annotations.JsQualifier)
+
+context(_: KaSession)
+private fun KaNamedSymbol.getSingleAnnotationArgumentStringForOverriddenDeclaration(annotationClassId: ClassId): String? {
+    val argument = (this as? KaAnnotated)?.getSingleAnnotationArgumentString(annotationClassId)
+    return when {
+        argument != null -> argument
+        this is KaCallableSymbol -> allOverriddenSymbols.firstNotNullOfOrNull { it.getSingleAnnotationArgumentString(annotationClassId) }
+        else -> null
+    }
+}
+
+context(_: KaSession)
+private fun KaNamedSymbol.getJsNameForOverriddenDeclaration(): String? =
+    getSingleAnnotationArgumentStringForOverriddenDeclaration(JsStandardClassIds.Annotations.JsName)
+
+context(_: KaSession)
+internal fun KaNamedSymbol.getJsSymbolForOverriddenDeclaration(): String? =
+    getSingleAnnotationArgumentStringForOverriddenDeclaration(JsStandardClassIds.Annotations.JsSymbol)
+
+context(_: KaSession)
+internal fun KaNamedSymbol.getExportedIdentifier(): String {
+    getJsNameForOverriddenDeclaration()?.let { return it }
+    return name.asString()
+}
+
+context(_: KaSession)
+internal fun shouldDeclarationBeExportedImplicitlyOrExplicitly(
+    declaration: KaDeclarationSymbol,
+): Boolean = declaration.isJsImplicitExport() || shouldDeclarationBeExported(declaration)
+
+// TODO: Add memoization?
+context(_: KaSession)
+private fun shouldDeclarationBeExported(declaration: KaDeclarationSymbol): Boolean = shouldDeclarationBeExported(declaration) {
+    declaration.containingDeclaration?.let { shouldDeclarationBeExported(it) } ?: false
+}
+
+internal val TypeScriptExportConfig.generateNamespacesForPackages: Boolean
+    get() = artifactConfiguration.moduleKind != ModuleKind.ES
+
+// TODO: Add memoization?
+context(_: KaSession)
+internal fun KaNamedSymbol.getExportedFqName(shouldIncludePackage: Boolean): FqName {
+    val name = Name.identifier(getExportedIdentifier())
+    when (val parent = containingDeclaration) {
+        is KaNamedSymbol -> return parent.getExportedFqName(shouldIncludePackage).child(name)
+        null -> {
+            // TODO(KT-82224): Respect file-level @JsQualifier
+            val jsQualifier = (this as? KaAnnotated)?.getJsQualifier()
+            if (jsQualifier != null) {
+                return FqName(jsQualifier)
+            }
+
+            if (!shouldIncludePackage) {
+                return FqName.topLevel(name)
+            }
+
+            // This is a top-level declaration.
+            val packageFqName = when (this) {
+                is KaClassLikeSymbol -> classId?.packageFqName
+                is KaCallableSymbol -> callableId?.packageName
+                else -> null
+            }
+            return packageFqName?.child(name) ?: FqName.topLevel(name)
+        }
+        else -> return FqName.topLevel(name)
+    }
+}
+
+private fun KaAnnotated.isJsImplicitExport(): Boolean =
+    annotations.contains(JsImplicitExport)
+
+private fun KaAnnotated.isJsExportIgnore(): Boolean =
+    annotations.contains(JsExportIgnore)
+
+internal fun KaAnnotated.isJsExport(): Boolean =
+    annotations.contains(JsExport)
+
+private fun KaAnnotated.isExplicitlyExported(): Boolean =
+    annotations.contains(JsExport) || annotations.contains(JsExportDefault)
+
+private val KaSymbolVisibility.isPublicApi: Boolean
+    get() = this == KaSymbolVisibility.PUBLIC || this == KaSymbolVisibility.PROTECTED
+
+internal fun shouldDeclarationBeExportedImplicitlyOrExplicitly(
+    declaration: KaDeclarationSymbol,
+    parentIsExported: () -> Boolean,
+): Boolean = declaration.isJsImplicitExport() || shouldDeclarationBeExported(declaration, parentIsExported)
+
+private fun shouldDeclarationBeExported(
+    declaration: KaDeclarationSymbol,
+    parentIsExported: () -> Boolean,
+): Boolean {
+    if (declaration.isExpect || declaration.isJsExportIgnore() || !declaration.visibility.isPublicApi) {
+        return false
+    }
+    if (declaration.isExplicitlyExported()) {
+        return true
+    }
+
+    return parentIsExported()
+}

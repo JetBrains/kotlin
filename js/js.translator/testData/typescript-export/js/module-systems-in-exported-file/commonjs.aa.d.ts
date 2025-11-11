@@ -7,9 +7,10 @@ export declare namespace kotlin {
 
 export declare namespace foo {
     /* ErrorDeclaration: Top level property declarations are not implemented yet */
-    /* ErrorDeclaration: Top level function declarations are not implemented yet */
-    /* ErrorDeclaration: Top level function declarations are not implemented yet */
-    /* ErrorDeclaration: Top level function declarations are not implemented yet */
-    /* ErrorDeclaration: Top level function declarations are not implemented yet */
+    function box(): string;
+    function asyncList(): Promise<any/* kotlin.collections.List<number> */>;
+    function arrayOfLists(): Array<any/* kotlin.collections.List<number> */>;
+    function acceptArrayOfPairs(array: Array<kotlin.Pair<string, string>>): void;
+    function justSomeDefaultExport(): string;
     /* ErrorDeclaration: Class declarations are not implemented yet */
 }

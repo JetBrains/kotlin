@@ -1,44 +1,35 @@
+
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KaContextParameterApi::class)
+@file:OptIn(KaContextParameterApi::class, KaExperimentalApi::class)
 
 package org.jetbrains.kotlin.js.tsexport
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.containingFile
 import org.jetbrains.kotlin.analysis.api.components.klibSourceFileName
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ErrorDeclaration
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedNamespace
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.ir.backend.js.tsexport.*
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Primitive
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.common.safeModuleName
-import org.jetbrains.kotlin.js.config.ModuleKind
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExport
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportIgnore
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsImplicitExport
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.compactIfPossible
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-internal class ExportModelGenerator(
-    moduleKind: ModuleKind,
-) {
-    private val generateNamespacesForPackages = moduleKind != ModuleKind.ES
-
+internal class ExportModelGenerator(private val config: TypeScriptExportConfig) {
     context(_: KaSession)
     fun generateExport(library: KaLibraryModule, config: TypeScriptModuleConfig): ProcessedModule {
         // TODO: Collect implicitly exported declarations, see ImplicitlyExportedDeclarationsMarkingLowering
@@ -66,7 +57,7 @@ internal class ExportModelGenerator(
             fileMap.mapValues { (key, exports) ->
                 when {
                     exports.isEmpty() -> emptyList()
-                    !generateNamespacesForPackages || key.packageFqName.isRoot -> exports.compactIfPossible()
+                    !this.config.generateNamespacesForPackages || key.packageFqName.isRoot -> exports.compactIfPossible()
                     else -> listOf(ExportedNamespace(key.packageFqName.asString(), exports.compactIfPossible()))
                 }
             },
@@ -76,47 +67,115 @@ internal class ExportModelGenerator(
 
     context(_: KaSession)
     private fun exportTopLevelDeclaration(declaration: KaDeclarationSymbol): ExportedDeclaration? {
-        // FIXME(KT-82224): `containingFile` is always null for declarations deserialized from KLIBs
-        val isWholeFileExported = declaration.containingFile?.isJsExport() ?: false
+        val isWholeFileExported = {
+            // FIXME(KT-82224): `containingFile` is always null for declarations deserialized from KLIBs
+            declaration.containingFile?.isJsExport() ?: false
+        }
         if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration, isWholeFileExported)) return null
 
         return when (declaration) {
-            is KaNamedFunctionSymbol -> ErrorDeclaration("Top level function declarations are not implemented yet")
+            is KaNamedFunctionSymbol -> exportFunction(declaration, parent = null)
             is KaPropertySymbol -> ErrorDeclaration("Top level property declarations are not implemented yet")
             is KaClassSymbol -> ErrorDeclaration("Class declarations are not implemented yet")
             is KaTypeAliasSymbol -> ErrorDeclaration("Type alias declarations are not implemented yet")
             else -> null
         }
     }
-}
 
-private fun KaAnnotated.isJsImplicitExport(): Boolean =
-    annotations.contains(JsImplicitExport)
+    context(_: KaSession)
+    private fun exportFunction(function: KaNamedFunctionSymbol, parent: KaDeclarationSymbol?): ExportedDeclaration? =
+        when (val exportability = functionExportability(function)) {
+            is Exportability.NotNeeded, is Exportability.Implicit -> null
+            is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
+            is Exportability.Allowed -> {
+                val returnType = if (function.isSuspend) {
+                    ExportedType.ClassType(
+                        name = "Promise",
+                        arguments = listOf(exportType(function.returnType))
+                    )
+                } else {
+                    exportType(function.returnType)
+                }
+                ExportedFunction(
+                    name = function.getJsSymbolForOverriddenDeclaration()?.let(ExportedFunctionName::WellKnownSymbol)
+                        ?: ExportedFunctionName.Identifier(function.getExportedIdentifier()),
+                    returnType = returnType,
+                    parameters = exportFunctionParameters(function),
+                    typeParameters = function.typeParameters.memoryOptimizedMap { exportTypeParameter(it) },
+                    isMember = parent is KaClassSymbol,
+                    isStatic = false, // TODO: isEs6ConstructorReplacement || isStaticMethodOfClass
+                    isAbstract = parent is KaClassSymbol && parent.classKind != KaClassKind.INTERFACE && function.modality == KaSymbolModality.ABSTRACT,
+                    isProtected = function.visibility == KaSymbolVisibility.PROTECTED,
+                )
+            }
+        }
 
-private fun KaAnnotated.isJsExportIgnore(): Boolean =
-    annotations.contains(JsExportIgnore)
-
-private fun KaAnnotated.isJsExport(): Boolean =
-    annotations.contains(JsExport)
-
-private val KaSymbolVisibility.isPublicApi: Boolean
-    get() = this == KaSymbolVisibility.PUBLIC || this == KaSymbolVisibility.PROTECTED
-
-private fun shouldDeclarationBeExportedImplicitlyOrExplicitly(
-    declaration: KaDeclarationSymbol,
-    parentIsExported: Boolean,
-): Boolean = declaration.isJsImplicitExport() || shouldDeclarationBeExported(declaration, parentIsExported)
-
-private fun shouldDeclarationBeExported(
-    declaration: KaDeclarationSymbol,
-    parentIsExported: Boolean,
-): Boolean {
-    if (declaration.isExpect || declaration.isJsExportIgnore() || !declaration.visibility.isPublicApi) {
-        return false
+    context(_: KaSession)
+    private fun exportFunctionParameters(function: KaFunctionSymbol): List<ExportedParameter> {
+        fun sanitizeName(parameterName: Name): String {
+            // Parameter names do not matter in d.ts files. They can be renamed as we like
+            var sanitizedName = makeValidES5Identifier(parameterName.asString(), withHash = false)
+            if (sanitizedName in allReservedWords)
+                sanitizedName = "_$sanitizedName"
+            return sanitizedName
+        }
+        return buildList {
+            for (parameter in function.contextParameters) {
+                add(ExportedParameter(sanitizeName(parameter.name), exportType(parameter.returnType)))
+            }
+            function.receiverParameter?.let {
+                add(ExportedParameter(sanitizeName(SpecialNames.THIS), exportType(it.returnType)))
+            }
+            for (parameter in function.valueParameters) {
+                val type = if (parameter.isVararg) {
+                    TypeExporter(config).exportArrayWithElementType(parameter.returnType)
+                } else {
+                    exportType(parameter.returnType)
+                }
+                add(ExportedParameter(sanitizeName(parameter.name), type, parameter.hasDefaultValue))
+            }
+        }
     }
-    if (declaration.isJsExport()) {
-        return true
+
+    context(_: KaSession)
+    private fun exportType(type: KaType): ExportedType = TypeExporter(config).exportType(type)
+
+    context(_: KaSession)
+    private fun exportTypeParameter(typeParameter: KaTypeParameterSymbol): ExportedType.TypeParameter {
+        val constraints = typeParameter.upperBounds
+            .mapNotNull {
+                val exportedType = exportType(it)
+                if (exportedType is ExportedType.ErrorType) return@mapNotNull null
+                if (exportedType is ExportedType.ImplicitlyExportedType && exportedType.exportedSupertype == Primitive.Any) {
+                    exportedType.copy(exportedSupertype = Primitive.Unknown)
+                } else {
+                    exportedType
+                }
+            }
+
+        return ExportedType.TypeParameter(
+            name = typeParameter.name.identifier,
+            constraint = when (constraints.size) {
+                0 -> null
+                1 -> constraints[0]
+                else -> constraints.reduce(ExportedType::IntersectionType)
+            }
+        )
     }
 
-    return parentIsExported
+    context(_: KaSession)
+    private fun functionExportability(function: KaNamedFunctionSymbol): Exportability {
+        if (function.isInline && function.typeParameters.any { it.isReified })
+            return Exportability.Prohibited("Inline reified function")
+
+        val parentClass = function.containingDeclaration as? KaClassSymbol
+
+        // TODO: Use [] syntax instead of prohibiting
+        val name = function.getExportedIdentifier()
+        if (parentClass == null && name in allReservedWords) {
+            return Exportability.Prohibited("Name is a reserved word")
+        }
+
+        return Exportability.Allowed
+    }
 }

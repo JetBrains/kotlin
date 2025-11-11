@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -48,7 +49,8 @@ class AnalysisApiBasedDtsGeneratorFacade(
                 outputName = outputFile.nameWithoutExtension,
                 granularity = JsGenerationGranularity.WHOLE_PROGRAM,
                 tsCompilationStrategy = TsCompilationStrategy.MERGED,
-            )
+            ),
+            compileLongAsBigInt = JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives,
         )
         val runtimeKlibs = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val regularDependencies = module.transitiveRegularDependencies(reverseOrder = true)

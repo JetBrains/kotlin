@@ -3,8 +3,8 @@ declare namespace JS_TESTS {
     function KtSingleton<T>(): T & (abstract new() => any);
 
     namespace foo {
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        function processInterface(test: foo.TestInterface): string;
+        function processOptionalInterface(a: foo.OptionalFieldsInterface): string;
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */

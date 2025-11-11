@@ -3,7 +3,7 @@ declare namespace JS_TESTS {
     function KtSingleton<T>(): T & (abstract new() => any);
 
     /* ErrorDeclaration: Top level property declarations are not implemented yet */
-    /* ErrorDeclaration: Top level function declarations are not implemented yet */
+    function publicFun(): number;
     /* ErrorDeclaration: Class declarations are not implemented yet */
     /* ErrorDeclaration: Class declarations are not implemented yet */
     /* ErrorDeclaration: Class declarations are not implemented yet */

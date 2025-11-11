@@ -9,10 +9,10 @@ declare namespace JS_TESTS {
     namespace foo {
         /* ErrorDeclaration: Top level property declarations are not implemented yet */
         /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        function createPair(): kotlin.Pair<number, string>;
+        function createTriple(): kotlin.Triple<foo.Foo, Array<kotlin.Pair<number, string>>, string>;
+        function acceptPair<K, V>(somePair: kotlin.Pair<K, V>): V;
+        function acceptTriple<A, B, C>(someTriple: kotlin.Triple<A, B, C>): kotlin.Pair<A, C>;
         /* ErrorDeclaration: Class declarations are not implemented yet */
     }
 }

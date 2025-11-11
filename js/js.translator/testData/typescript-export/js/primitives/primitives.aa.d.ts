@@ -67,6 +67,6 @@ declare namespace JS_TESTS {
         /* ErrorDeclaration: Top level property declarations are not implemented yet */
         /* ErrorDeclaration: Top level property declarations are not implemented yet */
         /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        function _nothing(): never;
     }
 }

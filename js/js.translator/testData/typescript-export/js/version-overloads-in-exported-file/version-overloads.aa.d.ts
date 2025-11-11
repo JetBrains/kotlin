@@ -3,7 +3,7 @@ declare namespace JS_TESTS {
     function KtSingleton<T>(): T & (abstract new() => any);
 
     namespace foo {
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        function foo2(a: number, B: string | undefined, b1: string | undefined, c: number | undefined, f: () => void): void;
         /* ErrorDeclaration: Class declarations are not implemented yet */
     }
 }

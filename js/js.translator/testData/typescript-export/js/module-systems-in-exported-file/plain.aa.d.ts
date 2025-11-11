@@ -4,7 +4,8 @@ declare namespace JS_TESTS {
 
     namespace foo {
         /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level function declarations are not implemented yet */
+        function box(): string;
+        function justSomeDefaultExport(): string;
         /* ErrorDeclaration: Class declarations are not implemented yet */
     }
 }
