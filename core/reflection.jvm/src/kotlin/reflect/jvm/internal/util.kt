@@ -46,7 +46,12 @@ import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.lang.annotation.Inherited
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -311,6 +316,7 @@ internal val CallableDescriptor.instanceReceiverParameter: ReceiverParameterDesc
 
 internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
     moduleAnchor: Class<*>,
+    containerSource: DeserializedContainerSource?,
     proto: M,
     nameResolver: NameResolver,
     typeTable: TypeTable,
@@ -327,9 +333,17 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
 
     val context = DeserializationContext(
         moduleData.deserialization, nameResolver, moduleData.module, typeTable, VersionRequirementTable.EMPTY, metadataVersion,
-        containerSource = null, parentTypeDeserializer = null, typeParameters = typeParameters
+        containerSource, parentTypeDeserializer = null, typeParameters,
     )
     return MemberDeserializer(context).createDescriptor(proto)
+}
+
+internal class LocalDelegatedPropertyFakeContainerSource(val container: KDeclarationContainerImpl) : DeserializedContainerSource {
+    override val incompatibility: IncompatibleVersionErrorData<*>? get() = null
+    override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo.DEFAULT_VISIBLE
+    override val abiStability: DeserializedContainerAbiStability get() = DeserializedContainerAbiStability.STABLE
+    override val presentableString: String get() = "${this::class.java.simpleName}: $container"
+    override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }
 
 internal val KType.isInlineClassType: Boolean

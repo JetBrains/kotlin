@@ -30,6 +30,7 @@ import kotlin.jvm.internal.TypeParameterReference
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVariance
+import kotlin.reflect.jvm.ReflectedLambdaFakeContainerSource
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal class KTypeParameterImpl private constructor(
@@ -98,7 +99,7 @@ private fun TypeParameterDescriptor.toContainer(): KTypeParameterOwnerImpl =
                 else -> {
                     val deserializedMember = declaration as? DeserializedMemberDescriptor
                         ?: throw KotlinReflectionInternalError("Non-class callable descriptor must be deserialized: $declaration")
-                    Reflection.getOrCreateKotlinPackage(deserializedMember.getContainerClass()) as KPackageImpl
+                    deserializedMember.getContainerOfDeserializedMember()
                 }
             }
             declaration.accept(CreateKCallableVisitor(callableContainerClass), Unit)
@@ -110,8 +111,14 @@ private fun ClassDescriptor.toKClassImpl(): KClassImpl<*> =
     toJavaClass()?.kotlin as KClassImpl<*>?
         ?: throw KotlinReflectionInternalError("Type parameter container is not resolved: $containingDeclaration")
 
-private fun DeserializedMemberDescriptor.getContainerClass(): Class<*> {
-    val jvmPackagePartSource = containerSource as? JvmPackagePartSource
-    return (jvmPackagePartSource?.knownJvmBinaryClass as? ReflectKotlinClass)?.klass
-        ?: throw KotlinReflectionInternalError("Container of deserialized member is not resolved: $this")
-}
+private fun DeserializedMemberDescriptor.getContainerOfDeserializedMember(): KDeclarationContainerImpl =
+    when (val containerSource = containerSource) {
+        is JvmPackagePartSource -> (containerSource.knownJvmBinaryClass as? ReflectKotlinClass)?.klass?.let {
+            Reflection.getOrCreateKotlinPackage(it) as KPackageImpl
+        } ?: throw KotlinReflectionInternalError(
+            "Container of top-level deserialized member is not resolved: $this (${containerSource.knownJvmBinaryClass}"
+        )
+        is LocalDelegatedPropertyFakeContainerSource -> containerSource.container
+        is ReflectedLambdaFakeContainerSource -> EmptyContainerForLocal
+        else -> throw KotlinReflectionInternalError("Container of deserialized member is not resolved: $this")
+    }
