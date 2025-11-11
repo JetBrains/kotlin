@@ -9,6 +9,7 @@ function assert(condition: boolean) {
 assert(typeof foo._any === "object");
 assert(foo._string === "ZZZ");
 assert(foo._boolean === true);
+assert(foo._char === 1105);
 assert(foo._byte === 1);
 assert(foo._short === 1);
 assert(foo._float === 1);

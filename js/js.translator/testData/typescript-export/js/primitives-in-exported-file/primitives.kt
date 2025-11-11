@@ -29,6 +29,9 @@ val _string: String = "ZZZ"
 val _boolean: Boolean = true
 
 
+val _char: Char = 'ё'
+
+
 val _byte: Byte = 1.toByte()
 
 val _short: Short = 1.toShort()
@@ -38,7 +41,6 @@ val _int: Int = 1
 val _float: Float = 1.0f
 
 val _double: Double = 1.0
-// TODO: Char and Long
 
 
 val _ubyte: UByte = UByte.MAX_VALUE

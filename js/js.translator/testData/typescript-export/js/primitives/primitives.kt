@@ -24,6 +24,9 @@ val _string: String = "ZZZ"
 val _boolean: Boolean = true
 
 @JsExport
+val _char: Char = 'ё'
+
+@JsExport
 val _byte: Byte = 1.toByte()
 @JsExport
 val _short: Short = 1.toShort()
@@ -33,7 +36,6 @@ val _int: Int = 1
 val _float: Float = 1.0f
 @JsExport
 val _double: Double = 1.0
-// TODO: Char and Long
 
 @JsExport
 val _ubyte: UByte = UByte.MAX_VALUE

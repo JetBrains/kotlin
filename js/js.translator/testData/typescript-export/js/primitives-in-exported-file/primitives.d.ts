@@ -6,6 +6,7 @@ declare namespace JS_TESTS {
         const _throwable: Error;
         const _string: string;
         const _boolean: boolean;
+        const _char: any/* kotlin.Char */;
         const _byte: number;
         const _short: number;
         const _int: number;
