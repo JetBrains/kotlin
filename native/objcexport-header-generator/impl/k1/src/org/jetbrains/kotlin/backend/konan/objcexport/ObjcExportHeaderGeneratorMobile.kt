@@ -19,7 +19,16 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
     objcGenerics: Boolean,
     objcExportBlockExplicitParameterNames: Boolean,
     private val restrictToLocalModules: Boolean,
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, objcExportBlockExplicitParameterNames, problemCollector) {
+    threadsCount: Int,
+) : ObjCExportHeaderGenerator(
+    moduleDescriptors,
+    mapper,
+    namer,
+    objcGenerics,
+    objcExportBlockExplicitParameterNames,
+    problemCollector,
+    threadsCount
+) {
 
     companion object {
         fun createInstance(
@@ -30,6 +39,7 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
             deprecationResolver: DeprecationResolver? = null,
             local: Boolean = false,
             restrictToLocalModules: Boolean = false,
+            threadsCount: Int = Runtime.getRuntime().availableProcessors(),
         ): ObjCExportHeaderGenerator {
             val mapper = ObjCExportMapper(deprecationResolver, local, configuration.unitSuspendFunctionExport, configuration.entryPoints)
             val namerConfiguration = createNamerConfiguration(configuration)
@@ -42,7 +52,8 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 problemCollector,
                 configuration.objcGenerics,
                 configuration.objcExportBlockExplicitParameterNames,
-                restrictToLocalModules
+                restrictToLocalModules,
+                threadsCount,
             )
         }
     }
