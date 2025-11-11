@@ -43,7 +43,7 @@ abstract class AbstractIrFileEntry : IrFileEntry {
     override fun getLineNumber(offset: Int): Int {
         if (offset < 0) return UNDEFINED_LINE_NUMBER
         val index = lineStartOffsets.binarySearch(offset)
-        return firstRelevantLineIndex + if (index >= 0) index else -index - 2
+        return firstRelevantLineIndex + if (index >= 0) index else index.inv() - 1
     }
 
     override fun getColumnNumber(offset: Int): Int {
