@@ -21,17 +21,27 @@ object CustomKlibCompilerTestDirectives : SimpleDirectivesContainer() {
     val IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE by stringDirective(
         description = """
             Ignore a KLIB forward-compatibility test (i.e. the test with the custom KLIB compiler version
-            used on the second phase of the test pipeline).
+            used on the second phase of the test pipeline), should a previous compiler fail to produce an executable from klib built by current compiler.
             
             The value of this directive is the specific compiler version prefixes where the test is expected
             to be ignored.
         """.trimIndent(),
     )
 
-    val IGNORE_KLIB_1ST_PHASE_ERRORS_WITH_CUSTOM_SECOND_PHASE by stringDirective(
+    val IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_PHASE by stringDirective(
         description = """
             Ignore a KLIB forward-compatibility test (i.e. the test with the custom KLIB compiler version
-            used on the second phase of the test pipeline), due to current compiler cannot produce klib of previous ABI version.
+            used on the second phase of the test pipeline), should current compiler fail to produce klib of previous ABI version.
+            
+            The value of this directive is the specific compiler version prefixes where the test is expected
+            to be ignored.
+        """.trimIndent(),
+    )
+
+    val IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_PHASE by stringDirective(
+        description = """
+            Ignore a KLIB forward-compatibility test (i.e. the test with the custom KLIB compiler version
+            used on the second phase of the test pipeline), should a test executable produce a runtime error.
             
             The value of this directive is the specific compiler version prefixes where the test is expected
             to be ignored.

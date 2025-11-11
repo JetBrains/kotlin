@@ -1,5 +1,5 @@
 // ISSUE: KT-59326
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
 // ^^^ KT-59326 is fixed in 2.2.20-Beta2
 
 // Test that we don't have this exception in Kotlin/JS:
