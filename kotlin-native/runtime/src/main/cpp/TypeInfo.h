@@ -73,7 +73,7 @@ struct ExtendedTypeInfo {
   // Table of supported debug operations functions.
   void** debugOperations_;
 
-  std::vector<std::string> getFieldTypes() const;
+  std::vector<std::string> getExtendedFieldTypes() const;
 };
 
 typedef void const* VTableElement;

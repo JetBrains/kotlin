@@ -81,7 +81,7 @@ std::string TypeInfo::fqName() const {
     return fqName;
 }
 
-std::vector<std::string> ExtendedTypeInfo::getFieldTypes() const {
+std::vector<std::string> ExtendedTypeInfo::getExtendedFieldTypes() const {
     std::vector<std::string> fieldTypes;
     for (int i = 0; i < fieldsCount_; i++) {
         std::string fqName;
