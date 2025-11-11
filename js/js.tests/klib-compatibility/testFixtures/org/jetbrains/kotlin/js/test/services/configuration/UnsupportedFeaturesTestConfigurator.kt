@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.services.configuration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
@@ -23,28 +24,25 @@ class UnsupportedFeaturesTestConfigurator(testServices: TestServices) : MetaTest
             CompilationStage.FIRST
         ).languageVersionSettings.languageVersion
 
-        listOf(
-            LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization,
-            LanguageFeature.NameBasedDestructuring,
-            LanguageFeature.ContextParameters,
-        ).forEach {
-            if (it.isNeededButNotSupported(testModule, languageVersion)) {
-                return true
+        return testModule.directives[LanguageSettingsDirectives.LANGUAGE]
+            .asSequence()
+            .mapNotNull { languageFeatureString ->
+                val featureName = if (languageFeatureString.startsWith("+")) languageFeatureString.drop(1) else return@mapNotNull null
+                LanguageFeature.fromString(featureName) ?: return@mapNotNull null
+            }.any { languageFeature ->
+                languageFeature != LanguageFeature.ExportKlibToOlderAbiVersion &&
+                        languageFeature != LanguageFeature.MultiPlatformProjects &&
+                        !languageFeature.isSupportedInLV(languageVersion)
             }
-        }
-        return false
     }
 
     private fun LanguageFeature.isSupportedInLV(languageVersion: LanguageVersion): Boolean =
         sinceVersion?.let {
-            it.major > languageVersion.major ||
-                    (it.major == languageVersion.major && it.minor >= languageVersion.minor)
+            it.major < languageVersion.major ||
+                    (it.major == languageVersion.major && it.minor <= languageVersion.minor)
         } ?: false
 
     private fun LanguageFeature.isNeededInModule(testModule: TestModule): Boolean =
         testModule.languageVersionSettings.supportsFeature(this)
-
-    private fun LanguageFeature.isNeededButNotSupported(testModule: TestModule, languageVersion: LanguageVersion): Boolean =
-        isNeededInModule(testModule) && !isSupportedInLV(languageVersion)
 }
 
