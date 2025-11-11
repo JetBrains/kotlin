@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -414,14 +415,27 @@ class JavaClassUseSiteMemberScope(
             ?: return this
         if (continuationParameterType.lookupTag.classId.asSingleFqName() != StandardNames.CONTINUATION_INTERFACE_FQ_NAME) return this
 
-        return buildSimpleFunctionCopy(fir) {
+        val fir = fir
+        val returnType = continuationParameterType.typeArguments[0].type ?: return this
+        val builder: FirFunctionBuilder.() -> Unit = {
             valueParameters.clear()
             valueParameters.addAll(fir.valueParameters.dropLast(1))
             returnTypeRef = buildResolvedTypeRef {
-                coneType = continuationParameterType.typeArguments[0].type ?: return this@replaceWithWrapperSymbolIfNeeded
+                coneType = returnType
             }
             (status as FirDeclarationStatusImpl).isSuspend = true
-            symbol = FirNamedFunctionSymbol(callableId)
+        }
+        val symbol = FirNamedFunctionSymbol(callableId)
+        return if (fir is FirJavaMethod) {
+            buildJavaMethodCopy(fir) {
+                builder()
+                this.symbol = symbol
+            }
+        } else {
+            buildSimpleFunctionCopy(fir) {
+                builder()
+                this.symbol = symbol
+            }
         }.symbol
     }
 
