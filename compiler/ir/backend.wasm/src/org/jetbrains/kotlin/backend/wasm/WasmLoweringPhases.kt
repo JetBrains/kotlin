@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
@@ -35,6 +36,11 @@ private fun List<CompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFra
 private val validateIrBeforeLowering = makeIrModulePhase(
     ::KlibIrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
+)
+
+private val checkInlineCallCyclesPhase = makeIrModulePhase(
+    ::InlineCallCycleCheckerLowering,
+    name = "InlineCallCycleChecker"
 )
 
 private val validateIrAfterInliningOnlyPrivateFunctionsPhase = makeIrModulePhase(
@@ -607,6 +613,7 @@ fun getWasmLowerings(
     return listOfNotNull(
         // BEGIN: Common Native/JS/Wasm prefix.
         validateIrBeforeLowering,
+        checkInlineCallCyclesPhase,
         upgradeCallableReferences,
         lateinitPhase,
         sharedVariablesLoweringPhase,
