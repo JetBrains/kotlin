@@ -99,6 +99,7 @@ fun Project.customCompilerTest(
         addClasspathProperty(customCompiler, "kotlin.internal.js.test.compat.customCompilerClasspath")
         addClasspathProperty(runtimeDependencies, "kotlin.internal.js.test.compat.runtimeDependencies")
         systemProperty("kotlin.internal.js.test.compat.customCompilerVersion", version.rawVersion)
+        systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib")
     }
 }
 
@@ -144,5 +145,10 @@ projectTests {
     testData(project(":compiler").isolated, "testData/codegen/box")
     testData(project(":compiler").isolated, "testData/codegen/boxInline")
     testData(project(":js").isolated, "js.translator/testData")
+
+    projectTests {
+        withStdlibJsRuntime()
+        withTestJsRuntime()
+    }
 }
 
