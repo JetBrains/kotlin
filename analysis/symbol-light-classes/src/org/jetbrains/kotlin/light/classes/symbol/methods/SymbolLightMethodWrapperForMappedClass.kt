@@ -28,10 +28,12 @@ import com.intellij.psi.impl.light.LightParameter
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
+import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import javax.swing.Icon
@@ -42,6 +44,7 @@ internal class SymbolLightMethodWrapperForMappedClass(
     private val containingClass: SymbolLightClassForClassOrObject,
     private val javaMethod: PsiMethod,
     private val substitutor: PsiSubstitutor,
+    private val lightMemberOrigin: LightMemberOrigin?,
     private val name: String,
     private val isFinal: Boolean,
     private val hasImplementation: Boolean,
@@ -55,11 +58,16 @@ internal class SymbolLightMethodWrapperForMappedClass(
         }
     }
 
-    override fun getPresentation(): ItemPresentation? = javaMethod.presentation
-    override fun getNavigationElement(): PsiElement = javaMethod.navigationElement
-    override fun getIcon(flags: Int): Icon? = javaMethod.getIcon(flags)
+    override fun getPresentation(): ItemPresentation? =
+        kotlinOrigin?.presentation ?: javaMethod.presentation
 
-    override val kotlinOrigin: KtElement? get() = null
+    override fun getNavigationElement(): PsiElement =
+        kotlinOrigin?.navigationElement ?: javaMethod.navigationElement
+
+    override fun getIcon(flags: Int): Icon? =
+        kotlinOrigin?.getIcon(flags) ?: javaMethod.getIcon(flags)
+
+    override val kotlinOrigin: KtElement? get() = lightMemberOrigin?.originalElement
 
     override fun hasModifierProperty(name: String): Boolean = when (name) {
         PsiModifier.ABSTRACT -> !hasImplementation
@@ -67,14 +75,17 @@ internal class SymbolLightMethodWrapperForMappedClass(
         else -> javaMethod.hasModifierProperty(name)
     }
 
-    override fun getParameterList(): PsiParameterList {
-        return LightParameterListBuilder(manager, KotlinLanguage.INSTANCE).apply {
+    override fun getParameterList(): PsiParameterList = cachedValue {
+        LightParameterListBuilder(manager, KotlinLanguage.INSTANCE).apply {
             javaMethod.parameterList.parameters.forEachIndexed { index, paramFromJava ->
                 val type = providedSignature?.parameterTypes?.get(index) ?: substituteType(paramFromJava.type)
                 addParameter(
                     LightParameter(
-                        paramFromJava.name, type,
-                        this@SymbolLightMethodWrapperForMappedClass, KotlinLanguage.INSTANCE, paramFromJava.isVarArgs
+                        paramFromJava.name,
+                        type,
+                        this@SymbolLightMethodWrapperForMappedClass,
+                        KotlinLanguage.INSTANCE,
+                        paramFromJava.isVarArgs
                     )
                 )
             }
