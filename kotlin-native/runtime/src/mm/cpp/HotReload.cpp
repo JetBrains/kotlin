@@ -5,7 +5,6 @@
 #include <chrono>
 #include <fstream>
 #include <sstream>
-#include <charconv>
 
 #include <dlfcn.h>
 
@@ -23,13 +22,9 @@
 
 #include "hot/HotReloadServer.hpp"
 #include "hot/HotReloadUtility.hpp"
-#include "hot/LightClassTable.hpp"
+#include "hot/MachOParser.hpp"
 
-#if KONAN_APPLE
 #include "hot/fishhook.h"
-#endif
-
-#include "hot/ComposeIRAnalyzer.hpp"
 
 using namespace kotlin;
 
@@ -39,7 +34,7 @@ void stopTheWorld(GCHandle gcHandle, const char* reason) noexcept;
 void resumeTheWorld(GCHandle gcHandle) noexcept;
 } // namespace kotlin::gc
 
-ManuallyScoped<hot::HotReloader> globalDataInstance{};
+ManuallyScoped<HotReloader> globalDataInstance{};
 
 enum class Origin { Global, ShadowStack, ObjRef };
 
@@ -130,18 +125,17 @@ void Kotlin_native_internal_HotReload_perform(ObjHeader* obj) {
 
 HotReloader::HotReloader() {
     utility::initializeHotReloadLogs();
-    utility::log("Initializing HotReload module");
+    utility::log("Initializing HotReload module and server");
     if (_server.start()) {
-        _server.run([this](const std::vector<std::string>& artifactOutputs) {
-            const ReloadRequest req {artifactOutputs};
-            _requests.push_front(req);
-            utility::log("A reload request has arrived...", utility::LogLevel::DEBUG);
+        _server.run([this](const std::vector<std::string>& dylibPaths) {
+            utility::log("A new reload request has arrived, containing: ", utility::LogLevel::DEBUG);
+            for (auto& dylib : dylibPaths) utility::log("\t" + dylib, utility::LogLevel::DEBUG);
+            _requests.emplace_front(dylibPaths);
         });
     }
 }
 
 void HotReloader::InitModule() noexcept {
-    //google::protobuf::SetLogHandler(nullptr);
     globalDataInstance.construct();
 }
 
@@ -149,101 +143,56 @@ HotReloader& HotReloader::Instance() noexcept {
     return *globalDataInstance;
 }
 
-void HotReloader::interposeNewFunctionSymbols(const LightClassTable& newClassTable) const {
+void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlinDynamicLibrary) const {
     // TODO: What about top-declarations? :) They are contained in the "" root-class.
 
-    const auto fqnClassNames = newClassTable.getFqnKotlinClassNames();
+    std::vector<rebinding> rebindingsToPerform{};
+    // std::vector<void*> originalFuncs{};
+    rebindingsToPerform.reserve(kotlinDynamicLibrary.functions.size()); // This is a pessimistic assumption
+    // originalFuncs.resize(functions.size());
 
-    for (const auto& className : fqnClassNames) {
-        const auto& clazz = newClassTable.getKotlinClass(className)->get();
-        const auto& functions = clazz.functions();
 
-        std::vector<rebinding> rebindingsToPerform{};
-        // std::vector<void*> originalFuncs{};
+    for (const auto& mangledFunctionName : kotlinDynamicLibrary.functions) {
 
-        rebindingsToPerform.reserve(functions.size()); // This is a pessimistic assumption
-        // originalFuncs.resize(functions.size());
+        void* symbolAddress = nullptr;
+        std::string symbolName{mangledFunctionName};
 
-        for (const auto& func : functions) {
-            auto mangledFunctionName = func.mangledName(clazz.name());
-            void* symbolAddress = nullptr;
-
-            for (auto& handle : _reloader.handles) {
-                utility::log("Checking handle: " + handle.path + ", epoch: " + std::to_string(handle.epoch));
-
-                void* symbol = dlsym(handle.handle, mangledFunctionName.c_str());
-                if (symbol != nullptr) {
-                    symbolAddress = symbol;
-                    break;
-                }
-                utility::log("dlerror: " + std::string{dlerror()}, utility::LogLevel::WARN);
+        for (auto& handle : _reloader.handles) {
+            utility::log("Checking handle: " + handle.path + ", epoch: " + std::to_string(handle.epoch));
+            if (void* symbol = dlsym(handle.handle, symbolName.c_str()); symbol != nullptr) {
+                symbolAddress = symbol;
+                break;
             }
-
-            if (symbolAddress == nullptr) continue;
-
-            rebinding reb{};
-            reb.name = strdup(mangledFunctionName.c_str());
-            reb.replacement = symbolAddress;
-            // reb.replaced = &originalFuncs[index];
-
-            rebindingsToPerform.push_back(reb);
-
-            utility::log("Function '" + mangledFunctionName + "' is going to be rebound.");
+            utility::log("dlerror: " + std::string{dlerror()}, utility::LogLevel::WARN);
         }
 
-        // Perform symbol interposition with the collected function symbols
-        if (!rebindingsToPerform.empty()) {
-            utility::log("Performing rebinding of " + std::to_string(rebindingsToPerform.size()) + " symbols");
+        if (symbolAddress == nullptr) continue;
 
-            if (rebind_symbols(rebindingsToPerform.data(), rebindingsToPerform.size()) != 0) {
-                utility::log("Rebinding failed for an unknown reason", utility::LogLevel::ERR);
-            } else {
-                utility::log("Rebinding performed successfully!");
-            }
+        rebinding reb{};
+        reb.name = strdup(symbolName.c_str()); // TODO: do we really need this?
+        reb.replacement = symbolAddress;
+        // reb.replaced = &originalFuncs[index];
 
-            // Clean up the memory from strdup
-            for (auto& reb : rebindingsToPerform) free((void*)reb.name);
+        rebindingsToPerform.push_back(reb);
+
+        utility::log("Function '" + symbolName + "' is going to be rebound.");
+    }
+
+    // Perform symbol interposition with the collected function symbols
+    if (!rebindingsToPerform.empty()) {
+        utility::log("Performing rebinding of " + std::to_string(rebindingsToPerform.size()) + " symbols");
+
+        if (rebind_symbols(rebindingsToPerform.data(), rebindingsToPerform.size()) != 0) {
+            utility::log("Rebinding failed for an unknown reason", utility::LogLevel::ERR);
+        } else {
+            utility::log("Rebinding performed successfully!");
         }
+
+        // Clean up the memory from strdup
+        for (auto& reb : rebindingsToPerform) free((void*)(reb.name));
     }
 }
 
-void HotReloader::invlidateGroupsWithKey(const LightClassTable& newClassTable, const ir::Klib& klib) {
-
-    // constexpr const char* INVALIDATE_GROUPS_WITH_KEYS_SYMB = "kfun:androidx.compose.runtime#invalidateGroupsWithKey(kotlin.Int){}";
-    // const auto invalidateSym = dlsym(RTLD_DEFAULT, INVALIDATE_GROUPS_WITH_KEYS_SYMB);
-    // if (invalidateSym == nullptr) {
-    //     utility::log("Could not find the invalidateGroupsWithKey function...", utility::LogLevel::ERR);
-    //     return;
-    // }
-    //const auto invalidateGroupsWithKey = reinterpret_cast<void (*)(int)>(invalidateSym);
-
-    std::vector<long> composeKeys{};
-    const auto composableSingletons = newClassTable.getKotlinClass("ComposableSingletons$AppKt");
-    if (composableSingletons.has_value()) {
-        auto properties = composableSingletons.value().get().properties();
-        for (const auto& [name, _] : properties) {
-            if (name.find("lambda") != std::string::npos) {
-                if (auto key = parseComposeGroupKeyFromSingletonLambda(name); key.has_value()) {
-                    composeKeys.push_back(key.value());
-                }
-            }
-        }
-    }
-
-    for (const auto key : composeKeys) {
-        utility::log("(ComposableSingleton) found compose group with key=" + std::to_string(key));
-        //invalidateGroupsWithKey(static_cast<int>(key));
-    }
-
-    auto composeGroups = findComposeGroups(klib);
-
-    // debug statement :)
-    for (const auto& group : composeGroups) {
-        utility::log("found compose group with key=" + std::to_string(group.groupKey) + ", func=" + group.functionName);
-        //invalidateGroupsWithKey(static_cast<int>(group.groupKey));
-    }
-
-}
 void HotReloader::performIfNeeded(ObjHeader* _) noexcept {
     if (_requests.empty()) {
         // utility::log("Cannot perform hot-reloading since there is no upcoming request", utility::LogLevel::DEBUG);
@@ -257,24 +206,16 @@ void HotReloader::performIfNeeded(ObjHeader* _) noexcept {
 
     _processing = true;
 
-    const auto [artifactOutputs] = _requests.front();
+    const ReloadRequest reloadRequest = _requests.front();
     _requests.pop_front();
 
-    auto artifactOutput = artifactOutputs[0];
+    const std::string dylibPath = reloadRequest.dylibPathsToLoad[0]; // TODO: handle more dylibs
 
-    /// Assuming artifactOutpuit is a path to a directory containing a dylib and a klib, we have to:
-    /// 1. Read a compiled .klib to collect class metadata and build light class table
-
-    const std::string klibPath = artifactOutput + "default/";
-    const std::string dylibPath = artifactOutput + "libshared.dylib";
-
-    const ir::Klib klib{klibPath};
-    const LightClassTable newClassTable{klib};
-
-    utility::log("Contained classes:\n" + newClassTable.dumpTableAsString(), utility::LogLevel::DEBUG);
-
-    /// 2. Load the new library into memory with `dlopen`
-    _reloader.loadLibraryFromPath(dylibPath);
+    /// 1. Load the new library into memory with `dlopen`
+    if (!_reloader.loadLibraryFromPath(dylibPath)) {
+        _processing = false;
+        return;
+    }
 
     const uint64_t epoch =
             std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -287,178 +228,149 @@ void HotReloader::performIfNeeded(ObjHeader* _) noexcept {
 
     kotlin::gc::stopTheWorld(gcHandle, "starting hot reloading");
 
-    /// 3. Locate the **new** TypeInfo (@"kclass:kotlin.Function0")
-    auto classNames = newClassTable.getKotlinClassNames();
-    for (const auto& className : classNames) {
-        /// TODO: Optimization - let's consider only classes with a new layout...
-        if (className == "kclass:kotlin.Annotation") continue; // Skip annotation base class
+    /// 2. Locate the **new** TypeInfo (@"kclass:kotlin.Function0")
+    auto parsedDynamicLib = dyld::parseDynamicLibrary(dylibPath);
 
-        const auto typeInfoName = KotlinClass::classNameToTypeInfoName(className);
+    for (const auto& classMangledName : parsedDynamicLib.classes) {
+        if (classMangledName == "_kclass:kotlin.Annotation") continue; // Skip annotation base class
 
-        TypeInfo* oldTypeInfo = _reloader.lookForTypeInfo(typeInfoName, 0);
+        auto temp = std::string{classMangledName};
+
+        TypeInfo* oldTypeInfo = _reloader.lookForTypeInfo(temp, 0);
         if (oldTypeInfo == nullptr) {
-            utility::log("Cannot find the old TypeInfo for: " + typeInfoName, utility::LogLevel::WARN);
+            // utility::log("Cannot find the old TypeInfo for: " + temp, utility::LogLevel::WARN);
             continue;
         }
 
-        TypeInfo* newTypeInfo = _reloader.lookForTypeInfo(typeInfoName, 1);
+        TypeInfo* newTypeInfo = _reloader.lookForTypeInfo(temp, 1);
         if (newTypeInfo == nullptr) {
-            utility::log("Cannot find the new TypeInfo for: " + typeInfoName, utility::LogLevel::WARN);
+            utility::log("Cannot find the new TypeInfo for: " + temp, utility::LogLevel::WARN);
             continue;
         }
-
         auto objectsToReload = findObjectsToReload(oldTypeInfo);
-
-        /// 4. For each new redefined TypeInfo, reload the instances
-        for (const auto& obj : objectsToReload) {
-            const auto newInstance = stateTransfer(obj, newTypeInfo, newClassTable);
-            updateShadowStackReferences(obj, newInstance);
-            updateHeapReferences(obj, newInstance);
-        }
-    }
-
-    /// 5. TODO: Also, interpose new function symbols
-    /// This part is a bit annoying, we need to interpose all the new symbols of the defined class.
-    /// At the moment, we can cheat for the purpose of science by interposing only the toString method
-    /// kfun:Vector#toString(){}kotlin.String
-    interposeNewFunctionSymbols(newClassTable);
-
-    // 6. Perform `Recomposer#invalidateGroupsWithKey` function for each compose group found
-    invlidateGroupsWithKey(newClassTable, klib);
-
-    kotlin::gc::resumeTheWorld(gcHandle);
-    _processing = false;
-
-    utility::log("Hot-Reload ended.");
-}
-
-ObjHeader* hot::HotReloader::stateTransfer(ObjHeader* oldObject, const TypeInfo* newTypeInfo, const LightClassTable& classTable) {
-    struct FieldData {
-        Konan_RuntimeType type;
-        int32_t offset;
-
-        FieldData() : type(RT_INVALID), offset(0) {}
-
-        FieldData(const Konan_RuntimeType type, const int32_t offset) : type(type), offset(offset) {}
-    };
-
-    // TODO: We need two class tables here (the old and the new one)
-
-    // TODO: INHERITANCE
-    // TODO: At the moment we are not considering inheritance. We should consider three cases:
-    // TODO: a. Parent class does not change.
-    // TODO: b. Parent class changes.
-    // TODO: c. Parent class gets removed.
-
-    const mm::ThreadRegistry& threadRegistry = mm::ThreadRegistry::Instance();
-    mm::ThreadData* currentThreadData = threadRegistry.CurrentThreadData();
-
-    ObjHeader* newObject = currentThreadData->allocator().allocateObject(newTypeInfo);
-    if (newObject == nullptr) {
-        utility::log("allocation of new object failed!?", utility::LogLevel::ERR);
-        return nullptr;
-    }
-
-    const auto oldObjectTypeInfo = oldObject->type_info();
-    const auto newClassName = newTypeInfo->fqName();
-    const auto oldClassName = oldObjectTypeInfo->fqName();
-
-    const ExtendedTypeInfo* oldObjExtendedInfo = oldObjectTypeInfo->extendedInfo_;
-    const int32_t oldFieldsCount = oldObjExtendedInfo->fieldsCount_; // How many fields the old objects declared
-    const char** oldFieldNames = oldObjExtendedInfo->fieldNames_; // field names are null-terminated
-    const int32_t* oldFieldOffsets = oldObjExtendedInfo->fieldOffsets_;
-    const uint8_t* oldFieldTypes = oldObjExtendedInfo->fieldTypes_;
-
-    std::unordered_map<std::string, FieldData> oldObjectFields{};
-
-    for (int32_t i = 0; i < oldFieldsCount; i++) {
-        std::string fieldName{oldFieldNames[i]};
-        FieldData fieldData{static_cast<Konan_RuntimeType>(oldFieldTypes[i]), oldFieldOffsets[i]};
-        oldObjectFields[fieldName] = fieldData;
-    }
-
-    const ExtendedTypeInfo* newObjExtendedInfo = newObject->type_info()->extendedInfo_;
-    const int32_t newFieldsCount = newObjExtendedInfo->fieldsCount_; // How many fields the old objects declared
-    const char** newFieldNames = newObjExtendedInfo->fieldNames_; // field names are null-terminated
-    const int32_t* newFieldOffsets = newObjExtendedInfo->fieldOffsets_;
-    const uint8_t* newFieldTypes = newObjExtendedInfo->fieldTypes_;
-
-    const auto oldClassTable = classTable.getKotlinClass(oldClassName);
-    const auto newClassTable = classTable.getKotlinClass(newClassName);
-
-    for (int32_t i = 0; i < newFieldsCount; i++) {
-        const std::string newFieldName{newFieldNames[i]};
-
-        const uint8_t newFieldType = newFieldTypes[i];
-        const uint8_t newFieldOffset = newFieldOffsets[i];
-
-        if (const auto foundField = oldObjectFields.find(newFieldName); foundField == oldObjectFields.end()) {
-            utility::log("field `" + newFieldName + "` is new field in '" + newClassName + "'. It won't be copied.");
-            continue;
+        /// 3. For each new redefined TypeInfo, reload the instances
+            for (const auto& obj : objectsToReload) {
+                const auto newInstance = stateTransfer(obj, newTypeInfo);
+                updateShadowStackReferences(obj, newInstance);
+                updateHeapReferences(obj, newInstance);
+            }
         }
 
-        // Performs type-checking. Note that this type checking is shallow, i.e., it does not check the object classes.
-        const auto& [oldFieldType, oldFieldOffset] = oldObjectFields[newFieldName];
-        if (oldFieldType != newFieldType) {
-            std::stringstream ss;
-            ss << "failed type-checking: " << newClassName << "::" << newFieldName << ":" << utility::kTypeNames[newFieldType];
-            ss << " != ";
-            ss << oldClassName << "::" << newFieldName << ":" << utility::kTypeNames[oldFieldType];
-            utility::log(ss.str());
-            continue;
+        /// 5. Also, interpose new function symbols
+        interposeNewFunctionSymbols(parsedDynamicLib);
+
+        kotlin::gc::resumeTheWorld(gcHandle);
+        _processing = false;
+
+        utility::log("code has been hot-reloaded.");
+    }
+
+    ObjHeader* HotReloader::stateTransfer(ObjHeader * oldObject, const TypeInfo* newTypeInfo) {
+        struct FieldData {
+            std::string type;
+            int32_t offset;
+            Konan_RuntimeType runtimeType;
+
+            FieldData() : offset(0), runtimeType(RT_INVALID) {}
+
+            FieldData(const std::string type, const int32_t offset, Konan_RuntimeType _runtimeType) : type(type), offset(offset), runtimeType(_runtimeType) {}
+        };
+
+        // // TODO: Do we need two class tables here (the old and the new one)?
+        //
+        // // TODO: INHERITANCE
+        // // TODO: At the moment we are not considering inheritance. We should consider three cases:
+        // // TODO: a. Parent class does not change.
+        // // TODO: b. Parent class changes.
+        // // TODO: c. Parent class gets removed.
+
+        const mm::ThreadRegistry& threadRegistry = mm::ThreadRegistry::Instance();
+        mm::ThreadData* currentThreadData = threadRegistry.CurrentThreadData();
+
+        ObjHeader* newObject = currentThreadData->allocator().allocateObject(newTypeInfo);
+        if (newObject == nullptr) {
+            utility::log("allocation of new object failed!?", utility::LogLevel::ERR);
+            return nullptr;
         }
 
-        // Handle Kotlin Objects in a different way, the updates must be notified to the GC
-        if (oldFieldType == RT_OBJECT) {
-            if (!newClassTable.has_value() || !oldClassTable.has_value()) {
-                utility::log("Missing one of the two class properties", utility::LogLevel::DEBUG);
-                utility::log("NewClassProperties has " + std::to_string(newClassTable.has_value()), utility::LogLevel::DEBUG);
-                utility::log("OldClassProperties has " + std::to_string(oldClassTable.has_value()), utility::LogLevel::DEBUG);
+        const auto oldObjectTypeInfo = oldObject->type_info();
+        const auto newClassName = newTypeInfo->fqName();
+        const auto oldClassName = oldObjectTypeInfo->fqName();
+
+        const ExtendedTypeInfo* oldObjExtendedInfo = oldObjectTypeInfo->extendedInfo_;
+        const int32_t oldFieldsCount = oldObjExtendedInfo->fieldsCount_; // How many fields the old objects declared
+        const char** oldFieldNames = oldObjExtendedInfo->fieldNames_; // field names are null-terminated
+        const int32_t* oldFieldOffsets = oldObjExtendedInfo->fieldOffsets_;
+        const auto oldFieldRuntimeTypes = oldObjExtendedInfo->fieldTypes_;
+        const auto oldFieldTypes = oldObjExtendedInfo->getExtendedFieldTypes();
+
+        std::unordered_map<std::string, FieldData> oldObjectFields{};
+
+        for (int32_t i = 0; i < oldFieldsCount; i++) {
+            std::string fieldName{oldFieldNames[i]};
+            FieldData fieldData{oldFieldTypes[i], oldFieldOffsets[i], static_cast<Konan_RuntimeType>(oldFieldRuntimeTypes[i])};
+            oldObjectFields[fieldName] = fieldData;
+        }
+
+        const ExtendedTypeInfo* newObjExtendedInfo = newObject->type_info()->extendedInfo_;
+        const int32_t newFieldsCount = newObjExtendedInfo->fieldsCount_; // How many fields the old objects declared
+        const char** newFieldNames = newObjExtendedInfo->fieldNames_; // field names are null-terminated
+        const int32_t* newFieldOffsets = newObjExtendedInfo->fieldOffsets_;
+        const auto newFieldTypes = newObjExtendedInfo->getExtendedFieldTypes();
+
+        for (int32_t i = 0; i < newFieldsCount; i++) {
+            const std::string newFieldName{newFieldNames[i]};
+
+            const auto& newFieldType = newFieldTypes[i];
+            const uint8_t newFieldOffset = newFieldOffsets[i];
+
+            if (const auto foundField = oldObjectFields.find(newFieldName); foundField == oldObjectFields.end()) {
+                utility::log("field `" + newFieldName + "` is new field in '" + newClassName + "'. It won't be copied.");
                 continue;
             }
 
-            const auto actualNewFieldType = newClassTable->get().properties().find(newFieldName)->second;
-            const auto actualOldFieldType = oldClassTable->get().properties().find(newFieldName)->second;
-
-            if (actualNewFieldType != actualOldFieldType) {
-                // naive type-checking (not covering typealiases and so on)
+            // Performs type-checking. Note that this type checking is shallow, i.e., it does not check the object classes.
+            const auto& [oldFieldType, oldFieldOffset, oldFieldRuntimeType] = oldObjectFields[newFieldName];
+            if (oldFieldType != newFieldType) {
                 std::stringstream ss;
-                ss << "object references have different types. ";
-                ss << "old: " << actualOldFieldType << ", new: " << actualNewFieldType;
-                utility::log(ss.str(), utility::LogLevel::WARN);
-                utility::log("Whhops!");
+                ss << "failed type-checking: " << newClassName << "::" << newFieldName << ":" << utility::kTypeNames[oldFieldRuntimeType];
+                ss << " != ";
+                ss << oldClassName << "::" << newFieldName << ":" << utility::kTypeNames[oldFieldRuntimeType];
+                utility::log(ss.str());
                 continue;
             }
 
-            const auto oldFieldLocation = reinterpret_cast<ObjHeader**>(reinterpret_cast<uint8_t*>(oldObject) + oldFieldOffset);
-            const auto newFieldLocation = reinterpret_cast<ObjHeader**>(reinterpret_cast<uint8_t*>(newObject) + newFieldOffset);
+            // Handle Kotlin Objects in a different way, the updates must be notified to the GC
+            if (oldFieldRuntimeType == RT_OBJECT) {
+                const auto oldFieldLocation = reinterpret_cast<ObjHeader**>(reinterpret_cast<uint8_t*>(oldObject) + oldFieldOffset);
+                const auto newFieldLocation = reinterpret_cast<ObjHeader**>(reinterpret_cast<uint8_t*>(newObject) + newFieldOffset);
 
-            // std::stringstream ss;
-            // ss << "copying reference field '" << newFieldName << '\n';
-            // ss << "\t" << newFieldName << ':' << actualNewFieldType << " = ";
-            // ss << std::showbase << std::hex << *oldFieldLocation << std::dec << std::endl;
-            // utility::log(ss.str());
+                // std::stringstream ss;
+                // ss << "copying reference field '" << newFieldName << '\n';
+                // ss << "\t" << newFieldName << ':' << actualNewFieldType << " = ";
+                // ss << std::showbase << std::hex << *oldFieldLocation << std::dec << std::endl;
+                // utility::log(ss.str());
 
-            UpdateHeapRef(newFieldLocation, *oldFieldLocation);
-            *newFieldLocation = *oldFieldLocation; // just copy the reference to the previous object
-            utility::log("Obj reference updated!", utility::LogLevel::DEBUG);
+                UpdateHeapRef(newFieldLocation, *oldFieldLocation);
+                *newFieldLocation = *oldFieldLocation; // just copy the reference to the previous object
+                utility::log("Obj reference updated!", utility::LogLevel::DEBUG);
 
-            continue;
+                continue;
+            }
+
+            const auto oldFieldData = reinterpret_cast<uint8_t*>(oldObject) + oldFieldOffset;
+            const auto newFieldData = reinterpret_cast<uint8_t*>(newObject) + newFieldOffset;
+
+            // utility::log(
+            //     "copying field " + utility::field2String(newFieldName.c_str(), oldFieldData, oldFieldType),
+            //     utility::LogLevel::DEBUG);
+
+            // Perform byte-copy of the field
+            std::memcpy(newFieldData, oldFieldData, utility::kRuntimeTypeSize[oldFieldRuntimeType]);
         }
 
-        const auto oldFieldData = reinterpret_cast<uint8_t*>(oldObject) + oldFieldOffset;
-        const auto newFieldData = reinterpret_cast<uint8_t*>(newObject) + newFieldOffset;
-
-        utility::log(
-                "copying field " + utility::field2String(newFieldName.c_str(), oldFieldData, oldFieldType),
-                utility::LogLevel::DEBUG);
-
-        // Perform byte-copy of the field
-        std::memcpy(newFieldData, oldFieldData, utility::kRuntimeTypeSize[oldFieldType]);
+        return newObject;
     }
-
-    return newObject;
-}
 
 std::vector<ObjHeader*> HotReloader::findObjectsToReload(const TypeInfo* oldTypeInfo) const {
     std::vector<ObjHeader*> existingObjects{};
@@ -577,21 +489,21 @@ void HotReloader::updateShadowStackReferences(const ObjHeader* oldObject, ObjHea
 
 // Reloader
 
-void HotReloader::SymbolLoader::loadLibraryFromPath(const std::string& fileName) {
+bool HotReloader::SymbolLoader::loadLibraryFromPath(const std::string& fileName) {
     void* libraryHandle = dlopen(fileName.c_str(), RTLD_LAZY);
     if (libraryHandle == nullptr) {
         utility::log("An error occurred while loading library from: " + fileName, utility::LogLevel::ERR);
         utility::log("Details: " + std::string{dlerror()}, utility::LogLevel::ERR);
-        return;
+        return false;
     }
 
-    const uint64_t epoch =
-            std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const uint64_t epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     const LibraryHandle newHandle{epoch, libraryHandle, fileName};
     utility::log("Loaded library from path: " + fileName, utility::LogLevel::DEBUG);
 
     handles.push_front(newHandle);
+    return true;
 }
 
 TypeInfo* HotReloader::SymbolLoader::lookForTypeInfo(const std::string& mangledClassName, const int startingFrom = 0) const {
@@ -614,5 +526,6 @@ TypeInfo* HotReloader::SymbolLoader::lookForTypeInfo(const std::string& mangledC
         if (symbol != nullptr) return static_cast<TypeInfo*>(symbol);
         utility::log("dlerror: " + std::string{dlerror()}, utility::LogLevel::ERR);
     }
+
     return nullptr;
 }

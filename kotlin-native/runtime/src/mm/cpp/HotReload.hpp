@@ -13,7 +13,7 @@
 #include "main/cpp/Memory.h"
 
 #include "hot/HotReloadServer.hpp"
-#include "hot/LightClassTable.hpp"
+#include "hot/MachOParser.hpp"
 
 namespace kotlin::hot {
 
@@ -30,7 +30,7 @@ public:
             LibraryHandle(uint64_t epoch, void* handle, const std::string& path) : epoch(epoch), handle(handle), path(path) {}
         };
 
-        void loadLibraryFromPath(const std::string& fileName);
+        bool loadLibraryFromPath(const std::string& fileName);
 
         [[nodiscard]] TypeInfo* lookForTypeInfo(const std::string& mangledClassName, int startingFrom) const;
 
@@ -53,12 +53,11 @@ public:
 
 private:
 
-    void interposeNewFunctionSymbols(const LightClassTable& newClassTable) const;
-    void invlidateGroupsWithKey(const LightClassTable& newClassTable, const ir::Klib& klib);
+    void interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlinDynamicLibrary) const;
 
     /// Given an instance provided by <code>existingObject</code>, create a new class of the
     /// type provided by <code>newTypeInfo</code>, while preserving existing properties.
-    static ObjHeader* stateTransfer(ObjHeader* existingObject, const TypeInfo* newTypeInfo, const LightClassTable& classTable);
+    static ObjHeader* stateTransfer(ObjHeader* existingObject, const TypeInfo* newTypeInfo);
 
     /// Search for all the classes with instance <code>oldTypeInfo</code> and create
     /// new instances provided by <code>newTypeInfo</code>.
