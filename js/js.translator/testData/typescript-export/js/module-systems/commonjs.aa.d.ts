@@ -6,7 +6,7 @@ export declare namespace kotlin {
 }
 
 export declare namespace foo {
-    /* ErrorDeclaration: Top level property declarations are not implemented yet */
+    const prop: number;
     function box(): string;
     function asyncList(): Promise<any/* kotlin.collections.List<number> */>;
     function arrayOfLists(): Array<any/* kotlin.collections.List<number> */>;

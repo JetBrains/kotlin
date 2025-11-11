@@ -7,16 +7,16 @@ declare namespace JS_TESTS {
     }
 
     namespace foo {
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
+        const _long: bigint;
+        const _ulong: bigint;
+        const _long_array: BigInt64Array;
+        const _ulong_array: Array<bigint>;
+        const _array_long: BigInt64Array;
+        const _array_ulong: Array<bigint>;
+        let myVar: bigint;
+        const _n_long: Nullable<bigint>;
+        const funInterfaceInheritor1: foo.funInterface;
+        const funInterfaceInheritor2: foo.funInterface;
         function funWithLongParameters(a: bigint, b: bigint): bigint;
         function funWithLongDefaultParameters(a?: bigint, b?: bigint): bigint;
         function varargLong(x: BigInt64Array): number;

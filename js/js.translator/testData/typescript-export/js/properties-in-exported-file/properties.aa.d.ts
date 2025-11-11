@@ -3,12 +3,12 @@ declare namespace JS_TESTS {
     function KtSingleton<T>(): T & (abstract new() => any);
 
     namespace foo {
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
+        const _const_val: number;
+        const _val: number;
+        let _var: number;
+        const _valCustom: number;
+        const _valCustomWithField: number;
+        let _varCustom: number;
+        let _varCustomWithField: number;
     }
 }

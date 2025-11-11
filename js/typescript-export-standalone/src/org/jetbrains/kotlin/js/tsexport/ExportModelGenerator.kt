@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.containingFile
+import org.jetbrains.kotlin.analysis.api.components.isNullable
 import org.jetbrains.kotlin.analysis.api.components.klibSourceFileName
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -75,7 +76,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
 
         return when (declaration) {
             is KaNamedFunctionSymbol -> exportFunction(declaration, parent = null)
-            is KaPropertySymbol -> ErrorDeclaration("Top level property declarations are not implemented yet")
+            is KaPropertySymbol -> exportProperty(declaration, parent = null)
             is KaClassSymbol -> ErrorDeclaration("Class declarations are not implemented yet")
             is KaTypeAliasSymbol -> ErrorDeclaration("Type alias declarations are not implemented yet")
             else -> null
@@ -135,6 +136,29 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 add(ExportedParameter(sanitizeName(parameter.name), type, parameter.hasDefaultValue))
             }
         }
+    }
+
+    context(_: KaSession)
+    private fun exportProperty(property: KaPropertySymbol, parent: KaDeclarationSymbol?): ExportedDeclaration? {
+        // Frontend will report an error on an attempt to export an extension property.
+        // Just to be safe, filter out such properties here as well.
+        if (property.receiverType != null) {
+            return null
+        }
+        val parentClass = parent as? KaClassSymbol
+        val isOptional = property.isExternal && parentClass != null && property.returnType.isNullable
+        return ExportedProperty(
+            name = property.getExportedIdentifier(),
+            type = exportType(property.returnType),
+            mutable = !property.isVal,
+            isMember = parentClass != null,
+            isStatic = property.isStatic,
+            isAbstract = parentClass?.classKind != KaClassKind.INTERFACE && property.modality == KaSymbolModality.ABSTRACT,
+            isProtected = property.visibility == KaSymbolVisibility.PROTECTED,
+            isField = parentClass?.classKind == KaClassKind.INTERFACE,
+            isObjectGetter = false, // TODO: Should be true for getInstance functions of objects
+            isOptional = isOptional,
+        )
     }
 
     context(_: KaSession)

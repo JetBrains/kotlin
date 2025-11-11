@@ -7,9 +7,9 @@ declare namespace JS_TESTS {
     }
 
     namespace foo {
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
+        const console: Console;
+        const error: CompileError;
+        const forth: any/* foo.Forth */;
         function producer(value: number): any/* foo.NonExportedType */;
         function consumer(value: any/* foo.NonExportedType */): number;
         function childProducer(value: number): any/* foo.NotExportedChildClass */;

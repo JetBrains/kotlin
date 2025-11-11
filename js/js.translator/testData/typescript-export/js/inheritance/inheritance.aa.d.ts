@@ -3,7 +3,7 @@ declare namespace JS_TESTS {
     function KtSingleton<T>(): T & (abstract new() => any);
 
     namespace foo {
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
+        const fifth: any/* foo.Fifth<boolean> */;
         function getI3(): foo.I3;
         function getA(): foo.I3;
         function getB(): foo.I3;

@@ -7,7 +7,7 @@ declare namespace JS_TESTS {
     }
 
     namespace foo {
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
+        const foo: string;
         function bar(): string;
     }
 }

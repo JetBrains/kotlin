@@ -7,8 +7,8 @@ declare namespace JS_TESTS {
     }
 
     namespace foo {
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
-        /* ErrorDeclaration: Top level property declarations are not implemented yet */
+        const pair: kotlin.Pair<string, number>;
+        const triple: kotlin.Triple<string, number, kotlin.Pair<string, number>>;
         function createPair(): kotlin.Pair<number, string>;
         function createTriple(): kotlin.Triple<foo.Foo, Array<kotlin.Pair<number, string>>, string>;
         function acceptPair<K, V>(somePair: kotlin.Pair<K, V>): V;
