@@ -48,21 +48,7 @@ flowchart TD
 
     stage7 ~~~ variableReadiness8
 
-    variableReadiness8["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
-	false ALLOWED
-	 true HAS_PROPER_CONSTRAINTS
-	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-	false REIFIED
-	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_CONSTRAINT
-)</tt></pre>"]
+    variableReadiness8["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>FORBIDDEN</tt></pre>"]
     class variableReadiness8 nowrapClass;
     class variableReadiness8 readinessStyle;
 
@@ -108,21 +94,7 @@ flowchart TD
 
     stage16 ~~~ variableReadiness17
 
-    variableReadiness17["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
-	 true ALLOWED
-	 true HAS_PROPER_CONSTRAINTS
-	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-	false REIFIED
-	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_CONSTRAINT
-)</tt></pre>"]
+    variableReadiness17["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>READY_FOR_FIXATION_LOWER</tt></pre>"]
     class variableReadiness17 nowrapClass;
     class variableReadiness17 readinessStyle;
     constraint18["<tt>TypeVariable(T) == T</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
@@ -226,21 +198,7 @@ flowchart TD
 
     stage38 ~~~ variableReadiness39
 
-    variableReadiness39["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
-	 true ALLOWED
-	 true HAS_PROPER_CONSTRAINTS
-	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-	false REIFIED
-	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_CONSTRAINT
-)</tt></pre>"]
+    variableReadiness39["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT</tt></pre>"]
     class variableReadiness39 nowrapClass;
     class variableReadiness39 readinessStyle;
     constraint41["<tt>TypeVariable(S) == Long</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
@@ -276,21 +234,7 @@ flowchart TD
     constraint46 ~~~ variableReadiness40
     constraint47 ~~~ variableReadiness40
 
-    variableReadiness40["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
-	 true ALLOWED
-	 true HAS_PROPER_CONSTRAINTS
-	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-	false REIFIED
-	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_CONSTRAINT
-)</tt></pre>"]
+    variableReadiness40["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>READY_FOR_FIXATION_UPPER</tt></pre>"]
     class variableReadiness40 nowrapClass;
     class variableReadiness40 readinessStyle;
     constraint48["<tt>TypeVariable(T) == Long</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
@@ -394,21 +338,7 @@ flowchart TD
 
     stage68 ~~~ variableReadiness69
 
-    variableReadiness69["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
-	 true ALLOWED
-	 true HAS_PROPER_CONSTRAINTS
-	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-	false REIFIED
-	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_CONSTRAINT
-)</tt></pre>"]
+    variableReadiness69["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY</tt></pre>"]
     class variableReadiness69 nowrapClass;
     class variableReadiness69 readinessStyle;
     constraint72["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
@@ -417,21 +347,7 @@ flowchart TD
 
     constraint72 ~~~ variableReadiness70
 
-    variableReadiness70["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
-	 true ALLOWED
-	 true HAS_PROPER_CONSTRAINTS
-	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-	false REIFIED
-	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_CONSTRAINT
-)</tt></pre>"]
+    variableReadiness70["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>READY_FOR_FIXATION_UPPER</tt></pre>"]
     class variableReadiness70 nowrapClass;
     class variableReadiness70 readinessStyle;
 
@@ -575,21 +491,7 @@ flowchart TD
 
     stage101 ~~~ variableReadiness102
 
-    variableReadiness102["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
-	 true ALLOWED
-	 true HAS_PROPER_CONSTRAINTS
-	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-	false REIFIED
-	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_CONSTRAINT
-)</tt></pre>"]
+    variableReadiness102["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY</tt></pre>"]
     class variableReadiness102 nowrapClass;
     class variableReadiness102 readinessStyle;
     constraint104["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
@@ -598,21 +500,7 @@ flowchart TD
 
     constraint104 ~~~ variableReadiness103
 
-    variableReadiness103["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
-	 true ALLOWED
-	 true HAS_PROPER_CONSTRAINTS
-	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-	false REIFIED
-	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
-	 true HAS_PROPER_NON_ILT_CONSTRAINT
-)</tt></pre>"]
+    variableReadiness103["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>READY_FOR_FIXATION_UPPER</tt></pre>"]
     class variableReadiness103 nowrapClass;
     class variableReadiness103 readinessStyle;
     constraint105["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]

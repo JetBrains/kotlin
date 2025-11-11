@@ -16,7 +16,7 @@ fun foo(x: MyExpression<String>) {
     checkNotNull(getElement(x.min1())).<!UNRESOLVED_REFERENCE!>length<!>
 
     getElement(x.min2())!!.length
-    checkNotNull(<!TYPE_MISMATCH!>getElement<!>(x.<!TYPE_MISMATCH!>min2<!>())).<!UNRESOLVED_REFERENCE!>length<!>
+    checkNotNull(getElement(x.min2())).<!UNRESOLVED_REFERENCE!>length<!>
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, inProjection,

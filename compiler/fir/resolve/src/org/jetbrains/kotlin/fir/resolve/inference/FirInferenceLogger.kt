@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemMarker
 import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger
-import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.TypeVariableFixationReadinessQuality as Q
+import org.jetbrains.kotlin.resolve.calls.inference.components.LegacyVariableReadinessCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator.TypeVariableFixationReadinessQuality as Q
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
@@ -195,7 +197,7 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
         return true
     }
 
-    private fun FixationLogVariableInfo.isSimilarTo(info: FixationLogVariableInfo?): Boolean {
+    private fun FixationLogVariableInfo<*>.isSimilarTo(info: FixationLogVariableInfo<*>?): Boolean {
         if (info == null) return false
         if (readiness != info.readiness) return false
         if (constraints.size != info.constraints.size) return false
@@ -216,12 +218,19 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
                     if (element !is FixationLogRecordElement) continue
                     val log = element.record
                     if (log.chosen !== typeVariable) continue
-                    if (log.map[typeVariable]?.readiness?.get(Q.ALLOWED) == false) continue
+                    if (log.map[typeVariable]?.isForbiddenReadiness == true) continue
                     log.fixedTo = type
                 }
             }
         }
     }
+
+    private val FixationLogVariableInfo<*>.isForbiddenReadiness: Boolean
+        get() = when (val readiness = readiness) {
+            is VariableReadinessCalculator.TypeVariableFixationReadiness -> !readiness[Q.ALLOWED]
+            is LegacyVariableReadinessCalculator.TypeVariableFixationReadiness -> readiness == LegacyVariableReadinessCalculator.TypeVariableFixationReadiness.FORBIDDEN
+            else -> error("Unexpected readiness type: ${readiness::class}")
+        }
 
     var origins: List<ConstraintElement> = listOf()
 

@@ -156,7 +156,7 @@ class MermaidInferenceLogsDumper(
         get() = this in printingOptions.constraintsRemaping
 
     private inline fun <T : LoggingElement, R> List<T>.renderListWithoutJoining(transformRender: (T, RenderingResult) -> R): List<R>? =
-        renderNotNullWithIndex { index ->
+        renderNotNullWithIndex { _ ->
             this.render()?.let { rendered -> transformRender(this, rendered) }
         }
 
@@ -253,9 +253,9 @@ class MermaidInferenceLogsDumper(
         }
     }
 
-    private fun FixationLogRecordElement.render(): RenderingResult? {
+    private fun FixationLogRecordElement.render(): RenderingResult {
         val variable = record.chosen ?: "<no chosen>"
-        val readiness = record.map[record.chosen]?.readiness ?: "<no readiness>"
+        val readiness = record.map[record.chosen]?.renderReadiness() ?: "<no readiness>"
 
         return node(
             idPrefix = "variableReadiness",
@@ -280,7 +280,7 @@ class MermaidInferenceLogsDumper(
             extraClasses = listOf("callStyle"),
         )
 
-        val contents = candidates.renderNotNullWithIndex { index -> render() }?.join("\n\n") ?: return null
+        val contents = candidates.renderNotNullWithIndex { _ -> render() }?.join("\n\n") ?: return null
         return listOf(title, contents).join("\n\n")
     }
 

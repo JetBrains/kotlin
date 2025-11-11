@@ -8,29 +8,48 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.PARTIAL
 import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogRecord
 import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogVariableInfo
+import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context
+import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.VariableForFixation
 import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.TypeVariableFixationReadinessQuality as Q
+import kotlin.collections.component1
+import kotlin.collections.component2
 
-class VariableFixationFinder(
-    private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
+/**
+ * For the K1's DI to properly instantiate it with [LegacyVariableReadinessCalculator], this class must be `abstract`.
+ */
+@DefaultImplementation(VariableFixationFinder.DefaultForK1DependencyInjection::class)
+abstract class VariableFixationFinder(
     private val languageVersionSettings: LanguageVersionSettings,
-    inferenceLoggerParameter: InferenceLogger? = null,
+    private val variableReadinessCalculator: AbstractVariableReadinessCalculator<*>,
 ) {
     /**
-     * A workaround for K1's DI: the dummy instance must be provided, but
-     * because it's useless, it's better to avoid calling its members to
-     * prevent performance penalties.
+     * Only used by the dependency injection in K1.
      */
     @OptIn(AllowedToUsedOnlyInK1::class)
-    private val inferenceLogger = inferenceLoggerParameter.takeIf { it !is InferenceLogger.Dummy }
+    class DefaultForK1DependencyInjection(
+        languageVersionSettings: LanguageVersionSettings,
+        legacyVariableReadinessCalculator: LegacyVariableReadinessCalculator,
+    ) : VariableFixationFinder(
+        languageVersionSettings,
+        legacyVariableReadinessCalculator,
+    )
+
+    class Default(
+        languageVersionSettings: LanguageVersionSettings,
+        variableReadinessCalculator: AbstractVariableReadinessCalculator<*>,
+    ) : VariableFixationFinder(
+        languageVersionSettings,
+        variableReadinessCalculator,
+    )
 
     interface Context : TypeSystemInferenceExtensionContext, ConstraintSystemMarker {
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
@@ -81,154 +100,14 @@ class VariableFixationFinder(
     ): VariableForFixation? =
         findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
 
-    enum class TypeVariableFixationReadinessQuality {
-        // *** The following block constitutes what "with complex dependency" used to mean in the old fixation code ***
-        // Prioritizers needed for KT-67335 (the `greater.kt` case with ILTs).
-        HAS_PROPER_NON_ILT_CONSTRAINT, // There's a constraint to types like `Long`, `Int`, etc.
-        HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT, // There's a constraint `T = ...` which doesn't depend on others.
-
-        // *** "ready for fixation" kinds ***
-        // Prefer `LOWER` `T :> SomeRegularType` to `UPPER` `T <: SomeRegularType` for KT-41934.
-        HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT,
-
-        // K1 used this for reified type parameters, mainly to get `discriminateNothingForReifiedParameter.kt` working.
-        // KT-55691 lessens the need for this readiness kind in K2, however it still needs it for, e.g., `reifiedToNothing.kt`.
-        // TODO: consider deprioritizing Nothing in relation systems like `Nothing <: T <: SomeType` (see KT-76443)
-        //  and not using anymore this readiness kind in K2.
-        //  Related issues: KT-32358 (especially kt32358_3.kt test)
-        REIFIED,
-
-        // *** The following block constitutes what "ready for fixation" used to mean in the old fixation code ***
-        HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
-        HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE,
-        HAS_PROPER_NON_TRIVIAL_CONSTRAINTS, // A proper trivial constraint from arguments, except for `Nothing(?) <: T`
-        HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES,
-        HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT,
-
-        // *** A prioritizer needed for KT-74999 (the Traversable vs. Path choice) ***
-        // Currently, only used in 2.2+, and helps with self-type based declared upper bounds in particular situations.
-        // Captured types are difficult to manipulate, so with `T <: Captured(...)` AND `T <: K` it's better to fix `T`
-        // earlier than `K :> SomeRegularType` / `K <: SomeRegularType`, as otherwise, we will have
-        // `T <: Captured(...) & SomeRegularType`, which is often problematic.
-        // TODO: it would be probably better to use READY_FOR_FIXATION_UPPER here and to have
-        //  it prioritized in comparison with READY_FOR_FIXATION_LOWER (however, KT-41934 example currently prevents it)
-        HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES,
-
-        // *** Strong de-prioritizers (normally, these are `true`, and they de-prioritize by being `false`) ***
-        HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY,
-        HAS_PROPER_CONSTRAINTS,
-        ALLOWED,
-        ;
-
-        val mask = 1 shl ordinal
-    }
-
-    class TypeVariableFixationReadiness : Comparable<TypeVariableFixationReadiness> {
-        private var bitMask: Int = 0
-
-        operator fun get(index: TypeVariableFixationReadinessQuality) = bitMask and index.mask != 0
-
-        operator fun set(index: TypeVariableFixationReadinessQuality, value: Boolean) {
-            val numerical = if (value) 1 else 0
-            bitMask = (bitMask or index.mask) - index.mask * (1 - numerical)
-        }
-
-        override fun compareTo(other: TypeVariableFixationReadiness): Int = bitMask - other.bitMask
-
-        fun toString(linePadding: String): String {
-            // `asReversed()` - to keep high-priority qualities first.
-            val qualities = TypeVariableFixationReadinessQuality.entries.asReversed()
-                .joinToString("") { "\n$linePadding\t" + (if (get(it)) " true " else "false ") + it.name }
-            return "Readiness($qualities\n$linePadding)"
-        }
-
-        fun toString(linePadding: Int) = toString(" ".repeat(linePadding))
-        override fun toString(): String = toString("")
-    }
-
-    private val fixationEnhancementsIn22: Boolean
-        get() = languageVersionSettings.supportsFeature(LanguageFeature.FixationEnhancementsIn22)
-
-    context(c: Context)
-    private fun TypeConstructorMarker.getReadiness(dependencyProvider: TypeVariableDependencyInformationProvider) =
-        TypeVariableFixationReadiness().also {
-            val forbidden = !c.notFixedTypeVariables.contains(this)
-                    || dependencyProvider.isVariableRelatedToTopLevelType(this)
-                    || hasUnprocessedConstraintsInForks()
-            val areAllProperConstraintsSelfTypeBased = areAllProperConstraintsSelfTypeBased()
-
-            // These values go in the same order as they are defined in `TypeVariableFixationReadinessQuality`,
-            // except for being reversed: so that higher-priority ones come first.
-
-            it[Q.ALLOWED] = !forbidden
-            it[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints() || areAllProperConstraintsSelfTypeBased
-            it[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)
-
-            it[Q.HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES] = areAllProperConstraintsSelfTypeBased
-                    && fixationEnhancementsIn22
-                    && !isReified() && hasDirectConstraintToNotFixedRelevantVariable()
-
-            it[Q.HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT] = it[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased
-            it[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables()
-            it[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS] = !allConstraintsTrivialOrNonProper()
-            it[Q.HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE] = !dependencyProvider.isVariableRelatedToAnyOutputType(this)
-            it[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] = !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
-
-            it[Q.REIFIED] = isReified()
-            it[Q.HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT] = hasLowerNonNothingNonIltProperConstraint()
-
-            computeIltConstraintsRelatedFlags(it)
-        }
-
-    context(c: Context)
-    private fun TypeConstructorMarker.hasDirectConstraintToNotFixedRelevantVariable(): Boolean {
-        return c.notFixedTypeVariables[this]?.constraints?.any { it.type.isNotFixedRelevantVariable() } == true
-    }
-
-    context(c: Context)
-    private fun TypeConstructorMarker.hasUnprocessedConstraintsInForks(): Boolean {
-        if (c.constraintsFromAllForkPoints.isEmpty()) return false
-
-        for ((_, forkPointData) in c.constraintsFromAllForkPoints) {
-            for (constraints in forkPointData) {
-                for ((typeVariableFromConstraint, constraint) in constraints) {
-                    if (typeVariableFromConstraint.freshTypeConstructor() == this) return true
-                    if (constraint.type.containsTypeVariable(this)) return true
-                }
-            }
-        }
-
-        return false
-    }
-
     context(c: Context)
     fun typeVariableHasProperConstraint(typeVariable: TypeConstructorMarker): Boolean {
         val dependencyProvider = TypeVariableDependencyInformationProvider(
             c.notFixedTypeVariables, emptyList(), topLevelType = null, c,
             languageVersionSettings,
         )
-        val readiness = typeVariable.getReadiness(dependencyProvider)
-        return when {
-            !readiness[Q.ALLOWED] || !readiness[Q.HAS_PROPER_CONSTRAINTS] -> false
-            else -> true
-        }
-    }
 
-    context(c: Context)
-    private fun TypeConstructorMarker.allConstraintsTrivialOrNonProper(): Boolean {
-        return c.notFixedTypeVariables[this]?.constraints?.all { constraint ->
-            trivialConstraintTypeInferenceOracle.isNotInterestingConstraint(constraint) || !constraint.isProperArgumentConstraint()
-        } ?: false
-    }
-
-    context(c: Context)
-    private fun TypeConstructorMarker.hasOnlyIncorporatedConstraintsFromDeclaredUpperBound(): Boolean {
-        val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
-
-        fun Constraint.isTrivial() = kind == ConstraintKind.LOWER && type.isNothing()
-                || kind == ConstraintKind.UPPER && type.isNullableAny()
-
-        return constraints.filter { it.isProperArgumentConstraint() && !it.isTrivial() }.all { it.position.isFromDeclaredUpperBound }
+        return variableReadinessCalculator.typeVariableHasProperConstraint(typeVariable, dependencyProvider)
     }
 
     context(c: Context)
@@ -245,22 +124,84 @@ class VariableFixationFinder(
             languageVersionSettings,
         )
 
-        val candidate = chooseBestTypeVariableCandidateWithLogging(allTypeVariables, dependencyProvider) ?: return null
-        val readiness = candidate.getReadiness(dependencyProvider)
+        val candidate = variableReadinessCalculator.chooseBestTypeVariableCandidateWithLogging(allTypeVariables, dependencyProvider)
+            ?: return null
+        return variableReadinessCalculator.prepareVariableForFixation(candidate, dependencyProvider)
+    }
+}
 
-        return when {
-            !readiness[Q.ALLOWED] -> null
-            else -> VariableForFixation(
-                variable = candidate,
-                hasProperConstraint = readiness[Q.HAS_PROPER_CONSTRAINTS],
-                hasDependencyOnOuterTypeVariable = !readiness[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY],
-            )
+abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readiness>>(
+    private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
+    private val languageVersionSettings: LanguageVersionSettings,
+    inferenceLoggerParameter: InferenceLogger? = null,
+) {
+    /**
+     * A workaround for K1's DI: the dummy instance must be provided, but
+     * because it's useless, it's better to avoid calling its members to
+     * prevent performance penalties.
+     */
+    @OptIn(AllowedToUsedOnlyInK1::class)
+    private val inferenceLogger = inferenceLoggerParameter.takeIf { it !is InferenceLogger.Dummy }
+
+    context(c: Context)
+    abstract fun TypeConstructorMarker.getReadiness(dependencyProvider: TypeVariableDependencyInformationProvider): Readiness
+
+    context(c: Context)
+    abstract fun prepareVariableForFixation(
+        candidate: TypeConstructorMarker,
+        dependencyProvider: TypeVariableDependencyInformationProvider
+    ): VariableForFixation?
+
+    context(c: Context)
+    abstract fun typeVariableHasProperConstraint(
+        typeVariable: TypeConstructorMarker,
+        dependencyProvider: TypeVariableDependencyInformationProvider,
+    ): Boolean
+
+    protected val fixationEnhancementsIn22: Boolean
+        get() = languageVersionSettings.supportsFeature(LanguageFeature.FixationEnhancementsIn22)
+
+    context(c: Context)
+    protected fun TypeConstructorMarker.hasDirectConstraintToNotFixedRelevantVariable(): Boolean {
+        return c.notFixedTypeVariables[this]?.constraints?.any { it.type.isNotFixedRelevantVariable() } == true
+    }
+
+    context(c: Context)
+    protected fun TypeConstructorMarker.hasUnprocessedConstraintsInForks(): Boolean {
+        if (c.constraintsFromAllForkPoints.isEmpty()) return false
+
+        for ((_, forkPointData) in c.constraintsFromAllForkPoints) {
+            for (constraints in forkPointData) {
+                for ((typeVariableFromConstraint, constraint) in constraints) {
+                    if (typeVariableFromConstraint.freshTypeConstructor() == this) return true
+                    if (constraint.type.containsTypeVariable(this)) return true
+                }
+            }
         }
+
+        return false
+    }
+
+    context(c: Context)
+    protected fun TypeConstructorMarker.allConstraintsTrivialOrNonProper(): Boolean {
+        return c.notFixedTypeVariables[this]?.constraints?.all { constraint ->
+            trivialConstraintTypeInferenceOracle.isNotInterestingConstraint(constraint) || !constraint.isProperArgumentConstraint()
+        } ?: false
+    }
+
+    context(c: Context)
+    protected fun TypeConstructorMarker.hasOnlyIncorporatedConstraintsFromDeclaredUpperBound(): Boolean {
+        val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
+
+        fun Constraint.isTrivial() = kind == ConstraintKind.LOWER && type.isNothing()
+                || kind == ConstraintKind.UPPER && type.isNullableAny()
+
+        return constraints.filter { it.isProperArgumentConstraint() && !it.isTrivial() }.all { it.position.isFromDeclaredUpperBound }
     }
 
     @OptIn(K2Only::class)
     context(c: Context)
-    private fun chooseBestTypeVariableCandidateWithLogging(
+    fun chooseBestTypeVariableCandidateWithLogging(
         allTypeVariables: List<TypeConstructorMarker>,
         dependencyProvider: TypeVariableDependencyInformationProvider,
     ): TypeConstructorMarker? {
@@ -284,7 +225,7 @@ class VariableFixationFinder(
     }
 
     context(c: Context)
-    private fun TypeConstructorMarker.hasDependencyToOtherTypeVariables(): Boolean {
+    protected fun TypeConstructorMarker.hasDependencyToOtherTypeVariables(): Boolean {
         val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
         return constraints.any { it.hasDependencyToOtherTypeVariable(this) }
     }
@@ -295,10 +236,22 @@ class VariableFixationFinder(
                 type.contains { it.typeConstructor() != ownerTypeVariable && c.notFixedTypeVariables.containsKey(it.typeConstructor()) }
     }
 
+    // IltRelatedFlags can't be a combination of 1/0, as any non-ILT equality proper constraint is also a non-ILT proper constraint
+    protected data class IltRelatedFlags(
+        /**
+         * @return true if a considered type variable has a proper EQUALS constraint T = SomeType, and SomeType is not an ILT-type
+         */
+        val hasProperNonIltEqualityConstraint: Boolean,
+        /**
+         * @return true if a considered type variable has a proper constraint T vs SomeType, and SomeType is not an ILT-type
+         */
+        val hasProperNonIltConstraint: Boolean,
+    )
+
     context(c: Context)
-    private fun TypeConstructorMarker.computeIltConstraintsRelatedFlags(readiness: TypeVariableFixationReadiness) {
+    protected fun TypeConstructorMarker.computeIltConstraintsRelatedFlags(): IltRelatedFlags {
         val constraints = c.notFixedTypeVariables[this]?.constraints
-        if (!fixationEnhancementsIn22 || constraints == null) return
+        if (!fixationEnhancementsIn22 || constraints == null) return IltRelatedFlags(false, false)
 
         var hasProperNonIltEqualityConstraint = false
         var hasProperNonIltConstraint = false
@@ -312,12 +265,11 @@ class VariableFixationFinder(
             hasProperNonIltConstraint = hasProperNonIltConstraint || isProperNonIlt
         }
 
-        readiness[Q.HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT] = hasProperNonIltEqualityConstraint
-        readiness[Q.HAS_PROPER_NON_ILT_CONSTRAINT] = hasProperNonIltConstraint
+        return IltRelatedFlags(hasProperNonIltEqualityConstraint, hasProperNonIltConstraint)
     }
 
     context(c: Context)
-    private fun TypeConstructorMarker.hasProperArgumentConstraints(): Boolean {
+    protected fun TypeConstructorMarker.hasProperArgumentConstraints(): Boolean {
         val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
         val anyProperConstraint = constraints.any { it.isProperArgumentConstraint() }
         if (!anyProperConstraint) return false
@@ -345,7 +297,7 @@ class VariableFixationFinder(
     }
 
     context(c: Context)
-    private fun Constraint.isProperArgumentConstraint() =
+    protected fun Constraint.isProperArgumentConstraint() =
         type.isProperType()
                 && position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition<*>
                 && !isNullabilityConstraint
@@ -366,20 +318,8 @@ class VariableFixationFinder(
     }
 
     context(c: Context)
-    private fun TypeConstructorMarker.isReified(): Boolean =
+    protected fun TypeConstructorMarker.isReified(): Boolean =
         c.notFixedTypeVariables[this]?.typeVariable?.let { c.isReified(it) } ?: false
-
-    context(c: Context)
-    private fun TypeConstructorMarker.hasLowerNonNothingNonIltProperConstraint(): Boolean {
-        val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
-
-        return constraints.any { constraint ->
-            constraint.kind.isLower()
-                    && constraint.isProperArgumentConstraint()
-                    && !constraint.type.typeConstructor().isNothingConstructor()
-                    && !constraint.type.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
-        }
-    }
 
     context(c: Context)
     private fun Constraint.isProperSelfTypeConstraint(ownerTypeVariable: TypeConstructorMarker): Boolean {
@@ -390,7 +330,7 @@ class VariableFixationFinder(
     }
 
     context(c: Context)
-    private fun TypeConstructorMarker.areAllProperConstraintsSelfTypeBased(): Boolean {
+    protected fun TypeConstructorMarker.areAllProperConstraintsSelfTypeBased(): Boolean {
         val constraints = c.notFixedTypeVariables[this]?.constraints?.takeIf { it.isNotEmpty() } ?: return false
 
         var hasSelfTypeConstraint = false

@@ -13,6 +13,10 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger.BlockOwner
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger.Companion.sanitizeFqNames
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger.BlockElement
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogVariableInfo
+import org.jetbrains.kotlin.resolve.calls.inference.components.LegacyVariableReadinessCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator.TypeVariableFixationReadinessQuality
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
@@ -122,5 +126,25 @@ abstract class FirInferenceLogsDumper {
         }
 
         return topLevelNodes
+    }
+
+    /**
+     * This function accepts a [FixationLogVariableInfo] instead of the `readiness` itself
+     * because the `readiness` property is not type-safe.
+     */
+    protected fun FixationLogVariableInfo<*>.renderReadiness(paddingSize: Int = 0): String {
+        val linePadding = " ".repeat(paddingSize)
+
+        return when (val readiness = readiness) {
+            is VariableReadinessCalculator.TypeVariableFixationReadiness -> {
+                // `asReversed()` - to keep high-priority qualities first.
+                val qualities = TypeVariableFixationReadinessQuality.entries.asReversed().joinToString("") {
+                    "\n$linePadding\t" + (if (readiness[it]) " true " else "false ") + it.name
+                }
+                "Readiness($qualities\n$linePadding)"
+            }
+            is LegacyVariableReadinessCalculator.TypeVariableFixationReadiness -> readiness.toString()
+            else -> error("Unexpected readiness type: ${readiness::class}")
+        }
     }
 }
