@@ -8,6 +8,22 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 
+/**
+ * Base configuration options for the compilation of Kotlin WasmWasi targets.
+ *
+ * ```
+ * kotlin {
+ *     wasmWasi { // Creates WasmWasi target
+ *         // Configure WasmWasi target specifics here
+ *     }
+ * }
+ * ```
+ *
+ * To learn more see:
+ * - [Get started with Kotlin/Wasm and WASI](https://kotl.in/kotlin-wasm-wasi-setup).
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ */
 interface KotlinWasmWasiTargetDsl :
     KotlinWasmTargetDsl,
     KotlinTargetWithNodeJsDsl,
