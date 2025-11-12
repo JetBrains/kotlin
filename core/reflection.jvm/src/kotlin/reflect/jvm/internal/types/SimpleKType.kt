@@ -25,9 +25,14 @@ internal class SimpleKType(
     computeJavaType: (() -> Type)? = null,
 ) : AbstractKType(computeJavaType), KTypeBase {
     override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType = SimpleKType(
-        classifier, arguments, nullable, annotations, abbreviation, isDefinitelyNotNullType = false, isNothingType, isSuspendFunctionType,
-        mutableCollectionClass,
+        classifier.toWrapperClassIfNeeded(nullable), arguments, nullable, annotations, abbreviation, isDefinitelyNotNullType = false,
+        isNothingType, isSuspendFunctionType, mutableCollectionClass,
     )
+
+    private fun KClassifier.toWrapperClassIfNeeded(nullable: Boolean): KClassifier {
+        if (this !is KClass<*>) return this
+        return if (nullable) javaObjectType.kotlin else javaPrimitiveType?.kotlin ?: this
+    }
 
     override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType = SimpleKType(
         classifier, arguments, isMarkedNullable = isMarkedNullable && !isDefinitelyNotNull, annotations, abbreviation, isDefinitelyNotNull,
