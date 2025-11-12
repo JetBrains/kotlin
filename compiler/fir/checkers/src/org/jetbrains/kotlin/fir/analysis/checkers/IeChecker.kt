@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
+import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.equalTypes
 import org.jetbrains.kotlin.fir.types.forEachType
 import kotlin.reflect.full.memberProperties
 
@@ -45,7 +47,6 @@ class IEReporter(
 }
 
 data class IEData(
-    val isExplicit: Boolean? = null,
     val type: String? = null,
     val call: String? = null,
 )
@@ -56,23 +57,18 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall) {
         val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
         val symbol = expression.toResolvedCallableSymbol() ?: return
-        val usedParameters = buildSet {
-            symbol.fir.returnTypeRef.coneType.forEachType { type ->
-                if (type is ConeTypeParameterType) {
-                    add(type.lookupTag.typeParameterSymbol)
-                }
-            }
-        }
         symbol.typeParameterSymbols.zip(expression.typeArguments).forEach { (param, type) ->
-            if (param !in usedParameters) {
-                report(
-                    IEData(
-                        isExplicit = type.isExplicit,
-                        type = type.render(),
-                        call = symbol.name.toString(),
-                    )
+            if (!type.isExplicit) return@forEach
+            if (param.resolvedBounds.size != 1) return@forEach
+            val bound = param.resolvedBounds.first()
+            type as? FirTypeProjectionWithVariance ?: return@forEach
+            if (!bound.coneType.equalTypes(type.typeRef.coneType, context.session)) return@forEach
+            report(
+                IEData(
+                    type = type.render(),
+                    call = symbol.name.toString()
                 )
-            }
+            )
         }
     }
 }
