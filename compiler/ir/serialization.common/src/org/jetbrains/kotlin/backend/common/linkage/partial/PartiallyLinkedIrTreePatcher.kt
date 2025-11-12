@@ -730,8 +730,8 @@ internal class PartiallyLinkedIrTreePatcher(
                     // OK. Used in the same module.
                     null
                 }
-                containingModule.shouldBeSkipped -> {
-                    // Optimization: Don't check visibility of declarations in stdlib & co.
+                containingModule == PLModule.SyntheticBuiltInFunctions -> {
+                    // Optimization: Don't check the visibility of synthetic built-in functions.
                     null
                 }
                 !declaration.isEffectivelyPrivate() -> {
