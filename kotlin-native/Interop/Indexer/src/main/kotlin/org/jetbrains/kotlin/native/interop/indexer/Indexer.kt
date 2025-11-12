@@ -73,11 +73,11 @@ private class ObjCClassImpl(
         override val typeParameters: List<String> = emptyList<String>(),
         override val swiftName: String? = null
 ) : ObjCClass(name), ObjCContainerImpl {
-    override val protocols = mutableListOf<ObjCProtocol>()
-    override val methods = mutableListOf<ObjCMethod>()
-    override val properties = mutableListOf<ObjCProperty>()
+    override var protocols = mutableListOf<ObjCProtocol>()
+    override var methods = mutableListOf<ObjCMethod>()
+    override var properties = mutableListOf<ObjCProperty>()
     override var baseClass: ObjCClass? = null
-    override val includedCategories = mutableListOf<ObjCCategory>()
+    override var includedCategories = mutableListOf<ObjCCategory>()
 }
 
 private class ObjCCategoryImpl(
@@ -108,7 +108,6 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 !library.headerExclusionPolicy.excludeAll(headerId)
 
         fun get(cursor: CValue<CXCursor>): D? = all.get(getDeclarationId(cursor))
-        fun remove(cursor: CValue<CXCursor>) = all.remove(getDeclarationId(cursor))
 
         inline fun getOrPut(cursor: CValue<CXCursor>, create: () -> D) = getOrPut(cursor, create, configure = {})
 
@@ -427,8 +426,20 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             }
         }
 
-        if (objCClassRegistry.get(cursor)?.isForwardDeclaration == true) {
-            objCClassRegistry.remove(cursor)
+        val existing = objCClassRegistry.get(cursor)
+        if (existing != null && existing.isForwardDeclaration) {
+            existing.isForwardDeclaration = false
+            existing.location = getLocation(cursor)
+            existing.binaryName = getObjCBinaryName(cursor).takeIf { it != name }
+            existing.also { objcClass ->
+                addChildrenToObjCContainer(cursor, objcClass)
+                if (name in this.library.objCClassesIncludingCategories) {
+                    // We don't include methods from categories to class during indexing
+                    // because indexing does not care about how class is represented in Kotlin.
+                    // Instead, it should be done during StubIR construction.
+                    objcClass.includedCategories += collectClassCategories(cursor, name).mapNotNull { getObjCCategoryAt(it) }
+                }
+            }
         }
 
         return objCClassRegistry.getOrPut(cursor, {
