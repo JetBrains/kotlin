@@ -20,16 +20,19 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
+import org.jetbrains.kotlin.test.frontend.fir.getAllWasmDependenciesPaths
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -58,6 +61,9 @@ abstract class KtModuleByCompilerConfiguration(
         return when {
             targetPlatform.isNative() -> {
                 librariesByRoots(getAllNativeDependenciesPaths(testModule, testServices).map { Paths.get(it) })
+            }
+            targetPlatform.isWasm() -> {
+                librariesByRoots(getAllWasmDependenciesPaths(testModule, testServices, configuration.wasmTarget).map { Paths.get(it) })
             }
             else -> buildList {
                 val roots = buildList {

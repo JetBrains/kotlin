@@ -439,6 +439,35 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
     testGroup(
         "analysis/low-level-api-fir/tests-gen",
+        "compiler/testData/diagnostics",
+    ) {
+        fun TestGroup.TestClass.modelInitWasmJs() {
+            model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+        }
+
+        fun TestGroup.TestClass.modelInitWasmWasi() {
+            model("wasmWasiTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+        }
+
+        testClass<AbstractLLWasmJsDiagnosticsTest>(suiteTestClassName = "LLWasmJsDiagnosticsFe10TestGenerated") {
+            modelInitWasmJs()
+        }
+
+        testClass<AbstractLLWasmWasiDiagnosticsTest>(suiteTestClassName = "LLWasmWasiDiagnosticsFe10TestGenerated") {
+            modelInitWasmWasi()
+        }
+
+        testClass<AbstractLLReversedWasmJsDiagnosticsTest>(suiteTestClassName = "LLReversedWasmJsDiagnosticsFe10TestGenerated") {
+            modelInitWasmJs()
+        }
+
+        testClass<AbstractLLReversedWasmWasiDiagnosticsTest>(suiteTestClassName = "LLReversedWasmWasiDiagnosticsFe10TestGenerated") {
+            modelInitWasmWasi()
+        }
+    }
+
+    testGroup(
+        "analysis/low-level-api-fir/tests-gen",
         "compiler/testData",
     ) {
         fun TestGroup.TestClass.modelInit() {
