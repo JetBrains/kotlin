@@ -7,8 +7,6 @@
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
@@ -24,6 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.createLibraryListForJvm
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createIncrementalCompilationScope
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.targetDescription
@@ -221,10 +220,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     targetDescription
                 ) ?: return null
 
-                val projectEnvironment = VfsBasedProjectEnvironment(
-                    kotlinCoreEnvironment.project,
-                    VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-                ) { kotlinCoreEnvironment.createPackagePartProvider(it) }
+                val projectEnvironment = kotlinCoreEnvironment.toVfsBasedProjectEnvironment()
 
                 val sources = {
                     val ktFiles = kotlinCoreEnvironment.getSourceFiles()

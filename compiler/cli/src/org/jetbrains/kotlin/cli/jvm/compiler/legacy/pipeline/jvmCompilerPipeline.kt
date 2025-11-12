@@ -9,9 +9,7 @@ import com.intellij.core.CoreJavaFileManager
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
@@ -221,11 +219,11 @@ fun createContextForIncrementalCompilation(
 
 private class ProjectEnvironmentWithCoreEnvironmentEmulation(
     project: Project,
-    localFileSystem: VirtualFileSystem,
+    knownFileSystems: List<VirtualFileSystem>,
     getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
     val initialRoots: List<JavaRoot>,
     val configuration: CompilerConfiguration
-) : VfsBasedProjectEnvironment(project, localFileSystem, getPackagePartProviderFn) {
+) : VfsBasedProjectEnvironment(project, knownFileSystems, getPackagePartProviderFn) {
 
     val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
 
@@ -253,7 +251,7 @@ fun createProjectEnvironment(
     projectEnvironment.configureProjectEnvironment(configuration, configFiles)
 
     val project = projectEnvironment.project
-    val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+    val localFileSystem = projectEnvironment.environment.localFileSystem
 
     val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
@@ -311,7 +309,7 @@ fun createProjectEnvironment(
 
     return ProjectEnvironmentWithCoreEnvironmentEmulation(
         project,
-        localFileSystem,
+        listOfNotNull(projectEnvironment.jarFileSystem, projectEnvironment.environment.jrtFileSystem, localFileSystem),
         { JvmPackagePartProvider(configuration.languageVersionSettings, it) },
         initialRoots, configuration
     ).also {
