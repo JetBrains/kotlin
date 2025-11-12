@@ -246,19 +246,26 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
     val regenerateSyntheticLinkageProject = regenerateLinkageImportProjectTask(swiftPMDependenciesMetadataClasspath())
 
-    val projectPath = project.providers.environmentVariable("PROJECT_FILE_PATH")
+    val xcodeProjectPathForKmpIJPlugin = swiftPMDependenciesExtension().xcodeProjectPathForKmpIJPlugin
+    val envProjectPath = project.providers.environmentVariable("PROJECT_FILE_PATH")
+
+    val projectPath = envProjectPath.orElse(
+        xcodeProjectPathForKmpIJPlugin.map {
+            it.asFile.path
+        }
+    )
     regenerateSyntheticLinkageProject.configure {
-        it.onlyIf {
-            projectPath.isPresent
+        it.doFirst {
+            if (!envProjectPath.isPresent && !xcodeProjectPathForKmpIJPlugin.isPresent) {
+                error("Please specify Xcode project path in \"swiftPMDependencies { xcodeProjectPathForKmpIJPlugin.set(...) }\"")
+            }
         }
         it.syntheticImportProjectRoot.set(
             projectPath.flatMap {
                 project.layout.dir(
                     project.provider { File(it).parentFile.resolve(SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) }
                 )
-            }.orElse(
-                project.layout.buildDirectory.dir("stub")
-            )
+            }
         )
     }
     val syntheticLinkageImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated()
@@ -392,10 +399,10 @@ private fun Project.registerEmbedTask(
 fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
     execOperations: ExecOperations,
     gradleProjectPath: String,
+    xcodeProjectThatCalledEmbedAndSign: File,
     rootProjectDir: File,
 ) {
-    val projectThatCalledEmbedAndSign = File(System.getenv("PROJECT_FILE_PATH")!!)
-    val pbxprojPath = projectThatCalledEmbedAndSign.resolve("project.pbxproj")
+    val pbxprojPath = xcodeProjectThatCalledEmbedAndSign.resolve("project.pbxproj")
     val output = ByteArrayOutputStream()
     execOperations.exec {
         it.standardOutput = output
@@ -420,12 +427,12 @@ fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
             ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
         } else "${gradleProjectPath}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
 
-        val gradlew = searchForGradlew(projectThatCalledEmbedAndSign)
+        val gradlew = searchForGradlew(xcodeProjectThatCalledEmbedAndSign)
         val messageLines = listOf(
             "You have SwiftPM dependencies with embedAndSign integration.",
             "Please integrate with synthetic import linkage project by",
             "running the following command:",
-            "${IntegrateLinkagePackageIntoXcodeProject.PROJECT_PATH_ENV}='${projectThatCalledEmbedAndSign.path}' '${gradlew?.path}' -p '${rootProjectDir}' '${taskCall}' -i"
+            "${IntegrateLinkagePackageIntoXcodeProject.PROJECT_PATH_ENV}='${xcodeProjectThatCalledEmbedAndSign.path}' '${gradlew?.path}' -p '${rootProjectDir}' '${taskCall}' -i"
         )
         messageLines.forEach {
             println("error: $it")
@@ -449,18 +456,31 @@ private fun Project.checkSandboxAndWriteProtectionTask(
 private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(): TaskProvider<*> {
     val swiftPMDependencies = swiftPMDependenciesMetadataClasspath()
     val hasDirectlyDeclaredSwiftPMDependencies = provider { swiftPMDependenciesExtension().spmDependencies.isNotEmpty() }
-    val projectPathEnv = project.providers.environmentVariable("PROJECT_FILE_PATH")
+    val xcodeProjectPathForKmpIJPlugin = swiftPMDependenciesExtension().xcodeProjectPathForKmpIJPlugin
+    val envProjectPath = project.providers.environmentVariable("PROJECT_FILE_PATH")
+
+    val projectPath = envProjectPath.orElse(
+        xcodeProjectPathForKmpIJPlugin.map {
+            it.asFile.path
+        }
+    )
+
     return locateOrRegisterTask<DefaultTask>("checkSyntheticImportProjectIsCorrectlyIntegrated") { task ->
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Check linkage project for embedAndSign is integrated correctly into the project"
         val execOps = project.serviceOf<ExecOperations>()
-        val projectPath = project.path
+        val gradleProjectPath = project.path
         val rootProjectDir = rootProject.projectDir
-        task.onlyIf { projectPathEnv.isPresent && (swiftPMDependencies.get().any { it.value.dependencies.isNotEmpty() } || hasDirectlyDeclaredSwiftPMDependencies.get()) }
+        task.onlyIf { swiftPMDependencies.get().any { it.value.dependencies.isNotEmpty() } || hasDirectlyDeclaredSwiftPMDependencies.get() }
         task.doFirst {
+            if (!envProjectPath.isPresent && !xcodeProjectPathForKmpIJPlugin.isPresent) {
+                error("Please specify Xcode project path in \"swiftPMDependencies { xcodeProjectPathForKmpIJPlugin.set(...) }\"")
+            }
+
             checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
                 execOps,
-                projectPath,
+                gradleProjectPath,
+                File(projectPath.get()),
                 rootProjectDir
             )
         }

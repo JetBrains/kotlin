@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.DomainObjectSet
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Repository
@@ -20,6 +21,8 @@ abstract class SwiftImportExtension @Inject constructor(
 
     val discoverModulesImplicitly: Property<Boolean> = objects.property(Boolean::class.java)
         .convention(true)
+
+    abstract val xcodeProjectPathForKmpIJPlugin: RegularFileProperty
 
     internal abstract val spmDependencies: DomainObjectSet<SwiftPMDependency>
 
