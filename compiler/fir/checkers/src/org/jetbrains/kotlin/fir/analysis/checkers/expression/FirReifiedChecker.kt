@@ -45,7 +45,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             val typeArgumentProjection = typeArguments.elementAt(index)
             val source = typeArgumentProjection.source ?: calleeReference.source ?: continue
 
-            val typeArgument = typeArgumentProjection.toConeTypeProjection().type?.fullyExpandedType() ?: continue
+            val typeArgument = typeArgumentProjection.toConeTypeProjection().type?.fullyExpandedType()?.lowerBoundIfFlexible() ?: continue
             val typeParameter = typeParameters[index]
 
             val isExplicit = typeArgumentProjection.source?.kind == KtRealSourceElementKind

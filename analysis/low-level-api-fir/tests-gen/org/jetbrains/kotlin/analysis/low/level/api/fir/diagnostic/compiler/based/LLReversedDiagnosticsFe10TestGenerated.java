@@ -24065,6 +24065,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         }
 
         @Test
+        @TestMetadata("ReifiedIntersectionJava.kt")
+        public void testReifiedIntersectionJava() {
+          runTest("compiler/testData/diagnostics/tests/inference/reified/ReifiedIntersectionJava.kt");
+        }
+
+        @Test
         @TestMetadata("ReifiedIntersectionWarning.kt")
         public void testReifiedIntersectionWarning() {
           runTest("compiler/testData/diagnostics/tests/inference/reified/ReifiedIntersectionWarning.kt");
