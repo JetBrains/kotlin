@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
-import org.jetbrains.kotlin.gradle.utils.fileProperty
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
@@ -1297,6 +1296,9 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
     @get:Input
     abstract val xcodeprojPath: Property<String>
 
+    @get:Internal
+    val xcodeprojTemporaries = project.layout.buildDirectory.dir("kotlin/swiftImportXcodeprojMutationTemporaries")
+
     @get:Inject
     protected abstract val execOps: ExecOperations
 
@@ -1402,8 +1404,10 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
         val updatedProjectJson = projectJson.toMutableMap()
         updatedProjectJson["objects"] = objects
 
-        val resultingJson = Gson().toJson(updatedProjectJson)
-        pbxprojPath.writeText(resultingJson)
+        saveJsonBackIntoPbxproj(
+            Gson().toJson(updatedProjectJson),
+            pbxprojPath.path,
+        )
     }
 
     private fun generateRandomPBXObjectReference(): String {
@@ -1413,9 +1417,104 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
         ).joinToString(separator = "") { byte -> "%02x".format(byte) }.uppercase().subSequence(0, 24).toString()
     }
 
+    private fun saveJsonBackIntoPbxproj(json: String, outputPbxprojPath: String) {
+        xcodeprojTemporaries.get().asFile.mkdirs()
+        val jsonPbxprojPath = xcodeprojTemporaries.get().asFile.resolve("project.pbxproj.json")
+        jsonPbxprojPath.writeText(json)
+        val binName = "mutatePbxproj"
+        xcodeprojTemporaries.get().asFile.resolve("Package.swift").writeText(
+            """
+                // swift-tools-version: 5.9
+                import PackageDescription
+
+                let package = Package(
+                    name: "${binName}",
+                    platforms: [.macOS(.v13)],
+                    targets: [
+                        .executableTarget(name: "${binName}"),
+                    ]
+                )
+            """.trimIndent()
+        )
+        xcodeprojTemporaries.get().asFile.resolve("Sources").mkdirs()
+        xcodeprojTemporaries.get().asFile.resolve("Sources/main.swift").writeText(
+            """
+                import Foundation
+
+                let inputEnv = "${INPUT_PBXPROJ_JSON_PATH_ENV}"
+                let outputEnv = "${OUTPUT_PBXPROJ_PATH_ENV}"
+                guard let inputPbxprojJsonPath = ProcessInfo.processInfo.environment[inputEnv] else {
+                    fatalError("Specify path to pbxproj json in \(inputEnv) environment variable")
+                }
+                guard let outputPbxprojPath = ProcessInfo.processInfo.environment[outputEnv] else {
+                    fatalError("Specify path to output pbxproj in \(outputEnv) environment variable")
+                }
+
+                let selectedXcode = URL(fileURLWithPath: "/var/db/xcode_select_link")
+                let devToolsCore = selectedXcode.resolvingSymlinksInPath().deletingLastPathComponent().appending(path: "Frameworks/DevToolsCore.framework/DevToolsCore")
+
+                print("Loading DevToolsCore from \(devToolsCore)")
+
+                if (dlopen(devToolsCore.path(), RTLD_NOW) == nil) {
+                    fatalError(String(cString: dlerror()))
+                }
+
+                guard let inputStream = InputStream(url: URL(filePath: inputPbxprojJsonPath)) else {
+                    fatalError("Couldn't create input stream \(inputPbxprojJsonPath)")
+                }
+                inputStream.open()
+                let jsonPbxproj = try JSONSerialization.jsonObject(
+                    with: inputStream
+                )
+                inputStream.close()
+                guard let project = jsonPbxproj as? NSDictionary else {
+                    fatalError("Couldn't cast \(jsonPbxproj)")
+                }
+
+                let data = project.perform(Selector(("plistDescriptionUTF8Data"))).takeRetainedValue()
+                guard let nsData = data as? Data else {
+                    fatalError("Couldn't cast return type \(data)")
+                }
+
+                let handle = try FileHandle(forWritingTo: URL(fileURLWithPath: outputPbxprojPath))
+                try handle.seek(toOffset: 0)
+                try handle.write(contentsOf: nsData)
+                try handle.truncate(atOffset: UInt64(nsData.count))
+                try handle.synchronize()
+                try handle.close()
+
+            """.trimIndent()
+        )
+
+        execOps.exec {
+            it.workingDir(xcodeprojTemporaries.get().asFile)
+            it.commandLine("swift", "build")
+        }
+
+        // For some reason they sanitize or override DYLD_ variables in swift run so we have to call the binary directly instead
+        val output = ByteArrayOutputStream()
+        execOps.exec {
+            it.workingDir(xcodeprojTemporaries.get().asFile)
+            it.commandLine("swift", "build", "--show-bin-path")
+            it.standardOutput = output
+        }
+        val outputsPath = File(output.toString().lineSequence().first()).resolve(binName)
+
+        execOps.exec {
+            it.workingDir(xcodeprojTemporaries.get().asFile)
+            it.commandLine(outputsPath.path)
+            it.environment("DYLD_FALLBACK_FRAMEWORK_PATH", "/var/db/xcode_select_link/../SharedFrameworks")
+            it.environment(INPUT_PBXPROJ_JSON_PATH_ENV, jsonPbxprojPath.path)
+            it.environment(OUTPUT_PBXPROJ_PATH_ENV, outputPbxprojPath)
+        }
+    }
+
     companion object {
         const val PROJECT_PATH_ENV = "XCODEPROJ_PATH"
         const val TASK_NAME = "integrateLinkagePackage"
+
+        const val INPUT_PBXPROJ_JSON_PATH_ENV = "INPUT_PBXPROJ_JSON_PATH"
+        const val OUTPUT_PBXPROJ_PATH_ENV = "OUTPUT_PBXPROJ_PATH"
     }
 }
 
