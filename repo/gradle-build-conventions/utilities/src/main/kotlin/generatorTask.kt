@@ -10,6 +10,7 @@ import org.gradle.kotlin.dsl.get
 import kotlin.properties.PropertyDelegateProvider
 import GeneratorInputKind.RuntimeClasspath
 import GeneratorInputKind.SourceSetJar
+import org.gradle.api.file.FileCollection
 
 enum class GeneratorInputKind {
     RuntimeClasspath,
@@ -74,7 +75,7 @@ fun Project.smartJavaExec(
     return javaExecTaskProvider
 }
 
-// Moves the classpath into a jar metadata, to shorten the command line length and to avoid hitting the limit on Windows
+
 private fun Project.registerJarTaskForJavaExec(
     javaExec: TaskProvider<JavaExec>,
     sourceSet: SourceSet,
@@ -82,8 +83,34 @@ private fun Project.registerJarTaskForJavaExec(
     inputKind: GeneratorInputKind,
 ) {
     val classpath = sourceSet.runtimeClasspath
-    // We write the whole classpath into separate jar to work around CLI length limit on Windows
-    val jarWithClasspathTask = project.tasks.register("${javaExec.name}WriteClassPath", Jar::class.java) {
+    val jarWithClasspathTask = createSyntheticClasspathJarTask(classpath, mainClass, javaExec)
+    val classpathInput = provider {
+        when (inputKind) {
+            RuntimeClasspath -> classpath
+            SourceSetJar -> tasks[sourceSet.jarTaskName].outputs.files
+        }
+    }
+
+    javaExec.configure {
+        inputs.files(jarWithClasspathTask)
+            .withPropertyName("jarTaskOutput")
+            .withNormalizer(ClasspathNormalizer::class.java)
+
+        inputs.files(classpathInput)
+            .withPropertyName("classpathToExecute")
+            .withNormalizer(ClasspathNormalizer::class.java)
+
+        this.mainClass.set(mainClass)
+        this.classpath = objects.fileCollection().from(jarWithClasspathTask.map { it.outputs.files })
+    }
+}
+
+/**
+ * Moves the classpath into a jar metadata, to shorten the command line length and to avoid hitting the limit on Windows.
+ * This hack could be removed when https://github.com/gradle/gradle/issues/1989 will be fixed.
+ */
+private fun Project.createSyntheticClasspathJarTask(classpath: FileCollection, mainClass: String, javaExec: TaskProvider<JavaExec>): TaskProvider<Jar> {
+    return project.tasks.register("${javaExec.name}WriteClassPath", Jar::class.java) {
         inputs.files(classpath)
             .withPropertyName("classpathInput")
             .withNormalizer(ClasspathNormalizer::class.java)
@@ -105,25 +132,5 @@ private fun Project.registerJarTaskForJavaExec(
                 )
             }
         }
-    }
-
-    val classpathInput = provider {
-        when (inputKind) {
-            RuntimeClasspath -> classpath
-            SourceSetJar -> tasks[sourceSet.jarTaskName].outputs.files
-        }
-    }
-
-    javaExec.configure {
-        inputs.files(jarWithClasspathTask)
-            .withPropertyName("jarTaskOutput")
-            .withNormalizer(ClasspathNormalizer::class.java)
-
-        inputs.files(classpathInput)
-            .withPropertyName("classpathToExecute")
-            .withNormalizer(ClasspathNormalizer::class.java)
-
-        this.mainClass.set(mainClass)
-        this.classpath = objects.fileCollection().from(jarWithClasspathTask.map { it.outputs.files })
     }
 }
