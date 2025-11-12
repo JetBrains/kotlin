@@ -794,11 +794,55 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
     }
 
-    private fun defaultValue(flags: Int): FirExpression? {
-        if (Flags.DECLARES_DEFAULT_VALUE.get(flags)) {
-            return buildExpressionStub()
+    private fun defaultValue(
+        flags: Int,
+        proto: ProtoBuf.ValueParameter,
+        typeRef: FirTypeRef,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        classProto: ProtoBuf.Class?,
+        parameterIndex: Int
+    ): FirExpression? {
+        if (!Flags.DECLARES_DEFAULT_VALUE.get(flags)) return null
+
+        if (classProto != null && isAnnotationClass(classProto)) {
+            val concreteValue = loadAnnotationParameterDefaultFromProperty(
+                proto, typeRef, nameResolver, typeTable, classProto, parameterIndex
+            )
+            return concreteValue ?: buildExpressionStub()
         }
-        return null
+        return buildExpressionStub()
+    }
+
+    private fun isAnnotationClass(classProto: ProtoBuf.Class): Boolean {
+        return Flags.CLASS_KIND.get(classProto.flags) == ProtoBuf.Class.Kind.ANNOTATION_CLASS
+    }
+
+    private fun loadAnnotationParameterDefaultFromProperty(
+        proto: ProtoBuf.ValueParameter,
+        typeRef: FirTypeRef,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        classProto: ProtoBuf.Class,
+        parameterIndex: Int
+    ): FirExpression? {
+        val parameterName = nameResolver.getName(proto.name)
+        val propertyProto = classProto.propertyList.find {
+            nameResolver.getName(it.name) == parameterName
+        } ?: run {
+            if (parameterIndex >= 0 && parameterIndex < classProto.propertyCount) {
+                classProto.propertyList[parameterIndex]
+            } else {
+                return null
+            }
+        }
+        return c.annotationDeserializer.loadAnnotationPropertyDefaultValue(
+            c.containerSource,
+            propertyProto,
+            typeRef,
+            nameResolver,
+            typeTable
+        )
     }
 
     private fun addValueParametersTo(
@@ -825,7 +869,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 this.name = name
                 symbol = FirValueParameterSymbol()
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                defaultValue = defaultValue(flags)
+                defaultValue = defaultValue(flags, proto, returnTypeRef, c.nameResolver, c.typeTable, classProto, index)
                 if (addDefaultValue) {
                     defaultValue = buildExpressionStub()
                 }
