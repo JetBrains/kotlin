@@ -568,13 +568,15 @@ private class Fir2IrPipeline(
         )
     }
 
-    fun IrPluginContext.applyIrGenerationExtensions(
+    fun Fir2IrPluginContext.applyIrGenerationExtensions(
         irModuleFragment: IrModuleFragment,
         irGenerationExtensions: Collection<IrGenerationExtension>,
     ) {
+        val k2PluginContext = this.asK2IrPluginContext()
         for (extension in irGenerationExtensions) {
             try {
                 extension.generate(irModuleFragment, this)
+                extension.generate(irModuleFragment, k2PluginContext)
                 if (runMandatoryIrValidation(extension, irModuleFragment)) {
                     hasIrValidationErrorFromPlugin = true
                 }

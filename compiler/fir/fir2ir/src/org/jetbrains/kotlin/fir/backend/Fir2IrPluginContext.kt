@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
+import org.jetbrains.kotlin.backend.common.extensions.IrGeneratedDeclarationsRegistrar
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -16,31 +18,34 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.recordFqNameLookup
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
+import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.getProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
-import org.jetbrains.kotlin.fir.lookupTracker
-import org.jetbrains.kotlin.fir.recordFqNameLookup
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -201,7 +206,84 @@ class Fir2IrPluginContext(
         signature: IdSignature,
         kind: IrDeserializer.TopLevelSymbolKind,
         moduleDescriptor: ModuleDescriptor
-    ): IrSymbol? {
+    ): IrSymbol {
         error(ERROR_MESSAGE)
+    }
+
+    fun asK2IrPluginContext(): K2IrPluginContext {
+        return Fir2IrK2IrPluginContext()
+    }
+
+    inner class Fir2IrK2IrPluginContext : K2IrPluginContext {
+        override val irFactory: IrFactory
+            get() = this@Fir2IrPluginContext.irFactory
+        override val irBuiltIns: IrBuiltIns
+            get() = this@Fir2IrPluginContext.irBuiltIns
+        override val languageVersionSettings: LanguageVersionSettings
+            get() = this@Fir2IrPluginContext.languageVersionSettings
+        override val platform: TargetPlatform
+            get() = this@Fir2IrPluginContext.platform
+        override val diagnosticReporter: IrDiagnosticReporter
+            get() = this@Fir2IrPluginContext.diagnosticReporter
+        override val metadataDeclarationRegistrar: IrGeneratedDeclarationsRegistrar
+            get() = this@Fir2IrPluginContext.metadataDeclarationRegistrar
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class, K2IrPluginContext.InternalApi::class)
+        override fun referenceClass(classId: ClassId, fromFile: IrFile): IrClassSymbol? {
+            var classIdToSearch = classId
+            while (true) {
+                val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classIdToSearch) ?: return null
+                when (firSymbol) {
+                    is FirRegularClassSymbol -> return c.classifierStorage.getIrClassSymbol(firSymbol).also {
+                        recordLookup(it.owner, fromFile)
+                    }
+                    is FirTypeAliasSymbol -> {
+                        val irTypeAlias = c.classifierStorage.getIrTypeAliasSymbol(firSymbol).owner
+                        recordLookup(irTypeAlias, fromFile)
+                        classIdToSearch = firSymbol.resolvedExpandedTypeRef.coneType.classId ?: return null
+                    }
+                    is FirAnonymousObjectSymbol -> shouldNotBeCalled()
+                }
+            }
+        }
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class, K2IrPluginContext.InternalApi::class)
+        override fun referenceClassifier(classId: ClassId, fromFile: IrFile): IrSymbol? {
+            val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
+            return when (firSymbol) {
+                is FirRegularClassSymbol -> c.classifierStorage.getIrClassSymbol(firSymbol)
+                is FirTypeAliasSymbol -> c.classifierStorage.getIrTypeAliasSymbol(firSymbol)
+                is FirAnonymousObjectSymbol -> shouldNotBeCalled()
+            }.also {
+                recordLookup(it.owner, fromFile)
+            }
+        }
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class, K2IrPluginContext.InternalApi::class)
+        override fun referenceConstructors(classId: ClassId, fromFile: IrFile): Collection<IrConstructorSymbol> {
+            return this@Fir2IrPluginContext.referenceConstructors(classId).onEach {
+                recordLookup(it.owner, fromFile)
+            }
+        }
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class, K2IrPluginContext.InternalApi::class)
+        override fun referenceFunctions(callableId: CallableId, fromFile: IrFile): Collection<IrSimpleFunctionSymbol> {
+            return this@Fir2IrPluginContext.referenceFunctions(callableId).onEach {
+                recordLookup(it.owner, fromFile)
+            }
+        }
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class, K2IrPluginContext.InternalApi::class)
+        override fun referenceProperties(callableId: CallableId, fromFile: IrFile): Collection<IrPropertySymbol> {
+            return this@Fir2IrPluginContext.referenceProperties(callableId).onEach {
+                recordLookup(it.owner, fromFile)
+            }
+        }
+
+        @K2IrPluginContext.InternalApi
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        override fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile) {
+            this@Fir2IrPluginContext.recordLookup(declaration, fromFile)
+        }
     }
 }

@@ -17,6 +17,8 @@ interface IrGenerationExtension {
 
     fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext)
 
+    fun generate(moduleFragment: IrModuleFragment, pluginContext: K2IrPluginContext) {}
+
     fun getPlatformIntrinsicExtension(loweringContext: LoweringContext): IrIntrinsicExtension? = null
 
     // In K1 mode, returns true if this extension should also be applied in the KAPT stub generation mode in Kotlin/JVM. This mode uses
