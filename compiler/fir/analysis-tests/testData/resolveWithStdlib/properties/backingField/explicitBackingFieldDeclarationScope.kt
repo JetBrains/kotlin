@@ -8,7 +8,7 @@ fun local() {
 
 fun localInWhen() {
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val local: List<String><!><!SYNTAX!><!> <!UNRESOLVED_REFERENCE!>field<!> <!SYNTAX!>=<!> mutableListOf(<!SYNTAX!><!>)<!SYNTAX!>)<!> {     //SYNTAX
-        <!SYNTAX!>is<!> <!NO_COMPANION_OBJECT!>List<*><!> <!SYNTAX!>-> "1"<!>
+        <!SYNTAX!>is<!> <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>List<!><*> <!SYNTAX!>-> "1"<!>
         <!SYNTAX!>else<!> <!SYNTAX!>-> "2"<!>
     }
 }

@@ -309,6 +309,7 @@ public final class kotlin/UByte$Companion {
 }
 
 public final class kotlin/UByteArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field Companion Lkotlin/UByteArray$Companion;
 	public synthetic fun add (Ljava/lang/Object;)Z
 	public fun add-7apg3OU (B)Z
 	public fun addAll (Ljava/util/Collection;)Z
@@ -345,6 +346,9 @@ public final class kotlin/UByteArray : java/util/Collection, kotlin/jvm/internal
 	public final synthetic fun unbox-impl ()[B
 }
 
+public final class kotlin/UByteArray$Companion {
+}
+
 public final class kotlin/UInt : java/lang/Comparable {
 	public static final field Companion Lkotlin/UInt$Companion;
 	public static final field MAX_VALUE I
@@ -368,6 +372,7 @@ public final class kotlin/UInt$Companion {
 }
 
 public final class kotlin/UIntArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field Companion Lkotlin/UIntArray$Companion;
 	public synthetic fun add (Ljava/lang/Object;)Z
 	public fun add-WZ4Q5Ns (I)Z
 	public fun addAll (Ljava/util/Collection;)Z
@@ -404,6 +409,9 @@ public final class kotlin/UIntArray : java/util/Collection, kotlin/jvm/internal/
 	public final synthetic fun unbox-impl ()[I
 }
 
+public final class kotlin/UIntArray$Companion {
+}
+
 public final class kotlin/ULong : java/lang/Comparable {
 	public static final field Companion Lkotlin/ULong$Companion;
 	public static final field MAX_VALUE J
@@ -427,6 +435,7 @@ public final class kotlin/ULong$Companion {
 }
 
 public final class kotlin/ULongArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field Companion Lkotlin/ULongArray$Companion;
 	public synthetic fun add (Ljava/lang/Object;)Z
 	public fun add-VKZWuLQ (J)Z
 	public fun addAll (Ljava/util/Collection;)Z
@@ -463,6 +472,9 @@ public final class kotlin/ULongArray : java/util/Collection, kotlin/jvm/internal
 	public final synthetic fun unbox-impl ()[J
 }
 
+public final class kotlin/ULongArray$Companion {
+}
+
 public final class kotlin/UShort : java/lang/Comparable {
 	public static final field Companion Lkotlin/UShort$Companion;
 	public static final field MAX_VALUE S
@@ -486,6 +498,7 @@ public final class kotlin/UShort$Companion {
 }
 
 public final class kotlin/UShortArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field Companion Lkotlin/UShortArray$Companion;
 	public synthetic fun add (Ljava/lang/Object;)Z
 	public fun add-xj2QHRw (S)Z
 	public fun addAll (Ljava/util/Collection;)Z
@@ -520,6 +533,9 @@ public final class kotlin/UShortArray : java/util/Collection, kotlin/jvm/interna
 	public fun toString ()Ljava/lang/String;
 	public static fun toString-impl ([S)Ljava/lang/String;
 	public final synthetic fun unbox-impl ()[S
+}
+
+public final class kotlin/UShortArray$Companion {
 }
 
 public final class kotlin/UninitializedPropertyAccessException : java/lang/RuntimeException {
@@ -3754,6 +3770,10 @@ public class kotlin/jvm/internal/AdaptedFunctionReference : java/io/Serializable
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class kotlin/jvm/internal/ArrayCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/ArrayCompanionObject;
+}
+
 public final class kotlin/jvm/internal/ArrayIteratorKt {
 	public static final fun iterator ([Ljava/lang/Object;)Ljava/util/Iterator;
 }
@@ -3769,6 +3789,10 @@ public final class kotlin/jvm/internal/ArrayIteratorsKt {
 	public static final fun iterator ([Z)Lkotlin/collections/BooleanIterator;
 }
 
+public final class kotlin/jvm/internal/BooleanArrayCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/BooleanArrayCompanionObject;
+}
+
 public final class kotlin/jvm/internal/BooleanCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/BooleanCompanionObject;
 }
@@ -3781,6 +3805,10 @@ public final class kotlin/jvm/internal/BooleanSpreadBuilder : kotlin/jvm/interna
 }
 
 public final class kotlin/jvm/internal/BoxingConstructorMarker {
+}
+
+public final class kotlin/jvm/internal/ByteArrayCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/ByteArrayCompanionObject;
 }
 
 public final class kotlin/jvm/internal/ByteCompanionObject {
@@ -3822,6 +3850,10 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	public fun isFinal ()Z
 	public fun isOpen ()Z
 	public fun isSuspend ()Z
+}
+
+public final class kotlin/jvm/internal/CharArrayCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/CharArrayCompanionObject;
 }
 
 public final class kotlin/jvm/internal/CharCompanionObject {
@@ -3893,6 +3925,10 @@ public final class kotlin/jvm/internal/CollectionToArray {
 public final class kotlin/jvm/internal/DefaultConstructorMarker {
 }
 
+public final class kotlin/jvm/internal/DoubleArrayCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/DoubleArrayCompanionObject;
+}
+
 public final class kotlin/jvm/internal/DoubleCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/DoubleCompanionObject;
 	public static final field MAX_VALUE D
@@ -3918,6 +3954,10 @@ public final class kotlin/jvm/internal/DoubleSpreadBuilder : kotlin/jvm/internal
 
 public final class kotlin/jvm/internal/EnumCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/EnumCompanionObject;
+}
+
+public final class kotlin/jvm/internal/FloatArrayCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/FloatArrayCompanionObject;
 }
 
 public final class kotlin/jvm/internal/FloatCompanionObject {
@@ -4023,6 +4063,10 @@ public class kotlin/jvm/internal/InlineMarker {
 	public static fun mark (Ljava/lang/String;)V
 }
 
+public final class kotlin/jvm/internal/IntArrayCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/IntArrayCompanionObject;
+}
+
 public final class kotlin/jvm/internal/IntCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/IntCompanionObject;
 	public static final field MAX_VALUE I
@@ -4094,10 +4138,21 @@ public abstract class kotlin/jvm/internal/Lambda : java/io/Serializable, kotlin/
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class kotlin/jvm/internal/ListCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/ListCompanionObject;
+	public final fun of ()Ljava/util/List;
+	public final fun of (Ljava/lang/Object;)Ljava/util/List;
+	public final fun of ([Ljava/lang/Object;)Ljava/util/List;
+}
+
 public class kotlin/jvm/internal/LocalVariableReference : kotlin/jvm/internal/PropertyReference0 {
 	public fun <init> ()V
 	public fun get ()Ljava/lang/Object;
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
+}
+
+public final class kotlin/jvm/internal/LongArrayCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/LongArrayCompanionObject;
 }
 
 public final class kotlin/jvm/internal/LongCompanionObject {
@@ -4131,6 +4186,13 @@ public class kotlin/jvm/internal/MagicApiIntrinsics {
 	public static fun intMagicApiCall (Ljava/lang/Object;)I
 	public static fun voidMagicApiCall (I)V
 	public static fun voidMagicApiCall (Ljava/lang/Object;)V
+}
+
+public final class kotlin/jvm/internal/MutableListCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/MutableListCompanionObject;
+	public final fun of ()Ljava/util/List;
+	public final fun of (Ljava/lang/Object;)Ljava/util/List;
+	public final fun of ([Ljava/lang/Object;)Ljava/util/List;
 }
 
 public class kotlin/jvm/internal/MutableLocalVariableReference : kotlin/jvm/internal/MutablePropertyReference0 {
@@ -4205,6 +4267,13 @@ public class kotlin/jvm/internal/MutablePropertyReference2Impl : kotlin/jvm/inte
 	public fun <init> (Lkotlin/reflect/KDeclarationContainer;Ljava/lang/String;Ljava/lang/String;)V
 	public fun get (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun set (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
+}
+
+public final class kotlin/jvm/internal/MutableSetCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/MutableSetCompanionObject;
+	public final fun of ()Ljava/util/Set;
+	public final fun of (Ljava/lang/Object;)Ljava/util/Set;
+	public final fun of ([Ljava/lang/Object;)Ljava/util/Set;
 }
 
 public final class kotlin/jvm/internal/PackageReference : kotlin/jvm/internal/ClassBasedDeclarationContainer {
@@ -4414,6 +4483,17 @@ public abstract interface annotation class kotlin/jvm/internal/RepeatableContain
 
 public abstract interface annotation class kotlin/jvm/internal/SerializedIr : java/lang/annotation/Annotation {
 	public abstract fun b ()[Ljava/lang/String;
+}
+
+public final class kotlin/jvm/internal/SetCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/SetCompanionObject;
+	public final fun of ()Ljava/util/Set;
+	public final fun of (Ljava/lang/Object;)Ljava/util/Set;
+	public final fun of ([Ljava/lang/Object;)Ljava/util/Set;
+}
+
+public final class kotlin/jvm/internal/ShortArrayCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/ShortArrayCompanionObject;
 }
 
 public final class kotlin/jvm/internal/ShortCompanionObject {
@@ -5300,7 +5380,11 @@ public final class kotlin/reflect/TypesJVMKt {
 }
 
 public abstract interface class kotlin/sequences/Sequence {
+	public static final field Companion Lkotlin/sequences/Sequence$Companion;
 	public abstract fun iterator ()Ljava/util/Iterator;
+}
+
+public final class kotlin/sequences/Sequence$Companion {
 }
 
 public abstract class kotlin/sequences/SequenceScope {

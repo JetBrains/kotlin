@@ -376,6 +376,101 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
     CLASS_BODY
+      OBJECT_DECLARATION[classId=kotlin/collections/List.Companion, fqName=kotlin.collections.List.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[public companion]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+            valueArguments: [ ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+        CLASS_BODY
+          FUN[fqName=kotlin.collections.List.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=List]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+          FUN[fqName=kotlin.collections.List.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=List]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+          FUN[fqName=kotlin.collections.List.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
+                MODIFIER_LIST[vararg]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=List]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
       PROPERTY[fqName=kotlin.collections.List.size, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=size]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         TYPE_REFERENCE
@@ -1081,6 +1176,101 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
     CLASS_BODY
+      OBJECT_DECLARATION[classId=kotlin/collections/MutableList.Companion, fqName=kotlin.collections.MutableList.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[public companion]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+            valueArguments: [ ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+        CLASS_BODY
+          FUN[fqName=kotlin.collections.MutableList.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=MutableList]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+          FUN[fqName=kotlin.collections.MutableList.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=MutableList]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+          FUN[fqName=kotlin.collections.MutableList.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
+                MODIFIER_LIST[vararg]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=MutableList]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
       FUN[fqName=kotlin.collections.MutableList.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
@@ -1721,6 +1911,101 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
     CLASS_BODY
+      OBJECT_DECLARATION[classId=kotlin/collections/MutableSet.Companion, fqName=kotlin.collections.MutableSet.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[public companion]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+            valueArguments: [ ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+        CLASS_BODY
+          FUN[fqName=kotlin.collections.MutableSet.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=MutableSet]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+          FUN[fqName=kotlin.collections.MutableSet.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=MutableSet]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+          FUN[fqName=kotlin.collections.MutableSet.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
+                MODIFIER_LIST[vararg]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=MutableSet]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
       FUN[fqName=kotlin.collections.MutableSet.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
@@ -1891,6 +2176,101 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
     CLASS_BODY
+      OBJECT_DECLARATION[classId=kotlin/collections/Set.Companion, fqName=kotlin.collections.Set.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[public companion]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+            valueArguments: [ ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+        CLASS_BODY
+          FUN[fqName=kotlin.collections.Set.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=Set]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+          FUN[fqName=kotlin.collections.Set.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=Set]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+          FUN[fqName=kotlin.collections.Set.Companion.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalStdlibApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
+                MODIFIER_LIST[vararg]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=collections]
+                REFERENCE_EXPRESSION[referencedName=Set]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
       PROPERTY[fqName=kotlin.collections.Set.size, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=size]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         TYPE_REFERENCE

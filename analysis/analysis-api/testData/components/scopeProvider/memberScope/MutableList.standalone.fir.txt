@@ -1955,3 +1955,38 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
   returnValueStatus: Unspecified
   importableFqName: null
+
+KaNamedClassSymbol:
+  annotations: [
+    kotlin/ExperimentalStdlibApi()
+      psi: null
+  ]
+  classId: kotlin/collections/MutableList.Companion
+  classKind: COMPANION_OBJECT
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: CLASS
+  modality: FINAL
+  name: Companion
+  origin: LIBRARY
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+  importableFqName: kotlin.collections.MutableList.Companion

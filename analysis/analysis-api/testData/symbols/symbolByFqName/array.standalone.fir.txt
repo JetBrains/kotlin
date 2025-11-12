@@ -2,7 +2,7 @@ KaNamedClassSymbol:
   annotations: []
   classId: kotlin/Array
   classKind: CLASS
-  companionObject: null
+  companionObject: KaNamedClassSymbol(kotlin/Array.Companion)
   compilerVisibility: Public
   contextReceivers: []
   isActual: false

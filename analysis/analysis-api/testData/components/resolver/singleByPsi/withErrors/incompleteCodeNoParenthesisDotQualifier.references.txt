@@ -1,6 +1,6 @@
 KtNameReferenceExpression(36,40): 'List'
   KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
+    isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+      (in kotlin.collections.List) companion object

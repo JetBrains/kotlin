@@ -1,4 +1,5 @@
 Classifier names:
+  Companion
 
 Callable names:
   <init>
