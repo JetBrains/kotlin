@@ -25,6 +25,36 @@ public class ScriptSymbolLightClassesByPsiForSourceTestGenerated extends Abstrac
   }
 
   @Nested
+  @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/collections")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Collections {
+    @Test
+    public void testAllFilesPresentInCollections() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/collections"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Mutable {
+      @Test
+      public void testAllFilesPresentInMutable() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ReadOnly {
+      @Test
+      public void testAllFilesPresentInReadOnly() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/facades")
   @TestDataPath("$PROJECT_ROOT")
   public class Facades {

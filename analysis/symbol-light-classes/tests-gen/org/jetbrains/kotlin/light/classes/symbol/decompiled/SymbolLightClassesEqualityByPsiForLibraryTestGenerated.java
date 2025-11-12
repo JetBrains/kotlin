@@ -457,6 +457,414 @@ public class SymbolLightClassesEqualityByPsiForLibraryTestGenerated extends Abst
   }
 
   @Nested
+  @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/collections")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Collections {
+    @Test
+    public void testAllFilesPresentInCollections() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/collections"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("explicitOverrides.kt")
+    public void testExplicitOverrides() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/explicitOverrides.kt");
+    }
+
+    @Test
+    @TestMetadata("indirectInheritanceStubs.kt")
+    public void testIndirectInheritanceStubs() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/indirectInheritanceStubs.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Mutable {
+      @Test
+      public void testAllFilesPresentInMutable() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("mutableCollectionClass.kt")
+      public void testMutableCollectionClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableCollectionClass.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableCollectionInterface.kt")
+      public void testMutableCollectionInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableCollectionInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableCollectionInterfaceOfString.kt")
+      public void testMutableCollectionInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableCollectionInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableCollectionOfString.kt")
+      public void testMutableCollectionOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableCollectionOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableIterableClass.kt")
+      public void testMutableIterableClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIterableClass.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableIterableInterface.kt")
+      public void testMutableIterableInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIterableInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableIterableInterfaceOfString.kt")
+      public void testMutableIterableInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIterableInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableIterableOfString.kt")
+      public void testMutableIterableOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIterableOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableIteratorClass.kt")
+      public void testMutableIteratorClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIteratorClass.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableIteratorInterface.kt")
+      public void testMutableIteratorInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIteratorInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableIteratorInterfaceOfString.kt")
+      public void testMutableIteratorInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIteratorInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableIteratorOfString.kt")
+      public void testMutableIteratorOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableIteratorOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableListClass.kt")
+      public void testMutableListClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableListClass.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableListInterface.kt")
+      public void testMutableListInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableListInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableListInterfaceOfString.kt")
+      public void testMutableListInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableListInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableListOfString.kt")
+      public void testMutableListOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableListOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableMapClass.kt")
+      public void testMutableMapClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapClass.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableMapEntryClass.kt")
+      public void testMutableMapEntryClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapEntryClass.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableMapEntryInterface.kt")
+      public void testMutableMapEntryInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapEntryInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableMapEntryInterfaceOfString.kt")
+      public void testMutableMapEntryInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapEntryInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableMapEntryOfAToB.kt")
+      public void testMutableMapEntryOfAToB() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapEntryOfAToB.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableMapEntryOfStringToV.kt")
+      public void testMutableMapEntryOfStringToV() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapEntryOfStringToV.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableMapInterface.kt")
+      public void testMutableMapInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableMapInterfaceOfString.kt")
+      public void testMutableMapInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableMapOfAToB.kt")
+      public void testMutableMapOfAToB() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapOfAToB.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableMapOfStringToV.kt")
+      public void testMutableMapOfStringToV() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableMapOfStringToV.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableSetClass.kt")
+      public void testMutableSetClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableSetClass.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableSetInterface.kt")
+      public void testMutableSetInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableSetInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableSetInterfaceOfString.kt")
+      public void testMutableSetInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableSetInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableSetOfString.kt")
+      public void testMutableSetOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/mutable/mutableSetOfString.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ReadOnly {
+      @Test
+      public void testAllFilesPresentInReadOnly() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("collectionAbstractClass.kt")
+      public void testCollectionAbstractClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/collectionAbstractClass.kt");
+      }
+
+      @Test
+      @TestMetadata("collectionAbstractClassOfString.kt")
+      public void testCollectionAbstractClassOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/collectionAbstractClassOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("collectionInterface.kt")
+      public void testCollectionInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/collectionInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("collectionInterfaceOfString.kt")
+      public void testCollectionInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/collectionInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("iterableAbstractClass.kt")
+      public void testIterableAbstractClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iterableAbstractClass.kt");
+      }
+
+      @Test
+      @TestMetadata("iterableAbstractClassOfString.kt")
+      public void testIterableAbstractClassOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iterableAbstractClassOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("iterableInterface.kt")
+      public void testIterableInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iterableInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("iterableInterfaceOfString.kt")
+      public void testIterableInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iterableInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("iteratorAbstractClass.kt")
+      public void testIteratorAbstractClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iteratorAbstractClass.kt");
+      }
+
+      @Test
+      @TestMetadata("iteratorAbstractClassOfString.kt")
+      public void testIteratorAbstractClassOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iteratorAbstractClassOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("iteratorInterface.kt")
+      public void testIteratorInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iteratorInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("iteratorInterfaceOfString.kt")
+      public void testIteratorInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/iteratorInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("listAbstractClass.kt")
+      public void testListAbstractClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/listAbstractClass.kt");
+      }
+
+      @Test
+      @TestMetadata("listAbstractClassOfString.kt")
+      public void testListAbstractClassOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/listAbstractClassOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("listInterface.kt")
+      public void testListInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/listInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("listInterfaceOfString.kt")
+      public void testListInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/listInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mapAbstractClass.kt")
+      public void testMapAbstractClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapAbstractClass.kt");
+      }
+
+      @Test
+      @TestMetadata("mapAbstractClassOfAToB.kt")
+      public void testMapAbstractClassOfAToB() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapAbstractClassOfAToB.kt");
+      }
+
+      @Test
+      @TestMetadata("mapAbstractClassOfAToT.kt")
+      public void testMapAbstractClassOfAToT() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapAbstractClassOfAToT.kt");
+      }
+
+      @Test
+      @TestMetadata("mapAbstractClassOfTToA.kt")
+      public void testMapAbstractClassOfTToA() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapAbstractClassOfTToA.kt");
+      }
+
+      @Test
+      @TestMetadata("mapEntryAbstractClass.kt")
+      public void testMapEntryAbstractClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapEntryAbstractClass.kt");
+      }
+
+      @Test
+      @TestMetadata("mapEntryAbstractClassOfAToB.kt")
+      public void testMapEntryAbstractClassOfAToB() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapEntryAbstractClassOfAToB.kt");
+      }
+
+      @Test
+      @TestMetadata("mapEntryAbstractClassOfString.kt")
+      public void testMapEntryAbstractClassOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapEntryAbstractClassOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mapEntryInterface.kt")
+      public void testMapEntryInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapEntryInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mapEntryInterfaceOfString.kt")
+      public void testMapEntryInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapEntryInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("mapInterface.kt")
+      public void testMapInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("mapInterfaceOfString.kt")
+      public void testMapInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/mapInterfaceOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("setAbstractClass.kt")
+      public void testSetAbstractClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/setAbstractClass.kt");
+      }
+
+      @Test
+      @TestMetadata("setAbstractClassOfString.kt")
+      public void testSetAbstractClassOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/setAbstractClassOfString.kt");
+      }
+
+      @Test
+      @TestMetadata("setInterface.kt")
+      public void testSetInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/setInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("setInterfaceOfString.kt")
+      public void testSetInterfaceOfString() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/setInterfaceOfString.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/facades")
   @TestDataPath("$PROJECT_ROOT")
   public class Facades {
