@@ -172,8 +172,6 @@ internal class SymbolLightMethodWrapperForMappedClass(
         return result
     }
 
-    // TODO remove PSI access
-    override fun toString(): String {
-        return "$javaClass:$name${parameterList.parameters.map { it.type }.joinToString(prefix = "(", postfix = ")", separator = ", ")}"
-    }
+    override fun toString(): String =
+        "${this::class.simpleName.orEmpty()}:$name"
 }
