@@ -57,7 +57,8 @@ private class ObjCProtocolImpl(
         name: String,
         override val binaryName: String?,
         override val location: Location,
-        override val isForwardDeclaration: Boolean
+        override val isForwardDeclaration: Boolean,
+        override val swiftName: String? = null
 ) : ObjCProtocol(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
@@ -69,7 +70,8 @@ private class ObjCClassImpl(
         override val location: Location,
         override val isForwardDeclaration: Boolean,
         override val binaryName: String?,
-        override val typeParameters: List<String> = emptyList<String>()
+        override val typeParameters: List<String> = emptyList<String>(),
+        override val swiftName: String? = null
 ) : ObjCClass(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
@@ -435,11 +437,11 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     location = getLocation(cursor),
                     isForwardDeclaration = false,
                     binaryName = getObjCBinaryName(cursor).takeIf { it != name },
-                    typeParameters = parameters
+                    typeParameters = parameters,
+                    swiftName = readSwiftName(cursor)
             )
         }) { objcClass ->
             addChildrenToObjCContainer(cursor, objcClass)
-            objcClass.swiftName = readSwiftName(cursor)
             if (name in this.library.objCClassesIncludingCategories) {
                 // We don't include methods from categories to class during indexing
                 // because indexing does not care about how class is represented in Kotlin.
@@ -509,14 +511,14 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
         return objCProtocolRegistry.getOrPut(cursor, {
             ObjCProtocolImpl(
-                    name,
+                    name = name,
                     binaryName = binaryName,
-                    getLocation(cursor),
-                    isForwardDeclaration = false
+                    location = getLocation(cursor),
+                    isForwardDeclaration = false,
+                    swiftName = readSwiftName(cursor)
             )
         }) {
             addChildrenToObjCContainer(cursor, it)
-            it.swiftName = readSwiftName(cursor)
         }
     }
 
@@ -1045,8 +1047,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     }
 
                     if (getter != null) {
-                        val property = ObjCProperty(entityName!!, getter, setter)
-                        property.swiftName = readSwiftName(cursor)
+                        val property = ObjCProperty(entityName!!, getter, setter, readSwiftName(cursor))
                         val objCContainer: ObjCContainerImpl? = when (container.kind) {
                             CXCursorKind.CXCursor_ObjCCategoryDecl -> getObjCCategoryAt(container)
                             CXCursorKind.CXCursor_ObjCInterfaceDecl -> getObjCClassAt(container)
@@ -1149,9 +1150,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0),
                 isExplicitlyDesignatedInitializer = hasAttribute(cursor, OBJC_DESIGNATED_INITIALIZER),
                 isDirect = hasAttribute(cursor, OBJC_DIRECT),
-        ).apply {
-            swiftName = readSwiftName(cursor)
-        }
+                swiftName = readSwiftName(cursor)
+        )
     }
 
     // TODO: unavailable declarations should be imported as deprecated.
