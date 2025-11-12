@@ -38,7 +38,7 @@ void resumeTheWorld(GCHandle gcHandle) noexcept;
 
 ManuallyScoped<HotReloader> globalDataInstance{};
 
-constexpr std::set<std::string_view> NON_RELOADABLE_CLASS_SYMBOLS = {
+const std::set<std::string_view> NON_RELOADABLE_CLASS_SYMBOLS = {
     "kclass:kotlin.Annotation"
 };
 
