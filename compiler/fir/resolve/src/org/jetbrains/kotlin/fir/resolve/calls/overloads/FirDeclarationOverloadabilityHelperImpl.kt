@@ -123,8 +123,12 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
                 declaration.resolvedReceiverType?.let { add(it) }
                 valueParameters.mapTo(this) { it.resolvedReturnType }
             },
+            contextParameterTypes = buildSet {
+                if (!ignoreContextParameters) {
+                    declaration.contextParameterSymbols.mapTo(this) { it.resolvedReturnType }
+                }
+            },
             hasExtensionReceiver = declaration.receiverParameterSymbol != null,
-            contextReceiverCount = if (ignoreContextParameters) 0 else declaration.contextParameterSymbols.size,
             hasVarargs = valueParameters.any { it.isVararg },
             numDefaults = 0,
             isExpect = declaration.isExpect,
@@ -144,8 +148,8 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
             valueParameterTypes = buildList<KotlinTypeMarker> {
                 valueParameters.mapTo(this) { it.resolvedReturnType }
             },
+            contextParameterTypes = emptySet(), // ignore context parameters
             hasExtensionReceiver = false,
-            contextReceiverCount = 0,
             hasVarargs = valueParameters.any { it.isVararg },
             numDefaults = 0,
             isExpect = declaration.isExpect,

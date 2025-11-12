@@ -12,6 +12,6 @@ FILE: optional.kt
     }
     public final fun test(): R|kotlin/Unit| {
         R|/foo|()
-        context(R|/A.A|()) R|/foo|()
+        <Ambiguity: foo, [/foo, /foo]>#(R|/A.A|())
         R|/foo|(R|/A.A|(), Int(2))
     }

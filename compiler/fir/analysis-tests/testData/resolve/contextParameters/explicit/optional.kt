@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
 // LANGUAGE: +ContextParameters +ExplicitContextArguments
 
@@ -9,7 +9,7 @@ fun foo(a: A = A(), x: Int = 1) { }
 
 fun test() {
     foo()
-    foo(a = A())
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(a = A())
     foo(a = A(), x = 2)
 }
 

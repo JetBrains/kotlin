@@ -24,29 +24,29 @@ class FlatSignature<out T> constructor(
     val origin: T,
     val typeParameters: Collection<TypeParameterMarker>,
     val hasExtensionReceiver: Boolean,
-    val contextReceiverCount: Int,
     val hasVarargs: Boolean,
     val numDefaults: Int,
     val isExpect: Boolean,
     val isSyntheticMember: Boolean,
     val valueParameterTypes: List<TypeWithConversion?>,
-    val hasContext: Boolean = contextReceiverCount > 0
+    val contextParameterTypes: Set<KotlinTypeMarker?>,
 ) {
     val isGeneric = typeParameters.isNotEmpty()
+    val contextReceiverCount: Int get() = contextParameterTypes.size
 
     constructor(
         origin: T,
         typeParameters: Collection<TypeParameterMarker>,
         valueParameterTypes: List<KotlinTypeMarker?>,
+        contextParameterTypes: Set<KotlinTypeMarker?>,
         hasExtensionReceiver: Boolean,
-        contextReceiverCount: Int,
         hasVarargs: Boolean,
         numDefaults: Int,
         isExpect: Boolean,
         isSyntheticMember: Boolean,
     ) : this(
-        origin, typeParameters, hasExtensionReceiver, contextReceiverCount, hasVarargs, numDefaults, isExpect,
-        isSyntheticMember, valueParameterTypes.map(::TypeWithConversion)
+        origin, typeParameters, hasExtensionReceiver, hasVarargs, numDefaults, isExpect,
+        isSyntheticMember, valueParameterTypes.map(::TypeWithConversion), contextParameterTypes
     )
 
     companion object
