@@ -119,6 +119,8 @@ object BinaryOptions : BinaryOptionRegistry() {
      * Generate a macOS Catalyst binary for the given architecture
      */
     val macabi by booleanOption()
+
+    val enableHair by booleanOption()
 }
 
 open class BinaryOption<T : Any>(
