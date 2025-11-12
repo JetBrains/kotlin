@@ -267,8 +267,5 @@ open class IrPluginContextImpl(
         override fun referenceProperties(callableId: CallableId, fromFile: IrFile): Collection<IrPropertySymbol> {
             return this@IrPluginContextImpl.referenceProperties(callableId)
         }
-
-        @K2IrPluginContext.InternalApi
-        override fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile) {}
     }
 }
