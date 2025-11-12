@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibili
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isWasmKotlinTest
 import org.jetbrains.kotlin.library.isWasmStdlib
-import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 object WasmLibrarySpecialCompatibilityChecker : LibrarySpecialCompatibilityChecker() {
     override fun shouldCheckLibrary(library: KotlinLibrary) = library.isWasmStdlib || library.isWasmKotlinTest
@@ -20,10 +19,19 @@ object WasmLibrarySpecialCompatibilityChecker : LibrarySpecialCompatibilityCheck
             library.isWasmKotlinTest -> "kotlin-test"
             else -> null
         }
-        return runUnless(libraryVersion == compilerVersion) {
-            "The version of the Kotlin/Wasm $libraryDisplayName library ($libraryVersion) differs from the version of the compiler ($compilerVersion).\n" +
-                    "Please, make sure that the $libraryDisplayName library has the same version as the compiler. " +
-                    "Adjust your project's settings if necessary."
+
+        val rootCause = when {
+            libraryVersion < compilerVersion ->
+                "The Kotlin/Wasm $libraryDisplayName library has an older version ($libraryVersion) than the compiler ($compilerVersion). Such a configuration is not supported."
+
+            !libraryVersion.hasSameLanguageVersion(compilerVersion) ->
+                "The Kotlin/Wasm $libraryDisplayName library has a more recent version ($libraryVersion) than the compiler supports. The compiler version is $compilerVersion."
+
+            else -> return null
         }
+
+        return "$rootCause\nPlease, make sure that the $libraryDisplayName library has the version in the range " +
+                "[${compilerVersion.toComparableVersionString()} .. ${compilerVersion.toLanguageVersionString()}.${KotlinVersion.MAX_COMPONENT_VALUE}]. " +
+                "Adjust your project's settings if necessary."
     }
 }

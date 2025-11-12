@@ -22,20 +22,18 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 
 abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
 
-    fun testJsSameBasicCompilerVersion() = testSameBasicCompilerVersion(isWasm = false)
-
-    fun testWasmSameBasicCompilerVersion() = testSameBasicCompilerVersion(isWasm = true)
-
-    private fun testSameBasicCompilerVersion(isWasm: Boolean) {
+    fun testSameBasicCompilerVersion() {
         for (versionsWithSameBasicVersion in SORTED_TEST_VERSION_GROUPS) {
             for (libraryVersion in versionsWithSameBasicVersion) {
                 for (compilerVersion in versionsWithSameBasicVersion) {
-                    compileDummyLibrary(
-                        libraryVersion = libraryVersion,
-                        compilerVersion = compilerVersion,
-                        isWasm = isWasm,
-                        expectedWarningStatus = WarningStatus.NO_WARNINGS
-                    )
+                    for (isWasm in listOf(false, true)) {
+                        compileDummyLibrary(
+                            libraryVersion = libraryVersion,
+                            compilerVersion = compilerVersion,
+                            isWasm = isWasm,
+                            expectedWarningStatus = WarningStatus.NO_WARNINGS
+                        )
+                    }
                 }
             }
         }
@@ -64,16 +62,26 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         }
     }
 
-    fun testWasmMismatchingVersions() {
+    fun testWasmNewerCompilerVersion() {
         testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
-            for ((libraryVersion, compilerVersion) in listOf(currentVersion to nextVersion, nextVersion to currentVersion)) {
-                compileDummyLibrary(
-                    libraryVersion = libraryVersion,
-                    compilerVersion = compilerVersion,
-                    isWasm = true,
-                    expectedWarningStatus = WarningStatus.WASM_WARNING
-                )
-            }
+            compileDummyLibrary(
+                libraryVersion = currentVersion,
+                compilerVersion = nextVersion,
+                isWasm = true,
+                expectedWarningStatus = WarningStatus.WASM_OLD_LIBRARY_WARNING
+            )
+        }
+    }
+
+    fun testWasmOlderCompilerVersion() {
+        testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
+            val sameLanguageVersion = haveSameLanguageVersion(currentVersion, nextVersion)
+            compileDummyLibrary(
+                libraryVersion = nextVersion,
+                compilerVersion = currentVersion,
+                isWasm = true,
+                expectedWarningStatus = if (sameLanguageVersion) WarningStatus.NO_WARNINGS else WarningStatus.WASM_TOO_NEW_LIBRARY_WARNING
+            )
         }
     }
 
@@ -130,7 +138,8 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
 
     protected abstract fun MessageCollectorImpl.hasJsOldLibraryError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
     protected abstract fun MessageCollectorImpl.hasJsTooNewLibraryError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
-    protected abstract fun MessageCollectorImpl.hasWasmError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
+    protected abstract fun MessageCollectorImpl.hasWasmOldLibraryError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
+    protected abstract fun MessageCollectorImpl.hasWasmTooNewLibraryError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
 
     private fun MessageCollectorImpl.checkMessage(
         expectedWarningStatus: WarningStatus,
@@ -138,10 +147,11 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         compilerVersion: TestVersion?,
     ) {
         val success = when (expectedWarningStatus) {
-            WarningStatus.NO_WARNINGS -> !hasJsOldLibraryError() && !hasJsTooNewLibraryError() && !hasWasmError()
+            WarningStatus.NO_WARNINGS -> !hasJsOldLibraryError() && !hasJsTooNewLibraryError() && !hasWasmOldLibraryError() && !hasWasmTooNewLibraryError()
             WarningStatus.JS_OLD_LIBRARY_WARNING -> hasJsOldLibraryError(libraryVersion!! to compilerVersion!!)
             WarningStatus.JS_TOO_NEW_LIBRARY_WARNING -> hasJsTooNewLibraryError(libraryVersion!! to compilerVersion!!)
-            WarningStatus.WASM_WARNING -> hasWasmError(libraryVersion!! to compilerVersion!!)
+            WarningStatus.WASM_OLD_LIBRARY_WARNING -> hasWasmOldLibraryError(libraryVersion!! to compilerVersion!!)
+            WarningStatus.WASM_TOO_NEW_LIBRARY_WARNING -> hasWasmTooNewLibraryError(libraryVersion!! to compilerVersion!!)
         }
         if (!success) fail(
             buildString {
@@ -197,7 +207,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     private fun createFakeUnzippedLibraryWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
         val rawVersion = version?.toString()
 
-        val patchedLibraryDir = createDir("dependencies/fakeLib-${rawVersion ?: "unknown"}")
+        val patchedLibraryDir = createDir("dependencies/fakeLib-${rawVersion ?: "unknown"}-${if (isWasm) "wasm" else "js"}")
         val manifestFile = patchedLibraryDir.resolve("default").resolve("manifest")
         if (manifestFile.exists()) return patchedLibraryDir
 
@@ -229,7 +239,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     private fun createFakeZippedLibraryWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
         val rawVersion = version?.toString()
 
-        val patchedLibraryFile = createFile("dependencies/fakeLib-${rawVersion ?: "unknown"}.klib")
+        val patchedLibraryFile = createFile("dependencies/fakeLib-${rawVersion ?: "unknown"}-${if (isWasm) "wasm" else "js"}.klib")
         if (patchedLibraryFile.exists()) return patchedLibraryFile
 
         val unzippedLibraryDir = createFakeUnzippedLibraryWithSpecificVersion(isWasm, version)
@@ -251,7 +261,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     protected fun createDir(name: String): File = tmpdir.resolve(name).apply { mkdirs() }
     protected fun createFile(name: String): File = tmpdir.resolve(name).apply { parentFile.mkdirs() }
 
-    protected enum class WarningStatus { NO_WARNINGS, JS_OLD_LIBRARY_WARNING, JS_TOO_NEW_LIBRARY_WARNING, WASM_WARNING }
+    protected enum class WarningStatus { NO_WARNINGS, JS_OLD_LIBRARY_WARNING, JS_TOO_NEW_LIBRARY_WARNING, WASM_OLD_LIBRARY_WARNING, WASM_TOO_NEW_LIBRARY_WARNING }
 
     protected class TestVersion(val basicVersion: KotlinVersion, val postfix: String) : Comparable<TestVersion> {
         constructor(major: Int, minor: Int, patch: Int, postfix: String = "") : this(KotlinVersion(major, minor, patch), postfix)

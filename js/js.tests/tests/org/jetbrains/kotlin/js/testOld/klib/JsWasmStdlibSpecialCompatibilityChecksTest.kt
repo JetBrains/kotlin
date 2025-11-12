@@ -28,9 +28,17 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityCh
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
 
-    override fun MessageCollectorImpl.hasWasmError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
-        val stdlibMessagePart = "The version of the Kotlin/Wasm standard library" + specificVersions?.first?.let { " ($it)" }.orEmpty()
-        val compilerMessagePart = "differs from the version of the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
+    override fun MessageCollectorImpl.hasWasmOldLibraryError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
+        val stdlibMessagePart = "Kotlin/Wasm standard library has an older version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
+        val compilerMessagePart = "than the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
+
+        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
+    }
+
+    override fun MessageCollectorImpl.hasWasmTooNewLibraryError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
+        val stdlibMessagePart =
+            "The Kotlin/Wasm standard library has a more recent version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
+        val compilerMessagePart = "The compiler version is " + specificVersions?.second?.toString().orEmpty()
 
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
