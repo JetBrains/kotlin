@@ -5,20 +5,27 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.js
 
-import org.jetbrains.kotlin.backend.common.extensions.*
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.buildValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 private const val KOTLIN = "kotlin"
@@ -56,7 +63,7 @@ internal fun buildCall(
 internal fun IrFactory.buildBlockBody(statements: List<IrStatement>) =
     createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, statements)
 
-internal fun IrPluginContext.buildSetField(
+internal fun K2IrPluginContext.buildSetField(
     symbol: IrFieldSymbol,
     receiver: IrExpression?,
     value: IrExpression,
@@ -110,7 +117,7 @@ internal fun buildGetValue(
         symbol
     )
 
-internal fun IrPluginContext.buildConstNull() = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.anyNType)
+internal fun K2IrPluginContext.buildConstNull() = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.anyNType)
 
 internal fun IrExpression.isConstNull() = this is IrConst && this.kind.asString == "Null"
 
@@ -119,19 +126,19 @@ internal fun IrField.setterName() = "<set-${name.asString()}>"
 
 internal fun IrValueParameter.capture() = buildGetValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol)
 
-internal fun IrPluginContext.buildGetterType(valueType: IrType): IrSimpleType =
+internal fun K2IrPluginContext.buildGetterType(valueType: IrType): IrSimpleType =
     buildSimpleType(
         irBuiltIns.functionN(0).symbol,
         listOf(valueType)
     )
 
-internal fun IrPluginContext.buildSetterType(valueType: IrType): IrSimpleType =
+internal fun K2IrPluginContext.buildSetterType(valueType: IrType): IrSimpleType =
     buildSimpleType(
         irBuiltIns.functionN(1).symbol,
         listOf(valueType, irBuiltIns.unitType)
     )
 
-private fun IrPluginContext.buildSetField(backingField: IrField, ownerClass: IrExpression?, value: IrGetValue): IrSetField {
+private fun K2IrPluginContext.buildSetField(backingField: IrField, ownerClass: IrExpression?, value: IrGetValue): IrSetField {
     val receiver = if (ownerClass is IrTypeOperatorCall) ownerClass.argument as IrGetValue else ownerClass
     return buildSetField(
         symbol = backingField.symbol,
@@ -148,7 +155,7 @@ private fun buildGetField(backingField: IrField, ownerClass: IrExpression?): IrG
     )
 }
 
-private fun IrPluginContext.buildDefaultPropertyAccessor(name: String): IrSimpleFunction =
+private fun K2IrPluginContext.buildDefaultPropertyAccessor(name: String): IrSimpleFunction =
     irFactory.buildFun {
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
@@ -158,11 +165,12 @@ private fun IrPluginContext.buildDefaultPropertyAccessor(name: String): IrSimple
         this.name = Name.identifier(name)
     }
 
-internal fun IrPluginContext.buildArrayElementAccessor(
+internal fun K2IrPluginContext.buildArrayElementAccessor(
     arrayField: IrField,
     arrayGetter: IrCall,
     index: IrExpression,
-    isSetter: Boolean
+    isSetter: Boolean,
+    fromFile: IrFile,
 ): IrExpression {
     val valueType = arrayField.type
     val functionType = if (isSetter) buildSetterType(valueType) else buildGetterType(valueType)
@@ -174,7 +182,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
         body = irFactory.buildBlockBody(
             listOf(
                 if (isSetter) {
-                    val setSymbol = referenceFunction(referenceArrayClass(arrayField.type as IrSimpleType), SET)
+                    val setSymbol = referenceFunction(referenceArrayClass(arrayField.type as IrSimpleType, fromFile), SET, fromFile)
                     buildCall(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         target = setSymbol,
@@ -184,7 +192,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                     )
                 } else {
                     val getField = buildGetField(arrayField, arrayGetter.dispatchReceiver)
-                    val getSymbol = referenceFunction(referenceArrayClass(arrayField.type as IrSimpleType), GET)
+                    val getSymbol = referenceFunction(referenceArrayClass(arrayField.type as IrSimpleType, fromFile), GET, fromFile)
                     buildCall(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         target = getSymbol,
@@ -205,7 +213,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
     )
 }
 
-internal fun IrPluginContext.buildFieldAccessor(
+internal fun K2IrPluginContext.buildFieldAccessor(
     field: IrField,
     dispatchReceiver: IrExpression?,
     isSetter: Boolean
@@ -241,37 +249,43 @@ internal fun IrCall.getBackingField(): IrField =
         propertySymbol.owner.backingField ?: error("Property expected to have backing field")
     } ?: error("Atomic property accessor ${this.render()} expected to have non-null correspondingPropertySymbol")
 
-internal fun IrPluginContext.referencePackageFunction(
+internal fun K2IrPluginContext.referencePackageFunction(
     packageName: String,
     name: String,
+    fromFile: IrFile,
     predicate: (IrFunctionSymbol) -> Boolean = { true }
 ): IrSimpleFunctionSymbol = try {
-    referenceFunctions(CallableId(FqName(packageName), Name.identifier(name))).single(predicate)
+    referenceFunctions(CallableId(FqName(packageName), Name.identifier(name)), fromFile).single(predicate)
 } catch (e: RuntimeException) {
     error("Exception while looking for the function `$name` in package `$packageName`: ${e.message}")
 }
 
-internal fun IrPluginContext.referenceFunction(classSymbol: IrClassSymbol, functionName: String): IrSimpleFunctionSymbol {
+internal fun K2IrPluginContext.referenceFunction(
+    classSymbol: IrClassSymbol,
+    functionName: String,
+    fromFile: IrFile,
+): IrSimpleFunctionSymbol {
     val functionId = CallableId(FqName("$KOTLIN.${classSymbol.owner.name}"), Name.identifier(functionName))
     return try {
-        referenceFunctions(functionId).single()
+        referenceFunctions(functionId, fromFile).single()
     } catch (e: RuntimeException) {
         error("Exception while looking for the function `$functionId`: ${e.message}")
     }
 }
 
-private fun IrPluginContext.referenceArrayClass(irType: IrSimpleType): IrClassSymbol {
+private fun K2IrPluginContext.referenceArrayClass(irType: IrSimpleType, fromFile: IrFile): IrClassSymbol {
     val jsArrayName = irType.getArrayClassClassId()
-    return referenceClass(jsArrayName) ?: error("Array class $jsArrayName was not found in the context")
+    return referenceClass(jsArrayName, fromFile) ?: error("Array class $jsArrayName was not found in the context")
 }
 
-internal fun IrPluginContext.getArrayConstructorSymbol(
+internal fun K2IrPluginContext.getArrayConstructorSymbol(
     irType: IrSimpleType,
+    fromFile: IrFile,
     predicate: (IrConstructorSymbol) -> Boolean = { true }
 ): IrConstructorSymbol {
     val jsArrayName = irType.getArrayClassClassId()
     return try {
-        referenceConstructors(jsArrayName).single(predicate)
+        referenceConstructors(jsArrayName, fromFile).single(predicate)
     } catch (_: RuntimeException) {
         error("Array constructor $jsArrayName matching the predicate was not found in the context")
     }

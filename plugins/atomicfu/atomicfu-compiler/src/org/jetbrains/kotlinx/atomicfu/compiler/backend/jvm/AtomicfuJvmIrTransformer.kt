@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.irBlockBody
@@ -23,7 +23,7 @@ import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTr
 
 class AtomicfuJvmIrTransformer(
     override val atomicfuSymbols: JvmAtomicSymbols,
-    pluginContext: IrPluginContext
+    pluginContext: K2IrPluginContext
 ) : AbstractAtomicfuTransformer(pluginContext) {
 
     override val atomicfuPropertyTransformer: AtomicPropertiesTransformer = JvmAtomicPropertiesTransformer()

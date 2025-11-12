@@ -6,11 +6,13 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.extensions
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -24,10 +26,12 @@ import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.JvmAtomicSymbols
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.native.AtomicfuNativeIrTransformer
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.native.NativeAtomicSymbols
 
-public open class AtomicfuLoweringExtension : IrGenerationExtension {
+open class AtomicfuLoweringExtension : IrGenerationExtension {
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {}
+
     override fun generate(
         moduleFragment: IrModuleFragment,
-        pluginContext: IrPluginContext
+        pluginContext: K2IrPluginContext
     ) {
         val platform = pluginContext.platform
         when {
@@ -45,7 +49,7 @@ public open class AtomicfuLoweringExtension : IrGenerationExtension {
 }
 
 private class AtomicfuClassLowering(
-    val context: IrPluginContext
+    val context: K2IrPluginContext
 ) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (context.platform.isJs()) {

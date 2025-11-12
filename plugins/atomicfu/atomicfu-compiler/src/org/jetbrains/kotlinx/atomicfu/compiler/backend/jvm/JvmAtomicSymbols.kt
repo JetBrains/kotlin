@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -25,14 +25,13 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicHandlerType
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicSymbols
 
 class JvmAtomicSymbols(
-    context: IrPluginContext,
+    context: K2IrPluginContext,
     moduleFragment: IrModuleFragment
 ) : AbstractAtomicSymbols(context, moduleFragment) {
 
@@ -42,8 +41,7 @@ class JvmAtomicSymbols(
     private val javaLangClass: IrClassSymbol = createClass(javaLang, "Class", ClassKind.CLASS, Modality.FINAL)
 
     override val volatileAnnotationClass: IrClass
-        get() = context.referenceClass(ClassId(FqName("kotlin.jvm"), Name.identifier("Volatile")))?.owner
-            ?: error("kotlin.jvm.Volatile class is not found")
+        get() = referenceClass(FqName("kotlin.jvm"), "Volatile").owner
 
     // java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     val javaAtomicIntegerFieldUpdaterClass: IrClassSymbol by lazy {
@@ -99,21 +97,25 @@ class JvmAtomicSymbols(
         atomicUpdaterClassSymbol.getSimpleFunction("newUpdater")
             ?: error("No newUpdater function was found for ${atomicUpdaterClassSymbol.owner.render()} ")
 
-    private val BOXED_ATOMIC_TYPES = setOf(
-        javaAtomicIntegerClass,
-        javaAtomicLongClass,
-        javaAtomicBooleanClass,
-        javaAtomicReferenceClass
-    )
+    private val BOXED_ATOMIC_TYPES by lazy {
+        setOf(
+            javaAtomicIntegerClass,
+            javaAtomicLongClass,
+            javaAtomicBooleanClass,
+            javaAtomicReferenceClass
+        )
+    }
 
-    private val ATOMIC_FIELD_UPDATER_TYPES = setOf(
-        javaAtomicIntegerFieldUpdaterClass,
-        javaAtomicLongFieldUpdaterClass,
-        javaAtomicRefFieldUpdaterClass
-    )
+    private val ATOMIC_FIELD_UPDATER_TYPES by lazy {
+        setOf(
+            javaAtomicIntegerFieldUpdaterClass,
+            javaAtomicLongFieldUpdaterClass,
+            javaAtomicRefFieldUpdaterClass
+        )
+    }
 
-    fun isAtomicFieldUpdaterHandlerType(type: IrType) = type.classOrNull in ATOMIC_FIELD_UPDATER_TYPES
-    fun isBoxedAtomicHandlerType(type: IrType) = type.classOrNull in BOXED_ATOMIC_TYPES
+    fun isAtomicFieldUpdaterHandlerType(type: IrType): Boolean = type.classOrNull in ATOMIC_FIELD_UPDATER_TYPES
+    fun isBoxedAtomicHandlerType(type: IrType): Boolean = type.classOrNull in BOXED_ATOMIC_TYPES
 
     fun javaFUClassSymbol(valueType: IrType): IrClassSymbol =
         when {

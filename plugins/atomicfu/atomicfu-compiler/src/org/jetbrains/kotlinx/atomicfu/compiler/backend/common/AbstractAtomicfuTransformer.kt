@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.common
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
-import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -23,17 +22,15 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
-import kotlin.collections.plus
 
-abstract class AbstractAtomicfuTransformer(
-    val pluginContext: IrPluginContext,
-) {
+abstract class AbstractAtomicfuTransformer(val pluginContext: K2IrPluginContext) {
     companion object {
         internal const val VOLATILE = "\$volatile"
         internal const val ATOMICFU = "atomicfu"
@@ -81,32 +78,42 @@ abstract class AbstractAtomicfuTransformer(
 
     private fun transformAtomicProperties(moduleFragment: IrModuleFragment) {
         for (irFile in moduleFragment.files) {
-            irFile.transform(atomicfuPropertyTransformer, null)
+            atomicfuSymbols.withFile(irFile) {
+                irFile.transform(atomicfuPropertyTransformer, null)
+            }
         }
     }
 
     private fun transformAtomicExtensions(moduleFragment: IrModuleFragment) {
         for (irFile in moduleFragment.files) {
-            irFile.transform(atomicfuExtensionsTransformer, null)
+            atomicfuSymbols.withFile(irFile) {
+                irFile.transform(atomicfuExtensionsTransformer, null)
+            }
         }
     }
 
     private fun transformAtomicFunctions(moduleFragment: IrModuleFragment) {
         for (irFile in moduleFragment.files) {
-            irFile.transform(atomicfuFunctionCallTransformer, null)
+            atomicfuSymbols.withFile(irFile) {
+                irFile.transform(atomicfuFunctionCallTransformer, null)
+            }
         }
     }
 
     private fun remapValueParameters(moduleFragment: IrModuleFragment) {
         for (irFile in moduleFragment.files) {
-            irFile.transform(RemapValueParameters(), null)
+            atomicfuSymbols.withFile(irFile) {
+                irFile.transform(RemapValueParameters(), null)
+            }
         }
     }
 
     private fun finalTransformationCheck(moduleFragment: IrModuleFragment) {
         val finalTransformationChecker = FinalTransformationChecker()
         for (irFile in moduleFragment.files) {
-            irFile.accept(finalTransformationChecker, null)
+            atomicfuSymbols.withFile(irFile) {
+                irFile.accept(finalTransformationChecker, null)
+            }
         }
     }
 

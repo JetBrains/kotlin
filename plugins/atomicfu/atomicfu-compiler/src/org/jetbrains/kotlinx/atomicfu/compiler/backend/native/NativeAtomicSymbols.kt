@@ -5,80 +5,88 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.native
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.types.isLong
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicSymbols
 
 class NativeAtomicSymbols(
-    context: IrPluginContext,
-    moduleFragment: IrModuleFragment
+    context: K2IrPluginContext,
+    moduleFragment: IrModuleFragment,
 ) : AbstractAtomicSymbols(context, moduleFragment) {
 
     private val kotlinConcurrentPackageFqName = FqName("kotlin.concurrent")
 
     override val volatileAnnotationClass: IrClass
-        get() = context.referenceClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("Volatile")))?.owner
-            ?: error("kotlin.concurrent.Volatile class is not found")
+        get() = referenceClass(kotlinConcurrentPackageFqName, "Volatile").owner
 
     // kotlin.concurrent.AtomicIntArray
-    override val atomicIntArrayClassSymbol: IrClassSymbol by lazy {
-        context.referenceClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("AtomicIntArray")))
-            ?: error("kotlin.concurrent.AtomicIntArray is not found")
-    }
+    override val atomicIntArrayClassSymbol: IrClassSymbol
+        get() = referenceClass(kotlinConcurrentPackageFqName, "AtomicIntArray")
 
     // kotlin.concurrent.AtomicLongArray
-    override val atomicLongArrayClassSymbol: IrClassSymbol by lazy {
-        context.referenceClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("AtomicLongArray")))
-            ?: error("kotlin.concurrent.AtomicLongArray is not found")
-    }
+    override val atomicLongArrayClassSymbol: IrClassSymbol
+        get() = referenceClass(kotlinConcurrentPackageFqName, "AtomicLongArray")
 
     // kotlin.concurrent.AtomicArray
-    override val atomicRefArrayClassSymbol: IrClassSymbol by lazy {
-        context.referenceClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("AtomicArray")))
-            ?: error("kotlin.concurrent.AtomicArray is not found")
-    }
+    override val atomicRefArrayClassSymbol: IrClassSymbol
+        get() = referenceClass(kotlinConcurrentPackageFqName, "AtomicArray")
 
     // Intrinsics for atomic update of volatile properties
 
-    val nativeAtomicGetFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("atomicGetField"))).single()
-    }
-    val nativeAtomicSetFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("atomicSetField"))).single()
-    }
-    val nativeCompareAndSetFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("compareAndSetField"))).single()
-    }
-    val nativeGetAndSetFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndSetField"))).single()
-    }
-    val nativeGetAndAddIntFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndAddField")))
-            .single { it.owner.returnType.isInt() }
-    }
-    val nativeGetAndAddLongFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndAddField")))
-            .single { it.owner.returnType.isLong() }
-    }
-    val intPlusOperator by lazy {
-        context.referenceFunctions(CallableId(StandardClassIds.Int, Name.identifier("plus")))
-            .single { it.owner.parameters.size == 2 && it.owner.parameters.last().type.isInt() }
-    }
-    val longPlusOperator by lazy {
-        context.referenceFunctions(CallableId(StandardClassIds.Long, Name.identifier("plus")))
-            .single { it.owner.parameters.size == 2 && it.owner.parameters.last().type.isLong() }
-    }
+    val nativeAtomicGetFieldIntrinsic: IrSimpleFunctionSymbol
+        get() = referenceFunction(CallableId(kotlinConcurrentPackageFqName, Name.identifier("atomicGetField")))
 
-    fun isVolatilePropertyReferenceGetter(type: IrType) = type.classOrNull == irBuiltIns.functionN(0).symbol
+    val nativeAtomicSetFieldIntrinsic: IrSimpleFunctionSymbol
+        get() = referenceFunction(CallableId(kotlinConcurrentPackageFqName, Name.identifier("atomicSetField")))
 
-    override fun createBuilder(symbol: IrSymbol) =
+    val nativeCompareAndSetFieldIntrinsic: IrSimpleFunctionSymbol
+        get() = referenceFunction(CallableId(kotlinConcurrentPackageFqName, Name.identifier("compareAndSetField")))
+
+    val nativeGetAndSetFieldIntrinsic: IrSimpleFunctionSymbol
+        get() = referenceFunction(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndSetField")))
+
+    val nativeGetAndAddIntFieldIntrinsic: IrSimpleFunctionSymbol
+        get() = referenceFunction(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndAddField"))) {
+            it.owner.returnType.isInt()
+        }
+
+    val nativeGetAndAddLongFieldIntrinsic: IrSimpleFunctionSymbol
+        get() = referenceFunction(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndAddField"))) {
+            it.owner.returnType.isLong()
+        }
+
+    val intPlusOperator: IrSimpleFunctionSymbol
+        get() = referenceFunction(CallableId(StandardClassIds.Int, Name.identifier("plus"))) {
+            it.owner.parameters.size == 2 && it.owner.parameters.last().type.isInt()
+        }
+
+    val longPlusOperator: IrSimpleFunctionSymbol
+        get() = referenceFunction(CallableId(StandardClassIds.Long, Name.identifier("plus"))) {
+            it.owner.parameters.size == 2 && it.owner.parameters.last().type.isLong()
+        }
+
+
+    fun isVolatilePropertyReferenceGetter(type: IrType): Boolean = type.classOrNull == irBuiltIns.functionN(0).symbol
+
+    override fun createBuilder(symbol: IrSymbol): NativeAtomicfuIrBuilder =
         NativeAtomicfuIrBuilder(this, symbol)
+
+    private inline fun referenceFunction(
+        callableId: CallableId,
+        predicate: (IrSimpleFunctionSymbol) -> Boolean = { true },
+    ): IrSimpleFunctionSymbol {
+        return context.referenceFunctions(callableId, currentFile!!).single(predicate)
+    }
 }

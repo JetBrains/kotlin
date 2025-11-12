@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.js
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -50,7 +50,7 @@ private const val REENTRANT_LOCK_FACTORY = "reentrantLock"
 
 private var IrSimpleFunction.transformedAtomicExtension: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
-class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
+class AtomicfuJsIrTransformer(private val context: K2IrPluginContext) {
 
     private val irBuiltIns = context.irBuiltIns
 
@@ -65,8 +65,11 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
     private val ATOMIC_ARRAY_TYPES = setOf("AtomicIntArray", "AtomicLongArray", "AtomicBooleanArray", "AtomicArray")
     private val ATOMICFU_INLINE_FUNCTIONS = setOf("atomicfu_loop", "atomicfu_update", "atomicfu_getAndUpdate", "atomicfu_updateAndGet")
 
+    private lateinit var currentFile: IrFile
+
     fun transform(irFile: IrFile) {
         if (context.platform.isJs()) {
+            currentFile = irFile
             irFile.transform(AtomicExtensionTransformer(), null)
             irFile.transformChildren(AtomicTransformer(), null)
             irFile.patchDeclarationParents()
@@ -259,7 +262,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
             // val arr = AtomicIntArray(size) -> val arr = new Int32Array(size)
             if (expression.isAtomicArrayConstructor()) {
                 val arrayConstructorSymbol =
-                    context.getArrayConstructorSymbol(expression.type as IrSimpleType) { it.owner.parameters.size == 1 }
+                    context.getArrayConstructorSymbol(expression.type as IrSimpleType, currentFile) { it.owner.parameters.size == 1 }
                 val size = expression.arguments[0]
                 return IrConstructorCallImpl(
                     expression.startOffset, expression.endOffset,
@@ -363,8 +366,8 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                 val index = arguments[1]!!
                 val arrayField = arrayGetter.getBackingField()
                 listOf(
-                    context.buildArrayElementAccessor(arrayField, arrayGetter, index, false),
-                    context.buildArrayElementAccessor(arrayField, arrayGetter, index, true)
+                    context.buildArrayElementAccessor(arrayField, arrayGetter, index, isSetter = false, currentFile),
+                    context.buildArrayElementAccessor(arrayField, arrayGetter, index, isSetter = true, currentFile)
                 )
             }
 
@@ -388,7 +391,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                 "value.<set-value>" -> "setValue"
                 else -> name
             }
-            return context.referencePackageFunction(AFU_PKG, "$ATOMICFU_RUNTIME_FUNCTION_PREDICATE$functionName") {
+            return context.referencePackageFunction(AFU_PKG, "$ATOMICFU_RUNTIME_FUNCTION_PREDICATE$functionName", currentFile) {
                 val typeArg = it.owner.getGetterReturnType()
                 !(typeArg as IrType).isPrimitiveType() || typeArg == type
             }
@@ -418,7 +421,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
             }
 
         private fun IrCall.buildObjectArray(): IrCall {
-            val arrayFactorySymbol = context.referencePackageFunction("kotlin", "arrayOfNulls")
+            val arrayFactorySymbol = context.referencePackageFunction("kotlin", "arrayOfNulls", currentFile)
             val arrayElementType = typeArguments[0] ?: error("AtomicArray factory should have a type argument: ${symbol.owner.render()}")
             val size = arguments[0]
             return buildCall(

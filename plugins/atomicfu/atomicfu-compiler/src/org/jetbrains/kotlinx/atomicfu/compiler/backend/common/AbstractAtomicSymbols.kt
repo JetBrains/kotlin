@@ -5,22 +5,31 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.common
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.ir.util.getSimpleFunction
+import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.PrivateForInline
 
 abstract class AbstractAtomicSymbols(
-    val context: IrPluginContext,
+    val context: K2IrPluginContext,
     private val moduleFragment: IrModuleFragment
 ) {
     val irBuiltIns: IrBuiltIns = context.irBuiltIns
@@ -31,6 +40,26 @@ abstract class AbstractAtomicSymbols(
     abstract val atomicIntArrayClassSymbol: IrClassSymbol
     abstract val atomicLongArrayClassSymbol: IrClassSymbol
     abstract val atomicRefArrayClassSymbol: IrClassSymbol
+
+    @set:PrivateForInline
+    var currentFile: IrFile? = null
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withFile(irFile: IrFile, block: () -> T): T {
+        val previousFile = currentFile
+        currentFile = irFile
+        return try {
+            block()
+        } finally {
+            currentFile = previousFile
+        }
+    }
+
+    protected fun referenceClass(packageFqName: FqName, name: String): IrClassSymbol {
+        val classId = ClassId(packageFqName, Name.identifier(name))
+        return context.referenceClass(classId, currentFile!!)
+            ?: error("${classId.asFqNameString()} is not found")
+    }
 
     val volatileAnnotationConstructorCall: IrConstructorCall
         get() {
@@ -52,17 +81,19 @@ abstract class AbstractAtomicSymbols(
         listOf(argType, returnType)
     )
 
-    val arrayOfNulls by lazy {
-        context.referenceFunctions(CallableId(FqName("kotlin"), Name.identifier("arrayOfNulls"))).first()
-    }
+    val arrayOfNulls: IrSimpleFunctionSymbol
+        get() {
+            val callableId = CallableId(FqName("kotlin"), Name.identifier("arrayOfNulls"))
+            return context.referenceFunctions(callableId, currentFile!!).first()
+        }
 
-    private val ATOMIC_ARRAY_TYPES: Set<IrClassSymbol> by lazy {
-        setOf(
-            atomicIntArrayClassSymbol,
-            atomicLongArrayClassSymbol,
-            atomicRefArrayClassSymbol
-        )
-    }
+    private val ATOMIC_ARRAY_TYPES: Set<IrClassSymbol>
+        get() =
+            setOf(
+                atomicIntArrayClassSymbol,
+                atomicLongArrayClassSymbol,
+                atomicRefArrayClassSymbol
+            )
 
     fun isAtomicArrayHandlerType(type: IrType) = type.classOrNull in ATOMIC_ARRAY_TYPES
 
