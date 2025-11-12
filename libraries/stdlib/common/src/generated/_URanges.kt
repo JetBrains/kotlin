@@ -316,6 +316,54 @@ public infix fun UShort.downTo(to: UShort): UIntProgression {
 }
 
 /**
+ * Returns a progression from this value down to but excluding the specified [to] value with the step -1.
+ * 
+ * The [to] value should be less than `this` value.
+ * If the [to] value is equal to or greater than `this` value the returned progression is empty.
+ */
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
+public infix fun UByte.downUntil(to: UByte): UIntProgression {
+    return UIntProgression.fromClosedRange(this.toUInt(), to.toUInt() + 1u, -1)
+}
+
+/**
+ * Returns a progression from this value down to but excluding the specified [to] value with the step -1.
+ * 
+ * The [to] value should be less than `this` value.
+ * If the [to] value is equal to or greater than `this` value the returned progression is empty.
+ */
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
+public infix fun UInt.downUntil(to: UInt): UIntProgression {
+    return UIntProgression.fromClosedRange(this, to + 1u, -1)
+}
+
+/**
+ * Returns a progression from this value down to but excluding the specified [to] value with the step -1.
+ * 
+ * The [to] value should be less than `this` value.
+ * If the [to] value is equal to or greater than `this` value the returned progression is empty.
+ */
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
+public infix fun ULong.downUntil(to: ULong): ULongProgression {
+    return ULongProgression.fromClosedRange(this, to + 1u, -1L)
+}
+
+/**
+ * Returns a progression from this value down to but excluding the specified [to] value with the step -1.
+ * 
+ * The [to] value should be less than `this` value.
+ * If the [to] value is equal to or greater than `this` value the returned progression is empty.
+ */
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
+public infix fun UShort.downUntil(to: UShort): UIntProgression {
+    return UIntProgression.fromClosedRange(this.toUInt(), to.toUInt() + 1u, -1)
+}
+
+/**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 @SinceKotlin("1.5")
