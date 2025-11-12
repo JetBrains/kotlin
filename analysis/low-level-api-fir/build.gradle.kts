@@ -115,6 +115,7 @@ projectTests {
     }
 
     withJvmStdlibAndReflect()
+    withWasmRuntime()
 }
 
 allprojects {
