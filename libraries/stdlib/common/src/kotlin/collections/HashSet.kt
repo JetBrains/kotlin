@@ -5,6 +5,58 @@
 
 package kotlin.collections
 
+/**
+ * A hash table implementation of [MutableSet].
+ *
+ * This class stores unique elements using a hash table data structure that provides fast lookups
+ * and ensures no duplicate elements are stored. It fully implements the [MutableSet] contract,
+ * providing all standard Set operations including lookup, insertion, and removal.
+ *
+ * ## Hash and equality contract
+ *
+ * [HashSet] relies on the [hashCode] and [equals] functions of elements to organize and locate them.
+ * Elements are considered equal if their [equals] function returns `true`, and elements that are equal
+ * must have the same [hashCode] value. Violating this contract can lead to incorrect behavior, such as
+ * duplicate elements being stored or elements becoming unreachable.
+ *
+ * The [hashCode] and [equals] functions should be consistent and immutable during the lifetime
+ * of the element objects. Modifying an element in a way that changes its hash code or equality
+ * after it has been added to a [HashSet] may lead to the element becoming unreachable.
+ *
+ * ## Performance characteristics
+ *
+ * [HashSet] provides efficient implementation for common operations:
+ *
+ * - **Lookup** ([contains]): O(1) average case, O(n) worst case. Performance depends
+ *   on the quality of the [hashCode] function. A good hash function distributes elements uniformly,
+ *   minimizing collisions and maintaining constant-time performance.
+ * - **Insertion and removal** ([add], [remove]): O(1) average case, O(n) worst case
+ * - **Iteration**: O(n + capacity) time, where capacity is the current internal table size.
+ *   Iteration time depends on both the number of elements and the table capacity.
+ *
+ * Note: On the JS target, these time-complexity guarantees may not hold due to the underlying
+ * JavaScript engine implementation.
+ *
+ * ## Usage guidelines
+ *
+ * To optimize performance and memory usage:
+ *
+ * - If the number of elements is known in advance, use the constructor with initial capacity
+ *   to avoid multiple rehashing operations as the set grows.
+ * - Choose an appropriate load factor when creating the set. A lower load factor reduces collision
+ *   probability but uses more memory, while a higher load factor saves memory but may increase
+ *   lookup time. The default load factor typically provides a good balance.
+ * - Ensure element objects have well-distributed [hashCode] implementations to minimize collisions
+ *   and maintain good performance.
+ * - Prefer [addAll] over multiple individual [add] calls when adding multiple elements.
+ *
+ * ## Thread safety
+ *
+ * [HashSet] is not thread-safe. If multiple threads access an instance concurrently and at least
+ * one thread modifies it, external synchronization is required.
+ *
+ * @param E the type of elements contained in the set.
+ */
 public expect class HashSet<E> : MutableSet<E> {
     /**
      * Creates a new empty [HashSet].
