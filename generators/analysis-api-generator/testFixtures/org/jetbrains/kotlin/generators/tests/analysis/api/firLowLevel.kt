@@ -472,6 +472,27 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
     ) {
         fun TestGroup.TestClass.modelInit() {
             model(
+                "diagnostics/testsWithJsStdLib",
+                excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                pattern = KT_OR_KTS,
+            )
+        }
+
+        testClass<AbstractLLJsDiagnosticsTest>(suiteTestClassName = "LLJsDiagnosticsFe10TestGenerated") {
+            modelInit()
+        }
+
+        testClass<AbstractLLReversedJsDiagnosticsTest>(suiteTestClassName = "LLReversedJsDiagnosticsFe10TestGenerated") {
+            modelInit()
+        }
+    }
+
+    testGroup(
+        "analysis/low-level-api-fir/tests-gen",
+        "compiler/testData",
+    ) {
+        fun TestGroup.TestClass.modelInit() {
+            model(
                 "diagnostics/tests",
                 excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 pattern = KT_OR_KTS,
