@@ -10,6 +10,7 @@ class B
 fun foo1_1() { }
 context(a: A) fun foo1_1() { }
 
+fun example1() { foo1_1() }
 context(a: A) fun example1a() { <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo1_1<!>() }
 fun example1b1() { foo1_1(a = A()) }
 context(a: A) fun example1b2() { foo1_1(a = A()) }
