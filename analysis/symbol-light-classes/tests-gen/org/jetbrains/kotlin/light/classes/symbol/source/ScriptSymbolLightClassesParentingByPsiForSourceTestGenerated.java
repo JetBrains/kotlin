@@ -44,6 +44,46 @@ public class ScriptSymbolLightClassesParentingByPsiForSourceTestGenerated extend
     }
 
     @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/collections")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Collections {
+      @Test
+      public void testAllFilesPresentInCollections() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/collections"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/collections/mutable")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Mutable {
+        @Test
+        public void testAllFilesPresentInMutable() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/collections/mutable"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/collections/readOnly")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ReadOnly {
+        @Test
+        public void testAllFilesPresentInReadOnly() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/collections/readOnly"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/collections/valueClasses")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ValueClasses {
+        @Test
+        public void testAllFilesPresentInValueClasses() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/collections/valueClasses"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed")
     @TestDataPath("$PROJECT_ROOT")
     public class JvmExposeBoxed {
