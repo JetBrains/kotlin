@@ -245,9 +245,16 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             )
         }
 
+        val hasCollectionSupertype = hasCollectionSupertype(allSupertypes)
+
         classSymbol.delegatedMemberScope.callables.forEach { callableSymbol ->
             when (callableSymbol) {
                 is KaNamedFunctionSymbol -> {
+                    if (!hasCollectionSupertype) {
+                        createDelegateMethod(functionSymbol = callableSymbol)
+                        return@forEach
+                    }
+
                     val originalFunction = callableSymbol.fakeOverrideOriginal as? KaNamedFunctionSymbol
                     val shouldCreateRegularDelegate = processPossiblyMappedMethod(
                         containingClass = this@SymbolLightClassForClassOrObject,

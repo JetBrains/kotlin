@@ -49,7 +49,7 @@ internal fun KaSession.processOwnDeclarationsMappedSpecialSignaturesAware(
     allSupertypes: List<KaClassType>,
     result: MutableList<PsiMethod>,
 ): Sequence<KaCallableSymbol> {
-    if (allSupertypes.none { it.classId.packageFqName.startsWith(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME) }) {
+    if (!hasCollectionSupertype(allSupertypes)) {
         // The class definitely doesn't have mapped signatures
         return callableDeclarations
     }
@@ -77,6 +77,9 @@ internal fun KaSession.processOwnDeclarationsMappedSpecialSignaturesAware(
 
     return filteredDeclarations.asSequence()
 }
+
+internal fun hasCollectionSupertype(allSupertypes: List<KaClassType>): Boolean =
+    allSupertypes.any { it.classId.packageFqName.startsWith(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME) }
 
 /**
  * Processes a Kotlin function that may be mapped to a Java collection method with special signature requirements.
