@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.builders
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_MULTIPLE_API_VERSIONS_SETTING
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
@@ -50,7 +51,11 @@ class LanguageVersionSettingsBuilder {
         environmentConfigurators: List<AbstractEnvironmentConfigurator>,
         useK2: Boolean
     ) {
-        val apiVersion = directives.singleOrZeroValue(LanguageSettingsDirectives.API_VERSION)
+        val apiVersion = if (ALLOW_MULTIPLE_API_VERSIONS_SETTING in directives) {
+            directives[LanguageSettingsDirectives.API_VERSION].lastOrNull()
+        } else {
+            directives.singleOrZeroValue(LanguageSettingsDirectives.API_VERSION)
+        }
         if (apiVersion != null) {
             this.apiVersion = apiVersion
             val languageVersion = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
@@ -78,7 +83,8 @@ class LanguageVersionSettingsBuilder {
                 )
             }
             languageVersion = languageVersionDirective
-            if (languageVersion < LanguageVersion.fromVersionString(this.apiVersion.versionString)!!) {
+            if (ALLOW_MULTIPLE_API_VERSIONS_SETTING !in directives &&
+                languageVersion < LanguageVersion.fromVersionString(this.apiVersion.versionString)!!) {
                 error(
                     """
                         Language version must be larger than or equal to the API version.
