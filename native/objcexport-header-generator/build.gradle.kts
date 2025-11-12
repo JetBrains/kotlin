@@ -71,11 +71,13 @@ projectTests {
     objCExportHeaderGeneratorTestTask("testK1", testDisplayNameTag = "K1") {
         classpath += k1TestRuntimeClasspath
         exclude("**/ObjCExportIntegrationTest.class")
+        outputs.dir(layout.buildDirectory.dir(integrationTestOutputsDir))
     }
 
     objCExportHeaderGeneratorTestTask("testAnalysisApi", testDisplayNameTag = "AA") {
         classpath += analysisApiRuntimeClasspath
         exclude("**/ObjCExportIntegrationTest.class")
+        outputs.dir(layout.buildDirectory.dir(integrationTestOutputsDir))
     }
 }
 
@@ -117,7 +119,6 @@ projectTests {
         filter {
             includeTestsMatching("org.jetbrains.kotlin.backend.konan.tests.integration.ObjCExportIntegrationTest")
         }
-        dependsOn("testK1", "testAnalysisApi")
 
         inputs.dir(
             layout.buildDirectory.dir(integrationTestOutputsDir)
