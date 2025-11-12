@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
@@ -78,9 +80,17 @@ import kotlin.math.abs
  * }
  * ```
  */
-private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val context: IrPluginContext) : DeclarationTransformer {
+private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val context: K2IrPluginContext) : DeclarationTransformer {
     private val EXPECTED_ORIGIN = IrDeclarationOrigin.GeneratedByPlugin(JsPlainObjectsPluginKey)
-    private val jsFunction = context.referenceFunctions(StandardIds.JS_FUNCTION_ID).single()
+    private val jsFunction: IrSimpleFunctionSymbol
+        get() = context.referenceFunctions(StandardIds.JS_FUNCTION_ID, currentFile).single()
+
+    private lateinit var currentFile: IrFile
+
+    override fun lower(irFile: IrFile) {
+        currentFile = irFile
+        super.lower(irFile)
+    }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         val file = declaration.file
@@ -239,7 +249,9 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
 }
 
 open class JsPlainObjectsLoweringExtension : IrGenerationExtension {
-    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {}
+
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: K2IrPluginContext) {
         MoveExternalInlineFunctionsWithBodiesOutsideLowering(pluginContext).lower(moduleFragment)
     }
 }
