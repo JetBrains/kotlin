@@ -55,8 +55,6 @@ dependencies {
     implementation(project(":native:hair:sym"))
     implementation(project(":native:hair:ir"))
     implementation(project(":native:hair:utils"))
-    implementation(project(":native:hair:ir:generated"))
-    implementation(project(":native:hair:ir:core"))
 
     testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":compiler:ir.backend.common")))

@@ -764,8 +764,6 @@ include(
     "native:hair:utils",
     "native:hair:sym",
     "native:hair:ir",
-    "native:hair:ir:core",
-    "native:hair:ir:generated",
     "native:hair:ir:generator",
     "native:hair:compiler",
 )
