@@ -7,12 +7,11 @@ val main by sourceSets.getting {
         api(kotlinStdlib())
         implementation(project(":native:hair:sym"))
         implementation(project(":native:hair:utils"))
-        implementation(project(":native:hair:ir:core"))
     }
 }
 
 val generate by tasks.registering(JavaExec::class) {
-    val generationRoot = projectDir.resolve("../generated/src/main/generated")
+    val generationRoot = projectDir.resolve("../generated/src/commonMain/generated")
     doFirst {
         fun purgeDirectory(dir: File) {
             require(dir.exists()) { "$dir does not exist" }

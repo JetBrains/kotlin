@@ -112,6 +112,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val minidumpLocation by stringOption()
 
     val cCallMode by option<CCallMode>()
+
+    val enableHair by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

@@ -1,5 +1,6 @@
 package hair.ir.generator.toolbox
 
+import hair.ir.generator.ControlFlow
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
@@ -11,15 +12,15 @@ abstract class ModelDSL {
     inner class ElementDelegate<T: Element>(
         private val explicitName: String?,
         private val constructor: (String) -> T,
-    ) : ReadOnlyProperty<ModelDSL, Element>, PropertyDelegateProvider<ModelDSL, ElementDelegate<T>> {
+    ) : ReadOnlyProperty<Any?, Element>, PropertyDelegateProvider<Any?, ElementDelegate<T>> {
 
         private var element: T? = null
 
-        override fun getValue(thisRef: ModelDSL, property: KProperty<*>): T {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): T {
             return element!!
         }
 
-        override fun provideDelegate(thisRef: ModelDSL, property: KProperty<*>): ElementDelegate<T> {
+        override fun provideDelegate(thisRef: Any?, property: KProperty<*>): ElementDelegate<T> {
             val name = explicitName ?: property.name.replaceFirstChar(Char::uppercaseChar);
             element = constructor(name).apply {
                 elements.add(this)
@@ -45,17 +46,17 @@ abstract class ModelDSL {
         return Element.FormParam(name, type).also { formParams.add(it) }
     }
 
-    fun Element.param(name: String, type: Element? = null, default: Element.NodeParam? = null): Element.NodeParam {
-        return Element.NodeParam(name, type, default, true).also { nodeParams.add(it) }
+    fun Element.param(name: String, type: Element? = null, optional: Boolean = false): Element.NodeParam {
+        return Element.NodeParam(name, type, true, optional).also { nodeParams.add(it) }
     }
 
-    fun Interface.param(name: String, type: Element? = null, default: Element.NodeParam? = null, isVar: Boolean = false): Element.NodeParam {
-        return Element.NodeParam(name, type, default, isVar).also { nodeParams.add(it) }
+    fun Interface.param(name: String, type: Element? = null, optional: Boolean = false, variable: Boolean = optional): Element.NodeParam {
+        return Element.NodeParam(name, type, variable, optional).also { nodeParams.add(it) }
     }
 
-    fun Element.variadicParam(name: String, type: Element? = null): Element.NodeParam? {
+    fun Element.variadicParam(name: String, type: Element? = null, optional: Boolean = false): Element.NodeParam? {
         require(variadicParam == null)
-        variadicParam = Element.NodeParam(name, type, null, true)
+        variadicParam = Element.NodeParam(name, type, optional = optional, variable = true)
         return variadicParam
     }
 
@@ -81,8 +82,8 @@ abstract class ModelDSL {
         promisedVariadic()?.let { inheritVariadic() }
     }
 
-//    fun Node.nestedProjection(fieldName: String, nodeName: String, parent: AbstractClass, initializer: Node.() -> Unit = {}) {
-//        require(parent.hasInterface(Builtin.projection))
-//        projections[fieldName] = Node(nodeName, parent, nestedIn = this).also(initializer)
-//    }
+    fun Node.nestedProjection(fieldName: String, nodeName: String, parent: AbstractClass, initializer: Node.() -> Unit = {}) {
+        require(parent.hasInterface(ControlFlow.projection))
+        nestedProjections[fieldName] = Node(nodeName, parent, nestedIn = this).also(initializer)
+    }
 }

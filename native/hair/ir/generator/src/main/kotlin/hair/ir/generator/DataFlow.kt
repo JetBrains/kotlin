@@ -1,13 +1,11 @@
 package hair.ir.generator
 
-import hair.ir.generator.toolbox.Builtin
 import hair.ir.generator.toolbox.ModelDSL
-import hair.ir.nodes.Var
 
 object DataFlow : ModelDSL() {
 
-    val varOp by abstractClass(Builtin.spinal) {
-        formParam("variable", Var::class)
+    val varOp by abstractClass(ControlFlow.blockBody) {
+        formParam("variable", Any::class)
     }
 
     val readVar by node(varOp)
@@ -17,11 +15,15 @@ object DataFlow : ModelDSL() {
     }
 
     val phi by node {
-        param("block", ControlFlow.block)
+        param("block", ControlFlow.blockEntry)
         variadicParam("joinedValues")
     }
 
     val param by node {
-        formParam("number", Int::class)
+        formParam("index", Int::class)
+    }
+
+    val catch by node {
+        param("unwind")
     }
 }
