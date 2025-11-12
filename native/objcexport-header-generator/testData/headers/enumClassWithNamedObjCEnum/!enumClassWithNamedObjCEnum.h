@@ -45,11 +45,6 @@ typedef NS_ENUM(int32_t, OBJCFoo) {
 };
 
 
-
-/**
- * @note annotations
- *   kotlin.native.ObjCEnum(name="OBJCFoo")
-*/
 __attribute__((objc_subclassing_restricted))
 @interface Foo : KotlinEnum<Foo *>
 + (instancetype)alloc __attribute__((unavailable));
