@@ -8,15 +8,18 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCallToDeprecatedOverrideOfHidden
@@ -25,10 +28,13 @@ import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.abbreviatedType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isTypealiasExpansion
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
@@ -121,8 +127,32 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         callSite: FirElement? = null,
     ) {
         val deprecation = getWorstDeprecation(callSite, referencedSymbol) ?: return
+        if (referencedSymbol.isNestedTypeAliasWhenItIsEnabledAndRelevantDeprecation(deprecation)) return
         val isTypealiasExpansion = deprecation.isTypealiasExpansionOf(referencedSymbol, callSite)
         reportApiStatus(source, referencedSymbol, isTypealiasExpansion, deprecation)
+    }
+
+    private val KOTLIN_2_3 = VersionRequirement.Version(2, 3)
+
+    context(c: SessionHolder)
+    private fun FirBasedSymbol<*>.isNestedTypeAliasWhenItIsEnabledAndRelevantDeprecation(deprecation: FirDeprecationInfo): Boolean {
+        when (this) {
+            is FirTypeAliasSymbol -> {
+                if (!classId.isNestedClass) return false
+            }
+            is FirConstructorSymbol -> {
+                if (origin != FirDeclarationOrigin.Synthetic.TypeAliasConstructor) return false
+            }
+        }
+
+        if (LanguageFeature.NestedTypeAliases.isDisabled()) return false
+
+        // Make sure it's a relevant deprecation
+        return (deprecation as? RequireKotlinDeprecationInfo)?.versionRequirement?.let {
+            it.kind == ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION &&
+                    it.level == DeprecationLevel.ERROR &&
+                    it.version == KOTLIN_2_3
+        } == true
     }
 
     context(context: CheckerContext)
