@@ -70,7 +70,7 @@ class NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument(session: F
         register(SupertypesDependantOnAnnotationArgumentComponent.PREDICATE)
     }
 
-    object Key : GeneratedDeclarationKey()
+    data object Key : GeneratedDeclarationKey()
 }
 
 class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSession) : FirSupertypeGenerationExtension(session) {

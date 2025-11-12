@@ -62,7 +62,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
         val REFINE = ClassId(FqName.ROOT, Name.identifier("Refine"))
         val DATAFRAME = ClassId(FqName.ROOT, Name.identifier("DataFrame"))
 
-        object KEY : GeneratedDeclarationKey()
+        data object KEY : GeneratedDeclarationKey()
     }
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {

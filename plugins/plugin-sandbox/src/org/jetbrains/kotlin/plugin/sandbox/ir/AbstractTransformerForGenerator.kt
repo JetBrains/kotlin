@@ -52,7 +52,6 @@ abstract class AbstractTransformerForGenerator(
             }
             return
         }
-        require(declaration.body == null)
         declaration.body = generateBodyForFunction(declaration, origin.pluginKey)
     }
 

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
@@ -16,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.fileNameForPluginGeneratedCallable
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
+import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
@@ -37,6 +41,7 @@ public class SimpleFunctionBuildingContext(
     private val containingFileName: String?,
 ) : FunctionBuildingContext<FirNamedFunction>(callableId, session, key, owner) {
     private var extensionReceiverTypeProvider: ((List<FirTypeParameter>) -> ConeKotlinType)? = null
+    private var generateDefaultBody: Boolean = true
 
     /**
      * Sets [type] as extension receiver type of the function.
@@ -55,7 +60,17 @@ public class SimpleFunctionBuildingContext(
         extensionReceiverTypeProvider = typeProvider
     }
 
+    /**
+     * By default, if the function is not abstract, the
+     * default throwing body will be generated.
+     * Call this function to disable this behavior.
+     */
+    public fun doNotGenerateDefaultBody() {
+        generateDefaultBody = false
+    }
+
     override fun build(): FirNamedFunction {
+        var returnTarget: FirFunctionTarget? = null
         return buildNamedFunction {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
@@ -90,11 +105,20 @@ public class SimpleFunctionBuildingContext(
                     containingDeclarationSymbol = this@buildNamedFunction.symbol
                 }
             }
+            if (generateDefaultBody && modality != Modality.ABSTRACT) {
+                val returnExpression = buildReturnExpression {
+                    result = generateExpressionStub()
+                    returnTarget = FirFunctionTarget(labelName = null, isLambda = false)
+                    target = returnTarget
+                }
+                body = buildSingleExpressionBlock(returnExpression)
+            }
         }.also {
             if (containingFileName != null) {
                 require(callableId.classId == null) { "containingFileName could be set only for top-level declarations, but $callableId is a member" }
             }
             it.fileNameForPluginGeneratedCallable = containingFileName
+            returnTarget?.bind(it)
         }
     }
 }

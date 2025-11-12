@@ -55,7 +55,7 @@ internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : Fi
         return matchedPackageNames.map { CallableId(it, TEST_FUN_NAME) }.toSet()
     }
 
-    object Key : GeneratedDeclarationKey()
+    data object Key : GeneratedDeclarationKey()
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)

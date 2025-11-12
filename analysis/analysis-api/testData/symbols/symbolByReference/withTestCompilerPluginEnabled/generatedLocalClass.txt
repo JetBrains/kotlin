@@ -96,7 +96,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: null
+  initializer: KaNonConstantInitializerValue(NO_PSI)
   isActual: false
   isConst: false
   isDelegatedProperty: false

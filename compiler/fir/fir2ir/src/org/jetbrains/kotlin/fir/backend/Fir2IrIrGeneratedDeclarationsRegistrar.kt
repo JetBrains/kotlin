@@ -448,7 +448,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
     }
 
-    private object GeneratedForMetadata : GeneratedDeclarationKey()
+    private data object GeneratedForMetadata : GeneratedDeclarationKey()
 
     private val metadataExtensionsForDeclarations: MutableMap<FirDeclaration, MutableMap<String, ByteArray>> = mutableMapOf()
 
