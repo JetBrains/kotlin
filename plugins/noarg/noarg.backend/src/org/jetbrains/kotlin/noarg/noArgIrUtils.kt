@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.noarg
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
 
-internal fun IrPluginContext.generateNoArgConstructorBody(
+internal fun K2IrPluginContext.generateNoArgConstructorBody(
     ctor: IrConstructor,
     ownerClass: IrClass,
     superConstructor: IrConstructor,

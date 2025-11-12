@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.noarg
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.ir.IrElement
@@ -28,13 +29,15 @@ class NoArgFullConstructorIrGenerationExtension(
     private val annotations: List<String>,
     private val invokeInitializers: Boolean,
 ) : IrGenerationExtension {
-    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {}
+
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: K2IrPluginContext) {
         moduleFragment.accept(NoArgFullConstructorIrGenerationTransformer(pluginContext, annotations, invokeInitializers), null)
     }
 }
 
 private class NoArgFullConstructorIrGenerationTransformer(
-    private val context: IrPluginContext,
+    private val context: K2IrPluginContext,
     private val annotations: List<String>,
     private val invokeInitializers: Boolean,
 ) : IrVisitorVoid(), AnnotationBasedExtension {
