@@ -419,6 +419,7 @@ internal fun Project.regenerateLinkageImportProjectTask(swiftPMDependencies: Pro
     ).also {
         it.configure {
             it.failOnNonIdempotentChanges.set(true)
+            it.buildingFromXcode.set(project.providers.systemProperty("idea.active").map { _ -> false }.orElse(true))
             it.onlyIf {
                 hasDirectlyDeclaredSwiftPMDependencies.get() || swiftPMDependencies.get().values.any { it.dependencies.isNotEmpty() }
             }
@@ -470,6 +471,9 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
 
     @get:Input
     val failOnNonIdempotentChanges: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
+
+    @get:Input
+    val buildingFromXcode: Property<Boolean> = project.objects.property(Boolean::class.java).convention(true)
 
     enum class SyntheticProductType : Serializable {
         DYNAMIC,
@@ -535,7 +539,12 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
             val finalDigest = sha.digest()
             if (!initialDigest.contentEquals(finalDigest)) {
                 println("error: Synthetic project regenerated")
-                println("error: Please go to File -> Package -> Resolve Package Versions")
+                if (buildingFromXcode.get()) {
+                    println("error: Please go to File -> Package -> Resolve Package Versions in Xcode")
+                } else {
+                    // KMP IJ plugin
+                    println("error: Please go to Tools -> Swift Package Manager -> Resolve Dependencies")
+                }
                 error("Synthetic project state updated")
             }
         }
