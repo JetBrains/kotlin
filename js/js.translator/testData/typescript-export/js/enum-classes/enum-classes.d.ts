@@ -13,10 +13,10 @@ declare namespace JS_TESTS {
                 get ordinal(): 1;
             };
             static get CustomNamedEntry(): foo.TestEnumClass & {
-                get name(): "CustomNamedEntry";
+                get name(): "C";
                 get ordinal(): 2;
             };
-            get name(): "A" | "B" | "CustomNamedEntry";
+            get name(): "A" | "B" | "C";
             get ordinal(): 0 | 1 | 2;
             get constructorParameter(): string;
             get foo(): number;

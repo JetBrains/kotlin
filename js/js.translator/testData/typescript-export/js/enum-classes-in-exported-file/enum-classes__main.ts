@@ -31,7 +31,6 @@ function box(): string {
 
     assert(TestEnumClass.A.name === "A")
     assert(TestEnumClass.B.name === "B")
-    // @ts-ignore KT-82362
     assert(TestEnumClass.CustomNamedEntry.name === "C")
     assert(TestEnumClass.A.ordinal === 0)
     assert(TestEnumClass.B.ordinal === 1)

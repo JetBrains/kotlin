@@ -175,7 +175,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         val parentClass = field.parent as IrClass
 
-        val name = irEnumEntry.getExportedIdentifier()
         val ordinal = enumEntries.getValue(irEnumEntry)
 
         fun fakeProperty(name: String, type: ExportedType) =
@@ -183,7 +182,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         val nameProperty = fakeProperty(
             name = "name",
-            type = ExportedType.LiteralType.StringLiteralType(name),
+            type = ExportedType.LiteralType.StringLiteralType(irEnumEntry.name.asString()),
         )
 
         val ordinalProperty = fakeProperty(
@@ -196,7 +195,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         )
 
         return ExportedProperty(
-            name = name,
+            name = irEnumEntry.getExportedIdentifier(),
             type = ExportedType.IntersectionType(exportType(parentClass.defaultType), type),
             mutable = false,
             isMember = true,
@@ -506,7 +505,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 if (candidate.isAllowedFakeOverriddenDeclaration(context)) {
                     val type: ExportedType = when (candidate.getExportedIdentifier()) {
                         "name" -> enumEntries
-                            .map { it.getExportedIdentifier() }
+                            .map { it.name.asString() }
                             .map { ExportedType.LiteralType.StringLiteralType(it) }
                             .reduceOrNull { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) } ?: return null
                         "ordinal" -> enumEntriesToOrdinal
