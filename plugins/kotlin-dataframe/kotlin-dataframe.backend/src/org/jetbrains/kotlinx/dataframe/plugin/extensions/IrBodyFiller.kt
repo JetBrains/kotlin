@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.extensions
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
@@ -32,14 +33,15 @@ import org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 class IrBodyFiller : IrGenerationExtension {
-    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {}
+
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: K2IrPluginContext) {
         DataFrameFileLowering(pluginContext).lower(moduleFragment)
         IrImportedSchemaGenerator(pluginContext).lower(moduleFragment)
     }
 }
 
-private class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass,
-    IrElementTransformerVoid() {
+private class DataFrameFileLowering(val context: K2IrPluginContext) : FileLoweringPass, IrElementTransformerVoid() {
     companion object {
         val COLUMNS_SCOPE_ID =
             CallableId(ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("ColumnsScope")), Name.identifier("get"))
@@ -47,7 +49,10 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
             CallableId(ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("DataRow")), Name.identifier("get"))
     }
 
+    private lateinit var currentFile: IrFile
+
     override fun lower(irFile: IrFile) {
+        currentFile = irFile
         irFile.transformChildren(this, null)
     }
 
@@ -68,7 +73,10 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         }
         val getter = declaration.getter ?: return declaration
 
-        val constructors = context.referenceConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
+        val constructors = context.referenceConstructors(
+            ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")),
+            currentFile
+        )
         val jvmName = constructors.single { it.owner.parameters.size == 1 }
         val getterExtensionReceiver = getter.parameters.single { it.kind == IrParameterKind.ExtensionReceiver }
         val marker = ((getterExtensionReceiver.type as IrSimpleType).arguments.single() as IrSimpleType).classOrFail.owner
@@ -86,7 +94,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
         val get = if (isDataColumn) {
             context
-                .referenceFunctions(COLUMNS_SCOPE_ID)
+                .referenceFunctions(COLUMNS_SCOPE_ID, currentFile)
                 .single {
                     it.owner.hasShape(
                         dispatchReceiver = true,
@@ -96,7 +104,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
                 }
         } else {
             context
-                .referenceFunctions(DATA_ROW_ID)
+                .referenceFunctions(DATA_ROW_ID, currentFile)
                 .single {
                     it.owner.hasShape(
                         dispatchReceiver = true,
@@ -179,7 +187,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 }
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
-fun generateBodyForDefaultConstructor(context: IrPluginContext, declaration: IrConstructor): IrBody? {
+fun generateBodyForDefaultConstructor(context: K2IrPluginContext, declaration: IrConstructor): IrBody? {
     val irType = declaration.returnType.superTypes()[0]
     val symbol =
         irType.classOrFail.owner.primaryConstructor?.symbol ?: context.irBuiltIns.anyType.classOrNull?.constructors?.firstOrNull()

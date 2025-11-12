@@ -6,7 +6,7 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -26,7 +26,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaCompanionKey
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 class IrImportedSchemaGenerator(
-    val context: IrPluginContext,
+    val context: K2IrPluginContext,
 ) : FileLoweringPass,
     IrElementTransformerVoid() {
 
@@ -35,7 +35,10 @@ class IrImportedSchemaGenerator(
         val schemaReaderId = ClassId(io, Name.identifier("SchemaReader"))
     }
 
+    private lateinit var currentFile: IrFile
+
     override fun lower(irFile: IrFile) {
+        currentFile = irFile
         irFile.transformChildren(this, null)
     }
 
@@ -50,13 +53,13 @@ class IrImportedSchemaGenerator(
             }
 
             val providerFun = CallableId(schemaReaderId, declaration.name)
-            val provide = context.referenceFunctions(providerFun).firstOrNull()
+            val provide = context.referenceFunctions(providerFun, currentFile).firstOrNull()
                 ?: error("Couldn't find a function $providerFun")
 
             val actualSchemaReaderClassId =
                 ClassId(FqName(metadata.format.substringBeforeLast(".")), Name.identifier(metadata.format.substringAfterLast(".")))
 
-            val zeroArg = context.referenceConstructors(actualSchemaReaderClassId).firstOrNull {
+            val zeroArg = context.referenceConstructors(actualSchemaReaderClassId, currentFile).firstOrNull {
                 // empty or all default
                 it.owner.parameters.all { it.defaultValue != null }
             }
@@ -84,15 +87,17 @@ class IrImportedSchemaGenerator(
     }
 
     override fun visitProperty(declaration: IrProperty): IrStatement {
-        val typeOf = context.referenceFunctions(CallableId(FqName("kotlin.reflect"), Name.identifier("typeOf")))
-            .firstOrNull {
-                it.owner.hasShape(
-                    dispatchReceiver = false,
-                    extensionReceiver = false,
-                    contextParameters = 0,
-                    regularParameters = 0,
-                )
-            } ?: error("kotlin.reflect.typeOf function not found")
+        val typeOf = context.referenceFunctions(
+            CallableId(FqName("kotlin.reflect"), Name.identifier("typeOf")),
+            currentFile
+        ).firstOrNull {
+            it.owner.hasShape(
+                dispatchReceiver = false,
+                extensionReceiver = false,
+                contextParameters = 0,
+                regularParameters = 0,
+            )
+        } ?: error("kotlin.reflect.typeOf function not found")
         val getter = declaration.getter ?: return declaration
         val schemaType = declaration.parentClassOrNull?.parentClassOrNull?.defaultType ?: return declaration
         if (declaration.origin.isFromDataSchemaSource() && declaration.name == Names.SCHEMA_KTYPE) {
