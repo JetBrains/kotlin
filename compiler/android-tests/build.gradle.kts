@@ -65,12 +65,3 @@ projectTests {
 
     withJvmStdlibAndReflect()
 }
-
-val generateAndroidTests by generator(
-    "org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator",
-    testSourceSet,
-    inputKind = GeneratorInputKind.RuntimeClasspath,
-) {
-    workingDir = rootDir
-    dependsOn(rootProject.tasks.named("dist"))
-}
