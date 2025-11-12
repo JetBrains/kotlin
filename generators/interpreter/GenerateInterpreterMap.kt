@@ -58,6 +58,8 @@ fun generateMap(): String {
     generateInterpretBinaryFunction(p, binaryOperations)
     generateInterpretTernaryFunction(p, ternaryOperations)
 
+    generateCanInterpretFunction(p, unaryOperations + binaryOperations + ternaryOperations)
+
     return sb.toString()
 }
 
@@ -68,6 +70,7 @@ private fun printPreamble(p: Printer) {
     p.println()
     p.println("package org.jetbrains.kotlin.ir.interpreter.builtins")
     p.println()
+    p.println("import org.jetbrains.kotlin.name.CallableId")
     p.println("import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterMethodNotFoundError")
     p.println("import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy")
     p.println()
@@ -150,6 +153,27 @@ private fun generateInterpretTernaryFunction(p: Printer, ternaryOperations: List
     p.popIndent()
     p.println("}")
     p.println("throw InterpreterMethodNotFoundError(\"Unknown function: \$name(\$typeA, \$typeB, \$typeC)\")")
+    p.popIndent()
+    p.println("}")
+    p.println()
+}
+
+private fun generateCanInterpretFunction(p: Printer, operations: List<Operation>) {
+    p.println("private val knownFunctions = mapOf(")
+    p.pushIndent()
+    for ((callableId, ops) in operations.groupBy { it.callableId }) {
+        val types = ops.map {operation ->
+            "listOf(${operation.parameterTypes.map{ "\"${it.addKotlinPackage()}\""} .joinToString(", ")})"
+        }.joinToString( ", " )
+        p.println("\"${callableId.toString()}\" to listOf($types),")
+    }
+    p.popIndent()
+    p.println(")")
+    p.println()
+
+    p.println("internal fun canInterpretFunction(callableId: CallableId, typeA: String, typeB: String? = null, typeC: String? = null): Boolean {")
+    p.pushIndent()
+    p.println("return knownFunctions[callableId.toString()]?.any { it.first() == typeA && it.getOrNull(1) == typeB && it.getOrNull(2) == typeC} ?: false")
     p.popIndent()
     p.println("}")
     p.println()
