@@ -414,7 +414,7 @@ fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
         )
     }
 
-    val json = Gson().fromJson(output.toString(), Map::class.java) as Map<String, Any>
+    @Suppress("UNCHECKED_CAST") val json = Gson().fromJson(output.toString(), Map::class.java) as Map<String, Any>
     val hasSyntheticImportProjectReference = isLinkageProductReferencedInPBXObjects(json)
     if (!hasSyntheticImportProjectReference) {
         // FIXME: Find a proper way to get to wrapper
