@@ -39,49 +39,30 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         }
     }
 
-    fun testJsNewerCompilerVersion() {
+    fun testNewerCompilerVersion() {
         testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
-            compileDummyLibrary(
-                libraryVersion = currentVersion,
-                compilerVersion = nextVersion,
-                isWasm = false,
-                expectedWarningStatus = WarningStatus.JS_OLD_LIBRARY_WARNING
-            )
+            for (isWasm in listOf(false, true)) {
+                compileDummyLibrary(
+                    libraryVersion = currentVersion,
+                    compilerVersion = nextVersion,
+                    isWasm = isWasm,
+                    expectedWarningStatus = WarningStatus.OLD_LIBRARY_WARNING
+                )
+            }
         }
     }
 
-    fun testJsOlderCompilerVersion() {
+    fun testOlderCompilerVersion() {
         testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
             val sameLanguageVersion = haveSameLanguageVersion(currentVersion, nextVersion)
-            compileDummyLibrary(
-                libraryVersion = nextVersion,
-                compilerVersion = currentVersion,
-                isWasm = false,
-                expectedWarningStatus = if (sameLanguageVersion) WarningStatus.NO_WARNINGS else WarningStatus.JS_TOO_NEW_LIBRARY_WARNING
-            )
-        }
-    }
-
-    fun testWasmNewerCompilerVersion() {
-        testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
-            compileDummyLibrary(
-                libraryVersion = currentVersion,
-                compilerVersion = nextVersion,
-                isWasm = true,
-                expectedWarningStatus = WarningStatus.WASM_OLD_LIBRARY_WARNING
-            )
-        }
-    }
-
-    fun testWasmOlderCompilerVersion() {
-        testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
-            val sameLanguageVersion = haveSameLanguageVersion(currentVersion, nextVersion)
-            compileDummyLibrary(
-                libraryVersion = nextVersion,
-                compilerVersion = currentVersion,
-                isWasm = true,
-                expectedWarningStatus = if (sameLanguageVersion) WarningStatus.NO_WARNINGS else WarningStatus.WASM_TOO_NEW_LIBRARY_WARNING
-            )
+            for (isWasm in listOf(false, true)) {
+                compileDummyLibrary(
+                    libraryVersion = nextVersion,
+                    compilerVersion = currentVersion,
+                    isWasm = isWasm,
+                    expectedWarningStatus = if (sameLanguageVersion) WarningStatus.NO_WARNINGS else WarningStatus.TOO_NEW_LIBRARY_WARNING
+                )
+            }
         }
     }
 
@@ -98,31 +79,19 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         }
     }
 
-    fun testJsEitherVersionIsMissing() {
+    fun testEitherVersionIsMissing() {
         listOf(
             TestVersion(2, 0, 0) to null,
             null to TestVersion(2, 0, 0),
         ).forEach { (libraryVersion, compilerVersion) ->
-            compileDummyLibrary(
-                libraryVersion = libraryVersion,
-                compilerVersion = compilerVersion,
-                isWasm = false,
-                expectedWarningStatus = WarningStatus.NO_WARNINGS
-            )
-        }
-    }
-
-    fun testWasmEitherVersionIsMissing() {
-        listOf(
-            TestVersion(2, 0, 0) to null,
-            null to TestVersion(2, 0, 0),
-        ).forEach { (libraryVersion, compilerVersion) ->
-            compileDummyLibrary(
-                libraryVersion = libraryVersion,
-                compilerVersion = compilerVersion,
-                isWasm = true,
-                expectedWarningStatus = WarningStatus.NO_WARNINGS
-            )
+            for (isWasm in listOf(false, true)) {
+                compileDummyLibrary(
+                    libraryVersion = libraryVersion,
+                    compilerVersion = compilerVersion,
+                    isWasm = isWasm,
+                    expectedWarningStatus = WarningStatus.NO_WARNINGS
+                )
+            }
         }
     }
 
@@ -136,22 +105,48 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         compileDummyLibrary(libraryVersion, compilerVersion, isWasm, isZipped = true, expectedWarningStatus)
     }
 
-    protected abstract fun MessageCollectorImpl.hasJsOldLibraryError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
-    protected abstract fun MessageCollectorImpl.hasJsTooNewLibraryError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
-    protected abstract fun MessageCollectorImpl.hasWasmOldLibraryError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
-    protected abstract fun MessageCollectorImpl.hasWasmTooNewLibraryError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
+    protected abstract val libraryDisplayName: String
+
+    private fun MessageCollectorImpl.hasOldLibraryError(
+        isWasm: Boolean,
+        specificVersions: Pair<TestVersion, TestVersion>? = null,
+    ): Boolean {
+        val platformDisplayName = if (isWasm) "Kotlin/Wasm" else "Kotlin/JS"
+
+        val stdlibMessagePart = "$platformDisplayName $libraryDisplayName library has an older version" +
+                specificVersions?.first?.let { " ($it)" }.orEmpty()
+        val compilerMessagePart = "than the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
+
+        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
+    }
+
+    private fun MessageCollectorImpl.hasTooNewLibraryError(
+        isWasm: Boolean,
+        specificVersions: Pair<TestVersion, TestVersion>? = null,
+    ): Boolean {
+        val platformDisplayName = if (isWasm) "Kotlin/Wasm" else "Kotlin/JS"
+
+        val stdlibMessagePart = "The $platformDisplayName $libraryDisplayName library has a more recent version" +
+                specificVersions?.first?.let { " ($it)" }.orEmpty()
+        val compilerMessagePart = "The compiler version is " + specificVersions?.second?.toString().orEmpty()
+
+        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
+
+    }
 
     private fun MessageCollectorImpl.checkMessage(
+        isWasm: Boolean,
         expectedWarningStatus: WarningStatus,
         libraryVersion: TestVersion?,
         compilerVersion: TestVersion?,
     ) {
         val success = when (expectedWarningStatus) {
-            WarningStatus.NO_WARNINGS -> !hasJsOldLibraryError() && !hasJsTooNewLibraryError() && !hasWasmOldLibraryError() && !hasWasmTooNewLibraryError()
-            WarningStatus.JS_OLD_LIBRARY_WARNING -> hasJsOldLibraryError(libraryVersion!! to compilerVersion!!)
-            WarningStatus.JS_TOO_NEW_LIBRARY_WARNING -> hasJsTooNewLibraryError(libraryVersion!! to compilerVersion!!)
-            WarningStatus.WASM_OLD_LIBRARY_WARNING -> hasWasmOldLibraryError(libraryVersion!! to compilerVersion!!)
-            WarningStatus.WASM_TOO_NEW_LIBRARY_WARNING -> hasWasmTooNewLibraryError(libraryVersion!! to compilerVersion!!)
+            WarningStatus.NO_WARNINGS -> !hasOldLibraryError(isWasm = false) &&
+                    !hasTooNewLibraryError(isWasm = false) &&
+                    !hasOldLibraryError(isWasm = true) &&
+                    !hasTooNewLibraryError(isWasm = true)
+            WarningStatus.OLD_LIBRARY_WARNING -> hasOldLibraryError(isWasm, libraryVersion!! to compilerVersion!!)
+            WarningStatus.TOO_NEW_LIBRARY_WARNING -> hasTooNewLibraryError(isWasm, libraryVersion!! to compilerVersion!!)
         }
         if (!success) fail(
             buildString {
@@ -195,7 +190,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
             }
         }
 
-        messageCollector.checkMessage(expectedWarningStatus, libraryVersion, compilerVersion)
+        messageCollector.checkMessage(isWasm, expectedWarningStatus, libraryVersion, compilerVersion)
     }
 
     private fun haveSameLanguageVersion(a: TestVersion, b: TestVersion): Boolean =
@@ -261,7 +256,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     protected fun createDir(name: String): File = tmpdir.resolve(name).apply { mkdirs() }
     protected fun createFile(name: String): File = tmpdir.resolve(name).apply { parentFile.mkdirs() }
 
-    protected enum class WarningStatus { NO_WARNINGS, JS_OLD_LIBRARY_WARNING, JS_TOO_NEW_LIBRARY_WARNING, WASM_OLD_LIBRARY_WARNING, WASM_TOO_NEW_LIBRARY_WARNING }
+    protected enum class WarningStatus { NO_WARNINGS, OLD_LIBRARY_WARNING, TOO_NEW_LIBRARY_WARNING }
 
     protected class TestVersion(val basicVersion: KotlinVersion, val postfix: String) : Comparable<TestVersion> {
         constructor(major: Int, minor: Int, patch: Int, postfix: String = "") : this(KotlinVersion(major, minor, patch), postfix)

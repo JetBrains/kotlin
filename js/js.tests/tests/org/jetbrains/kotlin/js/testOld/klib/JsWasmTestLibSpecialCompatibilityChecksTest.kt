@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.js.testOld.klib
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
-import kotlin.collections.any
-
 @Suppress("JUnitTestCaseWithNoTests")
 class JsWasmTestLibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
     override val originalLibraryPath: String
@@ -16,35 +13,6 @@ class JsWasmTestLibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityC
     override fun additionalLibraries(isWasm: Boolean): List<String> =
         if (!isWasm) listOf(System.getProperty("kotlin.js.full.stdlib.path")) else listOf(System.getProperty("kotlin.wasm.full.stdlib.path"))
 
-    override fun MessageCollectorImpl.hasJsOldLibraryError(
-        specificVersions: Pair<TestVersion, TestVersion>?,
-    ): Boolean {
-        val stdlibMessagePart = "Kotlin/JS kotlin-test library has an older version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
-        val compilerMessagePart = "than the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
-
-        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
-    }
-
-    override fun MessageCollectorImpl.hasJsTooNewLibraryError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
-        val stdlibMessagePart =
-            "The Kotlin/JS kotlin-test library has a more recent version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
-        val compilerMessagePart = "The compiler version is " + specificVersions?.second?.toString().orEmpty()
-
-        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
-    }
-
-    override fun MessageCollectorImpl.hasWasmOldLibraryError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
-        val stdlibMessagePart = "Kotlin/Wasm kotlin-test library has an older version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
-        val compilerMessagePart = "than the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
-
-        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
-    }
-
-    override fun MessageCollectorImpl.hasWasmTooNewLibraryError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
-        val stdlibMessagePart =
-            "The Kotlin/Wasm kotlin-test library has a more recent version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
-        val compilerMessagePart = "The compiler version is " + specificVersions?.second?.toString().orEmpty()
-
-        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
-    }
+    override val libraryDisplayName: String
+        get() = "kotlin-test"
 }
