@@ -315,9 +315,10 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                     }
                 )
 
+                val konanTargetName = target.konanTarget.name
                 linkTask.toolOptions.freeCompilerArgs.add(
                     // FIXME: Fix this properly by extracting the "explicitOrMaximumDeploymentTarget" logic. This is just a hack to combat libswift_Concurrency linkage
-                    "-Xoverride-konan-properties=minVersion.ios=15.0"
+                    "-Xoverride-konan-properties=osVersionMin.${konanTargetName}=15.0"
                 )
             }
         }
