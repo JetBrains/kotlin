@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +MultiPlatformProjects
 // JSPECIFY_STATE: warn
 

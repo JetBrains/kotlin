@@ -14,5 +14,5 @@ class K<T> : J<T> {
 }
 
 class K2<T> : J<T> {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun simple(t: T) {}
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun simple(t: T) {}
 }

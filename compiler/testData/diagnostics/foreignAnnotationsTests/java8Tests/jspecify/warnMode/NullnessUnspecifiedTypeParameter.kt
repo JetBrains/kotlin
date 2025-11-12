@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // JSPECIFY_STATE: warn
 // FILE: NullnessUnspecifiedTypeParameter.java
 import org.jspecify.annotations.*;

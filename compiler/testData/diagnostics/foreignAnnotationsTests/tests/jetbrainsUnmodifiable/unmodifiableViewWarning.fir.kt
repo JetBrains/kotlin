@@ -27,7 +27,7 @@ public class J {
 
 // FILE: main.kt
 fun main() {
-    takeMutable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.foo()<!>)
+    takeMutable(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.foo()<!>)
     <!RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.foo()<!>.add("")
     J.foo().size
     for (x in J.foo()) {}

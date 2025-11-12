@@ -12,9 +12,9 @@ interface I {
 }
 
 class A : Base(), I {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun foo(): String? = null
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun bar(): String? = ""
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun baz(s: String?) {}
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun foo(): String? = null
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun bar(): String? = ""
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun baz(s: String?) {}
 }
 
 // MODULE: jvm()()(common)

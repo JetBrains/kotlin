@@ -30,7 +30,7 @@ public class NullMarkedType {
 fun <T> accept(arg: T) {}
 
 fun test() {
-    accept<Any>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>NullMarkedType.TargetType.UNBOUNDED_WILDCARD().produce()<!>)
-    accept<String>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().produce()<!>)
-    accept<Any>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().produce()<!>)
+    accept<Any>(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>NullMarkedType.TargetType.UNBOUNDED_WILDCARD().produce()<!>)
+    accept<String>(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().produce()<!>)
+    accept<Any>(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().produce()<!>)
 }

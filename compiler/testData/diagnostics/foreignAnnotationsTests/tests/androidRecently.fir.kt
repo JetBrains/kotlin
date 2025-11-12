@@ -27,7 +27,7 @@ public class A<T> {
 fun main(a: A<String>, a1: A<String?>) {
     a.foo("", null)?.length
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo("", null)<!>.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!>.length
 
     a.bar().length
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
@@ -37,10 +37,10 @@ fun main(a: A<String>, a1: A<String?>) {
 
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz("")<!>.length
     a.baz("")?.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)<!>.length
 
     a1.baz("")!!.length
-    a1.baz(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)!!.length
+    a1.baz(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)!!.length
 
     a.baz2("").length
     a.baz2("")<!UNNECESSARY_SAFE_CALL!>?.<!>length

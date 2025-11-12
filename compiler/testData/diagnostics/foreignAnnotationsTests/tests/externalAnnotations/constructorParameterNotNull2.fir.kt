@@ -14,7 +14,7 @@ public class ClassWithExternalAnnotatedMembers {
 // FILE: usage.kt
 fun test() {
     val i: Int? = null
-    ClassWithExternalAnnotatedMembers(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>i<!>)
+    ClassWithExternalAnnotatedMembers(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>i<!>)
 
     val s: String? = null
     ClassWithExternalAnnotatedMembers(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
@@ -22,7 +22,7 @@ fun test() {
     val b: Boolean? = null
     <!NONE_APPLICABLE!>ClassWithExternalAnnotatedMembers<!>(b)
 
-    ClassWithExternalAnnotatedMembers(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    ClassWithExternalAnnotatedMembers(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 }
 
 // FILE: annotations.xml

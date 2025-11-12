@@ -18,7 +18,7 @@ public class ClassWithExternalAnnotatedMembers {
 // FILE: usage.kt
 fun test() {
     val i: Int? = null
-    ClassWithExternalAnnotatedMembers(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>i<!>)
+    ClassWithExternalAnnotatedMembers(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>i<!>)
 
     val s: String? = null
     ClassWithExternalAnnotatedMembers(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
