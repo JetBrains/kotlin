@@ -119,44 +119,6 @@ extension ExportedKotlinPackages.a.b.c {
             }
         }
     }
-    open class A: KotlinRuntime.KotlinBase {
-        public init() {
-            if Self.self != ExportedKotlinPackages.a.b.c.A.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.a.b.c.A ") }
-            let __kt = a_b_c_A_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            a_b_c_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-        }
-        public final func make(
-            value: Swift.Int32
-        ) -> Swift.String {
-            return a_b_c_A_make__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), value)
-        }
-    }
-    open class B: KotlinRuntime.KotlinBase {
-        public init() {
-            if Self.self != ExportedKotlinPackages.a.b.c.B.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.a.b.c.B ") }
-            let __kt = a_b_c_B_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            a_b_c_B_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-        }
-        public final func make(
-            value: Swift.Int32
-        ) -> Swift.String {
-            return a_b_c_B_make__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), value)
-        }
-    }
 }
 // Can't export foo: inline functions are not supported yet.
 // Can't export foo: inline functions are not supported yet.
