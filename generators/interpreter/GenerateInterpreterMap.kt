@@ -8,19 +8,22 @@ package org.jetbrains.kotlin.generators.interpreter
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.IntrinsicConstEvaluation
 import org.jetbrains.kotlin.utils.Printer
 import kotlin.reflect.full.memberFunctions
 
 import java.io.File
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
 
 val DESTINATION = File("compiler/ir/ir.interpreter/src/org/jetbrains/kotlin/ir/interpreter/builtins/IrBuiltInsMapGenerated.kt")
 
@@ -40,11 +43,11 @@ fun generateMap(): String {
 
     val unaryOperations = getOperationMap(1).apply {
         this.addAll(getUnsignedConversionOperationMap())
-        this += Operation(BuiltInOperatorNames.CHECK_NOT_NULL, listOf("T0?"), customExpression = "a!!")
-        this += Operation("toString", listOf("Any?"), customExpression = "a?.toString() ?: \"null\"")
-        this += Operation("code", listOf("Char"), customExpression = "(a as Char).code")
+        this += Operation(callableIdOf(null, BuiltInOperatorNames.CHECK_NOT_NULL), listOf("T0?"), customExpression = "a!!")
+        this += Operation(callableIdOf(null,"toString"), listOf("Any?"), customExpression = "a?.toString() ?: \"null\"")
+        this += Operation(callableIdOf(null,"code"), listOf("Char"), customExpression = "(a as Char).code")
         // TODO next operation can be dropped after serialization introduction
-        this += Operation("toString", listOf("Unit"), customExpression = "Unit.toString()")
+        this += Operation(callableIdOf(null,"toString"), listOf("Unit"), customExpression = "Unit.toString()")
     }
 
     val binaryOperations = getOperationMap(2) + getBinaryIrOperationMap() + getExtensionOperationMap()
@@ -153,11 +156,12 @@ private fun generateInterpretTernaryFunction(p: Printer, ternaryOperations: List
 }
 
 private data class Operation(
-    val name: String,
-    private val parameterTypes: List<String>,
+    val callableId: CallableId,
+    val parameterTypes: List<String>,
     val isFunction: Boolean = true,
     val customExpression: String? = null,
 ) {
+    val name: String get() = callableId.callableName.asString()
     val typeA: String get() = parameterTypes[0].addKotlinPackage()
     val typeB: String get() = parameterTypes[1].addKotlinPackage()
     val typeC: String get() = parameterTypes[2].addKotlinPackage()
@@ -205,8 +209,6 @@ private data class Operation(
         }
     }
 
-    private fun String.addKotlinPackage(): String =
-        if (this == "T" || this == "T0?") this else "kotlin.$this"
 
     private fun castValue(name: String, type: String): String = when (type) {
         "Any?", "T" -> name
@@ -245,7 +247,13 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
         for (function in compileTimeFunctions) {
             val parameterTypes = listOf(classDescriptor.defaultType.constructor.toString()) +
                     function.valueParameters.map { it.type.toString() }
-            operationMap.add(Operation(function.name.asString(), parameterTypes, function is FunctionDescriptor))
+            operationMap.add(
+                Operation(
+                    callableIdOf(classDescriptor.name.asString(), function.name.asString()),
+                    parameterTypes,
+                    function is FunctionDescriptor
+                )
+            )
         }
     }
 
@@ -256,10 +264,23 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
             .filter { it.parameters.size == argumentsCount }
             .filter { !excludedUnsignedOperations.contains(it.name) }
             .forEach { function ->
-                operationMap.add(Operation(function.name, function.parameters.map {
-                    it.type.toString().removePrefix("kotlin.")
-                }))
+                operationMap.add(
+                    Operation(
+                        callableIdOf(unsignedClass.simpleName, function.name),
+                        function.parameters.map { it.type.toString().removePrefix("kotlin.") })
+                )
             }
+    }
+
+    when(argumentsCount) {
+        1 -> {
+            operationMap.add(Operation(callableIdOf(null, "trimMargin", "kotlin.text"), listOf("String")))
+            operationMap.add(Operation(callableIdOf(null, "trimIndent", "kotlin.text"), listOf("String")))
+        }
+        2 -> {
+
+            operationMap.add(Operation(callableIdOf(null, "trimMargin", "kotlin.text"), listOf("String", "String")))
+        }
     }
 
     return operationMap
@@ -279,8 +300,8 @@ private fun getUnsignedConversionOperationMap(): List<Operation> {
     )
 
     for ((type, extensions) in uintConversionExtensions) {
-        for (extension in extensions) {
-            operationMap.add(Operation(extension, listOf(type)))
+        for ((extension, declaredIn) in extensions.zip(listOf("ULong", "UInt", "UShort", "UByte"))) {
+            operationMap.add(Operation(callableIdOf(null, extension), listOf(type)))
         }
     }
 
@@ -291,7 +312,7 @@ private fun getBinaryIrOperationMap(): List<Operation> {
     val operationMap = mutableListOf<Operation>()
 
     fun addOperation(function: String, type: String) {
-        operationMap.add(Operation(function, listOf(type, type)))
+        operationMap.add(Operation(callableIdOf(null, function, "kotlin/internal/ir"), listOf(type, type)))
     }
 
     val compareFunction = setOf(
@@ -318,25 +339,33 @@ private fun getBinaryIrOperationMap(): List<Operation> {
     return operationMap
 }
 
+private fun callableIdOf(className: String?, name: String,  packageName: String = "kotlin"): CallableId =
+    CallableId(FqName(packageName), className?.let{FqName(it)}, Name.identifier(name))
+
+
+
 // TODO can be drop after serialization introduction
 private fun getExtensionOperationMap(): List<Operation> {
     val operationMap = mutableListOf<Operation>()
 
     for (type in integerTypes) {
         for (otherType in integerTypes) {
-            operationMap.add(Operation("mod", listOf(type, otherType)))
-            operationMap.add(Operation("floorDiv", listOf(type, otherType)))
+            operationMap.add(Operation(callableIdOf(null,"mod"), listOf(type, otherType)))
+            operationMap.add(Operation(callableIdOf(null,"floorDiv"), listOf(type, otherType)))
         }
     }
 
     for (type in fpTypes) {
         for (otherType in fpTypes) {
-            operationMap.add(Operation("mod", listOf(type, otherType)))
+            operationMap.add(Operation(callableIdOf(null,"mod"), listOf(type, otherType)))
         }
     }
 
     return operationMap
 }
+
+private fun String.addKotlinPackage(): String =
+    if (this == "T" || this == "T0?") this else "kotlin.$this"
 
 private fun String.typeSortKey() =
     listOf("Boolean", "Char", "Byte", "Short", "Int", "Float", "Long", "Double", "Number", "UByte", "UShort", "UInt", "ULong", "String", "CharSequence", "Comparable", "Any", "Any?", "Unit", "Throwable")
