@@ -22,20 +22,14 @@ object FirConstructorCallChecker : FirFunctionCallChecker(MppCheckerKind.Common)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol() ?: return
-        val coneType = constructorSymbol.resolvedReturnTypeRef.coneType
+        val coneType = constructorSymbol.resolvedReturnType
 
         if (constructorSymbol.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && coneType.contains { it is ConeCapturedType }) {
             reporter.reportOn(expression.source, FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION)
         }
 
-        val declarationClass = coneType.toRegularClassSymbol()
-            ?: return
-
-        if (declarationClass.classKind == ClassKind.ENUM_CLASS) {
-            reporter.reportOn(
-                expression.source,
-                FirErrors.ENUM_CLASS_CONSTRUCTOR_CALL
-            )
+        if (coneType.toRegularClassSymbol()?.classKind == ClassKind.ENUM_CLASS) {
+            reporter.reportOn(expression.source, FirErrors.ENUM_CLASS_CONSTRUCTOR_CALL)
         }
     }
 }
