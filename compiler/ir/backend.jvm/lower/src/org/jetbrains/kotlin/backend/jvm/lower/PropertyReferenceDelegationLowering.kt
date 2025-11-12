@@ -11,16 +11,35 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.fileParentOrNull
 import org.jetbrains.kotlin.backend.jvm.lower.JvmPropertiesLowering.Companion.createSyntheticMethodForPropertyDelegate
+import org.jetbrains.kotlin.backend.jvm.originalGetter
+import org.jetbrains.kotlin.backend.jvm.originalSetter
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irExprBody
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irGetField
+import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isFacadeClass
+import org.jetbrains.kotlin.ir.util.isTrivial
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.parents
+import org.jetbrains.kotlin.ir.util.remapReceiver
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 
@@ -51,7 +70,7 @@ internal class PropertyReferenceDelegationLowering(val context: JvmBackendContex
 }
 
 private class PropertyReferenceDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
-    private fun IrSimpleFunction.accessorBody(delegate: IrPropertyReference, receiverFieldOrExpression: IrStatement?): IrBody =
+    private fun IrSimpleFunction.accessorBody(delegate: IrRichPropertyReference, receiverFieldOrExpression: IrStatement?): IrBody =
         context.createIrBuilder(symbol, startOffset, endOffset).run {
             val value = parameters.lastOrNull()?.takeIf { it.kind == IrParameterKind.Regular }?.let(::irGet)
             val isGetter = value == null
@@ -67,9 +86,9 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                 else -> throw AssertionError("not a field/variable/expression: ${receiverFieldOrExpression.render()}")
             }
             val unboundReceiver = getReceiverParameterOrNull()
-            val field = delegate.field?.owner
+            val field = delegate.field
             val access = if (field == null) {
-                val accessor = if (isGetter) delegate.getter!! else delegate.setter!!
+                val accessor = if (isGetter) delegate.originalGetter!! else delegate.originalSetter!!
                 irCall(accessor).apply {
                     // This has the same assumptions about receivers as `PropertyReferenceLowering.propertyReferenceKindFor`:
                     // only one receiver can be bound, and if the property has both, the extension receiver cannot be bound.
@@ -132,10 +151,9 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     }
 
     private fun IrProperty.transform(): List<IrDeclaration>? {
-        val delegate = getPropertyReferenceForOptimizableDelegatedProperty() ?: return null
+        val delegate = getRichPropertyReferenceForOptimizableDelegatedProperty() ?: return null
         val oldField = backingField ?: return null
-
-        val receiver = delegate.getReceiverOrNull()?.transform(this@PropertyReferenceDelegationTransformer, null)
+        val receiver = delegate.receiverOrNull?.transform(this@PropertyReferenceDelegationTransformer, null)
         backingField = receiver?.takeIf { !it.canInline(parents.toSet()) }?.let {
             context.irFactory.buildField {
                 updateFrom(oldField)
@@ -157,10 +175,11 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                 val boundReceiver = backingField?.let { irGetField(dispatchReceiverParameter?.let(::irGet), it) }
                     ?: receiver?.remapReceiver(originalThis, dispatchReceiverParameter)
                 irExprBody(
-                    delegate.deepCopyWithSymbols().apply {
+                    delegate.deepCopyWithSymbols(parent).apply {
                         origin = PropertyReferenceLowering.REFLECTED_PROPERTY_REFERENCE
                         if (boundReceiver != null) {
-                            arguments[0] = boundReceiver
+                            boundValues.clear()
+                            boundValues.add(boundReceiver)
                         }
                     }
                 )
@@ -186,24 +205,15 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         return parameters.find { it.kind == IrParameterKind.ExtensionReceiver } ?: dispatchReceiverParameter
     }
 
-    private fun IrPropertyReference.getReceiverOrNull(): IrExpression? {
-        return getReceiverParameterOrNull()?.indexInParameters?.let(arguments::get)
-        // In POJOs there is no getter, and thus there are no receiver parameters anywhere.
-            ?: if (field?.owner?.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) arguments.singleOrNull() else null
-    }
-
-    private fun IrPropertyReference.getReceiverParameterOrNull(): IrValueParameter? = getter?.owner?.getReceiverParameterOrNull()
-
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
         val delegate = declaration.delegate
         val delegateInitializer = delegate?.initializer
-        if (delegateInitializer !is IrPropertyReference ||
+        if (delegateInitializer !is IrRichPropertyReference ||
             !declaration.getter.returnsResultOfStdlibCall ||
             declaration.setter?.returnsResultOfStdlibCall == false
         ) return super.visitLocalDelegatedProperty(declaration)
-
         // Variables are cheap, so optimizing them out is not really necessary.
-        val receiver = delegateInitializer.getReceiverOrNull()?.let { receiver ->
+        val receiver = delegateInitializer.receiverOrNull?.let { receiver ->
             with(delegate) { buildVariable(parent, startOffset, endOffset, origin, name, receiver.type) }.apply {
                 initializer = receiver.transform(this@PropertyReferenceDelegationTransformer, null)
             }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
@@ -65,3 +66,6 @@ var IrVariable.originalSnippetValueSymbol: IrSymbol? by irAttribute(copyByDefaul
 // For Method.invoke(..) The original call is stored in this attribute
 // It's used in suspend calls generation
 var IrCall.originalForReflectiveCall: IrCall? by irAttribute(copyByDefault = false)
+
+var IrRichPropertyReference.originalGetter: IrSimpleFunctionSymbol? by irAttribute(copyByDefault = false)
+var IrRichPropertyReference.originalSetter: IrSimpleFunctionSymbol? by irAttribute(copyByDefault = false)
