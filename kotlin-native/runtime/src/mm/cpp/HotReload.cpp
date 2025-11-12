@@ -26,6 +26,8 @@
 
 #include "hot/fishhook.h"
 
+#include <set>
+
 using namespace kotlin;
 
 /// Forward declarations for GC functions.
@@ -36,7 +38,22 @@ void resumeTheWorld(GCHandle gcHandle) noexcept;
 
 ManuallyScoped<HotReloader> globalDataInstance{};
 
-enum class Origin { Global, ShadowStack, ObjRef };
+constexpr std::set<std::string_view> NON_RELOADABLE_CLASS_SYMBOLS = {
+    "kclass:kotlin.Annotation"
+};
+
+enum class Origin {
+    Global, ShadowStack, ObjRef
+};
+
+const char* originToString(const Origin origin) noexcept {
+    switch (origin) {
+        case Origin::Global: return "Global";
+        case Origin::ShadowStack: return "ShadowStack";
+        case Origin::ObjRef: return "Object Reference";
+        default: return "Unknown";
+    }
+}
 
 template <typename F>
 void traverseObjectFieldsInternal(ObjHeader* object, F process) noexcept(noexcept(process(std::declval<mm::RefFieldAccessor>()))) {
@@ -67,20 +84,7 @@ int visitObjectGraph(ObjHeader* startObject, F processingFunction) {
 
     // Let's start collecting the root set
     auto processObject = [&](ObjHeader* obj, Origin origin) {
-        // const char* originString = "Unknown";
-        // switch (origin) {
-        //     case Origin::Global:
-        //         originString = "Global";
-        //         break;
-        //     case Origin::ShadowStack:
-        //         originString = "ShadowStack";
-        //         break;
-        //     case Origin::ObjRef:
-        //         originString = "Object Reference";
-        //         break;
-        //     default:
-        //         break;
-        // }
+        // const char* originString = originToString(origin);
 
         if (obj != nullptr) {
             // hot::utility::log("processing object of type: " + obj->type_info()->fqName() + " from: " + originString);
@@ -130,6 +134,7 @@ HotReloader::HotReloader() {
         _server.run([this](const std::vector<std::string>& dylibPaths) {
             utility::log("A new reload request has arrived, containing: ", utility::LogLevel::DEBUG);
             for (auto& dylib : dylibPaths) utility::log("\t" + dylib, utility::LogLevel::DEBUG);
+            utility::log("Note that only dylib at time is supported right now.", utility::LogLevel::WARN);
             _requests.emplace_front(dylibPaths);
         });
     }
@@ -144,22 +149,19 @@ HotReloader& HotReloader::Instance() noexcept {
 }
 
 void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlinDynamicLibrary) const {
-    // TODO: What about top-declarations? :) They are contained in the "" root-class.
 
     std::vector<rebinding> rebindingsToPerform{};
     // std::vector<void*> originalFuncs{};
     rebindingsToPerform.reserve(kotlinDynamicLibrary.functions.size()); // This is a pessimistic assumption
     // originalFuncs.resize(functions.size());
 
-
     for (const auto& mangledFunctionName : kotlinDynamicLibrary.functions) {
 
         void* symbolAddress = nullptr;
-        std::string symbolName{mangledFunctionName};
 
         for (auto& handle : _reloader.handles) {
-            utility::log("Checking handle: " + handle.path + ", epoch: " + std::to_string(handle.epoch));
-            if (void* symbol = dlsym(handle.handle, symbolName.c_str()); symbol != nullptr) {
+            utility::log("Checking handle: " + handle.path + ", epoch: " + std::to_string(handle.epoch), utility::LogLevel::DEBUG);
+            if (void* symbol = dlsym(handle.handle, mangledFunctionName.data()); symbol != nullptr) {
                 symbolAddress = symbol;
                 break;
             }
@@ -169,13 +171,13 @@ void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlin
         if (symbolAddress == nullptr) continue;
 
         rebinding reb{};
-        reb.name = strdup(symbolName.c_str()); // TODO: do we really need this?
+        reb.name = mangledFunctionName.data();
         reb.replacement = symbolAddress;
         // reb.replaced = &originalFuncs[index];
 
         rebindingsToPerform.push_back(reb);
 
-        utility::log("Function '" + symbolName + "' is going to be rebound.");
+        utility::log("Function '" + std::string{mangledFunctionName} + "' is going to be rebound.", utility::LogLevel::DEBUG);
     }
 
     // Perform symbol interposition with the collected function symbols
@@ -187,20 +189,17 @@ void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlin
         } else {
             utility::log("Rebinding performed successfully!");
         }
-
-        // Clean up the memory from strdup
-        for (auto& reb : rebindingsToPerform) free((void*)(reb.name));
     }
 }
 
 void HotReloader::performIfNeeded(ObjHeader* _) noexcept {
     if (_requests.empty()) {
-        // utility::log("Cannot perform hot-reloading since there is no upcoming request", utility::LogLevel::DEBUG);
+        utility::log("Cannot perform hot-reloading since there is no upcoming request", utility::LogLevel::WARN);
         return;
     }
 
     if (_processing) {
-        utility::log("Processing a previous request...", utility::LogLevel::DEBUG);
+        utility::log("Processing a previous request...", utility::LogLevel::WARN);
         return;
     }
 
@@ -232,29 +231,32 @@ void HotReloader::performIfNeeded(ObjHeader* _) noexcept {
     auto parsedDynamicLib = dyld::parseDynamicLibrary(dylibPath);
 
     for (const auto& classMangledName : parsedDynamicLib.classes) {
-        if (classMangledName == "_kclass:kotlin.Annotation") continue; // Skip annotation base class
-
+        if (NON_RELOADABLE_CLASS_SYMBOLS.find(classMangledName) != NON_RELOADABLE_CLASS_SYMBOLS.end()) {
+            utility::log("Cannot reload class of type: " + std::string(classMangledName));
+            continue;
+        }
+        
         auto temp = std::string{classMangledName};
 
-        TypeInfo* oldTypeInfo = _reloader.lookForTypeInfo(temp, 0);
+        const TypeInfo* oldTypeInfo = _reloader.lookForTypeInfo(temp, 0);
         if (oldTypeInfo == nullptr) {
             // utility::log("Cannot find the old TypeInfo for: " + temp, utility::LogLevel::WARN);
             continue;
         }
 
-        TypeInfo* newTypeInfo = _reloader.lookForTypeInfo(temp, 1);
+        const TypeInfo* newTypeInfo = _reloader.lookForTypeInfo(temp, 1);
         if (newTypeInfo == nullptr) {
             utility::log("Cannot find the new TypeInfo for: " + temp, utility::LogLevel::WARN);
             continue;
         }
         auto objectsToReload = findObjectsToReload(oldTypeInfo);
         /// 3. For each new redefined TypeInfo, reload the instances
-            for (const auto& obj : objectsToReload) {
-                const auto newInstance = stateTransfer(obj, newTypeInfo);
-                updateShadowStackReferences(obj, newInstance);
-                updateHeapReferences(obj, newInstance);
-            }
+        for (const auto& obj : objectsToReload) {
+            const auto newInstance = stateTransfer(obj, newTypeInfo);
+            updateShadowStackReferences(obj, newInstance);
+            updateHeapReferences(obj, newInstance);
         }
+    }
 
         /// 5. Also, interpose new function symbols
         interposeNewFunctionSymbols(parsedDynamicLib);
@@ -398,20 +400,7 @@ int HotReloader::updateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject
 
     // Let's start collecting the root set
     auto processObject = [&](ObjHeader* obj, Origin origin) {
-        const char* originString = "Unknown";
-        switch (origin) {
-            case Origin::Global:
-                originString = "Global";
-                break;
-            case Origin::ShadowStack:
-                originString = "ShadowStack";
-                break;
-            case Origin::ObjRef:
-                originString = "Object Reference";
-                break;
-            default:
-                break;
-        }
+        const char* originString = originToString(origin);
 
         if (obj != nullptr) {
             utility::log("processing object of type: " + obj->type_info()->fqName() + " from: " + originString, utility::LogLevel::DEBUG);
