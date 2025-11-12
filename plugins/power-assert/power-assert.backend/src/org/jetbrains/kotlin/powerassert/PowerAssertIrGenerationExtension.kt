@@ -21,13 +21,16 @@ package org.jetbrains.kotlin.powerassert
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.powerassert.diagram.SourceFile
 
 class PowerAssertIrGenerationExtension(
     private val configuration: PowerAssertConfiguration,
 ) : IrGenerationExtension {
-    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {}
+
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: K2IrPluginContext) {
         for (file in moduleFragment.files) {
             PowerAssertCallTransformer(SourceFile(file), pluginContext, configuration)
                 .visitFile(file)

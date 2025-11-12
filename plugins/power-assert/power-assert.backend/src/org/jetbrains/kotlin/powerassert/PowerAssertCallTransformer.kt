@@ -22,7 +22,7 @@ package org.jetbrains.kotlin.powerassert
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.powerassert.diagram.*
 
 class PowerAssertCallTransformer(
     private val sourceFile: SourceFile,
-    private val context: IrPluginContext,
+    private val context: K2IrPluginContext,
     private val configuration: PowerAssertConfiguration,
 ) : IrElementTransformerVoidWithContext() {
     private val irTypeSystemContext = IrTypeSystemContextImpl(context.irBuiltIns)
@@ -189,12 +189,12 @@ class PowerAssertCallTransformer(
         // Java static functions require searching by class
         val parentClassFunctions = (
                 function.parentClassId
-                    ?.let { context.referenceClass(it) }
+                    ?.let { context.referenceClass(it, currentFile) }
                     ?.functions ?: emptySequence()
                 )
             .filter { it.owner.kotlinFqName == function.kotlinFqName }
             .toList()
-        val possible = (context.referenceFunctions(function.callableId) + parentClassFunctions)
+        val possible = (context.referenceFunctions(function.callableId, currentFile) + parentClassFunctions)
             .distinct()
 
         return possible.mapNotNull { overload ->
@@ -249,7 +249,7 @@ class PowerAssertCallTransformer(
         type.isFunctionOrKFunction() && type is IrSimpleType && (type.arguments.size == 1 && isStringSupertype(type.arguments.first()))
 
     private fun isStringJavaSupplierFunction(type: IrType): Boolean {
-        val javaSupplier = context.referenceClass(ClassId.topLevel(FqName("java.util.function.Supplier")))
+        val javaSupplier = context.referenceClass(ClassId.topLevel(FqName("java.util.function.Supplier")), currentFile)
         return javaSupplier != null && type.isSubtypeOfClass(javaSupplier) &&
                 type is IrSimpleType && (type.arguments.size == 1 && isStringSupertype(type.arguments.first()))
     }
