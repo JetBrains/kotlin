@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.js.test.klib
 
 import java.io.File
-import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.fir.setUpDefaultDirectivesForJsBoxTest
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_MULTIPLE_API_VERSIONS_SETTING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
@@ -33,24 +33,10 @@ import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 
 @Tag("custom-second-phase")
 open class AbstractCustomJsCompilerSecondPhaseTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
-    override fun runTest(@TestDataFile filePath: String) {
-        try {
-            super.runTest(filePath)
-        } catch (ise: java.lang.IllegalStateException) {
-            // Sadly, this kind of exception happens before the action of MetaTestConfigurator
-            // AfterAnalysisChecker cannot handle it as well.
-            // So, here's the only place to intercept the exception and ignore tests which explicitly set `// API_VERSION: XXX`
-            if (ise.message?.contains("Too many values passed to API_VERSION") == true) {
-                throw Assumptions.abort<Nothing>()
-            } else throw ise
-        }
-    }
-
     override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
         return if (customJsCompilerSettings.defaultLanguageVersion >= LanguageVersion.LATEST_STABLE)
             StandardLibrariesPathProviderForKotlinProject
@@ -70,6 +56,7 @@ open class AbstractCustomJsCompilerSecondPhaseTest : AbstractKotlinCompilerWithT
             if (customJsCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
                 +ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
                 LANGUAGE_VERSION with customJsCompilerSettings.defaultLanguageVersion
+                +ALLOW_MULTIPLE_API_VERSIONS_SETTING
                 API_VERSION with ApiVersion.createByLanguageVersion(customJsCompilerSettings.defaultLanguageVersion)
                 LANGUAGE with "+ExportKlibToOlderAbiVersion"
             }

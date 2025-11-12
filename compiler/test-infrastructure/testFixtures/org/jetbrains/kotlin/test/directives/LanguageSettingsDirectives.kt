@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
+import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object LanguageSettingsDirectives : SimpleDirectivesContainer() {
@@ -42,6 +43,16 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
             For language feature testing, use `// LANGUAGE: [+-]FeatureName` directive instead,
             where FeatureName is an entry of the enum `LanguageFeature`
         """.trimIndent()
+    )
+
+    val ALLOW_MULTIPLE_API_VERSIONS_SETTING by directive(
+        description = """
+            Disables the failure in the ${LanguageVersionSettingsBuilder::class} in case if there
+            several values specified for the $API_VERSION. In this case the latest version will be used.
+            
+            Please note that having several API versions specified is most likely an error prone
+            situation, so it's not recommended to use this directive.
+       """.trimIndent()
     )
 
 
