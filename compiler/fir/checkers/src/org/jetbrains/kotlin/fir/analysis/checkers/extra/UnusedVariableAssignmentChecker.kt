@@ -186,7 +186,7 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
 
             return when (from) {
                 // Do not propagate captured writes beyond the property declaration.
-                is VariableDeclarationNode -> super.visitEdge(from, to, metadata, data.remove(from.fir.symbol))
+                is VariableDeclarationExitNode -> super.visitEdge(from, to, metadata, data.remove(from.fir.symbol))
 
                 else -> super.visitEdge(from, to, metadata, data)
             }
