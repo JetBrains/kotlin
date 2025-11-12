@@ -20,9 +20,11 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
 import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.CompilationStage
@@ -58,6 +60,9 @@ abstract class KtModuleByCompilerConfiguration(
         return when {
             targetPlatform.isNative() -> {
                 librariesByRoots(getAllNativeDependenciesPaths(testModule, testServices).map { Paths.get(it) })
+            }
+            targetPlatform.isJs() -> {
+                librariesByRoots(getAllJsDependenciesPaths(testModule, testServices).map { Paths.get(it) })
             }
             else -> buildList {
                 val roots = buildList {

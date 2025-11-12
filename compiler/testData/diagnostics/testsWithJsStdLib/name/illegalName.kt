@@ -1,3 +1,4 @@
+// IGNORE_NON_REVERSED_RESOLVE: KT-62937
 // LANGUAGE: -JsAllowInvalidCharsIdentifiersEscaping
 private fun ` .private `(): String = TODO("")
 
