@@ -7,10 +7,6 @@ public final enum class TestEnum : kotlin.Enum<TestEnum> {
 
     enum entry Collection
 
-    enum entry Set
-
-    enum entry List
-
     enum entry Map
 
     enum entry Function

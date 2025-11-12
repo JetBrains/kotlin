@@ -1,5 +1,28 @@
 CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntArray modality:FINAL visibility:public superTypes:[kotlin.Any; kotlin.Cloneable; java.io.Serializable]
   thisReceiver: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> type:kotlin.IntArray
+  CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
+    annotations:
+      ExperimentalStdlibApi
+    thisReceiver: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> type:kotlin.IntArray.Companion
+    CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private returnType:kotlin.IntArray.Companion [primary]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN IR_EXTERNAL_DECLARATION_STUB name:of visibility:public modality:FINAL returnType:kotlin.IntArray [operator]
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.IntArray.Companion
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:elements index:1 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
+      annotations:
+        ExperimentalStdlibApi
   CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public returnType:kotlin.IntArray [primary]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:size index:0 type:kotlin.Int
   CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public returnType:kotlin.IntArray

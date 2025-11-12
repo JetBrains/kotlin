@@ -62,6 +62,14 @@ public interface Iterator<out T> {
 }
 
 public interface List<out E> : kotlin.collections.Collection<E> {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(): kotlin.collections.List<T> { /* compiled code */ }
+
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(element: T): kotlin.collections.List<T> { /* compiled code */ }
+
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(vararg elements: T): kotlin.collections.List<T> { /* compiled code */ }
+    }
+
     public abstract val size: kotlin.Int
 
     public abstract fun isEmpty(): kotlin.Boolean
@@ -156,6 +164,14 @@ public interface MutableIterator<out T> : kotlin.collections.Iterator<T> {
 }
 
 public interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E> {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(): kotlin.collections.MutableList<T> { /* compiled code */ }
+
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(element: T): kotlin.collections.MutableList<T> { /* compiled code */ }
+
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(vararg elements: T): kotlin.collections.MutableList<T> { /* compiled code */ }
+    }
+
     @kotlin.IgnorableReturnValue public abstract fun add(element: E): kotlin.Boolean
 
     @kotlin.IgnorableReturnValue public abstract fun remove(element: E): kotlin.Boolean
@@ -218,6 +234,14 @@ public interface MutableMap<K, V> : kotlin.collections.Map<K, V> {
 }
 
 public interface MutableSet<E> : kotlin.collections.Set<E>, kotlin.collections.MutableCollection<E> {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(): kotlin.collections.MutableSet<T> { /* compiled code */ }
+
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(element: T): kotlin.collections.MutableSet<T> { /* compiled code */ }
+
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(vararg elements: T): kotlin.collections.MutableSet<T> { /* compiled code */ }
+    }
+
     public abstract operator fun iterator(): kotlin.collections.MutableIterator<E>
 
     @kotlin.IgnorableReturnValue public abstract fun add(element: E): kotlin.Boolean
@@ -234,6 +258,14 @@ public interface MutableSet<E> : kotlin.collections.Set<E>, kotlin.collections.M
 }
 
 public interface Set<out E> : kotlin.collections.Collection<E> {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(): kotlin.collections.Set<T> { /* compiled code */ }
+
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(element: T): kotlin.collections.Set<T> { /* compiled code */ }
+
+        @kotlin.ExperimentalStdlibApi public final operator fun <T> of(vararg elements: T): kotlin.collections.Set<T> { /* compiled code */ }
+    }
+
     public abstract val size: kotlin.Int
 
     public abstract fun isEmpty(): kotlin.Boolean

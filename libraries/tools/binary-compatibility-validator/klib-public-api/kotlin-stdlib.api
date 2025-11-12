@@ -655,6 +655,13 @@ abstract interface <#A: kotlin/Any?> kotlin.collections/MutableList : kotlin.col
     abstract fun set(kotlin/Int, #A): #A // kotlin.collections/MutableList.set|set(kotlin.Int;1:0){}[0]
     abstract fun subList(kotlin/Int, kotlin/Int): kotlin.collections/MutableList<#A> // kotlin.collections/MutableList.subList|subList(kotlin.Int;kotlin.Int){}[0]
 
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin.collections/MutableList.Companion|null[0]
+        final inline fun <#A2: kotlin/Any?> of(#A2): kotlin.collections/MutableList<#A2> // kotlin.collections/MutableList.Companion.of|of(0:0){0§<kotlin.Any?>}[0]
+        final inline fun <#A2: kotlin/Any?> of(): kotlin.collections/MutableList<#A2> // kotlin.collections/MutableList.Companion.of|of(){0§<kotlin.Any?>}[0]
+        final inline fun <#A2: kotlin/Any?> of(kotlin/Array<out #A2>...): kotlin.collections/MutableList<#A2> // kotlin.collections/MutableList.Companion.of|of(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+    }
+
     // Targets: [js]
     open fun asJsArrayView(): kotlin.js.collections/JsArray<#A> // kotlin.collections/MutableList.asJsArrayView|asJsArrayView(){}[0]
 }
@@ -675,6 +682,13 @@ abstract interface <#A: kotlin/Any?> kotlin.collections/MutableSet : kotlin.coll
     abstract fun remove(#A): kotlin/Boolean // kotlin.collections/MutableSet.remove|remove(1:0){}[0]
     abstract fun removeAll(kotlin.collections/Collection<#A>): kotlin/Boolean // kotlin.collections/MutableSet.removeAll|removeAll(kotlin.collections.Collection<1:0>){}[0]
     abstract fun retainAll(kotlin.collections/Collection<#A>): kotlin/Boolean // kotlin.collections/MutableSet.retainAll|retainAll(kotlin.collections.Collection<1:0>){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin.collections/MutableSet.Companion|null[0]
+        final inline fun <#A2: kotlin/Any?> of(#A2): kotlin.collections/MutableSet<#A2> // kotlin.collections/MutableSet.Companion.of|of(0:0){0§<kotlin.Any?>}[0]
+        final inline fun <#A2: kotlin/Any?> of(): kotlin.collections/MutableSet<#A2> // kotlin.collections/MutableSet.Companion.of|of(){0§<kotlin.Any?>}[0]
+        final inline fun <#A2: kotlin/Any?> of(kotlin/Array<out #A2>...): kotlin.collections/MutableSet<#A2> // kotlin.collections/MutableSet.Companion.of|of(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+    }
 
     // Targets: [js]
     open fun asJsSetView(): kotlin.js.collections/JsSet<#A> // kotlin.collections/MutableSet.asJsSetView|asJsSetView(){}[0]
@@ -746,6 +760,13 @@ abstract interface <#A: out kotlin/Any?> kotlin.collections/List : kotlin.collec
     abstract fun listIterator(kotlin/Int): kotlin.collections/ListIterator<#A> // kotlin.collections/List.listIterator|listIterator(kotlin.Int){}[0]
     abstract fun subList(kotlin/Int, kotlin/Int): kotlin.collections/List<#A> // kotlin.collections/List.subList|subList(kotlin.Int;kotlin.Int){}[0]
 
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin.collections/List.Companion|null[0]
+        final inline fun <#A2: kotlin/Any?> of(#A2): kotlin.collections/List<#A2> // kotlin.collections/List.Companion.of|of(0:0){0§<kotlin.Any?>}[0]
+        final inline fun <#A2: kotlin/Any?> of(): kotlin.collections/List<#A2> // kotlin.collections/List.Companion.of|of(){0§<kotlin.Any?>}[0]
+        final inline fun <#A2: kotlin/Any?> of(kotlin/Array<out #A2>...): kotlin.collections/List<#A2> // kotlin.collections/List.Companion.of|of(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+    }
+
     // Targets: [js]
     open fun asJsReadonlyArrayView(): kotlin.js.collections/JsReadonlyArray<#A> // kotlin.collections/List.asJsReadonlyArrayView|asJsReadonlyArrayView(){}[0]
 }
@@ -776,6 +797,13 @@ abstract interface <#A: out kotlin/Any?> kotlin.collections/Set : kotlin.collect
     abstract fun isEmpty(): kotlin/Boolean // kotlin.collections/Set.isEmpty|isEmpty(){}[0]
     abstract fun iterator(): kotlin.collections/Iterator<#A> // kotlin.collections/Set.iterator|iterator(){}[0]
 
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin.collections/Set.Companion|null[0]
+        final inline fun <#A2: kotlin/Any?> of(#A2): kotlin.collections/Set<#A2> // kotlin.collections/Set.Companion.of|of(0:0){0§<kotlin.Any?>}[0]
+        final inline fun <#A2: kotlin/Any?> of(): kotlin.collections/Set<#A2> // kotlin.collections/Set.Companion.of|of(){0§<kotlin.Any?>}[0]
+        final inline fun <#A2: kotlin/Any?> of(kotlin/Array<out #A2>...): kotlin.collections/Set<#A2> // kotlin.collections/Set.Companion.of|of(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+    }
+
     // Targets: [js]
     open fun asJsReadonlySetView(): kotlin.js.collections/JsReadonlySet<#A> // kotlin.collections/Set.asJsReadonlySetView|asJsReadonlySetView(){}[0]
 }
@@ -793,6 +821,13 @@ abstract interface <#A: out kotlin/Any?> kotlin.reflect/KProperty0 : kotlin.refl
 
 abstract interface <#A: out kotlin/Any?> kotlin.sequences/Sequence { // kotlin.sequences/Sequence|null[0]
     abstract fun iterator(): kotlin.collections/Iterator<#A> // kotlin.sequences/Sequence.iterator|iterator(){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin.sequences/Sequence.Companion|null[0]
+        final inline fun <#A2: kotlin/Any?> of(#A2): kotlin.sequences/Sequence<#A2> // kotlin.sequences/Sequence.Companion.of|of(0:0){0§<kotlin.Any?>}[0]
+        final inline fun <#A2: kotlin/Any?> of(): kotlin.sequences/Sequence<#A2> // kotlin.sequences/Sequence.Companion.of|of(){0§<kotlin.Any?>}[0]
+        final inline fun <#A2: kotlin/Any?> of(kotlin/Array<out #A2>...): kotlin.sequences/Sequence<#A2> // kotlin.sequences/Sequence.Companion.of|of(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+    }
 }
 
 abstract interface <#A: out kotlin/Any?> kotlin/Function // kotlin/Function|null[0]
@@ -1442,6 +1477,11 @@ final class <#A: kotlin/Any?> kotlin/Array { // kotlin/Array|null[0]
 
     // Targets: [native, wasmJs, wasmWasi]
     constructor <init>(kotlin/Int) // kotlin/Array.<init>|<init>(kotlin.Int){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/Array.Companion|null[0]
+        final inline fun <#A2: reified kotlin/Any?> of(kotlin/Array<out #A2>...): kotlin/Array<#A2> // kotlin/Array.Companion.of|of(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+    }
 }
 
 final class <#A: out kotlin/Any?, #B: out kotlin/Any?, #C: out kotlin/Any?> kotlin/Triple : kotlin.io/Serializable { // kotlin/Triple|null[0]
@@ -2159,6 +2199,11 @@ final class kotlin/BooleanArray { // kotlin/BooleanArray|null[0]
     final fun get(kotlin/Int): kotlin/Boolean // kotlin/BooleanArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/BooleanIterator // kotlin/BooleanArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Boolean) // kotlin/BooleanArray.set|set(kotlin.Int;kotlin.Boolean){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/BooleanArray.Companion|null[0]
+        final inline fun of(kotlin/BooleanArray...): kotlin/BooleanArray // kotlin/BooleanArray.Companion.of|of(kotlin.BooleanArray...){}[0]
+    }
 }
 
 final class kotlin/Byte : kotlin/Comparable<kotlin/Byte>, kotlin/Number { // kotlin/Byte|null[0]
@@ -2446,6 +2491,11 @@ final class kotlin/ByteArray { // kotlin/ByteArray|null[0]
     final fun get(kotlin/Int): kotlin/Byte // kotlin/ByteArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/ByteIterator // kotlin/ByteArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Byte) // kotlin/ByteArray.set|set(kotlin.Int;kotlin.Byte){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/ByteArray.Companion|null[0]
+        final inline fun of(kotlin/ByteArray...): kotlin/ByteArray // kotlin/ByteArray.Companion.of|of(kotlin.ByteArray...){}[0]
+    }
 }
 
 final class kotlin/Char : kotlin/Comparable<kotlin/Char> { // kotlin/Char|null[0]
@@ -2583,6 +2633,11 @@ final class kotlin/CharArray { // kotlin/CharArray|null[0]
     final fun get(kotlin/Int): kotlin/Char // kotlin/CharArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/CharIterator // kotlin/CharArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Char) // kotlin/CharArray.set|set(kotlin.Int;kotlin.Char){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/CharArray.Companion|null[0]
+        final inline fun of(kotlin/CharArray...): kotlin/CharArray // kotlin/CharArray.Companion.of|of(kotlin.CharArray...){}[0]
+    }
 }
 
 final class kotlin/Double : kotlin/Comparable<kotlin/Double>, kotlin/Number { // kotlin/Double|null[0]
@@ -2856,6 +2911,11 @@ final class kotlin/DoubleArray { // kotlin/DoubleArray|null[0]
     final fun get(kotlin/Int): kotlin/Double // kotlin/DoubleArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/DoubleIterator // kotlin/DoubleArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Double) // kotlin/DoubleArray.set|set(kotlin.Int;kotlin.Double){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/DoubleArray.Companion|null[0]
+        final inline fun of(kotlin/DoubleArray...): kotlin/DoubleArray // kotlin/DoubleArray.Companion.of|of(kotlin.DoubleArray...){}[0]
+    }
 }
 
 final class kotlin/Float : kotlin/Comparable<kotlin/Float>, kotlin/Number { // kotlin/Float|null[0]
@@ -3129,6 +3189,11 @@ final class kotlin/FloatArray { // kotlin/FloatArray|null[0]
     final fun get(kotlin/Int): kotlin/Float // kotlin/FloatArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/FloatIterator // kotlin/FloatArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Float) // kotlin/FloatArray.set|set(kotlin.Int;kotlin.Float){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/FloatArray.Companion|null[0]
+        final inline fun of(kotlin/FloatArray...): kotlin/FloatArray // kotlin/FloatArray.Companion.of|of(kotlin.FloatArray...){}[0]
+    }
 }
 
 final class kotlin/Int : kotlin/Comparable<kotlin/Int>, kotlin/Number { // kotlin/Int|null[0]
@@ -3398,6 +3463,11 @@ final class kotlin/IntArray { // kotlin/IntArray|null[0]
     final fun get(kotlin/Int): kotlin/Int // kotlin/IntArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/IntIterator // kotlin/IntArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Int) // kotlin/IntArray.set|set(kotlin.Int;kotlin.Int){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/IntArray.Companion|null[0]
+        final inline fun of(kotlin/IntArray...): kotlin/IntArray // kotlin/IntArray.Companion.of|of(kotlin.IntArray...){}[0]
+    }
 }
 
 final class kotlin/KotlinNothingValueException : kotlin/RuntimeException { // kotlin/KotlinNothingValueException|null[0]
@@ -3586,6 +3656,11 @@ final class kotlin/LongArray { // kotlin/LongArray|null[0]
     final fun get(kotlin/Int): kotlin/Long // kotlin/LongArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/LongIterator // kotlin/LongArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Long) // kotlin/LongArray.set|set(kotlin.Int;kotlin.Long){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/LongArray.Companion|null[0]
+        final inline fun of(kotlin/LongArray...): kotlin/LongArray // kotlin/LongArray.Companion.of|of(kotlin.LongArray...){}[0]
+    }
 }
 
 final class kotlin/NotImplementedError : kotlin/Error { // kotlin/NotImplementedError|null[0]
@@ -3884,6 +3959,11 @@ final class kotlin/ShortArray { // kotlin/ShortArray|null[0]
     final fun get(kotlin/Int): kotlin/Short // kotlin/ShortArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/ShortIterator // kotlin/ShortArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Short) // kotlin/ShortArray.set|set(kotlin.Int;kotlin.Short){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/ShortArray.Companion|null[0]
+        final inline fun of(kotlin/ShortArray...): kotlin/ShortArray // kotlin/ShortArray.Companion.of|of(kotlin.ShortArray...){}[0]
+    }
 }
 
 final class kotlin/String : kotlin/CharSequence, kotlin/Comparable<kotlin/String> { // kotlin/String|null[0]
@@ -4127,6 +4207,11 @@ final value class kotlin/UByteArray : kotlin.collections/Collection<kotlin/UByte
     final fun iterator(): kotlin.collections/Iterator<kotlin/UByte> // kotlin/UByteArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/UByte) // kotlin/UByteArray.set|set(kotlin.Int;kotlin.UByte){}[0]
     final fun toString(): kotlin/String // kotlin/UByteArray.toString|toString(){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/UByteArray.Companion|null[0]
+        final inline fun of(kotlin/UByteArray...): kotlin/UByteArray // kotlin/UByteArray.Companion.of|of(kotlin.UByteArray...){}[0]
+    }
 }
 
 final value class kotlin/UInt : kotlin/Comparable<kotlin/UInt> { // kotlin/UInt|null[0]
@@ -4221,6 +4306,11 @@ final value class kotlin/UIntArray : kotlin.collections/Collection<kotlin/UInt> 
     final fun iterator(): kotlin.collections/Iterator<kotlin/UInt> // kotlin/UIntArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/UInt) // kotlin/UIntArray.set|set(kotlin.Int;kotlin.UInt){}[0]
     final fun toString(): kotlin/String // kotlin/UIntArray.toString|toString(){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/UIntArray.Companion|null[0]
+        final inline fun of(kotlin/UIntArray...): kotlin/UIntArray // kotlin/UIntArray.Companion.of|of(kotlin.UIntArray...){}[0]
+    }
 }
 
 final value class kotlin/ULong : kotlin/Comparable<kotlin/ULong> { // kotlin/ULong|null[0]
@@ -4315,6 +4405,11 @@ final value class kotlin/ULongArray : kotlin.collections/Collection<kotlin/ULong
     final fun iterator(): kotlin.collections/Iterator<kotlin/ULong> // kotlin/ULongArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/ULong) // kotlin/ULongArray.set|set(kotlin.Int;kotlin.ULong){}[0]
     final fun toString(): kotlin/String // kotlin/ULongArray.toString|toString(){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/ULongArray.Companion|null[0]
+        final inline fun of(kotlin/ULongArray...): kotlin/ULongArray // kotlin/ULongArray.Companion.of|of(kotlin.ULongArray...){}[0]
+    }
 }
 
 final value class kotlin/UShort : kotlin/Comparable<kotlin/UShort> { // kotlin/UShort|null[0]
@@ -4407,6 +4502,11 @@ final value class kotlin/UShortArray : kotlin.collections/Collection<kotlin/USho
     final fun iterator(): kotlin.collections/Iterator<kotlin/UShort> // kotlin/UShortArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/UShort) // kotlin/UShortArray.set|set(kotlin.Int;kotlin.UShort){}[0]
     final fun toString(): kotlin/String // kotlin/UShortArray.toString|toString(){}[0]
+
+    // Targets: [js, wasmJs, wasmWasi]
+    final object Companion { // kotlin/UShortArray.Companion|null[0]
+        final inline fun of(kotlin/UShortArray...): kotlin/UShortArray // kotlin/UShortArray.Companion.of|of(kotlin.UShortArray...){}[0]
+    }
 }
 
 open class kotlin.coroutines.cancellation/CancellationException : kotlin/IllegalStateException { // kotlin.coroutines.cancellation/CancellationException|null[0]
