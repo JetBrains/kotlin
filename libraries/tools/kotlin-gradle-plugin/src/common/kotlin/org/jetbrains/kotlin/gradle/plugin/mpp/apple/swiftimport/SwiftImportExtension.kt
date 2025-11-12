@@ -153,7 +153,7 @@ abstract class SwiftImportExtension @Inject constructor(
             it.platformConstraints == null && it.cinteropClangModules.isEmpty()
         }.map { it.name },
         traits: Set<String> = setOf(),
-        javaOverloadsArePain: Boolean = true,
+        @Suppress("unused", "UNUSED_PARAMETER") javaOverloadsArePain: Boolean = true,
     ) {
         spmDependencies.add(
             SwiftPMDependency.Local(

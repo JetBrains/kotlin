@@ -506,6 +506,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                 it.setExecutable(true)
             }
             SyntheticProductType.INFERRED -> null
+            null -> null
         }
         generatePackageManifest(
             identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,

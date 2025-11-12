@@ -51,6 +51,7 @@ internal constructor(
     // TODO KT-75294 When the deprecated secondary constructor is removed, move `providers` to a non-null constructor property.
     private val providers: ProviderFactory = providers ?: this.project.providers
 
+    @get:Internal
     internal val processOptions: ProcessLaunchOptions = this.objects.processLaunchOptions {
         environment.putAll(this@KotlinNativeTest.providers.getAllEnvironmentVariables())
     }
