@@ -755,6 +755,66 @@ class ComposeIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("CMP-9167 verification")
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811, maxVersion = TestVersions.AGP.AGP_811)
+    @OtherGradlePluginTests
+    @TestMetadata("composeMultiplatform")
+    fun testComposeDefaultValueParamStubs(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            projectName = "composeMultiplatform",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                    version = TestVersions.Kotlin.CURRENT
+                ),
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
+            ),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://maven.pkg.jetbrains.space/public/p/compose/dev")),
+            enableGradleDaemonMemoryLimitInMb = 2048,
+            enableKotlinDaemonMemoryLimitInMb = 2048,
+        ) {
+            buildGradleKts.appendComposePlugin()
+
+            val sourceFile = projectPath.resolve("src/commonMain/kotlin/com/example/App.kt")
+            sourceFile.writeText(
+                //language=kotlin
+                """
+                package com.example
+                
+                import androidx.compose.runtime.Composable
+                import kotlin.jvm.JvmInline
+                
+                @JvmInline
+                value class ImeAction private constructor(val value: Int) {
+                    companion object {
+                        val Default = ImeAction(0)
+                    }
+                }
+                
+                @Composable
+                fun <T> TextCompose(genericText: (T) -> String, imeAction: ImeAction = ImeAction.Default) {}
+                """.trimIndent()
+            )
+
+            build(":compileKotlinIosSimulatorArm64") {
+                assertTasksExecuted(":compileKotlinIosSimulatorArm64")
+            }
+            build(":compileKotlinWasmJs") {
+                assertTasksExecuted(":compileKotlinWasmJs")
+            }
+            build(":compileKotlinJs") {
+                assertTasksExecuted(":compileKotlinJs")
+            }
+        }
+    }
+
     private fun Path.appendComposePlugin() {
         modify { originalBuildScript ->
             """
