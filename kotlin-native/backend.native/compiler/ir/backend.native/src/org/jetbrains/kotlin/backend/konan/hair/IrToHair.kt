@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.ir.util.render
 
 internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
 
-internal fun IrSimpleFunction.shouldGenerateHair(): Boolean = name.toString().startsWith("toHair")
-
 internal val GenerateHairPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, Map<IrFunction, FunctionCompilation>>(
         name = "GenerateHair",
         preactions = getDefaultIrActions(),
@@ -52,6 +50,10 @@ class KNFunction(val irFunction: IrSimpleFunction) : HairFunction {
     override fun toString() = irFunction.name.toString()
 }
 
+// FIXME move to utils?
+context(controlBuilder: ControlFlowBuilder)
+val controlBuilder get() = controlBuilder
+
 internal class HairGenerator(val context: Context, val module: IrModuleFragment) : BodyLoweringPass {
     val moduleCompilation = Compilation()
 
@@ -59,13 +61,13 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         // TODO non-simple functions
-        if (container is IrSimpleFunction && container.shouldGenerateHair()) {
+        if (context.config.enableHair && container is IrSimpleFunction) {
             try {
                 funCompilations[container] = generateHair(container)
+                context.log { "# Successfully generated HaIR for ${container.name.toString()}" }
             } catch (e: Throwable) {
                 context.reportWarning("Failed to generate HaIR for ${container.name.toString()}: $e", container.fileOrNull, container)
             }
-            context.log { "# Successfully generated HaIR for ${container.name.toString()}" }
         }
     }
 
@@ -74,15 +76,12 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
         val funCompilation = FunctionCompilation(moduleCompilation, hairFun)
         context.log {"# Generating hair for ${f.name}, compilation = $funCompilation" }
 
-        // TODO replace Var with wrapper aroung IRValueSymbol?
         // TODO parse directly into SSA ignoing Vars?
-        val vars = mutableMapOf<IrValueSymbol, Var>()
-        fun getVar(sym: IrValueSymbol): Var {
-            return vars.getOrPut(sym) { Var(sym.owner) }
-        }
+        val vars = mutableMapOf<IrValueSymbol, IrValueSymbol>()
+        fun getVar(sym: IrValueSymbol) = sym
 
         with (funCompilation.session) {
-            buildInitialIR<Unit> {
+            buildInitialIR {
                 // FIXME
                 val unitConst by lazy { NoValue() }
 
@@ -131,13 +130,9 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         return NoValue()
                     }
 
-                    override fun visitReturn(expression: IrReturn, data: Unit): Node {
-                        return Return(expression.value.accept(this, Unit))
-                    }
-
                     override fun visitConst(expression: IrConst, data: Unit): Node {
                         return when (expression.kind) {
-                            IrConstKind.Int -> ConstInt(expression.value as Int)
+                            IrConstKind.Int -> ConstI(expression.value as Int)
                             else -> TODO(expression.render())
                         }
                     }
@@ -145,7 +140,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     override fun visitCall(expression: IrCall, data: Unit): Node {
                         val args = expression.arguments.map { it?.accept(this, Unit) }
                         return when (tryGetIntrinsicType(expression)) {
-                            IntrinsicType.PLUS -> Add(Type.Primitive.INT)(args[0]!!, args[1]!!)
+                            IntrinsicType.PLUS -> AddI(args[0]!!, args[1]!!)
                             // TODO non-static calls
                             else -> TODO(expression.render())
                                 //StaticCall(callee.function)(callArgs = arrayOf(ConstInt(1), ConstInt(2), ConstInt(3)))
@@ -153,57 +148,53 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     }
 
                     override fun visitWhen(expression: IrWhen, data: Unit): Node {
+                        // FIXME reuse convenience builder somehow
                         val (values, exits) = expression.branches.map {
                             if (it.isUnconditional()) {
                                 val value = it.result.accept(this, Unit)
-                                val exit = lastControl?.let { Goto() }
-                                Pair(value, exit)
+                                val exit = if (controlBuilder.lastControl != null) Goto() else null
+                                value to exit
                             } else {
-                                val cond = it.condition.accept(this, Unit)
-                                val if_ = If(cond)
+                                val if_ = If(it.condition.accept(this, Unit))
 
-                                Block().also { if_.trueExit = it }
-                                require(lastControl is Block)
+                                BlockEntry(if_.trueExit).ensuring { controlBuilder.lastControl == it }
                                 val trueValue = it.result.accept(this, Unit)
-                                val trueExit = lastControl?.let { Goto() }
+                                val trueExit = if (controlBuilder.lastControl != null) Goto() else null
 
-                                Block().also { if_.falseExit = it }
-                                require(lastControl is Block)
+                                BlockEntry(if_.falseExit).ensuring { controlBuilder.lastControl == it }
 
-                                Pair(trueValue, trueExit)
+                                trueValue to trueExit
                             }
                         }.unzip()
 
                         val result = if (exits.any { it != null }) {
-                            val merge = Block()
-                            for (exit in exits.filterNotNull()) {
-                                exit.exit = merge
-                            }
+                            val merge = BlockEntry(*exits.filterNotNull().toTypedArray())
                             Phi(merge, *values.toTypedArray())
                         } else NoValue()
+
                         return result
                     }
 
-                    val loopHeaders = mutableMapOf<IrLoop, Block>()
                     val loopBreaks = mutableMapOf<IrLoop, MutableList<Goto>>()
+                    val loopContinues = mutableMapOf<IrLoop, MutableList<Goto>>()
 
                     override fun visitWhileLoop(loop: IrWhileLoop, data: Unit): Node {
-                        val goto = Goto()
-                        val condBlock = Block()
-                        loopHeaders[loop] = condBlock
-                        goto.exit = condBlock
+                        val condBlock = BlockEntry(Goto(), null)
                         val cond = loop.condition.accept(this, Unit)
                         val if_ = If(cond)
 
-                        Block().also { if_.trueExit = it }
+                        BlockEntry(if_.trueExit)
                         loop.body?.accept(this, Unit)
                         val trueExit = Goto()
-                        trueExit.exit = condBlock
+                        condBlock.preds[1] = trueExit
 
-                        val exitBlock = Block()
-                        if_.falseExit = exitBlock
-                        for (breakExit in loopBreaks[loop] ?: emptyList()) {
-                            breakExit.exit = exitBlock
+                        val breakExits = loopBreaks[loop] ?: mutableListOf()
+                        BlockEntry(if_.falseExit, *breakExits.toTypedArray())
+
+                        val continueExits = loopContinues[loop] ?: mutableListOf()
+                        if (continueExits.isNotEmpty()) {
+                            val preds = condBlock.preds + continueExits
+                            condBlock.replaceArgs(preds.toTypedArray())
                         }
 
                         return unitConst
@@ -211,23 +202,24 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
                     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Unit): Node {
                         val goto = Goto()
-                        val entryBlock = Block()
-                        loopHeaders[loop] = entryBlock
-                        goto.exit = entryBlock
+                        val entryBlock = BlockEntry(goto, null)
 
                         loop.body?.accept(this, Unit)
 
                         val cond = loop.condition.accept(this, Unit)
                         val if_ = If(cond)
 
-                        Block().also { if_.trueExit = it }
+                        BlockEntry(if_.trueExit)
                         val trueExit = Goto()
-                        trueExit.exit = entryBlock
+                        entryBlock.preds[1] = trueExit
 
-                        val exitBlock = Block()
-                        if_.falseExit = exitBlock
-                        for (breakExit in loopBreaks[loop] ?: emptyList()) {
-                            breakExit.exit = exitBlock
+                        val breakExits = loopBreaks[loop] ?: mutableListOf()
+                        val exitBlock = BlockEntry(if_.falseExit, *breakExits.toTypedArray())
+
+                        val continueExits = loopContinues[loop] ?: mutableListOf()
+                        if (continueExits.isNotEmpty()) {
+                            val preds = entryBlock.preds + continueExits
+                            entryBlock.replaceArgs(preds.toTypedArray())
                         }
 
                         return unitConst
@@ -236,31 +228,38 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     override fun visitBreak(jump: IrBreak, data: Unit): Node {
                         val goto = Goto()
                         loopBreaks.getOrPut(jump.loop) { mutableListOf() } += goto
-                        Block()
+                        // TODO why? BlockEntry()
                         return NoValue()
                     }
 
                     override fun visitContinue(jump: IrContinue, data: Unit): Node {
                         val goto = Goto()
-                        val header = loopHeaders[jump.loop]!!
-                        goto.exit = header
-                        Block()
+                        loopContinues.getOrPut(jump.loop) { mutableListOf() } += goto
+                        // TODO why? BlockEntry()
                         return NoValue()
                     }
 
                     val returns = mutableMapOf<IrReturnableBlockSymbol, MutableList<Pair<Goto, Node>>>()
 
+                    override fun visitReturn(expression: IrReturn, data: Unit): Node {
+                        val value = expression.value.accept(this, Unit)
+                        val target = expression.returnTargetSymbol
+                        if (target is IrReturnableBlockSymbol) {
+                            val goto = Goto()
+                            returns.getOrPut(target) { mutableListOf() } += goto to value
+                            return goto
+                        }
+                        // FIXME what if return Unit?
+                        return Return(value)
+                    }
+
                     override fun visitReturnableBlock(expression: IrReturnableBlock, data: Unit): Node {
                         returns[expression.symbol] = mutableListOf()
                         val mainResult = super.visitReturnableBlock(expression, data)
                         val mainExit = Goto()
-                        val exitBlock = Block()
-                        val joinedValues = mutableListOf<Node>()
-                        for ((goto, value) in returns[expression.symbol]!! + listOf(Pair(mainExit, mainResult))) {
-                            goto.exit = exitBlock
-                            joinedValues += value
-                        }
-                        return Phi(exitBlock, *joinedValues.toTypedArray())
+                        val (exits, results) = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).unzip()
+                        val exitBlock = BlockEntry(mainExit, *exits.toTypedArray())
+                        return Phi(exitBlock, *results.toTypedArray())
                     }
                 }, Unit)
             }

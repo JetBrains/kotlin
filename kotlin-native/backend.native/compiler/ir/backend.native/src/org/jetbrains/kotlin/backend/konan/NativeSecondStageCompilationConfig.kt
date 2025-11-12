@@ -476,6 +476,10 @@ class NativeSecondStageCompilationConfig(
         } ?: true
     }
 
+    val enableHair by lazy {
+        configuration.get(BinaryOptions.enableHair) ?: false
+    }
+
     internal val runtimeLinkageStrategy: RuntimeLinkageStrategy by lazy {
         // Intentionally optimize in debug mode only. See `RuntimeLinkageStrategy`.
         val defaultStrategy = if (debug) RuntimeLinkageStrategy.Optimize else RuntimeLinkageStrategy.Raw

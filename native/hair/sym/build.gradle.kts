@@ -1,10 +1,15 @@
 plugins {
-    kotlin("jvm")
+    kotlin("multiplatform")
 }
 
-val main by sourceSets.getting {
-    dependencies {
-        api(kotlinStdlib())
+kotlin {
+    jvm()
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                api(kotlinStdlib())
+            }
+        }
+        val commonTest by getting
     }
 }
-val test by sourceSets.getting

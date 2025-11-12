@@ -10,12 +10,12 @@ fun main(args: Array<String>) {
     generator.generate(Utils)
     generator.generate(ControlFlow)
     generator.generate(DataFlow)
-    generator.generate(Calc)
+    generator.generate(Arithmetics)
     generator.generate(Object)
     generator.generate(Calls)
 
     generator.generateSession()
     generator.generateVisitor()
     generator.generateBuilder()
-    generator.generateModifiers()
+    generator.generateCloner()
 }

@@ -1,9 +1,12 @@
 package hair.ir.generator.toolbox
 
+import hair.ir.generator.ControlFlow
 import kotlin.reflect.KClass
 import hair.utils.*
 
 sealed class Element(val name: String, val nestedIn: Element?) {
+    override fun toString(): String = name
+
     class FormParam(val name: String, var type: KClass<*>) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -14,7 +17,7 @@ sealed class Element(val name: String, val nestedIn: Element?) {
         override fun toString(): String = "FormParam($name)"
 
     }
-    data class NodeParam(val name: String, var type: Element?, var default: NodeParam?, var isVar: Boolean) {
+    data class NodeParam(val name: String, var type: Element?, var variable: Boolean, var optional: Boolean) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other is NodeParam) return name == other.name
@@ -23,12 +26,12 @@ sealed class Element(val name: String, val nestedIn: Element?) {
         override fun hashCode(): Int = name.hashCode()
         override fun toString(): String = "NodeParam($name)"
     }
-    enum class Control
 
     internal val interfaces = linkedSetOf<Interface>()
     internal val formParams = mutableListOf<FormParam>()
     internal val nodeParams = mutableListOf<NodeParam>()
     internal var variadicParam: NodeParam? = null // FIXME ensure single in hierarchy
+    internal var nestedProjections = linkedMapOf<String, Node>()
 
     open fun getFormParam(name: String) = formParams.first { it.name == name }
     open fun getParam(name: String) = nodeParams.first { it.name == name }
@@ -66,7 +69,8 @@ sealed class Element(val name: String, val nestedIn: Element?) {
     internal fun superDeclVariadic(): NodeParam? = promisedVariadic()
 
     internal fun hasInterface(iface: Interface): Boolean = iface in allInterfaces()
-    internal fun isControlFlow(): Boolean = hasInterface(Builtin.controlFlow)
+
+    internal fun isControlFlow(): Boolean = hasInterface(ControlFlow.controlFlow)
 }
 
 class Interface(name: String, val builtin: Boolean, nestedIn: Element? = null) : Element(name, nestedIn)
@@ -82,14 +86,23 @@ sealed class ElementWithParams(name: String, val parent: AbstractClass? = null, 
     internal fun allParents(): List<ElementWithParams> = parent?.let { listOf(it) + it.allParents() } ?: emptyList()
     internal fun allFormParams(): List<FormParam> = (parent?.allFormParams() ?: emptyList()) + formParams
     internal fun allParams(): List<NodeParam> = (parent?.allParams() ?: emptyList()) + nodeParams
+    internal fun variadicWithInherited(): NodeParam? {
+        val inherited = parent?.variadicWithInherited()
+        require(inherited == null || variadicParam == null)
+        return inherited ?: variadicParam
+    }
     internal fun ownParamsWithIndex(): List<IndexedValue<NodeParam>> {
         val firstOwnParamIndex = parent?.allParams()?.size ?: 0
         return nodeParams.withIndex().map { IndexedValue(it.index + firstOwnParamIndex,it.value) }
     }
 
     internal fun isSubclassOf(other: AbstractClass): Boolean = (this == other) || (parent?.isSubclassOf(other) == true)
-    internal fun isControlMerge(): Boolean = isSubclassOf(Builtin.controlMerge)
-    internal fun isControlled(): Boolean = hasInterface(Builtin.controlled)
+
+    internal fun producesControl(): Boolean = hasInterface(ControlFlow.controlling)
+    internal fun producesException(): Boolean = hasInterface(ControlFlow.throwing)
+    internal fun transfersControl(): Boolean = hasInterface(ControlFlow.blockExit)
+
+    internal fun hasControlInput(): Boolean = isSubclassOf(ControlFlow.controlled)
 }
 
 class AbstractClass(name: String, val builtin: Boolean, parent: AbstractClass?, nestedIn: Element? = null) : ElementWithParams(name, parent, nestedIn)
@@ -101,9 +114,6 @@ class Node(name: String, parent: AbstractClass?, nestedIn: Element? = null) : El
         require(variadicDefs.size <= 1)
         require(variadicDefs.containsAll(listOfNotNull(promisedVariadic())))
     }
-
-
-
 }
 
 

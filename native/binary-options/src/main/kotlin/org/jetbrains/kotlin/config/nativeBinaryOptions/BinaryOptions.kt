@@ -126,6 +126,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val escapeAnalysisPropagateExiledToHeapObjects by booleanOption()
 
     val perFileCacheForStdlib by booleanOption()
+
+    val enableHair by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

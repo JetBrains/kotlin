@@ -1,38 +1,67 @@
 package hair.ir.generator
 
-import hair.ir.generator.toolbox.Builtin
-import hair.ir.generator.toolbox.Builtin.param
 import hair.ir.generator.toolbox.ModelDSL
 
 object ControlFlow : ModelDSL() {
 
-    val goto by node(Builtin.singleExit) {
-        //interfaces(blockExit)
+    val controlFlow by nodeInterface()
+
+    val projection by nodeInterface(controlFlow) {
+        param("owner", controlFlow)
     }
 
-    val `if` by node(Builtin.twoExits) {
-        param("condition")
+    val controlling by nodeInterface(controlFlow)
+    val throwing by nodeInterface(controlFlow)
+    val blockExit by nodeInterface(controlFlow)
+
+    val blockEntry by node {
+        interfaces(controlling)
+        variadicParam("preds", blockExit)
     }
 
-    // TODO switch?
+    val controlled by abstractClass {
+        interfaces(controlFlow)
+        param("control", controlling)
+    }
 
-    val halt by node(Builtin.noExit)
+    val blockBody by abstractClass(controlled) {
+        interfaces(controlling)
+    }
 
-    val block by abstractClass(Builtin.controlMerge)
-    val bBlock by node(block)
-    val xBlock by node(block)
+    val blockBodyWithException by abstractClass(blockBody) {
+        interfaces(throwing)
+    }
 
-    // exceptions
+    // TODO last location access?
+    val blockEnd by abstractClass(controlled)
 
-    val `throw` by node(Builtin.throwExit) {
+    val `return` by node(blockEnd) {
+        param("result")
+    }
+
+    val goto by node(blockEnd) {
+        interfaces(blockExit)
+    }
+
+    val `if` by node(blockEnd) {
+        val ifNode = this
+        val ifProjection by abstractClass {
+            interfaces(projection)
+            interfaces(blockExit)
+            param("owner", ifNode)
+        }
+        nestedProjection("trueExit", "True", ifProjection)
+        nestedProjection("falseExit", "False", ifProjection)
+        param("cond")
+    }
+
+    val `throw` by node(blockEnd) {
+        interfaces(throwing)
         param("exception")
     }
 
-
-    // FIXME place near the Phi
-    val `catch` by node {
-        param("xBlock", xBlock)
-        variadicParam("catchedValues")
+    val unwind by node {
+        interfaces(blockExit)
+        param("thrower", throwing)
     }
-
 }
