@@ -12,9 +12,13 @@ FILE: generatedFunctionWithDefaultParameter.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun materialize(): R|foo/Foo|
+        public final fun materialize(): R|foo/Foo| {
+            ^materialize Null(null)!!
+        }
 
-        public final fun idWithDefault(x: R|kotlin/String| = Null(null)!!): R|kotlin/String|
+        public final fun idWithDefault(x: R|kotlin/String| = Null(null)!!): R|kotlin/String| {
+            ^idWithDefault Null(null)!!
+        }
 
         public final class Nested : R|kotlin/Any| {
             public constructor(): R|foo/Foo.Nested| {

@@ -8,7 +8,9 @@ FILE: inlineClasses.kt
             public get(): R|kotlin/Int|
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Foo>|
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Foo>| {
+                ^serializer Null(null)!!
+            }
 
             private constructor(): R|Foo.Companion| {
                 super<R|kotlin/Any|>()
@@ -42,7 +44,9 @@ FILE: inlineClasses.kt
             public get(): R|Foo|
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Holder>|
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Holder>| {
+                ^serializer Null(null)!!
+            }
 
             private constructor(): R|Holder.Companion| {
                 super<R|kotlin/Any|>()

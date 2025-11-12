@@ -7,4 +7,6 @@ FILE: topLevelPrivateSuspendFun.kt
 FILE: foo/__GENERATED__CALLABLES__.kt
     package foo
 
-    private final suspend fun testFun_generated(): R|kotlin/Unit|
+    private final suspend fun testFun_generated(): R|kotlin/Unit| {
+        ^testFun_generated Null(null)!!
+    }

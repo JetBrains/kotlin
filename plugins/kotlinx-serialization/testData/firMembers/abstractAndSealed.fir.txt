@@ -1,7 +1,9 @@
 FILE: abstractAndSealed.kt
     @R|kotlinx/serialization/Serializable|() public sealed interface I : R|kotlin/Any| {
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<I>|
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<I>| {
+                ^serializer Null(null)!!
+            }
 
             private constructor(): R|I.Companion| {
                 super<R|kotlin/Any|>()
@@ -24,7 +26,9 @@ FILE: abstractAndSealed.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<X>|
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<X>| {
+                ^serializer Null(null)!!
+            }
 
             private constructor(): R|X.Companion| {
                 super<R|kotlin/Any|>()
@@ -47,7 +51,9 @@ FILE: abstractAndSealed.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Y>|
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Y>| {
+                ^serializer Null(null)!!
+            }
 
             private constructor(): R|Y.Companion| {
                 super<R|kotlin/Any|>()
@@ -62,7 +68,9 @@ FILE: abstractAndSealed.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Bottom>|
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Bottom>| {
+                ^serializer Null(null)!!
+            }
 
             private constructor(): R|Bottom.Companion| {
                 super<R|kotlin/Any|>()

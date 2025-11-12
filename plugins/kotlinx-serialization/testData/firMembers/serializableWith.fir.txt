@@ -44,7 +44,9 @@ FILE: serializableWith.kt
             public get(): R|kotlin/Int|
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<IntHolder>|
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<IntHolder>| {
+                ^serializer Null(null)!!
+            }
 
             private constructor(): R|IntHolder.Companion| {
                 super<R|kotlin/Any|>()
@@ -58,7 +60,9 @@ FILE: serializableWith.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun serializer(): R|kotlinx/serialization/KSerializer<SerializableObject>|
+        public final fun serializer(): R|kotlinx/serialization/KSerializer<SerializableObject>| {
+            ^serializer Null(null)!!
+        }
 
     }
     public final fun box(): R|kotlin/String| {

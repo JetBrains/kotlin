@@ -45,7 +45,9 @@ FILE: enums.kt
             public get(): R|kotlin/enums/EnumEntries<WithNames>|
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<WithNames>|
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<WithNames>| {
+                ^serializer Null(null)!!
+            }
 
             private constructor(): R|WithNames.Companion| {
                 super<R|kotlin/Any|>()
@@ -66,7 +68,9 @@ FILE: enums.kt
             public get(): R|WithNames|
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Holder>|
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Holder>| {
+                ^serializer Null(null)!!
+            }
 
             private constructor(): R|Holder.Companion| {
                 super<R|kotlin/Any|>()

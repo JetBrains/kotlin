@@ -276,7 +276,9 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             SerializationPluginKey,
             callableId.callableName,
             target.resolvedReturnType
-        )
+        ) {
+            doNotGenerateDefaultInitializer()
+        }
 
         property.excludeFromJsExport(session)
 

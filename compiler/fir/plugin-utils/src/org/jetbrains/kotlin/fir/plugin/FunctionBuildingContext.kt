@@ -94,19 +94,7 @@ public sealed class FunctionBuildingContext<T : FirFunction>(
             name = valueParameter.name
             symbol = FirValueParameterSymbol()
             if (valueParameter.hasDefaultValue) {
-                defaultValue = buildCheckNotNullCall {
-                    coneTypeOrNull = session.builtinTypes.nothingType.coneType
-                    val argument = buildLiteralExpression(
-                        source = null,
-                        kind = ConstantValueKind.Null,
-                        value = null,
-                        setType = true,
-                    )
-                    argumentList = buildArgumentListForErrorCall(
-                        original = buildUnaryArgumentList(argument),
-                        mapping = LinkedHashMap<FirExpression, FirValueParameter?>().apply { put(argument, null) },
-                    )
-                }
+                defaultValue = generateExpressionStub()
             }
             this.containingDeclarationSymbol = containingFunctionSymbol
             isCrossinline = valueParameter.isCrossinline

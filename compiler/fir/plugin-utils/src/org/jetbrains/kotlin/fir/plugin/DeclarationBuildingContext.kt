@@ -17,6 +17,11 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.buildArgumentListForErrorCall
+import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
+import org.jetbrains.kotlin.fir.expressions.builder.buildCheckNotNullCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -28,6 +33,7 @@ import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 
 public sealed class DeclarationBuildingContext<T : FirDeclaration>(
@@ -206,6 +212,22 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
                 coneBounds.map { it.toFirResolvedTypeRef() }
             }
             typeParameter.replaceBounds(bounds)
+        }
+    }
+
+    protected fun generateExpressionStub(): FirExpression {
+        return buildCheckNotNullCall {
+            coneTypeOrNull = session.builtinTypes.nothingType.coneType
+            val argument = buildLiteralExpression(
+                source = null,
+                kind = ConstantValueKind.Null,
+                value = null,
+                setType = true,
+            )
+            argumentList = buildArgumentListForErrorCall(
+                original = buildUnaryArgumentList(argument),
+                mapping = LinkedHashMap<FirExpression, FirValueParameter?>().apply { put(argument, null) },
+            )
         }
     }
 

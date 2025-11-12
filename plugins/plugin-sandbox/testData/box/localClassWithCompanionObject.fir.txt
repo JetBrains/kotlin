@@ -6,7 +6,9 @@ FILE: localClassWithCompanionObject.kt
             }
 
             local final companion object Companion : R|kotlin/Any| {
-                public final fun foo(): R|kotlin/Int|
+                public final fun foo(): R|kotlin/Int| {
+                    ^foo Null(null)!!
+                }
 
                 private constructor(): R|<local>/SomeClass.Companion| {
                     super<R|kotlin/Any|>()
