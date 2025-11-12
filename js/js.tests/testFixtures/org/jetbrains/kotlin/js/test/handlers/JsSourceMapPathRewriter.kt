@@ -65,13 +65,12 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
                 continue
             }
 
-            val sourceRoot: File = libraryFile // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/classes/kotlin/js/main
-                .parentFile                    // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/classes/kotlin/js/
-                ?.parentFile                   // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/classes/kotlin/
-                ?.parentFile                   // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/classes/
-                ?.parentFile                   // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/
-                ?.parentFile                   // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/
-                ?: continue
+            // find an embracing `build` folder from either
+            // - libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/classes/kotlin/js/main
+            // - libraries/stdlib/build/libs/kotlin-stdlib-js-2.3.255-SNAPSHOT.klib
+            val buildFolder = generateSequence(libraryFile) { it.parentFile }
+                .firstOrNull { it.name == "build" }
+            val sourceRoot: File = buildFolder?.parentFile ?: continue
 
             val searchPaths = listOf(sourceRoot, sourceRoot.resolve("build"))
 
