@@ -194,7 +194,7 @@ void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlin
 
 void HotReloader::performIfNeeded(ObjHeader* _) noexcept {
     if (_requests.empty()) {
-        utility::log("Cannot perform hot-reloading since there is no upcoming request", utility::LogLevel::WARN);
+        // utility::log("Cannot perform hot-reloading since there is no upcoming request", utility::LogLevel::WARN);
         return;
     }
 
