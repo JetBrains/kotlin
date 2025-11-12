@@ -94,16 +94,16 @@ internal class DescriptorKType(
         // If the type is not marked nullable, it's either a non-null type or a platform type.
         if (!type.isFlexible() && isMarkedNullable == nullable) return this
 
-        return DescriptorKType(TypeUtils.makeNullableAsSpecified(type, nullable), computeJavaType)
+        return DescriptorKType(TypeUtils.makeNullableAsSpecified(type, nullable))
     }
 
     override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType {
         val result =
             if (isDefinitelyNotNull)
-                DefinitelyNotNullType.makeDefinitelyNotNull(type.unwrap(), true) ?: type
+                DefinitelyNotNullType.makeDefinitelyNotNull(type.unwrap(), true) ?: return this
             else
-                (type as? DefinitelyNotNullType)?.original ?: type
-        return DescriptorKType(result, computeJavaType)
+                (type as? DefinitelyNotNullType)?.original ?: return this
+        return DescriptorKType(result)
     }
 
     override val abbreviation: KType?
