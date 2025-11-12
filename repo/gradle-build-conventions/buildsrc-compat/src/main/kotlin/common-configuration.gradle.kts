@@ -334,6 +334,7 @@ fun Project.configureTests() {
             ":generators",
             ":generators:analysis-api-generator:generator-kotlin-native",
             ":js:js.tests",
+            ":js:js.tests:klib-compatibility",
             ":jps:jps-common",
             ":jps:jps-plugin",
             ":kotlin-allopen-compiler-plugin",
