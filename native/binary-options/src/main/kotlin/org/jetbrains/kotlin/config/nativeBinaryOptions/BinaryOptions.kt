@@ -135,6 +135,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val runLLVMPassesInCompiler by booleanOption()
 
     val enableReleaseBinaryCache by booleanOption()
+
+    val enableHair by booleanOption()
 }
 
 open class BinaryOption<T : Any>(
