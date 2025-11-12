@@ -2,6 +2,19 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
+        abstract class Uninhabited {
+            private constructor();
+            static values(): Array<foo.Uninhabited>;
+            static valueOf(value: string): foo.Uninhabited;
+            get name(): string;
+            get ordinal(): number;
+        }
+        namespace Uninhabited {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Uninhabited;
+            }
+        }
         abstract class TestEnumClass {
             private constructor();
             static get A(): foo.TestEnumClass & {

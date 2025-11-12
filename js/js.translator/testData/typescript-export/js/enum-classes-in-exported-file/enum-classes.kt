@@ -13,6 +13,9 @@
 package foo
 
 
+enum class Uninhabited
+
+
 enum class TestEnumClass(val constructorParameter: String) {
     A("aConstructorParameter"),
     B("bConstructorParameter"),
