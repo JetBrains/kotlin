@@ -24,7 +24,7 @@ import javax.swing.Icon
 
 internal data class MethodSignature(val parameterTypes: List<PsiType>, val returnType: PsiType)
 
-internal class SymbolLightMethodWrapperForMappedClass(
+internal class SymbolLightMethodForMappedClass(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassForClassOrObject,
     private val javaMethod: PsiMethod,
@@ -67,7 +67,7 @@ internal class SymbolLightMethodWrapperForMappedClass(
                     LightParameter(
                         paramFromJava.name,
                         type,
-                        this@SymbolLightMethodWrapperForMappedClass,
+                        this@SymbolLightMethodForMappedClass,
                         KotlinLanguage.INSTANCE,
                         paramFromJava.isVarArgs
                     )
@@ -115,7 +115,7 @@ internal class SymbolLightMethodWrapperForMappedClass(
 
     private val _modifierList: PsiModifierList by lazyPub {
         object : LightModifierList(manager, language) {
-            override fun getParent(): PsiElement = this@SymbolLightMethodWrapperForMappedClass
+            override fun getParent(): PsiElement = this@SymbolLightMethodForMappedClass
 
             private val overrideAnnotation by lazy {
                 SymbolLightSimpleAnnotation(fqName = CommonClassNames.JAVA_LANG_OVERRIDE, parent = this)
@@ -124,7 +124,7 @@ internal class SymbolLightMethodWrapperForMappedClass(
             private val allAnnotations: Array<PsiAnnotation> by lazy { arrayOf(overrideAnnotation) }
 
             override fun hasModifierProperty(name: String): Boolean =
-                this@SymbolLightMethodWrapperForMappedClass.hasModifierProperty(name)
+                this@SymbolLightMethodForMappedClass.hasModifierProperty(name)
 
             override fun hasExplicitModifier(name: String): Boolean = hasModifierProperty(name)
 
@@ -144,7 +144,7 @@ internal class SymbolLightMethodWrapperForMappedClass(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightMethodWrapperForMappedClass) return false
+        if (other !is SymbolLightMethodForMappedClass) return false
 
         if (name != other.name) return false
         if (isFinal != other.isFinal) return false

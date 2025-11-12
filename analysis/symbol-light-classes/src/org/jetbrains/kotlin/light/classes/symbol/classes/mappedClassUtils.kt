@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.light.classes.symbol.methods.MethodSignature
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodWrapperForMappedClass
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedClass
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
@@ -357,7 +357,7 @@ private fun createJavaUtilMapMethodWithSpecialSignature(
     containingClass: SymbolLightClassForClassOrObject,
     method: PsiMethod,
     substitutor: PsiSubstitutor,
-): SymbolLightMethodWrapperForMappedClass? {
+): SymbolLightMethodForMappedClass? {
     val typeParameters = substitutor.substitutionMap.keys
     val kOriginal = substitutor.substitutionMap[typeParameters.find { it.name == "K" }] ?: return null
     val vOriginal = substitutor.substitutionMap[typeParameters.find { it.name == "V" }] ?: return null
@@ -395,12 +395,12 @@ private fun createJavaUtilMapMethodWithSpecialSignature(
 private fun PsiMethod.finalBridge(
     containingClass: SymbolLightClassForClassOrObject,
     substitutor: PsiSubstitutor,
-): SymbolLightMethodWrapperForMappedClass = wrap(containingClass, substitutor, makeFinal = true, hasImplementation = true)
+): SymbolLightMethodForMappedClass = wrap(containingClass, substitutor, makeFinal = true, hasImplementation = true)
 
 private fun PsiMethod.openBridge(
     containingClass: SymbolLightClassForClassOrObject,
     substitutor: PsiSubstitutor,
-): SymbolLightMethodWrapperForMappedClass = wrap(containingClass, substitutor, makeFinal = false, hasImplementation = true)
+): SymbolLightMethodForMappedClass = wrap(containingClass, substitutor, makeFinal = false, hasImplementation = true)
 
 private fun PsiMethod.wrap(
     containingClass: SymbolLightClassForClassOrObject,
@@ -411,7 +411,7 @@ private fun PsiMethod.wrap(
     name: String = this.name,
     substituteObjectWith: PsiType? = null,
     signature: MethodSignature? = null,
-) = SymbolLightMethodWrapperForMappedClass(
+) = SymbolLightMethodForMappedClass(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     javaMethod = this,
