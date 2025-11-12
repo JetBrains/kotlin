@@ -145,6 +145,8 @@ projectTests {
     testData(project(":compiler").isolated, "testData/codegen/box")
     testData(project(":compiler").isolated, "testData/codegen/boxInline")
     testData(project(":js").isolated, "js.translator/testData")
+    testData(project(":libraries").isolated, "stdlib")
+    testData(project(":libraries").isolated, "kotlin.test")
 
     projectTests {
         withStdlibJsRuntime()
