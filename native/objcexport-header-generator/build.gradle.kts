@@ -1,6 +1,12 @@
 @file:Suppress("HasPlatformType")
 
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.PathSensitivity
+import org.gradle.process.CommandLineArgumentProvider
+import javax.inject.Inject
 
 plugins {
     kotlin("jvm")
@@ -81,11 +87,29 @@ tasks.check.configure {
     dependsOn(":native:objcexport-header-generator-analysis-api:check")
 }
 
+open class IntegrationTestOutputDirArgumentProvider @Inject constructor(
+    objectFactory: ObjectFactory,
+) : CommandLineArgumentProvider {
+    @get:Internal
+    val outputDir: DirectoryProperty = objectFactory.directoryProperty()
+
+    @get:Internal
+    var propertyName: String = ""
+
+    @get:Input
+    val relativePath: String
+        get() = outputDir.get().asFile.toRelativeString(outputDir.get().asFile.parentFile.parentFile)
+
+    override fun asArguments(): Iterable<String> {
+        return listOf("-D$propertyName=${outputDir.get().asFile.absolutePath}")
+    }
+}
+
 tasks.withType<Test>().configureEach {
-    systemProperty(
-        integrationTestOutputsDir,
-        layout.buildDirectory.dir(integrationTestOutputsDir).get().asFile.absolutePath
-    )
+    val provider = objects.newInstance<IntegrationTestOutputDirArgumentProvider>()
+    provider.propertyName = integrationTestOutputsDir
+    provider.outputDir.set(layout.buildDirectory.dir(integrationTestOutputsDir))
+    jvmArgumentProviders.add(provider)
 }
 
 projectTests {
