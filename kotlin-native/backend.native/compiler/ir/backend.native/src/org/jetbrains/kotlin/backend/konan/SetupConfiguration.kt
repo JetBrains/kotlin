@@ -145,6 +145,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     }
 
     get(BinaryOptions.hotReload)?.also {
+        report(WARNING, "note that hot-code reloading is an experimental feature, some code may not work as expected!")
         val debug = getBoolean(KonanConfigKeys.DEBUG)
         val hasInterposableLinkerFlag = getList(LINKER_ARGS).firstOrNull { arg -> arg.contains("-interposable") } != null
         if (it && !debug) {

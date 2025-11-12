@@ -115,6 +115,7 @@ class KonanConfig(
     }
 
     val hotReloadEnabled: Boolean = configuration.get(BinaryOptions.hotReload) == true
+    val hotReloadServerPort: Int = configuration.get(BinaryOptions.hotReloadServerPort)?.toIntOrNull() ?: -1
 
     val inlineForPerformance get() = !debug && !smallBinary
 

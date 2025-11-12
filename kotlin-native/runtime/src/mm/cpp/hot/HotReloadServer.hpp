@@ -5,6 +5,8 @@
 #ifndef HOTRELOADSERVER_HPP
 #define HOTRELOADSERVER_HPP
 
+#include "CompilerConstants.hpp"
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -22,12 +24,14 @@ using namespace kotlin::hot;
 
 class HotReloadServer {
 public:
-    explicit HotReloadServer(const int port = kDefaultServerPort) : port(port) {}
+    explicit HotReloadServer(
+            const int32_t port = (kotlin::compiler::hotReloadServerPort() == -1) ? kDefaultServerPort
+                                                                             : kotlin::compiler::hotReloadServerPort()) :
+        port(port) {}
 
     ~HotReloadServer() { stop(); }
 
     bool start() {
-
         // Create socket
         serverFd = socket(AF_INET, SOCK_STREAM, 0);
         if (serverFd == -1) {
@@ -119,7 +123,7 @@ private:
     static constexpr auto kDefaultServerPort = 5567;
 
     int serverFd{0};
-    int port{0};
+    int32_t port{0};
     bool running{false};
     std::unique_ptr<std::thread> runningThread{nullptr};
 
@@ -144,8 +148,6 @@ private:
             log("Failed to read number of dylibs", utility::LogLevel::ERR);
             return;
         }
-
-        utility::log("Received RELOAD message with " + std::to_string(numDylibs) + " dylibs:", utility::LogLevel::INFO);
 
         // Read each dylib path
         std::vector<std::string> dylibPaths;

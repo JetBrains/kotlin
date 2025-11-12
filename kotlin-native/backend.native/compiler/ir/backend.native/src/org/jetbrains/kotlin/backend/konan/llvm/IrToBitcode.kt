@@ -2975,6 +2975,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModule
     setRuntimeConstGlobal("Kotlin_fixedBlockPageSize", llvm.constInt32(config.fixedBlockPageSize.toInt()))
     setRuntimeConstGlobal("Kotlin_pagedAllocator", llvm.constInt32(if (config.pagedAllocator) 1 else 0))
     setRuntimeConstGlobal("Kotlin_hotReload", llvm.constInt32(if (config.hotReloadEnabled) 1 else 0))
+    setRuntimeConstGlobal("Kotlin_hotReloadServerPort", llvm.constInt32(config.hotReloadServerPort))
 
     return llvmModule
 }

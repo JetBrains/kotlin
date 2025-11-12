@@ -30,6 +30,7 @@ extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
 extern "C" const int32_t Kotlin_fixedBlockPageSize;
 extern "C" const int32_t Kotlin_pagedAllocator;
 extern "C" const int32_t Kotlin_hotReload;
+extern "C" const int32_t Kotlin_hotReloadServerPort;
 
 class SourceInfo;
 
@@ -86,6 +87,10 @@ ALWAYS_INLINE inline bool pagedAllocator() noexcept {
 
 ALWAYS_INLINE inline bool hotReloadEnabled() noexcept {
     return Kotlin_hotReload != 0;
+}
+
+ALWAYS_INLINE inline int32_t hotReloadServerPort() noexcept {
+    return Kotlin_hotReloadServerPort;
 }
 
 bool gcMutatorsCooperate() noexcept;
