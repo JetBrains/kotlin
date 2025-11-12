@@ -149,7 +149,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
-            "Java type mismatch: The inferred receiver type is ''{0}'', but a member from ''{1}'' is called on it.",
+            "Java type mismatch: inferred receiver type is ''{0}'', but a member from ''{1}'' is called on it.",
             RENDER_TYPE,
             CLASS_ID,
         )
