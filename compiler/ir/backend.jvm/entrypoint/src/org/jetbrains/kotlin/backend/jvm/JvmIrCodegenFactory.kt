@@ -236,6 +236,7 @@ class JvmIrCodegenFactory(
             messageCollector,
             diagnosticReporter
         )
+        val k2PluginContext = pluginContext.asK2IrPluginContext()
         for (extension in project.filteredExtensions) {
             if (!psi2irContext.configuration.generateBodies &&
                 !@OptIn(FirIncompatiblePluginAPI::class) extension.shouldAlsoBeAppliedInKaptStubGenerationMode
@@ -246,6 +247,7 @@ class JvmIrCodegenFactory(
                 try {
                     stubGenerator.unboundSymbolGeneration = true
                     extension.generate(module, pluginContext)
+                    extension.generate(module, k2PluginContext)
                 } finally {
                     stubGenerator.unboundSymbolGeneration = old
                 }

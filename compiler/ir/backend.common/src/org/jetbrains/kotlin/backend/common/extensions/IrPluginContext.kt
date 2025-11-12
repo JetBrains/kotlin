@@ -69,6 +69,8 @@ interface IrPluginContext : IrGeneratorContext {
     fun referenceFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol>
     fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol>
 
+    fun asK2IrPluginContext(): K2IrPluginContext
+
     // ------------------------------------ IC API ------------------------------------
 
     /**

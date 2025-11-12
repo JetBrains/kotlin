@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -227,5 +228,47 @@ open class IrPluginContextImpl(
         override fun addCustomMetadataExtension(irDeclaration: IrDeclaration, pluginId: String, data: ByteArray) {}
 
         override fun getCustomMetadataExtension(irDeclaration: IrDeclaration, pluginId: String): ByteArray? = null
+    }
+
+    override fun asK2IrPluginContext(): K2IrPluginContext {
+        return K2LikeK1IrPluginContext()
+    }
+
+    private inner class K2LikeK1IrPluginContext : K2IrPluginContext {
+        override val irFactory: IrFactory
+            get() = this@IrPluginContextImpl.irFactory
+        override val irBuiltIns: IrBuiltIns
+            get() = this@IrPluginContextImpl.irBuiltIns
+        override val languageVersionSettings: LanguageVersionSettings
+            get() = this@IrPluginContextImpl.languageVersionSettings
+        override val platform: TargetPlatform
+            get() = this@IrPluginContextImpl.platform ?: error("Platform should not be null")
+        override val diagnosticReporter: IrDiagnosticReporter
+            get() = this@IrPluginContextImpl.diagnosticReporter
+        override val metadataDeclarationRegistrar: IrGeneratedDeclarationsRegistrar
+            get() = this@IrPluginContextImpl.metadataDeclarationRegistrar
+
+        override fun referenceClass(classId: ClassId, fromFile: IrFile): IrClassSymbol? {
+            return this@IrPluginContextImpl.referenceClass(classId)
+        }
+
+        override fun referenceClassifier(classId: ClassId, fromFile: IrFile): IrSymbol? {
+            return this@IrPluginContextImpl.referenceClass(classId)
+        }
+
+        override fun referenceConstructors(classId: ClassId, fromFile: IrFile): Collection<IrConstructorSymbol> {
+            return this@IrPluginContextImpl.referenceConstructors(classId)
+        }
+
+        override fun referenceFunctions(callableId: CallableId, fromFile: IrFile): Collection<IrSimpleFunctionSymbol> {
+            return this@IrPluginContextImpl.referenceFunctions(callableId)
+        }
+
+        override fun referenceProperties(callableId: CallableId, fromFile: IrFile): Collection<IrPropertySymbol> {
+            return this@IrPluginContextImpl.referenceProperties(callableId)
+        }
+
+        @K2IrPluginContext.InternalApi
+        override fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile) {}
     }
 }

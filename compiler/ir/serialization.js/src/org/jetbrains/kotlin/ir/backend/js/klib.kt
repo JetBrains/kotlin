@@ -466,12 +466,14 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         linker = irLinker,
         messageCollector = messageCollector,
     )
+    val k2PluginContext = pluginContext.asK2IrPluginContext()
     for (extension in IrGenerationExtension.getInstances(project)) {
         psi2Ir.addPostprocessingStep { module ->
             val old = stubGenerator?.unboundSymbolGeneration
             try {
                 stubGenerator?.unboundSymbolGeneration = true
                 extension.generate(module, pluginContext)
+                extension.generate(module, k2PluginContext)
             } finally {
                 stubGenerator?.unboundSymbolGeneration = old!!
             }

@@ -210,7 +210,7 @@ class Fir2IrPluginContext(
         error(ERROR_MESSAGE)
     }
 
-    fun asK2IrPluginContext(): K2IrPluginContext {
+    override fun asK2IrPluginContext(): K2IrPluginContext {
         return Fir2IrK2IrPluginContext()
     }
 
