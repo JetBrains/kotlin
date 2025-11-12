@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.search.GlobalSearchScope
@@ -18,7 +16,7 @@ import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -81,10 +79,7 @@ abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
                 project,
                 moduleFiles.mapNotNull { it.ktFile }
             )
-            val projectEnvironment = VfsBasedProjectEnvironment(
-                project,
-                VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-            ) { environment.createPackagePartProvider(it) }
+            val projectEnvironment = environment.toVfsBasedProjectEnvironment()
 
             val configuration = CompilerConfiguration().apply {
                 this.languageVersionSettings = config?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT

@@ -446,7 +446,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
     /* It eliminates dependency and composite providers since the current dependency provider is composite in fact.
     *  To prevent duplications and resolving errors, library or source providers from other modules should be filtered out during flattening.
     *  It depends on the session's kind of the top-level provider */
-    private fun FirSymbolProvider.flattenAndFilterOwnProviders(): List<FirSymbolProvider> {
+    fun FirSymbolProvider.flattenAndFilterOwnProviders(): List<FirSymbolProvider> {
         val originalSession = session.takeIf { it.kind == FirSession.Kind.Source }
         return flatten { provider ->
             // Make sure only source symbol providers from the same session as the original symbol provider are flattened. A composite

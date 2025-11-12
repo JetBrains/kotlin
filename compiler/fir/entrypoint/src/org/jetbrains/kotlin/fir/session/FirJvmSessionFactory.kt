@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.jvmTarget
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -22,7 +18,8 @@ import org.jetbrains.kotlin.fir.java.deserialization.FirJvmClasspathBuiltinSymbo
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.*
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -84,8 +81,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         languageVersionSettings: LanguageVersionSettings,
         context: Context,
     ): FirSession {
-        val projectEnvironment = context.projectEnvironment
-        val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(context.librariesScope)
         return createLibrarySession(
             context,
             sharedLibrarySession,
@@ -94,7 +89,12 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
             extensionRegistrars,
             createSeparateSharedProvidersInHmppCompilation = true,
             createProviders = { session, kotlinScopeProvider ->
+                val projectEnvironment = context.projectEnvironment
                 val moduleData = moduleDataProvider.allModuleData.last()
+                val searchScope = moduleDataProvider.getModuleDataPaths(moduleData)?.let { paths ->
+                    projectEnvironment.getSearchScopeByClassPath(paths)
+                } ?: context.librariesScope
+                val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(searchScope)
                 listOfNotNull(
                     JvmClassFileBasedSymbolProvider(
                         session,

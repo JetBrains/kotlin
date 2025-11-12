@@ -6,19 +6,14 @@
 
 package org.jetbrains.kotlin.cli.pipeline.metadata
 
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
-import org.jetbrains.kotlin.cli.common.isCommonSourceForPsi
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createIncrementalCompilationScope
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
@@ -31,11 +26,7 @@ import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.asKtFilesList
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.config.useLightTree
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
@@ -44,7 +35,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
-import kotlin.collections.orEmpty
 
 object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, MetadataFrontendPipelineArtifact>(
     name = "MetadataFrontendPipelinePhase",
@@ -116,10 +106,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
                 resolveAndCheckFir(session, firFiles, diagnosticsReporter)
             }
         } else {
-            val projectEnvironment = VfsBasedProjectEnvironment(
-                environment.project,
-                VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-            ) { environment.createPackagePartProvider(it) }
+            val projectEnvironment = environment.toVfsBasedProjectEnvironment()
             var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
             val extensionRegistrars = FirExtensionRegistrar.Companion.getInstances(projectEnvironment.project)
             val ktFiles = environment.getSourceFiles().also { ktFiles ->

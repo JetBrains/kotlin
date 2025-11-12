@@ -262,7 +262,7 @@ open class IncrementalFirJvmCompilerRunner(
                     newDirtySources.forEach {
                         dirtySources.add(KtIoFileSourceFile(it))
                     }
-                    projectEnvironment.localFileSystem.refresh(false)
+                    projectEnvironment.knownFileSystems.forEach { it.refresh(false) }
                 }
             }
 
