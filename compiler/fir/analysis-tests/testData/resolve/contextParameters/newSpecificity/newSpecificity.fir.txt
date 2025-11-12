@@ -1,0 +1,122 @@
+FILE: newSpecificity.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo1_1(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final fun foo1_1(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final fun example1a(): R|kotlin/Unit| {
+        <Ambiguity: foo1_1, [/foo1_1, /foo1_1]>#()
+    }
+    public final fun example1b1(): R|kotlin/Unit| {
+        context(R|/A.A|()) R|/foo1_1|()
+    }
+    context(a: R|A|)
+    public final fun example1b2(): R|kotlin/Unit| {
+        context(R|/A.A|()) R|/foo1_1|()
+    }
+    context(b: R|B|)
+    public final fun foo1_2(): R|kotlin/Unit| {
+    }
+    context(b: R|B|, a: R|A|)
+    public final fun foo1_2(): R|kotlin/Unit| {
+    }
+    context(a: R|A|, b: R|B|)
+    public final fun example1c(): R|kotlin/Unit| {
+        <Ambiguity: foo1_2, [/foo1_2, /foo1_2]>#()
+    }
+    context(b: R|B|)
+    public final fun example1d1(): R|kotlin/Unit| {
+        context(R|<local>/b|, R|/A.A|()) R|/foo1_2|()
+    }
+    context(a: R|A|, b: R|B|)
+    public final fun example1d2(): R|kotlin/Unit| {
+        context(R|<local>/b|, R|/A.A|()) R|/foo1_2|()
+    }
+    context(a: R|A|)
+    public final fun foo2(): R|kotlin/Unit| {
+    }
+    public final fun foo2(a: R|A|): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final fun example2a(): R|kotlin/Unit| {
+        context(R|<local>/a|) R|/foo2|()
+    }
+    public final fun example2b1(): R|kotlin/Unit| {
+        <Ambiguity: foo2, [/foo2, /foo2]>#(R|/A.A|())
+    }
+    context(a: R|A|)
+    public final fun example2b2(): R|kotlin/Unit| {
+        <Ambiguity: foo2, [/foo2, /foo2]>#(R|/A.A|())
+    }
+    context(a: R|A|)
+    public final fun foo3_1(): R|kotlin/Unit| {
+    }
+    public final fun foo3_1(a: R|A| = R|/A.A|()): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final fun example3a(): R|kotlin/Unit| {
+        <Ambiguity: foo3_1, [/foo3_1, /foo3_1]>#()
+    }
+    public final fun example3b1(): R|kotlin/Unit| {
+        <Ambiguity: foo3_1, [/foo3_1, /foo3_1]>#(R|/A.A|())
+    }
+    context(a: R|A|)
+    public final fun example3b2(): R|kotlin/Unit| {
+        <Ambiguity: foo3_1, [/foo3_1, /foo3_1]>#(R|/A.A|())
+    }
+    context(b: R|B|, a: R|A|)
+    public final fun foo3_2(): R|kotlin/Unit| {
+    }
+    context(b: R|B|)
+    public final fun foo3_2(a: R|A| = R|/A.A|()): R|kotlin/Unit| {
+    }
+    context(a: R|A|, b: R|B|)
+    public final fun example3c(): R|kotlin/Unit| {
+        <Ambiguity: foo3_2, [/foo3_2, /foo3_2]>#()
+    }
+    context(b: R|B|)
+    public final fun example3d1(): R|kotlin/Unit| {
+        <Ambiguity: foo3_2, [/foo3_2, /foo3_2]>#(R|/A.A|())
+    }
+    context(a: R|A|, b: R|B|)
+    public final fun example3d2(): R|kotlin/Unit| {
+        <Ambiguity: foo3_2, [/foo3_2, /foo3_2]>#(R|/A.A|())
+    }
+    public open class Parent : R|kotlin/Any| {
+        public constructor(): R|Parent| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Child : R|Parent| {
+        public constructor(): R|Child| {
+            super<R|Parent|>()
+        }
+
+    }
+    context(a: R|Parent|)
+    public final fun foo4(): R|kotlin/Unit| {
+    }
+    context(a: R|Child|)
+    public final fun foo4(): R|kotlin/Unit| {
+    }
+    context(child: R|Child|)
+    public final fun example4a(): R|kotlin/Unit| {
+        <Ambiguity: foo4, [/foo4, /foo4]>#()
+    }
+    public final fun example4b(): R|kotlin/Unit| {
+        <Ambiguity: foo4, [/foo4, /foo4]>#(R|/Child.Child|())
+    }

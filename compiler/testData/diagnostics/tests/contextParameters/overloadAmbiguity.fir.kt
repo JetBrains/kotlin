@@ -12,7 +12,7 @@ context(_: String, _: Any) <!CONTEXTUAL_OVERLOAD_SHADOWED!>fun f3()<!> {}
 
 context(_: String)
 fun test() {
-    val x: Int = f1()
+    val x: Int = <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>()
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f2<!>()
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f3<!>()
 }

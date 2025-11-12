@@ -394,7 +394,7 @@ class ConeOverloadConflictResolver(
         }
 
         if (contextParametersEnabled) {
-            if (call1.hasContext != call2.hasContext) return call1.hasContext
+            if (call1.contextParameterTypes != call2.contextParameterTypes) return false
         } else {
             if (call1.contextReceiverCount > call2.contextReceiverCount) return true
             if (call1.contextReceiverCount < call2.contextReceiverCount) return false
@@ -491,13 +491,12 @@ class ConeOverloadConflictResolver(
             origin = call,
             typeParameters = (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
             valueParameterTypes = computeSignatureTypes(call, variable),
+            contextParameterTypes = computeContextTypes(call, variable),
             hasExtensionReceiver = variable.receiverParameter != null,
-            contextReceiverCount = if (!contextParametersEnabled) variable.contextParameters.size else 0,
             hasVarargs = false,
             numDefaults = 0,
             isExpect = (variable as? FirProperty)?.isExpect == true,
             isSyntheticMember = false,
-            hasContext = variable.contextParameters.isNotEmpty(),
         )
     }
 
@@ -506,14 +505,13 @@ class ConeOverloadConflictResolver(
             origin = call,
             typeParameters = constructor.typeParameters.map { it.symbol.toLookupTag() },
             valueParameterTypes = computeSignatureTypes(call, constructor),
+            contextParameterTypes = computeContextTypes(call, constructor),
             //constructor.receiverParameter != null,
             hasExtensionReceiver = false,
-            contextReceiverCount = if (!contextParametersEnabled) constructor.contextParameters.size else 0,
             hasVarargs = constructor.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
             isExpect = constructor.isExpect,
             isSyntheticMember = false,
-            hasContext = constructor.contextParameters.isNotEmpty(),
         )
     }
 
@@ -522,13 +520,12 @@ class ConeOverloadConflictResolver(
             origin = call,
             typeParameters = function.typeParameters.map { it.symbol.toLookupTag() },
             valueParameterTypes = computeSignatureTypes(call, function),
+            contextParameterTypes = computeContextTypes(call, function),
             hasExtensionReceiver = function.receiverParameter != null,
-            contextReceiverCount = if (!contextParametersEnabled) function.contextParameters.size else 0,
             hasVarargs = function.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
             isExpect = function.isExpect,
             isSyntheticMember = false,
-            hasContext = function.contextParameters.isNotEmpty(),
         )
     }
 
@@ -575,6 +572,13 @@ class ConeOverloadConflictResolver(
         }
     }
 
+    private fun computeContextTypes(
+        call: Candidate,
+        called: FirCallableDeclaration
+    ): Set<KotlinTypeMarker?> = called.contextParameters.mapTo(mutableSetOf()) {
+        it.returnTypeRef.coneType.prepareType(inferenceComponents.session, call)
+    }
+
     private fun FirValueParameter.toTypeWithConversion(argument: ConeResolutionAtom, session: FirSession, call: Candidate): TypeWithConversion {
         val argumentType = argumentType(argument).prepareType(session, call)
         val functionTypeForSam = toFunctionTypeForSamOrNull(call)
@@ -616,8 +620,8 @@ class ConeOverloadConflictResolver(
             call,
             (klass as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
             emptyList(),
+            setOf(),
             hasExtensionReceiver = false,
-            0,
             hasVarargs = false,
             numDefaults = 0,
             isExpect = (klass as? FirRegularClass)?.isExpect == true,

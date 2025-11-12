@@ -3064,6 +3064,22 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/newSpecificity")
+      @TestDataPath("$PROJECT_ROOT")
+      public class NewSpecificity {
+        @Test
+        public void testAllFilesPresentInNewSpecificity() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/newSpecificity"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("newSpecificity.kt")
+        public void testNewSpecificity() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/newSpecificity/newSpecificity.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/operators")
       @TestDataPath("$PROJECT_ROOT")
       public class Operators {
