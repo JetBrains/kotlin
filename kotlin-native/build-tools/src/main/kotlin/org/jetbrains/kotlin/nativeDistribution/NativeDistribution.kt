@@ -194,8 +194,8 @@ value class NativeDistributionProperty internal constructor(private val director
     private fun ret(value: Directory): NativeDistribution = NativeDistribution(value)
     private fun retNullable(value: Directory?): NativeDistribution? = value?.let(::NativeDistribution)
     private fun ret(provider: Provider<Directory>): Provider<NativeDistribution> = provider.map(::NativeDistribution)
-    private fun ret(property: Property<Directory>): Property<NativeDistribution> = objectFactory.newInstance(NativeDistributionProperty::class.java, property as DirectoryProperty)
-    private fun ret(property: DirectoryProperty): NativeDistributionProperty = objectFactory.newInstance(NativeDistributionProperty::class.java, property)
+    private fun ret(property: Property<Directory>): Property<NativeDistribution> = NativeDistributionProperty(property as DirectoryProperty)
+    private fun ret(property: DirectoryProperty): NativeDistributionProperty = NativeDistributionProperty(property)
 
     override fun set(value: NativeDistribution?) = fwdNullable(value, DirectoryProperty::set)
     override fun set(provider: Provider<out NativeDistribution>) = fwd(provider, DirectoryProperty::set)
@@ -232,7 +232,7 @@ value class NativeDistributionProperty internal constructor(private val director
 /**
  * Creates a new [NativeDistributionProperty]. The property has no initial value.
  */
-fun ObjectFactory.nativeDistributionProperty() = newInstance(NativeDistributionProperty::class.java, directoryProperty())
+fun ObjectFactory.nativeDistributionProperty() = NativeDistributionProperty(directoryProperty())
 
 /**
  * Get the default Native distribution location.
