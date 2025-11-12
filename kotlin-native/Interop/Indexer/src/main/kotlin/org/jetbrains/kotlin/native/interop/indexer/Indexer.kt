@@ -103,8 +103,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         protected open fun shouldBeIncluded(declaration: D, headerId: HeaderId): Boolean =
                 !library.headerExclusionPolicy.excludeAll(headerId)
 
-        inline fun get(cursor: CValue<CXCursor>): D? = all.get(getDeclarationId(cursor))
-        inline fun remove(cursor: CValue<CXCursor>) = all.remove(getDeclarationId(cursor))
+        fun get(cursor: CValue<CXCursor>): D? = all.get(getDeclarationId(cursor))
+        fun remove(cursor: CValue<CXCursor>) = all.remove(getDeclarationId(cursor))
 
         inline fun getOrPut(cursor: CValue<CXCursor>, create: () -> D) = getOrPut(cursor, create, configure = {})
 
