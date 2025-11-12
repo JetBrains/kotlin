@@ -19,7 +19,6 @@ import org.gradle.api.specs.Spec
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.kotlinNativeDist
 import java.util.function.BiFunction
-import javax.inject.Inject
 
 /**
  * Describes distribution of Native compiler rooted at [root].
@@ -184,7 +183,8 @@ class NativeDistribution(val root: Directory) {
 // So, it's essential to have a separate `NativeDistributionProperty`, because regular `Property<NativeDistribution>` wouldn't get serialized.
 // And it's also essential for `NativeDistributionProperty` to be a `value class` around `DirectoryProperty`, so for java reflection
 // (and, consequently, for Gradle serialization) `NativeDistributionProperty` would look exactly like `DirectoryProperty`.
-abstract class NativeDistributionProperty @Inject internal constructor(val objectFactory: ObjectFactory, private val directoryProperty: DirectoryProperty) : Property<NativeDistribution> {
+@JvmInline
+value class NativeDistributionProperty internal constructor(private val directoryProperty: DirectoryProperty) : Property<NativeDistribution> {
     private inline fun <T : Any?> fwd(f: DirectoryProperty.() -> T) = directoryProperty.f()
     private inline fun <T : Any?> fwdNullable(value: NativeDistribution?, f: DirectoryProperty.(Directory?) -> T) = directoryProperty.f(value?.root)
 
@@ -194,8 +194,8 @@ abstract class NativeDistributionProperty @Inject internal constructor(val objec
     private fun ret(value: Directory): NativeDistribution = NativeDistribution(value)
     private fun retNullable(value: Directory?): NativeDistribution? = value?.let(::NativeDistribution)
     private fun ret(provider: Provider<Directory>): Provider<NativeDistribution> = provider.map(::NativeDistribution)
-    private fun ret(property: Property<Directory>): Property<NativeDistribution> = objectFactory.newInstance(NativeDistributionProperty::class.java, property as DirectoryProperty)
-    private fun ret(property: DirectoryProperty): NativeDistributionProperty = objectFactory.newInstance(NativeDistributionProperty::class.java, property)
+    private fun ret(property: Property<Directory>): Property<NativeDistribution> = NativeDistributionProperty(property as DirectoryProperty)
+    private fun ret(property: DirectoryProperty): NativeDistributionProperty = NativeDistributionProperty(property)
 
     override fun set(value: NativeDistribution?) = fwdNullable(value, DirectoryProperty::set)
     override fun set(provider: Provider<out NativeDistribution>) = fwd(provider, DirectoryProperty::set)
@@ -223,7 +223,7 @@ abstract class NativeDistributionProperty @Inject internal constructor(val objec
     override fun filter(spec: Spec<in NativeDistribution>): Provider<NativeDistribution> = ret(directoryProperty.filter { spec.isSatisfiedBy(NativeDistribution(it)) })
 
     override fun <S : Any> flatMap(transformer: Transformer<out Provider<out S>?, in NativeDistribution>): Provider<S> = directoryProperty.flatMap {
-        transformer.transform(objectFactory.newInstance(NativeDistribution::class.java, it))
+        transformer.transform(NativeDistribution(it))
     }
 
     override fun <U : Any, R : Any> zip(right: Provider<U>, combiner: BiFunction<in NativeDistribution, in U, out R?>): Provider<R> = directoryProperty.zip<U, R>(right) { lhs, rhs -> combiner.apply(ret(lhs), rhs) }
@@ -232,7 +232,7 @@ abstract class NativeDistributionProperty @Inject internal constructor(val objec
 /**
  * Creates a new [NativeDistributionProperty]. The property has no initial value.
  */
-fun ObjectFactory.nativeDistributionProperty() = newInstance(NativeDistributionProperty::class.java, directoryProperty())
+fun ObjectFactory.nativeDistributionProperty() = NativeDistributionProperty(directoryProperty())
 
 /**
  * Get the default Native distribution location.
