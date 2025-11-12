@@ -146,12 +146,13 @@ constructor(
                         nodeJsRoot.npmInstallTaskProvider,
                     )
                     it.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+
+                    if (isWasm) {
+                        it.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
+                    }
                 }
 
                 it.npmToolingEnvDir.value(npmToolingDir).disallowChanges()
-                if (isWasm) {
-                    it.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
-                }
 
                 with(nodeJsEnvSpec) {
                     it.dependsOn(project.nodeJsSetupTaskProvider)
