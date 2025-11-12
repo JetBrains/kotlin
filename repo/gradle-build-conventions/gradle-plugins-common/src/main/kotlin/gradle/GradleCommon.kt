@@ -474,7 +474,9 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     }
 
                     // Make original configuration unpublishable and not visible
-                    //originalConfiguration.isCanBeConsumed = false
+                    originalConfiguration.attributes {
+                        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("none"))
+                    }
                     originalConfiguration.isVisible = false
                     javaComponent.withVariantsFromConfiguration(originalConfiguration) {
                         skip()
