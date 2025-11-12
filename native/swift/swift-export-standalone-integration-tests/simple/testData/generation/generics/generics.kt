@@ -72,9 +72,6 @@ class GenericWithComparableUpperBound<T: Comparable<T>>(val t: T)
 
 // Minimal repro for KT-79105: having Array<T> in the API surface must not crash Swift export.
 
-//data class ArrayBox(val ints: Array<Int>)
-//
-
 class ArrayBox() {
     val ints: Array<Int> = emptyArray()
 }
@@ -83,29 +80,5 @@ class Holder<T>(val xs: Array<T>) {
     fun headOrNull(): T? = if (xs.isNotEmpty()) xs[0] else null
 }
 
-//fun makeArrayBox(): ArrayBox = ArrayBox(arrayOf(1, 2, 3))
-
 // Make sure arrays appear in both public signatures and bodies.
 fun takeAndReturn(a: Array<String>): Array<String> = a
-
-// KT-79227 Swift Export: Fix First Release Issues
-// Generic type erasure produces conflicts at call site
-//fun <T : Map<String, Int>> conflictTopLevel(a: T, b: Map<Int, String>): Int {
-//    return a.size + b.size
-//}
-//
-//class ConflictInMember<T : List<String>>(private val first: T) {
-//    fun conflictMember(second: List<Int>): Int {
-//        return first.size + second.size
-//    }
-//}
-//
-//interface ConflictInInterface<T : Set<String>> {
-//    fun conflictInSignature(x: T, y: Set<Int>)
-//}
-
-//fun <T : List<Pair<String, Int>>> conflictNested(a: T, b: List<Pair<Int, String>>) {
-//    // no-op
-//}
-
-//fun <T : Map<String, Int>> conflictReturn(a: Map<Int, String>): T? = null
