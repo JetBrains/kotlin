@@ -11,27 +11,9 @@ import org.jetbrains.kotlin.library.isWasmKotlinTest
 import org.jetbrains.kotlin.library.isWasmStdlib
 
 object WasmLibrarySpecialCompatibilityChecker : LibrarySpecialCompatibilityChecker() {
-    override fun shouldCheckLibrary(library: KotlinLibrary) = library.isWasmStdlib || library.isWasmKotlinTest
-
-    override fun getMessageToReport(compilerVersion: Version, libraryVersion: Version, library: KotlinLibrary): String? {
-        val libraryDisplayName = when {
-            library.isWasmStdlib -> "standard"
-            library.isWasmKotlinTest -> "kotlin-test"
-            else -> null
-        }
-
-        val rootCause = when {
-            libraryVersion < compilerVersion ->
-                "The Kotlin/Wasm $libraryDisplayName library has an older version ($libraryVersion) than the compiler ($compilerVersion). Such a configuration is not supported."
-
-            !libraryVersion.hasSameLanguageVersion(compilerVersion) ->
-                "The Kotlin/Wasm $libraryDisplayName library has a more recent version ($libraryVersion) than the compiler supports. The compiler version is $compilerVersion."
-
-            else -> return null
-        }
-
-        return "$rootCause\nPlease, make sure that the $libraryDisplayName library has the version in the range " +
-                "[${compilerVersion.toComparableVersionString()} .. ${compilerVersion.toLanguageVersionString()}.${KotlinVersion.MAX_COMPONENT_VALUE}]. " +
-                "Adjust your project's settings if necessary."
+    override fun KotlinLibrary.toCheckedLibrary(): CheckedLibrary? = when {
+        isWasmStdlib -> CheckedLibrary(libraryDisplayName = "standard", platformDisplayName = "Kotlin/Wasm")
+        isWasmKotlinTest -> CheckedLibrary(libraryDisplayName = "kotlin-test", platformDisplayName = "Kotlin/Wasm")
+        else -> null
     }
 }

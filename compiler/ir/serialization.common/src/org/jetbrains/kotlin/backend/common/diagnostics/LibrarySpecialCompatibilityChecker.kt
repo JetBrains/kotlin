@@ -60,15 +60,27 @@ abstract class LibrarySpecialCompatibilityChecker {
         val compilerVersion = Version.parseVersion(getRawCompilerVersion()) ?: return
 
         for (library in libraries) {
-            if (shouldCheckLibrary(library)) {
-                val jarManifest = library.getComponent(JarManifestComponent.Kind)?.jarManifest ?: continue
-                val libraryVersion = Version.parseVersion(jarManifest.mainAttributes.getValue(KLIB_JAR_LIBRARY_VERSION)) ?: continue
+            val checkedLibrary = library.toCheckedLibrary() ?: continue
 
-                val messageToReport = getMessageToReport(compilerVersion, libraryVersion, library)
-                if (messageToReport != null) {
-                    messageCollector.report(CompilerMessageSeverity.ERROR, messageToReport)
-                }
+            val jarManifest = library.getComponent(JarManifestComponent.Kind)?.jarManifest ?: continue
+            val libraryVersion = Version.parseVersion(jarManifest.mainAttributes.getValue(KLIB_JAR_LIBRARY_VERSION)) ?: continue
+
+            val rootCause = when {
+                libraryVersion < compilerVersion ->
+                    "The ${checkedLibrary.platformDisplayName} ${checkedLibrary.libraryDisplayName} library has an older version ($libraryVersion) than the compiler ($compilerVersion). Such a configuration is not supported."
+
+                !libraryVersion.hasSameLanguageVersion(compilerVersion) ->
+                    "The ${checkedLibrary.platformDisplayName} ${checkedLibrary.libraryDisplayName} library has a more recent version ($libraryVersion) than the compiler supports. The compiler version is $compilerVersion."
+
+                else -> continue
             }
+
+            messageCollector.report(
+                CompilerMessageSeverity.ERROR,
+                "$rootCause\nPlease, make sure that the ${checkedLibrary.libraryDisplayName} library has the version in the range " +
+                        "[${compilerVersion.toComparableVersionString()} .. ${compilerVersion.toLanguageVersionString()}.${KotlinVersion.MAX_COMPONENT_VALUE}]. " +
+                        "Adjust your project's settings if necessary."
+            )
         }
     }
 
@@ -76,8 +88,9 @@ abstract class LibrarySpecialCompatibilityChecker {
         return customCompilerVersionForTest?.let { return it.version } ?: KotlinCompilerVersion.getVersion()
     }
 
-    protected abstract fun shouldCheckLibrary(library: KotlinLibrary): Boolean
-    protected abstract fun getMessageToReport(compilerVersion: Version, libraryVersion: Version, library: KotlinLibrary): String?
+    protected class CheckedLibrary(val libraryDisplayName: String, val platformDisplayName: String)
+
+    protected abstract fun KotlinLibrary.toCheckedLibrary(): CheckedLibrary?
 
     companion object {
         private class CustomCompilerVersionForTest(val version: String?)
