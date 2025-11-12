@@ -87,7 +87,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
             SirSwiftModule.unsafeMutableRawPointer -> "kotlin.native.internal.NativePtr"
 
-            SirSwiftModule.void -> "Void"
+            SirSwiftModule.void -> "Unit"
             SirSwiftModule.never -> "Nothing"
 
             SirSwiftModule.array -> "kotlin.collections.List<${kotlinParametrizedName(type.typeArguments.first())}>"

@@ -66,12 +66,12 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         BridgeFunctionDescriptor(
             baseBridgeName = baseBridgeName,
             parameters = explicitParameters.mapIndexed { index, value -> bridgeParameter(value, index) },
-            returnType = bridgeType(returnType),
+            returnType = bridgeReturnType(returnType),
             kotlinFqName = kotlinFqName,
             selfParameter = selfParameter?.let { bridgeParameter(it, 0) },
             extensionReceiverParameter = extensionReceiverParameter?.let { bridgeParameter(it, 0) },
             errorParameter = errorParameter?.let {
-                BridgeParameter(
+                BridgedParameter.InOut(
                     name = it.name!!.let(::createBridgeParameterName),
                     bridge = Bridge.AsOutError
                 )
@@ -123,12 +123,12 @@ public interface BridgeFunctionProxy {
 
 private class BridgeFunctionDescriptor(
     override val baseBridgeName: String,
-    override val parameters: List<BridgeParameter>,
-    override val returnType: Bridge,
+    override val parameters: List<BridgedParameter>,
+    override val returnType: KotlinToSwiftBridge,
     override val kotlinFqName: FqName,
-    override val selfParameter: BridgeParameter?,
-    override val extensionReceiverParameter: BridgeParameter?,
-    override val errorParameter: BridgeParameter?,
+    override val selfParameter: BridgedParameter?,
+    override val extensionReceiverParameter: BridgedParameter?,
+    override val errorParameter: BridgedParameter.InOut?,
     override val isAsync: Boolean,
     override val typeNamer: SirTypeNamer,
 ) : BridgeFunctionBuilder, BridgeFunctionProxy {
@@ -138,10 +138,9 @@ private class BridgeFunctionDescriptor(
     val allParameters
         get() = listOfNotNull(selfParameter) + parameters + listOfNotNull(errorParameter) + listOfNotNull(asyncContinuationParameter)
 
-    val asyncContinuationParameter: BridgeParameter? = isAsync.ifTrue {
-        BridgeParameter(
-            name = "continuation", bridge = Bridge.AsBlock(parameters = listOf(returnType), returnType = Bridge.AsVoid)
-        )
+    val asyncContinuationParameter: BridgedParameter? = isAsync.ifTrue {
+        require(returnType is Bridge)
+        BridgedParameter.In(name = "continuation", bridge = Bridge.AsBlock(parameters = listOf(returnType), returnType = Bridge.AsOutVoid))
     }
 
     override val name
@@ -219,7 +218,7 @@ private class BridgeFunctionDescriptor(
 // problems with this approach are:
 // 1. there can be limit for declaration names in Clang compiler
 // 1. this name will be UGLY in the debug session
-private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<BridgeParameter>, typeNamer: SirTypeNamer): String {
+private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<BridgedParameter>, typeNamer: SirTypeNamer): String {
     val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
         typeNamer.swiftFqName(it.bridge.swiftType)
             .replace(".", "_")

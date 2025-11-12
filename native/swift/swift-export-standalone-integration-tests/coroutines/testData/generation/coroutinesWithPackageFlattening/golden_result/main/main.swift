@@ -12,7 +12,7 @@ extension ExportedKotlinPackages.flattened {
                     let continuation: (Swift.Int32) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
                     let _: () = flattened_testSuspendFunction({
             let originalBlock = continuation
-            return { arg0 in return originalBlock(arg0) }
+            return { arg0 in return { originalBlock(arg0); return 0 }() }
         }())
                 }
     }
