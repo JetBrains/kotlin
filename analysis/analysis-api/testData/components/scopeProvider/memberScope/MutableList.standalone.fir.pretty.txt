@@ -57,3 +57,6 @@ open fun toString(): kotlin.String
 override fun getFirst(): E
 
 override fun getLast(): E
+
+@kotlin.ExperimentalStdlibApi
+companion object

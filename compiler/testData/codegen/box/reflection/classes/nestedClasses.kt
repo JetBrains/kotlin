@@ -17,29 +17,29 @@ fun nestedNames(c: KClass<*>) = c.nestedClasses.map { it.simpleName ?: throw Ass
 
 fun box(): String {
     // Kotlin class without nested classes
-    assertEquals(emptyList<String>(), nestedNames(A.Inner::class))
+    assertEquals(listOf(), nestedNames(A.Inner::class))
     // Kotlin class with nested classes
     assertEquals(listOf("Companion", "Inner", "Nested", "PrivateNested"), nestedNames(A::class))
 
     // Java class without nested classes
-    assertEquals(emptyList<String>(), nestedNames(Error::class))
+    assertEquals(listOf(), nestedNames(Error::class))
     // Java interface with nested classes
     assertEquals(listOf("Entry"), nestedNames(java.util.Map::class))
     // Java class with nested classes
     assertEquals(listOf("SimpleEntry", "SimpleImmutableEntry"), nestedNames(java.util.AbstractMap::class) - "ViewCollection" - "KeyIterator" - "ValueIterator")
 
     // Built-ins
-    assertEquals(emptyList<String>(), nestedNames(Array<Any>::class))
-    assertEquals(emptyList<String>(), nestedNames(CharSequence::class))
+    assertEquals(listOf("Companion"), nestedNames(Array<Any>::class))
+    assertEquals(listOf(), nestedNames(CharSequence::class))
     assertEquals(listOf("Companion"), nestedNames(String::class))
 
-    assertEquals(emptyList<String>(), nestedNames(Collection::class))
-    assertEquals(emptyList<String>(), nestedNames(MutableCollection::class))
-    assertEquals(emptyList<String>(), nestedNames(List::class))
-    assertEquals(emptyList<String>(), nestedNames(MutableList::class))
+    assertEquals(listOf(), nestedNames(Collection::class))
+    assertEquals(listOf(), nestedNames(MutableCollection::class))
+    assertEquals(listOf("Companion"), nestedNames(List::class))
+    assertEquals(listOf("Companion"), nestedNames(MutableList::class))
     assertEquals(listOf("Entry"), nestedNames(Map::class))
-    assertEquals(emptyList<String>(), nestedNames(Map.Entry::class))
-    assertEquals(emptyList<String>(), nestedNames(MutableMap.MutableEntry::class))
+    assertEquals(listOf(), nestedNames(Map.Entry::class))
+    assertEquals(listOf(), nestedNames(MutableMap.MutableEntry::class))
 
     // TODO: should be MutableEntry. Currently we do not distinguish between Map and MutableMap.
     assertEquals(listOf("Entry"), nestedNames(MutableMap::class))
@@ -54,7 +54,7 @@ fun box(): String {
         ByteArray::class, DoubleArray::class, FloatArray::class, IntArray::class,
         LongArray::class, ShortArray::class, CharArray::class, BooleanArray::class
     )) {
-        assertEquals(emptyList<String>(), nestedNames(primitiveArray))
+        assertEquals(listOf("Companion"), nestedNames(primitiveArray))
     }
 
     return "OK"

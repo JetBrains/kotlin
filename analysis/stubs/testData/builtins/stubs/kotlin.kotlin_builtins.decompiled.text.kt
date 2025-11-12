@@ -45,6 +45,10 @@ public open class Any public constructor() {
 }
 
 public final class Array<T> {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final inline operator fun <reified T> of(vararg elements: T): kotlin.Array<T> { /* compiled code */ }
+    }
+
     public constructor(size: kotlin.Int, init: (kotlin.Int) -> T) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
@@ -78,6 +82,10 @@ public final class Boolean private constructor() : kotlin.Comparable<kotlin.Bool
 }
 
 public final class BooleanArray public constructor(size: kotlin.Int) {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun of(vararg elements: kotlin.Boolean): kotlin.BooleanArray { /* compiled code */ }
+    }
+
     public constructor(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Boolean) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
@@ -216,6 +224,10 @@ public final class Byte private constructor() : kotlin.Number, kotlin.Comparable
 }
 
 public final class ByteArray public constructor(size: kotlin.Int) {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun of(vararg elements: kotlin.Byte): kotlin.ByteArray { /* compiled code */ }
+    }
+
     public constructor(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Byte) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
@@ -288,6 +300,10 @@ public final class Char private constructor() : kotlin.Comparable<kotlin.Char> {
 }
 
 public final class CharArray public constructor(size: kotlin.Int) {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun of(vararg elements: kotlin.Char): kotlin.CharArray { /* compiled code */ }
+    }
+
     public constructor(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Char) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
@@ -456,6 +472,10 @@ public final class Double private constructor() : kotlin.Number, kotlin.Comparab
 }
 
 public final class DoubleArray public constructor(size: kotlin.Int) {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun of(vararg elements: kotlin.Double): kotlin.DoubleArray { /* compiled code */ }
+    }
+
     public constructor(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Double) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
@@ -615,6 +635,10 @@ public final class Float private constructor() : kotlin.Number, kotlin.Comparabl
 }
 
 public final class FloatArray public constructor(size: kotlin.Int) {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun of(vararg elements: kotlin.Float): kotlin.FloatArray { /* compiled code */ }
+    }
+
     public constructor(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Float) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
@@ -773,6 +797,10 @@ public final class Int private constructor() : kotlin.Number, kotlin.Comparable<
 }
 
 public final class IntArray public constructor(size: kotlin.Int) {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun of(vararg elements: kotlin.Int): kotlin.IntArray { /* compiled code */ }
+    }
+
     public constructor(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Int) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
@@ -925,6 +953,10 @@ public final class Long private constructor() : kotlin.Number, kotlin.Comparable
 }
 
 public final class LongArray public constructor(size: kotlin.Int) {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun of(vararg elements: kotlin.Long): kotlin.LongArray { /* compiled code */ }
+    }
+
     public constructor(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Long) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
@@ -1114,6 +1146,10 @@ public final class Short private constructor() : kotlin.Number, kotlin.Comparabl
 }
 
 public final class ShortArray public constructor(size: kotlin.Int) {
+    @kotlin.ExperimentalStdlibApi public companion object {
+        @kotlin.ExperimentalStdlibApi public final operator fun of(vararg elements: kotlin.Short): kotlin.ShortArray { /* compiled code */ }
+    }
+
     public constructor(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Short) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */

@@ -65,6 +65,7 @@ HIGH:
   import kotlin.collections.ByteIterator
   import kotlin.collections.CharIterator
   import kotlin.collections.Collection
+  import kotlin.collections.Companion
   import kotlin.collections.DoubleIterator
   import kotlin.collections.Entry
   import kotlin.collections.FloatIterator
