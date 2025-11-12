@@ -1,7 +1,1 @@
-compiler/testData/compileKotlinAgainstCustomBinaries/usageOfNestedTypeAliasesWhenTheyAreEnabled/source.kt:1:22: error: 'typealias NestedTA = D' is only available since Kotlin 2.3 and cannot be used in Kotlin 2.2.
-fun test(nestedTA: C.NestedTA): D {
-                     ^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/usageOfNestedTypeAliasesWhenTheyAreEnabled/source.kt:2:14: error: 'constructor(): D' is only available since Kotlin 2.3 and cannot be used in Kotlin 2.2.
-    return C.NestedTA()
-             ^^^^^^^^
-COMPILATION_ERROR
+OK
