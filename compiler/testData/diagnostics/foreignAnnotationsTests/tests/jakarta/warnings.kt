@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // NULLABILITY_ANNOTATIONS: @jakarta.annotation:warn
 
 // FILE: A.java

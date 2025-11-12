@@ -35,9 +35,9 @@ public class NullMarkedType {
 // FILE: kotlin.kt
 
 fun test() {
-    NullMarkedType.TargetType.TYPE_ARGUMENT().consume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    NullMarkedType.TargetType.UNBOUNDED_WILDCARD().consume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().consume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().consume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    NullMarkedType.TargetType.TYPE_ARGUMENT().consume(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    NullMarkedType.TargetType.UNBOUNDED_WILDCARD().consume(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().consume(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().consume(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     NullMarkedType.TargetType.RAW().consume(null)
 }

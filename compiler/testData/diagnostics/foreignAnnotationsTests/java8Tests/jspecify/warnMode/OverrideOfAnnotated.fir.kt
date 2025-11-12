@@ -61,25 +61,25 @@ class Correct : IntermediateClass() {
 }
 
 class WrongReturnTypes : IntermediateClass() {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun everythingNotNullable(x: Foo): Foo? {
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun everythingNotNullable(x: Foo): Foo? {
         return null
     }
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun explicitlyNullnessUnspecified(x: Foo): Foo? {
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun explicitlyNullnessUnspecified(x: Foo): Foo? {
         return null
     }
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun intermediateNotNull(): Foo? {
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun intermediateNotNull(): Foo? {
         return null
     }
 }
 
 class WrongParameter : IntermediateClass() {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun everythingNotNullable(x: Foo?): Foo {
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun everythingNotNullable(x: Foo?): Foo {
         return FOO
     }
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun everythingNullable(x: Foo): Foo? {
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun everythingNullable(x: Foo): Foo? {
         return null
     }
 
@@ -87,7 +87,7 @@ class WrongParameter : IntermediateClass() {
         return null
     }
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun mixed(x: Foo?): Foo? {
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun mixed(x: Foo?): Foo? {
         return null
     }
 

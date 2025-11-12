@@ -32,29 +32,29 @@ fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>, z: java.util.LinkedList
 
     y.addFirst("")
     y.addLast("")
-    y.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    y.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    y.addFirst(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    y.addLast(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     var removed3 = y.removeFirst()
-    removed3 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    removed3 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
     var removed4 = y.removeLast()
-    removed4 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    removed4 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
     var got5 = y.getFirst()
-    got5 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    got5 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
     var got6 = y.getLast()
-    got6 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    got6 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
     var got7 = y.first
-    got7 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    got7 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
     var got8 = y.last
-    got8 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    got8 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 
     z.addFirst("")
     z.addLast("")
-    z.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    z.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    z.addFirst(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    z.addLast(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     var removed5 = z.removeFirst()
-    removed5 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    removed5 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
     var removed6 = z.removeLast()
-    removed6 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    removed6 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
     var got9 = z.<!DEPRECATION!>getFirst<!>()
     got9 = null
     var got10 = z.<!DEPRECATION!>getLast<!>()

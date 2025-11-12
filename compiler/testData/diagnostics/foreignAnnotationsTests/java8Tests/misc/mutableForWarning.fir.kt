@@ -30,5 +30,5 @@ fun main() {
 fun takeReadonly(l: List<String>) {}
 
 abstract class K : J() {
-    abstract <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun bar(): List<String>
+    abstract <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun bar(): List<String>
 }

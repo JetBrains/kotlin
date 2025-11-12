@@ -23,7 +23,7 @@ object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker(MppCheckerK
         if (declaration.symbol.hasExplicitReturnType) {
             declaration.initializer?.checkExpressionForEnhancedTypeMismatch(
                 declaration.returnTypeRef.coneType,
-                FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
+                FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
             )
         }
     }
@@ -34,7 +34,7 @@ object FirValueParameterJavaNullabilityWarningChecker : FirValueParameterChecker
     override fun check(declaration: FirValueParameter) {
         declaration.defaultValue?.checkExpressionForEnhancedTypeMismatch(
             declaration.returnTypeRef.coneType,
-            FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
+            FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
         )
     }
 }

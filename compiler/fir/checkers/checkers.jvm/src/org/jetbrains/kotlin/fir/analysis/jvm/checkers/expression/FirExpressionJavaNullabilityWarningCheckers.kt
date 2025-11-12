@@ -49,7 +49,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
         for ((contextArgument, contextParameter) in expression.contextArguments.zip(symbol.contextParameterSymbols)) {
             contextArgument.checkExpressionForEnhancedTypeMismatch(
                 expectedType = substitutor.substituteOrSelf(contextParameter.resolvedReturnType),
-                FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+                FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
             )
         }
 
@@ -57,7 +57,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
             expression.resolvedArgumentMapping?.forEach { (argument, parameter) ->
                 argument.checkExpressionForEnhancedTypeMismatch(
                     expectedType = substitutor.substituteOrSelf(parameter.returnTypeRef.coneType),
-                    FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+                    FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
                 )
             }
         }
@@ -196,7 +196,7 @@ object FirThrowJavaNullabilityWarningChecker : FirThrowExpressionChecker(MppChec
     override fun check(expression: FirThrowExpression) {
         expression.exception.checkExpressionForEnhancedTypeMismatch(
             expectedType = context.session.builtinTypes.throwableType.coneType,
-            FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+            FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
         )
     }
 }
@@ -206,7 +206,7 @@ object FirAssignmentJavaNullabilityWarningChecker : FirVariableAssignmentChecker
     override fun check(expression: FirVariableAssignment) {
         expression.rValue.checkExpressionForEnhancedTypeMismatch(
             expectedType = expression.lValue.resolvedType,
-            FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
+            FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
         )
     }
 }
@@ -244,7 +244,7 @@ object FirReturnJavaNullabilityWarningChecker : FirReturnExpressionChecker(MppCh
     override fun check(expression: FirReturnExpression) {
         expression.result.checkExpressionForEnhancedTypeMismatch(
             expectedType = expression.target.labeledElement.returnTypeRef.coneType,
-            FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+            FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
         )
     }
 }
@@ -253,7 +253,7 @@ context(context: CheckerContext, reporter: DiagnosticReporter)
 private fun FirExpression.checkConditionForEnhancedTypeMismatch() {
     checkExpressionForEnhancedTypeMismatch(
         context.session.builtinTypes.booleanType.coneType,
-        FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+        FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
     )
 }
 

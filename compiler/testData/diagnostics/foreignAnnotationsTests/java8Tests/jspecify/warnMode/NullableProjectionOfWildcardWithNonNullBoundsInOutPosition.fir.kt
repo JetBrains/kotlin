@@ -19,7 +19,7 @@ public class FromJava<T extends Object> {
 fun <T> accept(arg: T) {}
 
 fun test() {
-    accept<Any>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>FromJava.IMPLICIT_BOUNDS.produce()<!>)
-    accept<String>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>FromJava.EXPLICIT_UPPER_BOUND.produce()<!>)
-    accept<Any>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>FromJava.EXPLICIT_LOWER_BOUND.produce()<!>)
+    accept<Any>(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>FromJava.IMPLICIT_BOUNDS.produce()<!>)
+    accept<String>(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>FromJava.EXPLICIT_UPPER_BOUND.produce()<!>)
+    accept<Any>(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>FromJava.EXPLICIT_LOWER_BOUND.produce()<!>)
 }

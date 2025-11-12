@@ -5579,12 +5579,12 @@ internal class JvmExposeBoxedCannotExposeReifiedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmExposeBoxedCannotExposeReified
 
-internal class WrongNullabilityForJavaOverrideImpl(
+internal class WrongTypeForJavaOverrideImpl(
     override val override: KaCallableSymbol,
     override val base: KaCallableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongNullabilityForJavaOverride
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongTypeForJavaOverride
 
 internal class AccidentalOverrideClashByJvmSignatureImpl(
     override val hidden: KaFunctionSymbol,
@@ -5646,13 +5646,13 @@ internal class ReceiverMutabilityMismatchBasedOnJavaAnnotationsImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReceiverMutabilityMismatchBasedOnJavaAnnotations
 
-internal class NullabilityMismatchBasedOnJavaAnnotationsImpl(
+internal class TypeMismatchBasedOnJavaAnnotationsImpl(
     override val actualType: KaType,
     override val expectedType: KaType,
     override val messageSuffix: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NullabilityMismatchBasedOnJavaAnnotations
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeMismatchBasedOnJavaAnnotations
 
 internal class NullabilityMismatchBasedOnExplicitTypeArgumentsForJavaImpl(
     override val actualType: KaType,

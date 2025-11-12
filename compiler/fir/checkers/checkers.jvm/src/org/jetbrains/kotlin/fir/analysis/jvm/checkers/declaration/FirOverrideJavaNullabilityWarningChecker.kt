@@ -67,7 +67,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                             anyReported = true
                             reporter.reportOn(
                                 memberSymbol.source,
-                                FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
+                                FirJvmErrors.WRONG_TYPE_FOR_JAVA_OVERRIDE,
                                 memberSymbol,
                                 substitutedBase
                             )
@@ -79,7 +79,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                 if (anyBaseEnhanced && !anyReported) {
                     memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState)?.let {
                         reporter.reportOn(
-                            memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it
+                            memberSymbol.source, FirJvmErrors.WRONG_TYPE_FOR_JAVA_OVERRIDE, memberSymbol, it
                         )
                     }
                 }
@@ -94,7 +94,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                             anyReported = true
                             reporter.reportOn(
                                 memberSymbol.source,
-                                FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
+                                FirJvmErrors.WRONG_TYPE_FOR_JAVA_OVERRIDE,
                                 memberSymbol,
                                 substitutedBase
                             )
@@ -106,7 +106,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                 if (anyBaseEnhanced && !anyReported) {
                     memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState)?.let {
                         reporter.reportOn(
-                            memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it
+                            memberSymbol.source, FirJvmErrors.WRONG_TYPE_FOR_JAVA_OVERRIDE, memberSymbol, it
                         )
                     }
                 }
