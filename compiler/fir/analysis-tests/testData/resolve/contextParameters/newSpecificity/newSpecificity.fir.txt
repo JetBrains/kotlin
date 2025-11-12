@@ -16,6 +16,9 @@ FILE: newSpecificity.kt
     context(a: R|A|)
     public final fun foo1_1(): R|kotlin/Unit| {
     }
+    public final fun example1(): R|kotlin/Unit| {
+        R|/foo1_1|()
+    }
     context(a: R|A|)
     public final fun example1a(): R|kotlin/Unit| {
         <Ambiguity: foo1_1, [/foo1_1, /foo1_1]>#()
