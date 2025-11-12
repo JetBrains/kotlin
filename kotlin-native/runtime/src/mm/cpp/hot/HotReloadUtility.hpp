@@ -104,11 +104,6 @@ inline void initializeHotReloadLogs() {
     CurrentLogLevel = level;
 }
 
-/// Assuming the className is a fully-qualified-name
-inline std::string kotlinClassNameAsTypeInfoName(const std::string& className) {
-    return "kclass:" + className;
-}
-
 inline std::string field2String(const char* fieldName, const uint8_t* fieldValue, const Konan_RuntimeType fieldType) {
     std::stringstream ss;
     ss << fieldName << ":" << kTypeNames[fieldType] << " = ";
