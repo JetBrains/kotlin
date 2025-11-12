@@ -144,7 +144,7 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt")
     testData(project(":compiler").isolated, "testData/codegen/box")
     testData(project(":compiler").isolated, "testData/codegen/boxInline")
-    testData(project(":js").isolated, "js.translator/testData")
+    testData(project(":js:js.translator").isolated, "testData")
 
     projectTests {
         withStdlibJsRuntime()
