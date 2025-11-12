@@ -25,6 +25,14 @@ public class J {
     }
 }
 
+// FILE: B.java
+import java.util.List;
+import org.jetbrains.annotations.Unmodifiable;
+
+public class B<T extends @Unmodifiable List<String>> {
+    public T getT() { return null; }
+}
+
 // FILE: main.kt
 fun main(l: List<String>) {
     takeMutable(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.foo()<!>)
@@ -37,3 +45,7 @@ fun main(l: List<String>) {
 }
 
 fun takeMutable(l: MutableList<String>) {}
+
+fun captured(b: B<*>) {
+    <!RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.t<!>.add("")
+}

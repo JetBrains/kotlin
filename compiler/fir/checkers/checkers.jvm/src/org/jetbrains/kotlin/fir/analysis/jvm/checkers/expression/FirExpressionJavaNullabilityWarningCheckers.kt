@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
+import org.jetbrains.kotlin.fir.analysis.checkers.finalApproximationOrSelf
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.dispatchReceiverScope
 import org.jetbrains.kotlin.fir.expressions.*
@@ -98,13 +99,19 @@ private fun checkDispatchReceiver(
     // EFW(List) MutableList..List => MutableList <: List
     // MutableList..EFW(MutableList)List => MutableList <: MutableList
     // Therefore we don't need to handle the case where enhancedDispatchReceiverType is a real subtype of actualDispatchReceiverType.
-    val actualClassId = actualDispatchReceiverType.classId
-    if (actualClassId != null && enhancedDispatchReceiverType.classId != actualClassId) {
+    val actualApproximatedType = actualDispatchReceiverType.finalApproximationOrSelf()
+    val actualClassId = actualApproximatedType.classId
+
+    // TODO(KT-64024) replace with enhancedDispatchReceiverType.finalApproximationOrSelf().classId
+    //  once substitution of captured types is fixed.
+    val enhancedClassId = substitutor.substituteOrSelf(actualApproximatedType).classId
+
+    if (actualClassId != null && enhancedClassId != actualClassId) {
         val scope = symbol.dispatchReceiverScope(context.session, context.scopeSession)
 
         var found = false
         val processor = { it: FirCallableSymbol<*> ->
-            if (it.dispatchReceiverType?.classId == enhancedDispatchReceiverType.classId) {
+            if (it.dispatchReceiverType?.classId == enhancedClassId) {
                 found = true
                 ProcessorAction.STOP
             } else {
