@@ -60,9 +60,9 @@ private class ObjCProtocolImpl(
         override val isForwardDeclaration: Boolean,
         override val swiftName: String? = null
 ) : ObjCProtocol(name), ObjCContainerImpl {
-    override val protocols = mutableListOf<ObjCProtocol>()
-    override val methods = mutableListOf<ObjCMethod>()
-    override val properties = mutableListOf<ObjCProperty>()
+    override var protocols = mutableListOf<ObjCProtocol>()
+    override var methods = mutableListOf<ObjCMethod>()
+    override var properties = mutableListOf<ObjCProperty>()
 }
 
 private class ObjCClassImpl(
@@ -516,8 +516,13 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             }
         }
 
-        if (objCProtocolRegistry.get(cursor)?.isForwardDeclaration == true) {
-            objCProtocolRegistry.remove(cursor)
+        val existing = objCProtocolRegistry.get(cursor)
+        if (existing != null && existing.isForwardDeclaration) {
+            existing.isForwardDeclaration = false
+            existing.location = getLocation(cursor)
+            existing.also {
+                addChildrenToObjCContainer(cursor, it)
+            }
         }
 
         return objCProtocolRegistry.getOrPut(cursor, {
