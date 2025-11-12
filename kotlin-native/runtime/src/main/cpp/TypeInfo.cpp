@@ -67,36 +67,30 @@ RUNTIME_NOTHROW OBJ_GETTER(Kotlin_native_internal_reflect_objCNameOrNull, const 
 
 } // extern "C"
 
-std::string TypeInfo::fqName() const {
-    std::string fqName = "";
-    if (packageName_) {
-        fqName += kotlin::to_string<KStringConversionMode::UNCHECKED>(packageName_);
+static std::string joinPackageAndRelativeNames(const ObjHeader* packageName, const ObjHeader* relativeName) {
+    std::string fqName{};
+    if (packageName) {
+        fqName += kotlin::to_string<KStringConversionMode::UNCHECKED>(packageName);
         fqName += ".";
     }
-    if (relativeName_) {
-        fqName += kotlin::to_string<KStringConversionMode::UNCHECKED>(relativeName_);
+    if (relativeName) {
+        fqName += kotlin::to_string<KStringConversionMode::UNCHECKED>(relativeName);
     } else {
         fqName += "<anonymous>";
     }
     return fqName;
 }
 
+std::string TypeInfo::fqName() const {
+    return joinPackageAndRelativeNames(packageName_, relativeName_);
+}
+
 std::vector<std::string> ExtendedTypeInfo::getExtendedFieldTypes() const {
     std::vector<std::string> fieldTypes;
     for (int i = 0; i < fieldsCount_; i++) {
-        std::string fqName;
-        auto packageName = fieldExtendedTypes_[i * 2];
-        auto relativeName = fieldExtendedTypes_[(i * 2) + 1];
-        if (packageName) {
-            fqName += kotlin::to_string<KStringConversionMode::UNCHECKED>(packageName);
-            fqName += ".";
-        }
-        if (relativeName) {
-            fqName += kotlin::to_string<KStringConversionMode::UNCHECKED>(relativeName);
-        } else {
-            fqName += "<anonymous>";
-        }
-        fieldTypes.push_back(fqName);
+        const auto packageName = fieldExtendedTypes_[i * 2];
+        const auto relativeName = fieldExtendedTypes_[(i * 2) + 1];
+        fieldTypes.push_back(joinPackageAndRelativeNames(packageName, relativeName));
     }
     return fieldTypes;
 }
