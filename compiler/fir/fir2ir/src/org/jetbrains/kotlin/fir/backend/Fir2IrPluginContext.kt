@@ -228,7 +228,7 @@ class Fir2IrPluginContext(
         override val metadataDeclarationRegistrar: IrGeneratedDeclarationsRegistrar
             get() = this@Fir2IrPluginContext.metadataDeclarationRegistrar
 
-        @OptIn(UnsafeDuringIrConstructionAPI::class, K2IrPluginContext.InternalApi::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         override fun referenceClass(classId: ClassId, fromFile: IrFile): IrClassSymbol? {
             var classIdToSearch = classId
             while (true) {
@@ -247,7 +247,7 @@ class Fir2IrPluginContext(
             }
         }
 
-        @OptIn(UnsafeDuringIrConstructionAPI::class, K2IrPluginContext.InternalApi::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         override fun referenceClassifier(classId: ClassId, fromFile: IrFile): IrSymbol? {
             val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
             return when (firSymbol) {
@@ -259,31 +259,25 @@ class Fir2IrPluginContext(
             }
         }
 
-        @OptIn(UnsafeDuringIrConstructionAPI::class, K2IrPluginContext.InternalApi::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         override fun referenceConstructors(classId: ClassId, fromFile: IrFile): Collection<IrConstructorSymbol> {
             return this@Fir2IrPluginContext.referenceConstructors(classId).onEach {
                 recordLookup(it.owner, fromFile)
             }
         }
 
-        @OptIn(UnsafeDuringIrConstructionAPI::class, K2IrPluginContext.InternalApi::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         override fun referenceFunctions(callableId: CallableId, fromFile: IrFile): Collection<IrSimpleFunctionSymbol> {
             return this@Fir2IrPluginContext.referenceFunctions(callableId).onEach {
                 recordLookup(it.owner, fromFile)
             }
         }
 
-        @OptIn(UnsafeDuringIrConstructionAPI::class, K2IrPluginContext.InternalApi::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         override fun referenceProperties(callableId: CallableId, fromFile: IrFile): Collection<IrPropertySymbol> {
             return this@Fir2IrPluginContext.referenceProperties(callableId).onEach {
                 recordLookup(it.owner, fromFile)
             }
-        }
-
-        @K2IrPluginContext.InternalApi
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
-        override fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile) {
-            this@Fir2IrPluginContext.recordLookup(declaration, fromFile)
         }
     }
 }

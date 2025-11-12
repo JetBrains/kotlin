@@ -97,18 +97,4 @@ interface K2IrPluginContext : IrGeneratorContext {
      * for proper reference collecting for incremental compilation.
      */
     fun referenceProperties(callableId: CallableId, fromFile: IrFile): Collection<IrPropertySymbol>
-
-    /**
-     * Records information that [declaration] was referenced during modification of file [fromFile].
-     * This information later will be used by the Incremental compilation to correctly invalidate
-     * compiled files on source changes.
-     *
-     * Lookup recording is incorporated into `referenceXxx` functions, so usually there is no need to call
-     * this function directly.
-     */
-    @InternalApi
-    fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile)
-
-    @RequiresOptIn
-    annotation class InternalApi
 }
