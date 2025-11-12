@@ -88,10 +88,10 @@ declare namespace JS_TESTS {
             get name(): "EC2";
             get ordinal(): 1;
         };
+        static values(): [typeof EnumClass.EC1, typeof EnumClass.EC2];
+        static valueOf(value: string): EnumClass;
         get name(): "EC1" | "EC2";
         get ordinal(): 0 | 1;
-        static values(): Array<EnumClass>;
-        static valueOf(value: string): EnumClass;
     }
     namespace EnumClass {
         /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

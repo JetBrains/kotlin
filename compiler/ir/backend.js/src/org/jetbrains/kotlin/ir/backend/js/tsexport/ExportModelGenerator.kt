@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
 import org.jetbrains.kotlin.backend.common.report
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -73,7 +74,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 
 
-    private fun exportFunction(function: IrSimpleFunction): ExportedDeclaration? {
+    private fun exportFunction(function: IrSimpleFunction, specializedType: ExportedType? = null): ExportedDeclaration? {
         return when (val exportability = functionExportability(function)) {
             is Exportability.NotNeeded, is Exportability.Implicit -> null
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
@@ -85,7 +86,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                         ?.getJsSymbolForOverriddenDeclaration()
                         ?.let(ExportedFunctionName::WellKnownSymbol)
                         ?: ExportedFunctionName.Identifier(function.getExportedIdentifier()),
-                    returnType = exportType(function.returnType, function),
+                    returnType = specializedType ?: exportType(function.returnType, function),
                     typeParameters = function.typeParameters.memoryOptimizedMap { exportTypeParameter(it, function) },
                     isMember = parent is IrClass,
                     isStatic = function.isStaticMethod,
@@ -501,16 +502,36 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     ): ExportedDeclaration? {
         val enumEntries = enumEntriesToOrdinal.keys
         return when (candidate) {
+            is IrSimpleFunction if candidate.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> {
+                val specializedType = when (candidate.name) {
+                    StandardNames.ENUM_VALUES -> ExportedType.InlineArrayType(
+                        enumEntriesToOrdinal.keys
+                            .map {
+                                ExportedType.TypeOf(
+                                    ExportedType.ClassType(
+                                        name = it.getFqNameWithJsNameWhenAvailable(generateNamespacesForPackages).asString(),
+                                        arguments = emptyList()
+                                    )
+                                )
+                            }
+                    )
+                    StandardNames.ENUM_VALUE_OF if enumEntriesToOrdinal.isEmpty() -> ExportedType.Primitive.Nothing
+                    else -> null
+                }
+                exportFunction(candidate, specializedType)
+            }
             is IrProperty -> {
                 if (candidate.isAllowedFakeOverriddenDeclaration(context)) {
                     val type: ExportedType = when (candidate.getExportedIdentifier()) {
                         "name" -> enumEntries
                             .map { it.name.asString() }
                             .map { ExportedType.LiteralType.StringLiteralType(it) }
-                            .reduceOrNull { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) } ?: return null
+                            .reduceOrNull { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) }
+                            ?: ExportedType.Primitive.Nothing
                         "ordinal" -> enumEntriesToOrdinal
                             .map { (_, ordinal) -> ExportedType.LiteralType.NumberLiteralType(ordinal) }
-                            .reduceOrNull { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) } ?: return null
+                            .reduceOrNull { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) }
+                            ?: ExportedType.Primitive.Nothing
                         else -> return null
                     }
                     exportPropertyUnsafely(

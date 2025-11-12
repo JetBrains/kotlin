@@ -4,10 +4,10 @@ declare namespace JS_TESTS {
     namespace foo {
         abstract class Uninhabited {
             private constructor();
-            static values(): Array<foo.Uninhabited>;
-            static valueOf(value: string): foo.Uninhabited;
-            get name(): string;
-            get ordinal(): number;
+            static values(): [];
+            static valueOf(value: string): never;
+            get name(): never;
+            get ordinal(): never;
         }
         namespace Uninhabited {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -29,14 +29,14 @@ declare namespace JS_TESTS {
                 get name(): "C";
                 get ordinal(): 2;
             };
+            static values(): [typeof foo.TestEnumClass.A, typeof foo.TestEnumClass.B, typeof foo.TestEnumClass.CustomNamedEntry];
+            static valueOf(value: string): foo.TestEnumClass;
             get name(): "A" | "B" | "C";
             get ordinal(): 0 | 1 | 2;
             get constructorParameter(): string;
             get foo(): number;
             bar(value: string): string;
             bay(): string;
-            static values(): Array<foo.TestEnumClass>;
-            static valueOf(value: string): foo.TestEnumClass;
         }
         namespace TestEnumClass {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -72,10 +72,10 @@ declare namespace JS_TESTS {
                     get name(): "B";
                     get ordinal(): 1;
                 };
+                static values(): [typeof foo.OuterClass.NestedEnum.A, typeof foo.OuterClass.NestedEnum.B];
+                static valueOf(value: string): foo.OuterClass.NestedEnum;
                 get name(): "A" | "B";
                 get ordinal(): 0 | 1;
-                static values(): Array<foo.OuterClass.NestedEnum>;
-                static valueOf(value: string): foo.OuterClass.NestedEnum;
             }
             namespace NestedEnum {
                 /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

@@ -196,6 +196,8 @@ public sealed class ExportedType {
         public val members: List<ExportedDeclaration>
     ) : ExportedType()
 
+    public class InlineArrayType(public val elements: List<ExportedType>) : ExportedType()
+
     public class UnionType(public val lhs: ExportedType, public val rhs: ExportedType) : ExportedType()
 
     public class IntersectionType(public val lhs: ExportedType, public val rhs: ExportedType) : ExportedType()
