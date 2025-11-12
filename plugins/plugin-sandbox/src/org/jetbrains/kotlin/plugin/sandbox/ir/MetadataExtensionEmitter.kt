@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -23,7 +24,7 @@ import java.nio.ByteBuffer
 
 const val pluginId = "org.jetbrains.kotlin.plugin.sandbox"
 
-class MetadataExtensionEmitter(val context: IrPluginContext) : IrVisitorVoid() {
+class MetadataExtensionEmitter(val context: K2IrPluginContext) : IrVisitorVoid() {
     companion object {
         private val markerAnnotationFqName = FqName("org.jetbrains.kotlin.plugin.sandbox.EmitMetadata")
     }
@@ -54,7 +55,7 @@ class MetadataExtensionEmitter(val context: IrPluginContext) : IrVisitorVoid() {
     }
 }
 
-class MetadataExtensionExtractor(val context: IrPluginContext) : IrVisitorVoid() {
+class MetadataExtensionExtractor(val context: K2IrPluginContext) : IrVisitorVoid() {
     companion object {
         private val markerAnnotationFqName = FqName("org.jetbrains.kotlin.plugin.sandbox.GenerateBodyUsingEmittedMetadata")
     }

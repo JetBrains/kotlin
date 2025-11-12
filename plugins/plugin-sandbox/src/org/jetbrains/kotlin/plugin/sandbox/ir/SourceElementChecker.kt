@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.java.VirtualFileBasedSourceElement
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
-class SourceElementChecker(val context: IrPluginContext) : IrVisitorVoid() {
+class SourceElementChecker(val context: K2IrPluginContext) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

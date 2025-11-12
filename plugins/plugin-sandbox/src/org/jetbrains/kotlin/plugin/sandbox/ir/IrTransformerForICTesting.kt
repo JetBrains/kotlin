@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
  * If some function is annotated with `@CallSpecifiedFunction(functionFqName)` then this transformer
  * inserts the call of this function in the first statement of the body of annotated function.
  */
-class IrTransformerForICTesting(private val context: IrPluginContext) : IrVisitorVoid() {
+class IrTransformerForICTesting(private val context: K2IrPluginContext) : IrVisitorVoid() {
     companion object {
         private val ANNOTATION_FQ_NAME = FqName.fromSegments("org.jetbrains.kotlin.plugin.sandbox.CallSpecifiedFunction".split("."))
     }
@@ -50,7 +51,7 @@ class IrTransformerForICTesting(private val context: IrPluginContext) : IrVisito
             val functionName = Name.identifier(argumentString.substringAfterLast('.'))
             CallableId(packageFqName, functionName)
         }
-        val functionToCall = context.referenceFunctions(callableId).singleOrNull()?.owner ?: return
+        val functionToCall = context.referenceFunctions(callableId, declaration.file).singleOrNull()?.owner ?: return
         val body = declaration.body as? IrBlockBody ?: return
         val functionCall = IrCallImpl(
             startOffset = UNDEFINED_OFFSET,
@@ -61,6 +62,5 @@ class IrTransformerForICTesting(private val context: IrPluginContext) : IrVisito
             superQualifierSymbol = null
         )
         body.statements.add(0, functionCall)
-        context.recordLookup(functionToCall, fromFile = declaration.file)
     }
 }

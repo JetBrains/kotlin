@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorVoid() {
+class TransformerForAddingAnnotations(val context: K2IrPluginContext) : IrVisitorVoid() {
     companion object {
         private val markerAnnotationFqName = FqName("org.jetbrains.kotlin.plugin.sandbox.AddAnnotations")
         private val annotationToAddId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), Name.identifier("AnnotationToAdd"))
@@ -34,10 +35,14 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
     }
 
     private val annotationsAdder = AnnotationsAdder()
+    private lateinit var currentFile: IrFile
 
     override fun visitElement(element: IrElement) {
         when (element) {
-            is IrFile,
+            is IrFile -> {
+                currentFile = element
+                element.acceptChildrenVoid(this)
+            }
             is IrModuleFragment -> element.acceptChildrenVoid(this)
             else -> {}
         }
@@ -50,9 +55,14 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
     }
 
     private inner class AnnotationsAdder : IrVisitorVoid() {
-        val annotationClass = context.referenceClass(annotationToAddId)?.takeIf { it.owner.isAnnotationClass }
-        val simpleAnnotationClass = context.referenceClass(simpleAnnotationId)?.takeIf { it.owner.isAnnotationClass }
-        val arrayAnnotationClass = context.referenceClass(arrayAnnotationId)?.takeIf { it.owner.isAnnotationClass }
+        val annotationClass: IrClassSymbol?
+            get() = context.referenceClass(annotationToAddId, currentFile)?.takeIf { it.owner.isAnnotationClass }
+
+        val simpleAnnotationClass: IrClassSymbol?
+            get() = context.referenceClass(simpleAnnotationId, currentFile)?.takeIf { it.owner.isAnnotationClass }
+
+        val arrayAnnotationClass: IrClassSymbol?
+            get() = context.referenceClass(arrayAnnotationId, currentFile)?.takeIf { it.owner.isAnnotationClass }
 
         override fun visitElement(element: IrElement, data: Nothing?) {}
 

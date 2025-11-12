@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.plugin.sandbox.fir.generators.CompanionGenerator
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
@@ -15,8 +14,9 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.plugin.sandbox.fir.generators.CompanionGenerator
 
-class TransformerForCompanionGenerator(context: IrPluginContext) : AbstractTransformerForGenerator(context, visitBodies = true) {
+class TransformerForCompanionGenerator(context: K2IrPluginContext) : AbstractTransformerForGenerator(context, visitBodies = true) {
     override fun interestedIn(key: GeneratedDeclarationKey?): Boolean {
         return key == CompanionGenerator.Key
     }

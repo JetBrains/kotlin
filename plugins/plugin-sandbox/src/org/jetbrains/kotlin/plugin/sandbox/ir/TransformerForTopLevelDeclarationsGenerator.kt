@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.plugin.sandbox.fir.generators.TopLevelDeclarationsGenerator
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -17,8 +16,9 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.plugin.sandbox.fir.generators.TopLevelDeclarationsGenerator
 
-class TransformerForTopLevelDeclarationsGenerator(context: IrPluginContext) : AbstractTransformerForGenerator(context, visitBodies = false) {
+class TransformerForTopLevelDeclarationsGenerator(context: K2IrPluginContext) : AbstractTransformerForGenerator(context, visitBodies = false) {
     override fun interestedIn(key: GeneratedDeclarationKey?): Boolean {
         return key == TopLevelDeclarationsGenerator.Key
     }

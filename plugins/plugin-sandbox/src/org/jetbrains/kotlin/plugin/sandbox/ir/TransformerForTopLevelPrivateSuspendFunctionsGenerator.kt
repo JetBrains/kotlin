@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.plugin.sandbox.fir.generators.TopLevelPrivateSuspendFunctionGenerator
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.plugin.sandbox.fir.generators.TopLevelPrivateSuspendFunctionGenerator
 
-internal class TransformerForTopLevelPrivateSuspendFunctionsGenerator(context: IrPluginContext) : AbstractTransformerForGenerator(context, visitBodies = false) {
+internal class TransformerForTopLevelPrivateSuspendFunctionsGenerator(
+    context: K2IrPluginContext
+) : AbstractTransformerForGenerator(context, visitBodies = false) {
     override fun interestedIn(key: GeneratedDeclarationKey?): Boolean {
         return key == TopLevelPrivateSuspendFunctionGenerator.Key
     }
@@ -22,7 +24,7 @@ internal class TransformerForTopLevelPrivateSuspendFunctionsGenerator(context: I
         return irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
     }
 
-    override fun generateBodyForConstructor(constructor: IrConstructor, key: GeneratedDeclarationKey?): IrBody? {
+    override fun generateBodyForConstructor(constructor: IrConstructor, key: GeneratedDeclarationKey?): IrBody {
         error("Should not be called")
     }
 }

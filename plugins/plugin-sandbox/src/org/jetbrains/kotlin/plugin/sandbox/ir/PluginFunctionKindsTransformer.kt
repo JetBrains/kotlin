@@ -5,19 +5,17 @@
 
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -32,9 +30,16 @@ import org.jetbrains.kotlin.plugin.sandbox.fir.types.PluginFunctionalNames.FULL_
 import org.jetbrains.kotlin.plugin.sandbox.fir.types.PluginFunctionalNames.INLINEABLE_NAME_PREFIX
 import org.jetbrains.kotlin.plugin.sandbox.fir.types.PluginFunctionalNames.NOT_INLINEABLE_NAME_PREFIX
 
-class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrVisitorVoid() {
+class PluginFunctionKindsTransformer(val pluginContext: K2IrPluginContext) : IrVisitorVoid() {
     companion object {
         private val INVOKE = Name.identifier("invoke")
+    }
+
+    private lateinit var currentFile: IrFile
+
+    override fun visitFile(declaration: IrFile) {
+        currentFile = declaration
+        visitElement(declaration)
     }
 
     override fun visitElement(element: IrElement) {
@@ -108,8 +113,10 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrVis
     private val inlineableClassId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), FqName("MyInlineable"), false)
     private val notInlineableClassId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), FqName("MyNotInlineable"), false)
 
-    private val inlineableSymbol = pluginContext.referenceClass(inlineableClassId)!!
-    private val notInlineableSymbol = pluginContext.referenceClass(notInlineableClassId)!!
+    private val inlineableSymbol: IrClassSymbol
+        get() = pluginContext.referenceClass(inlineableClassId, currentFile)!!
+    private val notInlineableSymbol: IrClassSymbol
+        get() = pluginContext.referenceClass(notInlineableClassId, currentFile)!!
 
     private fun IrFunction.mark(inlineable: Boolean) {
         if (!hasAnnotation(inlineableClassId)) {
@@ -177,7 +184,7 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrVis
             val builtinClassId = FunctionTypeKind.Function.run {
                 ClassId(packageFqName, Name.identifier("$classNamePrefix$number"))
             }
-            return pluginContext.referenceClass(builtinClassId)
+            return pluginContext.referenceClass(builtinClassId, currentFile)
         }
         return null
     }

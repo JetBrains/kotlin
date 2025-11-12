@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 abstract class AbstractTransformerForGenerator(
-    protected val context: IrPluginContext,
+    protected val context: K2IrPluginContext,
     private val visitBodies: Boolean
 ) : IrVisitorVoid() {
     protected val irFactory = context.irFactory
@@ -87,8 +87,6 @@ abstract class AbstractTransformerForGenerator(
     }
 
     protected fun generateBodyForDefaultConstructor(declaration: IrConstructor): IrBody? {
-        val type = declaration.returnType as? IrSimpleType ?: return null
-
         val delegatingAnyCall = IrDelegatingConstructorCallImpl(
             -1,
             -1,

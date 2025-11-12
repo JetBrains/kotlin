@@ -5,7 +5,7 @@
 @file:Suppress("warnings")
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.K2IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
  *
  * Parent class should be Any or class, annotated with @AllPropertiesConstructor
  */
-class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisitorVoid() {
+class AllPropertiesConstructorIrGenerator(val context: K2IrPluginContext) : IrVisitorVoid() {
     companion object {
         private val ANNOTATION_FQN = "AllPropertiesConstructor".fqn()
     }
