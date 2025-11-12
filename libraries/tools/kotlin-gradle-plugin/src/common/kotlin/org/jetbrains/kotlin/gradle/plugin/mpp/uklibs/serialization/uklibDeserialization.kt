@@ -49,7 +49,7 @@ internal fun deserializeUklibFromDirectory(directory: File): Uklib {
     )
 }
 
-private inline fun <reified T> Map<String, Any>.property(named: String): T {
+internal inline fun <reified T> Map<String, Any>.property(named: String): T {
     if (!containsKey(named)) {
         error(
             """

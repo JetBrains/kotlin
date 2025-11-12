@@ -45,8 +45,6 @@ internal constructor(
         execOps = null,
     )
 
-    @get:Internal
-    internal val processOptions: ProcessLaunchOptions = this.objects.processLaunchOptions {
     // TODO KT-75294 When the deprecated secondary constructor is removed, move `objects` to a non-null constructor property.
     private val objects: ObjectFactory = objects ?: this.project.objects
 
