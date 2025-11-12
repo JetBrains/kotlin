@@ -1,0 +1,3 @@
+/nonOperatorOfWithUnrelatedType.kt:(311,312): error: Initializer type mismatch: expected 'A', actual 'A.B'.
+
+/nonOperatorOfWithUnrelatedType.kt:(313,317): error: 'operator' modifier is required on 'fun of(vararg p: Int): A.B' defined in 'A.Companion'.

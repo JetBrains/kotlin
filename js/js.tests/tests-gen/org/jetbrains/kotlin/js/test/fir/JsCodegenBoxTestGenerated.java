@@ -9373,6 +9373,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
     public void testNonGenericCollection() {
       runTest("compiler/testData/codegen/box/collectionLiterals/nonGenericCollection.kt");
     }
+
+    @Test
+    @TestMetadata("resolvesToOperator.kt")
+    public void testResolvesToOperator() {
+      runTest("compiler/testData/codegen/box/collectionLiterals/resolvesToOperator.kt");
+    }
   }
 
   @Nested

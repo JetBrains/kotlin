@@ -2204,6 +2204,46 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/ofOverloads")
+      @TestDataPath("$PROJECT_ROOT")
+      public class OfOverloads {
+        @Test
+        public void testAllFilesPresentInOfOverloads() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/ofOverloads"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("nonOperatorOfWithSameSignature.kt")
+        public void testNonOperatorOfWithSameSignature() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/ofOverloads/nonOperatorOfWithSameSignature.kt");
+        }
+
+        @Test
+        @TestMetadata("nonOperatorOfWithUnrelatedType.kt")
+        public void testNonOperatorOfWithUnrelatedType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/ofOverloads/nonOperatorOfWithUnrelatedType.kt");
+        }
+
+        @Test
+        @TestMetadata("nonVarargNonOperatorOfInCompanion.kt")
+        public void testNonVarargNonOperatorOfInCompanion() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/ofOverloads/nonVarargNonOperatorOfInCompanion.kt");
+        }
+
+        @Test
+        @TestMetadata("varargNonOperatorOfWithMoreNarrowTypeAsExtension.kt")
+        public void testVarargNonOperatorOfWithMoreNarrowTypeAsExtension() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/ofOverloads/varargNonOperatorOfWithMoreNarrowTypeAsExtension.kt");
+        }
+
+        @Test
+        @TestMetadata("varargNonOperatorOfWithMoreNarrowTypeInCompanion.kt")
+        public void testVarargNonOperatorOfWithMoreNarrowTypeInCompanion() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/ofOverloads/varargNonOperatorOfWithMoreNarrowTypeInCompanion.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes")
       @TestDataPath("$PROJECT_ROOT")
       public class UserTypes {
