@@ -17,7 +17,6 @@ import javax.inject.Inject
 @DisableCachingByDefault(because = "This task only copies files")
 internal abstract class CopySwiftExportIntermediatesForConsumer @Inject constructor(
     objectFactory: ObjectFactory,
-    projectLayout: ProjectLayout,
     providerFactory: ProviderFactory,
     private val fileSystem: FileSystemOperations,
 ) : DefaultTask() {
@@ -29,12 +28,9 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
     @get:Input
     abstract val libraryName: Property<String>
 
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    val builtProductsDirectory: DirectoryProperty = objectFactory.directoryProperty().convention(
-        projectLayout.dir(providerFactory.environmentVariable("BUILT_PRODUCTS_DIR").map {
-            File(it)
-        })
+    @get:Input
+    val builtProductsDirectory: Property<String> = objectFactory.property(String::class.java).convention(
+        providerFactory.environmentVariable("BUILT_PRODUCTS_DIR")
     )
 
     @get:InputFile
@@ -59,7 +55,7 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
     private fun copyLibrary() {
         fileSystem.copy { spec ->
             spec.from(library)
-            spec.into(builtProductsDirectory)
+            spec.into(builtProductsDirectory.get())
             spec.rename {
                 libraryName.get()
             }
@@ -70,7 +66,7 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
         interfaces.files.forEach { swiftInterface ->
             fileSystem.copy { spec ->
                 spec.from(swiftInterface)
-                spec.into(builtProductsDirectory)
+                spec.into(builtProductsDirectory.get())
                 spec.includeEmptyDirs = false
             }
         }
@@ -80,7 +76,7 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
         includes.forEach { include ->
             fileSystem.copy { spec ->
                 spec.from(include)
-                spec.into(builtProductsDirectory)
+                spec.into(builtProductsDirectory.get())
             }
         }
     }
