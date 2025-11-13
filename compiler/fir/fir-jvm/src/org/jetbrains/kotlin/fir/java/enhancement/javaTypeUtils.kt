@@ -134,7 +134,7 @@ private fun ConeRigidType.enhanceInflexibleType(
 
     return if (enhanced != null &&
         (effectiveQualifiers.isNullabilityQualifierForWarning
-                || effectiveQualifiers.isMutabilityQualifierForWarning
+                || (effectiveQualifiers.isMutabilityQualifierForWarning && enhancedTag != lookupTag)
                 || convertErrorToWarning)
     ) {
         val newAttributes = attributes.add(
