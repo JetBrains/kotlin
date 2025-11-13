@@ -154,6 +154,20 @@ class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
         }
     }
 
+    @GradleTest
+    @MppGradlePluginTests
+    @TestMetadata("kotlin-wasm-package-lock-project")
+    fun `kotlinToolingSetup task should depend on all prerequisite setup tasks`(
+        gradleVersion: GradleVersion,
+    ) {
+        project("kotlin-wasm-package-lock-project", gradleVersion) {
+            build(":kotlinToolingSetup") {
+                assertTasksExecuted(":kotlinWasmNodeJsSetup")
+                assertTasksExecuted(":kotlinWasmYarnSetup")
+            }
+        }
+    }
+
     companion object {
         @Suppress("ConstPropertyName")
         private const val `implementation(npm(decamelize))` =
