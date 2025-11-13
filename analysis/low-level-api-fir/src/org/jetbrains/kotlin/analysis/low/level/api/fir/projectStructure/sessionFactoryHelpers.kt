@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
@@ -62,14 +61,11 @@ internal fun LLFirSession.registerIdeComponents(project: Project, languageVersio
 private fun LLFirSession.registerResolveExtensionTool() {
     val resolveExtensionTool = createResolveExtensionTool() ?: return
 
-    // `KaResolveExtension`s are disposables meant to be tied to the lifetime of the `LLFirSession`.
-    resolveExtensionTool.extensions.forEach { Disposer.register(requestDisposable(), it) }
-
     register(LLFirResolveExtensionTool::class, resolveExtensionTool)
 }
 
 private fun LLFirSession.createResolveExtensionTool(): LLFirResolveExtensionTool? {
-    val extensions = KaResolveExtensionProvider.provideExtensionsFor(ktModule)
+    val extensions = KaResolveExtensionProvider.provideExtensionsFor(ktModule) { requestDisposable() }
     if (extensions.isEmpty()) return null
     return LLFirNonEmptyResolveExtensionTool(this, extensions)
 }
