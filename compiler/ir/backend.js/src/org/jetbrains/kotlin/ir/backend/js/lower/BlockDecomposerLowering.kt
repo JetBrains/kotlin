@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -32,6 +35,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import kotlin.collections.plusAssign
 
 /**
  * Transforms statement-like-expression nodes into pure-statement to make it easily transform into JS.
@@ -39,6 +43,22 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 class JsBlockDecomposerLowering(val context: JsIrBackendContext) : AbstractBlockDecomposerLowering(context) {
     override fun unreachableExpression(): IrExpression =
         JsIrBuilder.buildCall(context.symbols.unreachable, context.irBuiltIns.nothingType)
+
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        val file = container.fileOrNull?.takeIf { it.module.name.asString() == "<b>" && it.name.endsWith("b.kt") }
+
+        val dumpBefore = file?.dump(DumpIrTreeOptions(printSourceOffsets = true))
+        if (dumpBefore != null) {
+            println(dumpBefore)
+        }
+
+        super.lower(irBody, container)
+
+        val dumpAfter = file?.dump(DumpIrTreeOptions(printSourceOffsets = true))
+        if (dumpAfter != null) {
+            println(dumpAfter)
+        }
+    }
 }
 
 abstract class AbstractBlockDecomposerLowering(private val context: JsCommonBackendContext) : BodyLoweringPass {
@@ -186,7 +206,9 @@ class BlockDecomposerTransformer(
     private inner class StatementTransformer : IrElementTransformerVoid() {
         override fun visitBlockBody(body: IrBlockBody) = body.apply { processStatements(statements) }
 
-        override fun visitContainerExpression(expression: IrContainerExpression) = expression.apply { processStatements(statements) }
+        override fun visitContainerExpression(expression: IrContainerExpression): IrContainerExpression {
+            return expression.apply { processStatements(statements) }
+        }
 
         override fun visitExpression(expression: IrExpression) = expression.transform(expressionTransformer, null)
 
@@ -711,18 +733,44 @@ class BlockDecomposerTransformer(
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
+            return processContainerExpression(expression) { newStatements ->
+                JsIrBuilder.buildComposite(expression.type, newStatements)
+            }
+        }
 
-            expression.run { if (statements.isEmpty()) return IrCompositeImpl(startOffset, endOffset, type, origin, listOf(unitValue)) }
+        override fun visitReturnableBlock(expression: IrReturnableBlock): IrExpression {
+            return processContainerExpression(expression) { newStatements ->
+                // Preserve IrReturnableBlock to preserve debug information.
+                expression.statements.clear()
+                expression.statements += newStatements
+                expression
+            }
+        }
+
+        override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
+            return processContainerExpression(inlinedBlock) { newStatements ->
+                // Preserve IrInlinedFunctionBlock to preserve debug information.
+                inlinedBlock.statements.clear()
+                inlinedBlock.statements += newStatements
+                inlinedBlock
+            }
+        }
+
+        private inline fun <T : IrContainerExpression> processContainerExpression(
+            input: T,
+            output: (newStatements: List<IrStatement>) -> IrExpression
+        ): IrExpression {
+            input.run { if (statements.isEmpty()) return IrCompositeImpl(startOffset, endOffset, type, origin, listOf(unitValue)) }
 
             val newStatements = mutableListOf<IrStatement>()
 
-            for (i in 0 until expression.statements.lastIndex) {
-                newStatements += destructureComposite(expression.statements[i].transformStatement(statementTransformer))
+            for (i in 0 until input.statements.lastIndex) {
+                newStatements += destructureComposite(input.statements[i].transformStatement(statementTransformer))
             }
 
-            newStatements += destructureComposite(expression.statements.last().transformStatement(expressionTransformer))
+            newStatements += destructureComposite(input.statements.last().transformStatement(expressionTransformer))
 
-            return JsIrBuilder.buildComposite(expression.type, newStatements)
+            return output(newStatements)
         }
 
         private fun wrap(expression: IrExpression) =
