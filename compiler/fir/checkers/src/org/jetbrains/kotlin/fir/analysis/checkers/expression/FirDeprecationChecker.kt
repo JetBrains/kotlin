@@ -143,6 +143,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
             is FirConstructorSymbol -> {
                 if (origin != FirDeclarationOrigin.Synthetic.TypeAliasConstructor) return false
             }
+            else -> return false
         }
 
         if (LanguageFeature.NestedTypeAliases.isDisabled()) return false
