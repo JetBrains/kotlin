@@ -105,6 +105,7 @@ internal open class KotlinJsIrLinkConfig(
             val wasmTargetType = (compilation.origin as KotlinJsIrCompilation).target.wasmTargetType!!
             val targetValue = if (wasmTargetType == KotlinWasmTargetType.WASI) "wasm-wasi" else "wasm-js"
             add("$WASM_TARGET=$targetValue")
+            add(WASM_INCLUDED_MODULE_ONLY)
         }
     }
 }
