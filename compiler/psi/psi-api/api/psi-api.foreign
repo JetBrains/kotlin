@@ -5,7 +5,6 @@ com/intellij/extapi/psi/PsiFileBase
 com/intellij/extapi/psi/StubBasedPsiElementBase
 com/intellij/lang/ASTNode
 com/intellij/lang/Language
-com/intellij/lang/LighterASTNode
 com/intellij/navigation/ItemPresentation
 com/intellij/openapi/editor/Document
 com/intellij/openapi/fileTypes/FileType
@@ -52,7 +51,6 @@ com/intellij/psi/tree/ILazyParseableElementType
 com/intellij/psi/tree/TokenSet
 com/intellij/util/ArrayFactory
 com/intellij/util/IncorrectOperationException
-com/intellij/util/diff/FlyweightCapableTreeStructure
 javax/swing/Icon
 org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget
 org/jetbrains/kotlin/name/ClassId

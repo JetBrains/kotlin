@@ -3921,7 +3921,6 @@ public final class org/jetbrains/kotlin/psi/psiUtil/PsiUtilsKt {
 	public static final fun createSmartPointer (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/SmartPsiElementPointer;
 	public static final fun elementsInRange (Lcom/intellij/psi/PsiFile;Lcom/intellij/openapi/util/TextRange;)Ljava/util/List;
 	public static final fun getAllChildren (Lcom/intellij/psi/PsiElement;)Lorg/jetbrains/kotlin/psi/psiUtil/PsiChildRange;
-	public static final fun getAssignmentLhsIfUnwrappable (Lcom/intellij/lang/LighterASTNode;Lcom/intellij/util/diff/FlyweightCapableTreeStructure;)Lcom/intellij/lang/LighterASTNode;
 	public static final fun getAssignmentLhsIfUnwrappable (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 	public static final fun getContainingKtFile (Lcom/intellij/psi/impl/source/tree/LazyParseablePsiElement;)Lorg/jetbrains/kotlin/psi/KtFile;
 	public static final fun getElementTextWithContext (Lcom/intellij/psi/PsiElement;)Ljava/lang/String;
