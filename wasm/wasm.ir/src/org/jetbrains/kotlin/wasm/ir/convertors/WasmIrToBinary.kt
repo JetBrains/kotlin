@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.wasm.ir.convertors
 import org.jetbrains.kotlin.wasm.ir.*
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
-import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.wasm.ir.debug.DebugData
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformation
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationConsumer
@@ -62,13 +61,8 @@ class WasmIrToBinary(
     private val optimizeInstructionFlow: Boolean = true,
 ) : DebugInformationConsumer {
     private var b: ByteWriter = ByteWriter.OutputStream(outputStream)
-    private var codeSectionOffset: Int = 0
-    private val codeSectionOffsetDelegate = ::codeSectionOffset
-
-    // "Stack" of offsets waiting initialization. 
-    // Since blocks have as a prefix variable length number encoding its size, we can't calculate absolute offsets inside those blocks
-    // until we generate the whole block and generate size. So, we put them into "stack" and initialize as soon as we have all required data.
-    private var offsets = persistentListOf<Box>()
+    private var codeSectionOffset = Box(0)
+    private var functionCodeOffset = Box(0)
 
     override fun consumeDebugInformation(debugInformation: DebugInformation) {
         debugInformation.forEach {
@@ -181,7 +175,7 @@ class WasmIrToBinary(
             }
 
             // code section
-            appendSection(WasmBinary.Section.CODE, beforeContentWrite = { codeSectionOffset = b.written }) {
+            appendSection(WasmBinary.Section.CODE) {
                 appendVectorSize(definedFunctions.size)
                 definedFunctions.forEach { appendCode(it) }
             }
@@ -286,7 +280,12 @@ class WasmIrToBinary(
     }
 
     private fun getCurrentSourceLocationMapping(sourceLocation: SourceLocation): SourceLocationMappingToBinary =
-        SourceLocationMappingToBinary(sourceLocation, offsets + Box(b.written), codeSectionOffsetDelegate)
+        SourceLocationMappingToBinary(
+            sourceLocation = sourceLocation,
+            codeSectionOffset = codeSectionOffset,
+            functionCodeOffset = functionCodeOffset,
+            instructionOffset = b.written
+        )
 
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
@@ -336,28 +335,22 @@ class WasmIrToBinary(
         }
     }
 
-    private inline fun appendSection(section: WasmBinary.Section, beforeContentWrite: () -> Unit = {}, content: () -> Unit) {
+    private inline fun appendSection(section: WasmBinary.Section, content: () -> Unit) {
         b.writeVarUInt7(section.id)
-        withVarUInt32PayloadSizePrepended(beforeContentWrite, content)
+        codeSectionOffset = Box(-1)
+        codeSectionOffset.value = withVarUInt32PayloadSizePrepended(content)
     }
 
-    private inline fun withVarUInt32PayloadSizePrepended(beforeContentWrite: () -> Unit = {}, fn: () -> Unit) {
-        val box = Box(-1)
-        val previousOffsets = offsets
-        offsets += box
-
+    private inline fun withVarUInt32PayloadSizePrepended(fn: () -> Unit): Int {
         val previousWriter = b
         val newWriter = b.createTemp()
         b = newWriter
         fn()
         b = previousWriter
         b.writeVarUInt32(newWriter.written)
-
-        box.value = b.written
-        offsets = previousOffsets
-
-        beforeContentWrite()
+        val written = b.written
         b.write(newWriter)
+        return written
     }
 
     private fun appendVectorSize(size: Int) {
@@ -585,14 +578,20 @@ class WasmIrToBinary(
 
         if (shouldWriteLocationBeforeFunctionHeader) {
             debugInformationGenerator?.addSourceLocation(
-                SourceLocationMappingToBinary(SourceLocation.IgnoredLocation, offsets + Box(b.written), ::codeSectionOffset)
+                SourceLocationMappingToBinary(
+                    sourceLocation = SourceLocation.IgnoredLocation,
+                    codeSectionOffset = codeSectionOffset,
+                    functionCodeOffset = null,
+                    instructionOffset = b.written
+                )
             )
         }
 
-        withVarUInt32PayloadSizePrepended {
+        functionCodeOffset = Box(-1)
+        functionCodeOffset.value = withVarUInt32PayloadSizePrepended {
             if (!shouldWriteLocationBeforeFunctionHeader) {
                 debugInformationGenerator?.addSourceLocation(
-                    SourceLocationMappingToBinary(SourceLocation.NextLocation, offsets + Box(b.written), ::codeSectionOffset)
+                    getCurrentSourceLocationMapping(SourceLocation.NextLocation)
                 )
             }
 
@@ -670,25 +669,41 @@ class WasmIrToBinary(
 
     private class SourceLocationMappingToBinary(
         override val sourceLocation: SourceLocation,
-        // Offsets in generating binary, initialized lazily. Since blocks has as a prefix variable length number encoding its size
+        // Offsets in generating binary, should be got late. Since blocks has as a prefix variable length number encoding its size
         // we can't calculate absolute offsets inside those blocks until we generate whole block and generate size.
-        private val offsets: List<Box>,
-        private val codeSectionOffsetProvider: () -> Int
+        private val codeSectionOffset: Box,
+        private val functionCodeOffset: Box?,
+        private val instructionOffset: Int
     ) : SourceLocationMapping() {
-        override val generatedLocation by lazy {
-            SourceLocation.DefinedLocation(
-                file = "",
-                line = 0,
-                column = offsets.sumOf {
-                    assert(it.value >= 0) { "Offset must be >=0 but ${it.value}" }
-                    it.value
-                }
-            )
+
+        private fun getColumn(withSectionOffset: Boolean): Int {
+            var result = instructionOffset
+
+            if (functionCodeOffset != null) {
+                result += functionCodeOffset.value
+            }
+
+            if (withSectionOffset) {
+                assert(codeSectionOffset.value >= 0) { "CodeSection offset must be >=0 but ${codeSectionOffset.value}" }
+                result += codeSectionOffset.value
+            }
+
+            return result
         }
 
-        override val generatedLocationRelativeToCodeSection by lazy {
-            generatedLocation.copy(column = generatedLocation.column - codeSectionOffsetProvider())
-        }
+        override val generatedLocation: SourceLocation.DefinedLocation
+            get() = SourceLocation.DefinedLocation(
+                file = "",
+                line = 0,
+                column = getColumn(withSectionOffset = true)
+            )
+
+        override val generatedLocationRelativeToCodeSection: SourceLocation.DefinedLocation
+            get() = SourceLocation.DefinedLocation(
+                file = "",
+                line = 0,
+                column = getColumn(withSectionOffset = false)
+            )
     }
 }
 
