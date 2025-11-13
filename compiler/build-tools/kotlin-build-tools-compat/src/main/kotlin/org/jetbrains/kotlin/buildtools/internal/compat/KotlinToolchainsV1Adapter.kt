@@ -426,16 +426,29 @@ private interface ExecutionPolicyV1Adapter {
         constructor(compilationService: CompilationService) : this(Options(ExecutionPolicy.WithDaemon::class), compilationService)
 
         @Suppress("DEPRECATION")
+        private fun CompilationService.supportsShutdownDelayInDaemon(): Boolean = try {
+            val kotlinCompilerVersion = KotlinToolingVersion(getCompilerVersion())
+            kotlinCompilerVersion >= KotlinToolingVersion(2, 3, 0, null)
+        } catch (_: Exception) {
+            // there might be no getCompilerVersion in older versions
+            false
+        }
+
+        @Suppress("DEPRECATION")
         override val strategyConfiguration: CompilerExecutionStrategyConfiguration
             get() {
                 val jvmArguments = get(JVM_ARGUMENTS) ?: emptyList()
-                return get(SHUTDOWN_DELAY_MILLIS)?.let {
-                    compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(
-                        jvmArguments, Duration.ofMillis(it)
-                    )
-                } ?: compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(
-                    jvmArguments
-                )
+                return get(SHUTDOWN_DELAY_MILLIS).let { delay ->
+                    if (delay != null && compilationService.supportsShutdownDelayInDaemon()) {
+                        compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(
+                            jvmArguments, Duration.ofMillis(delay)
+                        )
+                    } else {
+                        compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(
+                            jvmArguments
+                        )
+                    }
+                }
             }
 
         override fun toBuilder(): ExecutionPolicy.WithDaemon.Builder = deepCopy()
