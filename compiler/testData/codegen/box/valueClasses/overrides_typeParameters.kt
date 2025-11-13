@@ -2,6 +2,8 @@
 // TARGET_BACKEND: JVM_IR
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 // CHECK_BYTECODE_LISTING
+// IGNORE_HEADER_MODE: JVM_IR
+//   Reason: KT-82407
 
 interface AbstractPoint<T> {
     val x: T

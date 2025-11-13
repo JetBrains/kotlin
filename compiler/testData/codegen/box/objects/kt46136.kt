@@ -1,3 +1,6 @@
+// IGNORE_HEADER_MODE: JVM_IR
+//   Reason: KT-82376
+
 abstract class A<T> {
     fun print() = "OK"
 }

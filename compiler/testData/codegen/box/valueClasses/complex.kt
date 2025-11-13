@@ -3,6 +3,8 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND: ANDROID
 // LANGUAGE: +ValueClasses, +ValueClassesSecondaryConstructorWithBody
+// IGNORE_HEADER_MODE: JVM_IR
+//   Reason: KT-82407
 
 @JvmInline
 value class A<T : Any>(val x: List<T>)

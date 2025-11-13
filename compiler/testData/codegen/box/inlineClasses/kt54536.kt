@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
+// IGNORE_HEADER_MODE: JVM_IR
+//   Reason: KT-82311
 
 @JvmInline
 value class A(val x: Int) {

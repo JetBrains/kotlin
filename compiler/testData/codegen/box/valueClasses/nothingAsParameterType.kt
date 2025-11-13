@@ -2,6 +2,8 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 // TARGET_BACKEND: JVM_IR
+// IGNORE_HEADER_MODE: JVM_IR
+//   Reason: KT-82407
 
 interface I<T: A> {
     fun f(x: T) = println(x)

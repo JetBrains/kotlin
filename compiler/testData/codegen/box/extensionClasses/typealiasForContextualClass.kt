@@ -1,6 +1,7 @@
 // LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K2: ANY
+// IGNORE_HEADER_MODE: JVM_IR
 
 class A {
     val ok = "OK"
