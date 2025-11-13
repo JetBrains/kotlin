@@ -44,6 +44,7 @@ internal class NodeJsRootPluginApplier(
     private val lockFileDirectory: (projectDirectory: Directory) -> Directory,
     private val singleNodeJsPluginApply: (project: Project) -> BaseNodeJsEnvSpec,
     private val yarnPlugin: KClass<out Plugin<Project>>,
+    private val beforePackageManager: (project: Project) -> Unit = {},
     private val platformType: KotlinPlatformType,
 ) {
 
@@ -314,6 +315,8 @@ internal class NodeJsRootPluginApplier(
             it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Clean unused local node version"
         }
+
+        beforePackageManager(project)
 
         val propertiesProvider = PropertiesProvider.Companion(project)
 
