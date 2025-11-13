@@ -60,11 +60,6 @@ public class IncrementalK2JvmWithPluginCompilerRunnerTestGenerated extends Abstr
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/generateNewTopLevelFunction/");
   }
 
-  @TestMetadata("recompileAfterCompilationFailure")
-  public void testRecompileAfterCompilationFailure() {
-    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/recompileAfterCompilationFailure/");
-  }
-
   @TestMetadata("recompileAfterDependencyFailure")
   public void testRecompileAfterDependencyFailure() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/recompileAfterDependencyFailure/");
@@ -73,11 +68,6 @@ public class IncrementalK2JvmWithPluginCompilerRunnerTestGenerated extends Abstr
   @TestMetadata("recompileOnAnnotationParameterChange")
   public void testRecompileOnAnnotationParameterChange() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/recompileOnAnnotationParameterChange/");
-  }
-
-  @TestMetadata("recompileOnAnnotationParameterChangeWithNewFunction")
-  public void testRecompileOnAnnotationParameterChangeWithNewFunction() {
-    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/recompileOnAnnotationParameterChangeWithNewFunction/");
   }
 
   @TestMetadata("referenceFunctionFromIrPlugin")
