@@ -13,6 +13,7 @@ import java.util.stream.Stream
 import kotlin.time.TimeSource
 import kotlin.streams.asStream
 import kotlin.time.Duration
+import java.util.logging.Logger
 
 class GCFuzzingTest : AbstractNativeSimpleTest() {
 
@@ -36,6 +37,8 @@ class GCFuzzingTest : AbstractNativeSimpleTest() {
 
         val seed = System.getProperty("gcfuzzing.seed")!!.toInt()
         println("Initializing Simple GC fuzzer with seed $seed")
+        Logger.getLogger(GCFuzzingTest::class.java.name)
+            .info("Initializing Simple GC fuzzer with seed $seed")
         val fuzzer = SimpleFuzzer(seed)
         var stepCounter = 0
         return generateSequence {
