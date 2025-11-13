@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters +ExplicitContextArguments
-// WITH_STDLIB
 // FIR_DUMP
 
 class A
