@@ -367,6 +367,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
         )
         processArgsBeforeCompile(args)
+
         compilerRunner.runJsCompilerAsync(
             args,
             environment,
