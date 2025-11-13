@@ -1710,6 +1710,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     public void testMappedTypeResolution() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/mappedTypeResolution.kt");
     }
+
+    @Test
+    @TestMetadata("sourceAnnotationInsideLibrary.kt")
+    public void testSourceAnnotationInsideLibrary() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/sourceAnnotationInsideLibrary.kt");
+    }
   }
 
   @Nested
