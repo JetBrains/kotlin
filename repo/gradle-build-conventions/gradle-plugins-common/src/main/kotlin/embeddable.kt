@@ -92,7 +92,7 @@ private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Un
     return tasks.register<ShadowJar>(taskName) {
         destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        from(compilerJar)
+        configurations.set(listOf(compilerJar))
         body()
     }
 }

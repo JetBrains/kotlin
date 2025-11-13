@@ -6,6 +6,8 @@ plugins {
     id("jps-compatible")
 }
 
+kotlin.jvmToolchain(17)
+
 repositories {
     gradlePluginPortal()
 }

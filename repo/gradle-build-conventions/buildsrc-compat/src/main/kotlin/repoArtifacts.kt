@@ -120,7 +120,7 @@ fun Project.runtimeJarWithRelocation(body: ShadowJar.() -> Unit = {}): TaskProvi
 
     val shadowJarTask = tasks.register<ShadowJar>("shadowJar") {
         archiveClassifier.set("shadow")
-        configurations = configurations + listOf(project.configurations["embedded"])
+        configurations.add(project.configurations["embedded"])
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
     }
@@ -146,7 +146,7 @@ fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit
     noDefaultJar()
 
     task.configure {
-        configurations = configurations + listOf(project.configurations["embedded"])
+        configurations.add(project.configurations["embedded"])
         setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()

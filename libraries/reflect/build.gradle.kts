@@ -1,6 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.CacheableTransformer
-import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
+import com.github.jengelman.gradle.plugins.shadow.transformers.ResourceTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import kotlin.metadata.jvm.KotlinModuleMetadata
 import kotlin.metadata.jvm.UnstableMetadataApi
@@ -99,7 +99,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 @CacheableTransformer
 @OptIn(UnstableMetadataApi::class)
-class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
+class KotlinModuleShadowTransformer(private val logger: Logger) : ResourceTransformer {
     @Suppress("ArrayInDataClass")
     private data class Entry(val path: String, val bytes: ByteArray)
 
@@ -115,7 +115,7 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
             context.relocators.fold(content) { acc, relocator -> relocator.applyToSourceContent(acc) }
 
         logger.info("Transforming ${context.path}")
-        val metadata = KotlinModuleMetadata.read(context.`is`.readBytes())
+        val metadata = KotlinModuleMetadata.read(context.inputStream.readBytes())
         val module = metadata.kmModule
 
         val packageParts = module.packageParts.toMap()

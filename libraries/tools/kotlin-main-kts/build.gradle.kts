@@ -53,7 +53,8 @@ dependencies {
     proguardLibraryJars(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     proguardLibraryJars(project(":kotlin-compiler"))
 
-    relocatedJarContents(mainSourceSet.output)
+    relocatedJarContents(mainSourceSet.output.classesDirs.filter { it.exists() })
+    relocatedJarContents(objects.fileCollection().from(tasks.named(mainSourceSet.processResourcesTaskName)))
 
     testImplementation(project(":kotlin-scripting-dependencies"))
     testImplementation(libs.junit4)
