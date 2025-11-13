@@ -90,6 +90,7 @@ open class KonanCacheTask @Inject constructor(
             PlatformManager(compilerDistribution.get().root.asFile.absolutePath).apply {
                 addAll(platform(targetByName(target.get())).additionalCacheFlags)
             }
+            add("-Xdebug-prefix-map=${outputDirectory.get().asFile.parentFile.absolutePath}=out")
         }
         val workQueue = workerExecutor.noIsolation()
         workQueue.submit(KonanCacheAction::class.java) {

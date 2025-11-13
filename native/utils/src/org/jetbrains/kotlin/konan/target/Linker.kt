@@ -269,6 +269,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
                 "Sanitizers are unsupported"
             }
             return listOf(Command(libtool).apply {
+                +"-D"
                 +"-static"
                 +listOf("-o", executable)
                 +listOf("-arch_only", arch)
