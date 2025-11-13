@@ -1,0 +1,202 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] test.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public? final? [ResolvedTo(TYPES)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public final [ResolvedTo(STATUS)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public final [ResolvedTo(CONTRACTS)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(RAW_FIR)] PurelyImplements.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class PurelyImplements : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/PurelyImplements.value] value: String): R|kotlin/jvm/PurelyImplements| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PurelyImplements] get(): String
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] test.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|/JavaClass.JavaClass|()
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] test.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|/JavaClass.JavaClass|()
+    }
