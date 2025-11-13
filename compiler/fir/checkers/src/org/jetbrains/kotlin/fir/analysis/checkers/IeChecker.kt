@@ -10,15 +10,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCallableDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.forEachType
 import kotlin.reflect.full.memberProperties
 
 class IEReporter(
@@ -45,33 +42,17 @@ class IEReporter(
 }
 
 data class IEData(
-    val isExplicit: Boolean? = null,
-    val type: String? = null,
-    val call: String? = null,
+    val func: String? = null,
 )
 
-object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+object FirMyChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirFunctionCall) {
-        val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
-        val symbol = expression.toResolvedCallableSymbol() ?: return
-        val usedParameters = buildSet {
-            symbol.fir.returnTypeRef.coneType.forEachType { type ->
-                if (type is ConeTypeParameterType) {
-                    add(type.lookupTag.typeParameterSymbol)
-                }
-            }
-        }
-        symbol.typeParameterSymbols.zip(expression.typeArguments).forEach { (param, type) ->
-            if (param !in usedParameters) {
-                report(
-                    IEData(
-                        isExplicit = type.isExplicit,
-                        type = type.render(),
-                        call = symbol.name.toString(),
-                    )
-                )
+    override fun check(declaration: FirCallableDeclaration) {
+        val report = IEReporter(declaration.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
+        declaration.typeParameters.forEach {
+            if (it.symbol.resolvedBounds.any { it.coneType is ConeTypeParameterType }) {
+                report(IEData(func = declaration.nameOrSpecialName.asString()))
             }
         }
     }
