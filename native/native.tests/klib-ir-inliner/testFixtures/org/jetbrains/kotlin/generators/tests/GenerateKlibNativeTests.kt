@@ -66,6 +66,7 @@ fun main(args: Array<String>) {
                 model("klibSerializationTests")
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
                 model("nativeTests")
+                model("testsWithAnyBackend")
             }
 
             testClass<AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase>(
