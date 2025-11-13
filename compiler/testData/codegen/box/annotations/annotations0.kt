@@ -1,20 +1,13 @@
-// KT-66094: java.lang.InstantiationError: Foo
-// WITH_STDLIB
+// MODULE: a
+// FILE: a.kt
 
-// FILE: 1.kt
-
-import kotlin.test.*
-
-@SerialInfo
-annotation class Foo(val x: Int, val y: String)
-
-fun box(): String {
-    val foo = @Suppress("ANNOTATION_CLASS_CONSTRUCTOR_CALL") Foo(42, "OK")
-    assertEquals(foo.x, 42)
-    return foo.y
+inline fun <R> myLet(block: () -> R): R {
+    return block()
 }
 
-// FILE: 2.kt
+// MODULE: b(a)
+// FILE: b.kt
 
-@Target(AnnotationTarget.ANNOTATION_CLASS)
-annotation class SerialInfo
+fun box(): String {
+    myLet { return "OK" }
+}
