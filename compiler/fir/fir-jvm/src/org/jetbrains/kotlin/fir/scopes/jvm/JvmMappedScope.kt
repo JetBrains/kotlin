@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
@@ -144,7 +145,21 @@ class JvmMappedScope(
         var needsHiddenFake = isList && (name == GET_FIRST_NAME || name == GET_LAST_NAME)
 
         javaMappedClassUseSiteScope.processFunctionsByName(name) processor@{ symbol ->
-            if (!symbol.isDeclaredInMappedJavaClass() || !(symbol.fir.status as FirResolvedDeclarationStatus).visibility.isPublicAPI) {
+            if (!symbol.isDeclaredInMappedJavaClass()) {
+                return@processor
+            }
+
+            if (symbol.fir.status !is FirResolvedDeclarationStatus) {
+                error(
+                    "symbol: $symbol,\n" +
+                            "name: ${name.asString()},\n" +
+                            "jvmDescriptor: ${symbol.fir.computeJvmDescriptor()},\n" +
+                            "declaredSignatures: ${declaredSignatures.joinToString(", ", "(", ")")}\n" +
+                            "status: ${symbol.fir.status.render()}"
+                )
+            }
+
+            if (!(symbol.fir.status as FirResolvedDeclarationStatus).visibility.isPublicAPI) {
                 return@processor
             }
 
