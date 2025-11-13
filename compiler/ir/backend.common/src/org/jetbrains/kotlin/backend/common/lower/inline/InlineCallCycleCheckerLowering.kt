@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.backend.common.lower.inline
 
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -56,7 +58,8 @@ class InlineCallCycleCheckerLowering<Context : LoweringContext>(val context: Con
                         appendLine("The '${edge.callNode.function.fqNameWhenAvailable}' invocation is a part of inline cycle",)
                     }
                 }
-                error(errorMessage)
+                context.messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage)
+                throw CompilationErrorException()
             }
         }
 
