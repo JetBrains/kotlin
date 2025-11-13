@@ -692,7 +692,6 @@ org.jetbrains.kotlin.psi.KtNamedDeclaration:getFqName()
 org.jetbrains.kotlin.psi.KtNamedDeclaration:getNameAsSafeName()
 org.jetbrains.kotlin.psi.KtNamedDeclarationUtil
 org.jetbrains.kotlin.psi.KtNamedDeclarationUtil:getParentFqName(KtNamedDeclaration)
-org.jetbrains.kotlin.psi.KtNamedDeclarationUtil:getUnsafeFQName(KtNamedDeclaration)
 org.jetbrains.kotlin.psi.KtNamedFunction.funKeyword
 org.jetbrains.kotlin.psi.KtNamedFunction.hasTypeParameterListBeforeFunctionName()
 org.jetbrains.kotlin.psi.KtNamedFunction.isAnonymous
