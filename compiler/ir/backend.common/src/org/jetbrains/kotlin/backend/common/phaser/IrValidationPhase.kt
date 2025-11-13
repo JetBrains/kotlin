@@ -3,12 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DuplicatedCode")
+
 package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.validation.*
 import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
@@ -108,6 +113,16 @@ class IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase<Context : Lower
             }
             .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
             .withCheckers(IrTypeOperatorRedundancyChecker)
+
+    override fun lower(irModule: IrModuleFragment) {
+        if (irModule.name.asString() == "<b>") {
+            val file = irModule.files.single { it.name.endsWith("b.kt") }
+            val dump = file.dump(DumpIrTreeOptions(printSourceOffsets = true))
+            println(dump)
+        }
+
+        super.lower(irModule)
+    }
 }
 
 class IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase<Context : LoweringContext>(
@@ -128,4 +143,14 @@ open class IrValidationAfterLoweringPhase<Context : LoweringContext>(context: Co
             .applyIf(context.configuration.enableIrNestedOffsetsChecks) {
                 withCheckers(IrNestedOffsetRangeChecker)
             }
+
+    override fun lower(irModule: IrModuleFragment) {
+        if (irModule.name.asString() == "<b>") {
+            val file = irModule.files.single { it.name.endsWith("b.kt") }
+            val dump = file.dump(DumpIrTreeOptions(printSourceOffsets = true))
+            println(dump)
+        }
+
+        super.lower(irModule)
+    }
 }
