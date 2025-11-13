@@ -127,7 +127,12 @@ abstract class WasmBoxRunnerBase(
 
         val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
 
-        return listOf(WasmVM.V8, WasmVM.SpiderMonkey, WasmVM.JavaScriptCore)
+        // KT-82392 [Wasm] Investigate and fix JSC test run on windows
+        val jscOfNotWindows = WasmVM.JavaScriptCore.takeIf {
+            !System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
+        }
+
+        return listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscOfNotWindows)
             .mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
