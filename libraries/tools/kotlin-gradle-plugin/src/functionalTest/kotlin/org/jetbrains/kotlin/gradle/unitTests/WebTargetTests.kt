@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.util.assertDependsOn
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import kotlin.test.Test
@@ -66,5 +67,22 @@ class WebTargetTests {
             ),
             "No necessary JS specific tasks found in Task Graph: $tasksInBuild, expected: $expected"
         )
+    }
+
+    @Test
+    fun `kotlinToolingSetup should depend on yarn setup in Yarn package manager project`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                @Suppress("OPT_IN_USAGE")
+                wasmJs {
+                    nodejs()
+                }
+            }
+        }.evaluate()
+
+        val kotlinWasmToolingSetup = project.tasks.named("kotlinWasmToolingSetup").get()
+        val kotlinWasmYarnSetup = project.tasks.named("kotlinWasmYarnSetup").get()
+        kotlinWasmToolingSetup.assertDependsOn(kotlinWasmYarnSetup)
+
     }
 }

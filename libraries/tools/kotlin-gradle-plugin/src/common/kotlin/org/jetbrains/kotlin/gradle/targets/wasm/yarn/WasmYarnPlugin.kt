@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.yarn
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPluginApplier
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPluginApplier
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.yarn.CommonYarnPlugin
 
 /**
@@ -29,11 +29,17 @@ abstract class WasmYarnPlugin internal constructor() : CommonYarnPlugin {
             yarnRootName = WasmYarnRootExtension.YARN,
             yarnEnvSpecKlass = WasmYarnRootEnvSpec::class,
             yarnEnvSpecName = WasmYarnRootEnvSpec.YARN,
-            nodeJsRootApply = { WasmNodeJsRootPlugin.apply(it) },
+            nodeJsRootApply = {
+                WasmNodeJsRootPlugin.apply(it)
+            },
             nodeJsRootExtension = { it.kotlinNodeJsRootExtension },
             nodeJsEnvSpec = { it.kotlinNodeJsEnvSpec },
             lockFileDirectory = { it.resolve(LockCopyTask.KOTLIN_JS_STORE).resolve(WasmPlatformDisambiguator.platformDisambiguator) },
         ).apply(target)
+
+        target.kotlinNodeJsRootExtension.toolingInstallTaskProvider.configure {
+            it.dependsOn(WasmYarnRootExtension.get(target).yarnSetupTaskProvider)
+        }
     }
 
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
