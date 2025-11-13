@@ -78,6 +78,8 @@ dependencies {
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
 
     testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
+    testImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
+    testRuntimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
     testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(intellijJDom())
     testImplementation(intellijPlatformUtil())
