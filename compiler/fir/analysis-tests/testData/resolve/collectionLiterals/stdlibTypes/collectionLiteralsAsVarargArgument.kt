@@ -2,7 +2,7 @@
 // ISSUE: KT-81722
 // LANGUAGE: +CollectionLiterals
 
-@file:OptIn(ExperimentalCollectionLiterals::class)
+@file:OptIn(ExperimentalCollectionLiterals::class, ExperimentalUnsignedTypes::class)
 
 fun takeBytes(vararg bytes: Byte) {}
 fun takeShorts(vararg shorts: Short) {}

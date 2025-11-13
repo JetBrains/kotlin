@@ -41,7 +41,7 @@ internal class IntrinsicType {
         const val OBJC_CREATE_SUPER_STRUCT      = "OBJC_CREATE_SUPER_STRUCT"
         const val OBJC_INIT_BY                  = "OBJC_INIT_BY"
         const val OBJC_GET_SELECTOR             = "OBJC_GET_SELECTOR"
-        const val BLOCK_PTR_TO_FUNCTION_OBJECT  = "BLOCK_PTR_TO_FUNCTION_OBJECT"
+        const val BLOCK_PTR_TO_FUNCTION_OBJECT = "BLOCK_PTR_TO_FUNCTION_OBJECT"
 
         // Other
         const val INTEROP_READ_BITS             = "INTEROP_READ_BITS"
@@ -50,7 +50,6 @@ internal class IntrinsicType {
         const val CREATE_UNINITIALIZED_ARRAY    = "CREATE_UNINITIALIZED_ARRAY"
         const val CREATE_EMPTY_STRING           = "CREATE_EMPTY_STRING"
         const val IDENTITY                      = "IDENTITY"
-        const val SECOND_ARGUMENT_IDENTITY      = "SECOND_ARGUMENT_IDENTITY"
         const val IMMUTABLE_BLOB                = "IMMUTABLE_BLOB"
         const val INIT_INSTANCE                 = "INIT_INSTANCE"
         const val IS_SUBTYPE                    = "IS_SUBTYPE"
