@@ -1,0 +1,70 @@
+package kaptk2.b458124793;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class kaptk2/b458124793/MyAnnotation : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lerror/NonExistentClass;)V
+ *   public constructor(myType: error/NonExistentClass)
+ *
+ *   // getter: myType()Lerror/NonExistentClass;
+ *   public final val myType: error/NonExistentClass
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface MyAnnotation {
+
+    public abstract error.NonExistentClass myType();
+}
+
+////////////////////
+
+package kaptk2.b458124793;
+
+@MyAnnotation(myType = null)
+/**
+ * public abstract interface kaptk2/b458124793/MyAnnotationUser : kotlin/Any {
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface MyAnnotationUser {
+}
+
+////////////////////
+
+package kaptk2.b458124793.myenum;
+
+/**
+ * public final enum class kaptk2/b458124793/myenum/MyEnum : kotlin/Enum<kaptk2/b458124793/myenum/MyEnum> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   ENUM_ELEMENT,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum MyEnum {
+    /*public static final*/ ENUM_ELEMENT /* = new MyEnum() */;
+
+    MyEnum() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<kaptk2.b458124793.myenum.MyEnum> getEntries() {
+        return null;
+    }
+}
