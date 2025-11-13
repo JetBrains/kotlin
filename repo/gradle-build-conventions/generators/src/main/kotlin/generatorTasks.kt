@@ -64,16 +64,9 @@ fun Project.generatedSourcesTask(
     dependOnTaskOutput: Boolean = true,
     additionalInputsToTrack: (ConfigurableFileCollection) -> Unit = {},
 ): TaskProvider<JavaExec> {
-    val generatorDependencies = configurations.dependencyScope("${taskName}GeneratorDependencies")
-    val generatorClasspath = configurations.resolvable("${taskName}GeneratorClasspath") {
-        extendsFrom(generatorDependencies.get())
-    }
-
-    dependencies.add(generatorDependencies.name, dependencies.project(generatorProject))
-
     return generatedSourcesTask(
         taskName,
-        generatorClasspath,
+        setupConfigurationForGeneratorRuntimeClasspath(taskName, dependencies.project(generatorProject)),
         generatorMainClass,
         argsProvider,
         dependOnTaskOutput = dependOnTaskOutput,
@@ -100,13 +93,14 @@ fun Project.generatedSourcesTask(
         "gen"
     }
     val generationRoot = layout.projectDirectory.dir(genPath)
-    val task = tasks.register<JavaExec>(taskName) {
-        workingDir = rootDir
-        classpath(generatorClasspath)
-        mainClass.set(generatorMainClass)
-        systemProperties["line.separator"] = "\n"
+    val task = generator(
+        taskName = taskName,
+        mainClassFqName = generatorMainClass,
+        generatorClasspath = generatorClasspath,
+        generatorInput = null,
+        generationRoot = generationRoot,
+    ) {
         args(argsProvider(generationRoot))
-
         val additionalInputFiles = objects.fileCollection()
         inputs.files(additionalInputFiles)
             .ignoreEmptyDirectories()
@@ -115,8 +109,6 @@ fun Project.generatedSourcesTask(
             .withPathSensitivity(PathSensitivity.RELATIVE)
             .withPropertyName("additionalInputFiles")
         additionalInputsToTrack(additionalInputFiles)
-
-        outputs.dir(generationRoot)
     }
 
     val dependency: Any = when (dependOnTaskOutput) {

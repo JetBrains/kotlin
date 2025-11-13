@@ -21,6 +21,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.register
@@ -255,8 +256,13 @@ abstract class ProjectTestsExtension(val project: Project) {
     }
 
     /**
-     * [doNotSetFixturesSourceSetDependency] exits only for a migration period and used in projects which are not migrated to `testFixtures` yet.
-     * Please don't use set it to `true` for new generator tasks.
+     * @param doNotSetFixturesSourceSetDependency exits only for a migration period and used in projects which are
+     *        not migrated to `testFixtures` yet.
+     *        !!! Please don't use set it to `true` for new generator tasks. !!!
+     *
+     * @param skipCollectDataTask disables the creation of `collectTestData` task, which is usually used as an input
+     *        for the generator task.
+     *        !!! Please don't use it unless you 146% sure you actually need it. !!!
      */
     fun testGenerator(
         fqName: String,
@@ -266,23 +272,44 @@ abstract class ProjectTestsExtension(val project: Project) {
         skipCollectDataTask: Boolean = false,
         configure: JavaExec.() -> Unit = {}
     ) {
-        val fixturesSourceSet = if (doNotSetFixturesSourceSetDependency) {
-            null
-        } else {
-            project.sourceSets.named("testFixtures").get()
-        }
         val generationPath = when (generateTestsInBuildDirectory) {
             false -> project.layout.projectDirectory.dir("tests-gen")
             true -> project.layout.buildDirectory.dir("tests-gen").get()
         }
+
+        val sourceSet = when (doNotSetFixturesSourceSetDependency) {
+            true -> project.testSourceSet
+            false -> project.testFixturesSourceSet
+        }
+
+        val runtimeClasspath = project.provider { sourceSet.runtimeClasspath }
+
+        /*
+         * Regular test generator actually depend only on the project where it is defined and on
+         * If the project with tests is configured properly, we don't want to use the whole generator classpath
+         * as an input of the generator task, as it will be invalidated by effectively any change in the compiler.
+         *
+         * So to workaround it we narrow the set of the inputs of the generator task to
+         * - .jar of the module with generator itself (`testFixturesJar`)
+         * - project with base infrastructure of the test generator
+         */
+        val classpathInput = when (doNotSetFixturesSourceSetDependency) {
+            true -> null
+            false -> arrayOf(
+                project.provider { project.tasks[sourceSet.jarTaskName].outputs.files }, // fixtures of the current project
+                project.provider { project.dependencies.project(":generators:test-generator") }, // base test generator
+            )
+        }
+
+
         val generatorTask = project.generator(
             taskName = taskName,
-            fqName = fqName,
-            sourceSet = fixturesSourceSet ?: project.testSourceSet,
-            inputKind = when (doNotSetFixturesSourceSetDependency) {
-                true -> GeneratorInputKind.RuntimeClasspath
-                false -> GeneratorInputKind.SourceSetJar
-            }
+            mainClassFqName = fqName,
+            generatorClasspath = project.setupConfigurationForGeneratorRuntimeClasspath(taskName, runtimeClasspath),
+            generatorInput = classpathInput?.let {
+                project.setupConfigurationForGeneratorClasspathInput(taskName, *it)
+            },
+            generationRoot = generationPath,
         ) {
             this.args = buildList {
                 add(generationPath.asFile.absolutePath)
