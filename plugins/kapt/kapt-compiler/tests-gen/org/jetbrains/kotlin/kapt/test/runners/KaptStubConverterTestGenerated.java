@@ -619,6 +619,18 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("kt82338.kt")
+  public void testKt82338() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/kt82338.kt");
+  }
+
+  @Test
+  @TestMetadata("kt82338_correct_error_types.kt")
+  public void testKt82338_correct_error_types() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/kt82338_correct_error_types.kt");
+  }
+
+  @Test
   @TestMetadata("lazyProperty.kt")
   public void testLazyProperty() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/lazyProperty.kt");
