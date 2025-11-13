@@ -59,9 +59,9 @@ public class Emulator {
         commandLine.addParameter(pathManager.getAndroidAvdRoot());
         commandLine.addParameter("-k");
         if (platform == X86) {
-            commandLine.addParameter("system-images;android-19;default;x86");
+            commandLine.addParameter("system-images;android-28;default;x86");
         } else {
-            commandLine.addParameter("system-images;android-19;default;armeabi-v7a");
+            commandLine.addParameter("system-images;android-28;default;arm64-v8a");
         }
         return commandLine;
     }
@@ -73,6 +73,7 @@ public class Emulator {
         commandLine.addParameter(AVD_NAME);
         commandLine.addParameter("-no-audio");
         commandLine.addParameter("-no-window");
+        commandLine.addParameter("-no-accel");
         return commandLine;
     }
 
@@ -172,12 +173,7 @@ public class Emulator {
     public void stopEmulator() {
         System.out.println("Stopping emulator...");
 
-        GeneralCommandLine command = createAdbCommand();
-        command.addParameter("-s");
-        command.addParameter("emulator-5554");
-        command.addParameter("emu");
-        command.addParameter("kill");
-        RunUtils.execute(command);
+        stopRedundantEmulators(pathManager);
 
         finishProcess("emulator64-" + platform);
         finishProcess("emulator-" + platform);
@@ -259,7 +255,6 @@ public class Emulator {
             }
             else {
                 if (!isDdmsStopped && SystemInfo.isUnix) {
-                    stopEmulator();
                     stopDdmsProcess();
                     isDdmsStopped = true;
                 }

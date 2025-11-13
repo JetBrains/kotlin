@@ -308,6 +308,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     if (fullFileText.contains("// LANGUAGE_VERSION: 1.2")) continue
                 }
 
+                // Cannot dex -> cannot run
+                if (fullFileText.contains("// IGNORE_DEXING")) continue
+
                 //TODO support JvmPackageName
                 if (fullFileText.contains("@file:JvmPackageName(")) continue
                 // TODO: Support jvm assertions
@@ -436,8 +439,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     }
 
     companion object {
-        const val GRADLE_VERSION = "6.8.1" // update GRADLE_SHA_256 on change
-        const val GRADLE_SHA_256 = "fd591a34af7385730970399f473afabdb8b28d57fd97d6625c388d090039d6fd"
+        const val GRADLE_VERSION = "8.14" // update GRADLE_SHA_256 on change
+        const val GRADLE_SHA_256 = "61ad310d3c7d3e5da131b76bbf22b5a4c0786e9d892dae8c1658d4b484de3caa"
         const val testClassPackage = "org.jetbrains.kotlin.android.tests"
         const val testClassName = "CodegenTestCaseOnAndroid"
         const val baseTestClassPackage = "org.jetbrains.kotlin.android.tests"
