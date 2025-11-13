@@ -77,7 +77,7 @@ internal abstract class IrConstAnnotationTransformer(private val context: IrCons
 
     private fun IrExpression.transformSingleArg(expectedType: IrType): IrExpression? {
         return when {
-            this is IrErrorCallExpression -> null
+            this is IrErrorExpression -> null
             this is IrGetClass && argument.type is IrErrorType -> null
             this is IrGetEnumValue || this is IrClassReference -> this
             this is IrConstructorCall && this.type.isAnnotation() -> {
