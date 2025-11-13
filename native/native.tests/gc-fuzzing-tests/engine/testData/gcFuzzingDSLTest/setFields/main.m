@@ -56,7 +56,7 @@ static void spawnThread(void (^block)()) {
 
 static inline id call(int32_t localsCount, int32_t blockLocalsCount, id (^block)(int32_t)) {
     int32_t nextLocalsCount = localsCount + blockLocalsCount;
-    if (nextLocalsCount > 500) {
+    if (nextLocalsCount > 200) {
         return nil;
     }
     return block(nextLocalsCount);

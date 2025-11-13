@@ -36,8 +36,7 @@ private class Generator(seed: Int = 0, val distributions: Distributions = Distri
             0.1 to 0,
             0.5 to 2,
             0.9 to 10,
-            0.999 to 1000,
-            1.0 to Int.MAX_VALUE
+            1.0 to 256,
         )
         val numParameters = CumulativeFun.uniform(
             0.0 to 0,

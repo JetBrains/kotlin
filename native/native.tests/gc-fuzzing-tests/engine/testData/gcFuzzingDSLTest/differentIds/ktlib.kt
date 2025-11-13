@@ -42,7 +42,7 @@ private fun spawnThread(block: () -> Unit) {
 
 private inline fun call(localsCount: Int, blockLocalsCount: Int, block: (Int) -> Any?): Any? {
     val nextLocalsCount = localsCount + blockLocalsCount
-    if (nextLocalsCount > 500) {
+    if (nextLocalsCount > 200) {
         return null
     }
     return block(nextLocalsCount)
