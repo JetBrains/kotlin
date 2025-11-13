@@ -61,7 +61,7 @@ class UndispatchedInjection<Context, Target>(
  * - Provider serialization time with CC
  * - Build completion without CC
  */
-class OnBuildCompletionSerializingInjection<Return>(
+class OnBuildCompletionSerializingInjection<Return : Any>(
     val serializedReturnPath: File,
     val returnValueInjection: GradleProjectBuildScriptInjectionContext.() -> Provider<Return>,
 ) : GradleBuildScriptInjection<Project> {
@@ -348,7 +348,7 @@ class ReturnFromBuildScriptAfterExecution<T>(
  *
  * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.consumeProjectDependencyViaSettingsInjection
  */
-internal fun <T> TestProject.buildScriptReturn(
+internal fun <T : Any> TestProject.buildScriptReturn(
     returnFromProject: GradleProjectBuildScriptInjectionContext.() -> T,
 ): ReturnFromBuildScriptAfterExecution<T> = providerBuildScriptReturn {
     project.provider {
@@ -365,7 +365,7 @@ internal fun <T> TestProject.buildScriptReturn(
  *
  * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.buildScriptReturnIsCCFriendly
  */
-internal fun <T> TestProject.providerBuildScriptReturn(
+internal fun <T : Any> TestProject.providerBuildScriptReturn(
     returnFromProject: GradleProjectBuildScriptInjectionContext.() -> Provider<T>,
 ): ReturnFromBuildScriptAfterExecution<T> {
     return buildScriptReturnInjection(
