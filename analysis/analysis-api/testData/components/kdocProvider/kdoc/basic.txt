@@ -1,0 +1,73 @@
+----------/Foo------------------------------------------------------------------
+<primary tag="null" subject="null">
+Class KDoc
+
+
+<section="null" subject="null">
+Class KDoc
+
+
+<section="property" subject="a">
+my property
+<section="property" subject="b">
+my property
+
+
+----------<constructor>(a: kotlin.String, b: kotlin.Int): Foo-------------------
+<primary tag="null" subject="null">
+Class KDoc
+
+
+<section="null" subject="null">
+Class KDoc
+
+
+<section="property" subject="a">
+my property
+<section="property" subject="b">
+my property
+
+
+----------a: kotlin.String------------------------------------------------------
+<primary tag="property" subject="a">
+my property
+
+----------b: kotlin.Int---------------------------------------------------------
+<primary tag="property" subject="b">
+my property
+
+
+----------<constructor>(a: kotlin.String): Foo----------------------------------
+<primary tag="null" subject="null">
+Secondary constructor docs
+
+
+<section="null" subject="null">
+Secondary constructor docs
+
+
+
+----------a: kotlin.String------------------------------------------------------
+<primary tag="param" subject="a">
+parameter
+
+----------val property: kotlin.String-------------------------------------------
+<primary tag="null" subject="null">
+Property KDoc
+<section="null" subject="null">
+Property KDoc
+
+----------/Foo.foo(<dispatch receiver>: Foo, a: kotlin.String): kotlin.Int------
+<primary tag="null" subject="null">
+Fun KDoc
+
+
+<section="null" subject="null">
+Fun KDoc
+
+
+
+----------a: kotlin.String------------------------------------------------------
+<primary tag="param" subject="a">
+param
+

@@ -1,0 +1,63 @@
+----------/Foo------------------------------------------------------------------
+<primary tag="null" subject="null">
+Foo KDoc
+
+
+<section="null" subject="null">
+Foo KDoc
+
+
+<section="property" subject="a">
+property
+<section="property" subject="b">
+property
+
+----------<constructor>(a: kotlin.String): Foo----------------------------------
+<primary tag="null" subject="null">
+Foo KDoc
+
+
+<section="null" subject="null">
+Foo KDoc
+
+
+<section="property" subject="a">
+property
+<section="property" subject="b">
+property
+
+----------a: kotlin.String------------------------------------------------------
+<primary tag="property" subject="a">
+property
+
+----------val b: kotlin.String--------------------------------------------------
+<primary tag="property" subject="b">
+property
+
+----------/Bar------------------------------------------------------------------
+<primary tag="null" subject="null">
+Bar KDoc
+
+
+<section="null" subject="null">
+Bar KDoc
+
+
+
+----------<constructor>(a: kotlin.String): Bar----------------------------------
+<primary tag="null" subject="null">
+Bar KDoc
+
+
+<section="null" subject="null">
+Bar KDoc
+
+
+
+----------a: kotlin.String------------------------------------------------------
+<primary tag="param" subject="a">
+property
+
+----------val b: kotlin.String--------------------------------------------------
+null
+

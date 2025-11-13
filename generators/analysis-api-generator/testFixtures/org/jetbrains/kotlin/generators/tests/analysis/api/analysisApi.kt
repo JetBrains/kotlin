@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inherit
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractExpressionTypeAsPsiTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractPsiTypeAsKaTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.kdocProvider.AbstractKDocProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractGetExpectsForActualTest
@@ -751,6 +752,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("visibilityChecker", filter = frontendIs(FrontendKind.Fir)) {
         test<AbstractVisibilityCheckerTest> {
             model(it, "visibility")
+        }
+    }
+
+    component("kdocProvider") {
+        test<AbstractKDocProviderTest> {
+            model(it, "kdoc")
         }
     }
 }

@@ -145,7 +145,8 @@ public interface KaSession : KaLifetimeOwner,
     KaCompilerFacility,
     KaSubstitutorProvider,
     KaDataFlowProvider,
-    KaSourceProvider
+    KaSourceProvider,
+    KaKDocProvider
 {
     /**
      * The [KaModule] from whose perspective the analysis is performed. The use-site module defines the resolution scope of the [KaSession],

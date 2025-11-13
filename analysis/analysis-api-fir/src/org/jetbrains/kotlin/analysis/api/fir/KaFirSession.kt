@@ -79,7 +79,8 @@ private constructor(
     compilerFacility = KaFirCompilerFacility(analysisSessionProvider),
     substitutorProvider = KaFirSubstitutorProvider(analysisSessionProvider),
     dataFlowProvider = KaFirDataFlowProvider(analysisSessionProvider),
-    sourceProvider = KaFirSourceProvider(analysisSessionProvider)
+    sourceProvider = KaFirSourceProvider(analysisSessionProvider),
+    kDocProvider = KaFirKDocProvider(analysisSessionProvider),
 ) {
     internal val firSymbolBuilder: KaSymbolByFirBuilder by lazy {
         KaSymbolByFirBuilder(project, this, token)

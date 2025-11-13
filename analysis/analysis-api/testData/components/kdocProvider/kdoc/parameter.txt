@@ -1,0 +1,42 @@
+----------/Foo------------------------------------------------------------------
+<primary tag="null" subject="null">
+Foo KDoc
+
+
+<section="null" subject="null">
+Foo KDoc
+
+
+
+----------T---------------------------------------------------------------------
+<primary tag="param" subject="T">
+type parameter
+
+----------<constructor>(a: T): Foo<T>-------------------------------------------
+<primary tag="null" subject="null">
+Foo KDoc
+
+
+<section="null" subject="null">
+Foo KDoc
+
+
+
+----------a: T------------------------------------------------------------------
+<primary tag="param" subject="a">
+value of type [T]
+
+----------/foo(a: kotlin.String): kotlin.Unit-----------------------------------
+<primary tag="null" subject="null">
+Function KDoc
+
+
+<section="null" subject="null">
+Function KDoc
+
+
+
+----------a: kotlin.String------------------------------------------------------
+<primary tag="param" subject="a">
+parameter
+

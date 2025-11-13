@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KtDocCommentDescriptor
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.dispatchReceiverType
 import org.jetbrains.kotlin.analysis.api.components.render
@@ -109,6 +110,15 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
         is Name -> asString()
         is CallableId -> toString()
         is KaCallableSignature<*> -> stringRepresentation(this)
+        is KtDocCommentDescriptor -> buildString {
+            appendLine("<primary tag=\"${primaryTag.name}\" subject=\"${primaryTag.getSubjectName()}\">")
+            append(primaryTag.getContent())
+            additionalSections.forEach { section ->
+                appendLine()
+                appendLine("<section=\"${section.name}\" subject=\"${section.getSubjectName()}\">")
+                append(section.getContent())
+            }
+        }
         else -> buildString {
             val className = renderFrontendIndependentKClassNameOf(this@with)
             append(className)

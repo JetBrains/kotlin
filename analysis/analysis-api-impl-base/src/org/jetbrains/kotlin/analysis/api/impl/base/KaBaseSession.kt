@@ -44,6 +44,7 @@ abstract class KaBaseSession(
     substitutorProvider: KaSubstitutorProvider,
     dataFlowProvider: KaDataFlowProvider,
     sourceProvider: KaSourceProvider,
+    kDocProvider: KaKDocProvider,
 ) : KaSession,
     KaResolver by resolver,
     KaSymbolRelationProvider by symbolRelationProvider,
@@ -72,4 +73,5 @@ abstract class KaBaseSession(
     KaCompilerFacility by compilerFacility,
     KaSubstitutorProvider by substitutorProvider,
     KaDataFlowProvider by dataFlowProvider,
-    KaSourceProvider by sourceProvider
+    KaSourceProvider by sourceProvider,
+    KaKDocProvider by kDocProvider

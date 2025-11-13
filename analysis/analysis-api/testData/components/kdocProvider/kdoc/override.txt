@@ -1,0 +1,105 @@
+----------/Foo------------------------------------------------------------------
+null
+
+----------/Foo.documented(<dispatch receiver>: Foo): kotlin.Unit----------------
+<primary tag="null" subject="null">
+KDoc for abstract fun
+<section="null" subject="null">
+KDoc for abstract fun
+
+----------/Foo.undocumented(<dispatch receiver>: Foo): kotlin.Unit--------------
+null
+
+----------/A--------------------------------------------------------------------
+null
+
+----------/A.documented(<dispatch receiver>: A): kotlin.Unit--------------------
+<primary tag="null" subject="null">
+Override documentation for [documented]
+<section="null" subject="null">
+Override documentation for [documented]
+
+----------/A.undocumented(<dispatch receiver>: A): kotlin.Unit------------------
+<primary tag="null" subject="null">
+New documentation for [undocumented]
+<section="null" subject="null">
+New documentation for [undocumented]
+
+----------/B--------------------------------------------------------------------
+null
+
+----------/B.documented(<dispatch receiver>: B): kotlin.Unit--------------------
+<primary tag="null" subject="null">
+KDoc for abstract fun
+<section="null" subject="null">
+KDoc for abstract fun
+
+----------/B.undocumented(<dispatch receiver>: B): kotlin.Unit------------------
+null
+
+----------/foo(): kotlin.Unit---------------------------------------------------
+null
+
+----------val fooA: Foo---------------------------------------------------------
+null
+
+----------<constructor>(): A----------------------------------------------------
+null
+
+----------val fooB: Foo---------------------------------------------------------
+null
+
+----------<constructor>(): B----------------------------------------------------
+null
+
+----------val a: A--------------------------------------------------------------
+null
+
+----------<constructor>(): A----------------------------------------------------
+null
+
+----------val b: B--------------------------------------------------------------
+null
+
+----------<constructor>(): B----------------------------------------------------
+null
+
+----------/Foo.documented(<dispatch receiver>: Foo): kotlin.Unit----------------
+<primary tag="null" subject="null">
+KDoc for abstract fun
+<section="null" subject="null">
+KDoc for abstract fun
+
+----------/Foo.documented(<dispatch receiver>: Foo): kotlin.Unit----------------
+<primary tag="null" subject="null">
+KDoc for abstract fun
+<section="null" subject="null">
+KDoc for abstract fun
+
+----------/Foo.undocumented(<dispatch receiver>: Foo): kotlin.Unit--------------
+null
+
+----------/Foo.undocumented(<dispatch receiver>: Foo): kotlin.Unit--------------
+null
+
+----------/A.documented(<dispatch receiver>: A): kotlin.Unit--------------------
+<primary tag="null" subject="null">
+Override documentation for [documented]
+<section="null" subject="null">
+Override documentation for [documented]
+
+----------/A.undocumented(<dispatch receiver>: A): kotlin.Unit------------------
+<primary tag="null" subject="null">
+New documentation for [undocumented]
+<section="null" subject="null">
+New documentation for [undocumented]
+
+----------/B.documented(<dispatch receiver>: B): kotlin.Unit--------------------
+<primary tag="null" subject="null">
+KDoc for abstract fun
+<section="null" subject="null">
+KDoc for abstract fun
+
+----------/B.undocumented(<dispatch receiver>: B): kotlin.Unit------------------
+null
+

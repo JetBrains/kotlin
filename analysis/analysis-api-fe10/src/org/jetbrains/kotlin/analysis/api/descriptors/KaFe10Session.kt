@@ -48,5 +48,6 @@ internal class KaFe10Session(
     compilerFacility = KaFe10CompilerFacility(analysisSessionProvider),
     substitutorProvider = KaFe10SubstitutorProvider(analysisSessionProvider),
     dataFlowProvider = KaFe10DataFlowProvider(analysisSessionProvider),
-    sourceProvider = KaFe10SourceProvider(analysisSessionProvider)
+    sourceProvider = KaFe10SourceProvider(analysisSessionProvider),
+    kDocProvider = KaFe10KDocProvider(analysisSessionProvider),
 )
