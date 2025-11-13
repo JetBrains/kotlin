@@ -12,13 +12,13 @@ public final class OperatorOfFromUnsignedArrayKt {
     @Lorg/jetbrains/annotations/NotNull;() // invisible, parameter 0
    L0
     ALOAD 0
-    LDC "$v$c$kotlin-ULongArray$-ulong$0"
+    LDC "ulong"
     INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkNotNullParameter (Ljava/lang/Object;Ljava/lang/String;)V
    L1
     LINENUMBER 6 L1
     RETURN
    L2
-    LOCALVARIABLE $v$c$kotlin-ULongArray$-ulong$0 [J L0 L2 0
+    LOCALVARIABLE ulong [J L0 L2 0
     MAXSTACK = 2
     MAXLOCALS = 1
 
