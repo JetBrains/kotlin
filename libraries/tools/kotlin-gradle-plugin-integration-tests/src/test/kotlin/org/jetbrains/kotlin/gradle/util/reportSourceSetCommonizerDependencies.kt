@@ -9,28 +9,13 @@ import org.gradle.testkit.runner.BuildResult
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.annotations.RegExp
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.targets.metadata.retrieveExternalDependencies
-import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
-import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
-import org.jetbrains.kotlin.gradle.utils.future
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
-import org.jetbrains.kotlin.library.commonizerTarget
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.tooling.core.linearClosure
 import java.io.File
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.nio.file.Path
 import javax.annotation.RegEx
@@ -155,19 +140,5 @@ fun TestProject.reportSourceSetCommonizerDependencies(
         }.test(this)
     }
 }
-
-private fun createSourceSetCommonizerDependencyOrNull(sourceSetName: String, libraryFile: File): SourceSetCommonizerDependency? {
-    if (!libraryFile.exists()) return null
-    return SourceSetCommonizerDependency(
-        sourceSetName,
-        file = libraryFile,
-        target = inferCommonizerTargetOrNull(libraryFile) as? SharedCommonizerTarget ?: return null,
-    )
-}
-
-private fun inferCommonizerTargetOrNull(libraryFile: File): CommonizerTarget? = resolveSingleFileKlib(
-    libraryFile = org.jetbrains.kotlin.konan.file.File(libraryFile.path),
-    strategy = ToolingSingleFileKlibResolveStrategy
-).commonizerTarget?.let(::parseCommonizerTarget)
 
 private val File.parentsClosure: Set<File> get() = this.linearClosure { it.parentFile }
