@@ -1941,7 +1941,6 @@ public abstract interface class org/jetbrains/kotlin/psi/KtNamedDeclaration : co
 
 public final class org/jetbrains/kotlin/psi/KtNamedDeclarationUtil {
 	public static fun getParentFqName (Lorg/jetbrains/kotlin/psi/KtNamedDeclaration;)Lorg/jetbrains/kotlin/name/FqName;
-	public static fun getUnsafeFQName (Lorg/jetbrains/kotlin/psi/KtNamedDeclaration;)Lorg/jetbrains/kotlin/name/FqNameUnsafe;
 }
 
 public class org/jetbrains/kotlin/psi/KtNamedFunction : org/jetbrains/kotlin/psi/KtTypeParameterListOwnerStub, org/jetbrains/kotlin/psi/KtDeclarationWithInitializer, org/jetbrains/kotlin/psi/KtFunction {
