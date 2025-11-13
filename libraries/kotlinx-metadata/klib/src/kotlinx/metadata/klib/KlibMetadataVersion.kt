@@ -23,6 +23,8 @@ class KlibMetadataVersion(val major: Int, val minor: Int, val patch: Int) : Comp
         require(patch >= 0) { "Patch version should be not less than 0" }
     }
 
+    fun toArray(): IntArray = intArrayOf(major, minor, patch)
+
     override fun compareTo(other: KlibMetadataVersion): Int {
         val majors = major.compareTo(other.major)
         if (majors != 0) return majors
