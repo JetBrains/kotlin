@@ -30,11 +30,9 @@ import com.intellij.psi.util.elementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.PLUS
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.util.getChildren
 import java.util.*
@@ -355,20 +353,6 @@ fun LighterASTNode.getAssignmentLhsIfUnwrappable(tree: FlyweightCapableTreeStruc
         it?.tokenType in UNWRAPPABLE_TOKEN_TYPES
     }
 
-/**
- * This function should only be called for a source element corresponding to
- * an assignment/assignment operator call/increment or a decrement operator.
- */
-fun KtSourceElement?.hasUnwrappableAsAssignmentLhs(): Boolean {
-    if (this == null) {
-        return false
-    }
-
-    val node = psi?.getAssignmentLhsIfUnwrappable()
-        ?: lighterASTNode.getAssignmentLhsIfUnwrappable(treeStructure)
-
-    return node != null
-}
 
 // -------------------- Recursive tree visiting --------------------------------------------------------------------------------------------
 
