@@ -17,7 +17,7 @@ interface Process {
 }
 
 fun run(filter: IntPredicate, allProcesses: Stream<Process>): List<IntLongPair> {
-    return <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>allProcesses.filter {
+    return <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>allProcesses.filter {
         filter.test(it.pid())
     }.map<IntLongPair?> {
         val duration = it.totalCpuDuration()
