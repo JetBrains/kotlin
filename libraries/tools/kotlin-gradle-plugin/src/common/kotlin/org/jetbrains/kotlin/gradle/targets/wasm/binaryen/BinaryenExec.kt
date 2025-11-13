@@ -14,6 +14,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -28,7 +29,6 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     @get:Inject
     internal abstract val workerExecutor: WorkerExecutor
 
-    @get:Inject
     internal abstract val fs: FileSystemOperations
 
     @get:InputFiles
@@ -107,6 +107,9 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
                 it.executable = binaryen.requireConfigured().executable
                 it.dependsOn(binaryen.setupTaskProvider)
                 it.dependsOn(compilation.compileTaskProvider)
+                if (project.kotlinPropertiesProvider.wasmPerModule && compilation.wasmTarget != WasmTarget.WASI) {
+                    it.binaryenArguments.set(BinaryenConfig.binaryenMultimoduleArgs)
+                }
                 it.configuration()
             }
         }

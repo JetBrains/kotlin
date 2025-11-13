@@ -183,6 +183,7 @@ constructor(
         compilations.all { compilation ->
             compilation.binaries
                 .withType(JsIrBinary::class.java)
+                .matching { it.target.wasmTargetType == null }
                 .all { binary ->
                     val syncTask = binary.linkSyncTask
 

@@ -3059,6 +3059,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/ir/WasmBi
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getOptimizeTask ()Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun getOutputDirBase ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getWasmBinaryConfigurationName ()Ljava/lang/String;
+	public abstract fun getWasmBinaryOutputConfigurationName ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary$DefaultImpls {
+	public static fun getWasmBinaryConfigurationName (Lorg/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary;)Ljava/lang/String;
+	public static fun getWasmBinaryOutputConfigurationName (Lorg/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary;)Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/WebpackConfigurator : org/jetbrains/kotlin/gradle/targets/js/ir/SubTargetConfigurator {

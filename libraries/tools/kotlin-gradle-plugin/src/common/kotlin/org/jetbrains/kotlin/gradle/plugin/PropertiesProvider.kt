@@ -179,6 +179,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
                 )
             } ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
 
+    val wasmPerModule: Boolean
+        get() = booleanProperty("kotlin.wasm.per.module") ?: false
+
+    val wasmPerModuleInvalidate: String?
+        get() = property("kotlin.wasm.per.module.invalidate").orNull
+
     val incrementalMultiplatform: Boolean?
         get() = booleanProperty("kotlin.incremental.multiplatform")
 
