@@ -34,7 +34,7 @@ class GCFuzzingTest : AbstractNativeSimpleTest() {
         val timelimit = Duration.parse(System.getProperty("gcfuzzing.timelimit")!!)
         val start = TimeSource.Monotonic.markNow()
 
-        val fuzzer = SimpleFuzzer(0)
+        val fuzzer = SimpleFuzzer(System.getProperty("gcfuzzing.seed")!!.toInt())
         var stepCounter = 0
         return generateSequence {
             if (start.elapsedNow() > timelimit) return@generateSequence null
