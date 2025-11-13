@@ -30,6 +30,7 @@ class ChainedMemberScope private constructor(
     private val debugName: String,
     private val scopes: Array<out MemberScope>
 ) : MemberScope {
+    fun getComponentScopes(): List<MemberScope> = scopes.toList()
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
         getFirstClassifierDiscriminateHeaders(scopes) { it.getContributedClassifier(name, location) }
