@@ -61,6 +61,15 @@ class DerivedClassWithSecondaryCtor : OpenClassWithMixedConstructors {
     constructor(y: Int, z: Int) : super(y, z)
 }
 
+@JsExport
+open class GenericClassWithSecondaryCtor<Self: GenericClassWithSecondaryCtor<Self>> {
+    val x: String
+    @JsName("createFromString")
+    constructor(y: String) {
+        x = y
+    }
+}
+
 // FILE: f2.kt
 
 @JsExport

@@ -5,6 +5,7 @@ const {
     ClassWithMultipleSecondaryCtors,
     DerivedClassWithSecondaryCtor,
     OpenClassWithMixedConstructors,
+    GenericClassWithSecondaryCtor,
     KotlinGreeter
 } = JS_TESTS;
 
@@ -44,6 +45,9 @@ function box(): string {
     const o10 = DerivedClassWithSecondaryCtor.delegateToCreateFromInts(-10, 20);
     if (o10.x !== "fromStrings:-10:20") return "Fail: DerivedClassWithSecondaryCtor.delegateToCreateFromInts";
 
+    const o11 = GenericClassWithSecondaryCtor.createFromString("hello");
+
+    if (o11.x !== "hello") return "Fail: GenericClassWithSecondaryCtor.createFromString";
 
     const kg = new KotlinGreeter("Hi");
     if (kg.greeting != "Hi") return "Fail: KotlinGreeter";
