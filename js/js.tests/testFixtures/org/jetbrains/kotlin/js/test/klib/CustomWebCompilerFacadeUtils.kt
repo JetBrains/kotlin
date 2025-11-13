@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.targetPlatformProvider
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
@@ -36,7 +35,7 @@ internal fun TestModule.wasmTargetOrNull(testServices: TestServices, compilation
     }
 
 /**
- * Note: To be used only internally in [CustomWebCompilerFirstPhaseFacade] and [CustomWebCompilerFirstPhaseEnvironmentConfigurator].
+ * Note: To be used only internally in [CustomWebCompilerFirstPhaseFacade] and [CustomWebCompilerSecondPhaseEnvironmentConfigurator].
  */
 internal fun TestModule.customWebCompilerSettings(testServices: TestServices): CustomWebCompilerSettings =
     if (isWasmModule(testServices)) customWasmJsCompilerSettings else customJsCompilerSettings
