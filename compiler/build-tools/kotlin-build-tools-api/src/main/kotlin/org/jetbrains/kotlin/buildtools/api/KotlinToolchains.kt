@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Companion.loadImplem
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Toolchain
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.konan.NativePlatformToolchain
 
 /**
  * The main entry point to the Build Tools API.
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
  * Currently supported toolchains:
  * - [JvmPlatformToolchain] for Kotlin/JVM compilation
  * - [CriToolchain] for Compiler Reference Index operations
+ * - [NativePlatformToolchain] for Kotlin/Native operations
  *
  * This interface is not intended to be implemented by the API consumers.
  *
