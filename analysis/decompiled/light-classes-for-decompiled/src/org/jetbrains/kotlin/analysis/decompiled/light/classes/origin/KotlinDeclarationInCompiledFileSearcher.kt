@@ -66,7 +66,14 @@ class KotlinDeclarationInCompiledFileSearcher {
                 ?.firstOrNull { doParametersMatch(member, it) }
         }
 
-        val declarations = container.declarations
+        val (regularDeclarations, companionDeclarations) = if (container is KtClass && member.hasModifierProperty(PsiModifier.STATIC)) {
+            // Compiled code cannot have more than one companion object, so we can pick the first one
+            container.declarations to container.companionObjects.firstOrNull()?.declarations.orEmpty()
+        } else {
+            container.declarations to emptyList()
+        }
+
+        val declarations = regularDeclarations + companionDeclarations
         return when (member) {
             is PsiMethod -> {
                 val names = SmartList(memberName)
@@ -109,19 +116,11 @@ class KotlinDeclarationInCompiledFileSearcher {
 
                 val declarations = when {
                     container is KtFile || container is KtObjectDeclaration -> declarations
-                    member.hasModifier(JvmModifier.STATIC) -> {
-                        val nonPropertyDeclarations = declarations.filter { it is KtEnumEntry || it is KtObjectDeclaration }
-
-                        // Fields for properties from companion objects are materialized in the containing class
-                        // Compiled code cannot have more than one companion object, so we can pick the first one
-                        val propertiesFromCompanion = (container as? KtClass)?.companionObjects
-                            ?.firstOrNull()
-                            ?.declarations
-                            ?.filterIsInstance<KtProperty>()
-                            .orEmpty()
-
-                        nonPropertyDeclarations + propertiesFromCompanion
-                    }
+                    member.hasModifier(JvmModifier.STATIC) ->
+                        // Enum entries and companion objects are materialized in the containing class as fields
+                        regularDeclarations.filter { it is KtEnumEntry || it is KtObjectDeclaration && it.isCompanion() } +
+                                // Fields for properties from companion objects are materialized in the containing class
+                                companionDeclarations.filterIsInstance<KtProperty>()
 
                     else -> declarations
                 }
