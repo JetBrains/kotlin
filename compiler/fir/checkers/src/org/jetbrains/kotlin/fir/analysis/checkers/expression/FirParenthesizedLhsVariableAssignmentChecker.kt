@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.psi.psiUtil.hasUnwrappableAsAssignmentLhs
+import org.jetbrains.kotlin.resolve.source.hasUnwrappableAsAssignmentLhs
 
 object FirParenthesizedLhsVariableAssignmentChecker : FirVariableAssignmentChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)

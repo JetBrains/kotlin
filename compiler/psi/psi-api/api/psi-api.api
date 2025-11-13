@@ -3964,7 +3964,6 @@ public final class org/jetbrains/kotlin/psi/psiUtil/PsiUtilsKt {
 	public static final fun hasFunModifier (Lorg/jetbrains/kotlin/psi/KtModifierList;)Z
 	public static final fun hasInnerModifier (Lorg/jetbrains/kotlin/psi/KtModifierListOwner;)Z
 	public static final fun hasSuspendModifier (Lorg/jetbrains/kotlin/psi/KtModifierList;)Z
-	public static final fun hasUnwrappableAsAssignmentLhs (Lorg/jetbrains/kotlin/KtSourceElement;)Z
 	public static final fun hasValueModifier (Lorg/jetbrains/kotlin/psi/KtModifierList;)Z
 	public static final fun isAncestor (Lcom/intellij/psi/PsiElement;Lcom/intellij/psi/PsiElement;Z)Z
 	public static synthetic fun isAncestor$default (Lcom/intellij/psi/PsiElement;Lcom/intellij/psi/PsiElement;ZILjava/lang/Object;)Z

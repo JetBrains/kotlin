@@ -54,7 +54,6 @@ com/intellij/util/ArrayFactory
 com/intellij/util/IncorrectOperationException
 com/intellij/util/diff/FlyweightCapableTreeStructure
 javax/swing/Icon
-org/jetbrains/kotlin/KtSourceElement
 org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget
 org/jetbrains/kotlin/name/ClassId
 org/jetbrains/kotlin/name/FqName
