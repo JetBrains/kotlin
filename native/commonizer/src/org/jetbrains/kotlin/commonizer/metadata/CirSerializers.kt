@@ -23,7 +23,8 @@ internal fun CirModule.serializeModule(
 ): KlibModuleMetadata = KlibModuleMetadata(
     name = name.toStrippedString(),
     fragments = fragments.toList(),
-    annotations = emptyList()
+    annotations = emptyList(),
+    metadataVersion = metadataVersion,
 )
 
 internal fun CirPackage.serializePackage(
