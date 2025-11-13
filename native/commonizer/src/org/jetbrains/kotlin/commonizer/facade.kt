@@ -90,8 +90,7 @@ internal fun serializeTarget(
     CirTreeSerializer.serializeSingleTarget(commonized, commonized.indexOfCommon, parameters.statsCollector) { metadataModule ->
         val libraryName = metadataModule.name
         val serializedMetadata = with(metadataModule.write(ChunkedKlibModuleFragmentWriteStrategy())) {
-            // TODO(KT-81409): replace MetadataVersion.INSTANCE.toArray() with metadataVersion.toArray() after adding metadataVersion SerializedKlibMetadata
-            SerializedMetadata(header, fragments, fragmentNames, MetadataVersion.INSTANCE.toArray())
+            SerializedMetadata(header, fragments, fragmentNames, metadataVersion.toArray())
         }
         val manifestData = parameters.manifestProvider[outputTarget].buildManifest(libraryName)
         parameters.resultsConsumer.consume(
