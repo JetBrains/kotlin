@@ -2,6 +2,10 @@
 // WITH_STDLIB
 // WITH_REFLECT
 // ISSUE: KT-70052
+
+// Android tests put the file into different package
+// IGNORE_BACKEND: ANDROID
+
 import kotlin.reflect.typeOf
 
 class Pair<A, B>(val x: A, val y: B)

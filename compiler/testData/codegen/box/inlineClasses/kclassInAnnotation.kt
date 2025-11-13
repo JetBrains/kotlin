@@ -2,6 +2,9 @@
 // TARGET_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
+
+// IGNORE_BACKEND: ANDROID
+
 package test
 
 import kotlin.reflect.KClass

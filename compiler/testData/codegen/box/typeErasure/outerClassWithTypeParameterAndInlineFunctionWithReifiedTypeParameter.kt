@@ -1,6 +1,10 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
 // WITH_REFLECT
+
+// Android tests put the file into different package
+// IGNORE_BACKEND: ANDROID
+
 import kotlin.reflect.typeOf
 
 class Pair<A, B>(val x: A, val y: B)

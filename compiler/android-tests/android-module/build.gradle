@@ -2,27 +2,28 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {        
-        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'com.android.tools.build:gradle:7.4.2'
     }
 }
 apply plugin: 'com.android.application'
 
 repositories {
     google()
-    jcenter()
+    mavenCentral()
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "29.0.3"
+    namespace "org.jetbrains.kotlin.android.tests"
+    compileSdkVersion 28
+    buildToolsVersion "34.0.0"
 
     defaultConfig {
         applicationId "org.jetbrains.kotlin.android.tests"
-        minSdkVersion 19
-        targetSdkVersion 19
+        minSdkVersion 28
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testApplicationId "org.jetbrains.kotlin.android.tests.gradle"
@@ -50,8 +51,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     flavorDimensions "box"
@@ -96,6 +97,7 @@ tasks.withType(JavaCompile) {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['kotlin-test.jar', 'kotlin-stdlib.jar'])
+    implementation 'junit:junit:4.13.2'
     androidTestImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
 
