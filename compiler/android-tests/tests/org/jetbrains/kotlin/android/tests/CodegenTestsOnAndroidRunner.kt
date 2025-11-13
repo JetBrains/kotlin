@@ -77,15 +77,15 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             val folders = reportFolder.listFiles()
             assertTrue(folders != null && folders.isNotEmpty(), "No folders in ${reportFolder.path}")
 
-            folders.forEach {
-                assertTrue("${it.path} is not directory") { it.isDirectory }
-                val isIr = it.name.contains("_ir")
-                val testCases = parseSingleReportInFolder(it)
+            for (folder in folders) {
+                assertTrue("${folder.path} is not directory") { folder.isDirectory }
+                val isIr = folder.name.contains("_ir")
+                val testCases = parseSingleReportInFolder(folder)
                 testCases.forEach { aCase ->
                     if (isIr) aCase.name += "_ir"
                     rootSuite.addTest(aCase)
                 }
-                Assert.assertNotEquals("There is no test results in report", 0, testCases.size.toLong())
+                Assert.assertNotEquals("There is no test results in report ${folder.path}", 0, testCases.size.toLong())
             }
         } catch (e: Throwable) {
             throw RuntimeException("Can't parse test results in $reportFolder\n$resultOutput", e)
@@ -126,10 +126,10 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         @Throws(IOException::class, SAXException::class, ParserConfigurationException::class)
         private fun parseSingleReportInFolder(folder: File): List<TestCase> {
             val files = folder.listFiles()!!
-            assert(files.size == 1) {
-                "Expecting one file but ${files.size}: ${files.joinToString { it.name }} in ${folder.path}"
+            assert(files.size > 1) {
+                "Expecting at least one file but none found in ${folder.path}"
             }
-            val reportFile = files[0]
+            val reportFile = files.find { it.name.endsWith(".xml") } ?: error("Cannot file report in ${folder.path}")
 
             val dbFactory = DocumentBuilderFactory.newInstance()
             val dBuilder = dbFactory.newDocumentBuilder()

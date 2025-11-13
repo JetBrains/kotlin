@@ -24,14 +24,14 @@ repositories {
     }
 }
 
-val platformToolsVersion = "r28.0.1"
-val sdkToolsVersion = "4333796" /*26.1.1*/
-val emulatorVersion = "5264690"
+val platformToolsVersion = "r36.0.0"
+val commandLineToolsVersion = "13114758" /*19.0*/
+val emulatorVersion = "5395263" // v28.0.25.0
 
 dependencies {
     listOf("linux", "windows", "darwin").forEach {
         implicitDependencies("google:platform-tools:$platformToolsVersion:$it@zip")
-        implicitDependencies("google:sdk-tools-$it:$sdkToolsVersion@zip")
+        implicitDependencies("google:commandlinetools-$it:${commandLineToolsVersion}_latest@zip")
         implicitDependencies("google:emulator-$it:$emulatorVersion@zip")
     }
 }
@@ -202,10 +202,10 @@ androidBuildTools("35.0.0")
 
 unzipSdkTask("android_m2repository", "r44", "extras/android", "")
 unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin)
-unzipSdkTask("sdk-tools-$toolsOsDarwin", sdkToolsVersion, "", "")
+unzipSdkTask("commandlinetools-$toolsOsDarwin", "${commandLineToolsVersion}_latest", "", "")
 unzipSdkTask("emulator-$toolsOsDarwin", emulatorVersion, "", "", prepareTask = prepareEmulator)
-unzipSdkTask("armeabi-v7a", "19", "system-images/android-19/default", "r05", prepareTask = prepareEmulator)
-unzipSdkTask("x86", "19", "system-images/android-19/default", "r06", prepareTask = prepareEmulator)
+unzipSdkTask("arm64-v8a", "28", "system-images/android-28/default", "r02", prepareTask = prepareEmulator)
+unzipSdkTask("x86", "28", "system-images/android-28/default", "r04", prepareTask = prepareEmulator)
 
 val clean by task<Delete> {
     delete(layout.buildDirectory)
