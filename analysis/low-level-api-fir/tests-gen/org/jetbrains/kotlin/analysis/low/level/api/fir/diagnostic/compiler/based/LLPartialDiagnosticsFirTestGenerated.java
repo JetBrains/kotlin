@@ -3073,9 +3073,27 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("generics.kt")
+        public void testGenerics() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/newSpecificity/generics.kt");
+        }
+
+        @Test
         @TestMetadata("newSpecificity.kt")
         public void testNewSpecificity() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/newSpecificity/newSpecificity.kt");
+        }
+
+        @Test
+        @TestMetadata("three.kt")
+        public void testThree() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/newSpecificity/three.kt");
+        }
+
+        @Test
+        @TestMetadata("transaction.kt")
+        public void testTransaction() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/newSpecificity/transaction.kt");
         }
       }
 

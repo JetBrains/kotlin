@@ -1,0 +1,20 @@
+FILE: transaction.kt
+    public abstract interface Transaction : R|kotlin/Any| {
+    }
+    public final fun transaction(block: R|@ContextFunctionTypeParams(1) context(Transaction) () -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    context(t: R|Transaction|)
+    public final fun transaction(block: R|@ContextFunctionTypeParams(1) context(Transaction) () -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun example(): R|kotlin/Unit| {
+        R|/transaction|(<L> = context(<unused var>: R|Transaction|) transaction@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            <Ambiguity: transaction, [/transaction, /transaction]>#(<L> = transaction@fun <anonymous>(): <ERROR TYPE REF: Ambiguity: transaction, [/transaction, /transaction]> <inline=Unknown>  {
+                ^ <Ambiguity: transaction, [/transaction, /transaction]>#(<L> = transaction@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    ^@transaction Unit
+                }
+                )
+            }
+            )
+        }
+        )
+    }

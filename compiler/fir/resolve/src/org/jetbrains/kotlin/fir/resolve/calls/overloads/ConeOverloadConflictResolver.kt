@@ -394,7 +394,11 @@ class ConeOverloadConflictResolver(
         }
 
         if (contextParametersEnabled) {
-            if (call1.contextParameterTypes != call2.contextParameterTypes) return false
+            with(inferenceComponents.session.typeContext) {
+                val erasedCall1Context = call1.contextParameterTypes.mapTo(mutableSetOf()) { it?.eraseContainingTypeParameters() }
+                val erasedCall2Context = call2.contextParameterTypes.mapTo(mutableSetOf()) { it?.eraseContainingTypeParameters() }
+                if (erasedCall1Context != erasedCall2Context) return false
+            }
         } else {
             if (call1.contextReceiverCount > call2.contextReceiverCount) return true
             if (call1.contextReceiverCount < call2.contextReceiverCount) return false

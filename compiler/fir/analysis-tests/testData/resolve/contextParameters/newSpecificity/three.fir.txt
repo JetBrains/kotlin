@@ -1,0 +1,31 @@
+FILE: three.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|B| {
+        public constructor(): R|C| {
+            super<R|B|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final fun foo2(b: R|C|): R|kotlin/Unit| {
+    }
+    context(b: R|A|)
+    public final fun foo2(a: R|B|): R|kotlin/Unit| {
+    }
+    public final fun example1(): R|kotlin/Unit| {
+        context(R|/B.B|()) R|/foo2|(R|/C.C|())
+        context(R|/C.C|()) R|/foo2|(R|/C.C|())
+        context(R|/B.B|()) R|/foo2|(R|/B.B|())
+    }
+    context(a: R|A|)
+    public final fun example2(): R|kotlin/Unit| {
+        context(R|<local>/a|) R|/foo2|(R|/C.C|())
+        context(R|<local>/a|) R|/foo2<Inapplicable(INAPPLICABLE): /foo2>#|(R|/B.B|())
+    }
