@@ -104,9 +104,15 @@ private fun checkDispatchReceiver(
 
     // TODO(KT-64024) replace with enhancedDispatchReceiverType.finalApproximationOrSelf().classId
     //  once substitution of captured types is fixed.
-    val enhancedClassId = substitutor.substituteOrSelf(actualApproximatedType).classId
+    val enhancedApproximatedType = substitutor.substituteOrSelf(actualApproximatedType)
+    val enhancedClassId = enhancedApproximatedType.classId
 
-    if (actualClassId != null && enhancedClassId != actualClassId) {
+    if (actualClassId != null &&
+        enhancedClassId != actualClassId &&
+        // symbol.dispatchReceiverType is only equal to actualDispatchReceiverType in case of fake overrides
+        // Prominent counter examples are equals, hashCode and toString defined in Any.
+        !enhancedApproximatedType.isSubtypeOf(expectedDispatchReceiverType.replaceArgumentsWithStarProjectionsOrNull() ?: expectedDispatchReceiverType, context.session)
+    ) {
         val scope = symbol.dispatchReceiverScope(context.session, context.scopeSession)
 
         var found = false

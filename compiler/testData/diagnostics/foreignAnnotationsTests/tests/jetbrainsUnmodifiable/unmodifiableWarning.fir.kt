@@ -42,6 +42,8 @@ fun main(l: List<String>) {
 
     J.foo { arg -> <!RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>arg<!>.add("") }
     J.foo { arg: MutableList<String> -> arg.add("") }
+
+    J.foo().toString()
 }
 
 fun takeMutable(l: MutableList<String>) {}
