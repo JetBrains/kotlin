@@ -802,9 +802,10 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     private fun ProtoBuf.ValueParameter.loadDefaultValue(
         parameterName: Name,
         classBuilderForAnnotationConstructor: FirRegularClassBuilder?,
+        forcefullyCreateDefaultValue: Boolean,
     ): FirExpression? {
         val flags = if (hasFlags()) flags else 0
-        if (!Flags.DECLARES_DEFAULT_VALUE.get(flags)) {
+        if (!forcefullyCreateDefaultValue && !Flags.DECLARES_DEFAULT_VALUE.get(flags)) {
             return null
         }
         if (hasAnnotationParameterDefaultValue()) {
@@ -821,6 +822,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         return buildExpressionStub()
     }
 
+    /**
+     * @param addDefaultValue is needed to create stub default values of enum constructors.
+     * These constructors don't have defaults in reality, but they do from the frontend point of view.
+     * The real arguments are injected at the backend.
+     */
     private fun addValueParametersTo(
         valueParameters: List<ProtoBuf.ValueParameter>,
         containingDeclarationSymbol: FirBasedSymbol<*>,
@@ -846,10 +852,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 this.name = name
                 symbol = FirValueParameterSymbol()
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                defaultValue = proto.loadDefaultValue(name, classBuilderForAnnotationConstructor)
-                if (addDefaultValue && defaultValue == null) {
-                    defaultValue = buildExpressionStub()
-                }
+                defaultValue = proto.loadDefaultValue(
+                    name,
+                    classBuilderForAnnotationConstructor,
+                    forcefullyCreateDefaultValue = addDefaultValue
+                )
                 isCrossinline = Flags.IS_CROSSINLINE.get(flags)
                 isNoinline = Flags.IS_NOINLINE.get(flags)
                 isVararg = proto.varargElementType(c.typeTable) != null
