@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_PHASE
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE
@@ -35,11 +34,13 @@ class CustomKlibCompilerSecondPhaseTestSuppressor(
         if (failedAssertions.isEmpty()) {
             return buildList {
                 with(testServices.moduleStructure.modules.first().directives) {
-                    addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_PHASE))
-                    addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE))
-                    addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_PHASE))
+                    with(customCompilerVersion) {
+                        addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_PHASE))
+                        addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE))
+                        addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_PHASE))
+                    }
                 }
-            }
+            }.map { it.wrap() }
         }
 
         val newFailedAssertions = failedAssertions.flatMap { wrappedException ->
@@ -69,17 +70,6 @@ class CustomKlibCompilerSecondPhaseTestSuppressor(
         } else {
             return newFailedAssertions
         }
-    }
-
-    context(directives: RegisteredDirectives)
-    private fun createUnmutingErrorIfNeeded(stringDirective: StringDirective): List<WrappedException> {
-        return if (customCompilerVersion in directives[stringDirective])
-            listOf(
-                AssertionError(
-                    "Looks like this test can be unmuted. Remove $customCompilerVersion from the $stringDirective directive"
-                ).wrap()
-            )
-        else emptyList()
     }
 
     private fun processException(wrappedException: WrappedException, ignoreDirective: StringDirective): List<WrappedException> {

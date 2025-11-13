@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstPhaseTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -33,6 +34,12 @@ open class AbstractCustomJsCompilerFirstPhaseTest : AbstractKotlinCompilerWithTa
             frontend = if (customJsCompilerSettings.defaultLanguageVersion.usesK2) FrontendKinds.FIR else FrontendKinds.ClassicFrontend
             targetPlatform = JsPlatforms.defaultJsPlatform
             dependencyKind = DependencyKind.Binary
+        }
+        defaultDirectives {
+            // `js-ir-minimal-for-test` must not be used in this test at all, so need to use `kotlin-test` library via `WITH_STDLIB` directive
+            // Note: attempt to use `js-ir-minimal-for-test` on 1st stage will cause unresolved symbol `kotlin.test/assertEquals|assertEquals(0:0;0:0;kotlin.String?){0§<kotlin.Any?>}[0]`
+            // on 2nd stage, since this symbol is absent in `kotlin-test` library.
+            +WITH_STDLIB
         }
 
         useConfigurators(
