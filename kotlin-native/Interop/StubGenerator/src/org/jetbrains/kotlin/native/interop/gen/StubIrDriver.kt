@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.native.interop.gen
 
+import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS
@@ -23,6 +24,7 @@ class StubIrContext(
         val generationMode: GenerationMode,
         val libName: String,
         val allowPrecompiledHeaders: Boolean,
+        val metadataVersion: KlibMetadataVersion,
 ) {
     val libraryForCStubs = configuration.library.copy(
             includes = mutableListOf<IncludeInfo>().apply {

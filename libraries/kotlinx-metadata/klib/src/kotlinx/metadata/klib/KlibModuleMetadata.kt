@@ -53,7 +53,8 @@ interface KlibModuleFragmentWriteStrategy {
 class KlibModuleMetadata(
     val name: String,
     val fragments: List<KmModuleFragment>,
-    val annotations: List<KmAnnotation>
+    val annotations: List<KmAnnotation>,
+    val metadataVersion: KlibMetadataVersion,
 ) {
 
     /**
@@ -62,7 +63,8 @@ class KlibModuleMetadata(
     class SerializedKlibMetadata(
         val header: ByteArray,
         val fragments: List<List<ByteArray>>,
-        val fragmentNames: List<String>
+        val fragmentNames: List<String>,
+        val metadataVersion: KlibMetadataVersion,
     )
 
     /**
@@ -70,6 +72,7 @@ class KlibModuleMetadata(
      */
     interface MetadataLibraryProvider {
         val moduleHeaderData: ByteArray
+        val metadataVersion: KlibMetadataVersion
         fun packageMetadataParts(fqName: String): Set<String>
         fun packageMetadata(fqName: String, partName: String): ByteArray
     }
@@ -94,7 +97,7 @@ class KlibModuleMetadata(
                     packageFragment.toKmModuleFragment(nameResolver, listOf(fileIndex))
                 }.let(readStrategy::processModuleParts)
             }
-            return KlibModuleMetadata(moduleHeader.moduleName, moduleFragments, moduleHeader.annotation)
+            return KlibModuleMetadata(moduleHeader.moduleName, moduleFragments, moduleHeader.annotation, library.metadataVersion)
         }
     }
 
@@ -130,7 +133,8 @@ class KlibModuleMetadata(
         return SerializedKlibMetadata(
             header.writeHeader(c).build().toByteArray(),
             groupedProtos.map { it.value.map(ProtoBuf.PackageFragment::toByteArray) },
-            header.packageFragmentName
+            header.packageFragmentName,
+            metadataVersion,
         )
     }
 }
