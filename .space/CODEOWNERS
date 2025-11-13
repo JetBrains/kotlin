@@ -289,6 +289,8 @@
 
 /js/ "Kotlin JS"
 /js/js.sourcemap/ "Kotlin JS" "Kotlin Wasm"
+/js/js.tests/klib-compatibility/ "Kotlin Common Backend"
+/js/js.tests/testFixtures/org/jetbrains/kotlin/js/test/klib/ "Kotlin Common Backend"
 /js/js.translator/testData/ "Kotlin JS" "Kotlin Wasm"
 
 /kotlin-js-store/ ilya.goncharov@jetbrains.com

@@ -251,6 +251,8 @@
 
 /js/ @JetBrains/kotlin-js
 /js/js.sourcemap/ @JetBrains/kotlin-js @JetBrains/kotlin-wasm
+/js/js.tests/klib-compatibility/ @JetBrains/kotlin-common-backend
+/js/js.tests/testFixtures/org/jetbrains/kotlin/js/test/klib/ @JetBrains/kotlin-common-backend
 /js/js.translator/testData/ @JetBrains/kotlin-js @JetBrains/kotlin-wasm
 
 /kotlin-js-store/ ilya.goncharov@jetbrains.com
