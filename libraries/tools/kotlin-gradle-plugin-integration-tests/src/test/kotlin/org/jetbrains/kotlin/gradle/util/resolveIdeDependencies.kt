@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinExtrasSerialization
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
@@ -25,6 +24,9 @@ import kotlin.test.fail
 private fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
 
 /* Test Utils / Test Infrastructure Implementation */
+
+// Using local constant to avoid relying on internal PropertiesProvider API from production code
+private const val KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES: String = "kotlin.internal.kmp.strictResolveIdeDependencies"
 
 internal fun TestProject.resolveIdeDependencies(
     subproject: String? = null,

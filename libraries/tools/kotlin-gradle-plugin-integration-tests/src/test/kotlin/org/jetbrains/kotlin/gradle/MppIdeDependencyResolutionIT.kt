@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportImpl
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -908,6 +909,135 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     FilePathRegex(".*/wasmJs/main")
                 )
             )
+        }
+    }
+
+    @GradleAndroidTest
+    fun `KT-81944 producer-consumer mpp with jvm+android+linux - metadata and ide resolution`(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        // Producer library project providing commonMain sources
+        val producer = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location,
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            addAgpToBuildScriptCompilationClasspath(agpVersion)
+
+            buildScriptInjection {
+                project.plugins.apply("com.android.library")
+                applyDefaultAndroidLibraryConfiguration()
+
+                project.applyMultiplatform {
+                    jvm()
+                    @Suppress("DEPRECATION")
+                    androidTarget()
+                    linuxX64()
+
+                    // Shared source set between JVM and Android
+                    val shared = sourceSets.create("jvmAndroidMain")
+                    sourceSets.getByName("jvmMain").dependsOn(shared)
+                    sourceSets.getByName("androidMain").dependsOn(shared)
+
+                    sourceSets.commonMain.get().compileSource("interface Producer")
+                }
+
+                // Configure Android flavors
+                androidLibrary.apply {
+                    flavorDimensions += "tier"
+                    productFlavors.create("free") { it.dimension = "tier" }
+                    productFlavors.create("paid") { it.dimension = "tier" }
+                }
+            }
+        }
+
+        // Consumer project depending on producer from commonMain
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location,
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            addAgpToBuildScriptCompilationClasspath(agpVersion)
+            include(producer, "producer")
+
+            buildScriptInjection {
+                project.plugins.apply("com.android.library")
+                applyDefaultAndroidLibraryConfiguration()
+
+                project.applyMultiplatform {
+                    jvm()
+                    @Suppress("DEPRECATION")
+                    androidTarget()
+                    linuxX64()
+
+                    // Shared source set between JVM and Android
+                    val shared = sourceSets.create("jvmAndroidMain")
+                    sourceSets.getByName("jvmMain").dependsOn(shared)
+                    sourceSets.getByName("androidMain").dependsOn(shared)
+
+                    // Consumer depends on producer from commonMain
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation(project(":producer"))
+                    }
+
+                    sourceSets.commonMain.get().compileSource("class Consumer : Producer")
+                }
+
+                // Configure Android flavors similarly to producer
+                androidLibrary.apply {
+                    flavorDimensions += "tier"
+                    productFlavors.create("free") { it.dimension = "tier" }
+                    productFlavors.create("paid") { it.dimension = "tier" }
+                }
+            }
+
+            // Verify that common metadata compilation works
+            build(":compileCommonMainKotlinMetadata") {
+                assertTasksExecuted(":compileCommonMainKotlinMetadata")
+            }
+
+            resolveIdeDependencies(
+                buildOptions = buildOptions.suppressAgpWarningSinceGradle814(
+                    gradleVersion,
+                    AgpCompatibilityMatrix.fromVersion(agpVersion)
+                )
+            ) { dependencies ->
+                dependencies["commonMain"].assertMatches(
+                    kotlinStdlibDependencies,
+                    regularSourceDependency(":producer/commonMain"),
+                )
+
+                /**
+                 * Resolvers from [org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver]
+                 * is not applicable for android-specific source sets. but it doesn't fail
+                 * but just returns "dependsOn" dependencies.
+                 */
+                dependencies["androidMain"].assertMatches(
+                    dependsOnDependency(":/commonMain"),
+                    dependsOnDependency(":/jvmAndroidMain"),
+                )
+
+                dependencies["jvmMain"].assertMatches(
+                    kotlinStdlibDependencies,
+                    jetbrainsAnnotationDependencies,
+                    dependsOnDependency(":/commonMain"),
+                    dependsOnDependency(":/jvmAndroidMain"),
+                    // FIXME: KT-74782 This is technically a bug, as we should expect that "kmp-lib" would be resolved
+                    //  as bunch of regular source dependencies. i.e. :producer:commonMain, jvmAndAndroid & jvmMain
+                    //  but IDEA is smart enough to convert this projectArtifactDependency to beforementioned source dependencies
+                    projectArtifactDependency(
+                        Regular,
+                        ":producer",
+                        FilePathRegex(".*/producer-jvm.jar")
+                    )
+                )
+            }
         }
     }
 
