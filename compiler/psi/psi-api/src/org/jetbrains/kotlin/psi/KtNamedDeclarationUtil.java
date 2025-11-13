@@ -20,16 +20,9 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 
 public final class KtNamedDeclarationUtil {
-    @Nullable
-    public static FqNameUnsafe getUnsafeFQName(@NotNull KtNamedDeclaration namedDeclaration) {
-        FqName fqName = namedDeclaration.getFqName();
-        return fqName != null ? fqName.toUnsafe() : null;
-    }
-
     @Nullable
     //NOTE: use JetNamedDeclaration#getFqName instead
     /*package private*/ static FqName getFQName(@NotNull KtNamedDeclaration namedDeclaration) {
