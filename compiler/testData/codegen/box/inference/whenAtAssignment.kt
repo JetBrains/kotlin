@@ -1,3 +1,5 @@
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE: 2.0.0 2.1.0 2.2.0
+// ^^^ KT-77008 is fixed in 2.3.0-Beta2
 // ISSUE: KT-77008
 
 interface I {
