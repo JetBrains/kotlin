@@ -63,7 +63,7 @@ dependencies {
 }
 
 val compiler = embeddableCompiler("kotlin-native-compiler-embeddable") {
-    from(kotlinNativeEmbedded)
+    configurations.set(setOf(kotlinNativeEmbedded))
     mergeServiceFiles()
 }
 

@@ -58,7 +58,7 @@ dependencies {
     compileOnly(gradleApi())
     val kotlinVersion = project.bootstrapKotlinVersion
     val slackApiVersion = "1.2.0"
-    val shadowVersion = "8.3.0"
+    val shadowVersion = "9.1.0"
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
     api("org.jetbrains.kotlin:kotlin-native-utils:${kotlinVersion}")

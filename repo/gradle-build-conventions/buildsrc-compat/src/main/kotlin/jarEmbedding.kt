@@ -7,6 +7,7 @@ import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -54,6 +55,8 @@ fun Project.validateEmbeddedJarClasspathUsingProguard(
     runtimeClasspath: ConfigurableFileCollection,
     proguardConfiguration: RegularFile,
 ) = tasks.register("validateEmbeddedJarClasspathUsingProguard", CacheableProguardTask::class) {
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = "Validates correctness of jar artifact produced by ${embeddedJar.name}"
     outputs.cacheIf { false }
     outputs.upToDateWhen { false }
 

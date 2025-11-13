@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import gradle.commonSourceSetName
 import gradle.GradlePluginVariant
 import gradle.publishGradlePluginsJavadoc
@@ -25,7 +26,6 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -681,9 +681,10 @@ fun Project.publishShadowedJar(
 ) {
     val jarTask = tasks.named<Jar>(sourceSet.jarTaskName)
 
-    val shadowJarTask = embeddableCompilerDummyForDependenciesRewriting(
-        taskName = "$EMBEDDABLE_COMPILER_TASK_NAME${sourceSet.jarTaskName.replaceFirstChar { it.uppercase() }}"
+    val shadowJarTask = tasks.register<ShadowJar>(
+        "$EMBEDDABLE_COMPILER_TASK_NAME${sourceSet.jarTaskName.replaceFirstChar { it.uppercase() }}"
     ) {
+        destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
         setupPublicJar(
             jarTask.flatMap { it.archiveBaseName },
             jarTask.flatMap { it.archiveClassifier }
@@ -693,13 +694,7 @@ fun Project.publishShadowedJar(
         from(sourceSet.output)
         from(commonSourceSet.output)
 
-        // When Gradle traverses the inputs, reject the shaded compiler JAR,
-        // which leads to the content of that JAR being excluded as well:
-        exclude {
-            // Docstring says `file` never returns null, but it does
-            @Suppress("UNNECESSARY_SAFE_CALL")
-            it.file?.name?.startsWith("kotlin-compiler-embeddable") ?: false
-        }
+        configureEmbeddableCompilerRelocation(withJavaxInject = false)
     }
 
     // Removing artifact produced by Jar task

@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.zip.ZipFile
 
 plugins {
@@ -98,7 +99,9 @@ sourceSets {
     "test" {}
 }
 
-val swiftExportEmbeddableJar = runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
+val swiftExportEmbeddableJar = runtimeJarWithRelocation {
+    configureEmbeddableCompilerRelocation()
+}
 registerSwiftExportEmbeddableValidationTasks(swiftExportEmbeddableJar)
 
 sourcesJar { exclude("**") } // empty Jar, no public sources
@@ -161,37 +164,33 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
     dependencies.add(project.dependencies.project(":native:swift:swift-export-standalone-integration-tests"))
 }
 
-val shadedIntransitiveTestDependenciesJar = rewriteDepsToShadedJar(
-    files(
+val shadedIntransitiveTestDependenciesJar = tasks.register<ShadowJar>("shadedTestDependencies") {
+    destinationDirectory.set(project.layout.buildDirectory.dir("testDependenciesShaded"))
+    configurations.addAll(
         intransitiveTestDependenciesJars,
         swiftExportStandaloneSimpleIT,
         swiftExportStandaloneExternalIT,
         swiftExportStandaloneCoroutinesIT,
-    ),
-    embeddableCompilerDummyForDependenciesRewriting("shadedTestDependencies") {
-        destinationDirectory.set(project.layout.buildDirectory.dir("testDependenciesShaded"))
-    }
-).apply {
-    configure {
-        // ShadowJar doesn't handle duplicates from embedded jars
-        // duplicatesStrategy = DuplicatesStrategy.FAIL
-        val intransitiveTestDependenciesJarFiles = files(intransitiveTestDependenciesJars)
-        doFirst {
-            val permittedDuplicates = setOf(
-                "META-INF/MANIFEST.MF",
-                "META-INF/versions/9/module-info.class",
-                "com/intellij/testFramework/TestDataPath.class",
-            )
-            val duplicates = intransitiveTestDependenciesJarFiles.flatMap { jar ->
-                ZipFile(jar).use { zip ->
-                    zip.entries().asSequence().filterNot { it.isDirectory || it.name in permittedDuplicates }.map { it.name }.toList()
-                }.map { path ->
-                    path to jar
-                }
-            }.groupBy({ it.first }, { it.second }).filterValues { it.size > 1 }
-            if (duplicates.isNotEmpty()) {
-                error(duplicates.map { "${it.key}:\n${it.value.joinToString("\n") { "  ${it}" }}" }.joinToString("\n\n"))
+    )
+    configureEmbeddableCompilerRelocation()
+    // ShadowJar doesn't handle duplicates from embedded jars
+    // duplicatesStrategy = DuplicatesStrategy.FAIL
+    val intransitiveTestDependenciesJarFiles = files(intransitiveTestDependenciesJars)
+    doFirst {
+        val permittedDuplicates = setOf(
+            "META-INF/MANIFEST.MF",
+            "META-INF/versions/9/module-info.class",
+            "com/intellij/testFramework/TestDataPath.class",
+        )
+        val duplicates = intransitiveTestDependenciesJarFiles.flatMap { jar ->
+            ZipFile(jar).use { zip ->
+                zip.entries().asSequence().filterNot { it.isDirectory || it.name in permittedDuplicates }.map { it.name }.toList()
+            }.map { path ->
+                path to jar
             }
+        }.groupBy({ it.first }, { it.second }).filterValues { it.size > 1 }
+        if (duplicates.isNotEmpty()) {
+            error(duplicates.map { "${it.key}:\n${it.value.joinToString("\n") { "  ${it}" }}" }.joinToString("\n\n"))
         }
     }
 }

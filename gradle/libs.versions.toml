@@ -15,7 +15,8 @@ kotlinx-serialization = "1.7.3"
 # Version of the coroutines should be aligned with the oldest supported IntelliJ IDEA. Intellij IDEA uses 1.6 since 2022.3
 # Check the version in this file: https://github.com/JetBrains/intellij-community/blob/cc37866d3827c51712f9856f5e580d405784d1ef/.idea/libraries/kotlinx_coroutines_core.xml
 kotlinx-coroutines = "1.8.0"
-shadow = "8.3.0" # Should be in sync with version in kotlin-native/
+# 9.2.+ could not be applied because of https://github.com/GradleUp/shadow/issues/1874
+shadow = "9.1.0" # Should be in sync with version in kotlin-native/
 spdx = "0.10.0-dev-15"
 proguard = "7.4.2"
 ktor = "3.1.3"
