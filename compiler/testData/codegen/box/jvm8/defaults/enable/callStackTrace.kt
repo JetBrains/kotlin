@@ -3,6 +3,8 @@
 // FULL_JDK
 // WITH_STDLIB
 // JVM_TARGET: 1.8
+// IGNORE_HEADER_MODE: JVM_IR
+//   Reason: KT-82408
 // FILE: Simple.java
 
 public interface Simple extends KInterface {

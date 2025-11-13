@@ -2,6 +2,8 @@
 // LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
+// IGNORE_HEADER_MODE: JVM_IR
+//   Reason: KT-82311
 
 @JvmInline
 value class IC1<T : Number>(val x: T) {

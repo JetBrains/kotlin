@@ -1,6 +1,8 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 // WITH_COROUTINES
+// IGNORE_HEADER_MODE: JVM_IR
+//   Reason: KT-82376
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

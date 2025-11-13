@@ -2,6 +2,8 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // WITH_STDLIB
+// IGNORE_HEADER_MODE: JVM_IR
+//   Reason: KT-82408
 // FILE: Simple.java
 
 public interface Simple extends KInterface2 {
