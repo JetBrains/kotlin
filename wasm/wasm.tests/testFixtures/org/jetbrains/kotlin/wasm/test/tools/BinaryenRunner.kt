@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.tools
 
-import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
+import org.jetbrains.kotlin.platform.wasm.binaryenArgs
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.writeTo
@@ -21,7 +21,7 @@ sealed interface WasmOptimizer {
         private val binaryenPath = System.getProperty("binaryen.path")
 
         override fun run(wasmInput: WasmBinaryData, withText: Boolean): OptimizationResult {
-            val command = arrayOf(binaryenPath, *BinaryenConfig.binaryenArgs.toTypedArray())
+            val command = arrayOf(binaryenPath, *binaryenArgs().toTypedArray())
             return OptimizationResult(
                 exec(command, wasmInput).let { WasmBinaryData(it, it.size) },
                 runIf(withText) { exec(command + "-S", wasmInput).toString(Charsets.UTF_8) }

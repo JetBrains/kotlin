@@ -5,40 +5,41 @@
 
 package org.jetbrains.kotlin.platform.wasm
 
-object BinaryenConfig {
-    val binaryenArgs = listOf(
-        // Proposals
-        "--enable-gc",
-        "--enable-reference-types",
-        "--enable-exception-handling",
-        "--enable-bulk-memory",  // For array initialization from data sections
+fun binaryenArgs(closedWorld: Boolean = true) = listOf(
+    // Proposals
+    "--enable-gc",
+    "--enable-reference-types",
+    "--enable-exception-handling",
+    "--enable-bulk-memory",  // For array initialization from data sections
 
-        // Other options
-        "--enable-nontrapping-float-to-int",
-        "--closed-world",
+    // Other options
+    "--enable-nontrapping-float-to-int",
 
-        // Optimizations:
-        // Note the order and repetition of the next options matter.
-        //
-        // About Binaryen optimizations:
-        // GC Optimization Guidebook -- https://github.com/WebAssembly/binaryen/wiki/GC-Optimization-Guidebook
-        // Optimizer Cookbook -- https://github.com/WebAssembly/binaryen/wiki/Optimizer-Cookbook
-        //
-        "--no-inline=kotlin.wasm.internal.throwValue",
-        "--no-inline=kotlin.wasm.internal.getKotlinException",
-        "--no-inline=kotlin.wasm.internal.jsToKotlinStringAdapter",
-        "--inline-functions-with-loops",
-        "--traps-never-happen",
-        "--fast-math",
-        // without "--type-merging" it produces increases the size
-        "--type-ssa",
-        "-O3",
-        "-O3",
+    // Optimizations:
+    // Note the order and repetition of the next options matter.
+    //
+    // About Binaryen optimizations:
+    // GC Optimization Guidebook -- https://github.com/WebAssembly/binaryen/wiki/GC-Optimization-Guidebook
+    // Optimizer Cookbook -- https://github.com/WebAssembly/binaryen/wiki/Optimizer-Cookbook
+    //
+    "--no-inline=kotlin.wasm.internal.throwValue",
+    "--no-inline=kotlin.wasm.internal.getKotlinException",
+    "--no-inline=kotlin.wasm.internal.jsToKotlinStringAdapter",
+    "--inline-functions-with-loops",
+    "--traps-never-happen",
+    "--fast-math",
+    // without "--type-merging" it produces increases the size
+    "--type-ssa",
+    "-O3",
+    "-O3",
+) + if (closedWorld) {
+    listOf(
         "--gufa",
         "-O3",
+        "--closed-world",
         // requires --closed-world
         "--type-merging",
         "-O3",
         "-Oz",
     )
-}
+} else emptyList()

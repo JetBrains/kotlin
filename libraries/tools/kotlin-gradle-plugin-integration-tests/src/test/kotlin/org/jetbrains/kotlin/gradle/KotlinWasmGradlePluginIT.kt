@@ -30,8 +30,67 @@ import kotlin.io.path.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(
+            wasmOptions = BuildOptions.WasmOptions(perModule = false)
+        )
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Different binaryen versions per project")
+    @GradleTest
+    fun testDifferentBinaryenVersions(gradleVersion: GradleVersion) {
+        project("wasm-browser-several-modules", gradleVersion) {
+            val binaryenVersionForFoo = "123"
+            val binaryenVersionForBar = "119"
+            subProject("foo").let {
+                it.buildScriptInjection {
+                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set(binaryenVersionForFoo)
+                }
+            }
+
+            subProject("bar").let {
+                it.buildScriptInjection {
+                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set(binaryenVersionForBar)
+                }
+            }
+
+            build(":foo:compileProductionExecutableKotlinWasmJsOptimize") {
+                assertOutputContains(
+                    Path("binaryen-version_$binaryenVersionForFoo").resolve("bin").resolve("wasm-opt").pathString
+                )
+            }
+
+            build(":bar:compileProductionExecutableKotlinWasmJsOptimize") {
+                assertOutputContains(
+                    Path("binaryen-version_$binaryenVersionForBar").resolve("bin").resolve("wasm-opt").pathString
+                )
+            }
+        }
+    }
+
+    @DisplayName("Check js target with browser")
+    @GradleTest
+    fun jsTargetWithBrowser(gradleVersion: GradleVersion) {
+        jsTargetWithBrowser(gradleVersion, 1)
+    }
+}
+
+class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(
+            wasmOptions = BuildOptions.WasmOptions(perModule = true)
+        )
+
+    @DisplayName("Check js target with browser")
+    @GradleTest
+    fun jsTargetWithBrowser(gradleVersion: GradleVersion) {
+        jsTargetWithBrowser(gradleVersion, 2)
+    }
+}
+
 @MppGradlePluginTests
-class KotlinWasmGradlePluginIT : KGPBaseTest() {
+abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
@@ -201,9 +260,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Check js target with browser")
-    @GradleTest
-    fun jsTargetWithBrowser(gradleVersion: GradleVersion) {
+    protected fun jsTargetWithBrowser(gradleVersion: GradleVersion, filesCount: Int) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
                 it.replace("<JsEngine>", "browser")
@@ -231,10 +288,10 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                     "src/wasmJsMain/kotlin/foo.kt"
                 )
 
-                assertTrue("Expected one wasm file") {
+                assertTrue("Expected ${filesCount} wasm file") {
                     projectPath.resolve("build/${Distribution.DIST}/wasmJs/productionExecutable").toFile().listFiles()!!
                         .filter { it.extension == "wasm" }
-                        .size == 1
+                        .size == filesCount
                 }
             }
 
@@ -251,10 +308,10 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js")
                 assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js.map")
 
-                assertTrue("Expected one wasm file") {
+                assertTrue("Expected ${filesCount} wasm file") {
                     projectPath.resolve("build/${Distribution.DIST}/wasmJs/productionExecutable").toFile().listFiles()!!
                         .filter { it.extension == "wasm" }
-                        .size == 1
+                        .size == filesCount
                 }
             }
 
@@ -492,39 +549,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             )
 
             build("help")
-        }
-    }
-
-    @OptIn(ExperimentalWasmDsl::class)
-    @DisplayName("Different binaryen versions per project")
-    @GradleTest
-    fun testDifferentBinaryenVersions(gradleVersion: GradleVersion) {
-        project("wasm-browser-several-modules", gradleVersion) {
-            val binaryenVersionForFoo = "123"
-            val binaryenVersionForBar = "119"
-            subProject("foo").let {
-                it.buildScriptInjection {
-                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set(binaryenVersionForFoo)
-                }
-            }
-
-            subProject("bar").let {
-                it.buildScriptInjection {
-                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set(binaryenVersionForBar)
-                }
-            }
-
-            build(":foo:compileProductionExecutableKotlinWasmJsOptimize") {
-                assertOutputContains(
-                    Path("binaryen-version_$binaryenVersionForFoo").resolve("bin").resolve("wasm-opt").pathString
-                )
-            }
-
-            build(":bar:compileProductionExecutableKotlinWasmJsOptimize") {
-                assertOutputContains(
-                    Path("binaryen-version_$binaryenVersionForBar").resolve("bin").resolve("wasm-opt").pathString
-                )
-            }
         }
     }
 

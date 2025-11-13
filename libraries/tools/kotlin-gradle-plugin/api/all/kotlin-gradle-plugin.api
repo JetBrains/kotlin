@@ -3063,6 +3063,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/ir/WasmBi
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getOptimizeTask ()Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun getOutputDirBase ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getWasmBinaryConfigurationName ()Ljava/lang/String;
+	public abstract fun getWasmBinaryOutputConfigurationName ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary$DefaultImpls {
+	public static fun getWasmBinaryConfigurationName (Lorg/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary;)Ljava/lang/String;
+	public static fun getWasmBinaryOutputConfigurationName (Lorg/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary;)Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/WebpackConfigurator : org/jetbrains/kotlin/gradle/targets/js/ir/SubTargetConfigurator {
@@ -5441,6 +5448,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/Binaryen
 	public fun <init> ()V
 	protected fun exec ()V
 	public final fun getBinaryenArgs ()Ljava/util/List;
+	public final fun getBinaryenArguments ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getFs ()Lorg/gradle/api/file/FileSystemOperations;
 	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
 	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
