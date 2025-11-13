@@ -21,7 +21,7 @@ class StubIrMetadataEmitter(
     fun emit(): KlibModuleMetadata {
         val annotations = emptyList<KmAnnotation>()
         val fragments = emitModuleFragments()
-        return KlibModuleMetadata(moduleName, fragments, annotations)
+        return KlibModuleMetadata(moduleName, fragments, annotations, context.metadataVersion)
     }
 
     private fun emitModuleFragments(): List<KmModuleFragment> =
