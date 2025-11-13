@@ -56,6 +56,7 @@ class CustomWebCompilerFirstPhaseFacade(testServices: TestServices) : CustomKlib
                     // Some of the test data files have declarations in the `kotlin` package.
                     // To avoid just suppressing such tests, we allow compiling with the `kotlin` package.
                     CommonCompilerArguments::allowKotlinPackage.cliArgument,
+                    CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
                 ),
                 runIf(regularDependencies.isNotEmpty()) {
                     listOf(
