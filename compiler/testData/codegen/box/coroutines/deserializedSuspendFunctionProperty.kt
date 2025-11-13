@@ -1,5 +1,8 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE: 1.9.20
+// ^^^KT-64148 is fixed in 2.0.0-Beta3
+
 // MODULE: m1
 // FILE: m1.kt
 typealias GivenLambda<ParentGivenType, GivenType> =

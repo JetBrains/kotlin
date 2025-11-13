@@ -30,8 +30,15 @@ class CustomKlibCompilerFirstPhaseTestSuppressor(
         get() = listOf(CustomKlibCompilerTestDirectives)
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        if (failedAssertions.isEmpty())
-            return emptyList()
+        if (failedAssertions.isEmpty()) {
+            return buildList {
+                with(testServices.moduleStructure.modules.first().directives) {
+                    with(customCompilerVersion) {
+                        addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE))
+                    }
+                }
+            }.map { it.wrap() }
+        }
 
         val newFailedAssertions = failedAssertions.asSequence().flatMap { wrappedException ->
             if (wrappedException is WrappedException.FromFacade) {
@@ -111,12 +118,7 @@ class CustomKlibCompilerFirstPhaseTestSuppressor(
                 return emptyList()
         }
 
-        return listOf(
-            wrappedException,
-            AssertionError(
-                "Looks like this test can be unmuted. Remove $customCompilerVersion from the $IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE directive"
-            ).wrap()
-        )
+        return listOf(wrappedException)
     }
 
     companion object {

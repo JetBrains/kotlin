@@ -1,4 +1,6 @@
 // ISSUE: KT-55318
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE: 1.9.20
+// ^^^KT-55318 is fixed in 2.0.0-Beta1
 
 // MODULE: lib
 // FILE: lib.kt
