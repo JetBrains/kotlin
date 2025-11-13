@@ -138,6 +138,7 @@ abstract class KtCodeFragment(
             clearCaches()
 
             if (notifyChanged) {
+                @OptIn(KtImplementationDetail::class)
                 project.messageBus.syncPublisher(IMPORT_MODIFICATION).onCodeFragmentImportsModification(this)
             }
         }
@@ -221,7 +222,7 @@ abstract class KtCodeFragment(
     companion object {
         const val IMPORT_SEPARATOR: String = ","
 
-        @Suppress("UnstableApiUsage")
+        @KtImplementationDetail
         val IMPORT_MODIFICATION: Topic<KotlinCodeFragmentImportModificationListener> =
             Topic(KotlinCodeFragmentImportModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 

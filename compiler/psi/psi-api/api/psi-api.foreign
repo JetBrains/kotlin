@@ -53,7 +53,6 @@ com/intellij/psi/tree/TokenSet
 com/intellij/util/ArrayFactory
 com/intellij/util/IncorrectOperationException
 com/intellij/util/diff/FlyweightCapableTreeStructure
-com/intellij/util/messages/Topic
 javax/swing/Icon
 org/jetbrains/kotlin/KtSourceElement
 org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget

@@ -1129,7 +1129,6 @@ public abstract class org/jetbrains/kotlin/psi/KtCodeFragment : org/jetbrains/ko
 
 public final class org/jetbrains/kotlin/psi/KtCodeFragment$Companion {
 	public final fun getFAKE_CONTEXT_FOR_JAVA_FILE ()Lcom/intellij/openapi/util/Key;
-	public final fun getIMPORT_MODIFICATION ()Lcom/intellij/util/messages/Topic;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/KtCodeFragmentBase : com/intellij/psi/JavaCodeFragment {

@@ -69,7 +69,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         )
 
         project.messageBus.connect(this).subscribe(
-            KtCodeFragment.IMPORT_MODIFICATION,
+            @OptIn(KtImplementationDetail::class) KtCodeFragment.IMPORT_MODIFICATION,
             KotlinCodeFragmentImportModificationListener { codeFragment -> handleOutOfBlockModification(codeFragment) }
         )
     }
