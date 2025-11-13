@@ -172,31 +172,10 @@ void mm::ExternalRCRefImpl::retainRef() noexcept {
 }
 
 void mm::ExternalRCRefImpl::releaseRef() noexcept {
-    if (gc::barriers::ExternalRCRefReleaseGuard::isNoop()) {
         auto rcBefore = rc_.fetch_sub(1, std::memory_order_relaxed);
         RuntimeAssert(
                 rcBefore > 0, "Releasing ExternalRCRefImpl@%p(%p %s) with rc %d", this, obj_, obj_->type_info()->fqName().c_str(),
                 rcBefore);
-    } else {
-        // A 1->0 release is potentially a removal from global root set.
-        // The CMS GC scans global root set concurrently. A guard is required.
-        auto rcBefore = rc_.load(std::memory_order_relaxed);
-        while (true) {
-            std::optional<gc::barriers::ExternalRCRefReleaseGuard> guard;
-            if (rcBefore == 1) {
-                // The guard is only required in case of the last reference release (0->1).
-                // We avoid it in all other cases, as the guard can be quite an overhead: e.g. taking the GC lock.
-                // We also drop the guard if CAS below fails and we retry. This way, the GC will be allowed to take the lock
-                // sooner. This does, however, hurt a thread that failed to decrement, because it may have to wait for the GC.
-                guard = gc::barriers::ExternalRCRefReleaseGuard{mm::DirectRefAccessor{obj_}};
-            }
-            if (rc_.compare_exchange_strong(rcBefore, rcBefore - 1, std::memory_order_relaxed)) break;
-        }
-
-        RuntimeAssert(
-                rcBefore > 0, "Releasing ExternalRCRefImpl@%p(%p %s) with rc %d", this, obj_, obj_->type_info()->fqName().c_str(),
-                rcBefore);
-    }
 }
 
 // static
