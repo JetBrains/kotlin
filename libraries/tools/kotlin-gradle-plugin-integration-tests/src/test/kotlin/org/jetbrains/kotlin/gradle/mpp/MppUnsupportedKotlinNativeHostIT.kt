@@ -19,14 +19,16 @@ import org.junit.jupiter.api.DisplayName
 class MppUnsupportedKotlinNativeHostIT : KGPBaseTest() {
 
     /**
-     * A list of JVM system property arguments used to specify unsupported native host platforms.
-     * These parameters configure the operating system name and architecture to unsupported values,
-     * such as Linux with a RISC-V64 architecture.
-     *
-     * This list is utilized in tests to verify behaviors when the native host platform is
-     * explicitly unsupported within the testing configuration.
+     * Defines the parameters for a Linux RISCV64 host environment.
+     * These parameters are used to specify the operating system name and architecture.
      */
-    private val unsupportedHostParameters = listOf("-Dos.name=Linux", "-Dos.arch=riscv64")
+    private val linuxRiscv64HostParameters = listOf("-Dos.name=Linux", "-Dos.arch=riscv64")
+
+    /**
+     * Defines the parameters for a Linux Arm64 host environment.
+     * These parameters are used to specify the operating system name and architecture.
+     */
+    private val linuxArm64HostParameters = listOf("-Dos.name=Linux", "-Dos.arch=aarch64")
 
     @OptIn(ExperimentalWasmDsl::class)
     @DisplayName("Build multiplatform project should not fail on unsupported native host platforms")
@@ -73,21 +75,21 @@ class MppUnsupportedKotlinNativeHostIT : KGPBaseTest() {
             }
 
             // JVM and JS compile
-            var args = listOf(":compileKotlinJvm") + unsupportedHostParameters
+            var args = listOf(":compileKotlinJvm") + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksExecuted(":compileKotlinJvm")
                 verifyDiagnostics()
                 assertDirectoryInProjectExists("build/classes/kotlin/jvm/main")
             }
 
-            args = listOf(":compileKotlinJs") + unsupportedHostParameters
+            args = listOf(":compileKotlinJs") + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksExecuted(":compileKotlinJs")
                 verifyDiagnostics()
                 assertDirectoryInProjectExists("build/classes/kotlin/js/main")
             }
 
-            args = listOf(":compileKotlinWasmJs") + unsupportedHostParameters
+            args = listOf(":compileKotlinWasmJs") + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksExecuted(":compileKotlinWasmJs")
                 verifyDiagnostics()
@@ -95,26 +97,26 @@ class MppUnsupportedKotlinNativeHostIT : KGPBaseTest() {
             }
 
             // Native compile
-            args = listOf(":compileKotlinLinuxX64") + unsupportedHostParameters
+            args = listOf(":compileKotlinLinuxX64") + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(":compileKotlinLinuxX64")
                 verifyDiagnostics()
             }
 
-            args = listOf(":compileKotlinMacosArm64") + unsupportedHostParameters
+            args = listOf(":compileKotlinMacosArm64") + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(":compileKotlinMacosArm64")
                 verifyDiagnostics()
             }
 
-            args = listOf(":compileKotlinMingwX64") + unsupportedHostParameters
+            args = listOf(":compileKotlinMingwX64") + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(":compileKotlinMingwX64")
                 verifyDiagnostics()
             }
 
             // Assemble
-            args = listOf(":assemble") + unsupportedHostParameters
+            args = listOf(":assemble") + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(
                     ":compileKotlinMingwX64",
@@ -136,6 +138,42 @@ class MppUnsupportedKotlinNativeHostIT : KGPBaseTest() {
                     ":downloadKotlinNativeDistribution"
                 )
                 verifyDiagnostics()
+            }
+        }
+    }
+
+    @DisplayName("KT-81443 `ConfigurationCacheError` on Linux arm64 due to disabled iOS targets")
+    @GradleTest
+    fun testConfigurationCacheOnUnsupportedHostPlatform(
+        gradleVersion: GradleVersion,
+    ) {
+        project(
+            "empty",
+            gradleVersion
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "mpp"
+            }
+            buildScriptInjection {
+                with(project) {
+                    applyMultiplatform {
+                        jvm()
+                        iosArm64().binaries.framework()
+
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+
+                        sourceSets.jvmMain.get().compileStubSourceWithSourceSetName()
+                        sourceSets.iosMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+
+            val args = listOf(":build") + linuxArm64HostParameters
+            build(*args.toTypedArray()) {
+                assertTasksExecuted(":build")
             }
         }
     }
