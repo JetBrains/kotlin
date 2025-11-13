@@ -31,7 +31,7 @@ class Config(
 ) {
     companion object {
         val DEFAULT = Config(
-            maximumStackDepth = 500,
+            maximumStackDepth = 200,
             mainLoopRepeatCount = 100000,
             maxThreadCount = 100,
             memoryPressureHazardZoneBytes = 2.5.GiB..3.0.GiB,
