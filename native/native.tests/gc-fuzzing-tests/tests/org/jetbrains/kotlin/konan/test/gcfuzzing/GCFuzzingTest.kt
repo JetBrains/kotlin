@@ -34,12 +34,13 @@ class GCFuzzingTest : AbstractNativeSimpleTest() {
         val timelimit = Duration.parse(System.getProperty("gcfuzzing.timelimit")!!)
         val start = TimeSource.Monotonic.markNow()
 
-        val fuzzer = SimpleFuzzer(0)
+        val seed = System.getProperty("gcfuzzing.seed")!!.toInt()
+        val fuzzer = SimpleFuzzer(seed)
         var stepCounter = 0
         return generateSequence {
             if (start.elapsedNow() > timelimit) return@generateSequence null
             val stepId = fuzzer.nextStepId()
-            DynamicTest.dynamicTest("step #${stepCounter++} ($stepId)") {
+            DynamicTest.dynamicTest("SimpleFuzzer($seed) step #${stepCounter++} ($stepId)") {
                 execute(stepId)
             }
         }.asStream()

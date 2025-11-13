@@ -1,3 +1,5 @@
+import kotlin.random.Random
+
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
@@ -32,5 +34,6 @@ projectTests {
             systemProperty("gcfuzzing.id", it)
         }
         systemProperty("gcfuzzing.timelimit", project.findProperty("gcfuzzing.timelimit") ?: "1h")
+        systemProperty("gcfuzzing.seed", project.findProperty("gcfuzzing.seed") ?: Random.nextInt())
     }
 }
