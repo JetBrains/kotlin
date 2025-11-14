@@ -111,6 +111,7 @@ public fun <@OnlyInputTypes T> assertNotSame(illegal: T, actual: T, message: Str
 @SinceKotlin("1.5")
 @InlineOnly
 @OptIn(ExperimentalStdlibApi::class)
+@IgnorableReturnValue
 public inline fun <reified T> assertIs(value: Any?, message: String? = null): T {
     contract { returns() implies (value is T) }
     assertIsOfType(value, typeOf<T>(), value is T, message)
