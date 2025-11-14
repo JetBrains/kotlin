@@ -278,8 +278,8 @@ private fun IrFunction.fromStdlib(): Boolean {
     // Since there can be libraries, which use -Xallow-kotlin-package, check, that the top-level declaration has @SinceKotlin
     if (hasAnnotation(SINCE_KOTLIN_FQ_NAME)) return true
     var cursor: IrDeclaration = this
-    while (cursor.parentClassOrNull != null) {
-        cursor = cursor.parentAsClass
+    while (true) {
+        if (cursor.hasAnnotation(SINCE_KOTLIN_FQ_NAME)) return true
+        cursor = cursor.parentClassOrNull ?: return false
     }
-    return cursor.hasAnnotation(SINCE_KOTLIN_FQ_NAME)
 }
