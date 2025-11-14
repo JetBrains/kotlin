@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger.BlockElemen
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogVariableInfo
 import org.jetbrains.kotlin.resolve.calls.inference.components.LegacyVariableReadinessCalculator
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewVariableReadinessCalculator
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewVariableReadinessCalculator.TypeVariableFixationReadinessQuality
+import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator.TypeVariableFixationReadinessQuality
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
@@ -136,7 +136,7 @@ abstract class FirInferenceLogsDumper {
         val linePadding = " ".repeat(paddingSize)
 
         return when (val readiness = readiness) {
-            is NewVariableReadinessCalculator.TypeVariableFixationReadiness -> {
+            is VariableReadinessCalculator.TypeVariableFixationReadiness -> {
                 val qualities = TypeVariableFixationReadinessQuality.entries.joinToString("") {
                     "\n$linePadding\t" + (if (readiness[it]) " true " else "false ") + it.name
                 }

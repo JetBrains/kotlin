@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.VariableForFixation
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewVariableReadinessCalculator.TypeVariableFixationReadinessQuality as Q
+import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator.TypeVariableFixationReadinessQuality as Q
 
-class NewVariableReadinessCalculator(
+class VariableReadinessCalculator(
     trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     languageVersionSettings: LanguageVersionSettings,
     inferenceLoggerParameter: InferenceLogger? = null,
-) : VariableReadinessCalculator<NewVariableReadinessCalculator.TypeVariableFixationReadiness>(
+) : AbstractVariableReadinessCalculator<VariableReadinessCalculator.TypeVariableFixationReadiness>(
     trivialConstraintTypeInferenceOracle,
     languageVersionSettings,
     inferenceLoggerParameter,

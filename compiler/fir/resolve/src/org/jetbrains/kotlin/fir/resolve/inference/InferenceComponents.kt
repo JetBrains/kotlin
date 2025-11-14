@@ -43,7 +43,7 @@ class InferenceComponents(override val session: FirSession) : FirSessionComponen
         ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
     val variableFixationFinder: VariableFixationFinder = run {
         val variableReadinessCalculatorBuilder =
-            ::NewVariableReadinessCalculator.takeIf { LanguageFeature.LexicographicVariableReadinessCalculation.isEnabled() }
+            ::VariableReadinessCalculator.takeIf { LanguageFeature.LexicographicVariableReadinessCalculation.isEnabled() }
                 ?: ::LegacyVariableReadinessCalculator
 
         VariableFixationFinder.Default(

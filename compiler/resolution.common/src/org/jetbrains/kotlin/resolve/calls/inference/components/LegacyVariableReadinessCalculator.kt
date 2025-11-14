@@ -16,7 +16,7 @@ class LegacyVariableReadinessCalculator(
     trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     languageVersionSettings: LanguageVersionSettings,
     inferenceLoggerParameter: InferenceLogger? = null,
-) : VariableReadinessCalculator<LegacyVariableReadinessCalculator.TypeVariableFixationReadiness>(
+) : AbstractVariableReadinessCalculator<LegacyVariableReadinessCalculator.TypeVariableFixationReadiness>(
     trivialConstraintTypeInferenceOracle,
     languageVersionSettings,
     inferenceLoggerParameter,

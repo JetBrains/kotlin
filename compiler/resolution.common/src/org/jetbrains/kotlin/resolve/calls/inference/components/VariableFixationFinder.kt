@@ -29,7 +29,7 @@ import kotlin.collections.component2
 @DefaultImplementation(VariableFixationFinder.DefaultForK1DependencyInjection::class)
 abstract class VariableFixationFinder(
     private val languageVersionSettings: LanguageVersionSettings,
-    private val variableReadinessCalculator: VariableReadinessCalculator<*>,
+    private val variableReadinessCalculator: AbstractVariableReadinessCalculator<*>,
 ) {
     /**
      * Only used by the dependency injection in K1.
@@ -45,7 +45,7 @@ abstract class VariableFixationFinder(
 
     class Default(
         languageVersionSettings: LanguageVersionSettings,
-        variableReadinessCalculator: VariableReadinessCalculator<*>,
+        variableReadinessCalculator: AbstractVariableReadinessCalculator<*>,
     ) : VariableFixationFinder(
         languageVersionSettings,
         variableReadinessCalculator,
@@ -130,7 +130,7 @@ abstract class VariableFixationFinder(
     }
 }
 
-abstract class VariableReadinessCalculator<Readiness : Comparable<Readiness>>(
+abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readiness>>(
     private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     private val languageVersionSettings: LanguageVersionSettings,
     inferenceLoggerParameter: InferenceLogger? = null,
