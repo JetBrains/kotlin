@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.ir.ByteWriterWithOffsetWrite
+import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.toByteArray
 import org.jetbrains.kotlin.wasm.ir.WasmExport
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
@@ -210,11 +212,11 @@ fun compileWasm(
         null
     }
 
-    val os = ByteArrayOutputStream()
+    val writer = ByteWriterWithOffsetWrite.makeNew()
 
     val wasmIrToBinary =
         WasmIrToBinary(
-            os,
+            writer,
             linkedModule,
             moduleName,
             emitNameSection,
@@ -226,7 +228,7 @@ fun compileWasm(
 
     wasmIrToBinary.appendWasmModule()
 
-    val byteArray = os.toByteArray()
+    val byteArray = writer.getBinaryData().toByteArray()
     val jsWrapper: String
     val dynamicJsModules = mutableListOf<DynamicJsModule>()
 

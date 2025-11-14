@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.wasm.serialization
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.*
-import org.jetbrains.kotlin.wasm.ir.convertors.ByteWriter
+import org.jetbrains.kotlin.wasm.ir.ByteWriter
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
@@ -97,7 +97,7 @@ class WasmSerializer(outputStream: OutputStream) {
      *  need to defer writing the body until the reference table is created and written.
      */
     private val bodyBuffer = ByteArrayOutputStream()
-    private val body = ByteWriter.OutputStream(bodyBuffer)
+    private val body = ByteWriter(bodyBuffer)
 
     /**
      * Temporary buffer, mainly used to store content that is prepended by its size, but the
@@ -108,7 +108,7 @@ class WasmSerializer(outputStream: OutputStream) {
      *  reset its content manually.
      */
     private val tempBuffer = ByteArrayOutputStream()
-    private val temp = ByteWriter.OutputStream(tempBuffer)
+    private val temp = ByteWriter(tempBuffer)
 
     /**
      * The current serialization target. This can be set to differently according to the current
@@ -118,7 +118,7 @@ class WasmSerializer(outputStream: OutputStream) {
      */
     private var b: ByteWriter = body
 
-    private val out = ByteWriter.OutputStream(outputStream)
+    private val out = ByteWriter(outputStream)
 
     fun serialize(compiledFileFragment: WasmCompiledFileFragment) {
         // Step 1: process non-deferred serializations (put into bodyBuffer temporarily)

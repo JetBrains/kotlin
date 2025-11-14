@@ -89,60 +89,54 @@ class LineProgram(private val encoding: Dwarf.Encoding, private val lineEncoding
         require(encoding.format == Dwarf.Format.DWARF_32) { "Unsupported format: ${encoding.format}" }
         require(encoding.version == 5) { "Unsupported DWARF version: ${encoding.version}" }
 
-        val sectionEpilogue = section.writer.createTemp().apply {
+        section.writeWithPrependSize(encoding) {
+            // sectionEpilogue
             writeUInt16(encoding.version.toUShort())
             writeUByte(encoding.addressSize.toUByte())
-            // Segment selector size.
-            writeByte(0)
-        }
+            writeByte(0) // Segment selector size.
+            // end sectionEpilogue
 
-        val header = section.writer.createTemp().apply {
-            writeUByte(lineEncoding.minimumInstructionLength)
-            writeUByte(lineEncoding.maximumOperandsPerInstruction)
-            writeBoolean(lineEncoding.defaultIsStatement)
-            writeByte(lineEncoding.lineBase)
-            writeUByte(lineEncoding.lineRange)
-            writeUByte(OPCODE_BASE)
-            writeBytes(byteArrayOf(0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1))
+            //wholeSectionWithoutLength
+            //header
+            section.writeWithPrependSize(encoding) {
+                writeUByte(lineEncoding.minimumInstructionLength)
+                writeUByte(lineEncoding.maximumOperandsPerInstruction)
+                writeBoolean(lineEncoding.defaultIsStatement)
+                writeByte(lineEncoding.lineBase)
+                writeUByte(lineEncoding.lineRange)
+                writeUByte(OPCODE_BASE)
+                writeBytes(byteArrayOf(0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1))
 
-            // Directory entry formats (only ever 1).
-            writeUByte(1u)
-            writeVarUInt32(DwLinesHeader.PATH.opcode)
-            writeVarUInt32(DwForm.LINE_STRP.opcode)
+                // Directory entry formats (only ever 1).
+                writeUByte(1u)
+                writeVarUInt32(DwLinesHeader.PATH.opcode)
+                writeVarUInt32(DwForm.LINE_STRP.opcode)
 
-            // Directory entries
-            writeVarUInt32(directories.size.toUInt())
-            for (dir in directories) {
-                writeUInt64(stringOffsets[dir.index - 1].toULong(), encoding.format.wordSize)
+                // Directory entries
+                writeVarUInt32(directories.size.toUInt())
+                for (dir in directories) {
+                    writeUInt64(stringOffsets[dir.index - 1].toULong(), encoding.format.wordSize)
+                }
+
+                // File name entry formats (only ever 3)
+                writeUByte(2u)
+                writeVarUInt32(DwLinesHeader.PATH.opcode)
+                writeVarUInt32(DwForm.LINE_STRP.opcode)
+                writeVarUInt32(DwLinesHeader.DIRECTORY_INDEX.opcode)
+                writeVarUInt32(DwForm.UDATA.opcode)
+
+                writeVarUInt32(files.size.toUInt())
+                for (file in files) {
+                    writeUInt64(stringOffsets[file.path.index - 1].toULong(), encoding.format.wordSize)
+                    writeVarUInt32(file.directory.index.toUInt())
+                }
             }
-
-            // File name entry formats (only ever 3)
-            writeUByte(2u)
-            writeVarUInt32(DwLinesHeader.PATH.opcode)
-            writeVarUInt32(DwForm.LINE_STRP.opcode)
-            writeVarUInt32(DwLinesHeader.DIRECTORY_INDEX.opcode)
-            writeVarUInt32(DwForm.UDATA.opcode)
-
-            writeVarUInt32(files.size.toUInt())
-            for (file in files) {
-                writeUInt64(stringOffsets[file.path.index - 1].toULong(), encoding.format.wordSize)
-                writeVarUInt32(file.directory.index.toUInt())
-            }
-        }
-
-        val wholeSectionWithoutLength = section.writer.createTemp().apply {
-            writeUInt64(header.written.toULong(), encoding.format.wordSize)
-            write(header)
+            //end header
 
             for (instruction in instructions) {
                 instruction.writeTo(this)
             }
-        }
-
-        with(section.writer) {
-            writeUInt64((wholeSectionWithoutLength.written + sectionEpilogue.written).toULong(), encoding.format.wordSize)
-            write(sectionEpilogue)
-            write(wholeSectionWithoutLength)
+            //end wholeSectionWithoutLength
         }
     }
 
