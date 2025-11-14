@@ -159,13 +159,10 @@ private fun generateInterpretTernaryFunction(p: Printer, ternaryOperations: List
 }
 
 private fun generateCanInterpretFunction(p: Printer, operations: List<Operation>) {
-    p.println("private val knownFunctions = mapOf(")
+    p.println("private val knownFunctions = setOf(")
     p.pushIndent()
-    for ((callableId, ops) in operations.groupBy { it.callableId }) {
-        val types = ops.map {operation ->
-            "listOf(${operation.parameterTypes.map{ "\"${it.addKotlinPackage()}\""} .joinToString(", ")})"
-        }.joinToString( ", " )
-        p.println("\"${callableId.toString()}\" to listOf($types),")
+    for (operation in operations) {
+        p.println("\"${operation.callableId}(${operation.parameterTypes.joinToString(", ") { it.addKotlinPackage() }})\",")
     }
     p.popIndent()
     p.println(")")
@@ -173,7 +170,8 @@ private fun generateCanInterpretFunction(p: Printer, operations: List<Operation>
 
     p.println("internal fun canInterpretFunction(callableId: CallableId, typeA: String, typeB: String? = null, typeC: String? = null): Boolean {")
     p.pushIndent()
-    p.println("return knownFunctions[callableId.toString()]?.any { it.first() == typeA && it.getOrNull(1) == typeB && it.getOrNull(2) == typeC} ?: false")
+    p.println("val types = listOf(typeA, typeB, typeC).filterNotNull().joinToString(\", \")",)
+    p.println("return knownFunctions.contains(\"\${callableId}(\$types)\")")
     p.popIndent()
     p.println("}")
     p.println()

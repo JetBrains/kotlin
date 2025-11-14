@@ -82,33 +82,6 @@ sealed class EvaluationMode {
     }
 
     data object OnlyBuiltins : EvaluationMode() {
-        private val allowedMethodsOnPrimitives = setOf<Name>(
-            *OperatorNameConventions.SIMPLE_UNARY_OPERATION_NAMES.toTypedArray(),
-            *OperatorNameConventions.SIMPLE_BINARY_OPERATION_NAMES.toTypedArray(),
-            *OperatorNameConventions.SIMPLE_BITWISE_OPERATION_NAMES.toTypedArray(),
-            OperatorNameConventions.TO_STRING, OperatorNameConventions.EQUALS, OperatorNameConventions.COMPARE_TO,
-            *OperatorNameConventions.NUMBER_CONVERSIONS.toTypedArray(),
-            Name.identifier("less"), Name.identifier("lessOrEqual"),
-            Name.identifier("greater"), Name.identifier("greaterOrEqual"),
-        )
-
-        private val allowedMethodsOnStrings = setOf(
-            Name.special("<get-length>"),
-            OperatorNameConventions.PLUS, OperatorNameConventions.GET, OperatorNameConventions.COMPARE_TO,
-            OperatorNameConventions.EQUALS, OperatorNameConventions.TO_STRING,
-        )
-
-        private val allowedExtensionFunctions = setOf(
-            "floorDiv", "mod", "NumbersKt.floorDiv", "NumbersKt.mod", "<get-code>"
-        ).map { StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier(it)) }.toSet()
-
-        private val allowedBuiltinExtensionFunctions = listOf(
-            BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL,
-            BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL,
-            BuiltInOperatorNames.EQEQ, BuiltInOperatorNames.IEEE754_EQUALS,
-            BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR
-        ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)) }.toSet()
-
         private val allowedOriginsForWhen = setOf(IrStatementOrigin.ANDAND, IrStatementOrigin.OROR)
 
         override fun canEvaluateFunction(function: IrFunction): Boolean {
