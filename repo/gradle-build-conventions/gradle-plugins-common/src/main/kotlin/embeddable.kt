@@ -140,7 +140,7 @@ fun Project.embeddableCompilerDummyForDependenciesRewriting(
     return tasks.register<ShadowJar>(taskName) {
         destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        from(compilerDummyJar)
+        configurations.set(setOf(compilerDummyJar))
         configureEmbeddableCompilerRelocation(withJavaxInject = false)
         body()
     }
