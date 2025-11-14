@@ -10333,12 +10333,6 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
       }
 
       @Test
-      @TestMetadata("noRedeclaration.kt")
-      public void testNoRedeclaration() {
-        runTest("compiler/testData/codegen/box/contextParameters/noRedeclaration.kt");
-      }
-
-      @Test
       @TestMetadata("plusAssign.kt")
       public void testPlusAssign() {
         runTest("compiler/testData/codegen/box/contextParameters/plusAssign.kt");
@@ -10354,12 +10348,6 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
       @TestMetadata("propertyCompoundAssignment.kt")
       public void testPropertyCompoundAssignment() {
         runTest("compiler/testData/codegen/box/contextParameters/propertyCompoundAssignment.kt");
-      }
-
-      @Test
-      @TestMetadata("propertyWithContextAndWithout.kt")
-      public void testPropertyWithContextAndWithout() {
-        runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
       }
 
       @Test
@@ -46003,12 +45991,6 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
         @TestMetadata("overrideWithExplicitBackingField.kt")
         public void testOverrideWithExplicitBackingField() {
           runTest("compiler/testData/codegen/box/properties/backingField/overrideWithExplicitBackingField.kt");
-        }
-
-        @Test
-        @TestMetadata("propertyWithBackingFieldAndWithContext.kt")
-        public void testPropertyWithBackingFieldAndWithContext() {
-          runTest("compiler/testData/codegen/box/properties/backingField/propertyWithBackingFieldAndWithContext.kt");
         }
       }
 
