@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.jvm.internal
+@file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 
+package kotlin.jvm.internal
 
 @ExperimentalStdlibApi
 @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
