@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
@@ -500,6 +501,8 @@ internal abstract class IrExpectActualMatchingContext(
     override val CallableSymbolMarker.isDelegatedMember: Boolean
         get() = asIr().origin == IrDeclarationOrigin.DELEGATED_MEMBER
 
+    private val objCMethodClassId = ClassId(FqName("kotlinx.cinterop"), Name.identifier("ObjCMethod"))
+
     override val CallableSymbolMarker.hasStableParameterNames: Boolean
         get() {
             var ir = asIr()
@@ -509,9 +512,8 @@ internal abstract class IrExpectActualMatchingContext(
             }
 
             return when (ir.origin) {
-                IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
-                -> false
+                IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> ir.hasAnnotation(objCMethodClassId)
+                IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB -> false
                 else -> true
             }
         }

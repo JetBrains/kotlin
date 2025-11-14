@@ -26,6 +26,7 @@ sealed class ExpectActualMatchingCompatibility {
     object ContextParameterCount : Mismatch("the number of context parameters is different")
     object FunctionTypeParameterCount : Mismatch(TYPE_PARAMETER_COUNT)
     object ParameterTypes : Mismatch("parameter types are different")
+    object ParameterNames : Mismatch("parameter names are different")
     object ContextParameterTypes : Mismatch("context parameter types are different")
     object FunctionTypeParameterUpperBounds : Mismatch(TYPE_PARAMETER_UPPER_BOUNDS)
     object MatchedSuccessfully : ExpectActualMatchingCompatibility()
