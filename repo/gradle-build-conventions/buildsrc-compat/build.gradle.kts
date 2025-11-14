@@ -42,15 +42,6 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 
-gradlePlugin {
-    plugins {
-        register("jps-compatible") {
-            id = "jps-compatible"
-            implementationClass = "org.jetbrains.kotlin.pill.JpsCompatiblePlugin"
-        }
-    }
-}
-
 repositories {
     mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
