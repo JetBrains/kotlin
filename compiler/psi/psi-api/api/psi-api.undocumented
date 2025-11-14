@@ -237,6 +237,7 @@ org.jetbrains.kotlin.kdoc.psi.api.KDoc.findSectionByTag(KDocKnownTag, String)
 org.jetbrains.kotlin.kdoc.psi.api.KDoc.getAllSections()
 org.jetbrains.kotlin.kdoc.psi.api.KDoc.getDefaultSection()
 org.jetbrains.kotlin.kdoc.psi.api.KDocElement
+org.jetbrains.kotlin.kdoc.psi.impl.KDocCommentDescriptorImpl
 org.jetbrains.kotlin.kdoc.psi.impl.KDocElementImpl
 org.jetbrains.kotlin.kdoc.psi.impl.KDocElementImpl:constructor(ASTNode)
 org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl
@@ -255,7 +256,6 @@ org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 org.jetbrains.kotlin.kdoc.psi.impl.KDocTag.Companion.indentationWhiteSpaces
 org.jetbrains.kotlin.kdoc.psi.impl.KDocTag.getSubjectLink()
 org.jetbrains.kotlin.kdoc.psi.impl.KDocTag.knownTag
-org.jetbrains.kotlin.kdoc.psi.impl.KtDocCommentDescriptorImpl
 org.jetbrains.kotlin.lang.BinaryOperationPrecedence
 org.jetbrains.kotlin.lang.BinaryOperationPrecedence.ADDITIVE
 org.jetbrains.kotlin.lang.BinaryOperationPrecedence.AS

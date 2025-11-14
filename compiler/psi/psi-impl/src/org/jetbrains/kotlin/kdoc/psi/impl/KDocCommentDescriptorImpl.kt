@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.kdoc.psi.impl
 
-import org.jetbrains.kotlin.kdoc.psi.api.KtDocCommentDescriptor
+import org.jetbrains.kotlin.kdoc.psi.api.KDocCommentDescriptor
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtNonPublicApi
 
 @KtNonPublicApi
 @KtImplementationDetail
-class KtDocCommentDescriptorImpl(
+class KDocCommentDescriptorImpl(
     override val primaryTag: KDocTag,
     override val additionalSections: List<KDocSection>,
-) : KtDocCommentDescriptor
+) : KDocCommentDescriptor

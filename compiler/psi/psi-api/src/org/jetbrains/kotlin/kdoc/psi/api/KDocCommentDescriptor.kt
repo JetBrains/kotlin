@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtNonPublicApi
  */
 @KtNonPublicApi
 @SubclassOptInRequired(KtImplementationDetail::class)
-interface KtDocCommentDescriptor {
+interface KDocCommentDescriptor {
     /**
      * Primary tag/section tag/section if the KDoc that is relevant for the symbol
      */
