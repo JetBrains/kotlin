@@ -25,6 +25,13 @@ fun ReturnVoid(control: Controlling?) = Return(control, null)
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 fun ReturnVoid() = Return(null)
 
+// logic
+context(nodeBuilder: NodeBuilder)
+fun True() = ConstI(1)
+
+context(nodeBuilder: NodeBuilder)
+fun False() = ConstI(0)
+
 // CFG structures
 private typealias BodyBuilder = context(NodeBuilder, ControlFlowBuilder) () -> Unit
 

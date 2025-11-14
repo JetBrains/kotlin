@@ -19,6 +19,21 @@ class NoValue internal constructor(form: Form, ) : NodeBase(form, listOf()) {
 }
 
 
+class UnitValue internal constructor(form: Form, ) : NodeBase(form, listOf()) {
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitUnitValue(this)
+    
+    companion object {
+        internal fun form(session: Session) = SimpleValueForm(session, "UnitValue")
+    }
+}
+
+
 class Use internal constructor(form: Form, control: Controlling?, value: Node?) : BlockBody(form, listOf(control, value)) {
     val value: Node
         get() = args[1]

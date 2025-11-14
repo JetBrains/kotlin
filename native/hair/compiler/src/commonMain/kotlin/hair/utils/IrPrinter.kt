@@ -49,24 +49,6 @@ fun Session.printGraphviz() {
         return "${arg.id}->${node.id}[${attrs.joinToString(",") { (k, v) -> "$k=\"$v\"" }}]"
     }
 
-    fun printControls(node: ControlFlow) {
-        val inputs: List<Node> = when (node) {
-            is Controlled -> listOf(node.control)
-            is BlockEntry -> node.preds.toList()
-            else -> emptyList()
-        }
-        for (input in inputs) {
-            println("${node.id}->${input.id}[color=\"$controlColor\"]")
-        }
-        val exceptionalInputs: List<Throwing> = when (node) {
-            is Unwind -> listOf(node.thrower)
-            else -> emptyList()
-        }
-        for (thrower in exceptionalInputs) {
-            println("${node.id}->${thrower.id}[color=\"$controlColor\", style=\"dashed\"]")
-        }
-    }
-
     val printed = mutableSetOf<Node>()
 
     fun graphvizNode(n: Node, forcedColor: String? = null): String {
@@ -112,6 +94,57 @@ fun Session.printGraphviz() {
         if (n !in printed) {
             println(graphvizNode(n, "blue"))
         }
+        for ((idx, arg) in n.args.filterNotNull().withIndex()) {
+            println(graphvizArg(arg, idx, n))
+        }
+    }
+    println("}")
+}
+
+fun Session.printGraphvizNoGCM() {
+    fun graphvizArg(arg: Node, argNum: Int, node: Node): String {
+        val name = node.paramName(argNum)
+        val color = when {
+            node is BlockEntry -> controlColor
+            node is Controlled && argNum == 0 -> controlColor
+            node is IfProjection && argNum == 0 -> controlColor
+            node is Unwind && argNum == 0 -> controlColor
+            //node is Projection -> projectionColor
+            //node is Phi && argNum == 0 -> controlColor // FIXME
+            else -> valueColor
+        }
+        val extraAttrs = when {
+            //node is Unwind && argNum == 0 -> listOf("constraint" to "false")
+            else -> emptyList<Pair<String, String>>()
+        }
+        val attrs = listOf(
+            "color" to color,
+            "label" to name,
+            "fontcolor" to color,
+            "dir" to "back"
+        ) + extraAttrs
+        return "${arg.id}->${node.id}[${attrs.joinToString(",") { (k, v) -> "$k=\"$v\"" }}]"
+    }
+
+    fun graphvizNode(n: Node, forcedColor: String? = null): String {
+        val color = when {
+            forcedColor != null -> forcedColor
+            n is Projection -> projectionColor
+            n is ControlFlow -> controlColor
+            else -> valueColor
+        }
+        val shape = when (n) {
+            is BlockExit -> blockExitShape
+            is ControlFlow -> controlShape
+            else -> commonShape
+        }
+        return "${n.id}[label=\"${n}\",color=\"$color\",shape=$shape];"
+    }
+
+    println("digraph Nodes {")
+    println()
+    for (n in allNodes()) {
+        println(graphvizNode(n, "blue"))
         for ((idx, arg) in n.args.filterNotNull().withIndex()) {
             println(graphvizArg(arg, idx, n))
         }
