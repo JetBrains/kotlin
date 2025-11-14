@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
+import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.toByteArray
 import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmBinaryToIR
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
@@ -227,9 +228,9 @@ fun testWasmFile(wasmFile: File, dirName: String) {
 }
 
 fun WasmModule.toBinaryFormat(): ByteArray {
-    val os = ByteArrayOutputStream()
-    WasmIrToBinary(os, this, "<WASM_TESTS>", emitNameSection = false, optimizeInstructionFlow = false).appendWasmModule()
-    return os.toByteArray()
+    val writer = ByteWriterWithOffsetWrite.makeNew()
+    WasmIrToBinary(writer, this, "<WASM_TESTS>", emitNameSection = false, optimizeInstructionFlow = false).appendWasmModule()
+    return writer.getBinaryData().toByteArray()
 }
 
 fun WasmModule.toTextFormat(): String {

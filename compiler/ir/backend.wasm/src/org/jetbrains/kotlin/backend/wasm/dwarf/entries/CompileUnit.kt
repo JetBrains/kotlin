@@ -28,9 +28,7 @@ class CompileUnit(
         require(encoding.format == Dwarf.Format.DWARF_32) { "Unsupported format: ${encoding.format}" }
         require(encoding.version == 5) { "Unsupported DWARF version: ${encoding.version}" }
 
-        val encodedUnit = DebuggingSection.DebugInfo()
-
-        with(encodedUnit.writer) {
+        section.writeWithPrependSize(encoding) {
             writeUInt16(encoding.version.toUShort())
             writeUByte(UnitHeader.COMPILE.opcode)
             writeUByte(encoding.addressSize.toUByte())
@@ -49,15 +47,10 @@ class CompileUnit(
 
             if (children.isNotEmpty()) {
                 for (child in children) {
-                    child.write(encoding, subprogramAbbreviation, encodedUnit, stringOffsets)
+                    child.write(encoding, subprogramAbbreviation, section, stringOffsets)
                 }
                 writeUByte(0u)
             }
-        }
-
-        with(section.writer) {
-            writeUInt64(encodedUnit.offset.toULong(), encoding.format.wordSize)
-            write(encodedUnit.writer)
         }
     }
 

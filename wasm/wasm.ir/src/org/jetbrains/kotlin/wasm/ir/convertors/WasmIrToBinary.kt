@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.wasm.ir.convertors
 
 import org.jetbrains.kotlin.wasm.ir.*
-import java.io.ByteArrayOutputStream
-import java.io.OutputStream
 import org.jetbrains.kotlin.wasm.ir.debug.DebugData
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformation
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationConsumer
@@ -53,16 +51,14 @@ private object WasmBinary {
 }
 
 class WasmIrToBinary(
-    outputStream: OutputStream,
+    val b: ByteWriterWithOffsetWrite,
     val module: WasmModule,
     val moduleName: String,
     val emitNameSection: Boolean,
     private val debugInformationGenerator: DebugInformationGenerator? = null,
     private val optimizeInstructionFlow: Boolean = true,
 ) : DebugInformationConsumer {
-    private var b: ByteWriter = ByteWriter.OutputStream(outputStream)
     private var codeSectionOffset = Box(0)
-    private var functionCodeOffset = Box(0)
 
     override fun consumeDebugInformation(debugInformation: DebugInformation) {
         debugInformation.forEach {
@@ -283,8 +279,7 @@ class WasmIrToBinary(
         SourceLocationMappingToBinary(
             sourceLocation = sourceLocation,
             codeSectionOffset = codeSectionOffset,
-            functionCodeOffset = functionCodeOffset,
-            instructionOffset = b.written
+            offset = b.written
         )
 
     private fun appendImmediate(x: WasmImmediate) {
@@ -342,15 +337,16 @@ class WasmIrToBinary(
     }
 
     private inline fun withVarUInt32PayloadSizePrepended(fn: () -> Unit): Int {
-        val previousWriter = b
-        val newWriter = b.createTemp()
-        b = newWriter
+        val prependOffset = b.written //offset for placeholder
+        b.writeVarUInt32Fixed(0) //placeholder for size
+        val prependStart = b.written
+
         fn()
-        b = previousWriter
-        b.writeVarUInt32(newWriter.written)
-        val written = b.written
-        b.write(newWriter)
-        return written
+
+        val size = b.written - prependStart
+        b.writeVarUInt32FixedSize(size, prependOffset) //placeholder for size
+
+        return prependStart
     }
 
     private fun appendVectorSize(size: Int) {
@@ -581,14 +577,12 @@ class WasmIrToBinary(
                 SourceLocationMappingToBinary(
                     sourceLocation = SourceLocation.IgnoredLocation,
                     codeSectionOffset = codeSectionOffset,
-                    functionCodeOffset = null,
-                    instructionOffset = b.written
+                    offset = b.written
                 )
             )
         }
 
-        functionCodeOffset = Box(-1)
-        functionCodeOffset.value = withVarUInt32PayloadSizePrepended {
+        withVarUInt32PayloadSizePrepended {
             if (!shouldWriteLocationBeforeFunctionHeader) {
                 debugInformationGenerator?.addSourceLocation(
                     getCurrentSourceLocationMapping(SourceLocation.NextLocation)
@@ -660,6 +654,10 @@ class WasmIrToBinary(
         this.writeVarUInt32(v.toUInt())
     }
 
+    fun ByteWriter.writeVarUInt32Fixed(v: Int) {
+        this.writeVarUInt32FixedSize(v.toUInt())
+    }
+
     private fun ByteWriter.writeString(str: String) {
         val bytes = str.toByteArray()
         this.writeVarUInt32(bytes.size)
@@ -669,166 +667,22 @@ class WasmIrToBinary(
 
     private class SourceLocationMappingToBinary(
         override val sourceLocation: SourceLocation,
-        // Offsets in generating binary, should be got late. Since blocks has as a prefix variable length number encoding its size
-        // we can't calculate absolute offsets inside those blocks until we generate whole block and generate size.
         private val codeSectionOffset: Box,
-        private val functionCodeOffset: Box?,
-        private val instructionOffset: Int
+        private val offset: Int
     ) : SourceLocationMapping() {
-
-        private fun getColumn(withSectionOffset: Boolean): Int {
-            var result = instructionOffset
-
-            if (functionCodeOffset != null) {
-                result += functionCodeOffset.value
-            }
-
-            if (withSectionOffset) {
-                assert(codeSectionOffset.value >= 0) { "CodeSection offset must be >=0 but ${codeSectionOffset.value}" }
-                result += codeSectionOffset.value
-            }
-
-            return result
-        }
 
         override val generatedLocation: SourceLocation.DefinedLocation
             get() = SourceLocation.DefinedLocation(
                 file = "",
                 line = 0,
-                column = getColumn(withSectionOffset = true)
+                column = offset
             )
 
         override val generatedLocationRelativeToCodeSection: SourceLocation.DefinedLocation
             get() = SourceLocation.DefinedLocation(
                 file = "",
                 line = 0,
-                column = getColumn(withSectionOffset = false)
+                column = offset - codeSectionOffset.value
             )
-    }
-}
-
-interface ByteWriter {
-    val written: Int
-
-    fun write(v: ByteWriter)
-    fun writeByte(v: Byte)
-    fun writeBytes(v: ByteArray)
-    fun createTemp(): ByteWriter
-
-    fun writeUByte(v: UByte) {
-        writeByte(v.toByte())
-    }
-
-    fun writeUInt16(v: UShort) {
-        writeByte(v.toByte())
-        writeByte((v.toUInt() shr 8).toByte())
-    }
-
-    fun writeUInt32(v: UInt) {
-        writeByte(v.toByte())
-        writeByte((v shr 8).toByte())
-        writeByte((v shr 16).toByte())
-        writeByte((v shr 24).toByte())
-    }
-
-    fun writeUInt64(v: ULong) {
-        writeByte(v.toByte())
-        writeByte((v shr 8).toByte())
-        writeByte((v shr 16).toByte())
-        writeByte((v shr 24).toByte())
-        writeByte((v shr 32).toByte())
-        writeByte((v shr 40).toByte())
-        writeByte((v shr 48).toByte())
-        writeByte((v shr 56).toByte())
-    }
-
-    fun writeUInt64(v: ULong, size: Int) =
-        when (size) {
-            1 -> writeUByte(v.toUByte())
-            2 -> writeUInt16(v.toUShort())
-            4 -> writeUInt32(v.toUInt())
-            8 -> writeUInt64(v)
-            else -> error("Unsupported size $size")
-        }
-
-    fun writeVarInt7(v: Byte) {
-        writeSignedLeb128(v.toLong())
-    }
-
-    fun writeVarInt32(v: Int) {
-        writeSignedLeb128(v.toLong())
-    }
-
-    fun writeVarInt64(v: Long) {
-        writeSignedLeb128(v)
-    }
-
-    fun writeVarUInt1(v: Boolean) {
-        writeUnsignedLeb128(if (v) 1u else 0u)
-    }
-
-    fun writeVarUInt7(v: UShort) {
-        writeUnsignedLeb128(v.toUInt())
-    }
-
-    fun writeVarUInt32(v: UInt) {
-        writeUnsignedLeb128(v)
-    }
-
-    fun writeBoolean(value: Boolean) {
-        writeByte(if (value) 1 else 0)
-    }
-
-    private fun writeUnsignedLeb128(v: UInt) {
-        // Taken from Android source, Apache licensed
-        @Suppress("NAME_SHADOWING")
-        var v = v
-        var remaining = v shr 7
-        while (remaining != 0u) {
-            val byte = (v and 0x7fu) or 0x80u
-            writeByte(byte.toByte())
-            v = remaining
-            remaining = remaining shr 7
-        }
-        val byte = v and 0x7fu
-        writeByte(byte.toByte())
-    }
-
-    private fun writeSignedLeb128(v: Long) {
-        // Taken from Android source, Apache licensed
-        @Suppress("NAME_SHADOWING")
-        var v = v
-        var remaining = v shr 7
-        var hasMore = true
-        val end = if (v and Long.MIN_VALUE == 0L) 0L else -1L
-        while (hasMore) {
-            hasMore = remaining != end || remaining and 1 != (v shr 6) and 1
-            val byte = ((v and 0x7f) or if (hasMore) 0x80 else 0).toInt()
-            writeByte(byte.toByte())
-            v = remaining
-            remaining = remaining shr 7
-        }
-    }
-
-    class OutputStream(val os: java.io.OutputStream) : ByteWriter {
-        override var written = 0; private set
-
-        override fun write(v: ByteWriter) {
-            if (v !is OutputStream || v.os !is ByteArrayOutputStream) error("Writer not created from createTemp")
-            v.os.writeTo(os)
-            written += v.os.size()
-        }
-
-        override fun writeByte(v: Byte) {
-            os.write(v.toInt())
-            written++
-        }
-
-        override fun writeBytes(v: ByteArray) {
-            os.write(v)
-            written += v.size
-        }
-
-        override fun createTemp() = OutputStream(ByteArrayOutputStream())
     }
 }

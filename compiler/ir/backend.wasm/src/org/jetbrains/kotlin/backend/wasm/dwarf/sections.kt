@@ -5,16 +5,28 @@
 
 package org.jetbrains.kotlin.backend.wasm.dwarf
 
-import org.jetbrains.kotlin.wasm.ir.convertors.ByteWriter
-import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.wasm.ir.ByteWriterWithOffsetWrite
+import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.toByteArray
 
 sealed class DebuggingSection(val name: String) {
-    private val os = ByteArrayOutputStream()
-
     val offset get() = writer.written
-    val writer = ByteWriter.OutputStream(os)
+    val writer = ByteWriterWithOffsetWrite.makeNew()
 
-    fun toByteArray(): ByteArray = os.toByteArray()
+    fun writeWithPrependSize(
+        encoding: Dwarf.Encoding,
+        body: ByteWriterWithOffsetWrite.() -> Unit
+    ) = with(writer) {
+        val placeholderOffset = written
+        writeUInt64(0U, encoding.format.wordSize) //placeholder
+        val bodyOffset = written
+
+        body()
+
+        val bodySize = written - bodyOffset
+        writeUInt64(bodySize.toULong(), encoding.format.wordSize, placeholderOffset)
+    }
+
+    fun toByteArray(): ByteArray = writer.getBinaryData().toByteArray()
 
     class DebugInfo : DebuggingSection(".debug_info")
     class DebugLines : DebuggingSection(".debug_line")
