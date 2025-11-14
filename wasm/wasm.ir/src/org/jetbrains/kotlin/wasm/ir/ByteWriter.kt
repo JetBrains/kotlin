@@ -136,7 +136,9 @@ open class ByteWriter(private val os: OutputStream) {
 class WasmBinaryData(private val data: ByteArray, private val size: Int) {
     companion object {
         fun WasmBinaryData.writeTo(file: File) {
-            file.outputStream().write(data, 0, size)
+            file.outputStream().use {
+                it.write(data, 0, size)
+            }
         }
 
         fun WasmBinaryData.toByteArray(): ByteArray = data.copyOf(size)

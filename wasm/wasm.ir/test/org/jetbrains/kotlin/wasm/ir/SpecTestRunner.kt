@@ -10,12 +10,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
-import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.toByteArray
+import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.writeTo
 import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmBinaryToIR
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
-import java.io.ByteArrayOutputStream
 import java.io.File
 
 @Suppress("unused")
@@ -209,7 +208,7 @@ fun testWasmFile(wasmFile: File, dirName: String) {
     val kotlinTextFile = newFile("kwt.wat")
     kotlinTextFile.writeText(kotlinTextFormat)
     val kotlinBinaryFile = newFile("kwt.wasm")
-    kotlinBinaryFile.writeBytes(kotlinBinaryFormat)
+    kotlinBinaryFormat.writeTo(kotlinBinaryFile)
 
     val kotlinTextToWasmTmpFile = newFile("kwt.tmp.wasm")
     Wabt.wat2wasm(kotlinTextFile, kotlinTextToWasmTmpFile)
@@ -227,10 +226,10 @@ fun testWasmFile(wasmFile: File, dirName: String) {
     assertEqualsToFile("Kwt binary format", wabtWatFile, kotlinBinaryCanonicalFile.readText())
 }
 
-fun WasmModule.toBinaryFormat(): ByteArray {
+fun WasmModule.toBinaryFormat(): WasmBinaryData {
     val writer = ByteWriterWithOffsetWrite.makeNew()
     WasmIrToBinary(writer, this, "<WASM_TESTS>", emitNameSection = false, optimizeInstructionFlow = false).appendWasmModule()
-    return writer.getBinaryData().toByteArray()
+    return writer.getBinaryData()
 }
 
 fun WasmModule.toTextFormat(): String {
