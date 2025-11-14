@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.scopes
 
+import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -29,6 +30,8 @@ fun wrapScopeWithJvmMapped(
 ): FirContainingNamesAwareScope {
     if (klass !is FirRegularClass) return declaredMemberScope
     val classId = klass.classId
+    // These are mapped but don't require a dedicated scope
+    if (classId in CompanionObjectMapping.companionClassIds) return declaredMemberScope
     val kotlinUnsafeFqName = classId.asSingleFqName().toUnsafe()
     val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinUnsafeFqName)
         ?: return declaredMemberScope

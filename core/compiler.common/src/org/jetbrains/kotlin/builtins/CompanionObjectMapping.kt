@@ -7,25 +7,32 @@ package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 object CompanionObjectMapping {
-    private val fqNamesWithOperatorOf: Set<FqName> = buildSet {
-        StandardNames.FqNames.run {
-            add(list)
-            add(mutableList)
-            add(set)
-            add(mutableSet)
-            add(array.toSafe())
+    private val fqNamesWithOperatorOf: List<FqName>
+        get() = buildList {
+            StandardNames.FqNames.run {
+                add(list)
+                add(mutableList)
+                add(set)
+                add(mutableSet)
+                add(array.toSafe())
+            }
+            addAll(PrimitiveType.entries.map(StandardNames::getPrimitiveArrayFqName))
         }
-        addAll(PrimitiveType.entries.map(StandardNames::getPrimitiveArrayFqName))
-    }
 
-    val classIds: Set<ClassId> = (
-            PrimitiveType.entries.map(StandardNames::getPrimitiveFqName) +
-                    StandardNames.FqNames.string.toSafe() +
-                    StandardNames.FqNames._enum.toSafe() +
-                    fqNamesWithOperatorOf
-            ).mapTo(linkedSetOf(), ClassId::topLevel)
+    private val allFqNames: List<FqName>
+        get() = PrimitiveType.entries.map(StandardNames::getPrimitiveFqName) +
+                StandardNames.FqNames.string.toSafe() +
+                StandardNames.FqNames._enum.toSafe() +
+                fqNamesWithOperatorOf
+
+    val classIds: Set<ClassId> = allFqNames.mapTo(linkedSetOf(), ClassId::topLevel)
+
+    val companionClassIds: Set<ClassId> = classIds.mapTo(linkedSetOf()) {
+        it.createNestedClassId(Name.identifier("Companion"))
+    }
 
     fun allClassesWithIntrinsicCompanions(): Set<ClassId> = classIds
 }
