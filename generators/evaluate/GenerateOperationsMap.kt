@@ -87,15 +87,15 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
     for (type in integerTypes) {
         for (otherType in integerTypes) {
             val parameters = listOf(type, otherType).map { it.typeName }
-            binaryOperationsMap.add(Operation(callableIdOf(type.typeName, "mod"), parameters))
-            binaryOperationsMap.add(Operation(callableIdOf(type.typeName, "floorDiv"), parameters))
+            binaryOperationsMap.add(Operation(callableIdOf(null, "mod"), parameters))
+            binaryOperationsMap.add(Operation(callableIdOf(null, "floorDiv"), parameters))
         }
     }
 
     for (type in fpTypes) {
         for (otherType in fpTypes) {
             val parameters = listOf(type, otherType).map { it.typeName }
-            binaryOperationsMap.add(Operation(callableIdOf(type.typeName, "mod"), parameters))
+            binaryOperationsMap.add(Operation(callableIdOf(null, "mod"), parameters))
         }
     }
 
@@ -212,20 +212,18 @@ private fun generateBinaryOp(
 }
 
 private fun generateCanEvalOpFunction(p: Printer, operations: List<Operation>) {
-    p.println("private val knownOps = mapOf(")
+    p.println("private val knownOps = setOf(")
     p.pushIndent()
-    for ((callableId, ops) in operations.groupBy { it.callableId }) {
-        val types = ops.map {operation ->
-           "listOf(${operation.parameterTypes.map{ it.toCompilTimeTypeFormat()} .joinToString(", ")})"
-        }.joinToString( "," )
-        p.println("\"${callableId}\" to listOf($types),")
+    for (operation in operations) {
+        p.println("\"${operation.callableId}(${operation.parameterTypes.joinToString(", ") { it.toCompilTimeTypeFormat() }})\",")
     }
     p.popIndent()
     p.println(")")
 
     p.println("fun canEvalOp(callableId: CallableId, typeA: CompileTimeType, typeB: CompileTimeType?): Boolean {")
     p.pushIndent()
-    p.println("return knownOps[callableId.toString()]?.any { it.first() == typeA && it.getOrNull(1) == typeB } ?: false")
+    p.println("val types = if (typeB != null) \"\$typeA, \$typeB\" else typeA.toString()")
+    p.println("return knownOps.contains(\"\${callableId}(\$types)\")")
     p.popIndent()
     p.println("}")
 }
@@ -293,8 +291,8 @@ private data class Operation(
         get() = callableId.callableName.asString()
 }
 
-private fun callableIdOf(className: String, name: String, packageName: String = "kotlin"): CallableId =
-    CallableId(FqName(packageName), FqName(className), Name.identifier(name))
+private fun callableIdOf(className: String?, name: String, packageName: String = "kotlin"): CallableId =
+    CallableId(FqName(packageName), className?.let{FqName(it)}, Name.identifier(name))
 
 private fun KotlinType.isIntegerType(): Boolean =
     KotlinBuiltIns.isInt(this) || KotlinBuiltIns.isShort(this) || KotlinBuiltIns.isByte(this) || KotlinBuiltIns.isLong(this)
