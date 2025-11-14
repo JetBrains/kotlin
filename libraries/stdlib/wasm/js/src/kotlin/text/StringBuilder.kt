@@ -141,7 +141,7 @@ public actual class StringBuilder private constructor(
         if (_length % 2 == 1 && (!allowEndSurrogate || !allowFrontSurrogate)) {
             array.set(end, if (allowFrontSurrogate) endTrailingChar else frontLeadingChar)
         }
-        jsString = jsFromCharCodeArray(array, 0, end).unsafeCast()
+        jsString = jsFromCharCodeArray(array, 0, _length).unsafeCast()
         return this
     }
 
@@ -253,6 +253,7 @@ public actual class StringBuilder private constructor(
      * Otherwise, this method takes no action and simply returns.
      */
     public actual fun ensureCapacity(minimumCapacity: Int) {
+        if (minimumCapacity <= capacity) return
         ensureCapacityInternal(minimumCapacity)
     }
 
@@ -401,6 +402,7 @@ public actual class StringBuilder private constructor(
      */
     @IgnorableReturnValue
     public actual fun insert(index: Int, value: CharArray): StringBuilder {
+        AbstractList.checkPositionIndex(index, _length)
         return insert(index, jsFromCharCodeArray(value.storage, 0, value.size).unsafeCast<JsString>())
     }
 
@@ -464,10 +466,15 @@ public actual class StringBuilder private constructor(
             throw IllegalArgumentException("Negative new length: $newLength.")
         }
 
-        if (newLength < _length) {
+        if (newLength > _length) {
+            val chars = WasmCharArray(newLength - _length)
+            chars.fill(_length, {'\u0000'})
+            jsString = jsConcat(jsString, jsFromCharCodeArray(chars, 0, newLength - _length).unsafeCast()).unsafeCast()
+        } else if (newLength < _length) {
             jsString = jsSubstring(jsString, 0, newLength).unsafeCast()
-            _length = newLength
         }
+        ensureCapacity(newLength)
+        _length = newLength
     }
 
     /**
@@ -507,7 +514,8 @@ public actual class StringBuilder private constructor(
      * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
      */
     public operator fun set(index: Int, value: Char) {
-        setRange(index, index, value.toString())
+        AbstractList.checkElementIndex(index, _length)
+        setRange(index, index + 1, value.toString())
     }
 
     /**
@@ -553,7 +561,8 @@ public actual class StringBuilder private constructor(
     @SinceKotlin("1.4")
     @IgnorableReturnValue
     public fun deleteAt(index: Int): StringBuilder {
-        return deleteRange(index, index)
+        AbstractList.checkElementIndex(index, _length)
+        return deleteRange(index, index + 1)
     }
 
     /**
@@ -690,15 +699,11 @@ public actual class StringBuilder private constructor(
         AbstractList.checkPositionIndex(index, _length)
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
 
+        val extraLength = endIndex - startIndex
+        ensureExtraCapacity(extraLength)
+
         val valueJsString = jsFromCharCodeArray(value.storage, startIndex, endIndex)
         return insert(index, valueJsString)
-//        val extraLength = endIndex - startIndex
-//        ensureExtraCapacity(extraLength)
-//        array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + extraLength)
-//        value.copyInto(array, startIndex = startIndex, endIndex = endIndex, destinationOffset = index)
-//
-//        _length += extraLength
-//        return this
     }
 
     // ---------------------------- private ----------------------------
