@@ -5897,9 +5897,7 @@ public fun CharArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  */
 public fun <T> Array<out T>.reversed(): List<T> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
@@ -5907,9 +5905,7 @@ public fun <T> Array<out T>.reversed(): List<T> {
  */
 public fun ByteArray.reversed(): List<Byte> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
@@ -5917,9 +5913,7 @@ public fun ByteArray.reversed(): List<Byte> {
  */
 public fun ShortArray.reversed(): List<Short> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
@@ -5927,9 +5921,7 @@ public fun ShortArray.reversed(): List<Short> {
  */
 public fun IntArray.reversed(): List<Int> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
@@ -5937,9 +5929,7 @@ public fun IntArray.reversed(): List<Int> {
  */
 public fun LongArray.reversed(): List<Long> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
@@ -5947,9 +5937,7 @@ public fun LongArray.reversed(): List<Long> {
  */
 public fun FloatArray.reversed(): List<Float> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
@@ -5957,9 +5945,7 @@ public fun FloatArray.reversed(): List<Float> {
  */
 public fun DoubleArray.reversed(): List<Double> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
@@ -5967,9 +5953,7 @@ public fun DoubleArray.reversed(): List<Double> {
  */
 public fun BooleanArray.reversed(): List<Boolean> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
@@ -5977,9 +5961,7 @@ public fun BooleanArray.reversed(): List<Boolean> {
  */
 public fun CharArray.reversed(): List<Char> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
