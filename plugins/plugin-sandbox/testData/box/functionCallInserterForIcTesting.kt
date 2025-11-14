@@ -1,3 +1,5 @@
+// IGNORE_NATIVE: mode=ONE_STAGE_MULTI_MODULE
+//  ^Reason: KT-82482
 // DUMP_IR
 // FILE: a.kt
 package foo

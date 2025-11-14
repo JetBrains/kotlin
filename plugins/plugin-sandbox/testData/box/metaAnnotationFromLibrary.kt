@@ -1,3 +1,5 @@
+// IGNORE_NATIVE: mode=ONE_STAGE_MULTI_MODULE
+//  ^Reason: KT-82482
 // MODULE: lib
 import org.jetbrains.kotlin.plugin.sandbox.AllOpen
 

@@ -145,7 +145,8 @@ fun Project.configureKotlinCompilationOptions() {
             if (project.path != ":native:kotlin-test-native-xctest" &&
                 !project.path.startsWith(":native:objcexport-header-generator") &&
                 !project.path.startsWith(":libraries:tools:analysis-api-based-klib-reader") &&
-                !project.path.startsWith(":native:external-projects-test-utils")
+                !project.path.startsWith(":native:external-projects-test-utils") &&
+                !project.path.startsWith(":plugins:plugin-sandbox:plugin-annotations")
             ) {
                 doFirst {
                     if (!useAbsolutePathsInKlib && this !is KotlinJvmCompile && this !is KotlinCompileCommon) {

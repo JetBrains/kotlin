@@ -757,6 +757,7 @@ tasks {
         val excludedNativePrefixes = listOf(
             ":native",
             ":libraries:tools:analysis-api-based-klib-reader:testProject",
+            ":plugins:plugin-sandbox:plugin-annotations",
         )
         allprojects
             .filter {
@@ -858,6 +859,7 @@ tasks {
     // ...
     register("nativeCompilerTest") {
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
+        dependsOn(":plugins:plugin-sandbox:nativeTest")
         dependsOn(":libraries:tools:analysis-api-based-klib-reader:check")
         dependsOn(":native:native.tests:test")
         dependsOn(":native:native.tests:cli-tests:check")
