@@ -38,6 +38,8 @@ class VarArgsList<N: Node>(val argsList: ArgsList, val firstVarargIndex: Int, va
     }
 }
 
+inline fun <reified N: Node> VarArgsList<N>.toTypedArray(): Array<N> = toList().toTypedArray()
+
 interface ArgsUpdater {
     fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?)
 }

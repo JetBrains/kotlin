@@ -5,7 +5,8 @@ import hair.ir.*
 import hair.ir.nodes.*
 import hair.utils.shouldNotReachHere
 
-fun Compilation.inline(call: StaticCall) {
+// FIXME AnyCall
+fun Compilation.inline(call: InvokeStatic) {
     val callerSession = call.session // FIXME obtain compilation by session?
     val calleeCompilation = getCompilation(call.function)
 
