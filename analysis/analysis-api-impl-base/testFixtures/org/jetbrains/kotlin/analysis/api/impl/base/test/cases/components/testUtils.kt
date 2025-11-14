@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.useSiteSession
 import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.kdoc.psi.api.KtDocCommentDescriptor
+import org.jetbrains.kotlin.kdoc.psi.api.KDocCommentDescriptor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -111,7 +111,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
         is Name -> asString()
         is CallableId -> toString()
         is KaCallableSignature<*> -> stringRepresentation(this)
-        is KtDocCommentDescriptor -> buildString {
+        is KDocCommentDescriptor -> buildString {
             appendLine("<primary tag=\"${primaryTag.name}\" subject=\"${primaryTag.getSubjectName()}\">")
             append(primaryTag.getContent())
             additionalSections.forEach { section ->
