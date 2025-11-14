@@ -252,6 +252,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             nestedClasses = nestedClasses,
             originalClassId = klass.classId,
             innerClassReference = runIf(klass.isInner) { klass.typeScriptInnerClassReference() },
+            isFinal = klass.modality == Modality.FINAL,
         )
     }
 
@@ -487,6 +488,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 nestedClasses = nestedClasses,
                 originalClassId = klass.classId,
                 innerClassReference = runIf(klass.isInner) { klass.typeScriptInnerClassReference() },
+                isFinal = klass.modality == Modality.FINAL,
             )
         }
     }

@@ -100,6 +100,7 @@ public data class ExportedRegularClass(
     override val originalClassId: ClassId?,
     val innerClassReference: String? = null,
     override val isExternal: Boolean,
+    val isFinal: Boolean = false,
 ) : ExportedClass() {
     override val isCompanion: Boolean
         get() = false

@@ -89,7 +89,7 @@ declare namespace JS_TESTS {
                 }
             }
             class I {
-                protected constructor($outer: foo.D, i: bigint);
+                private constructor($outer: foo.D, i: bigint);
                 get i(): bigint;
             }
             namespace I {

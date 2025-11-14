@@ -369,7 +369,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             generateMetadataNamespace(listOf(constructorProperty))
         })
 
-        val realNestedDeclarations = metadataNamespace + namespaceMembers + nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
+        val realNestedDeclarations = metadataNamespace + namespaceMembers + nonInnerClasses + innerClasses.map { it.withProtectedConstructorsForInnerClass() }
 
         val klassExport =
             "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}${
@@ -428,13 +428,11 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         }
     }
 
-    private fun ExportedClass.withProtectedConstructors(): ExportedRegularClass {
+    private fun ExportedClass.withProtectedConstructorsForInnerClass(): ExportedRegularClass {
         return (this as ExportedRegularClass).copy(members = members.map {
-            if (it !is ExportedConstructor || it.isProtected) {
-                it
-            } else {
-                it.copy(visibility = ExportedVisibility.PROTECTED)
-            }
+            if (it !is ExportedConstructor) return@map it
+            val visibility = if (isFinal) ExportedVisibility.PRIVATE else ExportedVisibility.PROTECTED
+            it.copy(visibility = visibility)
         })
     }
 
