@@ -1,6 +1,3 @@
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE: 1.9.20 2.0.0 2.1.0 2.2.0
-// ^^^ function `test` is codegenerated to `test_0`, and test directive `// CHECK_STRING_LITERAL_COUNT: function=test` does not see it
-
 // CHECK_STRING_LITERAL_COUNT: function=foo count=1
 fun foo(x: Int) = "foo $x"
 
@@ -16,14 +13,14 @@ fun beer(x: Int?) = "$x beer"
 // CHECK_STRING_LITERAL_COUNT: function=quux count=2
 fun quux(x: Int?) = "${x?.toString()} quux"
 
-// CHECK_STRING_LITERAL_COUNT: function=test count=2
-fun test(p: String?): String {
+// CHECK_STRING_LITERAL_COUNT: function=mytest count=2
+fun mytest(p: String?): String {
     return "${p ?: "Default"} test"
 }
 
 fun box(): String {
-    if (test(null) != "Default test") return "fail 1: ${test(null)}"
-    if (test("Good") != "Good test") return "fail 2: ${test("Good")}"
+    if (mytest(null) != "Default test") return "fail 1: ${mytest(null)}"
+    if (mytest("Good") != "Good test") return "fail 2: ${mytest("Good")}"
     if (foo(3) != "foo 3") return "fail 3: ${foo(3)}"
     if (bar(4) != "4 bar") return "fail 4: ${bar(4)}"
     if (baz(5) != "5 baz") return "fail 5: ${baz(5)}"
