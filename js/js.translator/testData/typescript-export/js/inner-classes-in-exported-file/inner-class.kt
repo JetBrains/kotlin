@@ -25,4 +25,18 @@ class TestInner(val a: String) {
             val concat: String = this@TestInner.a + this@Inner.a + this.a
         }
     }
+
+    open inner class OpenInnerWithPublicConstructor(val a: String) {
+        @JsName("fromNumber")
+        constructor(a: Int) : this(a.toString())
+
+        val concat: String = this@TestInner.a + this.a
+    }
+
+    open inner class OpenInnerWithProtectedConstructor protected constructor(val a: String) {
+        @JsName("fromNumber")
+        protected constructor(a: Int) : this(a.toString())
+
+        val concat: String = this@TestInner.a + this.a
+    }
 }
