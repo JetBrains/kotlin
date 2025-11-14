@@ -706,7 +706,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         sourceLocationConsumer.pushSourceInfo(null);
         for (JsParameter param : parameters) {
             notFirst = sepCommaSpace(notFirst);
+            printCommentsBeforeNode(param);
             accept(param);
+            printCommentsAfterNode(param);
         }
         sourceLocationConsumer.popSourceInfo();
         rightParen();

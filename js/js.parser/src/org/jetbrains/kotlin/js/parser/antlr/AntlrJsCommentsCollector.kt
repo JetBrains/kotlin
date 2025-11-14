@@ -31,6 +31,24 @@ internal class AntlrJsCommentsCollector(private val tokenStream: CommonTokenStre
         ctx.collectCommentsAfterNode()
     }
 
+    override fun visitFormalParameterArg(ctx: JavaScriptParser.FormalParameterArgContext) {
+        ctx.collectCommentsBeforeNode()
+        visitChildren(ctx)
+        ctx.collectCommentsAfterNode()
+    }
+
+    override fun visitArrowFunctionParameters(ctx: JavaScriptParser.ArrowFunctionParametersContext) {
+        // Single-parameter without a parens (e.g. `abc => 123;`) should be handled here, separately.
+        // Multiple parameters case is handled in `visitFormalParameterArg`.
+        ctx.identifierName()?.let { singleIdentifier ->
+            singleIdentifier.collectCommentsBeforeNode()
+            visitChildren(singleIdentifier)
+            singleIdentifier.collectCommentsAfterNode()
+        }
+
+        visitChildren(ctx)
+    }
+
     private fun JavaScriptRuleContext.collectCommentsBeforeNode() {
         val beforeCommentTokens = tokenStream
             .getHiddenTokensToLeft(start.tokenIndex, JavaScriptLexer.COMMENTS)
