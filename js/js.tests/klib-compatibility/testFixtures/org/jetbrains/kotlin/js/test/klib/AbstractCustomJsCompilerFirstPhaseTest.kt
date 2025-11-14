@@ -36,9 +36,10 @@ open class AbstractCustomJsCompilerFirstPhaseTest : AbstractKotlinCompilerWithTa
             dependencyKind = DependencyKind.Binary
         }
         defaultDirectives {
-            // `js-ir-minimal-for-test` must not be used in this test at all, so need to use `kotlin-test` library via `WITH_STDLIB` directive
-            // Note: attempt to use `js-ir-minimal-for-test` on 1st stage will cause unresolved symbol `kotlin.test/assertEquals|assertEquals(0:0;0:0;kotlin.String?){0§<kotlin.Any?>}[0]`
-            // on 2nd stage, since this symbol is absent in `kotlin-test` library.
+            // `js-ir-minimal-for-test` must not be used in this test at all, so need to use `kotlin-test` library on 2nd stage via `WITH_STDLIB` directive
+            // Note: on 1st stage, compilation is done against not `js-ir-minimal-for-test` (it's not bundled to stdlib Maven artifact),
+            // but against `kotlin-test` library, which has assert functions of different signatures.
+            // So, an attempt to use `js-ir-minimal-for-test` on 2sn stage will cause unresolved symbols like `kotlin.test/assertEquals|assertEquals(0:0;0:0;kotlin.String?){0§<kotlin.Any?>}[0]`
             +WITH_STDLIB
         }
 
