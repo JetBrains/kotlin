@@ -73,7 +73,7 @@ class KlibAnnotationsTest {
             emptyList(),
             KlibMetadataVersion(MetadataVersion.INSTANCE.toArray()),
         ).write()
-        return KlibModuleMetadata.read(object : KlibModuleMetadata.MetadataLibraryProvider {
+        return KlibModuleMetadata.readLenient(object : KlibModuleMetadata.MetadataLibraryProvider {
             override val moduleHeaderData: ByteArray get() = metadata.header
             override val metadataVersion: KlibMetadataVersion = metadata.metadataVersion
             override fun packageMetadataParts(fqName: String): Set<String> = metadata.fragmentNames.toSet()

@@ -96,7 +96,7 @@ internal class KotlinpBasedMetadataDumper(
         metadataVersion = originalModuleMetadata.metadataVersion,
     )
 
-    private fun loadModuleMetadata(library: KotlinLibrary) = KlibModuleMetadata.read(
+    private fun loadModuleMetadata(library: KotlinLibrary) = KlibModuleMetadata.readLenient(
         object : KlibModuleMetadata.MetadataLibraryProvider {
             private val metadata = library.metadata
             override val moduleHeaderData get() = metadata.moduleHeaderData

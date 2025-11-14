@@ -22,7 +22,7 @@ internal class CirTreeModuleDeserializer(
     private val packageDeserializer: CirTreePackageDeserializer
 ) {
     operator fun invoke(metadata: SerializedMetadata, typeResolver: CirTypeResolver): CirTreeModule {
-        val module = KlibModuleMetadata.read(SerializedMetadataLibraryProvider(metadata))
+        val module = KlibModuleMetadata.readStrict(SerializedMetadataLibraryProvider(metadata))
 
         val fragmentsByPackage: Map<CirPackageName, Collection<KmModuleFragment>> = module.fragments.foldToMap { fragment ->
             fragment.fqName?.let(CirPackageName.Companion::create)
