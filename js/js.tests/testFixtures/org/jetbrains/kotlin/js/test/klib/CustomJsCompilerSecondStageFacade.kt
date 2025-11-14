@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.test.converters.finalizePath
 import org.jetbrains.kotlin.js.test.converters.kind
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
-import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondPhaseFacade
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
@@ -28,11 +28,11 @@ import java.io.File
 import java.io.PrintStream
 
 /**
- * An implementation of [CustomKlibCompilerSecondPhaseFacade] for JS.
+ * An implementation of [CustomKlibCompilerSecondStageFacade] for JS.
  */
-class CustomJsCompilerSecondPhaseFacade(
+class CustomJsCompilerSecondStageFacade(
     testServices: TestServices
-) : CustomKlibCompilerSecondPhaseFacade<BinaryArtifacts.Js>(testServices) {
+) : CustomKlibCompilerSecondStageFacade<BinaryArtifacts.Js>(testServices) {
 
     override val outputKind get() = ArtifactKinds.Js
 

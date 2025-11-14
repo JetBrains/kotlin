@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironment
  * Note: This configuration is supposed to be used in tests with the custom compiler on the first compilation phase,
  *       so the second stage must be adapted a bit to accept old-style IR
  */
-class CustomWebCompilerSecondPhaseEnvironmentConfigurator(testServices: TestServices) : JsSecondStageEnvironmentConfigurator(testServices) {
+class CustomWebCompilerSecondStageEnvironmentConfigurator(testServices: TestServices) : JsSecondStageEnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         configuration.verifyIr = IrVerificationMode.NONE
         super.configureCompilerConfiguration(configuration, module)

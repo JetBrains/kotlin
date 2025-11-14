@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
-import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstPhaseFacade
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageFacade
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.CompilationStage
@@ -24,9 +24,9 @@ import java.io.File
 import java.io.PrintStream
 
 /**
- * An implementation of [CustomKlibCompilerFirstPhaseFacade] for JS and Wasm.
+ * An implementation of [CustomKlibCompilerFirstStageFacade] for JS and Wasm.
  */
-class CustomWebCompilerFirstPhaseFacade(testServices: TestServices) : CustomKlibCompilerFirstPhaseFacade(testServices) {
+class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlibCompilerFirstStageFacade(testServices) {
     override val TestModule.customKlibCompilerDefaultLanguageVersion: LanguageVersion
         get() = customWebCompilerSettings(testServices).defaultLanguageVersion
 

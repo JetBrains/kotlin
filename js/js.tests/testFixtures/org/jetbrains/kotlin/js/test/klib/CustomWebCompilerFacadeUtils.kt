@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
 
 /**
- * Note: To be used only internally in [CustomWebCompilerFirstPhaseFacade].
+ * Note: To be used only internally in [CustomWebCompilerFirstStageFacade].
  */
 internal fun TestModule.isWasmModule(testServices: TestServices): Boolean =
     testServices.targetPlatformProvider.getTargetPlatform(module = this).isWasm()
@@ -27,7 +27,7 @@ internal fun TestModule.isWasmModule(testServices: TestServices): Boolean =
 /**
  * Returns null only if this is a JS target.
  *
- * Note: To be used only internally in [CustomWebCompilerFirstPhaseFacade].
+ * Note: To be used only internally in [CustomWebCompilerFirstStageFacade].
  */
 internal fun TestModule.wasmTargetOrNull(testServices: TestServices, compilationStage: CompilationStage): WasmTarget? =
     runIf(isWasmModule(testServices)) {
@@ -35,13 +35,13 @@ internal fun TestModule.wasmTargetOrNull(testServices: TestServices, compilation
     }
 
 /**
- * Note: To be used only internally in [CustomWebCompilerFirstPhaseFacade] and [CustomWebCompilerSecondPhaseEnvironmentConfigurator].
+ * Note: To be used only internally in [CustomWebCompilerFirstStageFacade] and [CustomWebCompilerSecondStageEnvironmentConfigurator].
  */
 internal fun TestModule.customWebCompilerSettings(testServices: TestServices): CustomWebCompilerSettings =
     if (isWasmModule(testServices)) customWasmJsCompilerSettings else customJsCompilerSettings
 
 /**
- * Note: To be used only internally in [CustomWebCompilerFirstPhaseFacade] and [CustomJsCompilerSecondPhaseFacade].
+ * Note: To be used only internally in [CustomWebCompilerFirstStageFacade] and [CustomJsCompilerSecondStageFacade].
  */
 internal fun TestModule.collectDependencies(
     testServices: TestServices,
@@ -62,7 +62,7 @@ internal fun TestModule.collectDependencies(
                 customWasmJsCompilerSettings.kotlinTest,
             )
         }
-        WasmTarget.WASI -> error("WASI target is not yet supported in the first phase of ${CustomWebCompilerFirstPhaseFacade::class.simpleName}")
+        WasmTarget.WASI -> error("WASI target is not yet supported in the first phase of ${CustomWebCompilerFirstStageFacade::class.simpleName}")
     }
 
     val (transitiveLibraries: List<File>, friendLibraries: List<File>) = getTransitivesAndFriends(module = this, testServices)

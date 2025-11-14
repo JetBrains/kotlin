@@ -31,14 +31,14 @@ import org.jetbrains.kotlin.test.services.transitiveDependsOnDependencies
  * See also https://kotlinlang.org/docs/kotlin-evolution-principles.html#kotlin-klib-binaries
  *
  * The sources are compiled by the old (custom) compiler using an implementation of
- * [CustomKlibCompilerFirstPhaseFacade]. Then all produced KLIBs are passed to the new (current)
+ * [CustomKlibCompilerFirstStageFacade]. Then all produced KLIBs are passed to the new (current)
  * compiler to produce the executable binary. Finally, the binary is executed and the execution
  * result is verified.
  *
  * This facade effectively replaces a few smaller facades, and allows directly transforming
  * [ResultingArtifact.Source] artifacts to [BinaryArtifacts.KLib] artifacts.
  */
-abstract class CustomKlibCompilerFirstPhaseFacade(
+abstract class CustomKlibCompilerFirstStageFacade(
     val testServices: TestServices,
 ) : AbstractTestFacade<ResultingArtifact.Source, BinaryArtifacts.KLib>() {
 

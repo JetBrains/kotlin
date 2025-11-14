@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_MUL
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
-import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondPhaseTestSuppressor
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Tag
 
-@Tag("custom-second-phase")
-open class AbstractCustomJsCompilerSecondPhaseTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
+@Tag("custom-second-stage")
+open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
     override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
         return if (customJsCompilerSettings.defaultLanguageVersion >= LanguageVersion.LATEST_STABLE)
             StandardLibrariesPathProviderForKotlinProject
@@ -74,17 +74,17 @@ open class AbstractCustomJsCompilerSecondPhaseTest : AbstractKotlinCompilerWithT
             commonFirHandlersForCodegenTest()
         }
 
-        facadeStep(::CustomJsCompilerSecondPhaseFacade)
+        facadeStep(::CustomJsCompilerSecondStageFacade)
 
         jsArtifactsHandlersStep()
         configureJsBoxHandlers()
 
         useAfterAnalysisCheckers(
-            // Suppress all tests that failed on the first phase if they are anyway marked as "IGNORE_BACKEND*".
+            // Suppress all tests that failed on the first stage if they are anyway marked as "IGNORE_BACKEND*".
             ::CustomKlibCompilerTestSuppressor,
-            // Suppress failed tests having `// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: X.Y.Z`,
+            // Suppress failed tests having `// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: X.Y.Z`,
             // where `X.Y.Z` matches to `customJsCompilerSettings.version`
-            ::CustomKlibCompilerSecondPhaseTestSuppressor.bind(customJsCompilerSettings.version),
+            ::CustomKlibCompilerSecondStageTestSuppressor.bind(customJsCompilerSettings.version),
         )
         forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
             defaultDirectives {

@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.test.services.TestServices
  * which are used in generated KLIBs.
  *
  * The sources are compiler by the new (current) compiler. Then all produced KLIBs are passed
- * to the old (custom) compiler using an implementation of [CustomKlibCompilerSecondPhaseFacade]
+ * to the old (custom) compiler using an implementation of [CustomKlibCompilerSecondStageFacade]
  * to produce the executable binary. Finally, the binary is executed and the execution result is verified.
  *
  * This facade effectively replaces a few smaller facades, and allows directly transforming
  * [BinaryArtifacts.KLib] artifacts to the corresponding platform-specific binary artifacts.
  */
-abstract class CustomKlibCompilerSecondPhaseFacade<A : ResultingArtifact.Binary<A>>(
+abstract class CustomKlibCompilerSecondStageFacade<A : ResultingArtifact.Binary<A>>(
     val testServices: TestServices,
 ) : AbstractTestFacade<BinaryArtifacts.KLib, A>() {
 
