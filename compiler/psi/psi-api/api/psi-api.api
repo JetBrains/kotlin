@@ -4240,6 +4240,28 @@ public final class org/jetbrains/kotlin/psi/utils/ConstantExpressionUtils {
 	public static final fun toConstantValueKind (Lorg/jetbrains/kotlin/psi/stubs/elements/KtStubElementType;)Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;
 }
 
+public final class org/jetbrains/kotlin/psi/utils/OperatorTokens {
+	public static final field ASSIGNMENTS_FOR_OPERATIONS Ljava/util/Map;
+	public static final field ASSIGNMENT_OPERATION_NAMES Ljava/util/Map;
+	public static final field ASSIGNMENT_OPERATION_TOKENS Ljava/util/Map;
+	public static final field BINARY_OPERATION_NAMES Ljava/util/Map;
+	public static final field BINARY_OPERATION_TOKENS Ljava/util/Map;
+	public static final field COMPARISON_OPERATIONS Ljava/util/Set;
+	public static final field CONVENTION_NAMES Ljava/util/Set;
+	public static final field EQUALS_OPERATIONS Ljava/util/Set;
+	public static final field IDENTITY_EQUALS_OPERATIONS Ljava/util/Set;
+	public static final field INCREMENT_OPERATIONS Ljava/util/Set;
+	public static final field INSTANCE Lorg/jetbrains/kotlin/psi/utils/OperatorTokens;
+	public static final field IN_OPERATIONS Ljava/util/Set;
+	public static final field OPERATIONS_FOR_ASSIGNMENTS Ljava/util/Map;
+	public static final field UNARY_OPERATION_NAMES Ljava/util/Map;
+	public static final field UNARY_OPERATION_TOKENS Ljava/util/Map;
+	public static final fun isConventionName (Lorg/jetbrains/kotlin/name/Name;)Z
+	public static final fun operationName (Lorg/jetbrains/kotlin/lexer/KtToken;)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun operationName (Lorg/jetbrains/kotlin/lexer/KtToken;ZZ)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun operationToken (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/lexer/KtToken;
+}
+
 public class org/jetbrains/kotlin/resolve/StatementFilter {
 	public static final field Companion Lorg/jetbrains/kotlin/resolve/StatementFilter$Companion;
 	public static final field NONE Lorg/jetbrains/kotlin/resolve/StatementFilter;
@@ -4253,33 +4275,5 @@ public final class org/jetbrains/kotlin/resolve/StatementFilter$Companion {
 public final class org/jetbrains/kotlin/resolve/StatementFilterKt {
 	public static final fun filterStatements (Lorg/jetbrains/kotlin/resolve/StatementFilter;Lorg/jetbrains/kotlin/psi/KtBlockExpression;)Ljava/util/List;
 	public static final fun getLastStatementInABlock (Lorg/jetbrains/kotlin/resolve/StatementFilter;Lorg/jetbrains/kotlin/psi/KtBlockExpression;)Lorg/jetbrains/kotlin/psi/KtExpression;
-}
-
-public class org/jetbrains/kotlin/types/expressions/OperatorConventions {
-	public static final field ASSIGNMENT_OPERATIONS Lcom/google/common/collect/ImmutableBiMap;
-	public static final field ASSIGNMENT_OPERATION_COUNTERPARTS Lcom/google/common/collect/ImmutableBiMap;
-	public static final field ASSIGN_METHOD Lorg/jetbrains/kotlin/name/Name;
-	public static final field BINARY_OPERATION_NAMES Lcom/google/common/collect/ImmutableBiMap;
-	public static final field BOOLEAN_OPERATIONS Lcom/google/common/collect/ImmutableBiMap;
-	public static final field BYTE Lorg/jetbrains/kotlin/name/Name;
-	public static final field CHAR Lorg/jetbrains/kotlin/name/Name;
-	public static final field COMPARISON_OPERATIONS Lcom/google/common/collect/ImmutableSet;
-	public static final field CONVENTION_NAMES Lcom/google/common/collect/ImmutableSet;
-	public static final field DOUBLE Lorg/jetbrains/kotlin/name/Name;
-	public static final field EQUALS_OPERATIONS Lcom/google/common/collect/ImmutableSet;
-	public static final field FLOAT Lorg/jetbrains/kotlin/name/Name;
-	public static final field IDENTITY_EQUALS_OPERATIONS Lcom/google/common/collect/ImmutableSet;
-	public static final field INCREMENT_OPERATIONS Lcom/google/common/collect/ImmutableSet;
-	public static final field INT Lorg/jetbrains/kotlin/name/Name;
-	public static final field IN_OPERATIONS Lcom/google/common/collect/ImmutableSet;
-	public static final field LONG Lorg/jetbrains/kotlin/name/Name;
-	public static final field NOT_OVERLOADABLE Lcom/google/common/collect/ImmutableSet;
-	public static final field NUMBER_CONVERSIONS Lcom/google/common/collect/ImmutableSet;
-	public static final field SHORT Lorg/jetbrains/kotlin/name/Name;
-	public static final field UNARY_OPERATION_NAMES Lcom/google/common/collect/ImmutableBiMap;
-	public static fun getNameForOperationSymbol (Lorg/jetbrains/kotlin/lexer/KtToken;)Lorg/jetbrains/kotlin/name/Name;
-	public static fun getNameForOperationSymbol (Lorg/jetbrains/kotlin/lexer/KtToken;ZZ)Lorg/jetbrains/kotlin/name/Name;
-	public static fun getOperationSymbolForName (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static fun isConventionName (Lorg/jetbrains/kotlin/name/Name;)Z
 }
 

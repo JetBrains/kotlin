@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.psi.utils.OperatorTokens;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Set;
@@ -81,7 +81,7 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
     );
 
     private static boolean shouldDropOperatorKeyword(String oldName, String newName) {
-        return !OperatorConventions.isConventionName(Name.identifier(newName)) ||
+        return !OperatorTokens.isConventionName(Name.identifier(newName)) ||
                FUNCTIONLIKE_CONVENTIONS.contains(oldName) != FUNCTIONLIKE_CONVENTIONS.contains(newName);
     }
 
