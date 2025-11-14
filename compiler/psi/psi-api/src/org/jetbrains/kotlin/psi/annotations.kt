@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,3 +21,31 @@ annotation class KtPsiInconsistencyHandling
  */
 @RequiresOptIn("Internal API which should not be used outside the Kotlin PSI API implementation modules as it does not have any compatibility guarantees")
 annotation class KtImplementationDetail
+
+/**
+ * Marks an API as internal to projects developed by JetBrains. Such APIs are not intended for public user consumption and have less strict
+ * compatibility guarantees. For example, a change to the API might be implemented without a deprecation cycle.
+ */
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.TYPEALIAS,
+)
+@RequiresOptIn("Internal API which is used in projects developed by JetBrains")
+annotation class KtNonPublicApi
+
+/**
+ * Marks an API as experimental. The API is intended for user consumption, but it's not stable and might change at any moment, or even be
+ * removed, without a deprecation cycle.
+ */
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.TYPEALIAS,
+)
+@RequiresOptIn("Experimental API with no compatibility guarantees")
+annotation class KtExperimentalApi

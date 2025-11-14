@@ -1561,6 +1561,9 @@ public class org/jetbrains/kotlin/psi/KtEscapeStringTemplateEntry : org/jetbrain
 	public fun getUnescapedValue ()Ljava/lang/String;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/psi/KtExperimentalApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface class org/jetbrains/kotlin/psi/KtExpression : org/jetbrains/kotlin/psi/KtElement {
 	public static final field ARRAY_FACTORY Lcom/intellij/util/ArrayFactory;
 	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtExpression;
@@ -1968,6 +1971,9 @@ public class org/jetbrains/kotlin/psi/KtNamedFunction : org/jetbrains/kotlin/psi
 	public fun mayHaveContract (Z)Z
 	public fun setTypeReference (Lorg/jetbrains/kotlin/psi/KtTypeReference;)Lorg/jetbrains/kotlin/psi/KtTypeReference;
 	public fun shouldChangeModificationCount (Lcom/intellij/psi/PsiElement;)Z
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/psi/KtNonPublicApi : java/lang/annotation/Annotation {
 }
 
 public class org/jetbrains/kotlin/psi/KtNullableType : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtTypeElement {

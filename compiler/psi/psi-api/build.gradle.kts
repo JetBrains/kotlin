@@ -35,6 +35,8 @@ sourceSets {
 apiValidation {
     nonPublicMarkers += listOf(
         "org.jetbrains.kotlin.psi.KtImplementationDetail",
+        "org.jetbrains.kotlin.psi.KtNonPublicApi",
+        "org.jetbrains.kotlin.psi.KtExperimentalApi",
     )
 }
 
