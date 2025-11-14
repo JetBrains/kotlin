@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":core:language-model"))
     api(project(":core:compiler.common")) { isTransitive = false }
     api(project(":compiler:config")) { isTransitive = false }
     api(project(":native:kotlin-native-utils"))

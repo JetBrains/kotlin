@@ -200,6 +200,7 @@ val commonCompilerModules = arrayOf(
     ":core:compiler.common.wasm",
     ":core:compiler.common.web",
     ":core:util.runtime",
+    ":core:language-model",
     ":compiler:frontend.common.jvm",
     ":compiler:frontend.java", // TODO this is fe10 module but some utils used in fir ide now
     ":analysis:analysis-internal-utils",

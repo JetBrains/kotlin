@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.name
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.name.render
 
 @KaSpi
 @KaExperimentalApi
