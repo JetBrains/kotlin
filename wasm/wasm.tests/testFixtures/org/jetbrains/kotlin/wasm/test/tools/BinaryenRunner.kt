@@ -7,26 +7,28 @@ package org.jetbrains.kotlin.wasm.test.tools
 
 import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.wasm.ir.WasmBinaryData
+import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.writeTo
 import java.io.File
 import kotlin.test.fail
 
 sealed interface WasmOptimizer {
-    fun run(wasmInput: ByteArray, withText: Boolean = false): OptimizationResult
+    fun run(wasmInput: WasmBinaryData, withText: Boolean = false): OptimizationResult
 
-    data class OptimizationResult(val wasm: ByteArray, val wat: String?)
+    data class OptimizationResult(val wasm: WasmBinaryData, val wat: String?)
 
     object Binaryen : WasmOptimizer {
         private val binaryenPath = System.getProperty("binaryen.path")
 
-        override fun run(wasmInput: ByteArray, withText: Boolean): OptimizationResult {
+        override fun run(wasmInput: WasmBinaryData, withText: Boolean): OptimizationResult {
             val command = arrayOf(binaryenPath, *BinaryenConfig.binaryenArgs.toTypedArray())
             return OptimizationResult(
-                exec(command, wasmInput),
+                exec(command, wasmInput).let { WasmBinaryData(it, it.size) },
                 runIf(withText) { exec(command + "-S", wasmInput).toString(Charsets.UTF_8) }
             )
         }
 
-        private fun exec(command: Array<String>, input: ByteArray): ByteArray {
+        private fun exec(command: Array<String>, input: WasmBinaryData): ByteArray {
             var savedInput: File? = null
             var savedOutput: File? = null
             try {
@@ -34,7 +36,7 @@ sealed interface WasmOptimizer {
 
                 savedInput = File
                     .createTempFile("binaryen_input_$timestamp", ".wasm")
-                    .apply { writeBytes(input) }
+                    .apply { input.writeTo(this) }
 
                 savedOutput = File.createTempFile("binaryen_output_$timestamp", ".wasm")
 
