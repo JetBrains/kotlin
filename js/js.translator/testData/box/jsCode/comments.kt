@@ -4,17 +4,17 @@
 // CHECK_COMMENT_EXISTS: text="Forth single line comment" multiline=false
 // CHECK_COMMENT_EXISTS: text="Multi line comment" multiline=true
 // CHECK_COMMENT_EXISTS: text="Single line comment inside function" multiline=false
+// CHECK_COMMENT_EXISTS: text="Single line comment inside anonymous function" multiline=false
 // CHECK_COMMENT_EXISTS: text="Multi line comment inside function" multiline=true
+// CHECK_COMMENT_EXISTS: text="Multi line comment inside anonymous function" multiline=true
 // CHECK_COMMENT_EXISTS: text="After call single line comment" multiline=false
 // CHECK_COMMENT_EXISTS: text="After call multi line comment" multiline=true
 // CHECK_COMMENT_EXISTS: text="The header multiline\ncomment" multiline=true
+// CHECK_COMMENT_EXISTS: text="The header multiline\ncomment before anonymous function" multiline=true
 // CHECK_COMMENT_EXISTS: text="1Multi line comment\n" multiline=true
 // CHECK_COMMENT_EXISTS: text="2Multi line comment\n\n\n" multiline=true
 // CHECK_COMMENT_EXISTS: text="3Multi line\n\n\n\n\ncomment\n" multiline=true
 // CHECK_COMMENT_EXISTS: text="" multiline=true
-// CHECK_COMMENT_EXISTS: text="Multi line comment inside function" multiline=true
-// CHECK_COMMENT_EXISTS: text="After call single line comment" multiline=false
-// CHECK_COMMENT_EXISTS: text="After call multi line comment" multiline=true
 // CHECK_COMMENT_EXISTS: text="Before argument 1" multiline=true
 // CHECK_COMMENT_EXISTS: text="Before argument 2" multiline=true
 // CHECK_COMMENT_EXISTS: text="After argument 1" multiline=true
@@ -41,6 +41,14 @@ fun box(): String {
             // Single line comment inside function
             Object;
             /*Multi line comment inside function*/
+        }
+
+        /* The header multiline
+        comment before anonymous function*/
+        var foo2 = function(param) {
+            // Single line comment inside anonymous function
+            Object;
+            /*Multi line comment inside anonymous function*/
         }
         
         // Single line comment
