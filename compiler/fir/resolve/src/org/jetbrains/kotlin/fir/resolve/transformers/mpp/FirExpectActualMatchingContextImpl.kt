@@ -467,6 +467,9 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val CallableSymbolMarker.hasStableParameterNames: Boolean
         get() = asSymbol().rawStatus.hasStableParameterNames
 
+    override val CallableSymbolMarker.shouldMatchByParameterNames: Boolean
+        get() = false
+
     override val CallableSymbolMarker.isJavaField: Boolean
         get() = this is FirFieldSymbol && this.fir.unwrapFakeOverrides().isJava
 
