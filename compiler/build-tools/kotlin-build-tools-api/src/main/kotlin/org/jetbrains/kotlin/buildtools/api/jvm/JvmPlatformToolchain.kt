@@ -22,7 +22,7 @@ import java.nio.file.Path
  * An example of the basic usage is:
  *  ```
  *   val toolchain = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
- *   val operation = toolchain.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
+ *   val operation = toolchain.jvm.jvmCompilationOperationBuilder(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory")).build()
  *   toolchain.createBuildSession().use { it.executeOperation(operation) }
  *  ```
  *

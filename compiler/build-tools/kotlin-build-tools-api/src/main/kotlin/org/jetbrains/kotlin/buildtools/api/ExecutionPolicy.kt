@@ -13,7 +13,7 @@ import java.nio.file.Path
  *
  * This interface is not intended to be implemented by the API consumers.
  *
- * You can obtain an instance of this type from [KotlinToolchains.createInProcessExecutionPolicy] or [KotlinToolchains.createInProcessExecutionPolicy]
+ * You can obtain an instance of this type from [KotlinToolchains.createInProcessExecutionPolicy] or [KotlinToolchains.daemonExecutionPolicyBuilder]
  *
  * @since 2.3.0
  */
@@ -32,6 +32,8 @@ public sealed interface ExecutionPolicy {
 
         /**
          * A builder for configuring and instantiating the [WithDaemon] execution policy.
+         *
+         * @since 2.3.20
          */
         public interface Builder {
             /**
@@ -39,22 +41,29 @@ public sealed interface ExecutionPolicy {
              *
              * @return the previously set value for an option
              * @throws IllegalStateException if the option was not set and has no default value
+             * @since 2.3.20
              */
             public operator fun <V> get(key: Option<V>): V
 
             /**
              * Set the [value] for option specified by [key], overriding any previous value for that option.
+             *
+             * @since 2.3.20
              */
             public operator fun <V> set(key: Option<V>, value: V)
 
             /**
              * Creates an immutable instance of [WithDaemon] based on the configuration of this builder.
+             *
+             * @since 2.3.20
              */
             public fun build(): WithDaemon
         }
 
         /**
          * Creates a builder for [WithDaemon] that contains a copy of this configuration.
+         *
+         * @since 2.3.20
          */
         public fun toBuilder(): Builder
 

@@ -23,14 +23,14 @@ import java.nio.file.Path
  *
  * This interface is not intended to be implemented by the API consumers.
  *
- * Obtain an instance of this interface from [JvmPlatformToolchain.createJvmCompilationOperation].
+ * Obtain an instance of this interface from [JvmPlatformToolchain.jvmCompilationOperationBuilder].
  *
  * An example of the basic usage is:
  *  ```
  *   val toolchain = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
- *   val operation = toolchain.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
+ *   val operation = toolchain.jvm.jvmCompilationOperationBuilder(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
  *   operation.compilerArguments[CommonCompilerArguments.LANGUAGE_VERSION] = KotlinVersion.V2_0
- *   toolchain.createBuildSession().use { it.executeOperation(operation, toolchain.createDaemonExecutionPolicy()) }
+ *   toolchain.createBuildSession().use { it.executeOperation(operation.build(), toolchain.daemonExecutionPolicyBuilder().build()) }
  *  ```
  *
  * @since 2.3.0
@@ -40,10 +40,14 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
 
     /**
      * A builder for configuring and instantiating the [JvmCompilationOperation].
+     *
+     * @since 2.3.20
      */
     public interface Builder : BuildOperation.Builder {
         /**
          * Kotlin compiler configurable options for JVM platform.
+         *
+         * @since 2.3.20
          */
         public val compilerArguments: JvmCompilerArguments.Builder
 
@@ -52,16 +56,22 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
          *
          * @return the previously set value for an option
          * @throws IllegalStateException if the option was not set and has no default value
+         *
+         * @since 2.3.20
          */
         public operator fun <V> get(key: Option<V>): V
 
         /**
          * Set the [value] for option specified by [key], overriding any previous value for that option.
+         *
+         * @since 2.3.20
          */
         public operator fun <V> set(key: Option<V>, value: V)
 
         /**
          * Creates an immutable instance of [JvmCompilationOperation] based on the configuration of this builder.
+         *
+         * @since 2.3.20
          */
         public fun build(): JvmCompilationOperation
 
@@ -77,10 +87,11 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
          *
          * icConfig[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = true
          *
-         * compilation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = icConfig
+         * compilation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = icConfig.build()
          * ```
          *
          * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+         * @since 2.3.20
          */
         public fun snapshotBasedIcConfigurationBuilder(
             workingDirectory: Path,
@@ -92,6 +103,8 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
 
     /**
      * Creates a builder for [JvmCompilationOperation] that contains a copy of this configuration.
+     *
+     * @since 2.3.20
      */
     public fun toBuilder(): Builder
     /**
@@ -128,7 +141,7 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
      * Creates an options set for snapshot-based incremental compilation (IC) in JVM projects.
      * May be used to observe the defaults, adjust them, and configure incremental compilation as follows:
      * ```
-     * val icOptions = compilation.createSnapshotBasedIcOptions()
+     * val icOptions = compilation.snapshotBasedIcOptionsBuilder()
      *
      * icOptions[JvmIncrementalCompilationOptions.BACKUP_CLASSES] = true
      *
@@ -143,7 +156,7 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
      * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use `snapshotBasedIcConfigurationBuilder` instead.")
+    @Deprecated("JvmSnapshotBasedIncrementalCompilationOptions is deprecated. Use `snapshotBasedIcConfigurationBuilder` instead.")
     public fun createSnapshotBasedIcOptions(): org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 
     public companion object {
