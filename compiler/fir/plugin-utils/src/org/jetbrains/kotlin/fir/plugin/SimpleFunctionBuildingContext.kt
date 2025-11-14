@@ -41,6 +41,7 @@ public class SimpleFunctionBuildingContext(
     private val containingFileName: String?,
 ) : FunctionBuildingContext<FirNamedFunction>(callableId, session, key, owner) {
     private var extensionReceiverTypeProvider: ((List<FirTypeParameter>) -> ConeKotlinType)? = null
+    private var generateDefaultBody: Boolean = true
 
     /**
      * Sets [type] as extension receiver type of the function.
@@ -57,6 +58,15 @@ public class SimpleFunctionBuildingContext(
     public fun extensionReceiverType(typeProvider: (List<FirTypeParameter>) -> ConeKotlinType) {
         require(extensionReceiverTypeProvider == null) { "Extension receiver type is already initialized" }
         extensionReceiverTypeProvider = typeProvider
+    }
+
+    /**
+     * By default, if the property has backing field and not abstract, the
+     * default `null!!` initializer will be generated.
+     * Call this function to disable this behavior.
+     */
+    public fun doNotGenerateDefaultBody() {
+        generateDefaultBody = false
     }
 
     override fun build(): FirNamedFunction {
@@ -95,7 +105,7 @@ public class SimpleFunctionBuildingContext(
                     containingDeclarationSymbol = this@buildNamedFunction.symbol
                 }
             }
-            if (modality != Modality.ABSTRACT) {
+            if (generateDefaultBody && modality != Modality.ABSTRACT) {
                 val returnExpression = buildReturnExpression {
                     result = generateExpressionStub()
                     returnTarget = FirFunctionTarget(labelName = null, isLambda = false)

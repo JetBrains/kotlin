@@ -13,9 +13,7 @@ FILE: serializerInLocalClass.kt
             public final fun copy(i: R|kotlin/Int| = this@R|<local>/Carrier|.R|<local>/i|): R|<local>/Carrier|
 
             local final companion object Companion : R|kotlin/Any| {
-                public final fun serializer(): R|kotlinx/serialization/KSerializer<<local>/Carrier>| {
-                    ^serializer Null(null)!!
-                }
+                public final fun serializer(): R|kotlinx/serialization/KSerializer<<local>/Carrier>|
 
                 private constructor(): R|<local>/Carrier.Companion| {
                     super<R|kotlin/Any|>()

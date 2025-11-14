@@ -35,9 +35,7 @@ FILE: serializableWithCompanion.kt
                 ^foo String(OK)
             }
 
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<com/example/WithCompanion>| {
-                ^serializer Null(null)!!
-            }
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<com/example/WithCompanion>|
 
         }
 
@@ -79,9 +77,7 @@ FILE: serializableWithCompanion.kt
                 ^foo String(OK)
             }
 
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<com/example/WithNamedCompanion>| {
-                ^serializer Null(null)!!
-            }
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<com/example/WithNamedCompanion>|
 
         }
 

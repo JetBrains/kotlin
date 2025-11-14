@@ -29,9 +29,7 @@ FILE: metaSerializable.kt
             public get(): R|kotlin/String|
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project1>| {
-                ^serializer Null(null)!!
-            }
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project1>|
 
             private constructor(): R|Project1.Companion| {
                 super<R|kotlin/Any|>()
@@ -68,9 +66,7 @@ FILE: metaSerializable.kt
             public get(): R|kotlin/String|
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project2>| {
-                ^serializer Null(null)!!
-            }
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project2>|
 
             private constructor(): R|Project2.Companion| {
                 super<R|kotlin/Any|>()
@@ -104,9 +100,7 @@ FILE: metaSerializable.kt
             public get(): R|Project2|
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Wrapper>| {
-                ^serializer Null(null)!!
-            }
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Wrapper>|
 
             private constructor(): R|Wrapper.Companion| {
                 super<R|kotlin/Any|>()
@@ -143,9 +137,7 @@ FILE: metaSerializable.kt
             public get(): R|kotlin/String|
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project3>| {
-                ^serializer Null(null)!!
-            }
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project3>|
 
             private constructor(): R|Project3.Companion| {
                 super<R|kotlin/Any|>()
@@ -182,9 +174,7 @@ FILE: metaSerializable.kt
             public get(): R|kotlin/String|
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project4>| {
-                ^serializer Null(null)!!
-            }
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project4>|
 
             private constructor(): R|Project4.Companion| {
                 super<R|kotlin/Any|>()
@@ -207,9 +197,7 @@ FILE: metaSerializable.kt
                 public get(): R|kotlin/String|
 
             public final companion object Companion : R|kotlin/Any| {
-                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed.A>| {
-                    ^serializer Null(null)!!
-                }
+                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed.A>|
 
                 private constructor(): R|TestSealed.A.Companion| {
                     super<R|kotlin/Any|>()
@@ -244,9 +232,7 @@ FILE: metaSerializable.kt
                 public get(): R|kotlin/String|
 
             public final companion object Companion : R|kotlin/Any| {
-                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed.B>| {
-                    ^serializer Null(null)!!
-                }
+                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed.B>|
 
                 private constructor(): R|TestSealed.B.Companion| {
                     super<R|kotlin/Any|>()
@@ -273,9 +259,7 @@ FILE: metaSerializable.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed>| {
-                ^serializer Null(null)!!
-            }
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed>|
 
             private constructor(): R|TestSealed.Companion| {
                 super<R|kotlin/Any|>()
@@ -298,9 +282,7 @@ FILE: metaSerializable.kt
                 public get(): R|kotlin/String|
 
             public final companion object Companion : R|kotlin/Any| {
-                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract.A>| {
-                    ^serializer Null(null)!!
-                }
+                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract.A>|
 
                 private constructor(): R|TestAbstract.A.Companion| {
                     super<R|kotlin/Any|>()
@@ -335,9 +317,7 @@ FILE: metaSerializable.kt
                 public get(): R|kotlin/String|
 
             public final companion object Companion : R|kotlin/Any| {
-                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract.B>| {
-                    ^serializer Null(null)!!
-                }
+                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract.B>|
 
                 private constructor(): R|TestAbstract.B.Companion| {
                     super<R|kotlin/Any|>()
@@ -364,9 +344,7 @@ FILE: metaSerializable.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract>| {
-                ^serializer Null(null)!!
-            }
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract>|
 
             private constructor(): R|TestAbstract.Companion| {
                 super<R|kotlin/Any|>()
@@ -392,9 +370,7 @@ FILE: metaSerializable.kt
             public get(): R|kotlin/enums/EnumEntries<TestEnum>|
 
         public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<TestEnum>| {
-                ^serializer Null(null)!!
-            }
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<TestEnum>|
 
             private constructor(): R|TestEnum.Companion| {
                 super<R|kotlin/Any|>()
@@ -408,9 +384,7 @@ FILE: metaSerializable.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun serializer(): R|kotlinx/serialization/KSerializer<TestObject>| {
-            ^serializer Null(null)!!
-        }
+        public final fun serializer(): R|kotlinx/serialization/KSerializer<TestObject>|
 
     }
     public final object MySerializer : R|kotlinx/serialization/KSerializer<Project4>| {

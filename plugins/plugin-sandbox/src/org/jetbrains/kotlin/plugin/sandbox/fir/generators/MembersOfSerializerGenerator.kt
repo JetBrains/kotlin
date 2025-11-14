@@ -88,5 +88,5 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
         return super.getNestedClassifiersNames(classSymbol, context)
     }
 
-    object Key : GeneratedDeclarationKey()
+    data object Key : GeneratedDeclarationKey()
 }
