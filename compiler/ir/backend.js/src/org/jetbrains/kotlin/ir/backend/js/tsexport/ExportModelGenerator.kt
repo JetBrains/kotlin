@@ -110,11 +110,16 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
         if (!constructor.isPrimary) return null
+        val visibility = if (constructor.constructedClass.modality == Modality.SEALED) {
+            ExportedVisibility.PRIVATE
+        } else {
+            constructor.visibility.toExportedVisibility()
+        }
         return ExportedConstructor(
             parameters = constructor.nonDispatchParameters
                 .filterNot { it.isBoxParameter }
                 .memoryOptimizedMap { exportParameter(it, it.hasDefaultValue) },
-            visibility = constructor.visibility.toExportedVisibility()
+            visibility = visibility,
         )
     }
 
