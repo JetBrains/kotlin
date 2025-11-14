@@ -50,6 +50,7 @@ dependencies {
 
     embedded(project(":core:metadata")) { isTransitive = false }
     embedded(project(":core:metadata.jvm")) { isTransitive = false }
+    embedded(project(":compiler:compiler.version")) { isTransitive = false }
     embedded(project(":core:compiler.common")) { isTransitive = false }
     embedded(project(":core:compiler.common.jvm")) { isTransitive = false }
     embedded(project(":core:deserialization.common")) { isTransitive = false }
@@ -59,6 +60,7 @@ dependencies {
     embedded(project(":core:deserialization")) { isTransitive = false }
     embedded(project(":core:descriptors.runtime")) { isTransitive = false }
     embedded(project(":core:util.runtime")) { isTransitive = false }
+    embedded(project(":core:language-model")) { isTransitive = false }
     embedded("javax.inject:javax.inject:1") { isTransitive = false }
     embedded(protobufLite()) { isTransitive = false }
 

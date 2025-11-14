@@ -274,12 +274,13 @@
 /compiler/test-security-manager/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 /compiler/tests-spec/ "Kotlin Frontend"
 /compiler/util/ "Kotlin Frontend"
-/compiler/util/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
 /compiler/util-io/ "Kotlin Common Backend"
 /compiler/util-klib/ "Kotlin Common Backend"
 /compiler/util-klib-abi/ "Kotlin Common Backend"
 /compiler/util-klib-metadata/ "Kotlin Common Backend"
 
+/core/language-model/ "Kotlin Frontend"
+/core/language-model/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
 /core/compiler.common/ "Kotlin Frontend"
 /core/compiler.common.jvm/ "Kotlin Frontend"
 /core/compiler.common.js/ "Kotlin Frontend"
