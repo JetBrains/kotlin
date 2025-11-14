@@ -85,7 +85,7 @@ class KlibModuleMetadata(
          *
          * @param readStrategy specifies the way module fragments of a single package are modified (e.g. merged) after deserialization.
          */
-        @Deprecated("Use readStrict or readLenient instead")
+        @Deprecated(level = DeprecationLevel.ERROR, message = "Use readStrict or readLenient instead")
         fun read(
             library: MetadataLibraryProvider,
             readStrategy: KlibModuleFragmentReadStrategy = KlibModuleFragmentReadStrategy.DEFAULT
@@ -94,7 +94,7 @@ class KlibModuleMetadata(
         /**
          * Deserializes metadata from the given [library].
          *
-         * This method can read only supported metadata versions (see [MetadataVersion.isCompatibleWithCurrentCompilerVersion]).
+         * This method can read only supported metadata versions (see [KlibMetadataVersion.LATEST_STABLE_SUPPORTED]).
          * It will throw an exception if the metadata version is greater than what kotlinx-metadata-klib understands.
          *
          * @param readStrategy specifies the way module fragments of a single package are modified (e.g. merged) after deserialization.
