@@ -209,7 +209,7 @@ private fun getJsFalse(): JsBoolean =
     js("false")
 
 private var _jsEmptyString: JsString? = null
-private val jsEmptyString: JsString
+internal val jsEmptyString: JsString
     get() {
         var value = _jsEmptyString
         if (value == null) {
