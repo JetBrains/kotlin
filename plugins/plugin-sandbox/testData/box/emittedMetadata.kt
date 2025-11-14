@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR, NATIVE
 // IGNORE_HMPP: JS_IR
 // MODULE: lib
 import org.jetbrains.kotlin.plugin.sandbox.EmitMetadata
