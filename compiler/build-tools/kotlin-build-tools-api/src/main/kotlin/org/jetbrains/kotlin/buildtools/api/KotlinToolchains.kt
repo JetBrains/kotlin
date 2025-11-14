@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
  * An example of the basic usage is:
  *  ```
  *   val toolchain = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
- *   val operation = toolchains.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
+ *   val operation = toolchains.jvm.jvmCompilationOperationBuilder(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory")).build()
  *   toolchain.createBuildSession().use { it.executeOperation(operation) }
  *  ```
  *
@@ -113,7 +113,7 @@ public interface KotlinToolchains {
          * Execute the given [operation] using [ExecutionPolicy.InProcess].
          *
          * @param operation the [BuildOperation] to execute.
-         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
+         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.jvmCompilationOperationBuilder]
          */
         public fun <R> executeOperation(
             operation: BuildOperation<R>,
@@ -123,8 +123,8 @@ public interface KotlinToolchains {
          * Execute the given [operation] using the given [executionPolicy].
          *
          * @param operation the [BuildOperation] to execute.
-         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
-         * @param executionPolicy an [ExecutionPolicy] obtained from [createInProcessExecutionPolicy] or [createDaemonExecutionPolicy]
+         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.jvmCompilationOperationBuilder]
+         * @param executionPolicy an [ExecutionPolicy] obtained from [createInProcessExecutionPolicy] or [daemonExecutionPolicyBuilder]
          * @param logger an optional [KotlinLogger]
          */
         public fun <R> executeOperation(
