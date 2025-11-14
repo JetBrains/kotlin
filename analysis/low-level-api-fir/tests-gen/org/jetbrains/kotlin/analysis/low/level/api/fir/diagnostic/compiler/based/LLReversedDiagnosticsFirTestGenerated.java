@@ -11243,5 +11243,81 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/versionOverloads/withLambdaDefaults.kt");
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/when")
+    @TestDataPath("$PROJECT_ROOT")
+    public class When {
+      @Test
+      public void testAllFilesPresentInWhen() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/when"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("whenEnum.kt")
+      public void testWhenEnum() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenEnum.kt");
+      }
+
+      @Test
+      @TestMetadata("whenEnumNoElseRed.kt")
+      public void testWhenEnumNoElseRed() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenEnumNoElseRed.kt");
+      }
+
+      @Test
+      @TestMetadata("whenNull.kt")
+      public void testWhenNull() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenNull.kt");
+      }
+
+      @Test
+      @TestMetadata("whenReturnTypeRed.kt")
+      public void testWhenReturnTypeRed() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenReturnTypeRed.kt");
+      }
+
+      @Test
+      @TestMetadata("whenSealed.kt")
+      public void testWhenSealed() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSealed.kt");
+      }
+
+      @Test
+      @TestMetadata("whenSimple.kt")
+      public void testWhenSimple() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSimple.kt");
+      }
+
+      @Test
+      @TestMetadata("whenSimpleRed.kt")
+      public void testWhenSimpleRed() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSimpleRed.kt");
+      }
+
+      @Test
+      @TestMetadata("whenSmartCast.kt")
+      public void testWhenSmartCast() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSmartCast.kt");
+      }
+
+      @Test
+      @TestMetadata("whenSmartCastRed.kt")
+      public void testWhenSmartCastRed() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSmartCastRed.kt");
+      }
+
+      @Test
+      @TestMetadata("whenSpacing.kt")
+      public void testWhenSpacing() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSpacing.kt");
+      }
+
+      @Test
+      @TestMetadata("whenSubjectPositive.kt")
+      public void testWhenSubjectPositive() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSubjectPositive.kt");
+      }
+    }
   }
 }
