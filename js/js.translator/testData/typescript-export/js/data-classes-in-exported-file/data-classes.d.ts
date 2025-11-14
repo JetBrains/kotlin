@@ -67,5 +67,20 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => Test2;
             }
         }
+        class Test3 /* extends foo.NonExportedWithComponent1 */ {
+            constructor(value1: string, value2: string);
+            get value1(): string;
+            get value2(): string;
+            copy(value1?: string, value2?: string): foo.Test3;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+        }
+        namespace Test3 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Test3;
+            }
+        }
     }
 }
