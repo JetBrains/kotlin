@@ -87,8 +87,8 @@ public fun StringBuilder.appendln(): StringBuilder = appendLine()
 
 @GCUnsafeCall("Kotlin_StringBuilder_insertString")
 @Escapes.Nothing
-internal actual external fun insertString(array: CharArray, destinationIndex: Int, value: String, sourceIndex: Int, count: Int): Int
+internal external fun insertString(array: CharArray, destinationIndex: Int, value: String, sourceIndex: Int, count: Int): Int
 
 @GCUnsafeCall("Kotlin_StringBuilder_insertInt")
 @Escapes.Nothing
-internal actual external fun insertInt(array: CharArray, start: Int, value: Int): Int
+internal external fun insertInt(array: CharArray, start: Int, value: Int): Int

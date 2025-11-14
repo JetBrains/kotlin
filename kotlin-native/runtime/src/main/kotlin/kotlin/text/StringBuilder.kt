@@ -990,8 +990,6 @@ public inline fun StringBuilder.setCharAt(index: Int, value: Char): Unit = this.
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.deleteCharAt(index: Int): StringBuilder = this.deleteAt(index)
 
-
-
-internal expect fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int): String
-internal expect fun insertInt(array: CharArray, start: Int, value: Int): Int
-internal expect fun insertString(array: CharArray, destinationIndex: Int, value: String, sourceIndex: Int, count: Int): Int
+//internal expect fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int): String
+//internal expect fun insertInt(array: CharArray, start: Int, value: Int): Int
+//internal expect fun insertString(array: CharArray, destinationIndex: Int, value: String, sourceIndex: Int, count: Int): Int

@@ -418,7 +418,7 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
 // The return value may be an empty string, which is statically allocated and immutable;
 // we can treat it as non-escaping
 @Escapes.Nothing
-internal actual external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
+internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
 
 /**
  * Returns a [CharArray] containing characters of this string or its substring.
