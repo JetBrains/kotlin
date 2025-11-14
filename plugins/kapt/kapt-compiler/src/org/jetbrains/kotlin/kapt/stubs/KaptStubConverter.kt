@@ -1515,7 +1515,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             is FirGetClassCall -> {
                 convertFirGetClassCall(value)
             }
-            is FirPropertyAccessExpression -> {
+            is FirPropertyAccessExpression if (value.resolvedType is ConeErrorType) -> {
                 // Unresolved enum value
                 convertFirType(value.resolvedType)
             }

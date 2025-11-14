@@ -24,7 +24,7 @@ public abstract @interface MyAnnotation {
 
 package kaptk2.b458124793;
 
-@MyAnnotation(myType = null)
+@MyAnnotation(myType = MyEnum.ENUM_ELEMENT)
 /**
  * public abstract interface kaptk2/b458124793/MyAnnotationUser : kotlin/Any {
  *
