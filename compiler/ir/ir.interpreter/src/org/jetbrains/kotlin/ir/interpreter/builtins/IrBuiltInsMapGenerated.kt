@@ -259,12 +259,6 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.UInt" -> return (a as UInt).toUShort()
             "kotlin.ULong" -> return (a as ULong).toUShort()
         }
-        "trimMargin" -> when (type) {
-            "kotlin.String" -> return (a as String).trimMargin()
-        }
-        "trimIndent" -> when (type) {
-            "kotlin.String" -> return (a as String).trimIndent()
-        }
         "CHECK_NOT_NULL" -> when (type) {
             "T0?" -> return a!!
         }
@@ -937,9 +931,6 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
                 "kotlin.UInt" -> return (a as ULong).mod(b as UInt)
                 "kotlin.ULong" -> return (a as ULong).mod(b as ULong)
             }
-        }
-        "trimMargin" -> when (typeA) {
-            "kotlin.String" -> if (typeB == "kotlin.String") return (a as String).trimMargin(b as String)
         }
         "less" -> when (typeA) {
             "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char) < (b as Char)

@@ -272,17 +272,6 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
             }
     }
 
-    when(argumentsCount) {
-        1 -> {
-            operationMap.add(Operation(callableIdOf(null, "trimMargin", "kotlin.text"), listOf("String")))
-            operationMap.add(Operation(callableIdOf(null, "trimIndent", "kotlin.text"), listOf("String")))
-        }
-        2 -> {
-
-            operationMap.add(Operation(callableIdOf(null, "trimMargin", "kotlin.text"), listOf("String", "String")))
-        }
-    }
-
     return operationMap
 }
 
