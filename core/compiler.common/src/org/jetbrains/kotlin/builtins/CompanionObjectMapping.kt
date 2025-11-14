@@ -6,14 +6,21 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 object CompanionObjectMapping {
-    val classIds: Set<ClassId> = (
-            PrimitiveType.NUMBER_TYPES.map(StandardNames::getPrimitiveFqName) +
-                    StandardNames.FqNames.string.toSafe() +
-                    StandardNames.FqNames._boolean.toSafe() +
-                    StandardNames.FqNames._enum.toSafe()
-            ).mapTo(linkedSetOf(), ClassId::topLevel)
+
+    private val fqNames: List<FqName>
+        get() = PrimitiveType.entries.map(StandardNames::getPrimitiveFqName) +
+                StandardNames.FqNames.string.toSafe() +
+                StandardNames.FqNames._enum.toSafe()
+
+    val classIds: Set<ClassId> = fqNames.mapTo(linkedSetOf(), ClassId::topLevel)
+
+    val companionClassIds: Set<ClassId> = classIds.mapTo(linkedSetOf()) {
+        it.createNestedClassId(Name.identifier("Companion"))
+    }
 
     fun allClassesWithIntrinsicCompanions(): Set<ClassId> = classIds
 }
