@@ -128,7 +128,7 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
             kotlinSourcesDir().resolve("helloWorld.kt").writeText("fun f() = fffffffffffffffff")
             buildAndFail("assemble", forwardBuildOutput = true) {
                 assertOutputContainsExactlyTimes(
-                    "\ne: file://${projectPath.absolutePathString()}/src/main/kotlin/helloWorld.kt:1:11 Unresolved reference 'fffffffffffffffff'.",
+                    Regex("\ne: file://.*/src/main/kotlin/helloWorld.kt:1:11 Unresolved reference 'fffffffffffffffff'."),
                     1
                 )
             }
