@@ -3,7 +3,6 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResour
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("generated-sources")
 }
 

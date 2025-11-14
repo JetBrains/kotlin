@@ -2,7 +2,6 @@ description = "Kotlin lombok compiler plugin"
 
 plugins {
     id("gradle-plugin-common-configuration")
-    id("jps-compatible")
 }
 
 dependencies {

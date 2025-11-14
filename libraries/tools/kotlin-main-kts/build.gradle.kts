@@ -5,7 +5,6 @@ description = "Kotlin \"main\" script definition"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 val jarBaseName = the<BasePluginExtension>().archivesName

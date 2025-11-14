@@ -3,7 +3,6 @@ import java.net.URLClassLoader
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 repositories {

@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("project-tests-convention")
 }
 

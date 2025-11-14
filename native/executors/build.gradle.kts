@@ -13,12 +13,6 @@ plugins {
 val isNativeBuildToolsProject = rootProject.name == "native-build-tools"
 val isPerformanceProject = rootProject.name == "performance"
 
-if (!isNativeBuildToolsProject) {
-    // The module is shared between the main project and 'native-build-tools',
-    // in which there is no 'jps-compatible' plugin configured.
-    apply(plugin = "jps-compatible")
-}
-
 repositories {
     mavenCentral()
 }

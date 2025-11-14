@@ -2,7 +2,6 @@ description = "Parcelize compiler plugin (Common)"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {

@@ -4,7 +4,6 @@ description = "Parcelize compiler plugin"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("android-sdk-provisioner")
     id("java-test-fixtures")
     id("project-tests-convention")

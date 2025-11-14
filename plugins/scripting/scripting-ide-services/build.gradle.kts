@@ -4,7 +4,6 @@ description = "Kotlin Scripting Compiler extension providing code completion and
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 project.updateJvmTarget("1.8")

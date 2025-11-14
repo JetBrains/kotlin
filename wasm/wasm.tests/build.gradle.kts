@@ -13,7 +13,6 @@ buildscript {
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     alias(libs.plugins.gradle.node)
     id("d8-configuration")
     id("binaryen-configuration")

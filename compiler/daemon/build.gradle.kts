@@ -2,7 +2,6 @@ description = "Kotlin Daemon"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {

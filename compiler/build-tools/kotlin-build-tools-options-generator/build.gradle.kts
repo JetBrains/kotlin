@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     application
     id("project-tests-convention")
 }

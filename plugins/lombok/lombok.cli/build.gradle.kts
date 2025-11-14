@@ -2,7 +2,6 @@ description = "Lombok compiler plugin (CLI)"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {

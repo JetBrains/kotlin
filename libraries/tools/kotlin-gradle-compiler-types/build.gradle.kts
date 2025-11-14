@@ -1,6 +1,5 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    id("jps-compatible")
     id("gradle-plugin-api-reference") apply false
 }
 

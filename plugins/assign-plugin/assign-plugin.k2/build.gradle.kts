@@ -2,7 +2,6 @@ description = "Kotlin Assignment Compiler Plugin (K2)"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {

@@ -2,7 +2,6 @@ description = "Kotlin JavaScript Plain Objects Compiler Plugin (Backend)"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
