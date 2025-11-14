@@ -159,6 +159,8 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Ignores failures of signature dump comparison for tests with the $DUMP_SIGNATURES directive if the test uses the K2 frontend and the specified backend."
     )
 
+    // Besides a list of phases, also supports values `ALL_BEFORE`, `ALL_AFTER` and `ALL` for dumping
+    // before all lowerings, after all lowerings and both before and after all lowerings, correspondingly.
     val DUMP_IR_FOR_GIVEN_PHASES by stringDirective(
         description = "Dumps backend IR after given lowerings (enables ${PhasedIrDumpHandler::class})",
     )
