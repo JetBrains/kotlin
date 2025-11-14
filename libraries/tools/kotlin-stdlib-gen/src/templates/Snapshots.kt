@@ -174,12 +174,22 @@ object Snapshots : TemplateGroupBase() {
             return this.toMutableList().optimizeReadOnlyList()
             """
         }
-        body(CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
+        body(CharSequences, ArraysOfPrimitives) {
             """
             return when (${f.code.size}) {
                 0 -> emptyList()
                 1 -> listOf(this[0])
                 else -> this.toMutableList()
+            }
+            """
+        }
+        // For object array, ensure a single array copy instead of delegating to `toMutableList`, which can cause two copies (see KT-75801)
+        body(ArraysOfObjects) {
+            """
+            return when (${f.code.size}) {
+                0 -> emptyList()
+                1 -> listOf(this[0])
+                else -> copyOf().asList()
             }
             """
         }
