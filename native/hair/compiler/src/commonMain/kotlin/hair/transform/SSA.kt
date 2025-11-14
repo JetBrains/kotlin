@@ -6,7 +6,8 @@ import hair.ir.*
 import hair.ir.nodes.*
 import hair.utils.closure
 import hair.utils.indexOfSingle
-import hair.utils.isEmpty
+import hair.utils.printGraphvizNoGCM
+import kotlin.collections.set
 
 private typealias Var = Any
 
@@ -14,30 +15,29 @@ fun Session.buildSSA() {
     val cfg = cfg()
     val doms = Dominators.sfda(cfg)
 
-
     modifyIR {
         val defs = allNodes<AssignVar>().groupBy { it.variable }
         // FIXME find some general terms to do this?
-        val handlersWIthPossibleRedefs = allNodes<Unwind>().map { it.handler }.filter { it.preds.size > 1 }.toSet()
-        val phies = mutableMapOf<BlockEntry, MutableMap<Var, Phi>>()
+        val handlersWithPossibleRedefs = allNodes<Unwind>().map { it.handler }.filter { it.preds.size > 1 }.toSet()
         for ((variable, assigns) in defs) {
             val assignBlocks = assigns.map { it.block }.toSet()
             val redefBlocks = assignBlocks.flatMap { doms.dominanceFrontier(it) }.toSet().closure {
                 doms.dominanceFrontier(it).toList()
-            } + handlersWIthPossibleRedefs
+            } + handlersWithPossibleRedefs
             for (block in redefBlocks) {
-                val blockPhies = phies.getOrPut(block) { mutableMapOf() }
-                blockPhies[variable] = Phi(block, *arrayOfNulls(block.preds.size)) as Phi
+                PhiPlaceholder(variable)(block, *(Array(block.preds.size) { NoValue() }))
             }
         }
 
         fun search(block: BlockEntry, domDefs: Map<Var, Node>) {
             val currentDefs = domDefs.toMutableMap()
-            phies[block]?.let { currentDefs += it }
+            for (phi in block.uses.filterIsInstance<PhiPlaceholder>()) {
+                currentDefs[phi.origin] = phi
+            }
             fun patchInput(next: BlockEntry, blockExit: BlockExit) {
                 val inputIndex = next.preds.indexOfSingle(blockExit)
-                for ((variable, phi) in phies[next] ?: emptyMap()) {
-                    phi.joinedValues[inputIndex] = currentDefs[variable]!!
+                for (phi in next.uses.filterIsInstance<PhiPlaceholder>()) {
+                    phi.joinedValues[inputIndex] = currentDefs[phi.origin] ?: NoValue()
                 }
             }
             for (n in block.spine.toList()) {
@@ -67,7 +67,8 @@ fun Session.buildSSA() {
                         patchInput(it, n.unwind!!)
                     }
                     is If -> n.uses.forEach {
-                        patchInput(it.uses.single() as BlockEntry, it as IfProjection)
+                        it as IfProjection
+                        patchInput(it.uses.single() as BlockEntry, it)
                     }
 
                     else -> {}
@@ -80,7 +81,10 @@ fun Session.buildSSA() {
 
         search(entry, emptyMap())
 
-        allNodes<Phi>().forEach { require(it.joinedValues.withNulls.all { it != null })}
+        for (placeholder in allNodes().filterIsInstance<PhiPlaceholder>().toList()) {
+            val phi = Phi(placeholder.block, *placeholder.joinedValues.toTypedArray<Node>())
+            placeholder.replaceValueUses(phi)
+        }
     }
 }
 

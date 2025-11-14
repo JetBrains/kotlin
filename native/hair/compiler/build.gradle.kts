@@ -13,7 +13,11 @@ kotlin {
                 implementation(project(":native:hair:ir"))
             }
         }
-        val commonTest by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
     
     compilerOptions {

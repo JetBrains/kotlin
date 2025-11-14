@@ -5,9 +5,16 @@ import hair.sym.HairFunction
 
 object Calls : ModelDSL() {
 
-    val staticCall by node(ControlFlow.blockBodyWithException) {
+    val anyCall by nodeInterface {
+    }
+
+    val anyInvoke by abstractClass(ControlFlow.blockBodyWithException) {
+        interfaces(anyCall)
         formParam("function", HairFunction::class)
         variadicParam("callArgs")
     }
+
+    val invokeStatic by node(anyInvoke)
+    val invokeVirtual by node(anyInvoke)
 
 }
