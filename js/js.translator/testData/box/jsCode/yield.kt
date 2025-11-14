@@ -7,6 +7,7 @@ fun box(): String {
             yield;
             var value = yield 2;
             var undef = yield;
+            yield* [3, 4];
         }
     )""")
 
@@ -15,6 +16,8 @@ fun box(): String {
     assertEquals(js("undefined"), sequence.next().value)
     assertEquals(2, sequence.next().value)
     assertEquals(js("undefined"), sequence.next().value)
+    assertEquals(3, sequence.next().value)
+    assertEquals(4, sequence.next().value)
 
     return "OK"
 }
