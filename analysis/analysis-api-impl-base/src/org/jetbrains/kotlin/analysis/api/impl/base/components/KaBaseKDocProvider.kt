@@ -7,41 +7,27 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaKDocProvider
-import org.jetbrains.kotlin.analysis.api.components.KtDocCommentDescriptor
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.api.KtDocCommentDescriptor
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtConstructor
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtTypeParameter
+import org.jetbrains.kotlin.kdoc.psi.impl.KtDocCommentDescriptorImpl
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-@KaNonPublicApi
 @KaImplementationDetail
-internal class KtDocCommentDescriptorImpl(
-    override val primaryTag: KDocTag,
-    override val additionalSections: List<KDocSection>,
-) : KtDocCommentDescriptor
-
-@KaImplementationDetail
+@OptIn(KtNonPublicApi::class, KtImplementationDetail::class)
 abstract class KaBaseKDocProvider<T : KaSession> : KaBaseSessionComponent<T>(), KaKDocProvider {
     override fun KtDeclaration.findKDoc(): KtDocCommentDescriptor? = this.lookupOwnedKDoc() ?: this.lookupKDocInParent()
 

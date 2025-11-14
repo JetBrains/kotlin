@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
+import org.jetbrains.kotlin.kdoc.psi.api.KtDocCommentDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtNonPublicApi
 
 /**
  * Component that locates KDoc for [KtDeclaration] and [KaDeclarationSymbol].
@@ -62,6 +61,7 @@ public interface KaKDocProvider : KaSessionComponent {
      * - This method only resolves KDoc for Kotlin elements. Java elements and Javadoc are not supported.
      */
     @KaNonPublicApi
+    @KtNonPublicApi
     public fun KtDeclaration.findKDoc(): KtDocCommentDescriptor?
 
 
@@ -90,42 +90,8 @@ public interface KaKDocProvider : KaSessionComponent {
      * @see [KaKDocProvider.findKDoc] for the implementation details.
      */
     @KaNonPublicApi
+    @KtNonPublicApi
     public fun KaDeclarationSymbol.findKDoc(): KtDocCommentDescriptor?
-}
-
-/**
- * A view of a KDoc comment associated with a [KaSymbol].
- *
- * This is part of a non-public API intended for use only by IDE and Dokka. Current implementation
- * is based on the original `findKDoc` logic from Kotlin IDE Plugin.
- *
- * - If the symbol owns the KDoc, [primaryTag] is the KDoc's default section and
- *   [additionalSections] contains all sections of that KDoc (including the default one).
- * - For a primary constructor, if the enclosing class KDoc has an `@constructor` section,
- *   that section is used as [primaryTag], and [additionalSections] contains the sections
- *   that include `@param` tags from the class's KDoc.
- * - In some cases KDoc for a symbol may be extracted from the KDoc of a parent element. Examples:
- *   - a property-parameter of the primary constructor;
- *   - a type parameter;
- *   - a property of a class/object referenced with a @property tag in the class/object KDoc.
- *
- * @property primaryTag tag/section if the KDoc that is relevant for the symbol;
- * @property additionalSections other sections of the same KDoc that may provide additional context.
- *
- *   @see [KaKDocProvider] for more details on the KDoc lookup process.
- */
-@KaNonPublicApi
-@SubclassOptInRequired(KaImplementationDetail::class)
-public interface KtDocCommentDescriptor {
-    /**
-     * Primary tag/section tag/section if the KDoc that is relevant for the symbol
-     */
-    public val primaryTag: KDocTag
-
-    /**
-     * Other sections from the same KDoc as [primaryTag] that may provide additional context
-     */
-    public val additionalSections: List<KDocSection>
 }
 
 /**
@@ -165,6 +131,7 @@ public interface KtDocCommentDescriptor {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
+@KtNonPublicApi
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtDeclaration.findKDoc(): KtDocCommentDescriptor? {
@@ -199,6 +166,7 @@ public fun KtDeclaration.findKDoc(): KtDocCommentDescriptor? {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
+@KtNonPublicApi
 @KaContextParameterApi
 context(s: KaSession)
 public fun KaDeclarationSymbol.findKDoc(): KtDocCommentDescriptor? {
