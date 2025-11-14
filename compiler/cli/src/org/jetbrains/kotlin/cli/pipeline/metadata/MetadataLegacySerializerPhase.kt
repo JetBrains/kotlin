@@ -133,7 +133,7 @@ abstract class MetadataLegacySerializerPhaseBase(
 ) {
     final override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact {
         val (firResult, configuration, _, _) = input
-        val metadataVersion = input.metadataVersion
+        val metadataVersion = input.metadataVersion as? BuiltInsBinaryVersion ?: BuiltInsBinaryVersion.INSTANCE
         val destDir = configuration.metadataDestinationDirectory!!
         val outputInfo = serialize(firResult.outputs, destDir, metadataVersion)
         return MetadataSerializationArtifact(
