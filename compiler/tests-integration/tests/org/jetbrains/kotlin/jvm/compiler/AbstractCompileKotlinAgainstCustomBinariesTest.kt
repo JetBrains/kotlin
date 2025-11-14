@@ -143,7 +143,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     // ------------------------------------------------------------------------------
 
     // KT-62900 K2: Expected expression to be resolved during Fir2Ir
-    fun testMissingEnumReferencedInAnnotationArgument() = muteForK2 {
+    fun testMissingEnumReferencedInAnnotationArgument() {
         doTestBrokenLibrary("library", "a/E.class")
     }
 
