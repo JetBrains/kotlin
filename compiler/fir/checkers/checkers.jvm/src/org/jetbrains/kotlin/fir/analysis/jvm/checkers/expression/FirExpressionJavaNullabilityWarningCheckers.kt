@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
 import org.jetbrains.kotlin.fir.java.enhancement.isEnhancedTypeForWarningDeprecation
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
@@ -38,10 +40,10 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
 
         checkDispatchReceiver(expression, symbol)
 
-        val receiverType = symbol.resolvedReceiverType
         expression.extensionReceiver?.checkExpressionForEnhancedTypeMismatch(
-            expectedType = receiverType?.let(substitutor::substituteOrSelf),
-            FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+            expectedType = symbol.resolvedReceiverType?.let(substitutor::substituteOrSelf),
+            FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
+            suppressWarnings = { actualTypeForComparison -> shouldSuppressWarningForExtensionReceiver(symbol, actualTypeForComparison) }
         )
 
         for ((contextArgument, contextParameter) in expression.contextArguments.zip(symbol.contextParameterSymbols)) {
@@ -74,22 +76,20 @@ private fun checkDispatchReceiver(
     val substitutor = enhancedForWarningSubstitutor()
     val enhancedDispatchReceiverType = substitutor.substituteOrNull(actualDispatchReceiverType) ?: return
 
-    if (!actualDispatchReceiverType.lowerBoundIfFlexible().canBeNull(context.session)) {
-        if (enhancedDispatchReceiverType.lowerBoundIfFlexible().canBeNull(context.session)) {
+    if (!actualDispatchReceiverType.canLowerBoundBeNull() && enhancedDispatchReceiverType.canLowerBoundBeNull()) {
 
-            val factory = if (actualDispatchReceiverType.isExplicitTypeArgumentMadeFlexibleSynthetically()) {
-                FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA
-            } else {
-                FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
-            }
-            reporter.reportOn(
-                expression.dispatchReceiver?.source,
-                factory,
-                enhancedDispatchReceiverType,
-                expectedDispatchReceiverType,
-                buildSuffix(actualDispatchReceiverType, expectedDispatchReceiverType)
-            )
+        val factory = if (actualDispatchReceiverType.isExplicitTypeArgumentMadeFlexibleSynthetically()) {
+            FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA
+        } else {
+            FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
         }
+        reporter.reportOn(
+            expression.dispatchReceiver?.source,
+            factory,
+            enhancedDispatchReceiverType,
+            expectedDispatchReceiverType,
+            buildSuffix(actualDispatchReceiverType, expectedDispatchReceiverType)
+        )
     }
 
     // To check for mutability mismatch, we check if the class ID of the enhanced type is different.
@@ -111,7 +111,9 @@ private fun checkDispatchReceiver(
         enhancedClassId != actualClassId &&
         // symbol.dispatchReceiverType is only equal to actualDispatchReceiverType in case of fake overrides
         // Prominent counter examples are equals, hashCode and toString defined in Any.
-        !enhancedApproximatedType.isSubtypeOf(expectedDispatchReceiverType.replaceArgumentsWithStarProjectionsOrNull() ?: expectedDispatchReceiverType, context.session)
+        !enhancedApproximatedType.isSubtypeOf(
+            expectedDispatchReceiverType.replaceArgumentsWithStarProjectionsOrNull() ?: expectedDispatchReceiverType, context.session
+        )
     ) {
         val scope = symbol.dispatchReceiverScope(context.session, context.scopeSession)
 
@@ -142,6 +144,50 @@ private fun checkDispatchReceiver(
                 actualClassId,
             )
         }
+    }
+}
+
+context(context: CheckerContext)
+private fun ConeKotlinType.canLowerBoundBeNull(): Boolean {
+    return lowerBoundIfFlexible().canBeNull(context.session)
+}
+
+/**
+ * Mutability enhancement for warning can lead to unfortunate situations like the following:
+ *
+ * ```kt
+ * val list: EFW(List<String!>!) (Mutable)List<String!>!
+ * list.asReversed()
+ * ```
+ *
+ * The call resolves to `fun MutableList<T>.asReversed()`, we see that `List<String>` is not a subtype of `MutableList<String>`
+ * and report a warning.
+ *
+ * But in fact, the warning is mostly useless because when we switch the strictness to error,
+ * the call now resolves to the overload `fun List<T>.asReversed()`.
+ *
+ * As a crude workaround, we suppress the warning for extension functions in the `kotlin.collections` package
+ * when an overload exists that has a compatible receiver type.
+ */
+context(context: CheckerContext)
+private fun shouldSuppressWarningForExtensionReceiver(
+    symbol: FirCallableSymbol<*>,
+    actualTypeForComparison: ConeKotlinType,
+): Boolean {
+    val callableId = symbol.callableId
+    if (callableId?.packageName != StandardNames.COLLECTIONS_PACKAGE_FQ_NAME) return false
+
+    val topLevelCallableSymbols = context.session.symbolProvider.getTopLevelCallableSymbols(
+        StandardNames.COLLECTIONS_PACKAGE_FQ_NAME,
+        callableId.callableName
+    )
+
+    return topLevelCallableSymbols.any {
+        val receiverType =
+            (it.receiverParameterSymbol?.resolvedType as? ConeSimpleKotlinType)
+                ?.replaceArgumentsWithStarProjectionsOrNull()
+                ?: return@any false
+        actualTypeForComparison.isSubtypeOf(receiverType, context.session)
     }
 }
 
@@ -215,6 +261,7 @@ context(reporter: DiagnosticReporter, context: CheckerContext)
 internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
     expectedType: ConeKotlinType?,
     factory: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, String>,
+    suppressWarnings: (actualTypeForComparison: ConeKotlinType) -> Boolean = { false },
 ) {
     if (expectedType == null) return
     val actualType = resolvedType
@@ -224,16 +271,17 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
 
     if (!actualTypeForComparison.isSubtypeOf(context.session.typeContext, expectedTypeForComparison) &&
         // Don't report anything if the original types didn't match.
-        actualType.isSubtypeOf(context.session.typeContext, expectedType)
+        actualType.isSubtypeOf(context.session.typeContext, expectedType) &&
+        !suppressWarnings(actualTypeForComparison)
     ) {
-        val resultingFactory =
-            if (actualType.isExplicitTypeArgumentMadeFlexibleSynthetically() ||
-                expectedType.isExplicitTypeArgumentMadeFlexibleSynthetically()
-            ) {
-                FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA
-            } else {
-                factory
-            }
+        val resultingFactory = when {
+            actualType.isExplicitTypeArgumentMadeFlexibleSynthetically() ||
+                    expectedType.isExplicitTypeArgumentMadeFlexibleSynthetically()
+                -> FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA
+            factory == FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS && !actualTypeForComparison.canLowerBoundBeNull()
+                -> FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+            else -> factory
+        }
 
         reporter.reportOn(
             source,

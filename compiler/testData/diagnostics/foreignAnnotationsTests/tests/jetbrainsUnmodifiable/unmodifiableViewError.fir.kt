@@ -1,6 +1,7 @@
 // FULL_JDK
 // NULLABILITY_ANNOTATIONS: @org.jetbrains.annotations.UnmodifiableView:strict
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// WITH_STDLIB
 
 // FILE: org/jetbrains/annotations/UnmodifiableView.java
 package org.jetbrains.annotations;
@@ -42,6 +43,10 @@ fun main() {
 
     J.foo { arg -> arg.<!UNRESOLVED_REFERENCE!>add<!>("") }
     J.foo <!ARGUMENT_TYPE_MISMATCH!>{ arg: MutableList<String> -> arg.add("") }<!>
+
+    J.foo().toString()
+    J.foo().asReversed()
+    J.foo().asReversed().<!UNRESOLVED_REFERENCE!>add<!>("")
 }
 
 fun takeMutable(l: MutableList<String>) {}

@@ -1,6 +1,7 @@
 // FULL_JDK
 // NULLABILITY_ANNOTATIONS: @org.jetbrains.annotations.Unmodifiable:warn
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// WITH_STDLIB
 
 // FILE: org/jetbrains/annotations/Unmodifiable.java
 package org.jetbrains.annotations;
@@ -34,9 +35,11 @@ public class B<T extends @Unmodifiable List<String>> {
 }
 
 // FILE: main.kt
-fun main(l: List<String>) {
+fun main() {
     takeMutable(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.foo()<!>)
     <!RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.foo()<!>.add("")
+    <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.foo()<!> += ""
+
     J.foo().size
     for (x in J.foo()) {}
 
@@ -44,6 +47,8 @@ fun main(l: List<String>) {
     J.foo { arg: MutableList<String> -> arg.add("") }
 
     J.foo().toString()
+    J.foo().asReversed()
+    J.foo().asReversed().add("") // Unfortunately a false negative warning
 }
 
 fun takeMutable(l: MutableList<String>) {}
