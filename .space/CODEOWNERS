@@ -433,7 +433,6 @@
 /plugins/lombok/ "Kotlin Frontend"
 /plugins/noarg/ "Kotlin Frontend"
 /plugins/parcelize/ "Parcelize"
-/plugins/pill/ yan.zhulanow@jetbrains.com "Kotlin Build Infrastructure"
 /plugins/power-assert/ brian.norman@jetbrains.com "Kotlin Common Backend" sergej.jaskiewicz@jetbrains.com
 /plugins/sam-with-receiver/ "Kotlin Frontend"
 /plugins/scripting/ "Kotlin Frontend"

@@ -124,25 +124,6 @@ fun JUnit.configureForKotlin(xmx: String = "1600m") {
     workingDirectory = rootDir.toString()
 }
 
-// Needed because of idea.ext plugin can't pass \n symbol
-fun setupGenerateAllTestsRunConfiguration() {
-    rootDir.resolve(".idea/runConfigurations/JPS__Generate_All_Tests.xml").writeText(
-        """
-        |<component name="ProjectRunConfigurationManager">
-        | <configuration default="false" name="[JPS] Generate All Tests" type="Application" factoryName="Application">
-        |    <option name="MAIN_CLASS_NAME" value="org.jetbrains.kotlin.pill.generateAllTests.Main" />
-        |    <module name="kotlin.pill.generate-all-tests.test" />
-        |    <option name="VM_PARAMETERS" value="&quot;-Dline.separator=&#xA;&quot;" />
-        |    <shortenClasspath name="CLASSPATH_FILE" />
-        |    <method v="2">
-        |      <option name="Make" enabled="true" />
-        |    </method>
-        |  </configuration>
-        |</component>
-    """.trimMargin()
-    )
-}
-
 fun setupTestRunConfigurations() {
     createTestRunConfigurationWithPattern(
         name = "[JPS] Fast FIR PSI tests",
@@ -237,7 +218,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         writeIdeaBuildNumberForTests()
 
         setupTestRunConfigurations()
-        setupGenerateAllTestsRunConfiguration()
         updateCompilerXml()
 
         rootProject.allprojects {

@@ -395,7 +395,6 @@
 /plugins/lombok/ @JetBrains/kotlin-frontend
 /plugins/noarg/ @JetBrains/kotlin-frontend
 /plugins/parcelize/ nikitanazarov@google.com jobay@google.com troels@google.com jpaupore@google.com jsjeon@google.com jaebaek@google.com laszio@google.com
-/plugins/pill/ yan.zhulanow@jetbrains.com @JetBrains/kotlin-build-infrastructure
 /plugins/power-assert/ brian.norman@jetbrains.com @JetBrains/kotlin-common-backend sergej.jaskiewicz@jetbrains.com
 /plugins/sam-with-receiver/ @JetBrains/kotlin-frontend
 /plugins/scripting/ @JetBrains/kotlin-frontend
