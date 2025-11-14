@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.psi.utils.OperatorTokens
 import java.util.*
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
@@ -105,7 +105,7 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
             }
         }
         parent is KtBinaryExpression && parent.operationReference == this -> {
-            return if (parent.operationToken in OperatorConventions.IN_OPERATIONS) parent.right else parent.left
+            return if (parent.operationToken in OperatorTokens.IN_OPERATIONS) parent.right else parent.left
         }
         parent is KtUnaryExpression && parent.operationReference == this -> {
             return parent.baseExpression

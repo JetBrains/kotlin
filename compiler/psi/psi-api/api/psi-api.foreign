@@ -1,5 +1,3 @@
-com/google/common/collect/ImmutableBiMap
-com/google/common/collect/ImmutableSet
 com/intellij/extapi/psi/ASTWrapperPsiElement
 com/intellij/extapi/psi/PsiFileBase
 com/intellij/extapi/psi/StubBasedPsiElementBase

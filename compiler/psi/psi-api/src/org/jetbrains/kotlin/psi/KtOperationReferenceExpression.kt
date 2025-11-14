@@ -12,7 +12,7 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lang.BinaryOperationPrecedence
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.psi.utils.OperatorTokens
 
 /**
  * Represents an operator symbol in an expression.
@@ -81,6 +81,6 @@ class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl
 
     fun isConventionOperator(): Boolean {
         val tokenType = operationSignTokenType ?: return false
-        return OperatorConventions.getNameForOperationSymbol(tokenType) != null
+        return OperatorTokens.operationName(tokenType) != null
     }
 }
