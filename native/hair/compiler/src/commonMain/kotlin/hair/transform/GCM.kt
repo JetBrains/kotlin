@@ -9,7 +9,7 @@ import hair.utils.*
 // FIXME beware that GCM can be invalidated!!!!!!!!!!
 
 class GCMResult(val blocks: Map<Node, BlockEntry>) {
-    fun block(n: Node): BlockEntry = blocks[n]!!
+    fun block(n: Node): BlockEntry = blocks[n] ?: error("No block computed for $n")
 
     val linearOrderCache = mutableMapOf<BlockEntry, List<Node>>()
     fun linearOrder(b: BlockEntry) = linearOrderCache.getOrPut(b) { linearize(b) }
@@ -34,6 +34,8 @@ fun pos(n: Node): Controlling = gcm.pos(n)
 private val activeGCM = mutableMapOf<Session, GCMResult>()
 
 fun <T> Session.withGCM(action: context(GCMResult, NodeBuilder, ArgsUpdater) () -> T): T = withGCMImpl {
+    // FIXME why modify IR? And how come here can be dying values at this point?
+    // TODO require no dad nodes
     modifyIR { action() }
 }
 
@@ -146,21 +148,11 @@ fun GCMResult.linearize(block: ControlFlow): List<Node> {
     // TODO optimize
     val graph = object : DiGraph<Node> {
         override fun preds(n: Node): Sequence<Node> {
-            val valueArgs = n.args.filterNotNull()
-            val ctrl = when (n) {
-                is Controlled -> n.control
-                else -> null
-            }
-            return (valueArgs.asSequence() + (ctrl?.let { sequenceOf(it) } ?: emptySequence())).filter { block(it) == block }
+            return n.args.asSequence().filterNotNull().filter { block(it) == block }
         }
 
         override fun succs(n: Node): Sequence<Node> {
-            val valueUses = n.uses
-            val ctrl = when (n) {
-                is Controlling -> n.next
-                else -> null
-            }
-            return (valueUses.asSequence() + (ctrl?.let { sequenceOf(it) } ?: emptySequence())).filter { block(it) == block }
+            return n.uses.filter { block(it) == block }
         }
     }
 

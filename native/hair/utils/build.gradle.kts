@@ -10,6 +10,5 @@ kotlin {
                 api(kotlinStdlib())
             }
         }
-        val commonTest by getting
     }
 }

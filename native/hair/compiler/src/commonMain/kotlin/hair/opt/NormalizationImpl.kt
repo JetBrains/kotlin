@@ -24,9 +24,9 @@ class NormalizationImpl(val session: Session, builder: NodeBuilder) : Normalizat
                 return null
             }
 
-            override fun visitAddI(node: AddI): Node {
+            override fun visitAdd(node: Add): Node {
                 return tryFoldConstant(node) { l, r -> l + r }
-                    ?: super.visitAddI(node)
+                    ?: super.visitAdd(node)
             }
 
             // TODO sub etc
@@ -40,7 +40,6 @@ class NormalizationImpl(val session: Session, builder: NodeBuilder) : Normalizat
 
             // TODO If(const) -> Goto
             override fun visitPhi(node: Phi): Node {
-                if (null in node.joinedValues.withNulls) return super.visitPhi(node)
                 if (node.joinedValues.toSet().size == 1) return node.joinedValues.first()
                 return super.visitPhi(node)
             }

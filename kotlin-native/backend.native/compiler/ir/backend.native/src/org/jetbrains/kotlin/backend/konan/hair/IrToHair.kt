@@ -14,21 +14,47 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.common.*
 import hair.compilation.*
-import hair.sym.*
 import hair.ir.*
 import hair.ir.nodes.*
+import hair.sym.ArithmeticType
+import hair.sym.ArithmeticType.*
+import hair.sym.CmpOp
 import hair.utils.*
 import hair.transform.*
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
+import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
+import org.jetbrains.kotlin.backend.konan.ir.isComparisonFunction
+import org.jetbrains.kotlin.backend.konan.ir.isTypedIntrinsic
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.isChar
+import org.jetbrains.kotlin.ir.types.isDoubleOrFloatWithoutNullability
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.isOverridable
+import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.render
 
 
 internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
+
+private fun IrCall.isVirtual(): Boolean = superQualifierSymbol?.owner == null && symbol.owner.isOverridable
+
+private fun BinaryType<IrClass>.asArithmeticTypeOrNull() = when (primitiveBinaryTypeOrNull()) {
+    PrimitiveBinaryType.BOOLEAN,
+    PrimitiveBinaryType.BYTE,
+    PrimitiveBinaryType.SHORT,
+    PrimitiveBinaryType.INT -> INT
+    PrimitiveBinaryType.LONG -> LONG
+    PrimitiveBinaryType.FLOAT -> FLOAT
+    PrimitiveBinaryType.DOUBLE -> DOUBLE
+    else -> null
+}
 
 internal val GenerateHairPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, Map<IrFunction, FunctionCompilation>>(
         name = "GenerateHair",
@@ -44,10 +70,6 @@ internal fun generateHair(generationState: NativeGenerationState, irModule: IrMo
     val hairGenerator = HairGenerator(generationState.context, irModule)
     hairGenerator.lower(irModule)
     return hairGenerator.funCompilations.toMap()
-}
-
-class KNFunction(val irFunction: IrSimpleFunction) : HairFunction {
-    override fun toString() = irFunction.name.toString()
 }
 
 // FIXME move to utils?
@@ -66,13 +88,13 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                 funCompilations[container] = generateHair(container)
                 context.log { "# Successfully generated HaIR for ${container.name.toString()}" }
             } catch (e: Throwable) {
-                context.reportWarning("Failed to generate HaIR for ${container.name.toString()}: $e", container.fileOrNull, container)
+                context.reportWarning("Failed to generate HaIR for ${container.name.toString()}: $e\n${e.stackTraceToString()}", container.fileOrNull, container)
             }
         }
     }
 
     fun generateHair(f: IrSimpleFunction): FunctionCompilation {
-        val hairFun = KNFunction(f)
+        val hairFun = HairFunctionImpl(f)
         val funCompilation = FunctionCompilation(moduleCompilation, hairFun)
         context.log {"# Generating hair for ${f.name}, compilation = $funCompilation" }
 
@@ -83,7 +105,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
         with (funCompilation.session) {
             buildInitialIR {
                 // FIXME
-                val unitConst by lazy { NoValue() }
+                val unitConst by lazy { UnitValue() }
 
                 for ((idx, param) in f.parameters.withIndex()) {
                     val v = getVar(param.symbol)
@@ -138,19 +160,92 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     }
 
                     override fun visitCall(expression: IrCall, data: Unit): Node {
+                        val resultType = expression.type.computeBinaryType().asArithmeticTypeOrNull()
                         val args = expression.arguments.map { it?.accept(this, Unit) }
-                        return when (tryGetIntrinsicType(expression)) {
-                            IntrinsicType.PLUS -> AddI(args[0]!!, args[1]!!)
-                            // TODO non-static calls
-                            else -> TODO(expression.render())
-                                //StaticCall(callee.function)(callArgs = arrayOf(ConstInt(1), ConstInt(2), ConstInt(3)))
+
+                        val function = expression.symbol.owner
+                        require(!function.isSuspend) { "Suspend functions should be lowered out at this point"}
+
+                        return when {
+                            function.isTypedIntrinsic -> generateIntrinsic(expression, resultType, args)
+                            function.isBuiltInOperator -> generateBuiltinOperator(expression, resultType, args)
+                            function.origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER -> TODO(expression.render())
+                            function.origin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER -> TODO(expression.render())
+                            function.origin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> TODO(expression.render())
+                            !function.isReal -> TODO(expression.render())
+                            else -> if (expression.isVirtual()) TODO("InvokeVirtual ${expression.render()}") else {
+                                TODO("calls :c")
+                                val call = InvokeStatic(HairFunctionImpl(function))(callArgs = args.toTypedArray())
+                                // TODO insert Halt if function returns Notihing ?
+                                if (function.returnType.isUnit()) UnitValue() else call
+                            }
+                        }
+                    }
+
+                    private fun generateIntrinsic(call: IrCall, resType: ArithmeticType?, args: List<Node?>): Node = when (tryGetIntrinsicType(call)) {
+                        IntrinsicType.PLUS -> Add(resType!!)(args[0]!!, args[1]!!)
+                        IntrinsicType.THE_UNIT_INSTANCE -> UnitValue()
+                        else -> TODO("Intrinsic: ${call.render()}")
+                    }
+
+                    private fun generateBuiltinOperator(call: IrCall, resType: ArithmeticType?, args: List<Node?>): Node {
+                        val ib = context.irBuiltIns
+                        val functionSymbol = call.symbol
+                        val function = functionSymbol.owner
+                        val argType = function.parameters[0].type.computeBinaryType().asArithmeticTypeOrNull()!!
+                        return when (functionSymbol) {
+                            ib.eqeqeqSymbol -> {
+                                Cmp(argType, CmpOp.EQ)(args[0]!!, args[1]!!)
+                            }
+                            ib.booleanNotSymbol -> Cmp(argType, CmpOp.NE)(args[0]!!, True())
+                            else -> {
+                                val isFloatingPoint = call.arguments[0]!!.type.isDoubleOrFloatWithoutNullability() // FIXME is this correct?
+                                val shouldUseUnsignedComparison = functionSymbol.owner.parameters[0].type.isChar()
+                                val op = when {
+                                    functionSymbol.isComparisonFunction(ib.greaterFunByOperandType) -> {
+                                        when {
+                                            isFloatingPoint -> CmpOp.U_GT
+                                            shouldUseUnsignedComparison -> CmpOp.U_GT
+                                            else -> CmpOp.S_GT
+                                        }
+                                    }
+                                    functionSymbol.isComparisonFunction(ib.greaterOrEqualFunByOperandType) -> {
+                                        when {
+                                            isFloatingPoint -> CmpOp.U_GE
+                                            shouldUseUnsignedComparison -> CmpOp.U_GE
+                                            else -> CmpOp.S_GE
+                                        }
+                                    }
+                                    functionSymbol.isComparisonFunction(ib.lessFunByOperandType) -> {
+                                        when {
+                                            isFloatingPoint -> CmpOp.U_LT
+                                            shouldUseUnsignedComparison -> CmpOp.U_LT
+                                            else -> CmpOp.S_LT
+                                        }
+                                    }
+                                    functionSymbol.isComparisonFunction(ib.lessOrEqualFunByOperandType) -> {
+                                        when {
+                                            isFloatingPoint -> CmpOp.U_LE
+                                            shouldUseUnsignedComparison -> CmpOp.U_LE
+                                            else -> CmpOp.S_LE
+                                        }
+                                    }
+                                    functionSymbol == context.irBuiltIns.illegalArgumentExceptionSymbol -> {
+                                        TODO("context.symbols.throwIllegalArgumentExceptionWithMessage")
+                                    }
+                                    else -> TODO(functionSymbol.owner.name.toString())
+                                }
+                                Cmp(argType, op)(args[0]!!, args[1]!!)
+                            }
                         }
                     }
 
                     override fun visitWhen(expression: IrWhen, data: Unit): Node {
                         // FIXME reuse convenience builder somehow
-                        val (values, exits) = expression.branches.map {
+                        var exhaustive = false
+                        val pairs = expression.branches.map {
                             if (it.isUnconditional()) {
+                                exhaustive = true
                                 val value = it.result.accept(this, Unit)
                                 val exit = if (controlBuilder.lastControl != null) Goto() else null
                                 value to exit
@@ -165,10 +260,13 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
                                 trueValue to trueExit
                             }
-                        }.unzip()
+                        } + listOf(NoValue() to (if (exhaustive) null else Goto()))
 
-                        val result = if (exits.any { it != null }) {
-                            val merge = BlockEntry(*exits.filterNotNull().toTypedArray())
+                        val (values, exits) = pairs.filter { it.second != null }.unzip()
+
+                        val result = if (exits.isNotEmpty()) {
+                            require(exits.size == values.size)
+                            val merge = BlockEntry(*exits.toTypedArray())
                             Phi(merge, *values.toTypedArray())
                         } else NoValue()
 
@@ -186,7 +284,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         BlockEntry(if_.trueExit)
                         loop.body?.accept(this, Unit)
                         val trueExit = Goto()
-                        condBlock.preds[1] = trueExit
+                        condBlock.preds[1] = trueExit // FIXME sha t if no exit?
 
                         val breakExits = loopBreaks[loop] ?: mutableListOf()
                         BlockEntry(if_.falseExit, *breakExits.toTypedArray())
@@ -210,7 +308,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         val if_ = If(cond)
 
                         BlockEntry(if_.trueExit)
-                        val trueExit = Goto()
+                        val trueExit = Goto() // FIXME shat if no exit?
                         entryBlock.preds[1] = trueExit
 
                         val breakExits = loopBreaks[loop] ?: mutableListOf()
@@ -256,16 +354,40 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     override fun visitReturnableBlock(expression: IrReturnableBlock, data: Unit): Node {
                         returns[expression.symbol] = mutableListOf()
                         val mainResult = super.visitReturnableBlock(expression, data)
-                        val mainExit = Goto()
-                        val (exits, results) = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).unzip()
-                        val exitBlock = BlockEntry(mainExit, *exits.toTypedArray())
+                        val mainExit = if (controlBuilder.lastControl != null) Goto() else null
+                        val (exits, results) = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).filter { it.first != null }.unzip()
+                        require(exits.all { it != null })
+                        val exitBlock = BlockEntry(*exits.toTypedArray())
                         return Phi(exitBlock, *results.toTypedArray())
+                    }
+
+                    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Node {
+                        return when (expression.operator) {
+                            IrTypeOperator.CAST -> TODO()
+                            IrTypeOperator.IMPLICIT_CAST -> TODO()
+                            IrTypeOperator.IMPLICIT_NOTNULL -> TODO()
+                            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
+                                expression.argument.accept(this, Unit)
+                                UnitValue()
+                            }
+                            IrTypeOperator.IMPLICIT_INTEGER_COERCION -> TODO()
+                            IrTypeOperator.SAFE_CAST -> TODO()
+                            IrTypeOperator.INSTANCEOF -> TODO()
+                            IrTypeOperator.NOT_INSTANCEOF -> TODO()
+                            IrTypeOperator.SAM_CONVERSION -> TODO()
+                            IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> TODO()
+                            IrTypeOperator.REINTERPRET_CAST -> TODO()
+                        }
                     }
                 }, Unit)
             }
 
+//            println("HaIR of ${f.name} before SSA:")
+//            printGraphvizNoGCM()
+
             buildSSA()
 
+            println("HaIR of ${f.name} after SSA:")
             printGraphviz()
         }
         return funCompilation

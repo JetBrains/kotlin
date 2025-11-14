@@ -19,6 +19,12 @@ object DataFlow : ModelDSL() {
         variadicParam("joinedValues")
     }
 
+    val phiPlaceholder by node {
+        formParam("origin", Any::class)
+        param("block", ControlFlow.blockEntry)
+        variadicParam("joinedValues")
+    }
+
     val param by node {
         formParam("index", Int::class)
     }

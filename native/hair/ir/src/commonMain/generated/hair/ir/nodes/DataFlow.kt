@@ -95,6 +95,41 @@ class Phi internal constructor(form: Form, block: BlockEntry?, vararg joinedValu
 }
 
 
+class PhiPlaceholder internal constructor(form: Form, block: BlockEntry?, vararg joinedValues: Node?) : NodeBase(form, listOf(block, *joinedValues)) {
+    class Form internal constructor(metaForm: MetaForm, val origin: Any) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(origin)
+    }
+    
+    val origin: Any by form::origin
+    val block: BlockEntry
+        get() = args[0] as BlockEntry
+    val blockOrNull: BlockEntry?
+        get() = args.getOrNull(0)?.let { it as BlockEntry }
+    context(_: ArgsUpdater)
+     var block: BlockEntry
+        get() = args[0] as BlockEntry
+        set(value) { args[0] = value }
+    context(_: ArgsUpdater)
+     var blockOrNull: BlockEntry?
+        get() = args.getOrNull(0)?.let { it as BlockEntry }
+        set(value) { args[0] = value }
+    val joinedValues: VarArgsList<Node>
+        get() = VarArgsList(args, 1, Node::class)
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "block"
+        else -> "joinedValues"
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitPhiPlaceholder(this)
+    
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "PhiPlaceholder")
+    }
+}
+
+
 class Param internal constructor(form: Form) : NodeBase(form, listOf()) {
     class Form internal constructor(metaForm: MetaForm, val index: Int) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(index)

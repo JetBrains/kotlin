@@ -9,6 +9,9 @@ context(nodeBuilder: NodeBuilder)
 fun NoValue(): NoValue = nodeBuilder.register(NoValue(nodeBuilder.session.noValueForm))
 
 context(nodeBuilder: NodeBuilder)
+fun UnitValue(): UnitValue = nodeBuilder.register(UnitValue(nodeBuilder.session.unitValueForm))
+
+context(nodeBuilder: NodeBuilder)
 fun Use(control: Controlling?, value: Node?): Use = nodeBuilder.register(Use(nodeBuilder.session.useForm, control, value))
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
@@ -84,6 +87,12 @@ context(nodeBuilder: NodeBuilder)
 fun Phi(block: BlockEntry?, vararg joinedValues: Node?): Node = nodeBuilder.normalize(Phi(nodeBuilder.session.phiForm, block, *joinedValues)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder)
+fun PhiPlaceholder(origin: Any): PhiPlaceholder.Form = PhiPlaceholder.Form(nodeBuilder.session.phiPlaceholderMetaForm, origin).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun PhiPlaceholder.Form.invoke(block: BlockEntry?, vararg joinedValues: Node?): Node = nodeBuilder.normalize(PhiPlaceholder(this@invoke, block, *joinedValues)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
 private fun ParamForm(index: Int): Param.Form = Param.Form(nodeBuilder.session.paramMetaForm, index).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
@@ -105,21 +114,6 @@ context(nodeBuilder: NodeBuilder)
 fun ConstI(value: Int): ConstI = ConstIForm(value)()
 
 context(nodeBuilder: NodeBuilder)
-fun AddI(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(AddI(nodeBuilder.session.addIForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun SubI(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(SubI(nodeBuilder.session.subIForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun MulI(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(MulI(nodeBuilder.session.mulIForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun DivI(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(DivI(nodeBuilder.session.divIForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun RemI(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(RemI(nodeBuilder.session.remIForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
 private fun ConstLForm(value: Long): ConstL.Form = ConstL.Form(nodeBuilder.session.constLMetaForm, value).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
@@ -127,21 +121,6 @@ operator fun ConstL.Form.invoke(): ConstL = nodeBuilder.register(ConstL(this@inv
 
 context(nodeBuilder: NodeBuilder)
 fun ConstL(value: Long): ConstL = ConstLForm(value)()
-
-context(nodeBuilder: NodeBuilder)
-fun AddL(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(AddL(nodeBuilder.session.addLForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun SubL(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(SubL(nodeBuilder.session.subLForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun MulL(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(MulL(nodeBuilder.session.mulLForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun DivL(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(DivL(nodeBuilder.session.divLForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun RemL(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(RemL(nodeBuilder.session.remLForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder)
 private fun ConstFForm(value: Float): ConstF.Form = ConstF.Form(nodeBuilder.session.constFMetaForm, value).ensureFormUniq()
@@ -153,21 +132,6 @@ context(nodeBuilder: NodeBuilder)
 fun ConstF(value: Float): ConstF = ConstFForm(value)()
 
 context(nodeBuilder: NodeBuilder)
-fun AddF(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(AddF(nodeBuilder.session.addFForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun SubF(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(SubF(nodeBuilder.session.subFForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun MulF(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(MulF(nodeBuilder.session.mulFForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun DivF(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(DivF(nodeBuilder.session.divFForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
-fun RemF(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(RemF(nodeBuilder.session.remFForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder)
 private fun ConstDForm(value: Double): ConstD.Form = ConstD.Form(nodeBuilder.session.constDMetaForm, value).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
@@ -177,19 +141,85 @@ context(nodeBuilder: NodeBuilder)
 fun ConstD(value: Double): ConstD = ConstDForm(value)()
 
 context(nodeBuilder: NodeBuilder)
-fun AddD(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(AddD(nodeBuilder.session.addDForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+private fun NullForm(value: Any): Null.Form = Null.Form(nodeBuilder.session.nullMetaForm, value).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-fun SubD(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(SubD(nodeBuilder.session.subDForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+operator fun Null.Form.invoke(): Null = nodeBuilder.register(Null(this@invoke))
 
 context(nodeBuilder: NodeBuilder)
-fun MulD(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(MulD(nodeBuilder.session.mulDForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+fun Null(value: Any): Null = NullForm(value)()
 
 context(nodeBuilder: NodeBuilder)
-fun DivD(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(DivD(nodeBuilder.session.divDForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+fun Add(type: ArithmeticType): Add.Form = Add.Form(nodeBuilder.session.addMetaForm, type).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-fun RemD(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(RemD(nodeBuilder.session.remDForm, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+operator fun Add.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(Add(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Sub(type: ArithmeticType): Sub.Form = Sub.Form(nodeBuilder.session.subMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Sub.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(Sub(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Mul(type: ArithmeticType): Mul.Form = Mul.Form(nodeBuilder.session.mulMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Mul.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(Mul(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Div(type: ArithmeticType): Div.Form = Div.Form(nodeBuilder.session.divMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Div.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(Div(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Rem(type: ArithmeticType): Rem.Form = Rem.Form(nodeBuilder.session.remMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Rem.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(Rem(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun And(type: ArithmeticType): And.Form = And.Form(nodeBuilder.session.andMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun And.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(And(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Or(type: ArithmeticType): Or.Form = Or.Form(nodeBuilder.session.orMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Or.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(Or(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Xor(type: ArithmeticType): Xor.Form = Xor.Form(nodeBuilder.session.xorMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Xor.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(Xor(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Shl(type: ArithmeticType): Shl.Form = Shl.Form(nodeBuilder.session.shlMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Shl.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(Shl(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Shr(type: ArithmeticType): Shr.Form = Shr.Form(nodeBuilder.session.shrMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Shr.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(Shr(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Ushr(type: ArithmeticType): Ushr.Form = Ushr.Form(nodeBuilder.session.ushrMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Ushr.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(Ushr(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Cmp(type: ArithmeticType, op: CmpOp): Cmp.Form = Cmp.Form(nodeBuilder.session.cmpMetaForm, type, op).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Cmp.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.normalize(Cmp(this@invoke, lhs, rhs)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder)
 private fun NewForm(type: Class): New.Form = New.Form(nodeBuilder.session.newMetaForm, type).ensureFormUniq()
@@ -261,11 +291,20 @@ context(nodeBuilder: NodeBuilder)
 operator fun Cast.Form.invoke(obj: Node?): Node = nodeBuilder.normalize(Cast(this@invoke, obj)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder)
-fun StaticCall(function: HairFunction): StaticCall.Form = StaticCall.Form(nodeBuilder.session.staticCallMetaForm, function).ensureFormUniq()
+fun InvokeStatic(function: HairFunction): InvokeStatic.Form = InvokeStatic.Form(nodeBuilder.session.invokeStaticMetaForm, function).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun StaticCall.Form.invoke(control: Controlling?, vararg callArgs: Node?): StaticCall = nodeBuilder.register(StaticCall(this@invoke, control, *callArgs))
+operator fun InvokeStatic.Form.invoke(control: Controlling?, vararg callArgs: Node?): InvokeStatic = nodeBuilder.register(InvokeStatic(this@invoke, control, *callArgs))
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun StaticCall.Form.invoke(vararg callArgs: Node?): StaticCall = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, *callArgs) }
+operator fun InvokeStatic.Form.invoke(vararg callArgs: Node?): InvokeStatic = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, *callArgs) }
+
+context(nodeBuilder: NodeBuilder)
+fun InvokeVirtual(function: HairFunction): InvokeVirtual.Form = InvokeVirtual.Form(nodeBuilder.session.invokeVirtualMetaForm, function).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun InvokeVirtual.Form.invoke(control: Controlling?, vararg callArgs: Node?): InvokeVirtual = nodeBuilder.register(InvokeVirtual(this@invoke, control, *callArgs))
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun InvokeVirtual.Form.invoke(vararg callArgs: Node?): InvokeVirtual = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, *callArgs) }
 

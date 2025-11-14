@@ -12,6 +12,106 @@ sealed interface ConstAny : Node {
 }
 
 
+class ConstI internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
+    class Form internal constructor(metaForm: MetaForm, val value: Int) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(value)
+    }
+    
+    override val value: Int by form::value
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstI(this)
+    
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "ConstI")
+    }
+}
+
+
+class ConstL internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
+    class Form internal constructor(metaForm: MetaForm, val value: Long) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(value)
+    }
+    
+    override val value: Long by form::value
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstL(this)
+    
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "ConstL")
+    }
+}
+
+
+class ConstF internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
+    class Form internal constructor(metaForm: MetaForm, val value: Float) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(value)
+    }
+    
+    override val value: Float by form::value
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstF(this)
+    
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "ConstF")
+    }
+}
+
+
+class ConstD internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
+    class Form internal constructor(metaForm: MetaForm, val value: Double) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(value)
+    }
+    
+    override val value: Double by form::value
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstD(this)
+    
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "ConstD")
+    }
+}
+
+
+class Null internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
+    class Form internal constructor(metaForm: MetaForm, val value: Any) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(value)
+    }
+    
+    override val value: Any by form::value
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitNull(this)
+    
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "Null")
+    }
+}
+
+
 sealed class BinaryOp(form: Form, args: List<Node?>) : NodeBase(form, args) {
     val lhs: Node
         get() = args[0]
@@ -42,48 +142,12 @@ sealed class BinaryOp(form: Form, args: List<Node?>) : NodeBase(form, args) {
 }
 
 
-sealed interface AssociativeOp : Node {
-    
-    
-    
-}
-
-
-sealed interface CommutativeOp : Node {
-    
-    
-    
-}
-
-
-class ConstI internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
-    class Form internal constructor(metaForm: MetaForm, val value: Int) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
-        override val args = listOf<Any>(value)
+class Add internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
     }
     
-    override val value: Int by form::value
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstI(this)
-    
-    companion object {
-        internal fun metaForm(session: Session) = MetaForm(session, "ConstI")
-    }
-}
-
-
-sealed class BinaryOpI(form: Form, args: List<Node?>) : BinaryOp(form, args) {
-    
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitBinaryOpI(this)
-}
-
-
-class AddI internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpI(form, listOf(lhs, rhs)), CommutativeOp, AssociativeOp {
+    val type: ArithmeticType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -92,15 +156,20 @@ class AddI internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpI(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAddI(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAdd(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "AddI")
+        internal fun metaForm(session: Session) = MetaForm(session, "Add")
     }
 }
 
 
-class SubI internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpI(form, listOf(lhs, rhs)), AssociativeOp {
+class Sub internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
+    }
+    
+    val type: ArithmeticType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -109,15 +178,20 @@ class SubI internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpI(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitSubI(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitSub(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "SubI")
+        internal fun metaForm(session: Session) = MetaForm(session, "Sub")
     }
 }
 
 
-class MulI internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpI(form, listOf(lhs, rhs)), CommutativeOp, AssociativeOp {
+class Mul internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
+    }
+    
+    val type: ArithmeticType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -126,15 +200,20 @@ class MulI internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpI(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitMulI(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitMul(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "MulI")
+        internal fun metaForm(session: Session) = MetaForm(session, "Mul")
     }
 }
 
 
-class DivI internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpI(form, listOf(lhs, rhs)) {
+class Div internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
+    }
+    
+    val type: ArithmeticType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -143,15 +222,20 @@ class DivI internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpI(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitDivI(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitDiv(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "DivI")
+        internal fun metaForm(session: Session) = MetaForm(session, "Div")
     }
 }
 
 
-class RemI internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpI(form, listOf(lhs, rhs)) {
+class Rem internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
+    }
+    
+    val type: ArithmeticType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -160,42 +244,20 @@ class RemI internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpI(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitRemI(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitRem(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "RemI")
+        internal fun metaForm(session: Session) = MetaForm(session, "Rem")
     }
 }
 
 
-class ConstL internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
-    class Form internal constructor(metaForm: MetaForm, val value: Long) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
-        override val args = listOf<Any>(value)
+class And internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
     }
     
-    override val value: Long by form::value
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstL(this)
-    
-    companion object {
-        internal fun metaForm(session: Session) = MetaForm(session, "ConstL")
-    }
-}
-
-
-sealed class BinaryOpL(form: Form, args: List<Node?>) : BinaryOp(form, args) {
-    
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitBinaryOpL(this)
-}
-
-
-class AddL internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpL(form, listOf(lhs, rhs)), CommutativeOp, AssociativeOp {
+    val type: ArithmeticType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -204,15 +266,20 @@ class AddL internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpL(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAddL(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAnd(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "AddL")
+        internal fun metaForm(session: Session) = MetaForm(session, "And")
     }
 }
 
 
-class SubL internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpL(form, listOf(lhs, rhs)), AssociativeOp {
+class Or internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
+    }
+    
+    val type: ArithmeticType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -221,15 +288,20 @@ class SubL internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpL(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitSubL(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitOr(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "SubL")
+        internal fun metaForm(session: Session) = MetaForm(session, "Or")
     }
 }
 
 
-class MulL internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpL(form, listOf(lhs, rhs)), CommutativeOp, AssociativeOp {
+class Xor internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
+    }
+    
+    val type: ArithmeticType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -238,15 +310,20 @@ class MulL internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpL(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitMulL(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitXor(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "MulL")
+        internal fun metaForm(session: Session) = MetaForm(session, "Xor")
     }
 }
 
 
-class DivL internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpL(form, listOf(lhs, rhs)) {
+class Shl internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
+    }
+    
+    val type: ArithmeticType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -255,15 +332,20 @@ class DivL internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpL(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitDivL(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitShl(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "DivL")
+        internal fun metaForm(session: Session) = MetaForm(session, "Shl")
     }
 }
 
 
-class RemL internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpL(form, listOf(lhs, rhs)) {
+class Shr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
+    }
+    
+    val type: ArithmeticType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -272,42 +354,20 @@ class RemL internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpL(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitRemL(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitShr(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "RemL")
+        internal fun metaForm(session: Session) = MetaForm(session, "Shr")
     }
 }
 
 
-class ConstF internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
-    class Form internal constructor(metaForm: MetaForm, val value: Float) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
-        override val args = listOf<Any>(value)
+class Ushr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
     }
     
-    override val value: Float by form::value
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstF(this)
-    
-    companion object {
-        internal fun metaForm(session: Session) = MetaForm(session, "ConstF")
-    }
-}
-
-
-sealed class BinaryOpF(form: Form, args: List<Node?>) : BinaryOp(form, args) {
-    
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitBinaryOpF(this)
-}
-
-
-class AddF internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpF(form, listOf(lhs, rhs)), CommutativeOp {
+    val type: ArithmeticType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -316,15 +376,21 @@ class AddF internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpF(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAddF(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitUshr(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "AddF")
+        internal fun metaForm(session: Session) = MetaForm(session, "Ushr")
     }
 }
 
 
-class SubF internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpF(form, listOf(lhs, rhs)) {
+class Cmp internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
+    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType, val op: CmpOp) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type, op)
+    }
+    
+    val type: ArithmeticType by form::type
+    val op: CmpOp by form::op
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -333,173 +399,10 @@ class SubF internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpF(
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitSubF(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitCmp(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "SubF")
-    }
-}
-
-
-class MulF internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpF(form, listOf(lhs, rhs)), CommutativeOp {
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        0 -> "lhs"
-        1 -> "rhs"
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitMulF(this)
-    
-    companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "MulF")
-    }
-}
-
-
-class DivF internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpF(form, listOf(lhs, rhs)) {
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        0 -> "lhs"
-        1 -> "rhs"
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitDivF(this)
-    
-    companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "DivF")
-    }
-}
-
-
-class RemF internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpF(form, listOf(lhs, rhs)) {
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        0 -> "lhs"
-        1 -> "rhs"
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitRemF(this)
-    
-    companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "RemF")
-    }
-}
-
-
-class ConstD internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
-    class Form internal constructor(metaForm: MetaForm, val value: Double) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
-        override val args = listOf<Any>(value)
-    }
-    
-    override val value: Double by form::value
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstD(this)
-    
-    companion object {
-        internal fun metaForm(session: Session) = MetaForm(session, "ConstD")
-    }
-}
-
-
-sealed class BinaryOpD(form: Form, args: List<Node?>) : BinaryOp(form, args) {
-    
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitBinaryOpD(this)
-}
-
-
-class AddD internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpD(form, listOf(lhs, rhs)), CommutativeOp {
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        0 -> "lhs"
-        1 -> "rhs"
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAddD(this)
-    
-    companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "AddD")
-    }
-}
-
-
-class SubD internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpD(form, listOf(lhs, rhs)) {
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        0 -> "lhs"
-        1 -> "rhs"
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitSubD(this)
-    
-    companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "SubD")
-    }
-}
-
-
-class MulD internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpD(form, listOf(lhs, rhs)), CommutativeOp {
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        0 -> "lhs"
-        1 -> "rhs"
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitMulD(this)
-    
-    companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "MulD")
-    }
-}
-
-
-class DivD internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpD(form, listOf(lhs, rhs)) {
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        0 -> "lhs"
-        1 -> "rhs"
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitDivD(this)
-    
-    companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "DivD")
-    }
-}
-
-
-class RemD internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOpD(form, listOf(lhs, rhs)) {
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        0 -> "lhs"
-        1 -> "rhs"
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitRemD(this)
-    
-    companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "RemD")
+        internal fun metaForm(session: Session) = MetaForm(session, "Cmp")
     }
 }
 

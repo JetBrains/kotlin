@@ -2,7 +2,7 @@ package hair.ir.generator
 
 import hair.ir.generator.toolbox.ModelDSL
 import hair.sym.ArithmeticType
-import kotlin.reflect.KClass
+import hair.sym.CmpOp
 
 object Arithmetics : ModelDSL() {
 
@@ -10,66 +10,53 @@ object Arithmetics : ModelDSL() {
         formParam("value", Any::class) // TODO nullable?
     }
 
-    private enum class ArithmeticType(val suffix: String, val cls: KClass<out Number>, val isFloating: Boolean) {
-        INT("I", Int::class, false),
-        LONG("L", Long::class, false),
-        FLOAT("F", Float::class, true),
-        DOUBLE("D", Double::class, true),
-        // TODO i128?
+    val constI by node {
+        interfaces(constAny)
+        formParam("value", Int::class)
+    }
+
+    val constL by node {
+        interfaces(constAny)
+        formParam("value", Long::class)
+    }
+
+    val constF by node {
+        interfaces(constAny)
+        formParam("value", Float::class)
+    }
+
+    val constD by node {
+        interfaces(constAny)
+        formParam("value", Double::class)
+    }
+
+    val `null` by node {
+        interfaces(constAny)
     }
 
     val binaryOp by abstractClass {
+        formParam("type", ArithmeticType::class)
         param("lhs")
         param("rhs")
     }
 
-    val associativeOp by nodeInterface()
-    val commutativeOp by nodeInterface()
-
-    init {
-        for (type in ArithmeticType.entries) {
-            val suffix = type.suffix
-
-            val const by node(explicitName = "Const$suffix") {
-                interfaces(constAny)
-                formParam("value", type.cls)
-            }
-
-            val binaryOpX by abstractClass(binaryOp, explicitName = "BinaryOp$suffix")
-
-            val addX by node(binaryOpX, explicitName = "Add$suffix") {
-                interfaces(commutativeOp)
-                if (!type.isFloating) {
-                    interfaces(associativeOp)
-                }
-            }
-
-            val subX by node(binaryOpX, explicitName = "Sub$suffix") {
-                if (!type.isFloating) {
-                    interfaces(associativeOp)
-                }
-            }
-
-            val mulX by node(binaryOpX, explicitName = "Mul$suffix") {
-                interfaces(commutativeOp)
-                if (!type.isFloating) {
-                    interfaces(associativeOp)
-                }
-            }
-
-            val divX by node(binaryOpX, explicitName = "Div$suffix")
-
-            val remX by node(binaryOpX, explicitName = "Rem$suffix")
-        }
-    }
-
+    val add by node(binaryOp)
+    val sub by node(binaryOp)
+    val mul by node(binaryOp)
+    val div by node(binaryOp)
+    val rem by node(binaryOp)
 
     // TODO
-    // and
-    // or
-    // xor
-    // shl
-    // shr
-    // ushr
+    val and by node(binaryOp)
+    val or by node(binaryOp)
+    val xor by node(binaryOp)
+    val shl by node(binaryOp)
+    val shr by node(binaryOp)
+    val ushr by node(binaryOp)
+
+    // FIXME not exactly arithmetics:
+    val cmp by node(binaryOp) {
+        formParam("op", CmpOp::class)
+    }
 
 }
