@@ -337,6 +337,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 nestedClasses = emptyList(),
                 originalClassId = declaration.classId,
                 innerClassReference = runIf(declaration.isInner) { declaration.typeScriptInnerClassReference() },
+                isFinal = declaration.modality == Modality.FINAL,
             )
         }
 
