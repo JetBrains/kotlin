@@ -8,6 +8,8 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitNoValue(node: NoValue): NoValue = context(nodeBuilder, NoControlFlowBuilder) { NoValue() }
 
+    override fun visitUnitValue(node: UnitValue): UnitValue = context(nodeBuilder, NoControlFlowBuilder) { UnitValue() }
+
     override fun visitUse(node: Use): Use = context(nodeBuilder, NoControlFlowBuilder) { Use(null, null) }
 
     override fun visitBlockEntry(node: BlockEntry): BlockEntry = context(nodeBuilder, NoControlFlowBuilder) { BlockEntry(*Array(node.preds.size) { null }) }
@@ -32,57 +34,45 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitPhi(node: Phi): Phi = context(nodeBuilder, NoControlFlowBuilder) { Phi(null, *Array(node.joinedValues.size) { null }) } as Phi
 
+    override fun visitPhiPlaceholder(node: PhiPlaceholder): PhiPlaceholder = context(nodeBuilder, NoControlFlowBuilder) { PhiPlaceholder(node.origin)(null, *Array(node.joinedValues.size) { null }) } as PhiPlaceholder
+
     override fun visitParam(node: Param): Param = context(nodeBuilder, NoControlFlowBuilder) { Param(node.index) }
 
     override fun visitCatch(node: Catch): Catch = context(nodeBuilder, NoControlFlowBuilder) { Catch(null) } as Catch
 
     override fun visitConstI(node: ConstI): ConstI = context(nodeBuilder, NoControlFlowBuilder) { ConstI(node.value) }
 
-    override fun visitAddI(node: AddI): AddI = context(nodeBuilder, NoControlFlowBuilder) { AddI(null, null) } as AddI
-
-    override fun visitSubI(node: SubI): SubI = context(nodeBuilder, NoControlFlowBuilder) { SubI(null, null) } as SubI
-
-    override fun visitMulI(node: MulI): MulI = context(nodeBuilder, NoControlFlowBuilder) { MulI(null, null) } as MulI
-
-    override fun visitDivI(node: DivI): DivI = context(nodeBuilder, NoControlFlowBuilder) { DivI(null, null) } as DivI
-
-    override fun visitRemI(node: RemI): RemI = context(nodeBuilder, NoControlFlowBuilder) { RemI(null, null) } as RemI
-
     override fun visitConstL(node: ConstL): ConstL = context(nodeBuilder, NoControlFlowBuilder) { ConstL(node.value) }
-
-    override fun visitAddL(node: AddL): AddL = context(nodeBuilder, NoControlFlowBuilder) { AddL(null, null) } as AddL
-
-    override fun visitSubL(node: SubL): SubL = context(nodeBuilder, NoControlFlowBuilder) { SubL(null, null) } as SubL
-
-    override fun visitMulL(node: MulL): MulL = context(nodeBuilder, NoControlFlowBuilder) { MulL(null, null) } as MulL
-
-    override fun visitDivL(node: DivL): DivL = context(nodeBuilder, NoControlFlowBuilder) { DivL(null, null) } as DivL
-
-    override fun visitRemL(node: RemL): RemL = context(nodeBuilder, NoControlFlowBuilder) { RemL(null, null) } as RemL
 
     override fun visitConstF(node: ConstF): ConstF = context(nodeBuilder, NoControlFlowBuilder) { ConstF(node.value) }
 
-    override fun visitAddF(node: AddF): AddF = context(nodeBuilder, NoControlFlowBuilder) { AddF(null, null) } as AddF
-
-    override fun visitSubF(node: SubF): SubF = context(nodeBuilder, NoControlFlowBuilder) { SubF(null, null) } as SubF
-
-    override fun visitMulF(node: MulF): MulF = context(nodeBuilder, NoControlFlowBuilder) { MulF(null, null) } as MulF
-
-    override fun visitDivF(node: DivF): DivF = context(nodeBuilder, NoControlFlowBuilder) { DivF(null, null) } as DivF
-
-    override fun visitRemF(node: RemF): RemF = context(nodeBuilder, NoControlFlowBuilder) { RemF(null, null) } as RemF
-
     override fun visitConstD(node: ConstD): ConstD = context(nodeBuilder, NoControlFlowBuilder) { ConstD(node.value) }
 
-    override fun visitAddD(node: AddD): AddD = context(nodeBuilder, NoControlFlowBuilder) { AddD(null, null) } as AddD
+    override fun visitNull(node: Null): Null = context(nodeBuilder, NoControlFlowBuilder) { Null(node.value) }
 
-    override fun visitSubD(node: SubD): SubD = context(nodeBuilder, NoControlFlowBuilder) { SubD(null, null) } as SubD
+    override fun visitAdd(node: Add): Add = context(nodeBuilder, NoControlFlowBuilder) { Add(node.type)(null, null) } as Add
 
-    override fun visitMulD(node: MulD): MulD = context(nodeBuilder, NoControlFlowBuilder) { MulD(null, null) } as MulD
+    override fun visitSub(node: Sub): Sub = context(nodeBuilder, NoControlFlowBuilder) { Sub(node.type)(null, null) } as Sub
 
-    override fun visitDivD(node: DivD): DivD = context(nodeBuilder, NoControlFlowBuilder) { DivD(null, null) } as DivD
+    override fun visitMul(node: Mul): Mul = context(nodeBuilder, NoControlFlowBuilder) { Mul(node.type)(null, null) } as Mul
 
-    override fun visitRemD(node: RemD): RemD = context(nodeBuilder, NoControlFlowBuilder) { RemD(null, null) } as RemD
+    override fun visitDiv(node: Div): Div = context(nodeBuilder, NoControlFlowBuilder) { Div(node.type)(null, null) } as Div
+
+    override fun visitRem(node: Rem): Rem = context(nodeBuilder, NoControlFlowBuilder) { Rem(node.type)(null, null) } as Rem
+
+    override fun visitAnd(node: And): And = context(nodeBuilder, NoControlFlowBuilder) { And(node.type)(null, null) } as And
+
+    override fun visitOr(node: Or): Or = context(nodeBuilder, NoControlFlowBuilder) { Or(node.type)(null, null) } as Or
+
+    override fun visitXor(node: Xor): Xor = context(nodeBuilder, NoControlFlowBuilder) { Xor(node.type)(null, null) } as Xor
+
+    override fun visitShl(node: Shl): Shl = context(nodeBuilder, NoControlFlowBuilder) { Shl(node.type)(null, null) } as Shl
+
+    override fun visitShr(node: Shr): Shr = context(nodeBuilder, NoControlFlowBuilder) { Shr(node.type)(null, null) } as Shr
+
+    override fun visitUshr(node: Ushr): Ushr = context(nodeBuilder, NoControlFlowBuilder) { Ushr(node.type)(null, null) } as Ushr
+
+    override fun visitCmp(node: Cmp): Cmp = context(nodeBuilder, NoControlFlowBuilder) { Cmp(node.type, node.op)(null, null) } as Cmp
 
     override fun visitNew(node: New): New = context(nodeBuilder, NoControlFlowBuilder) { New(node.type)(null) }
 
@@ -98,7 +88,9 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitCast(node: Cast): Cast = context(nodeBuilder, NoControlFlowBuilder) { Cast(node.type)(null) } as Cast
 
-    override fun visitStaticCall(node: StaticCall): StaticCall = context(nodeBuilder, NoControlFlowBuilder) { StaticCall(node.function)(null, *Array(node.callArgs.size) { null }) }
+    override fun visitInvokeStatic(node: InvokeStatic): InvokeStatic = context(nodeBuilder, NoControlFlowBuilder) { InvokeStatic(node.function)(null, *Array(node.callArgs.size) { null }) }
+
+    override fun visitInvokeVirtual(node: InvokeVirtual): InvokeVirtual = context(nodeBuilder, NoControlFlowBuilder) { InvokeVirtual(node.function)(null, *Array(node.callArgs.size) { null }) }
 
 }
 

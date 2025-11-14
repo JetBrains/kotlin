@@ -11,7 +11,7 @@ val main by sourceSets.getting {
 }
 
 val generate by tasks.registering(JavaExec::class) {
-    val generationRoot = projectDir.resolve("../generated/src/commonMain/generated")
+    val generationRoot = projectDir.resolve("../src/commonMain/generated")
     doFirst {
         fun purgeDirectory(dir: File) {
             require(dir.exists()) { "$dir does not exist" }

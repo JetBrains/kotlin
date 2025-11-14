@@ -35,13 +35,17 @@ abstract class ValueNumberedNodeForm(session: Session) : Form(session) {
 
     override fun ensureUnique(node: Node): Node {
         require(node.form == this)
-        // FIXME this sould be invalidated more often!!
+        if (node.args.any { it == null }) return node
+        // FIXME this should be invalidated more often!!
         return uniqueNodes.getOrPut(node.args.toList()) { node }
     }
 
     override fun ensureUniqueAfterArgsUpdate(node: Node, oldArgs: List<Node?>): Node {
         require(node.form == this)
-        uniqueNodes.remove(oldArgs)!!.also { require(it == node) }
+        if (oldArgs.all { it != null }) {
+            uniqueNodes.remove(oldArgs)!!.also { require(it == node) }
+        }
+        if (node.args.any { it == null }) return node
         return ensureUnique(node)
     }
 

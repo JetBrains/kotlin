@@ -46,11 +46,14 @@ fun <T> Session.modifyIR(
         val result = builderAction()
 
         forEachInWorklist(allNodes()) { node ->
+            // FIXME what about cyclic dependencies?
             // FIXME maybe find common grounds for control flow handling
             if (node !is ControlFlow && node.uses.isEmpty()) {
-                addAll(node.args.filterNotNull())
-                // FIXME fic this registered/deregistered mess
-                if (node.registered) node.deregister()
+                // FIXME fix this registered/deregistered mess
+                if (node.registered) {
+                    addAll(node.args.filterNotNull())
+                    node.deregister()
+                }
             }
         }
 
