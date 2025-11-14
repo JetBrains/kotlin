@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 // FILE: foo/some.kt
 package foo
 

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 // MUTE_LL_FIR: KT-68878
 // ^in AA tests plugin generate declarations both for `lib` and `main` modules
 

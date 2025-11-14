@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 // DUMP_IR
 package bar
 
