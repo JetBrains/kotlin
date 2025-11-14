@@ -5,6 +5,8 @@
 
 package kotlinx.metadata.klib
 
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+
 /**
  * KLIB-specific metadata version. Supposed to be used mainly with the logic related to kotlinx-metadata-klib library.
  */
@@ -52,5 +54,18 @@ class KlibMetadataVersion(val major: Int, val minor: Int, val patch: Int) : Comp
         if (patch != other.patch) return false
 
         return true
+    }
+
+    companion object {
+        /**
+         * The latest stable metadata version supported by this version of the library.
+         * The library can read in strict mode Kotlin metadata produced by Kotlin up to and including this version + 1 minor.
+         *
+         * For example, if the latest supported stable Kotlin version is `2.1.0`, kotlinx-metadata-klib can read in strict mode binaries produced by Kotlin compilers up to `2.2.*` inclusively.
+         * In this case, this property will have the value `2.1.0`.
+         *
+         * @see KlibModuleMetadata.readStrict
+         */
+        val LATEST_STABLE_SUPPORTED: KlibMetadataVersion = KlibMetadataVersion(MetadataVersion.INSTANCE.toArray())
     }
 }

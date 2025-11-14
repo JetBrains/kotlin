@@ -14,6 +14,7 @@ import kotlin.metadata.internal.*
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 
@@ -55,8 +56,8 @@ class KlibModuleMetadata(
     val fragments: List<KmModuleFragment>,
     val annotations: List<KmAnnotation>,
     val metadataVersion: KlibMetadataVersion,
+    internal val isAllowedToWrite: Boolean = true,
 ) {
-
     /**
      * Serialized representation of module metadata.
      */
@@ -80,12 +81,48 @@ class KlibModuleMetadata(
     companion object {
         /**
          * Deserializes metadata from the given [library].
+         * This method is strict by default. Prefer calling [readStrict] or [readLenient] explicitly.
+         *
          * @param readStrategy specifies the way module fragments of a single package are modified (e.g. merged) after deserialization.
          */
+        @Deprecated(level = DeprecationLevel.ERROR, message = "Use readStrict or readLenient instead")
         fun read(
             library: MetadataLibraryProvider,
             readStrategy: KlibModuleFragmentReadStrategy = KlibModuleFragmentReadStrategy.DEFAULT
+        ): KlibModuleMetadata = readStrict(library, readStrategy)
+
+        /**
+         * Deserializes metadata from the given [library].
+         *
+         * This method can read only supported metadata versions (see [KlibMetadataVersion.LATEST_STABLE_SUPPORTED]).
+         * It will throw an exception if the metadata version is greater than what kotlinx-metadata-klib understands.
+         *
+         * @param readStrategy specifies the way module fragments of a single package are modified (e.g. merged) after deserialization.
+         */
+        fun readStrict(
+            library: MetadataLibraryProvider,
+            readStrategy: KlibModuleFragmentReadStrategy = KlibModuleFragmentReadStrategy.DEFAULT,
+        ): KlibModuleMetadata = readImpl(library, readStrategy, lenient = false)
+
+        /**
+         * Deserializes metadata from the given [library]
+         * This method makes best effort to read unsupported metadata versions.
+         * [KlibModuleMetadata] instances obtained from this method cannot be written.
+         *
+         * @param readStrategy specifies the way module fragments of a single package are modified (e.g. merged) after deserialization.
+         */
+        fun readLenient(
+            library: MetadataLibraryProvider,
+            readStrategy: KlibModuleFragmentReadStrategy = KlibModuleFragmentReadStrategy.DEFAULT,
+        ): KlibModuleMetadata = readImpl(library, readStrategy, lenient = true)
+
+        private fun readImpl(
+            library: MetadataLibraryProvider,
+            readStrategy: KlibModuleFragmentReadStrategy = KlibModuleFragmentReadStrategy.DEFAULT,
+            lenient: Boolean,
         ): KlibModuleMetadata {
+            checkMetadataVersionForRead(library.metadataVersion, lenient)
+
             val moduleHeaderProto = parseModuleHeader(library.moduleHeaderData)
             val headerNameResolver = NameResolverImpl(moduleHeaderProto.strings, moduleHeaderProto.qualifiedNames)
             val moduleHeader = moduleHeaderProto.readHeader(headerNameResolver)
@@ -97,7 +134,21 @@ class KlibModuleMetadata(
                     packageFragment.toKmModuleFragment(nameResolver, listOf(fileIndex))
                 }.let(readStrategy::processModuleParts)
             }
-            return KlibModuleMetadata(moduleHeader.moduleName, moduleFragments, moduleHeader.annotation, library.metadataVersion)
+            return KlibModuleMetadata(
+                moduleHeader.moduleName,
+                moduleFragments,
+                moduleHeader.annotation,
+                library.metadataVersion,
+                isAllowedToWrite = !lenient,
+            )
+        }
+
+        private fun checkMetadataVersionForRead(klibMetadataVersion: KlibMetadataVersion, lenient: Boolean) {
+            if (lenient) return
+            val metadataVersion = MetadataVersion(klibMetadataVersion.toArray(), isStrictSemantics = false)
+            if (!metadataVersion.isCompatibleWithCurrentCompilerVersion()) {
+                error("Provided metadata instance has version $metadataVersion, while maximum supported version is ${MetadataVersion.INSTANCE_NEXT}. To support newer versions, update the kotlinx-metadata-klib library.")
+            }
         }
     }
 
@@ -108,8 +159,11 @@ class KlibModuleMetadata(
     fun write(
         writeStrategy: KlibModuleFragmentWriteStrategy = KlibModuleFragmentWriteStrategy.DEFAULT
     ): SerializedKlibMetadata {
-        val reverseIndex = ReverseSourceFileIndexWriteExtension()
+        if (!isAllowedToWrite) {
+            error("Metadata read in lenient mode cannot be written back")
+        }
 
+        val reverseIndex = ReverseSourceFileIndexWriteExtension()
 
         val groupedFragments = fragments
             .groupBy(KmModuleFragment::fqNameOrFail)
