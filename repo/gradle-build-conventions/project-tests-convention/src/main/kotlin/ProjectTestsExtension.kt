@@ -85,11 +85,8 @@ abstract class ProjectTestsExtension(val project: Project) {
         attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
     }
 
-    private val noOp = project.kotlinBuildProperties.isInJpsBuildIdeaSync
     private fun add(configuration: Configuration, dependency: DependencyHandler.() -> ProjectDependency) {
-        if (!noOp) {
-            project.dependencies { configuration(dependency(this)) }
-        }
+        project.dependencies { configuration(dependency(this)) }
     }
 
     fun withJvmStdlibAndReflect() {

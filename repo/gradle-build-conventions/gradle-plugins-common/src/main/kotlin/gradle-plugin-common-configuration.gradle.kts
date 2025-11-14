@@ -66,11 +66,9 @@ tasks.named("jar") {
     enabled = false
 }
 
-if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    createGradlePluginVariants(
-        commonSourceSet = commonSourceSet,
-        publishShadowedJar = true,
-    )
-}
+createGradlePluginVariants(
+    commonSourceSet = commonSourceSet,
+    publishShadowedJar = true,
+)
 
 disableCoroutinesStacktraceRecoveryInTestsIfGradleEmbeddedStdlibIsInRuntimeClasspath()

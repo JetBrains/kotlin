@@ -798,7 +798,7 @@ tasks {
         "coreLibsTest", "check",
         coreLibsBuildable + listOfNotNull(
             ":kotlin-stdlib:samples",
-            ":kotlin-test:kotlin-test-js-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
+            ":kotlin-test:kotlin-test-js-it",
             ":tools:binary-compatibility-validator",
             ":tools:jdk-api-validator",
         )

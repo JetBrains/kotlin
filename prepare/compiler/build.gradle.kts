@@ -31,19 +31,6 @@ val compilerVersion by configurations.creating
 
 val builtinsMetadata by configurations.creating
 
-// JPS build assumes fat jar is built from embedded configuration,
-// but we can't use it in gradle build since slightly more complex processing is required like stripping metadata & services from some jars
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    val embedded by configurations
-    embedded.apply {
-        extendsFrom(fatJarContents)
-        extendsFrom(fatJarContentsStripMetadata)
-        extendsFrom(fatJarContentsStripServices)
-        extendsFrom(fatJarContentsStripVersions)
-        extendsFrom(compilerVersion)
-    }
-}
-
 val api by configurations
 val proguardLibraries by configurations.creating {
     extendsFrom(api)
@@ -162,20 +149,16 @@ dependencies {
 
     libraries(kotlinStdlib("jdk8"))
     librariesKotlinTest(kotlinTest("junit"))
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        libraries(kotlinStdlib(classifier = "distJsJar"))
-        libraries(kotlinStdlib(classifier = "distJsKlib"))
-    }
+    libraries(kotlinStdlib(classifier = "distJsJar"))
+    libraries(kotlinStdlib(classifier = "distJsKlib"))
 
     librariesStripVersion(libs.kotlinx.coroutines.core) { isTransitive = false }
 
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
     }
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        distCompilerPluginProjects.forEach {
-            compilerPlugins(project(it)) { isTransitive = false }
-        }
+    distCompilerPluginProjects.forEach {
+        compilerPlugins(project(it)) { isTransitive = false }
     }
     distCompilerPluginProjectsCompat.forEach {
         compilerPluginsCompat(
@@ -195,19 +178,14 @@ dependencies {
     sources(kotlinStdlib("jdk7", classifier = "sources"))
     sources(kotlinStdlib("jdk8", classifier = "sources"))
 
-    if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        sources(kotlinStdlib(classifier = "sources"))
-        sources("org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion:sources")
-    } else {
-        sources(project(":kotlin-stdlib", configuration = "distSources"))
-        sources(project(":kotlin-stdlib", configuration = "distJsSourcesJar"))
-        sources(project(":kotlin-reflect", configuration = "sources"))
+    sources(project(":kotlin-stdlib", configuration = "distSources"))
+    sources(project(":kotlin-stdlib", configuration = "distJsSourcesJar"))
+    sources(project(":kotlin-reflect", configuration = "sources"))
 
-        distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
+    distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
 
-        distCommonContents(project(":kotlin-stdlib", configuration = "commonMainMetadataElements"))
-        distCommonContents(project(":kotlin-stdlib", configuration = "metadataSourcesElements"))
-    }
+    distCommonContents(project(":kotlin-stdlib", configuration = "commonMainMetadataElements"))
+    distCommonContents(project(":kotlin-stdlib", configuration = "metadataSourcesElements"))
 
     distMavenContents(kotlinStdlib(classifier = "sources"))
 
