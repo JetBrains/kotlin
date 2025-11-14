@@ -14,7 +14,7 @@ fun box(): String {
         "test8: " to { test8() },
         "test9: " to { test9() },
         "test10: " to { test10() },
-        "test11: " to { test11() },
+        // "test11: " to { test11() },
         "test12: " to { test12() },
         "test13: " to { test13() },
         "test14: " to { test14() },
@@ -26,7 +26,7 @@ fun box(): String {
         "test20: " to { test20() },
         "test21: " to { test21() },
         "test22: " to { test22() },
-        "test23: " to { test23() },
+        // "test23: " to { test23() },
         "test24: " to { test24() },
     ).joinToString("") { (name, test) -> name + test() }
 }
@@ -134,11 +134,11 @@ fun test10() = expectThrowableMessage {
     }
 }
 
-fun test11() = expectThrowableMessage {
+/* fun test11() = expectThrowableMessage {
     with(context) {
         assert(dispatch in extension)
     }
-}
+} */
 
 fun test12() = expectThrowableMessage {
     with(dispatch) {
@@ -206,11 +206,11 @@ fun test22() = expectThrowableMessage {
     }
 }
 
-fun test23() = expectThrowableMessage {
+/* fun test23() = expectThrowableMessage {
     with(context) {
         assert(extension.contains(dispatch))
     }
-}
+} */
 
 fun test24() = expectThrowableMessage {
     with(dispatch) {

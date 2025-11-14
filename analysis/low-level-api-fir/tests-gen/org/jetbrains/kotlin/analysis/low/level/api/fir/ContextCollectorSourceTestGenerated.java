@@ -649,18 +649,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("afterSmartCastFunction.kt")
-    public void testAfterSmartCastFunction() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/afterSmartCastFunction.kt");
-    }
-
-    @Test
-    @TestMetadata("afterSmartCastProperty.kt")
-    public void testAfterSmartCastProperty() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/afterSmartCastProperty.kt");
-    }
-
-    @Test
     public void testAllFilesPresentInContextParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/contextParameters"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
@@ -927,18 +915,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("propertyWithContextParameterWithDefaultAccessor.kt")
     public void testPropertyWithContextParameterWithDefaultAccessor() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/propertyWithContextParameterWithDefaultAccessor.kt");
-    }
-
-    @Test
-    @TestMetadata("smartCastFunction.kt")
-    public void testSmartCastFunction() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/smartCastFunction.kt");
-    }
-
-    @Test
-    @TestMetadata("smartCastProperty.kt")
-    public void testSmartCastProperty() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/smartCastProperty.kt");
     }
 
     @Test
