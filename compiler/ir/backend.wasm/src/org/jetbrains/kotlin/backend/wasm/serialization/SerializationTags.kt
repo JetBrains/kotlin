@@ -53,8 +53,16 @@ internal object HeapTypeTags {
 }
 
 internal object InstructionTags {
-    const val WITH_LOCATION = 0u
-    const val WITHOUT_LOCATION = 1u
+    const val WITH_LOCATION0 = 0u
+    const val WITH_LOCATION1 = 1u
+    const val WITH_LOCATION2 = 2u
+    const val WITH_LOCATION3 = 3u
+    const val WITH_LOCATION4 = 4u
+    const val WITHOUT_LOCATION0 = 5u
+    const val WITHOUT_LOCATION1 = 6u
+    const val WITHOUT_LOCATION2 = 7u
+    const val WITHOUT_LOCATION3 = 8u
+    const val WITHOUT_LOCATION4 = 9u
 }
 
 internal object ImmediateTags {

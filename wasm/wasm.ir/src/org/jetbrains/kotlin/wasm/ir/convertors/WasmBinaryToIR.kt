@@ -444,7 +444,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
         }
 
         // We don't need location in Binary -> WasmIR, yet.
-        return WasmInstrWithoutLocation(op, immediates)
+        return error("xxx")//WasmInstrWithoutLocation(op, immediates)
     }
 
     private fun readTypeDeclaration(): WasmTypeDeclaration {

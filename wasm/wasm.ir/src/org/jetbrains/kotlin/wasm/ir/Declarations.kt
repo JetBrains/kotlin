@@ -171,30 +171,125 @@ class WasmStructFieldDeclaration(
     val isMutable: Boolean
 )
 
-sealed class WasmInstr(
-    val operator: WasmOp,
-    val immediates: List<WasmImmediate> = emptyList()
-) {
+sealed class WasmInstr(val operator: WasmOp) {
+    abstract fun immediates(body: (WasmImmediate) -> Unit)
+    abstract val immediatesCount: Int
     abstract val location: SourceLocation?
 }
 
-class WasmInstrWithLocation(
+open class WasmInstrWithLocation0(
     operator: WasmOp,
-    immediates: List<WasmImmediate>,
-    override val location: SourceLocation
-) : WasmInstr(operator, immediates) {
-    constructor(
-        operator: WasmOp,
-        location: SourceLocation
-    ) : this(operator, emptyList(), location)
+    override val location: SourceLocation,
+) : WasmInstr(operator) {
+    override val immediatesCount: Int = 0
+    override fun immediates(body: (WasmImmediate) -> Unit): Unit = Unit
 }
 
-class WasmInstrWithoutLocation(
+open class WasmInstrWithLocation1(
     operator: WasmOp,
-    immediates: List<WasmImmediate> = emptyList(),
-) : WasmInstr(operator, immediates) {
-    override val location: SourceLocation? get() = null
+    location: SourceLocation,
+    val immediate1: WasmImmediate,
+) : WasmInstrWithLocation0(operator, location) {
+    override val immediatesCount: Int = 1
+    override fun immediates(body: (WasmImmediate) -> Unit): Unit = body(immediate1)
 }
+
+open class WasmInstrWithLocation2(
+    operator: WasmOp,
+    location: SourceLocation,
+    immediate1: WasmImmediate,
+    val immediate2: WasmImmediate,
+) : WasmInstrWithLocation1(operator, location, immediate1) {
+    override val immediatesCount: Int = 2
+    override fun immediates(body: (WasmImmediate) -> Unit) { body(immediate1); body(immediate2) }
+}
+
+open class WasmInstrWithLocation3(
+    operator: WasmOp,
+    location: SourceLocation,
+    immediate1: WasmImmediate,
+    immediate2: WasmImmediate,
+    val immediate3: WasmImmediate,
+) : WasmInstrWithLocation2(operator, location, immediate1, immediate2) {
+    override val immediatesCount: Int = 3
+    override fun immediates(body: (WasmImmediate) -> Unit) { body(immediate1); body(immediate2); body(immediate3) }
+}
+
+open class WasmInstrWithLocation4(
+    operator: WasmOp,
+    location: SourceLocation,
+    immediate1: WasmImmediate,
+    immediate2: WasmImmediate,
+    immediate3: WasmImmediate,
+    val immediate4: WasmImmediate,
+) : WasmInstrWithLocation3(operator, location, immediate1, immediate2, immediate3) {
+    override val immediatesCount: Int = 4
+    override fun immediates(body: (WasmImmediate) -> Unit) { body(immediate1); body(immediate2); body(immediate3); body(immediate4) }
+}
+
+open class WasmInstrWithoutLocation0(
+    operator: WasmOp,
+) : WasmInstr(operator) {
+    override val location: SourceLocation? get() = null
+    override fun immediates(body: (WasmImmediate) -> Unit): Unit = Unit
+    override val immediatesCount: Int = 0
+}
+
+open class WasmInstrWithoutLocation1(
+    operator: WasmOp,
+    val immediate1: WasmImmediate,
+) : WasmInstrWithoutLocation0(operator) {
+    override fun immediates(body: (WasmImmediate) -> Unit): Unit = body(immediate1)
+    override val immediatesCount: Int = 1
+}
+
+open class WasmInstrWithoutLocation2(
+    operator: WasmOp,
+    immediate1: WasmImmediate,
+    val immediate2: WasmImmediate,
+) : WasmInstrWithoutLocation1(operator, immediate1) {
+    override fun immediates(body: (WasmImmediate) -> Unit) { body(immediate1); body(immediate2) }
+    override val immediatesCount: Int = 2
+}
+
+open class WasmInstrWithoutLocation3(
+    operator: WasmOp,
+    immediate1: WasmImmediate,
+    immediate2: WasmImmediate,
+    val immediate3: WasmImmediate,
+) : WasmInstrWithoutLocation2(operator, immediate1, immediate2) {
+    override fun immediates(body: (WasmImmediate) -> Unit) { body(immediate1); body(immediate2); body(immediate3) }
+    override val immediatesCount: Int = 3
+}
+
+open class WasmInstrWithoutLocation4(
+    operator: WasmOp,
+    immediate1: WasmImmediate,
+    immediate2: WasmImmediate,
+    immediate3: WasmImmediate,
+    val immediate4: WasmImmediate,
+) : WasmInstrWithoutLocation3(operator, immediate1, immediate2, immediate3) {
+    override fun immediates(body: (WasmImmediate) -> Unit) { body(immediate1); body(immediate2); body(immediate3); body(immediate4) }
+    override val immediatesCount: Int = 4
+}
+//
+//class WasmInstrWithLocation(
+//    operator: WasmOp,
+//    immediates: List<WasmImmediate>,
+//    override val location: SourceLocation
+//) : WasmInstr(operator, immediates) {
+//    constructor(
+//        operator: WasmOp,
+//        location: SourceLocation
+//    ) : this(operator, emptyList(), location)
+//}
+//
+//class WasmInstrWithoutLocation(
+//    operator: WasmOp,
+//    immediates: List<WasmImmediate> = emptyList(),
+//) : WasmInstr(operator, immediates) {
+//    override val location: SourceLocation? get() = null
+//}
 
 data class WasmLimits(
     val minSize: UInt,

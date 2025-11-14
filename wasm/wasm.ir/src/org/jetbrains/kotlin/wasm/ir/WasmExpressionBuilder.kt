@@ -28,13 +28,67 @@ internal fun WasmOp.isBlockEnd(): Boolean = this == WasmOp.END
 class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipCommentInstructions: Boolean = false) {
     private var _numberOfNestedBlocks = 0
 
-    fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate) {
-        if (op.isBlockStart()) {
+    fun buildInstr(op: WasmOp, location: SourceLocation) =
+        WasmInstrWithLocation0(op, location).appendInstruction()
+
+    fun buildInstr(op: WasmOp, location: SourceLocation, immediate: WasmImmediate) =
+        WasmInstrWithLocation1(op, location, immediate).appendInstruction()
+
+    fun buildInstr(
+        op: WasmOp, location: SourceLocation,
+        immediate1: WasmImmediate,
+        immediate2: WasmImmediate
+    ) = WasmInstrWithLocation2(op, location, immediate1, immediate2).appendInstruction()
+
+    fun buildInstr(
+        op: WasmOp, location: SourceLocation,
+        immediate1: WasmImmediate,
+        immediate2: WasmImmediate,
+        immediate3: WasmImmediate,
+    ) = WasmInstrWithLocation3(op, location, immediate1, immediate2, immediate3).appendInstruction()
+
+    fun buildInstr(
+        op: WasmOp, location: SourceLocation,
+        immediate1: WasmImmediate,
+        immediate2: WasmImmediate,
+        immediate3: WasmImmediate,
+        immediate4: WasmImmediate
+    ) = WasmInstrWithLocation4(op, location, immediate1, immediate2, immediate3, immediate4).appendInstruction()
+
+    fun buildInstrWithNoLocation(op: WasmOp) =
+        WasmInstrWithoutLocation0(op).appendInstruction()
+
+    fun buildInstrWithNoLocation(op: WasmOp, immediate: WasmImmediate) =
+        WasmInstrWithoutLocation1(op, immediate).appendInstruction()
+
+    fun buildInstrWithNoLocation(
+        op: WasmOp,
+        immediate1: WasmImmediate,
+        immediate2: WasmImmediate
+    ) = WasmInstrWithoutLocation2(op, immediate1, immediate2).appendInstruction()
+
+    fun buildInstrWithNoLocation(
+        op: WasmOp,
+        immediate1: WasmImmediate,
+        immediate2: WasmImmediate,
+        immediate3: WasmImmediate,
+    ) = WasmInstrWithoutLocation3(op, immediate1, immediate2, immediate3).appendInstruction()
+
+    fun buildInstrWithNoLocation(
+        op: WasmOp,
+        immediate1: WasmImmediate,
+        immediate2: WasmImmediate,
+        immediate3: WasmImmediate,
+        immediate4: WasmImmediate
+    ) = WasmInstrWithoutLocation4(op, immediate1, immediate2, immediate3, immediate4).appendInstruction()
+
+    private fun WasmInstr.appendInstruction() {
+        if (operator.isBlockStart()) {
             _numberOfNestedBlocks++
-        } else if (op.isBlockEnd()) {
+        } else if (operator.isBlockEnd()) {
             _numberOfNestedBlocks--
         }
-        expression += WasmInstrWithLocation(op, immediates.toList(), location)
+        expression += this
     }
 
     val numberOfNestedBlocks: Int
@@ -85,9 +139,6 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         buildEnd()
     }
 
-    private fun buildInstrWithNoLocation(op: WasmOp, vararg immediates: WasmImmediate) {
-        buildInstr(op, SourceLocation.NoLocation(op.mnemonic), *immediates)
-    }
 
     @Suppress("UNUSED_PARAMETER")
     fun buildIf(label: String?, resultType: WasmType? = null) {
@@ -166,16 +217,29 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
     }
 
     fun buildTryTable(
-        vararg catches: WasmImmediate.Catch,
+        catch1: WasmImmediate.Catch,
+        catch2: WasmImmediate.Catch? = null,
         resultType: WasmType? = null,
         body: (Int) -> Unit
     ) {
-        buildInstrWithNoLocation(
-            WasmOp.TRY_TABLE,
-            WasmImmediate.BlockType.Value(resultType),
-            WasmImmediate.ConstI32(catches.size),
-            *catches
-        )
+        val catchSize = if (catch2 == null) 1 else 2
+
+        if (catch2 == null) {
+            buildInstrWithNoLocation(
+                WasmOp.TRY_TABLE,
+                WasmImmediate.BlockType.Value(resultType),
+                WasmImmediate.ConstI32(catchSize),
+                catch1,
+            )
+        } else {
+            buildInstrWithNoLocation(
+                WasmOp.TRY_TABLE,
+                WasmImmediate.BlockType.Value(resultType),
+                WasmImmediate.ConstI32(catchSize),
+                catch1,
+                catch2,
+            )
+        }
         body(numberOfNestedBlocks)
         buildEnd()
     }

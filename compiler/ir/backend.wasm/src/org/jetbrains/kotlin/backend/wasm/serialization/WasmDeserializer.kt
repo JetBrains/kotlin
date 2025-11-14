@@ -7,6 +7,16 @@ package org.jetbrains.kotlin.backend.wasm.serialization
 
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.ReferencableElements
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.WITH_LOCATION0
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.WITH_LOCATION1
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.WITH_LOCATION2
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.WITH_LOCATION3
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.WITH_LOCATION4
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.WITHOUT_LOCATION0
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.WITHOUT_LOCATION1
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.WITHOUT_LOCATION2
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.WITHOUT_LOCATION3
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.WITHOUT_LOCATION4
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -229,10 +239,28 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 WasmOp.CALL.opcode -> WasmOp.CALL
                 else -> OPCODE_TO_WASM_OP.getOrElse(opcode) { error("Unknown opcode $opcode") }
             }
-            val immediates = deserializeList(::deserializeImmediate)
+
             when (tag) {
-                InstructionTags.WITH_LOCATION -> WasmInstrWithLocation(op, immediates, deserializeSourceLocation())
-                InstructionTags.WITHOUT_LOCATION -> WasmInstrWithoutLocation(op, immediates)
+                WITH_LOCATION0 ->
+                    WasmInstrWithLocation0(op, deserializeSourceLocation())
+                WITH_LOCATION1 ->
+                    WasmInstrWithLocation1(op,deserializeSourceLocation(), deserializeImmediate())
+                WITH_LOCATION2 ->
+                    WasmInstrWithLocation2(op,deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate())
+                WITH_LOCATION3 ->
+                    WasmInstrWithLocation3(op,deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
+                WITH_LOCATION4 ->
+                    WasmInstrWithLocation4(op,deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
+                WITHOUT_LOCATION0 ->
+                    WasmInstrWithoutLocation0(op)
+                WITHOUT_LOCATION1 ->
+                    WasmInstrWithoutLocation1(op, deserializeImmediate())
+                WITHOUT_LOCATION2 ->
+                    WasmInstrWithoutLocation2(op, deserializeImmediate(), deserializeImmediate())
+                WITHOUT_LOCATION3 ->
+                    WasmInstrWithoutLocation3(op, deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
+                WITHOUT_LOCATION4 ->
+                    WasmInstrWithoutLocation4(op, deserializeImmediate(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
                 else -> tagError(tag)
             }
         }

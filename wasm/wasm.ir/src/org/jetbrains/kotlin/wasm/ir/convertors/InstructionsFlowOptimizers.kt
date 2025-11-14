@@ -89,7 +89,7 @@ internal fun removeInstructionPriorUnreachable(input: Sequence<WasmInstr>): Sequ
                     val firstLocation = first.location as? SourceLocation.DefinedLocation
                     if (firstLocation != null) {
                         //replace first instruction to NOP
-                        yield(WasmInstrWithLocation(WasmOp.NOP, emptyList(), firstLocation))
+                        yield(WasmInstrWithLocation0(WasmOp.NOP, firstLocation))
                     }
                 }
             } else {
@@ -130,7 +130,7 @@ internal fun removeInstructionPriorDrop(input: Sequence<WasmInstr>): Sequence<Wa
                 val firstLocation = first.location as? SourceLocation.DefinedLocation
                 if (firstLocation != null) {
                     //replace first instruction
-                    firstInstruction = WasmInstrWithLocation(WasmOp.NOP, emptyList(), firstLocation)
+                    firstInstruction = WasmInstrWithLocation0(WasmOp.NOP, firstLocation)
                     secondInstruction = instruction
                 } else {
                     //eat both instructions
@@ -166,19 +166,19 @@ internal fun mergeSetAndGetIntoTee(input: Sequence<WasmInstr>): Sequence<WasmIns
                 continue
             }
 
-            if (first.operator == WasmOp.LOCAL_SET && instruction.operator == WasmOp.LOCAL_GET) {
-                val setNumber = (first.immediates.firstOrNull() as? WasmImmediate.LocalIdx)?.value
-                val getNumber = (instruction.immediates.firstOrNull() as? WasmImmediate.LocalIdx)?.value
-                if (getNumber == setNumber) {
-                    val location = instruction.location
-                    firstInstruction = if (location != null) {
-                        WasmInstrWithLocation(WasmOp.LOCAL_TEE, instruction.immediates, location)
-                    } else {
-                        WasmInstrWithoutLocation(WasmOp.LOCAL_TEE, instruction.immediates)
-                    }
-                    continue
-                }
-            }
+//            if (first.operator == WasmOp.LOCAL_SET && instruction.operator == WasmOp.LOCAL_GET) {
+//                val setNumber = (first.immediates.firstOrNull() as? WasmImmediate.LocalIdx)?.value
+//                val getNumber = (instruction.immediates.firstOrNull() as? WasmImmediate.LocalIdx)?.value
+//                if (getNumber == setNumber) {
+//                    val location = instruction.location
+//                    firstInstruction = if (location != null) {
+//                        WasmInstrWithLocation(WasmOp.LOCAL_TEE, instruction.immediates, location)
+//                    } else {
+//                        WasmInstrWithoutLocation(WasmOp.LOCAL_TEE, instruction.immediates)
+//                    }
+//                    continue
+//                }
+//            }
 
             yield(first)
             firstInstruction = instruction

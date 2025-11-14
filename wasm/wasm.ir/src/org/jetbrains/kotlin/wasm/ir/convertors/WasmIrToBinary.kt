@@ -270,10 +270,13 @@ class WasmIrToBinary(
             b.writeByte(opcode.toByte())
         }
 
-        instr.immediates.forEach {
-            appendImmediate(it)
-        }
+        instr.immediates(appendImmediateDelegate)
+//        instr.immediates.forEach {
+//            appendImmediate(it)
+//        }
     }
+
+    private val appendImmediateDelegate = ::appendImmediate
 
     private fun getCurrentSourceLocationMapping(sourceLocation: SourceLocation): SourceLocationMappingToBinary =
         SourceLocationMappingToBinary(
@@ -485,7 +488,7 @@ class WasmIrToBinary(
     private fun appendExpr(expr: Iterable<WasmInstr>, endLocation: SourceLocation = SourceLocation.NoLocation("End of instruction list")) {
         val expressionWithEndOp = sequence {
             yieldAll(expr)
-            yield(WasmInstrWithLocation(WasmOp.END, endLocation))
+            yield(WasmInstrWithLocation0(WasmOp.END, endLocation))
         }
 
         if (optimizeInstructionFlow) {
