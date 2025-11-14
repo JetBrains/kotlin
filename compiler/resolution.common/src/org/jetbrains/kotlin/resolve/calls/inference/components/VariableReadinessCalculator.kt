@@ -20,29 +20,14 @@ class VariableReadinessCalculator(
     languageVersionSettings,
     inferenceLoggerParameter,
 ) {
+    /**
+     * Earlier values have higher priority.
+     */
     enum class TypeVariableFixationReadinessQuality {
-        // *** The following block constitutes what "with complex dependency" used to mean in the old fixation code ***
-        // Prioritizers needed for KT-67335 (the `greater.kt` case with ILTs).
-        HAS_PROPER_NON_ILT_CONSTRAINT, // There's a constraint to types like `Long`, `Int`, etc.
-        HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT, // There's a constraint `T = ...` which doesn't depend on others.
-
-        // *** "ready for fixation" kinds ***
-        // Prefer `LOWER` `T :> SomeRegularType` to `UPPER` `T <: SomeRegularType` for KT-41934.
-        HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT,
-
-        // K1 used this for reified type parameters, mainly to get `discriminateNothingForReifiedParameter.kt` working.
-        // KT-55691 lessens the need for this readiness kind in K2, however it still needs it for, e.g., `reifiedToNothing.kt`.
-        // TODO: consider deprioritizing Nothing in relation systems like `Nothing <: T <: SomeType` (see KT-76443)
-        //  and not using anymore this readiness kind in K2.
-        //  Related issues: KT-32358 (especially kt32358_3.kt test)
-        REIFIED,
-
-        // *** The following block constitutes what "ready for fixation" used to mean in the old fixation code ***
-        HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
-        HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE,
-        HAS_PROPER_NON_TRIVIAL_CONSTRAINTS, // A proper trivial constraint from arguments, except for `Nothing(?) <: T`
-        HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES,
-        HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT,
+        // *** Strong de-prioritizers (normally, these are `true`, and they de-prioritize by being `false`) ***
+        ALLOWED,
+        HAS_PROPER_CONSTRAINTS,
+        HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY,
 
         // *** A prioritizer needed for KT-74999 (the Traversable vs. Path choice) ***
         // Currently, only used in 2.2+, and helps with self-type based declared upper bounds in particular situations.
@@ -53,13 +38,31 @@ class VariableReadinessCalculator(
         //  it prioritized in comparison with READY_FOR_FIXATION_LOWER (however, KT-41934 example currently prevents it)
         HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES,
 
-        // *** Strong de-prioritizers (normally, these are `true`, and they de-prioritize by being `false`) ***
-        HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY,
-        HAS_PROPER_CONSTRAINTS,
-        ALLOWED,
+        // *** The following block constitutes what "ready for fixation" used to mean in the old fixation code ***
+        HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT,
+        HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES,
+        HAS_PROPER_NON_TRIVIAL_CONSTRAINTS, // A proper trivial constraint from arguments, except for `Nothing(?) <: T`
+        HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE,
+        HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
+
+        // K1 used this for reified type parameters, mainly to get `discriminateNothingForReifiedParameter.kt` working.
+        // KT-55691 lessens the need for this readiness kind in K2, however it still needs it for, e.g., `reifiedToNothing.kt`.
+        // TODO: consider deprioritizing Nothing in relation systems like `Nothing <: T <: SomeType` (see KT-76443)
+        //  and not using anymore this readiness kind in K2.
+        //  Related issues: KT-32358 (especially kt32358_3.kt test)
+        REIFIED,
+
+        // *** "ready for fixation" kinds ***
+        // Prefer `LOWER` `T :> SomeRegularType` to `UPPER` `T <: SomeRegularType` for KT-41934.
+        HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT,
+
+        // *** The following block constitutes what "with complex dependency" used to mean in the old fixation code ***
+        // Prioritizers needed for KT-67335 (the `greater.kt` case with ILTs).
+        HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT, // There's a constraint `T = ...` which doesn't depend on others.
+        HAS_PROPER_NON_ILT_CONSTRAINT, // There's a constraint to types like `Long`, `Int`, etc.
         ;
 
-        val mask = 1 shl ordinal
+        val mask by lazy { 1 shl (entries.lastIndex - ordinal) }
     }
 
     class TypeVariableFixationReadiness : Comparable<TypeVariableFixationReadiness> {

@@ -137,8 +137,7 @@ abstract class FirInferenceLogsDumper {
 
         return when (val readiness = readiness) {
             is VariableReadinessCalculator.TypeVariableFixationReadiness -> {
-                // `asReversed()` - to keep high-priority qualities first.
-                val qualities = TypeVariableFixationReadinessQuality.entries.asReversed().joinToString("") {
+                val qualities = TypeVariableFixationReadinessQuality.entries.joinToString("") {
                     "\n$linePadding\t" + (if (readiness[it]) " true " else "false ") + it.name
                 }
                 "Readiness($qualities\n$linePadding)"
