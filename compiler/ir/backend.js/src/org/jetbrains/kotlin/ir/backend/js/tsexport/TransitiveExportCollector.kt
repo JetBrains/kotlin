@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.lower.isJsStdLibClass
 import org.jetbrains.kotlin.ir.backend.js.lower.isStdLibClass
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.superTypes
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsImplicitExport
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.irError
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.substitute
+import org.jetbrains.kotlin.ir.util.superTypes
 
 private typealias SubstitutionMap = Map<IrTypeParameterSymbol, IrType>
 

@@ -15,9 +15,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
-import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
+import org.jetbrains.kotlin.ir.backend.js.ir.*
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isPromisifiedWrapper
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -78,7 +77,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
 
     private fun exportFunction(function: IrSimpleFunction, specializedType: ExportedType? = null): ExportedDeclaration? {
-        return when (val exportability = functionExportability(function)) {
+        return when (val exportability = function.exportability(context)) {
             is Exportability.NotNeeded, is Exportability.Implicit -> null
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
             is Exportability.Allowed -> {
@@ -213,29 +212,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         ).withAttributesFor(irEnumEntry)
     }
 
-    private fun classExportability(klass: IrClass): Exportability {
-        when (klass.kind) {
-            ClassKind.ANNOTATION_CLASS ->
-                return Exportability.Prohibited("Class ${klass.fqNameWhenAvailable} with kind: ${klass.kind}")
-
-            ClassKind.OBJECT,
-            ClassKind.CLASS,
-            ClassKind.INTERFACE,
-            ClassKind.ENUM_CLASS,
-            ClassKind.ENUM_ENTRY -> {
-            }
-        }
-
-        if (klass.isJsImplicitExport()) {
-            return Exportability.Implicit
-        }
-
-        if (klass.isSingleFieldValueClass)
-            return Exportability.Prohibited("Inline class ${klass.fqNameWhenAvailable}")
-
-        return Exportability.Allowed
-    }
-
     private fun exportDeclarationImplicitly(klass: IrClass, superTypes: Iterable<IrType>): ExportedDeclaration {
         val typeParameters = klass.typeParameters.memoryOptimizedMap { exportTypeParameter(it, klass) }
         val superInterfaces = superTypes
@@ -262,7 +238,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 
     private fun exportOrdinaryClass(klass: IrClass, superTypes: Iterable<IrType>): ExportedDeclaration? {
-        when (val exportability = classExportability(klass)) {
+        when (val exportability = klass.exportability()) {
             is Exportability.Prohibited -> irError(exportability.reason) {
                 withIrEntry("klass", klass)
             }
@@ -282,7 +258,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 
     private fun exportEnumClass(klass: IrClass, superTypes: Iterable<IrType>): ExportedDeclaration? {
-        when (val exportability = classExportability(klass)) {
+        when (val exportability = klass.exportability()) {
             is Exportability.Prohibited -> irError(exportability.reason) {
                 withIrEntry("klass", klass)
             }
@@ -720,48 +696,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         return exportedType.withNullability(isMarkedNullable)
             .also { currentlyProcessedTypes.remove(type) }
     }
-
-    private fun functionExportability(function: IrSimpleFunction): Exportability {
-        if (function.isInline && function.typeParameters.any { it.isReified })
-            return Exportability.Prohibited("Inline reified function")
-        if (function.isSuspend)
-            return Exportability.Prohibited("Suspend function")
-        if (function.isFakeOverride && !function.isAllowedFakeOverriddenDeclaration(context))
-            return Exportability.NotNeeded
-        if (function.origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME ||
-            function.origin == JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR ||
-            function.origin == JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME ||
-            function.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION ||
-            function.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
-            function.origin == JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION
-        ) {
-            return Exportability.NotNeeded
-        }
-
-        val parentClass = function.parent as? IrClass
-
-        if (parentClass != null && parentClass.initEntryInstancesFun == function) {
-            return Exportability.NotNeeded
-        }
-
-        val nameString = function.name.asString()
-        if (nameString.endsWith("-impl"))
-            return Exportability.NotNeeded
-
-
-        // Workaround in case IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER is rewritten.
-        // TODO: Remove this check KT-75095
-        if (nameString.endsWith("\$") && function.parameters.any { "\$mask" in it.name.asString() }) {
-            return Exportability.NotNeeded
-        }
-
-        val name = function.getExportedIdentifier()
-        // TODO: Use [] syntax instead of prohibiting
-        if (parentClass == null && name in allReservedWords)
-            return Exportability.Prohibited("Name is a reserved word")
-
-        return Exportability.Allowed
-    }
 }
 
 private class ExportedClassDeclarationsInfo(
@@ -778,112 +712,7 @@ private val IrClassifierSymbol.isInterface
 private val IrFunction.isStaticMethod: Boolean
     get() = isEs6ConstructorReplacement || isStaticMethodOfClass
 
-private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithName? {
-    // Only actual public declarations with name can be exported
-    if (declaration !is IrDeclarationWithVisibility ||
-        declaration !is IrDeclarationWithName ||
-        !declaration.visibility.isPublicAPI ||
-        declaration.isExpect
-    ) {
-        return null
-    }
-
-    // Workaround to get property declarations instead of its lowered accessors.
-    if (declaration is IrSimpleFunction) {
-        val property = declaration.correspondingPropertySymbol?.owner
-        if (property != null) {
-            // Return property for getter accessors only to prevent
-            // returning it twice (for getter and setter) in the same scope
-            return if (property.getter == declaration)
-                property
-            else
-                null
-        }
-    }
-
-    return declaration
-}
-
-private fun shouldDeclarationBeExportedImplicitlyOrExplicitly(
-    declaration: IrDeclarationWithName,
-    context: JsIrBackendContext,
-    source: IrDeclaration = declaration
-): Boolean {
-    return declaration.isJsImplicitExport() || shouldDeclarationBeExported(declaration, context, source)
-}
-
-private fun shouldDeclarationBeExported(
-    declaration: IrDeclarationWithName,
-    context: JsIrBackendContext,
-    source: IrDeclaration = declaration
-): Boolean {
-    // Formally, user have no ability to annotate EnumEntry as exported, without Enum Class
-    // But, when we add @file:JsExport, the annotation appears on the all of enum entries
-    // what make a wrong behaviour on non-exported members inside Enum Entry (check exportEnumClass and exportFileWithEnumClass tests)
-    if (declaration is IrClass && declaration.kind == ClassKind.ENUM_ENTRY)
-        return false
-
-    if (declaration.isJsExportIgnore() || (declaration as? IrDeclarationWithVisibility)?.visibility?.isPublicAPI == false)
-        return false
-
-    if (context.additionalExportedDeclarationNames.contains(declaration.fqNameWhenAvailable))
-        return true
-
-    if (context.additionalExportedDeclarations.contains(declaration))
-        return true
-
-    if (source is IrOverridableDeclaration<*>) {
-        val overriddenNonEmpty = source.overriddenSymbols.isNotEmpty()
-
-        if (overriddenNonEmpty) {
-            return (source as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
-                    || source.isAllowedFakeOverriddenDeclaration(context)
-                    || source.isOverriddenExported(context)
-        }
-    }
-
-    if (declaration.isExplicitlyExported())
-        return true
-
-    return when (val parent = declaration.parent) {
-        is IrDeclarationWithName -> shouldDeclarationBeExported(parent, context)
-        is IrAnnotationContainer -> parent.isExplicitlyExported()
-        else -> false
-    }
-}
-
-fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIrBackendContext): Boolean {
-    if (isPromisifiedWrapper || isOverriddenEnumProperty(context)) return true
-
-    val firstExportedRealOverride = runIf(isFakeOverride) {
-        resolveFakeOverrideMaybeAbstract { it === this || it.isFakeOverride || it.parentClassOrNull?.isExported(context) != true }
-    } ?: return false
-
-    return firstExportedRealOverride.parentClassOrNull.isExportedInterface(context) && !firstExportedRealOverride.isJsExportIgnore()
-}
-
-fun IrOverridableDeclaration<*>.isOverriddenEnumProperty(context: JsIrBackendContext) =
-    overriddenSymbols
-        .map { it.owner }
-        .filterIsInstanceAnd<IrOverridableDeclaration<*>> {
-            it.overriddenSymbols.isEmpty() && it.parentClassOrNull?.symbol == context.irBuiltIns.enumClass
-        }
-        .isNotEmpty()
-
-fun IrOverridableDeclaration<*>.isOverriddenExported(context: JsIrBackendContext): Boolean =
-    overriddenSymbols
-        .any {
-            val owner = it.owner as IrDeclarationWithName
-            val candidate = getExportCandidate(owner) ?: owner
-            shouldDeclarationBeExported(candidate, context, owner)
-        }
-
-fun IrDeclaration.isExported(context: JsIrBackendContext): Boolean {
-    val candidate = getExportCandidate(this) ?: return false
-    return shouldDeclarationBeExported(candidate, context, this)
-}
-
-fun IrDeclaration.isExportedImplicitlyOrExplicitly(context: JsIrBackendContext): Boolean {
+private fun IrDeclaration.isExportedImplicitlyOrExplicitly(context: JsIrBackendContext): Boolean {
     val candidate = getExportCandidate(this) ?: return false
     return shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context, this)
 }
@@ -894,60 +723,6 @@ fun DescriptorVisibility.toExportedVisibility() =
         else -> ExportedVisibility.DEFAULT
     }
 
-private val reservedWords = setOf(
-    "break",
-    "case",
-    "catch",
-    "class",
-    "const",
-    "continue",
-    "debugger",
-    "default",
-    "delete",
-    "do",
-    "else",
-    "enum",
-    "export",
-    "extends",
-    "false",
-    "finally",
-    "for",
-    "function",
-    "if",
-    "import",
-    "in",
-    "instanceof",
-    "new",
-    "null",
-    "return",
-    "super",
-    "switch",
-    "this",
-    "throw",
-    "true",
-    "try",
-    "typeof",
-    "var",
-    "void",
-    "while",
-    "with"
-)
-
-val strictModeReservedWords = setOf(
-    "as",
-    "implements",
-    "interface",
-    "let",
-    "package",
-    "private",
-    "protected",
-    "public",
-    "static",
-    "yield"
-)
-
-private val allReservedWords = reservedWords + strictModeReservedWords
-
 private fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration): T {
     declaration.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
 
@@ -957,13 +732,4 @@ private fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclara
 
     return this
 }
-
-fun IrDeclarationWithName.getExportedIdentifier(): String =
-    with(getJsNameOrKotlinName()) {
-        if (isSpecial)
-            irError("Cannot export special name: ${name.asString()} for declaration") {
-                withIrEntry("this", this@getExportedIdentifier)
-            }
-        else identifier
-    }
 

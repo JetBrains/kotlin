@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.bridgeFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsName

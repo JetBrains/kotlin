@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.couldBeConvertedToExplicitExport
 import org.jetbrains.kotlin.ir.declarations.IrClass

@@ -11,15 +11,14 @@ import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.needsBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.originalConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.*

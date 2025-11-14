@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.constructorFactory
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.originalConstructor
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
+import org.jetbrains.kotlin.ir.backend.js.utils.hasStrictSignature
+import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -25,10 +28,13 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 val ES6_CONSTRUCTOR_REPLACEMENT by IrDeclarationOriginImpl.Regular
 val ES6_SYNTHETIC_EXPORT_CONSTRUCTOR by IrDeclarationOriginImpl.Regular

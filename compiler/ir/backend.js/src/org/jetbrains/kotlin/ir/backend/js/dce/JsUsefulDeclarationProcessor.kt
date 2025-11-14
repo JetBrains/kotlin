@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.ir.backend.js.JsSymbols.RuntimeMetadataKind
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
+import org.jetbrains.kotlin.ir.backend.js.JsSymbols.RuntimeMetadataKind
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 
 internal class JsUsefulDeclarationProcessor(

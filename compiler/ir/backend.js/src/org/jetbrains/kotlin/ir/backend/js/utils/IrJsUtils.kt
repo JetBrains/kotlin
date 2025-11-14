@@ -5,18 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.constructorFactory
-import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.*
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6PrimaryConstructorReplacement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock

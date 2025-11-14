@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isAllowedFakeOverriddenDeclaration
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isOverriddenEnumProperty
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isOverriddenExported
-import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.JsSymbols.RuntimeMetadataKind
+import org.jetbrains.kotlin.ir.backend.js.ir.isAllowedFakeOverriddenDeclaration
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.ir.isOverriddenEnumProperty
+import org.jetbrains.kotlin.ir.backend.js.ir.isOverriddenExported
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.suspendArityStore
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
@@ -27,9 +27,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isClass
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
