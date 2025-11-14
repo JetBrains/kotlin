@@ -255,6 +255,7 @@ org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 org.jetbrains.kotlin.kdoc.psi.impl.KDocTag.Companion.indentationWhiteSpaces
 org.jetbrains.kotlin.kdoc.psi.impl.KDocTag.getSubjectLink()
 org.jetbrains.kotlin.kdoc.psi.impl.KDocTag.knownTag
+org.jetbrains.kotlin.kdoc.psi.impl.KtDocCommentDescriptorImpl
 org.jetbrains.kotlin.lang.BinaryOperationPrecedence
 org.jetbrains.kotlin.lang.BinaryOperationPrecedence.ADDITIVE
 org.jetbrains.kotlin.lang.BinaryOperationPrecedence.AS

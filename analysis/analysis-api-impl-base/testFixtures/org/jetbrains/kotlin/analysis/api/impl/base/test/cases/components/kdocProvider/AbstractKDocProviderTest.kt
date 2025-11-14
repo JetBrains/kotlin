@@ -15,13 +15,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtTreeVisitor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import kotlin.collections.forEach
 
 /**
  * Reads the kdoc declarations provided in the source code and checks how they are rendered
@@ -63,6 +59,7 @@ abstract class AbstractKDocProviderTest : AbstractAnalysisApiBasedTest() {
     }
 }
 
+@OptIn(KtNonPublicApi::class)
 context(session: KaSession)
 private fun KaDeclarationSymbol.renderKDoc(): String = buildString {
     val symbolStr = stringRepresentation(this@renderKDoc)
