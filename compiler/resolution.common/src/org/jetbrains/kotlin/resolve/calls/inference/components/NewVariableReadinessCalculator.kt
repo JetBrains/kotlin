@@ -79,38 +79,42 @@ class NewVariableReadinessCalculator(
     }
 
     context(c: Context)
-    override fun TypeConstructorMarker.getReadiness(dependencyProvider: TypeVariableDependencyInformationProvider) =
-        TypeVariableFixationReadiness().also {
-            val forbidden = !c.notFixedTypeVariables.contains(this)
-                    || dependencyProvider.isVariableRelatedToTopLevelType(this)
-                    || hasUnprocessedConstraintsInForks()
-            val areAllProperConstraintsSelfTypeBased = areAllProperConstraintsSelfTypeBased()
+    override fun TypeConstructorMarker.getReadiness(dependencyProvider: TypeVariableDependencyInformationProvider): TypeVariableFixationReadiness {
+        val readiness = TypeVariableFixationReadiness()
 
-            // These values go in the same order as they are defined in `TypeVariableFixationReadinessQuality`,
-            // except for being reversed: so that higher-priority ones come first.
+        val forbidden = !c.notFixedTypeVariables.contains(this)
+                || dependencyProvider.isVariableRelatedToTopLevelType(this)
+                || hasUnprocessedConstraintsInForks()
+        val areAllProperConstraintsSelfTypeBased = areAllProperConstraintsSelfTypeBased()
 
-            it[Q.ALLOWED] = !forbidden
-            it[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints() || areAllProperConstraintsSelfTypeBased
-            it[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)
+        // These values go in the same order as they are defined in `TypeVariableFixationReadinessQuality`,
+        // except for being reversed: so that higher-priority ones come first.
 
-            it[Q.HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES] = areAllProperConstraintsSelfTypeBased
-                    && fixationEnhancementsIn22
-                    && !isReified() && hasDirectConstraintToNotFixedRelevantVariable()
+        readiness[Q.ALLOWED] = !forbidden
+        readiness[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints() || areAllProperConstraintsSelfTypeBased
+        readiness[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)
 
-            it[Q.HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT] = it[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased
-            it[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables()
-            it[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS] = !allConstraintsTrivialOrNonProper()
-            it[Q.HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE] = !dependencyProvider.isVariableRelatedToAnyOutputType(this)
-            it[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] =
-                !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
+        readiness[Q.HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES] = areAllProperConstraintsSelfTypeBased
+                && fixationEnhancementsIn22
+                && !isReified() && hasDirectConstraintToNotFixedRelevantVariable()
 
-            it[Q.REIFIED] = isReified()
-            it[Q.HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT] = hasLowerNonNothingNonIltProperConstraint()
+        readiness[Q.HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT] =
+            readiness[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased
+        readiness[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables()
+        readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS] = !allConstraintsTrivialOrNonProper()
+        readiness[Q.HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE] = !dependencyProvider.isVariableRelatedToAnyOutputType(this)
+        readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] =
+            !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
 
-            val (hasProperNonIltEqualityConstraint, hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
-            it[Q.HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT] = hasProperNonIltEqualityConstraint
-            it[Q.HAS_PROPER_NON_ILT_CONSTRAINT] = hasProperNonIltConstraint
-        }
+        readiness[Q.REIFIED] = isReified()
+        readiness[Q.HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT] = hasLowerNonNothingNonIltProperConstraint()
+
+        val (hasProperNonIltEqualityConstraint, hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
+        readiness[Q.HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT] = hasProperNonIltEqualityConstraint
+        readiness[Q.HAS_PROPER_NON_ILT_CONSTRAINT] = hasProperNonIltConstraint
+
+        return readiness
+    }
 
     context(c: Context)
     private fun TypeConstructorMarker.hasLowerNonNothingNonIltProperConstraint(): Boolean {
