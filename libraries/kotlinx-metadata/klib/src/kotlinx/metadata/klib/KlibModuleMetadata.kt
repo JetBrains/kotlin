@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 
 /**
- * Allows to modify the way fragments of the single package are read by [KlibModuleMetadata.read].
+ * Allows to modify the way fragments of the single package are read by [KlibModuleMetadata.readStrict] and [KlibModuleMetadata.readLenient].
  * For example, it may be convenient to join fragments into a single one.
  */
 interface KlibModuleFragmentReadStrategy {
