@@ -1,5 +1,9 @@
 // TARGET_BACKEND: NATIVE
 // FREE_CINTEROP_ARGS: -Xccall-mode direct
+
+// The test relies on GC actually collecting garbage and doesn't make any sense otherwise:
+// IGNORE_NATIVE: gcType=NOOP
+
 // MODULE: cinterop
 // FILE: lib.def
 language = Objective-C
