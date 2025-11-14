@@ -971,6 +971,10 @@ Avoid adjectives such as "legacy", "classic", "old" or similar.
 
 ## Naming Conventions
 
+### Use Common Prefixes for Top-Level Class-Like Declarations
+
+The Analysis API uses the `Ka` prefix, while the PSI API uses `Kt` or `KDoc` prefixes.
+
 ### Use Common Property and Parameter Names
 
 Entity naming in the Analysis API differs on whether an entity is referred from inside the same entity hierarchy or from another place.
