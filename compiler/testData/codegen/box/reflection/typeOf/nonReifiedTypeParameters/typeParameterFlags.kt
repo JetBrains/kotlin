@@ -1,6 +1,6 @@
 // WITH_REFLECT
 // WITH_STDLIB
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: 2.2.0
 // ^^^ KT-79704 is fixed in 2.3.0-Beta1, see improved `toString()` in kotlin.reflect.js.internal.KTypeParameterImpl, commit 4bdbc543
 // ^^^ Expected <in IN>, actual <IN>.
 //     at assertEquals

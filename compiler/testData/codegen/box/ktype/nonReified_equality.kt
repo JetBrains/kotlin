@@ -4,7 +4,7 @@
  */
 // WITH_STDLIB
 // WITH_REFLECT
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: 2.2.0
 // ^^^ KT-79704 is fixed in 2.3.0-Beta1, see improved `equals()` in kotlin.reflect.js.internal.KTypeParameterImpl, commit 4bdbc543
 // ^^^ Illegal value: <T>
 //     at assertNotEquals

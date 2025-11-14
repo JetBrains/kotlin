@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.klib
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -16,13 +16,13 @@ import org.junit.jupiter.api.Assumptions
 
 /**
  * Mute (ignore) tests where:
- * - The custom compiler failed to compile test data in the first (frontend) phase.
+ * - The custom compiler failed to compile test data in the first (frontend) stage.
  * - The custom compiler successfully produced a KLIB artifact, which is known to have
- *   a problem that cause the second phase (backend) to crash. It's only allowed to mute
+ *   a problem that cause the second stage (backend) to crash. It's only allowed to mute
  *   such tests for a specific version of the custom compiler specified in
- *   [IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE] directive.
+ *   [IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE] directive.
  */
-class CustomKlibCompilerFirstPhaseTestSuppressor(
+class CustomKlibCompilerFirstStageTestSuppressor(
     testServices: TestServices,
     private val customCompilerVersion: String,
 ) : AfterAnalysisChecker(testServices) {
@@ -34,7 +34,7 @@ class CustomKlibCompilerFirstPhaseTestSuppressor(
             return buildList {
                 with(testServices.moduleStructure.modules.first().directives) {
                     with(customCompilerVersion) {
-                        addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE))
+                        addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE))
                     }
                 }
             }.map { it.wrap() }
@@ -42,16 +42,16 @@ class CustomKlibCompilerFirstPhaseTestSuppressor(
 
         val newFailedAssertions = failedAssertions.asSequence().flatMap { wrappedException ->
             if (wrappedException is WrappedException.FromFacade) {
-                if (wrappedException.facade is CustomKlibCompilerFirstPhaseFacade) {
-                    // The test failed on the first phase.
-                    processFirstPhaseException(wrappedException)
+                if (wrappedException.facade is CustomKlibCompilerFirstStageFacade) {
+                    // The test failed on the first stage.
+                    processFirstStageException(wrappedException)
                 } else {
-                    // The test failed not on the first phase.
-                    processNonFirstPhaseException(wrappedException)
+                    // The test failed not on the first stage.
+                    processNonFirstStageException(wrappedException)
                 }
             } else if (wrappedException is WrappedException.FromHandler) {
                 // The test failed on a handler.
-                processNonFirstPhaseException(wrappedException)
+                processNonFirstStageException(wrappedException)
             } else {
                 listOf(wrappedException)
             }
@@ -65,7 +65,7 @@ class CustomKlibCompilerFirstPhaseTestSuppressor(
         }
     }
 
-    private fun processFirstPhaseException(wrappedException: WrappedException.FromFacade): List<WrappedException> {
+    private fun processFirstStageException(wrappedException: WrappedException.FromFacade): List<WrappedException> {
         val (exitCode, compilerOutput) = wrappedException.cause as? CustomKlibCompilerException
             ?: return listOf(wrappedException)
 
@@ -77,7 +77,7 @@ class CustomKlibCompilerFirstPhaseTestSuppressor(
                         wrappedException,
                         AssertionError(
                             """
-                                        Custom KLIB compiler failed to compile test data on the first (frontend) phase, but the failure does not look like a frontend error.
+                                        Custom KLIB compiler failed to compile test data on the first (frontend) stage, but the failure does not look like a frontend error.
                                         Please check the compiler output and update the test accordingly.
                                         Compiler output: $compilerOutput
                                     """.trimIndent()
@@ -94,7 +94,7 @@ class CustomKlibCompilerFirstPhaseTestSuppressor(
                         wrappedException,
                         AssertionError(
                             """
-                                        Custom KLIB compiler failed to compile test data on the first (frontend) phase, but the failure does not look like a compiler exception.
+                                        Custom KLIB compiler failed to compile test data on the first (frontend) stage, but the failure does not look like a compiler exception.
                                         Please check the compiler output and update the test accordingly.
                                         Compiler output: $compilerOutput
                                     """.trimIndent()
@@ -108,12 +108,12 @@ class CustomKlibCompilerFirstPhaseTestSuppressor(
         }
     }
 
-    private fun processNonFirstPhaseException(wrappedException: WrappedException): List<WrappedException> {
+    private fun processNonFirstStageException(wrappedException: WrappedException): List<WrappedException> {
         val directives = testServices.moduleStructure.modules.first().directives
-        if (IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE !in directives)
+        if (IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE !in directives)
             return listOf(wrappedException)
 
-        for (prefix in directives[IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE]) {
+        for (prefix in directives[IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE]) {
             if (customCompilerVersion.startsWith(prefix))
                 return emptyList()
         }

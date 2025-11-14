@@ -1,6 +1,6 @@
 // KT-77372
 // WITH_REFLECT
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_PHASE: 2.2.0
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: 2.2.0
 // ^^^ KT-77372: Reflection intrinsics like `createKTypeParameter` have been moved to package `kotlin.reflect.js.internal` in 2.2.20-Beta1
 //     This regression test is written to make sure there's no clash between `getKClass` symbols:
 //     - user-defined one (as in this test)
