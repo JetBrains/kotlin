@@ -74,13 +74,6 @@ assert(context in dispatch)
        |       false
        Context(n=1)
 ---
-test11: ---
-assert(dispatch in extension)
-       |        |  |
-       |        |  Extension(n=1)
-       |        false
-       Dispatch(n=1)
----
 test12: ---
 assert(context in extension)
        |       |  |
@@ -163,13 +156,6 @@ assert(dispatch.contains(context))
        |        |        Context(n=1)
        |        false
        Dispatch(n=1)
----
-test23: ---
-assert(extension.contains(dispatch))
-       |         |        |
-       |         |        Dispatch(n=1)
-       |         false
-       Extension(n=1)
 ---
 test24: ---
 assert(extension.contains(context))
