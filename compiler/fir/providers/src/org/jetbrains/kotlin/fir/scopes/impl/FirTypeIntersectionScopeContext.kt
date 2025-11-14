@@ -165,7 +165,7 @@ class FirTypeIntersectionScopeContext(
                 // the same base scope), but this means there are different instantiations of the same base class,
                 // which should generally result in INCONSISTENT_TYPE_PARAMETER_VALUES errors.
                 group.size > 1 &&
-                        group.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size > 1
+                    group.asSequence().distinctBy { it.member.fir.unwrapSubstitutionOverrides().symbol }.hasMoreThan(1)
             } else {
                 // Create a non-trivial intersection override when return types should be intersected.
                 mostSpecific.size > 1
@@ -525,3 +525,5 @@ fun <D : FirCallableSymbol<*>> ResultOfIntersection<D>.isIntersectionOverride():
     }
     return this is ResultOfIntersection.NonTrivial
 }
+
+private fun <T> Sequence<T>.hasMoreThan(n: Int) = take(n + 1).count() > n
