@@ -449,23 +449,8 @@ private class FirConstCheckVisitor(
 
 
     private fun ConeKotlinType.toCompileTimeType(): CompileTimeType? {
-        return when(this.classId) {
-            StandardClassIds.Byte -> CompileTimeType.BYTE
-            StandardClassIds.Short -> CompileTimeType.SHORT
-            StandardClassIds.Int -> CompileTimeType.INT
-            StandardClassIds.Long -> CompileTimeType.LONG
-            StandardClassIds.UByte -> CompileTimeType.UBYTE
-            StandardClassIds.UShort -> CompileTimeType.USHORT
-            StandardClassIds.UInt -> CompileTimeType.UINT
-            StandardClassIds.ULong -> CompileTimeType.ULONG
-            StandardClassIds.Double -> CompileTimeType.DOUBLE
-            StandardClassIds.Float -> CompileTimeType.FLOAT
-            StandardClassIds.Char -> CompileTimeType.CHAR
-            StandardClassIds.Boolean -> CompileTimeType.BOOLEAN
-            StandardClassIds.String -> CompileTimeType.STRING
-            StandardClassIds.Any -> CompileTimeType.ANY
-            else -> null
-        }
+        if (this.classId == StandardClassIds.Any) return CompileTimeType.ANY
+        return this.classId?.toConstantValueKind()?.toCompileTimeType()
     }
 
     private fun FirExpression.hasAllowedCompileTimeType(): Boolean {
