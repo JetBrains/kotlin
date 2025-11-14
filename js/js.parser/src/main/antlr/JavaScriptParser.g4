@@ -462,7 +462,7 @@ anonymousFunction
     ;
 
 arrowFunctionParameters
-    : propertyName
+    : identifierName
     | '(' formalParameterList? ')'
     ;
 

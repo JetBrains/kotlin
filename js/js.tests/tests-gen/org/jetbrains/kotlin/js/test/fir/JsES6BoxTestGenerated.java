@@ -7566,6 +7566,12 @@ public class JsES6BoxTestGenerated extends AbstractJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("arrowFunctions.kt")
+    public void testArrowFunctions() {
+      runTest("js/js.translator/testData/box/jsCode/arrowFunctions.kt");
+    }
+
+    @Test
     @TestMetadata("break.kt")
     public void testBreak() {
       runTest("js/js.translator/testData/box/jsCode/break.kt");

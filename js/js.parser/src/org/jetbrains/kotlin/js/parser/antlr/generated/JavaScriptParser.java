@@ -8569,8 +8569,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ArrowFunctionParametersContext extends JavaScriptRuleContext {
-		public PropertyNameContext propertyName() {
-			return getRuleContext(PropertyNameContext.class,0);
+		public IdentifierNameContext identifierName() {
+			return getRuleContext(IdentifierNameContext.class,0);
 		}
 		public TerminalNode OpenParen() { return getToken(JavaScriptParser.OpenParen, 0); }
 		public TerminalNode CloseParen() { return getToken(JavaScriptParser.CloseParen, 0); }
@@ -8604,14 +8604,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			setState(1037);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case OpenBracket:
 			case NullLiteral:
 			case BooleanLiteral:
-			case DecimalLiteral:
-			case HexIntegerLiteral:
-			case OctalIntegerLiteral:
-			case OctalIntegerLiteral2:
-			case BinaryIntegerLiteral:
 			case Break:
 			case Do:
 			case Instanceof:
@@ -8664,11 +8658,10 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case Meta:
 			case Target:
 			case Identifier:
-			case StringLiteral:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(1031);
-				propertyName();
+				identifierName();
 				}
 				break;
 			case OpenParen:
@@ -10941,7 +10934,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"\u0402\u0403\u0005=\u0000\u0000\u0403\u0404\u0003\u009aM\u0000\u0404\u0406"+
 		"\u0001\u0000\u0000\u0000\u0405\u03f0\u0001\u0000\u0000\u0000\u0405\u03f2"+
 		"\u0001\u0000\u0000\u0000\u0405\u03ff\u0001\u0000\u0000\u0000\u0406\u0097"+
-		"\u0001\u0000\u0000\u0000\u0407\u040e\u0003\u0084B\u0000\u0408\u040a\u0005"+
+		"\u0001\u0000\u0000\u0000\u0407\u040e\u0003\u00acV\u0000\u0408\u040a\u0005"+
 		"\u0007\u0000\u0000\u0409\u040b\u0003r9\u0000\u040a\u0409\u0001\u0000\u0000"+
 		"\u0000\u040a\u040b\u0001\u0000\u0000\u0000\u040b\u040c\u0001\u0000\u0000"+
 		"\u0000\u040c\u040e\u0005\b\u0000\u0000\u040d\u0407\u0001\u0000\u0000\u0000"+

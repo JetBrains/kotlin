@@ -7383,6 +7383,12 @@ public class LightTreeJsBoxTestGenerated extends AbstractLightTreeJsBoxTest {
     }
 
     @Test
+    @TestMetadata("arrowFunctions.kt")
+    public void testArrowFunctions() {
+      runTest("js/js.translator/testData/box/jsCode/arrowFunctions.kt");
+    }
+
+    @Test
     @TestMetadata("break.kt")
     public void testBreak() {
       runTest("js/js.translator/testData/box/jsCode/break.kt");
