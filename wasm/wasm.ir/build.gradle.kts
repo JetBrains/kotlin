@@ -3,7 +3,6 @@ import java.net.URI
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     kotlin("plugin.serialization")
     id("project-tests-convention")
 }

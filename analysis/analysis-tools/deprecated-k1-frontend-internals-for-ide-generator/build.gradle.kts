@@ -1,7 +1,6 @@
 plugins {
     application
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {

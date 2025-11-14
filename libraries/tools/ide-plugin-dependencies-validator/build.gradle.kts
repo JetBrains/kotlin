@@ -5,7 +5,6 @@ import kotlin.io.path.readLines
 plugins {
     application
     kotlin("jvm")
-    id("jps-compatible")
     id("project-tests-convention")
 }
 

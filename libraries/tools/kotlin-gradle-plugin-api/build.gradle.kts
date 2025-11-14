@@ -3,7 +3,6 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 
 plugins {
     id("gradle-plugin-dependency-configuration")
-    id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("gradle-plugin-api-reference")
 }

@@ -2,7 +2,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     java
-    id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
 }
 

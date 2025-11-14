@@ -15,7 +15,6 @@ embedded.apply {
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 val proguardLibraryJars by configurations.creating {

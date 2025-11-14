@@ -2,7 +2,6 @@ description = "Kotlin Assignment Compiler Plugin"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")

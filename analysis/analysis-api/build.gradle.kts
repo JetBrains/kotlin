@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("project-tests-convention")
 }

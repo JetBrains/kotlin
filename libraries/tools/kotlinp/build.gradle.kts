@@ -2,7 +2,6 @@ description = "kotlinp"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {

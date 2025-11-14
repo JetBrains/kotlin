@@ -2,7 +2,6 @@ description = "Kotlin DataFrame Compiler Plugin (Embeddable)"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {

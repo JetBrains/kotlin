@@ -8,7 +8,6 @@ import java.util.*
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("jps-compatible")
     alias(libs.plugins.gradle.node)
     id("d8-configuration")
     id("java-test-fixtures")

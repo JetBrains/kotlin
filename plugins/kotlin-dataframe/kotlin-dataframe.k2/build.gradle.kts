@@ -3,7 +3,6 @@ description = "Kotlin DataFrame Compiler Plugin (K2)"
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("jps-compatible")
 }
 
 dependencies {

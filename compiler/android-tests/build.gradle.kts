@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("android-sdk-provisioner")
     id("project-tests-convention")
 }

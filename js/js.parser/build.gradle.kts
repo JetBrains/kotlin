@@ -1,7 +1,6 @@
 plugins {
     java
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 val antlrTool by configurations.creating

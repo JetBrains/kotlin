@@ -6,7 +6,6 @@ description = "kotlin-gradle-statistics"
 plugins {
     `java-library`
     id("org.jetbrains.kotlin.jvm")
-    id("jps-compatible")
     `maven-publish`
 }
 

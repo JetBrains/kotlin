@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
-    id("jps-compatible")
     id("project-tests-convention")
     id("test-inputs-check")
 }
