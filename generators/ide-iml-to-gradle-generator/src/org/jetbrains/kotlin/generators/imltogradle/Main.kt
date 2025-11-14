@@ -238,7 +238,7 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         |plugins {
         |    kotlin("jvm")
         |    `java-library` // Add `compileOnlyApi` configuration
-        |        |}
+        |}
         |
         |repositories {
         |    $mavenRepos
