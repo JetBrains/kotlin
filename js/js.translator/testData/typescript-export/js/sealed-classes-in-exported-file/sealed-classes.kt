@@ -21,4 +21,15 @@ sealed class TestSealed(val name: String) {
     class BB : TestSealed("BB") {
         fun baz(): String = "baz"
     }
+
+    @JsName("fromNumber")
+    protected constructor(n: Int) : this(n.toString())
+
+    protected val protectedVal = 10
+    protected fun protectedFun() = 10
+    protected class protectedClass {}
+    protected object protectedNestedObject {}
+    protected companion object {
+        val companionObjectProp = 10
+    }
 }

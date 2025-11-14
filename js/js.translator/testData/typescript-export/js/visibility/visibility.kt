@@ -67,6 +67,21 @@ open class Class {
 }
 
 @JsExport
+class FinalClass protected constructor() {
+
+    @JsName("fromNumber")
+    protected constructor(n: Int) : this()
+
+    protected val protectedVal = 10
+    protected fun protectedFun() = 10
+    protected class protectedClass {}
+    protected object protectedNestedObject {}
+    protected companion object {
+        val companionObjectProp = 10
+    }
+}
+
+@JsExport
 enum class EnumClass {
     EC1,
     EC2
