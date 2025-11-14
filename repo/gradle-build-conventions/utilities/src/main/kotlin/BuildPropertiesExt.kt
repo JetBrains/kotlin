@@ -4,10 +4,10 @@
  */
 
 val KotlinBuildProperties.includeJava9: Boolean
-    get() = !isInJpsBuildIdeaSync && getBoolean("kotlin.build.java9", true)
+    get() = getBoolean("kotlin.build.java9", true)
 
 val KotlinBuildProperties.useBootstrapStdlib: Boolean
-    get() = isInJpsBuildIdeaSync || getBoolean("kotlin.build.useBootstrapStdlib", false)
+    get() = getBoolean("kotlin.build.useBootstrapStdlib", false)
 
 val KotlinBuildProperties.postProcessing: Boolean get() = isTeamcityBuild || getBoolean("kotlin.build.postprocessing", true)
 
@@ -20,7 +20,7 @@ val KotlinBuildProperties.jarCompression: Boolean get() = getBoolean("kotlin.bui
 val KotlinBuildProperties.ignoreTestFailures: Boolean get() = getBoolean("ignoreTestFailures", isTeamcityBuild)
 
 val KotlinBuildProperties.disableWerror: Boolean
-    get() = getBoolean("kotlin.build.disable.werror") || useFir || isInJpsBuildIdeaSync || getBoolean("test.progressive.mode")
+    get() = getBoolean("kotlin.build.disable.werror") || useFir || getBoolean("test.progressive.mode")
 
 val KotlinBuildProperties.generateModularizedConfigurations: Boolean
     get() = getBoolean("kotlin.fir.modularized.mt.configurations", false)

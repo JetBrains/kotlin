@@ -49,56 +49,54 @@ pluginApiReference {
     }
 }
 
-if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    testing {
-        suites {
-            val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
-            val test by getting(JvmTestSuite::class) {
-                useJUnitJupiter(libs.versions.junit5)
-                dependencies {
-                    implementation("org.jetbrains.kotlin:kotlin-stdlib:${coreDepsVersion}")
-                    implementation("org.jetbrains.kotlin:kotlin-test:${coreDepsVersion}")
-                }
+testing {
+    suites {
+        val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter(libs.versions.junit5)
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib:${coreDepsVersion}")
+                implementation("org.jetbrains.kotlin:kotlin-test:${coreDepsVersion}")
+            }
+        }
+
+        register<JvmTestSuite>("functionalTest") {
+            dependencies {
+                implementation(project())
+                implementation(gradleKotlinDsl())
+                implementation(project(":compiler:cli-common")) { isTransitive = false }
+                implementation(platform(libs.junit.bom))
+                implementation(libs.junit.jupiter.api)
+                implementation("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
+                implementation("org.jetbrains.kotlin:kotlin-test:$coreDepsVersion")
+
+                runtimeOnly(libs.junit.jupiter.engine)
             }
 
-            register<JvmTestSuite>("functionalTest") {
-                dependencies {
-                    implementation(project())
-                    implementation(gradleKotlinDsl())
-                    implementation(project(":compiler:cli-common")) { isTransitive = false }
-                    implementation(platform(libs.junit.bom))
-                    implementation(libs.junit.jupiter.api)
-                    implementation("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
-                    implementation("org.jetbrains.kotlin:kotlin-test:$coreDepsVersion")
-
-                    runtimeOnly(libs.junit.jupiter.engine)
-                }
-
-                targets {
-                    all {
-                        testTask.configure {
-                            shouldRunAfter(test)
-                        }
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
                     }
                 }
             }
+        }
 
-            val functionalTests = sourceSets.getByName("functionalTest")
-            listOf(
-                functionalTests.compileClasspathConfigurationName,
-                functionalTests.runtimeClasspathConfigurationName,
-            ).forEach {
-                configurations.getByName(it).useDependenciesCompiledForGradle(
-                    GradlePluginVariant.MAXIMUM_SUPPORTED_GRADLE_VARIANT,
-                    objects,
-                )
-            }
+        val functionalTests = sourceSets.getByName("functionalTest")
+        listOf(
+            functionalTests.compileClasspathConfigurationName,
+            functionalTests.runtimeClasspathConfigurationName,
+        ).forEach {
+            configurations.getByName(it).useDependenciesCompiledForGradle(
+                GradlePluginVariant.MAXIMUM_SUPPORTED_GRADLE_VARIANT,
+                objects,
+            )
         }
     }
+}
 
-    tasks.named("check") {
-        dependsOn(testing.suites.named("functionalTest"))
-    }
+tasks.named("check") {
+    dependsOn(testing.suites.named("functionalTest"))
 }
 
 configurations.all {

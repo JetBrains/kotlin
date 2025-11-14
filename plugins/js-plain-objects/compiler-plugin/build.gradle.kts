@@ -40,17 +40,15 @@ dependencies {
     testFixtures(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    if (!project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        jsoIrRuntimeForTests(project(":plugins:js-plain-objects:runtime")) { isTransitive = false }
+    jsoIrRuntimeForTests(project(":plugins:js-plain-objects:runtime")) { isTransitive = false }
 
-        embedded(project(":plugins:js-plain-objects:runtime")) {
-            attributes {
-                attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-                attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
-                attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
-            }
-            isTransitive = false
+    embedded(project(":plugins:js-plain-objects:runtime")) {
+        attributes {
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+            attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
         }
+        isTransitive = false
     }
 
     testRuntimeOnly(project(":core:descriptors.runtime"))

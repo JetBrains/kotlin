@@ -91,24 +91,20 @@ private fun Project.jdkVariantsOfBootstrapStdlib(variant: Int): Any {
  */
 @JvmOverloads
 fun Project.kotlinTest(suffix: String? = null, classifier: String? = null): Any {
-    return if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        kotlinDep(listOfNotNull("test", suffix?.lowercase()).joinToString("-"), bootstrapKotlinVersion, classifier)
-    } else {
-        val elementsType = when (classifier) {
-            null -> "Runtime"
-            "sources" -> "Sources"
-            else -> error("Unsupported kotlin-test classifier: $classifier")
-        }
-        val configuration = when (suffix?.lowercase()) {
-            null -> classifier?.let { "jvm${elementsType}Elements" }
-            "junit" -> "jvmJUnit${elementsType}Elements"
-            "junit5" -> "jvmJUnit5${elementsType}Elements"
-            "testng" -> "jvmTestNG${elementsType}Elements"
-            "js" -> "js${elementsType}Elements"
-            else -> error("Unsupported kotlin-test flavor: $suffix")
-        }
-        dependencies.project(":kotlin-test", configuration)
+    val elementsType = when (classifier) {
+        null -> "Runtime"
+        "sources" -> "Sources"
+        else -> error("Unsupported kotlin-test classifier: $classifier")
     }
+    val configuration = when (suffix?.lowercase()) {
+        null -> classifier?.let { "jvm${elementsType}Elements" }
+        "junit" -> "jvmJUnit${elementsType}Elements"
+        "junit5" -> "jvmJUnit5${elementsType}Elements"
+        "testng" -> "jvmTestNG${elementsType}Elements"
+        "js" -> "js${elementsType}Elements"
+        else -> error("Unsupported kotlin-test flavor: $suffix")
+    }
+    return dependencies.project(":kotlin-test", configuration)
 }
 
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
@@ -236,11 +232,7 @@ fun Project.firstFromJavaHomeThatExists(
             logger.warn("Cannot find file by paths: ${paths.toList()} in $jdkHome")
     }
 
-fun Project.toolsJarApi(): Any =
-    if (kotlinBuildProperties.isInJpsBuildIdeaSync)
-        toolsJar()
-    else
-        dependencies.project(":dependencies:tools-jar-api")
+fun Project.toolsJarApi(): ProjectDependency = dependencies.project(":dependencies:tools-jar-api")
 
 fun Project.toolsJar(): FileCollection = files(
     getToolchainLauncherFor(DEFAULT_JVM_TOOLCHAIN)

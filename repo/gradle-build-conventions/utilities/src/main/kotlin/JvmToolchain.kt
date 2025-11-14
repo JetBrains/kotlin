@@ -30,8 +30,6 @@ fun Project.configureJvmDefaultToolchain() {
 }
 
 fun Project.configureJvmToolchain(jdkVersion: JdkMajorVersion) {
-    @Suppress("NAME_SHADOWING")
-    val jdkVersion = chooseJdk_1_8ForJpsBuild(jdkVersion)
     // Ensure java only modules also set default toolchain
     configureJavaOnlyToolchain(jdkVersion)
 
@@ -60,21 +58,11 @@ fun JavaToolchainSpec.setupToolchain(jdkVersion: JdkMajorVersion) {
 fun Project.configureJavaOnlyToolchain(
     jdkVersion: JdkMajorVersion
 ) {
-    @Suppress("NAME_SHADOWING")
-    val jdkVersion = chooseJdk_1_8ForJpsBuild(jdkVersion)
     plugins.withId("java-base") {
         val javaExtension = extensions.getByType<JavaPluginExtension>()
         javaExtension.toolchain {
             setupToolchain(jdkVersion)
         }
-    }
-}
-
-fun Project.chooseJdk_1_8ForJpsBuild(jdkVersion: JdkMajorVersion): JdkMajorVersion {
-    return if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        maxOf(jdkVersion, JdkMajorVersion.JDK_1_8)
-    } else {
-        jdkVersion
     }
 }
 
@@ -95,12 +83,6 @@ fun JavaCompile.configureTaskToolchain(
 fun Project.updateJvmTarget(
     jvmTarget: String
 ) {
-    @Suppress("NAME_SHADOWING")
-    val jvmTarget = if (kotlinBuildProperties.isInJpsBuildIdeaSync && jvmTarget == "1.6") {
-        "1.8"
-    } else {
-        jvmTarget
-    }
     // Java 9 tasks are exceptions that are configured in configureJava9Compilation
     tasks
         .withType<KotlinJvmCompile>()

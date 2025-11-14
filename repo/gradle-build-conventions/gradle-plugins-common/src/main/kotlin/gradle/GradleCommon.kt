@@ -621,13 +621,11 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
  */
 fun KotlinCompile.configureGradleCompatibility() {
     compilerOptions {
-        if (!project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
-            val variant = GradlePluginVariant.GRADLE_MIN
-            // we should keep control of the language version for compatibility with bundled Kotlin compiler for Gradle Kotlin scripts.
-            languageVersion.set(KotlinVersion.fromVersion(variant.bundledKotlinVersion))
-            // we should not use stdlib symbols not available in the bundled Kotlin runtime
-            apiVersion.set(KotlinVersion.fromVersion(variant.bundledKotlinVersion))
-        }
+        val variant = GradlePluginVariant.GRADLE_MIN
+        // we should keep control of the language version for compatibility with bundled Kotlin compiler for Gradle Kotlin scripts.
+        languageVersion.set(KotlinVersion.fromVersion(variant.bundledKotlinVersion))
+        // we should not use stdlib symbols not available in the bundled Kotlin runtime
+        apiVersion.set(KotlinVersion.fromVersion(variant.bundledKotlinVersion))
         freeCompilerArgs.addAll(
             listOf(
                 "-Xskip-prerelease-check",
