@@ -12,3 +12,7 @@ fun sealedExh(r: Result): String {
         is Result.Error -> "ERR"
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, isExpression, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration, sealed, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

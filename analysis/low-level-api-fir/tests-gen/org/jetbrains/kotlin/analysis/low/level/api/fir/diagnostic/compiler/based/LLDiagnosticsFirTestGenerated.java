@@ -11254,6 +11254,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("whenDuplicatedRed.kt")
+      public void testWhenDuplicatedRed() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenDuplicatedRed.kt");
+      }
+
+      @Test
       @TestMetadata("whenEnum.kt")
       public void testWhenEnum() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenEnum.kt");
@@ -11266,9 +11272,57 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("whenGeneric.kt")
+      public void testWhenGeneric() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenGeneric.kt");
+      }
+
+      @Test
+      @TestMetadata("whenGenericRed.kt")
+      public void testWhenGenericRed() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenGenericRed.kt");
+      }
+
+      @Test
+      @TestMetadata("whenGuard.kt")
+      public void testWhenGuard() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenGuard.kt");
+      }
+
+      @Test
+      @TestMetadata("whenGuardRed.kt")
+      public void testWhenGuardRed() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenGuardRed.kt");
+      }
+
+      @Test
+      @TestMetadata("whenInsideLoop.kt")
+      public void testWhenInsideLoop() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenInsideLoop.kt");
+      }
+
+      @Test
+      @TestMetadata("whenLambda.kt")
+      public void testWhenLambda() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("whenNested.kt")
+      public void testWhenNested() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenNested.kt");
+      }
+
+      @Test
       @TestMetadata("whenNull.kt")
       public void testWhenNull() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenNull.kt");
+      }
+
+      @Test
+      @TestMetadata("whenNullSmartCast.kt")
+      public void testWhenNullSmartCast() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenNullSmartCast.kt");
       }
 
       @Test
@@ -11284,6 +11338,18 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("whenSealedInterface.kt")
+      public void testWhenSealedInterface() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSealedInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("whenSealedRed.kt")
+      public void testWhenSealedRed() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSealedRed.kt");
+      }
+
+      @Test
       @TestMetadata("whenSimple.kt")
       public void testWhenSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSimple.kt");
@@ -11293,6 +11359,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("whenSimpleRed.kt")
       public void testWhenSimpleRed() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSimpleRed.kt");
+      }
+
+      @Test
+      @TestMetadata("whenSimpleStatement.kt")
+      public void testWhenSimpleStatement() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSimpleStatement.kt");
       }
 
       @Test
@@ -11314,9 +11386,33 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("whenStatement.kt")
+      public void testWhenStatement() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenStatement.kt");
+      }
+
+      @Test
       @TestMetadata("whenSubjectPositive.kt")
       public void testWhenSubjectPositive() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSubjectPositive.kt");
+      }
+
+      @Test
+      @TestMetadata("whenSyntaxRed.kt")
+      public void testWhenSyntaxRed() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenSyntaxRed.kt");
+      }
+
+      @Test
+      @TestMetadata("whenTryCatch.kt")
+      public void testWhenTryCatch() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenTryCatch.kt");
+      }
+
+      @Test
+      @TestMetadata("whenUnreachableElse.kt")
+      public void testWhenUnreachableElse() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/when/whenUnreachableElse.kt");
       }
     }
   }

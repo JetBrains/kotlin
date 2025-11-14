@@ -7,3 +7,6 @@ fun handle(x: String?): Int {
         else -> x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, nullableType, smartcast, whenExpression,
+whenWithSubject */
