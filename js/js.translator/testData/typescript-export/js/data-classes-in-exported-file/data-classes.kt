@@ -31,5 +31,13 @@ abstract class WithComponent1 {
     abstract fun component1(): String
 }
 
+@JsExport.Ignore
+abstract class NonExportedWithComponent1 {
+    abstract fun component1(): String
+}
+
 
 data class Test2(val value1: String, val value2: String): WithComponent1()
+
+
+data class Test3(val value1: String, val value2: String): NonExportedWithComponent1()

@@ -7,5 +7,6 @@ declare namespace JS_TESTS {
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
+        /* ErrorDeclaration: Class declarations are not implemented yet */
     }
 }
