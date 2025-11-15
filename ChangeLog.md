@@ -1,3 +1,74 @@
+## 2.3.0-RC
+
+### Backend. Wasm
+
+- [`KT-82075`](https://youtrack.jetbrains.com/issue/KT-82075) K/Wasm: kotlin.wasm.internal.getSimpleName crashes on iOS Safari older than 26
+
+### Compiler
+
+- [`KT-82138`](https://youtrack.jetbrains.com/issue/KT-82138) Debugger: Cannot evaluate JvmInline value class parameter
+- [`KT-78413`](https://youtrack.jetbrains.com/issue/KT-78413) Kotlin Debugger: value classes as context parameters have incorrect names in Variables View during debugging
+- [`KT-80549`](https://youtrack.jetbrains.com/issue/KT-80549) Call of Java method with type parameter bounds: Expected FirResolvedTypeRef with ConeKotlinType but was FirJavaTypeRef
+- [`KT-82132`](https://youtrack.jetbrains.com/issue/KT-82132) False-positive type mismatch with -language-version 2.2
+- [`KT-81988`](https://youtrack.jetbrains.com/issue/KT-81988) K2: Any?.toString() causes NPE inside lambda with Java
+- [`KT-82022`](https://youtrack.jetbrains.com/issue/KT-82022) K/N: Unexpected "Annotation `@JvmInline` is missing on actual declaration" warning with value classes
+
+### Compose compiler
+
+- [`CMP-9167`](https://youtrack.jetbrains.com/issue/CMP-9167) iOS: Platform declaration clash: The following functions have the same IR signature
+
+### IR. Actualizer
+
+- [`KT-77337`](https://youtrack.jetbrains.com/issue/KT-77337) `IrNoExpectSymbolsHandler` finds expect class reference after enabling annotation traversal in IR
+
+### IR. Tree
+
+- [`KT-81952`](https://youtrack.jetbrains.com/issue/KT-81952) "IllegalStateException: Callable reference with vararg should not appear at this stage" for callable references to functions with generic vararg parameters
+
+### JVM. Reflection
+
+- [`KT-81967`](https://youtrack.jetbrains.com/issue/KT-81967) isSubtypeOf: ClassCastException: CapturedKType cannot be cast to class AbstractKType
+- [`KT-81619`](https://youtrack.jetbrains.com/issue/KT-81619) Reflection: Function supertype of a FunctionN class has flexible type in new implementation
+
+### JavaScript
+
+- [`KT-82005`](https://youtrack.jetbrains.com/issue/KT-82005) KJS: "TypeError: callAgent.jsonRpcCall_ij3z26_k$ is not a function" after code change in 2.3.0-Beta1/2
+- [`KT-79514`](https://youtrack.jetbrains.com/issue/KT-79514) java.lang.IllegalStateException: IrClassSymbolImpl is unbound. Signature: kotlin.js/Promise|null[0] on running jsBrowserTest
+
+### Libraries
+
+- [`KT-81995`](https://youtrack.jetbrains.com/issue/KT-81995) K/N: CMP: Undefined symbol _kfun:kotlin.time.Duration.kotlin.time.Duration
+- [`KT-72111`](https://youtrack.jetbrains.com/issue/KT-72111) Change Duration.parseOrNull logic to not throw exceptions internally
+
+### Tools. Compiler Plugin API
+
+- [`KT-82099`](https://youtrack.jetbrains.com/issue/KT-82099) Compiler plugin ordering has no effect
+
+### Tools. Gradle
+
+- [`KT-79482`](https://youtrack.jetbrains.com/issue/KT-79482) Report webMain / webTest usage in FUS metrics
+- [`KT-82244`](https://youtrack.jetbrains.com/issue/KT-82244) Conflicting warnings when using AGP 9.0.0-alpha with built-in Kotlin disabled
+- [`KT-82068`](https://youtrack.jetbrains.com/issue/KT-82068) Workaround iOS Simulator start failure in IT
+- [`KT-81161`](https://youtrack.jetbrains.com/issue/KT-81161) Gradle plugin api reference: compiler arguments types are not available
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-81601`](https://youtrack.jetbrains.com/issue/KT-81601) With `android.builtInKotlin=false` AGP 9.0+, using `kotlin-multiplatform` plugin will fail with a`Class Cast Exception`
+- [`KT-81980`](https://youtrack.jetbrains.com/issue/KT-81980) KGP warning gives incorrect suggestion for AGP application compatibility
+
+### Tools. Gradle. Native
+
+- [`KT-81510`](https://youtrack.jetbrains.com/issue/KT-81510) `commonizeCInterop` exception with 'kotlinNativeBundleConfiguration' not found
+
+### Tools. Maven
+
+- [`KT-82180`](https://youtrack.jetbrains.com/issue/KT-82180) kotlin-maven-plugin: IC succeeds after dependent source deletion
+
+### Tools. Wasm
+
+- [`KT-82365`](https://youtrack.jetbrains.com/issue/KT-82365) K/Wasm: NodeRun tasks in Wasi depend on kotlinWasmToolingSetup
+
+
 ## 2.3.0-Beta2
 
 ### Analysis API
