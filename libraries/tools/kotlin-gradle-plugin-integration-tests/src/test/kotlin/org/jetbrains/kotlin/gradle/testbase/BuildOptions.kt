@@ -88,6 +88,7 @@ data class BuildOptions(
      * Note that `--continuous` *disables* `--no-daemon`.
      */
     val continuousBuild: Boolean? = null,
+    val generateCompilerRefIndex: Boolean? = null,
 ) {
     enum class ConfigurationCacheValue {
 
@@ -332,6 +333,10 @@ data class BuildOptions(
 
         if (kmpIsolatedProjectsSupport != null) {
             arguments.add("-Pkotlin.kmp.isolated-projects.support=${kmpIsolatedProjectsSupport.name.toLowerCaseAsciiOnly()}")
+        }
+
+        if (generateCompilerRefIndex != null) {
+            arguments.add("-Pkotlin.compiler.generateCompilerRefIndex=$generateCompilerRefIndex")
         }
 
         arguments.addAll(freeArgs)

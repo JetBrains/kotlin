@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
@@ -13,8 +14,12 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.FILE_IDS_T
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.LOOKUPS_FILENAME
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.SUBTYPES_FILENAME
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.cri
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback
+import org.junit.jupiter.api.extension.RegisterExtension
+import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.assertTrue
 
@@ -22,19 +27,36 @@ import kotlin.test.assertTrue
 @DisplayName("Gradle / Compiler Reference Index")
 class CompilerReferenceIndexIT : KGPBaseTest() {
 
+    private val kotlinDaemonRunFilesDir: Path
+        get() = kgpTestInfraWorkingDirectory.resolve("kotlin-daemon-run-files")
+
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
+        runViaBuildToolsApi = true,
+        generateCompilerRefIndex = true,
+    )
+
+    private val defaultInProcessBuildOptions: BuildOptions
+        get() = defaultBuildOptions.copy(compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
+
+    private val defaultDaemonBuildOptions: BuildOptions = defaultBuildOptions.copy(
+        compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON,
+        customKotlinDaemonRunFilesDirectory = kotlinDaemonRunFilesDir.toFile(),
+    )
+
     @GradleTest
     @DisplayName("Smoke test for Gradle / CRI data generation and deserialization")
     @OptIn(ExperimentalBuildToolsApi::class)
-    fun smokeTestCriDataGeneration(gradleVersion: GradleVersion) {
-        project("kotlinProject", gradleVersion) {
-            gradleProperties.append(
-                """
-                kotlin.compiler.runViaBuildToolsApi=true
-                kotlin.compiler.generateCompilerRefIndex=true
-                kotlin.compiler.execution.strategy=in-process
-                """.trimIndent() + "\n"
-            )
-
+    @GradleTestExtraStringArguments("in-process", "daemon")
+    fun smokeTestCriDataGeneration(gradleVersion: GradleVersion, strategy: String) {
+        project(
+            "kotlinProject",
+            gradleVersion,
+            buildOptions = when (strategy) {
+                "in-process" -> defaultInProcessBuildOptions
+                "daemon" -> defaultDaemonBuildOptions
+                else -> return // `out-of-process` strategy is not supported by BTA
+            }
+        ) {
             val srcDir = kotlinSourcesDir()
             srcDir.resolve("cri/Base.kt").apply {
                 parent.createDirectories()
@@ -48,8 +70,8 @@ class CompilerReferenceIndexIT : KGPBaseTest() {
                 )
             }
 
-            build("assemble", "--info") {
-                assertOutputContains("Generating Compiler Reference Index...")
+            build("assemble") {
+                if (strategy == "in-process") assertOutputContains("Generating Compiler Reference Index...")
             }
 
             val criDir = projectPath.resolve("build/kotlin/compileKotlin/cacheable").resolve(DATA_PATH)
@@ -78,5 +100,12 @@ class CompilerReferenceIndexIT : KGPBaseTest() {
                 assertTrue(subtypeEntries.isNotEmpty(), "Expected non-empty CRI subtype entries")
             }
         }
+    }
+
+    @Suppress("unused")
+    @RegisterExtension
+    private val afterTestExecutionCallback: AfterTestExecutionCallback = AfterTestExecutionCallback {
+        ConnectorServices.reset()
+        awaitKotlinDaemonTermination(kotlinDaemonRunFilesDir)
     }
 }
