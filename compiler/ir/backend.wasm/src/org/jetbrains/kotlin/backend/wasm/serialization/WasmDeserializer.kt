@@ -7,6 +7,16 @@ package org.jetbrains.kotlin.backend.wasm.serialization
 
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.ReferencableElements
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.LOCATED0
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.LOCATED1
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.LOCATED2
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.LOCATED3
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.LOCATED4
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.NOT_LOCATED0
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.NOT_LOCATED1
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.NOT_LOCATED2
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.NOT_LOCATED3
+import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.NOT_LOCATED4
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -229,10 +239,28 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 WasmOp.CALL.opcode -> WasmOp.CALL
                 else -> OPCODE_TO_WASM_OP.getOrElse(opcode) { error("Unknown opcode $opcode") }
             }
-            val immediates = deserializeList(::deserializeImmediate)
+
             when (tag) {
-                InstructionTags.WITH_LOCATION -> WasmInstrWithLocation(op, immediates, deserializeSourceLocation())
-                InstructionTags.WITHOUT_LOCATION -> WasmInstrWithoutLocation(op, immediates)
+                LOCATED0 ->
+                    WasmInstr0Located(op, deserializeSourceLocation())
+                LOCATED1 ->
+                    WasmInstr1Located(op, deserializeSourceLocation(), deserializeImmediate())
+                LOCATED2 ->
+                    WasmInstr2Located(op, deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate())
+                LOCATED3 ->
+                    WasmInstr3Located(op, deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
+                LOCATED4 ->
+                    WasmInstr4Located(op, deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
+                NOT_LOCATED0 ->
+                    WasmInstr0(op)
+                NOT_LOCATED1 ->
+                    WasmInstr1(op, deserializeImmediate())
+                NOT_LOCATED2 ->
+                    WasmInstr2(op, deserializeImmediate(), deserializeImmediate())
+                NOT_LOCATED3 ->
+                    WasmInstr3(op, deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
+                NOT_LOCATED4 ->
+                    WasmInstr4(op, deserializeImmediate(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
                 else -> tagError(tag)
             }
         }

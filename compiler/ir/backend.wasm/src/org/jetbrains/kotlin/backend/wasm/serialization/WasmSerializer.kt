@@ -286,9 +286,35 @@ class WasmSerializer(outputStream: OutputStream) {
         }
 
         b.writeUInt16(opcode.toUShort())
-        when (instr) {
-            is WasmInstrWithLocation -> withTag(InstructionTags.WITH_LOCATION) { serializeList(instr.immediates, ::serializeWasmImmediate); serializeSourceLocation(instr.location) }
-            is WasmInstrWithoutLocation -> withTag(InstructionTags.WITHOUT_LOCATION) { serializeList(instr.immediates, ::serializeWasmImmediate); }
+
+        val location = instr.location
+
+        val tag = if (location != null) {
+            when (instr.immediatesCount) {
+                0 -> InstructionTags.LOCATED0
+                1 -> InstructionTags.LOCATED1
+                2 -> InstructionTags.LOCATED2
+                3 -> InstructionTags.LOCATED3
+                4 -> InstructionTags.LOCATED4
+                else -> error("Invalid instruction with immediates count ${instr.immediatesCount}")
+            }
+        } else {
+            when (instr.immediatesCount) {
+                0 -> InstructionTags.NOT_LOCATED0
+                1 -> InstructionTags.NOT_LOCATED1
+                2 -> InstructionTags.NOT_LOCATED2
+                3 -> InstructionTags.NOT_LOCATED3
+                4 -> InstructionTags.NOT_LOCATED4
+                else -> error("Invalid instruction with immediates count ${instr.immediatesCount}")
+            }
+        }
+        withTag(tag) {
+            if (location != null) {
+                serializeSourceLocation(location)
+            }
+            instr.forEachImmediates {
+                serializeWasmImmediate(it)
+            }
         }
     }
 

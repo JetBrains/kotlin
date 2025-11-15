@@ -381,13 +381,14 @@ class BodyGenerator(
      */
     private fun buildTryWithCatchAll(aTry: IrTry, successLevel: Int, additionalCatch: (() -> WasmImmediate.Catch)? = null) {
         body.buildBlock(null, WasmExnRefType) { toCatchAll ->
-            val catches =
-                if (additionalCatch != null)
-                    arrayOf(additionalCatch(), body.createNewCatchAllRef(toCatchAll))
-                else
-                    arrayOf(body.createNewCatchAllRef(toCatchAll))
 
-            body.buildTryTable(catches = catches) {
+            val catchAll = body.createNewCatchAllRef(toCatchAll)
+            val additional = additionalCatch?.invoke()
+
+            val catch1 = additional ?: catchAll
+            val catch2 = catchAll.takeIf { additional != null }
+
+            body.buildTryTable(catch1, catch2) {
                 generateExpression(aTry.tryResult)
                 body.buildBr(
                     successLevel,
@@ -1566,24 +1567,22 @@ class BodyGenerator(
                         return wasmFileCodegenContext.referenceGcType(type.classOrNull!!)
                     }
 
-                    val immediates = arrayOf(
-                        when (val imm = op.immediates[0]) {
-                            WasmImmediateKind.MEM_ARG ->
-                                WasmImmediate.MemArg(0u, 0u)
-                            WasmImmediateKind.STRUCT_TYPE_IDX ->
-                                WasmImmediate.GcType(getReferenceGcType())
-                            WasmImmediateKind.HEAP_TYPE ->
-                                WasmImmediate.HeapType(WasmHeapType.Type(getReferenceGcType()))
-                            WasmImmediateKind.TYPE_IDX ->
-                                WasmImmediate.TypeIdx(getReferenceGcType())
-                            WasmImmediateKind.MEMORY_IDX ->
-                                WasmImmediate.MemoryIdx(0)
+                    val immediate = when (val imm = op.immediates[0]) {
+                        WasmImmediateKind.MEM_ARG ->
+                            WasmImmediate.MemArg(0u, 0u)
+                        WasmImmediateKind.STRUCT_TYPE_IDX ->
+                            WasmImmediate.GcType(getReferenceGcType())
+                        WasmImmediateKind.HEAP_TYPE ->
+                            WasmImmediate.HeapType(WasmHeapType.Type(getReferenceGcType()))
+                        WasmImmediateKind.TYPE_IDX ->
+                            WasmImmediate.TypeIdx(getReferenceGcType())
+                        WasmImmediateKind.MEMORY_IDX ->
+                            WasmImmediate.MemoryIdx(0)
+                        else ->
+                            error("Immediate $imm is unsupported")
+                    }
 
-                            else ->
-                                error("Immediate $imm is unsupported")
-                        }
-                    )
-                    body.buildInstr(op, location, *immediates)
+                    body.buildInstr(op, location, immediate)
                 }
                 else ->
                     error("Op $opString is unsupported")

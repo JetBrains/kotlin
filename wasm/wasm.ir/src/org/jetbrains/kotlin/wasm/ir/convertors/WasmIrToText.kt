@@ -104,7 +104,7 @@ class WasmIrToText(
 
         if (op.opcode == WASM_OP_PSEUDO_OPCODE) {
             fun commentText() =
-                (wasmInstr.immediates.single() as WasmImmediate.ConstString).value
+                ((wasmInstr as WasmInstr1).immediate1 as WasmImmediate.ConstString).value
 
             when (op) {
                 WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR -> {
@@ -149,13 +149,16 @@ class WasmIrToText(
             indent++
 
         if (wasmInstr.operator in setOf(WasmOp.CALL_INDIRECT, WasmOp.TABLE_INIT)) {
-            wasmInstr.immediates.reversed().forEach {
+            val reversed = mutableListOf<WasmImmediate>()
+            wasmInstr.forEachImmediates(reversed::add)
+            reversed.reverse()
+            reversed.forEach {
                 appendImmediate(it)
             }
             stringBuilder.append(wasmInstr.operator.tailMnemonic)
             return
         }
-        wasmInstr.immediates.forEach {
+        wasmInstr.forEachImmediates {
             appendImmediate(it)
         }
         stringBuilder.append(wasmInstr.operator.tailMnemonic)

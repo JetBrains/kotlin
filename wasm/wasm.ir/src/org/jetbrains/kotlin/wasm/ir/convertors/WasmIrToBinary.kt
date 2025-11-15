@@ -59,6 +59,7 @@ class WasmIrToBinary(
     private val optimizeInstructionFlow: Boolean = true,
 ) : DebugInformationConsumer {
     private var codeSectionOffset = Box(0)
+    private val appendImmediateDelegate = ::appendImmediate
 
     override fun consumeDebugInformation(debugInformation: DebugInformation) {
         debugInformation.forEach {
@@ -270,9 +271,7 @@ class WasmIrToBinary(
             b.writeByte(opcode.toByte())
         }
 
-        instr.immediates.forEach {
-            appendImmediate(it)
-        }
+        instr.forEachImmediates(appendImmediateDelegate)
     }
 
     private fun getCurrentSourceLocationMapping(sourceLocation: SourceLocation): SourceLocationMappingToBinary =
@@ -485,7 +484,7 @@ class WasmIrToBinary(
     private fun appendExpr(expr: Iterable<WasmInstr>, endLocation: SourceLocation = SourceLocation.NoLocation("End of instruction list")) {
         val expressionWithEndOp = sequence {
             yieldAll(expr)
-            yield(WasmInstrWithLocation(WasmOp.END, endLocation))
+            yield(WasmInstr0Located(WasmOp.END, endLocation))
         }
 
         if (optimizeInstructionFlow) {

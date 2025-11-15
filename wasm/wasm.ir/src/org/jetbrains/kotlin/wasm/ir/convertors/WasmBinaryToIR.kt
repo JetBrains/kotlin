@@ -443,8 +443,14 @@ class WasmBinaryToIR(val b: MyByteReader) {
             }
         }
 
-        // We don't need location in Binary -> WasmIR, yet.
-        return WasmInstrWithoutLocation(op, immediates)
+        return when (immediates.size) {
+            0 -> WasmInstr0(op)
+            1 -> WasmInstr1(op, immediates[0])
+            2 -> WasmInstr2(op, immediates[0], immediates[1])
+            3 -> WasmInstr3(op, immediates[0], immediates[1], immediates[3])
+            4 -> WasmInstr4(op, immediates[0], immediates[1], immediates[3], immediates[4])
+            else -> error("Immediates count ${immediates.size} instructions not supported")
+        }
     }
 
     private fun readTypeDeclaration(): WasmTypeDeclaration {

@@ -697,10 +697,10 @@ class WasmCompiledModuleFragment(
         additionalTypes.add(wasmLongArrayDeclaration)
 
         val stringAddressesAndLengthsInitializer = listOf(
-            WasmInstrWithLocation(
+            WasmInstr1Located(
                 operator = WasmOp.REF_NULL,
                 location = serviceCodeLocation,
-                immediates = listOf(WasmImmediate.HeapType(WasmRefNullrefType))
+                immediate1 = WasmImmediate.HeapType(WasmRefNullrefType)
             ),
         )
 
@@ -713,15 +713,15 @@ class WasmCompiledModuleFragment(
 
     private fun createStringPoolField(stringPoolSize: Int, stringEntities: StringLiteralWasmEntities): WasmGlobal {
         val stringCacheFieldInitializer = listOf(
-            WasmInstrWithLocation(
+            WasmInstr1Located(
                 operator = WasmOp.I32_CONST,
                 location = serviceCodeLocation,
-                immediates = listOf(WasmImmediate.ConstI32(stringPoolSize))
+                immediate1 = WasmImmediate.ConstI32(stringPoolSize),
             ),
-            WasmInstrWithLocation(
+            WasmInstr1Located(
                 operator = WasmOp.ARRAY_NEW_DEFAULT,
                 location = serviceCodeLocation,
-                immediates = listOf(WasmImmediate.GcType(stringEntities.wasmStringArrayType))
+                immediate1 = WasmImmediate.GcType(stringEntities.wasmStringArrayType)
             ),
         )
 
