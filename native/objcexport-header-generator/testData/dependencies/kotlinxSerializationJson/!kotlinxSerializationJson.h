@@ -29,13 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface KotlinEnum<E> : Base <KotlinComparable>
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) KotlinEnumCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) KotlinEnumCompanion *companion;
 - (int32_t)compareToOther:(E)other __attribute__((swift_name("compareTo(other:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) NSString *name __attribute__((swift_name("name")));
-@property (readonly) int32_t ordinal __attribute__((swift_name("ordinal")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) NSString *name;
+@property (readonly) int32_t ordinal;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -43,11 +43,11 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) ClassDiscriminatorMode *none __attribute__((swift_name("none")));
-@property (class, readonly) ClassDiscriminatorMode *allJsonObjects __attribute__((swift_name("allJsonObjects")));
-@property (class, readonly) ClassDiscriminatorMode *polymorphic __attribute__((swift_name("polymorphic")));
-+ (KotlinArray<ClassDiscriminatorMode *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<ClassDiscriminatorMode *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) ClassDiscriminatorMode *none;
+@property (class, readonly) ClassDiscriminatorMode *allJsonObjects;
+@property (class, readonly) ClassDiscriminatorMode *polymorphic;
++ (KotlinArray<ClassDiscriminatorMode *> *)values;
+@property (class, readonly) NSArray<ClassDiscriminatorMode *> *entries;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -55,11 +55,11 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) DecodeSequenceMode *whitespaceSeparated __attribute__((swift_name("whitespaceSeparated")));
-@property (class, readonly) DecodeSequenceMode *arrayWrapped __attribute__((swift_name("arrayWrapped")));
-@property (class, readonly) DecodeSequenceMode *autoDetect __attribute__((swift_name("autoDetect")));
-+ (KotlinArray<DecodeSequenceMode *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<DecodeSequenceMode *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) DecodeSequenceMode *whitespaceSeparated;
+@property (class, readonly) DecodeSequenceMode *arrayWrapped;
+@property (class, readonly) DecodeSequenceMode *autoDetect;
++ (KotlinArray<DecodeSequenceMode *> *)values;
+@property (class, readonly) NSArray<DecodeSequenceMode *> *entries;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -67,15 +67,15 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface Json : StringFormat
-@property (class, readonly, getter=companion) JsonDefault *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) JsonDefault *companion;
 - (id _Nullable)decodeFromJsonElementDeserializer:(DeserializationStrategy<id> *)deserializer element:(JsonElement *)element __attribute__((swift_name("decodeFromJsonElement(deserializer:element:)")));
 - (id _Nullable)decodeFromStringString:(NSString *)string __attribute__((swift_name("decodeFromString(string:)")));
 - (id _Nullable)decodeFromStringDeserializer:(DeserializationStrategy<id> *)deserializer string:(NSString *)string __attribute__((swift_name("decodeFromString(deserializer:string:)")));
 - (JsonElement *)encodeToJsonElementSerializer:(SerializationStrategy<id> *)serializer value:(id _Nullable)value __attribute__((swift_name("encodeToJsonElement(serializer:value:)")));
 - (NSString *)encodeToStringSerializer:(SerializationStrategy<id> *)serializer value:(id _Nullable)value __attribute__((swift_name("encodeToString(serializer:value:)")));
 - (JsonElement *)parseToJsonElementString:(NSString *)string __attribute__((swift_name("parseToJsonElement(string:)")));
-@property (readonly) JsonConfiguration *configuration __attribute__((swift_name("configuration")));
-@property (readonly) SerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) JsonConfiguration *configuration;
+@property (readonly) SerializersModule *serializersModule;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -84,7 +84,7 @@ __attribute__((swift_name("Json.Default")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)default_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) JsonDefault *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) JsonDefault *shared;
 @end
 
 __attribute__((unavailable("can't be imported")))
@@ -99,44 +99,44 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface JsonBuilder : Base
-@property BOOL allowSpecialFloatingPointValues __attribute__((swift_name("allowSpecialFloatingPointValues")));
-@property BOOL allowStructuredMapKeys __attribute__((swift_name("allowStructuredMapKeys")));
-@property BOOL allowTrailingComma __attribute__((swift_name("allowTrailingComma")));
-@property NSString *classDiscriminator __attribute__((swift_name("classDiscriminator")));
-@property ClassDiscriminatorMode *classDiscriminatorMode __attribute__((swift_name("classDiscriminatorMode")));
-@property BOOL coerceInputValues __attribute__((swift_name("coerceInputValues")));
-@property BOOL decodeEnumsCaseInsensitive __attribute__((swift_name("decodeEnumsCaseInsensitive")));
-@property BOOL encodeDefaults __attribute__((swift_name("encodeDefaults")));
-@property BOOL explicitNulls __attribute__((swift_name("explicitNulls")));
-@property BOOL ignoreUnknownKeys __attribute__((swift_name("ignoreUnknownKeys")));
-@property BOOL isLenient __attribute__((swift_name("isLenient")));
-@property id<JsonNamingStrategy> _Nullable namingStrategy __attribute__((swift_name("namingStrategy")));
-@property BOOL prettyPrint __attribute__((swift_name("prettyPrint")));
-@property NSString *prettyPrintIndent __attribute__((swift_name("prettyPrintIndent")));
-@property SerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
-@property BOOL useAlternativeNames __attribute__((swift_name("useAlternativeNames")));
-@property BOOL useArrayPolymorphism __attribute__((swift_name("useArrayPolymorphism")));
+@property BOOL allowSpecialFloatingPointValues;
+@property BOOL allowStructuredMapKeys;
+@property BOOL allowTrailingComma;
+@property NSString *classDiscriminator;
+@property ClassDiscriminatorMode *classDiscriminatorMode;
+@property BOOL coerceInputValues;
+@property BOOL decodeEnumsCaseInsensitive;
+@property BOOL encodeDefaults;
+@property BOOL explicitNulls;
+@property BOOL ignoreUnknownKeys;
+@property BOOL isLenient;
+@property id<JsonNamingStrategy> _Nullable namingStrategy;
+@property BOOL prettyPrint;
+@property NSString *prettyPrintIndent;
+@property SerializersModule *serializersModule;
+@property BOOL useAlternativeNames;
+@property BOOL useArrayPolymorphism;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface JsonConfiguration : Base
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) BOOL allowSpecialFloatingPointValues __attribute__((swift_name("allowSpecialFloatingPointValues")));
-@property (readonly) BOOL allowStructuredMapKeys __attribute__((swift_name("allowStructuredMapKeys")));
-@property (readonly) BOOL allowTrailingComma __attribute__((swift_name("allowTrailingComma")));
-@property (readonly) NSString *classDiscriminator __attribute__((swift_name("classDiscriminator")));
-@property ClassDiscriminatorMode *classDiscriminatorMode __attribute__((swift_name("classDiscriminatorMode")));
-@property (readonly) BOOL coerceInputValues __attribute__((swift_name("coerceInputValues")));
-@property (readonly) BOOL decodeEnumsCaseInsensitive __attribute__((swift_name("decodeEnumsCaseInsensitive")));
-@property (readonly) BOOL encodeDefaults __attribute__((swift_name("encodeDefaults")));
-@property (readonly) BOOL explicitNulls __attribute__((swift_name("explicitNulls")));
-@property (readonly) BOOL ignoreUnknownKeys __attribute__((swift_name("ignoreUnknownKeys")));
-@property (readonly) BOOL isLenient __attribute__((swift_name("isLenient")));
-@property (readonly) id<JsonNamingStrategy> _Nullable namingStrategy __attribute__((swift_name("namingStrategy")));
-@property (readonly) BOOL prettyPrint __attribute__((swift_name("prettyPrint")));
-@property (readonly) NSString *prettyPrintIndent __attribute__((swift_name("prettyPrintIndent")));
-@property (readonly) BOOL useAlternativeNames __attribute__((swift_name("useAlternativeNames")));
-@property (readonly) BOOL useArrayPolymorphism __attribute__((swift_name("useArrayPolymorphism")));
+- (NSString *)description;
+@property (readonly) BOOL allowSpecialFloatingPointValues;
+@property (readonly) BOOL allowStructuredMapKeys;
+@property (readonly) BOOL allowTrailingComma;
+@property (readonly) NSString *classDiscriminator;
+@property ClassDiscriminatorMode *classDiscriminatorMode;
+@property (readonly) BOOL coerceInputValues;
+@property (readonly) BOOL decodeEnumsCaseInsensitive;
+@property (readonly) BOOL encodeDefaults;
+@property (readonly) BOOL explicitNulls;
+@property (readonly) BOOL ignoreUnknownKeys;
+@property (readonly) BOOL isLenient;
+@property (readonly) id<JsonNamingStrategy> _Nullable namingStrategy;
+@property (readonly) BOOL prettyPrint;
+@property (readonly) NSString *prettyPrintIndent;
+@property (readonly) BOOL useAlternativeNames;
+@property (readonly) BOOL useArrayPolymorphism;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -152,17 +152,17 @@ __attribute__((objc_subclassing_restricted))
 */
 - (DeserializationStrategy<T> *)selectDeserializerElement:(JsonElement *)element __attribute__((swift_name("selectDeserializer(element:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(T)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 @protocol JsonDecoder
 @required
-- (JsonElement *)decodeJsonElement __attribute__((swift_name("decodeJsonElement()")));
-@property (readonly) Json *json __attribute__((swift_name("json")));
+- (JsonElement *)decodeJsonElement;
+@property (readonly) Json *json;
 @end
 
 @interface JsonElement : Base
-@property (class, readonly, getter=companion) JsonElementCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) JsonElementCompanion *companion;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -171,14 +171,14 @@ __attribute__((swift_name("JsonElement.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) JsonElementCompanion *shared __attribute__((swift_name("shared")));
-- (KSerializer<JsonElement *> *)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) JsonElementCompanion *shared;
+- (KSerializer<JsonElement *> *)serializer;
 @end
 
 @protocol JsonEncoder
 @required
 - (void)encodeJsonElementElement:(JsonElement *)element __attribute__((swift_name("encodeJsonElement(element:)")));
-@property (readonly) Json *json __attribute__((swift_name("json")));
+@property (readonly) Json *json;
 @end
 
 @protocol JsonNamingStrategy
@@ -191,16 +191,16 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)builtins __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) JsonNamingStrategyBuiltins *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) JsonNamingStrategyBuiltins *shared;
 @property (readonly) id<JsonNamingStrategy> KebabCase __attribute__((swift_name("KebabCase")));
 @property (readonly) id<JsonNamingStrategy> SnakeCase __attribute__((swift_name("SnakeCase")));
 @end
 
 @interface JsonPrimitive : JsonElement
-@property (class, readonly, getter=companion) JsonPrimitiveCompanion *companion __attribute__((swift_name("companion")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) NSString *content __attribute__((swift_name("content")));
-@property (readonly) BOOL isString __attribute__((swift_name("isString")));
+@property (class, readonly, getter=companion) JsonPrimitiveCompanion *companion;
+- (NSString *)description;
+@property (readonly) NSString *content;
+@property (readonly) BOOL isString;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -208,11 +208,11 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)jsonNull __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) JsonNull *shared __attribute__((swift_name("shared")));
-- (KSerializer<JsonNull *> *)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) JsonNull *shared;
+- (KSerializer<JsonNull *> *)serializer;
 - (KSerializer<id> *)serializerTypeParamsSerializers:(KotlinArray<KSerializer<id> *> *)typeParamsSerializers __attribute__((swift_name("serializer(typeParamsSerializers:)")));
-@property (readonly) NSString *content __attribute__((swift_name("content")));
-@property (readonly) BOOL isString __attribute__((swift_name("isString")));
+@property (readonly) NSString *content;
+@property (readonly) BOOL isString;
 @end
 
 __attribute__((unavailable("can't be imported")))
@@ -230,8 +230,8 @@ __attribute__((swift_name("JsonPrimitive.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) JsonPrimitiveCompanion *shared __attribute__((swift_name("shared")));
-- (KSerializer<JsonPrimitive *> *)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) JsonPrimitiveCompanion *shared;
+- (KSerializer<JsonPrimitive *> *)serializer;
 @end
 
 @interface JsonTransformingSerializer<T> : KSerializer<T>
@@ -248,7 +248,7 @@ __attribute__((swift_name("JsonPrimitive.Companion")))
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
 - (JsonElement *)transformSerializeElement:(JsonElement *)element __attribute__((swift_name("transformSerialize(element:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 @protocol InternalJsonReader
@@ -317,7 +317,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinEnumCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinEnumCompanion *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -326,9 +326,9 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (T _Nullable)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
+- (id<KotlinIterator>)iterator;
 - (void)setIndex:(int32_t)index value:(T _Nullable)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -368,8 +368,8 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.SinceKotlin(version="1.1")
 */
 - (BOOL)isInstanceValue:(id _Nullable)value __attribute__((swift_name("isInstance(value:)")));
-@property (readonly) NSString * _Nullable qualifiedName __attribute__((swift_name("qualifiedName")));
-@property (readonly) NSString * _Nullable simpleName __attribute__((swift_name("simpleName")));
+@property (readonly) NSString * _Nullable qualifiedName;
+@property (readonly) NSString * _Nullable simpleName;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -391,9 +391,9 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (unichar)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (KotlinCharIterator *)iterator __attribute__((swift_name("iterator()")));
+- (KotlinCharIterator *)iterator;
 - (void)setIndex:(int32_t)index value:(unichar)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -402,20 +402,20 @@ __attribute__((objc_subclassing_restricted))
 
 @protocol KotlinSequence
 @required
-- (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
+- (id<KotlinIterator>)iterator;
 @end
 
 @protocol KotlinIterator
 @required
-- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
-- (id _Nullable)next __attribute__((swift_name("next()")));
+- (BOOL)hasNext;
+- (id _Nullable)next;
 @end
 
 @interface KotlinCharIterator : Base <KotlinIterator>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (id)next __attribute__((swift_name("next()")));
-- (unichar)nextChar __attribute__((swift_name("nextChar()")));
+- (id)next;
+- (unichar)nextChar;
 @end
 
 @interface Json (Extensions)
@@ -451,10 +451,10 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface JsonElement (Extensions)
-@property (readonly) NSArray<JsonElement *> *jsonArray __attribute__((swift_name("jsonArray")));
-@property (readonly) JsonNull *jsonNull __attribute__((swift_name("jsonNull")));
-@property (readonly) NSDictionary<NSString *, JsonElement *> *jsonObject __attribute__((swift_name("jsonObject")));
-@property (readonly) JsonPrimitive *jsonPrimitive __attribute__((swift_name("jsonPrimitive")));
+@property (readonly) NSArray<JsonElement *> *jsonArray;
+@property (readonly) JsonNull *jsonNull;
+@property (readonly) NSDictionary<NSString *, JsonElement *> *jsonObject;
+@property (readonly) JsonPrimitive *jsonPrimitive;
 @end
 
 @interface JsonObjectBuilder (Extensions)
@@ -467,17 +467,17 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface JsonPrimitive (Extensions)
-@property (readonly) BOOL boolean __attribute__((swift_name("boolean")));
-@property (readonly) Boolean * _Nullable booleanOrNull __attribute__((swift_name("booleanOrNull")));
-@property (readonly) NSString * _Nullable contentOrNull __attribute__((swift_name("contentOrNull")));
-@property (readonly, getter=double) double double_ __attribute__((swift_name("double_")));
-@property (readonly) Double * _Nullable doubleOrNull __attribute__((swift_name("doubleOrNull")));
-@property (readonly, getter=float) float float_ __attribute__((swift_name("float_")));
-@property (readonly) Float * _Nullable floatOrNull __attribute__((swift_name("floatOrNull")));
-@property (readonly, getter=int) int32_t int_ __attribute__((swift_name("int_")));
-@property (readonly) Int * _Nullable intOrNull __attribute__((swift_name("intOrNull")));
-@property (readonly, getter=long) int64_t long_ __attribute__((swift_name("long_")));
-@property (readonly) Long * _Nullable longOrNull __attribute__((swift_name("longOrNull")));
+@property (readonly) BOOL boolean;
+@property (readonly) Boolean * _Nullable booleanOrNull;
+@property (readonly) NSString * _Nullable contentOrNull;
+@property (readonly, getter=double) double double_;
+@property (readonly) Double * _Nullable doubleOrNull;
+@property (readonly, getter=float) float float_;
+@property (readonly) Float * _Nullable floatOrNull;
+@property (readonly, getter=int) int32_t int_;
+@property (readonly) Int * _Nullable intOrNull;
+@property (readonly, getter=long) int64_t long_;
+@property (readonly) Long * _Nullable longOrNull;
 @end
 
 #pragma pop_macro("_Nullable_result")

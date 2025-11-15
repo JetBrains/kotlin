@@ -20,9 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 #pragma pop_macro("_Nullable_result")

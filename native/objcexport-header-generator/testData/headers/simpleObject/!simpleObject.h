@@ -25,9 +25,9 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)foo __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) Foo *shared __attribute__((swift_name("shared")));
-- (NSString *)someMethod __attribute__((swift_name("someMethod()")));
-@property (readonly) int32_t someProperty __attribute__((swift_name("someProperty")));
+@property (class, readonly, getter=shared) Foo *shared;
+- (NSString *)someMethod;
+@property (readonly) int32_t someProperty;
 @end
 
 #pragma pop_macro("_Nullable_result")

@@ -25,15 +25,15 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (class, readonly) NSString *experimentVal __attribute__((swift_name("experimentVal")));
+@property (class, readonly) NSString *experimentVal;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (class) NSString *experimentVar __attribute__((swift_name("experimentVar")));
-@property (class, readonly) NSString *localVal __attribute__((swift_name("localVal")));
-@property (class) NSString *localVar __attribute__((swift_name("localVar")));
+@property (class) NSString *experimentVar;
+@property (class, readonly) NSString *localVal;
+@property (class) NSString *localVar;
 @end
 
 #pragma pop_macro("_Nullable_result")
