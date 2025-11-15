@@ -14236,6 +14236,7 @@ abstract interface <#A: out kotlin/Any?> kotlin.js.collections/JsReadonlySet // 
 
 // Targets: [js]
 abstract interface kotlin.js/Console { // kotlin.js/Console|null[0]
+    abstract fun debug(kotlin/Array<out kotlin/Any?>...) // kotlin.js/Console.debug|debug(kotlin.Array<out|kotlin.Any?>...){}[0]
     abstract fun dir(kotlin/Any) // kotlin.js/Console.dir|dir(kotlin.Any){}[0]
     abstract fun error(kotlin/Array<out kotlin/Any?>...) // kotlin.js/Console.error|error(kotlin.Array<out|kotlin.Any?>...){}[0]
     abstract fun info(kotlin/Array<out kotlin/Any?>...) // kotlin.js/Console.info|info(kotlin.Array<out|kotlin.Any?>...){}[0]
