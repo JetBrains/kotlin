@@ -577,6 +577,16 @@ problems with parentheses in identifiers on certain platforms.""",
         }
 
     @Argument(
+        value = "-Xsimplified-downcast-messages",
+        description = "Simplified error messages when performing a downcast.",
+    )
+    var simplifiedDowncastMessages: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xstring-concat",
         valueDescription = "{indy-with-constants|indy|inline}",
         description = """Select the code generation scheme for string concatenation:

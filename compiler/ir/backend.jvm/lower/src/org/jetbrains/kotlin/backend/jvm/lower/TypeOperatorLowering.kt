@@ -98,7 +98,12 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
             else -> {
                 with(builder) {
                     irLetS(argument, irType = context.irBuiltIns.anyNType) { tmp ->
-                        val message = irString("null cannot be cast to non-null type ${type.render()}")
+                        val prefix = "null cannot be cast to non-null type"
+                        val message = if (backendContext.config.isSimplifyErrorsForDowncast) {
+                            irString(prefix)
+                        } else {
+                            irString("$prefix ${type.render()}")
+                        }
                         if (backendContext.config.unifiedNullChecks) {
                             // Avoid branching to improve code coverage (KT-27427).
                             // We have to generate a null check here, because even if argument is of non-null type,
@@ -148,7 +153,8 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
             is IrGetValue ->
                 this.symbol.owner.isDefinitelyNotNullVal()
             is IrGetClass,
-            is IrConstructorCall ->
+            is IrConstructorCall,
+                ->
                 true
             is IrCall ->
                 this.symbol == backendContext.irBuiltIns.checkNotNullSymbol
@@ -166,7 +172,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
     private fun JvmIrBuilder.jvmInvokeDynamic(
         dynamicCall: IrCall,
         bootstrapMethodHandle: Handle,
-        bootstrapMethodArguments: List<IrExpression>
+        bootstrapMethodArguments: List<IrExpression>,
     ) =
         irCall(backendContext.symbols.jvmIndyIntrinsic, dynamicCall.type).apply {
             typeArguments[0] = dynamicCall.type
@@ -232,7 +238,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         val implFunSymbol: IrFunctionSymbol,
         val instanceFunSymbol: IrFunctionSymbol,
         val requiredBridges: Collection<IrSimpleFunction>,
-        val dynamicCallSymbol: IrSimpleFunctionSymbol
+        val dynamicCallSymbol: IrSimpleFunctionSymbol,
     )
 
     private class ClassContext {
@@ -271,12 +277,12 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
     private data class DeserializedLambdaInfo(
         val functionalInterfaceClass: String,
         val implMethodHandle: Handle,
-        val functionalInterfaceMethod: Method
+        val functionalInterfaceMethod: Method,
     )
 
     private fun generateDeserializeLambdaMethod(
         irClass: IrClass,
-        serializableMethodRefInfos: List<SerializableMethodRefInfo>
+        serializableMethodRefInfos: List<SerializableMethodRefInfo>,
     ) {
         //  fun `$deserializeLambda$`(lambda: java.lang.invoke.SerializedLambda): Object {
         //      val tmp = lambda.getImplMethodName()
@@ -366,7 +372,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
     private fun JvmIrBuilder.generateSerializedLambdaEquals(
         lambdaParameter: IrValueParameter,
-        deserializedLambdaInfo: DeserializedLambdaInfo
+        deserializedLambdaInfo: DeserializedLambdaInfo,
     ): IrExpression {
         val functionalInterfaceClass = deserializedLambdaInfo.functionalInterfaceClass
         val implMethodHandle = deserializedLambdaInfo.implMethodHandle
@@ -425,7 +431,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
     private fun JvmIrBuilder.generateCreateDeserializedMethodRef(
         lambdaParameter: IrValueParameter,
-        info: SerializableMethodRefInfo
+        info: SerializableMethodRefInfo,
     ): IrExpression {
         val dynamicCall = irCall(info.dynamicCallSymbol)
         for ((index, dynamicValueParameter) in info.dynamicCallSymbol.owner.parameters.withIndex()) {
@@ -518,7 +524,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         instanceMethodSymbol: IrFunctionSymbol,
         shouldBeSerializable: Boolean,
         requiredBridges: Collection<IrSimpleFunction>,
-        dynamicCall: IrCall
+        dynamicCall: IrCall,
     ): IrCall {
         val samMethodType = jvmOriginalMethodType(samMethodSymbol)
         val implFunRawRef = irRawFunctionReference(context.irBuiltIns.anyType, implFunSymbol)
@@ -577,7 +583,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
     private fun getOverriddenMethodsRequiringBridges(
         instanceMethod: IrSimpleFunction,
         samMethod: IrSimpleFunction,
-        extraOverriddenMethods: List<IrSimpleFunction>
+        extraOverriddenMethods: List<IrSimpleFunction>,
     ): Collection<IrSimpleFunction> {
         val jvmInstanceMethod = backendContext.defaultMethodSignatureMapper.mapAsmMethod(instanceMethod)
         val jvmSamMethod = backendContext.defaultMethodSignatureMapper.mapAsmMethod(samMethod)
@@ -595,7 +601,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
     private fun wrapClosureInDynamicCall(
         erasedSamType: IrSimpleType,
         samMethod: IrSimpleFunction,
-        targetRef: IrFunctionReference
+        targetRef: IrFunctionReference,
     ): IrCall {
         fun fail(message: String): Nothing =
             throw AssertionError("$message, targetRef:\n${targetRef.dump()}")

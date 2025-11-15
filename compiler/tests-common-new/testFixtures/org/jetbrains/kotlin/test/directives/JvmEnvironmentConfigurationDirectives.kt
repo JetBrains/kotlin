@@ -83,5 +83,7 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         additionalParser = JvmWhenGenerationScheme.Companion::fromString
     )
 
+    val SIMPLIFY_DOWNCAST_MESSAGES by directive(description = "Simplifies error messages when performing a downcast")
+
     val USE_LEGACY_REFLECTION_IMPLEMENTATION by directive("Use legacy reflection implementation")
 }

@@ -158,6 +158,9 @@ object JVMConfigurationKeys {
     @JvmField
     val WHEN_GENERATION_SCHEME = CompilerConfigurationKey.create<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions")
 
+    @JvmField
+    val SIMPLIFY_DOWNCAST_MESSAGES = CompilerConfigurationKey.create<Boolean>("Simplified error messages when performing a downcast")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -347,4 +350,8 @@ var CompilerConfiguration.expressionToEvaluate: String?
 var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
     get() = get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME)
     set(value) { put(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.simplifyDowncastMessages: Boolean
+    get() = getBoolean(JVMConfigurationKeys.SIMPLIFY_DOWNCAST_MESSAGES)
+    set(value) { put(JVMConfigurationKeys.SIMPLIFY_DOWNCAST_MESSAGES, value) }
 
