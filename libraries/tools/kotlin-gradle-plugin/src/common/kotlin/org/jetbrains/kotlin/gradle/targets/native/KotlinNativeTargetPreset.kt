@@ -109,7 +109,7 @@ internal open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, pro
 }
 
 internal val KonanTarget.isCurrentHost: Boolean
-    get() = this == HostManager.hostOrNull
+    get() = this == HostManager.host
 
 /**
  * Returns whether klib compilation is allowed for [this]-target on the current host.
@@ -124,16 +124,12 @@ internal val KonanTarget.isCurrentHost: Boolean
 @Deprecated("Use crossCompilationOnCurrentHostSupported instead")
 internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     provider: PropertiesProvider,
-) = if (HostManager.hostOrNull != null) {
-    if (provider.enableKlibsCrossCompilation) {
-        // If cross-compilation is enabled, allow compilation for all targets
-        true
-    } else {
-        // If cross-compilation is disabled use standard HostManager enablement check
-        HostManager().isEnabled(this)
-    }
+) = if (provider.enableKlibsCrossCompilation) {
+    // If cross-compilation is enabled, allow compilation for all targets
+    true
 } else {
-    false
+    // If cross-compilation is disabled use standard HostManager enablement check
+    HostManager().isEnabled(this)
 }
 
 internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Future<Boolean>
@@ -149,4 +145,4 @@ internal val KotlinNativeTarget.publishableWithFallback: Boolean
         ?: konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
 
 internal val KonanTarget.enabledOnCurrentHostForBinariesCompilation
-    get() = if (HostManager.hostOrNull != null) HostManager().isEnabled(this) else false
+    get() = HostManager().isEnabled(this)
