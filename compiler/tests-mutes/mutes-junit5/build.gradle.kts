@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(libs.junit.jupiter.api)
+    implementation(libs.junit.jupiter.api)
     implementation(project(":compiler:tests-mutes"))
 }
 

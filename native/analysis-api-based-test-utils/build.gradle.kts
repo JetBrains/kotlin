@@ -8,10 +8,10 @@ description = "Test utils for Analysis API-based Objective-C and Swift exports"
 dependencies {
     compileOnly(kotlinStdlib())
 
-    api(project(":analysis:analysis-api-standalone"))
-    api(libs.junit.jupiter.api)
-    api(libs.junit.jupiter.engine)
-    api(libs.junit.jupiter.params)
+    implementation(project(":analysis:analysis-api-standalone"))
+    implementation(libs.junit.jupiter.api)
+    implementation(libs.junit.jupiter.engine)
+    implementation(libs.junit.jupiter.params)
 }
 
 sourceSets {
