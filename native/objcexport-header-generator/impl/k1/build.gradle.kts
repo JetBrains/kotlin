@@ -8,7 +8,12 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
+    implementation(libs.kotlinx.coroutines.core)
     api(project(":native:objcexport-header-generator"))
     testImplementation(project(":compiler:cli-base"))
     implementation(project(":compiler:ir.backend.common"))
