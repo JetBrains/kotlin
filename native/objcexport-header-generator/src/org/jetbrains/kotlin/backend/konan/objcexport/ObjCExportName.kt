@@ -22,6 +22,10 @@ interface ObjCExportFunctionName : ObjCExportName
 
 interface ObjCExportFileName : ObjCExportName
 
+interface ObjcExportNativeEnumEntry : ObjCExportName {
+    val value: Int
+}
+
 fun ObjCExportClassOrProtocolName(
     swiftName: String,
     objCName: String,
@@ -62,6 +66,16 @@ fun ObjCExportFileName(
     objCName = objCName
 )
 
+fun ObjcExportNativeEnumEntry(
+    swiftName: String,
+    objCName: String,
+    value: Int,
+): ObjcExportNativeEnumEntry = ObjcExportNativeEnumEntryImpl(
+    swiftName = swiftName,
+    objCName = objCName,
+    value = value
+)
+
 private data class ObjCExportPropertyNameImpl(
     override val swiftName: String,
     override val objCName: String,
@@ -76,6 +90,13 @@ private data class ObjCExportFileNameImpl(
     override val swiftName: String,
     override val objCName: String,
 ) : ObjCExportFileName
+
+
+private data class ObjcExportNativeEnumEntryImpl(
+    override val swiftName: String,
+    override val objCName: String,
+    override val value: Int,
+) : ObjcExportNativeEnumEntry
 
 
 fun ObjCExportClassOrProtocolName.toNameAttributes(): List<String> = listOfNotNull(

@@ -49,6 +49,16 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - enumClassWithNamedObjCEnum`() {
+        doTest(headersTestDataDir.resolve("enumClassWithNamedObjCEnum"))
+    }
+
+    @Test
+    fun `test - enumClassWithObjCEnum`() {
+        doTest(headersTestDataDir.resolve("enumClassWithObjCEnum"))
+    }
+
+    @Test
     fun `test - simpleObject`() {
         doTest(headersTestDataDir.resolve("simpleObject"))
     }

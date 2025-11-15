@@ -38,6 +38,7 @@ object KonanFqNames {
     val eagerInitialization = FqName("kotlin.native.EagerInitialization")
     val noReorderFields = FqName("kotlin.native.internal.NoReorderFields")
     val objCName = FqName("kotlin.native.ObjCName")
+    val objCEnum = FqName("kotlin.native.ObjCEnum")
     val hidesFromObjC = FqName("kotlin.native.HidesFromObjC")
     val refinesInSwift = FqName("kotlin.native.RefinesInSwift")
     val shouldRefineInSwift = FqName("kotlin.native.ShouldRefineInSwift")

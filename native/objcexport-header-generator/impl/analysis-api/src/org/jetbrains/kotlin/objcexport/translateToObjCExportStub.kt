@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -32,11 +31,11 @@ internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaCallableSymbo
     return result
 }
 
-internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaClassSymbol): ObjCClass? = when (symbol.classKind) {
-    KaClassKind.INTERFACE -> translateToObjCProtocol(symbol)
+internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaClassSymbol): TranslatedClass? = when (symbol.classKind) {
+    KaClassKind.INTERFACE -> TranslatedClass(translateToObjCProtocol(symbol))
     KaClassKind.CLASS -> translateToObjCClass(symbol)
-    KaClassKind.OBJECT -> translateToObjCObject(symbol)
+    KaClassKind.OBJECT -> TranslatedClass(translateToObjCObject(symbol))
     KaClassKind.ENUM_CLASS -> translateToObjCClass(symbol)
-    KaClassKind.COMPANION_OBJECT -> translateToObjCObject(symbol)
+    KaClassKind.COMPANION_OBJECT -> TranslatedClass(translateToObjCObject(symbol))
     else -> null
 }

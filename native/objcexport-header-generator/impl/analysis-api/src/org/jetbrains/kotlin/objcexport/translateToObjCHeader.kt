@@ -147,7 +147,8 @@ private class KtObjCExportHeaderGenerator(
          * Translate: Note: Even if the result was 'null', the classId will still be marked as 'handled' by adding it
          * to the [objCStubsByClassId] index.
          */
-        val objCClass = translateToObjCExportStub(symbol)
+        val translated = translateToObjCExportStub(symbol)
+        val objCClass = translated?.objCClass
         objCStubsByClassId[classId] = objCClass
         objCClass ?: return null
 
@@ -170,6 +171,9 @@ private class KtObjCExportHeaderGenerator(
             }
         }
 
+        for (aux in translated.auxiliaryDeclarations) {
+            objCStubs.add(aux)
+        }
 
         /* Note: It is important to add *this* stub to the result list only after translating/processing the superclass symbols */
         addObjCStubIfNotTranslated(objCClass, symbol.classId?.packageFqName?.asString())
@@ -202,6 +206,7 @@ private class KtObjCExportHeaderGenerator(
                     is ObjCProperty -> listOf(childStub.type)
                     is ObjCInterface -> childStub.superClassGenerics
                     is ObjCTopLevel -> emptyList()
+                    is ObjCNSEnum -> emptyList()
                 }
             }.map { type ->
                 /**
