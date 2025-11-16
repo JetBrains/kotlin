@@ -130,14 +130,18 @@ class MutableVariableWithConstraints private constructor(
     fun addConstraint(constraint: Constraint, inferenceLogger: InferenceLogger?): Pair<Constraint, Boolean> {
         val isLowerAndFlexibleTypeWithDefNotNullLowerBound = constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound()
 
-        for (previousConstraint in getConstraintsWithSameTypeHashCode(constraint)) {
-            if (previousConstraint.type == constraint.type
-                && previousConstraint.isNullabilityConstraint == constraint.isNullabilityConstraint
-            ) {
-                if (newConstraintIsUseless(previousConstraint, constraint)) {
-                    return previousConstraint to false
-                }
+        val previousConstraints = getConstraintsWithSameTypeHashCode(constraint)
 
+        for (previousConstraint in previousConstraints) {
+            if (constraintMatchesTypeAndIsNullability(previousConstraint, constraint) &&
+                newConstraintIsUseless(previousConstraint, constraint)
+            ) {
+                return previousConstraint to false
+            }
+        }
+
+        for (previousConstraint in previousConstraints) {
+            if (constraintMatchesTypeAndIsNullability(previousConstraint, constraint)) {
                 val isMatchingForSimplification = when (previousConstraint.kind) {
                     ConstraintKind.LOWER -> constraint.kind.isUpper()
                     ConstraintKind.UPPER -> constraint.kind.isLower()
@@ -215,6 +219,10 @@ class MutableVariableWithConstraints private constructor(
         }
 
         clearGroupedConstraintCaches()
+    }
+
+    private fun constraintMatchesTypeAndIsNullability(old: Constraint, new: Constraint): Boolean {
+        return old.type == new.type && old.isNullabilityConstraint == new.isNullabilityConstraint
     }
 
     private fun newConstraintIsUseless(old: Constraint, new: Constraint): Boolean {
