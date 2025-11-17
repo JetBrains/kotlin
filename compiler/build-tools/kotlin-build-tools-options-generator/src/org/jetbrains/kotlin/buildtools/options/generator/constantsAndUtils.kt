@@ -62,14 +62,6 @@ internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.wasmArguments,
 )
 
-internal fun KotlinCompilerArgument.extractName(): String = name.uppercase().replace("-", "_").let {
-    when {
-        it.startsWith("XX") && it != "XX" -> it.replaceFirst("XX", "XX_")
-        it.startsWith("X") && it != "X" -> it.replaceFirst("X", "X_")
-        else -> it
-    }
-}
-
 internal fun BtaCompilerArgument.extractName(): String = name.uppercase().replace("-", "_").let {
     when {
         it.startsWith("XX") && it != "XX" -> it.replaceFirst("XX", "XX_")
