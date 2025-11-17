@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
+import org.jetbrains.kotlin.cli.arguments.generator.calculateName
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
@@ -18,6 +19,7 @@ import kotlin.reflect.typeOf
  */
 sealed class BtaCompilerArgument(
     val name: String,
+    val effectiveCompilerName: String?,
     val description: String,
     val valueType: BtaCompilerArgumentValueType,
     val introducedSinceVersion: KotlinReleaseVersion,
@@ -28,6 +30,7 @@ sealed class BtaCompilerArgument(
         origin: KotlinCompilerArgument,
     ) : BtaCompilerArgument(
         name = origin.name,
+        effectiveCompilerName = origin.calculateName(),
         description = origin.description.current,
         valueType = BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType(origin.valueType),
         introducedSinceVersion = origin.releaseVersionsMetadata.introducedVersion,
@@ -44,6 +47,7 @@ sealed class BtaCompilerArgument(
         removedSinceVersion: KotlinReleaseVersion?,
     ) : BtaCompilerArgument(
         name = name,
+        effectiveCompilerName = null,
         description = description,
         valueType = valueType,
         introducedSinceVersion = introducedSinceVersion,
