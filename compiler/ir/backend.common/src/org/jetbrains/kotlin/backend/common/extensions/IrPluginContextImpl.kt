@@ -58,10 +58,6 @@ open class IrPluginContextImpl(
     override val messageCollector: MessageCollector,
     diagnosticReporter: DiagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector),
 ) : IrPluginContext {
-    @Deprecated("This API is deprecated. Use `irBuiltIns` instead.", level = DeprecationLevel.ERROR)
-    override val symbols: Symbols
-        get() = error("`symbols` are deprecated")
-
     override val afterK2: Boolean = false
 
     override val platform: TargetPlatform? = module.platform
@@ -98,19 +94,6 @@ open class IrPluginContextImpl(
         linker.postProcess(inOrAfterLinkageStep = false)
 
         return symbol
-    }
-
-    @Deprecated("Use messageCollector or diagnosticReporter properties instead", level = DeprecationLevel.ERROR)
-    override fun createDiagnosticReporter(pluginId: String): MessageCollector {
-        return object : MessageCollector by messageCollector {
-            override fun report(
-                severity: CompilerMessageSeverity,
-                message: String,
-                location: CompilerMessageSourceLocation?
-            ) {
-                messageCollector.report(severity, "[Plugin $pluginId] $message", location)
-            }
-        }
     }
 
     override val diagnosticReporter: IrDiagnosticReporter =

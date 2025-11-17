@@ -84,10 +84,6 @@ class Fir2IrPluginContext(
     override val platform: TargetPlatform
         get() = c.session.moduleData.platform
 
-    @Deprecated("This API is deprecated. Use `irBuiltIns` instead.", level = DeprecationLevel.ERROR)
-    override val symbols: Symbols
-        get() = error("`symbols` are deprecated")
-
     private val symbolProvider: FirSymbolProvider
         get() = c.session.symbolProvider
 
@@ -155,11 +151,6 @@ class Fir2IrPluginContext(
         val firFile = (fromFile.metadata as? FirMetadataSource.File)?.fir ?: return
         val fileSource = firFile.source ?: return
         lookupTracker.recordFqNameLookup(fqName, source = null, fileSource = fileSource)
-    }
-
-    @Deprecated("Use messageCollector or diagnosticReporter properties instead", level = DeprecationLevel.ERROR)
-    override fun createDiagnosticReporter(pluginId: String): MessageCollector {
-        error(ERROR_MESSAGE)
     }
 
     override val diagnosticReporter: IrDiagnosticReporter =

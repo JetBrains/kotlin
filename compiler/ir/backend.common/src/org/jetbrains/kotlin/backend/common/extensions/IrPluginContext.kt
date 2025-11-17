@@ -45,9 +45,6 @@ interface IrPluginContext : IrGeneratorContext {
      */
     val afterK2: Boolean
 
-    @Deprecated("This API is deprecated. Use `irBuiltIns` instead.", level = DeprecationLevel.ERROR)
-    val symbols: Symbols
-
     val platform: TargetPlatform?
 
     /**
@@ -79,9 +76,6 @@ interface IrPluginContext : IrGeneratorContext {
     fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile)
 
     // ------------------------------------ Deprecated API ------------------------------------
-
-    @Deprecated("Use diagnosticReporter instead", level = DeprecationLevel.ERROR)
-    fun createDiagnosticReporter(pluginId: String): MessageCollector
 
     /**
      * Returns a message collector instance to report generic diagnostic messages from plugin
