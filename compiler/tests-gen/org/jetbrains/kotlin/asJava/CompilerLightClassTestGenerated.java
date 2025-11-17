@@ -581,6 +581,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/JvmPackageName.kt");
     }
 
+    @TestMetadata("localClassApproximation.kt")
+    public void testLocalClassApproximation() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/localClassApproximation.kt");
+    }
+
     @TestMetadata("LocalInAnnotation.kt")
     public void testLocalInAnnotation() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/LocalInAnnotation.kt");

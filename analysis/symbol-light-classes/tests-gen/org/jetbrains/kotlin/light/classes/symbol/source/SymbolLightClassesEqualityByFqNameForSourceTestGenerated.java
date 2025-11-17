@@ -682,6 +682,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("localClassApproximation.kt")
+    public void testLocalClassApproximation() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/localClassApproximation.kt");
+    }
+
+    @Test
     @TestMetadata("LocalInAnnotation.kt")
     public void testLocalInAnnotation() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/LocalInAnnotation.kt");
