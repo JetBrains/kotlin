@@ -53,7 +53,7 @@ internal class BtaApiGenerator(
                     }
                     generateGetPutFunctions(argumentTypeName)
                     addType(TypeSpec.companionObjectBuilder().apply {
-                        generateOptions(level.transformArguments(), argumentTypeName)
+                        generateOptions(level.transformApiArguments(), argumentTypeName)
                     }.build())
                 }.build()
             )

@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.buildtools.options.generator
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
+import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 
 /**
  * Public facade used by the build-tools options generator. Wraps the single source of truth (arguments DSL)
@@ -32,6 +34,22 @@ sealed class BtaCompilerArgument(
         deprecatedSinceVersion = origin.releaseVersionsMetadata.deprecatedVersion,
         removedSinceVersion = origin.releaseVersionsMetadata.removedVersion
     )
+
+    class CustomCompilerArgument(
+        name: String,
+        description: String,
+        valueType: BtaCompilerArgumentValueType,
+        introducedSinceVersion: KotlinReleaseVersion,
+        deprecatedSinceVersion: KotlinReleaseVersion?,
+        removedSinceVersion: KotlinReleaseVersion?,
+    ) : BtaCompilerArgument(
+        name = name,
+        description = description,
+        valueType = valueType,
+        introducedSinceVersion = introducedSinceVersion,
+        deprecatedSinceVersion = deprecatedSinceVersion,
+        removedSinceVersion = removedSinceVersion,
+    )
 }
 
 /**
@@ -48,4 +66,15 @@ sealed class BtaCompilerArgumentValueType(
         val type: KType,
         isNullable: Boolean = false,
     ) : BtaCompilerArgumentValueType(isNullable = isNullable)
+}
+
+object CustomCompilerArguments {
+    val compilerPlugins = BtaCompilerArgument.CustomCompilerArgument(
+        name = "compiler-plugins",
+        description = "List of compiler plugins to load for this compilation.",
+        valueType = BtaCompilerArgumentValueType.CustomArgumentValueType(type = typeOf<List<CompilerPlugin>>(), isNullable = false),
+        introducedSinceVersion = KotlinReleaseVersion.v2_3_20,
+        deprecatedSinceVersion = null,
+        removedSinceVersion = null,
+    )
 }
