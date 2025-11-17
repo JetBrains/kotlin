@@ -54,10 +54,10 @@ internal class HtmlToDocTagConverter(
                     element.attributes().associate { (if (it.key == "src") "href" else it.key) to it.value })
             )
             "em" -> listOf(Em(children))
-            "code" -> ifChildrenPresent { if(keepFormatting) CodeBlock(children) else CodeInline(children) }
+            "code" -> ifChildrenPresent { if(keepFormatting) CodeBlock(children, mapOf("lang" to "java")) else CodeInline(children, mapOf("lang" to "java")) }
             "pre" -> if(children.size == 1) {
                 when(children.first()) {
-                    is CodeInline -> listOf(CodeBlock(children.first().children))
+                    is CodeInline -> listOf(CodeBlock(children.first().children, mapOf("lang" to "java")))
                     is CodeBlock -> listOf(children.first())
                     else -> listOf(Pre(children))
                 }
