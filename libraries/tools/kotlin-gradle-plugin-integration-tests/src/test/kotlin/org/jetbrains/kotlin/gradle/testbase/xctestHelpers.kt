@@ -6,15 +6,40 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import java.io.Closeable
 import java.io.File
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
+import java.util.logging.Level
+import java.util.logging.Logger
 
+/** Maximum number of attempts to boot a simulator. */
+private const val BOOT_RETRIES = 3
+
+/** Time to wait for a simulator to boot before considering it a failure. */
+private const val BOOT_TIMEOUT_MINUTES = 3L
+
+/**
+ * Manages the lifecycle of a dedicated iOS simulator for tests.
+ *
+ * This class creates a unique simulator, provides a robust boot mechanism,
+ * and ensures it is deleted (cleaned up) when done.
+ *
+ * Implements [Closeable] to be used with `use` blocks for automatic cleanup.
+ *
+ * @property testSimulatorName The unique name generated for this test simulator.
+ */
 internal class XCTestHelpers : Closeable {
+
+    companion object {
+        internal val logger = Logger.getLogger(this::class.java.name)
+    }
+
     @Serializable
     data class Device(val name: String, val udid: String)
 
@@ -28,18 +53,25 @@ internal class XCTestHelpers : Closeable {
     // https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes#Known-Issues
     // KTI-2756 Timeout in 🍏ᵐ Gradle Integration Tests Native Mac arm64 (Macos)
     private fun updateCache() {
-        processOutput(
+        processOutputQuick(
             listOf("/usr/bin/xcrun", "simctl", "runtime", "dyld_shared_cache", "update", "--all")
         )
     }
 
-    fun createSimulator(): Device {
+    /**
+     * Creates a new simulator instance with a unique name.
+     *
+     * This also runs the `dyld_shared_cache update` workaround before creation.
+     *
+     * @return The [Device] object representing the newly created simulator.
+     */
+    internal fun createSimulator(): Device {
         updateCache()
         return Device(
             testSimulatorName,
-            processOutput(
+            processOutputQuick(
                 listOf("/usr/bin/xcrun", "simctl", "create", testSimulatorName, deviceIdentifier)
-            ).dropLast(1)
+            ).dropLast(1) // `create` outputs the UDID followed by a newline
         )
     }
 
@@ -47,35 +79,104 @@ internal class XCTestHelpers : Closeable {
         ignoreUnknownKeys = true
     }
 
+    /**
+     * Lists all available simulators on the system.
+     *
+     * @return A [Simulators] data object parsed from the JSON output.
+     */
     private fun simulators(): Simulators {
         return json.decodeFromString<Simulators>(
-            processOutput(
+            processOutputQuick(
                 listOf("/usr/bin/xcrun", "simctl", "list", "devices", "-j")
             )
         )
     }
 
+    /**
+     * Cleans up (deletes) any simulators created by this helper instance.
+     *
+     * This is typically called via the [Closeable.close] method.
+     */
     override fun close() {
         simulators().devices.values.toList().flatten().filter {
             it.name == testSimulatorName
         }.forEach {
-            processOutput(
-                listOf("/usr/bin/xcrun", "simctl", "delete", it.udid)
-            )
+            logger.info("Cleaning up simulator ${it.name} (${it.udid})")
+            try {
+                processOutputQuick(
+                    listOf("/usr/bin/xcrun", "simctl", "shutdown", it.udid)
+                )
+            } catch (e: Throwable) {
+                // E.g., if it's already shut down, we don't care.
+                logger.warning("Warn: Failed to shut down simulator ${it.udid}. Proceeding with delete. Error: ${e.message}")
+            }
+            try {
+                processOutputQuick(
+                    listOf("/usr/bin/xcrun", "simctl", "delete", it.udid)
+                )
+            } catch (e: Throwable) {
+                logger.log(Level.SEVERE, "Error: Failed to delete simulator ${it.udid}: ${e.message}", e)
+            }
         }
     }
 }
 
-internal fun XCTestHelpers.Device.boot() {
-    processOutput(
-        listOf("/usr/bin/xcrun", "simctl", "bootstatus", udid, "-bd")
-    )
+/**
+ * Boots the simulator device with a timeout and retry mechanism.
+ *
+ * This will attempt to boot the simulator [BOOT_RETRIES] times,
+ * waiting [BOOT_TIMEOUT_MINUTES] for each attempt.
+ *
+ * If an attempt times out, it will try to shut down the simulator
+ * before retrying.
+ *
+ * @receiver The [XCTestHelpers.Device] to boot.
+ * @throws IllegalStateException if the simulator fails to boot after all retries.
+ */
+internal fun XCTestHelpers.Device.boot(logger: Logger = XCTestHelpers.logger) {
+    // The 'bootstatus' command with '-b' will boot the device if not already booted,
+    // and then wait for the boot to complete. This is the command that can hang.
+    val bootCommand = listOf("/usr/bin/xcrun", "simctl", "bootstatus", udid, "-b")
+
+    retry(BOOT_RETRIES, logger) { attempt ->
+        logger.info("Attempt $attempt/$BOOT_RETRIES to boot simulator $name ($udid)...")
+        try {
+            processOutputWithTimeout(
+                arguments = bootCommand,
+                timeout = BOOT_TIMEOUT_MINUTES,
+                unit = TimeUnit.MINUTES,
+                redirectErrorStream = true, // Errors and output are not important on success
+                logger = logger
+            )
+            logger.info("Simulator $name ($udid) booted successfully.")
+            // If successful, the retry block returns and exits the loop
+        } catch (e: TimeoutException) {
+            logger.warning("Boot attempt $attempt timed out after $BOOT_TIMEOUT_MINUTES minutes.")
+            // The simulator is in a bad state. Try to shut it down before retrying.
+            try {
+                processOutputQuick(listOf("/usr/bin/xcrun", "simctl", "shutdown", udid))
+            } catch (shutdownError: Throwable) {
+                logger.warning("Failed to shut down simulator $udid after timeout: ${shutdownError.message}")
+            }
+            throw e // Re-throw the timeout to trigger the retry
+        } catch (e: Throwable) {
+            logger.warning("Boot attempt $attempt failed with an error: ${e.message}")
+            throw e // Re-throw to trigger the retry
+        }
+    }
 }
 
-private fun processOutput(arguments: List<String>): String {
+/**
+ * Wrapper for [runProcess] that asserts success and returns the output.
+ * Use this for quick, non-hanging commands.
+ *
+ * @param arguments The command and its arguments.
+ * @return The standard output (stdout) of the process.
+ */
+private fun processOutputQuick(arguments: List<String>): String {
     val result = runProcess(
         arguments, File("."),
-        redirectErrorStream = false,
+        redirectErrorStream = false, // Keep false to see stderr on failure
     )
     assertProcessRunResult(
         result
@@ -84,4 +185,130 @@ private fun processOutput(arguments: List<String>): String {
     }
 
     return result.output
+}
+
+/**
+ * A robust utility to run an external process with a specified timeout.
+ *
+ * This function is necessary because [runProcess] blocks indefinitely.
+ * This function uses `process.waitFor(timeout)` and stream "gobblers"
+ * to read output on separate threads, preventing deadlocks.
+ *
+ * @param arguments The command and its arguments.
+ * @param workDir The working directory for the process.
+ * @param timeout The maximum time to wait.
+ * @param unit The time unit for the timeout.
+ * @param redirectErrorStream Whether to merge stderr into stdout.
+ * @return The standard output of the process as a String.
+ * @throws TimeoutException if the process does not complete within the timeout.
+ * @throws IllegalStateException if the process exits with a non-zero code.
+ */
+private fun processOutputWithTimeout(
+    arguments: List<String>,
+    workDir: File = File("."),
+    timeout: Long,
+    unit: TimeUnit,
+    redirectErrorStream: Boolean = false,
+    logger: Logger
+): String {
+    val process = ProcessBuilder(arguments)
+        .directory(workDir)
+        .redirectErrorStream(redirectErrorStream)
+        .start()
+
+    val executor = Executors.newFixedThreadPool(2)
+
+    // Consume stdout in a separate thread, logging each line
+    val outputFuture = executor.submit<String> {
+        val sb = StringBuilder()
+        process.inputStream.bufferedReader().use { reader ->
+            reader.forEachLine { line ->
+                logger.info(line) // Real-time logging
+                sb.append(line).append(System.lineSeparator())
+            }
+        }
+        sb.toString()
+    }
+
+    // Consume stderr in a separate thread (if not redirected)
+    val errorFuture = executor.submit<String> {
+        val sb = StringBuilder()
+        if (!redirectErrorStream) {
+            process.errorStream.bufferedReader().use { reader ->
+                reader.forEachLine { line ->
+                    logger.warning(line) // Real-time logging
+                    sb.append(line).append(System.lineSeparator())
+                }
+            }
+        }
+        sb.toString()
+    }
+
+    try {
+        if (!process.waitFor(timeout, unit)) {
+            // Process timed out
+            process.destroyForcibly()
+            throw TimeoutException(
+                "Process timed out after $timeout $unit: ${arguments.joinToString(" ")}"
+            )
+        }
+
+        // Process finished within time
+        val exitCode = process.exitValue()
+        val output = outputFuture.get()
+        val error = errorFuture.get()
+
+        if (exitCode != 0) {
+            throw IllegalStateException(
+                """
+                Process finished with non-zero exit code: $exitCode
+                Command: ${arguments.joinToString(" ")}
+                Output:
+                $output
+                Error (if not redirected):
+                $error
+                """.trimIndent()
+            )
+        }
+        return output
+    } finally {
+        // Clean up: ensure futures are cancelled and the thread pool is shut down
+        outputFuture.cancel(true)
+        errorFuture.cancel(true)
+        executor.shutdownNow()
+    }
+}
+
+/**
+ * A utility function to execute a block of code with a retry mechanism.
+ *
+ * @param T The return type of the block.
+ * @param retries The total number of attempts (e.g., 3).
+ * @param block The code block to execute, receiving the current attempt number.
+ * @throws IllegalStateException if all retry attempts fail.
+ * @return The result of the block if successful.
+ */
+private fun <T> retry(
+    retries: Int,
+    logger: Logger,
+    block: (attempt: Int) -> T
+): T {
+    var lastException: Throwable? = null
+    for (attempt in 1..retries) {
+        try {
+            return block(attempt) // Eagerly return on success
+        } catch (e: Throwable) {
+            lastException = e
+            logger.warning("Attempt $attempt/$retries failed: ${e.message}")
+            if (attempt == retries) {
+                // All retries failed
+                throw IllegalStateException(
+                    "Operation failed after $retries attempts. Last error: ${lastException?.message}",
+                    lastException
+                )
+            }
+        }
+    }
+    // This line is theoretically unreachable but required by the compiler
+    throw IllegalStateException("Retry logic fell through", lastException)
 }
