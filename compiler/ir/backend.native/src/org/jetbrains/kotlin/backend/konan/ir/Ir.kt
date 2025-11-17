@@ -132,6 +132,7 @@ private object ClassIds {
     val baseClassSuite = "BaseClassSuite".internalTestClassId
     val topLevelSuite = "TopLevelSuite".internalTestClassId
     val testFunctionKind = "TestFunctionKind".internalTestClassId
+    val testInitializer = "TestInitializer".internalTestClassId
 }
 
 // TODO: KT-77494 - move this callable ids into more appropriate places.
@@ -668,6 +669,7 @@ class KonanSymbols(
     val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
     val topLevelSuite = ClassIds.topLevelSuite.classSymbol()
     val testFunctionKind = ClassIds.testFunctionKind.classSymbol()
+    val testInitializer = ClassIds.testInitializer.classSymbol()
 
     override val getWithoutBoundCheckName: Name? = KonanNameConventions.getWithoutBoundCheck
 

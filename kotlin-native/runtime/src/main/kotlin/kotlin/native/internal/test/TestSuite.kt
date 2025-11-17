@@ -8,6 +8,10 @@ package kotlin.native.internal.test
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.IllegalArgumentException
 
+@Target(AnnotationTarget.FUNCTION)
+@PublishedApi
+internal annotation class TestInitializer
+
 /**
  * Represents a test case, that is a Kotlin test method marked with `@Test` annotaion.
  *

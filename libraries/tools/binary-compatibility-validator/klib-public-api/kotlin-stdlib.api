@@ -9745,6 +9745,11 @@ open annotation class kotlin.native.internal.objc/BindClassToObjCName : kotlin/A
 }
 
 // Targets: [native]
+open annotation class kotlin.native.internal.test/TestInitializer : kotlin/Annotation { // kotlin.native.internal.test/TestInitializer|null[0]
+    constructor <init>() // kotlin.native.internal.test/TestInitializer.<init>|<init>(){}[0]
+}
+
+// Targets: [native]
 open annotation class kotlin.native.internal/CanBePrecreated : kotlin/Annotation { // kotlin.native.internal/CanBePrecreated|null[0]
     constructor <init>() // kotlin.native.internal/CanBePrecreated.<init>|<init>(){}[0]
 }
