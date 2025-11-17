@@ -5,43 +5,51 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
+context(holder: SessionHolder)
 fun FirResolvedTypeRef.approximateDeclarationType(
-    session: FirSession,
     containingCallableVisibility: Visibility?,
     isLocal: Boolean,
     isInlineFunction: Boolean = false,
     stripEnhancedNullability: Boolean = true
 ): FirResolvedTypeRef {
     val approximatedType = coneType.approximateDeclarationType(
-        session, containingCallableVisibility, isLocal, isInlineFunction
+        containingCallableVisibility, isLocal, isInlineFunction
     )
     return this.withReplacedConeType(approximatedType).applyIf(stripEnhancedNullability) { withoutEnhancedNullability() }
 }
 
+context(holder: SessionHolder)
 fun ConeKotlinType.approximateDeclarationType(
-    session: FirSession,
     containingCallableVisibility: Visibility?,
     isLocal: Boolean,
-    isInlineFunction: Boolean = false
+    isInlineFunction: Boolean = false,
 ): ConeKotlinType {
-    val configuration = when (isLocal) {
-        true -> TypeApproximatorConfiguration.LocalDeclaration
-        false -> when (shouldApproximateAnonymousTypesOfNonLocalDeclaration(containingCallableVisibility, isInlineFunction)) {
-            true -> TypeApproximatorConfiguration.PublicDeclaration.ApproximateAnonymousTypes
-            false -> TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes
+    val configuration = when {
+        isLocal -> TypeApproximatorConfiguration.LocalDeclaration
+        shouldApproximateLocalTypesOfNonLocalDeclaration(
+            containingCallableVisibility,
+            isInlineFunction
+        ) -> if (LanguageFeature.ApproximateLocalTypesInPublicDeclarations.isEnabled()) {
+            TypeApproximatorConfiguration.PublicDeclaration.ApproximateLocalAndAnonymousTypes
+        } else {
+            TypeApproximatorConfiguration.PublicDeclaration.ApproximateAnonymousTypes
         }
+        else -> TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes
     }
 
-    var approximatedType = session.typeApproximator.approximateToSuperType(this, configuration) ?: this
+    var approximatedType = holder.session.typeApproximator.approximateToSuperType(this, configuration) ?: this
     if (approximatedType.contains { type -> type.attributes.any { !it.keepInInferredDeclarationType } }) {
-        approximatedType = UnnecessaryAttributesRemover(session).substituteOrSelf(approximatedType)
+        approximatedType = UnnecessaryAttributesRemover(holder.session).substituteOrSelf(approximatedType)
     }
     return approximatedType
 }

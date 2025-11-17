@@ -6846,6 +6846,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("localClassApproximationAfter.kt")
+      public void testLocalClassApproximationAfter() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/localClassApproximationAfter.kt");
+      }
+
+      @Test
       @TestMetadata("overrideInLocal.kt")
       public void testOverrideInLocal() {
         runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/overrideInLocal.kt");

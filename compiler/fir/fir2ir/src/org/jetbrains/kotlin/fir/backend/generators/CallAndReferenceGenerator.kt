@@ -1278,7 +1278,6 @@ class CallAndReferenceGenerator(
                 val typeParameter = typeParameters?.get(index)
                 val argumentIrType = if (typeParameter?.isReified == true) {
                     argumentType.approximateDeclarationType(
-                        session,
                         containingCallableVisibility = null,
                         isLocal = false
                     ).toIrType()

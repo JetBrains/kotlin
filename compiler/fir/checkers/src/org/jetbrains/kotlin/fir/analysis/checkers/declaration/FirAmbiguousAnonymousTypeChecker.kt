@@ -29,7 +29,7 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerK
         if (declaration.symbol.hasExplicitReturnType) return
         if (declaration.isLocal) return
 
-        if (!shouldApproximateAnonymousTypesOfNonLocalDeclaration(
+        if (!shouldApproximateLocalTypesOfNonLocalDeclaration(
                 declaration.visibilityForApproximation(context.containingDeclarations.lastOrNull()),
                 declaration.isInline
             )

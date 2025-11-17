@@ -488,7 +488,7 @@ private fun ConeKotlinType.needLocalTypeApproximation(
     session: FirSession,
     useSitePosition: PsiElement,
 ): Boolean {
-    if (!shouldApproximateAnonymousTypesOfNonLocalDeclaration(visibilityForApproximation, isInlineFunction)) return false
+    if (!shouldApproximateLocalTypesOfNonLocalDeclaration(visibilityForApproximation, isInlineFunction)) return false
     val localTypes: List<ConeKotlinType> = if (isLocal(session)) listOf(this) else {
         typeArguments.mapNotNull {
             if (it is ConeKotlinTypeProjection && it.type.isLocal(session)) {

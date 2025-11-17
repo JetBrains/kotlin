@@ -6,7 +6,7 @@ interface Your
 class My {
     internal val x = object : Your {}
 
-    internal fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>() = {
+    internal fun foo() = {
         class Local
         Local()
     }()

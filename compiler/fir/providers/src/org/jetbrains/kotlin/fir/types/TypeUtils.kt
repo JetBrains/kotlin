@@ -493,7 +493,7 @@ fun FirResolvedTypeRef.withReplacedSourceAndType(newSource: KtSourceElement?, ne
     }
 }
 
-fun shouldApproximateAnonymousTypesOfNonLocalDeclaration(containingCallableVisibility: Visibility?, isInlineFunction: Boolean): Boolean {
+fun shouldApproximateLocalTypesOfNonLocalDeclaration(containingCallableVisibility: Visibility?, isInlineFunction: Boolean): Boolean {
     // Approximate types for non-private (all but package private or private) members.
     // Also private inline functions, as per KT-33917.
     return when (containingCallableVisibility) {

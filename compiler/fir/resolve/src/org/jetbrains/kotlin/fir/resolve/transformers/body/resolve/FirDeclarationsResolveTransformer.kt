@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolv
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -167,7 +166,6 @@ open class FirDeclarationsResolveTransformer(
                     replaceReturnTypeRef(
                         (returnTypeRef as FirResolvedTypeRef)
                             .approximateDeclarationType(
-                                session,
                                 property.visibilityForApproximation(),
                                 isLocal = false
                             )
@@ -497,7 +495,6 @@ open class FirDeclarationsResolveTransformer(
 
                 property.replaceReturnTypeRef(
                     typeRef.approximateDeclarationType(
-                        session,
                         property.visibilityForApproximation(),
                         property.isLocalVariableOrParameter
                     )
@@ -1034,13 +1031,11 @@ open class FirDeclarationsResolveTransformer(
                 ?.run {
                     if (context.containers.getOrNull(context.containers.size - 2) is FirReplSnippet)
                         approximateDeclarationType(
-                            session,
                             namedFunction?.visibilityForApproximation(),
                             isLocal = false, isInlineFunction = namedFunction?.isInline == true
                         )
                     else
                         approximateDeclarationType(
-                            session,
                             namedFunction?.visibilityForApproximation(),
                             isLocal = namedFunction?.let { it.status.visibility == Visibilities.Local } == true,
                             isInlineFunction = namedFunction?.isInline == true
@@ -1577,7 +1572,7 @@ open class FirDeclarationsResolveTransformer(
         return backingField.transformReturnTypeRef(
             transformer,
             ResolutionMode.UpdateImplicitTypeRef(
-                expectedType.approximateDeclarationType(session, backingField.visibilityForApproximation(), isLocal = false)
+                expectedType.approximateDeclarationType(backingField.visibilityForApproximation(), isLocal = false)
             )
         )
     }
@@ -1598,7 +1593,7 @@ open class FirDeclarationsResolveTransformer(
 
             val newTypeRef: FirResolvedTypeRef = resultType?.let {
                 val expectedType = it.toExpectedTypeRef(fallbackSource = variable.source)
-                expectedType.approximateDeclarationType(session, variable.visibilityForApproximation(), variable.isLocalVariableOrParameter)
+                expectedType.approximateDeclarationType(variable.visibilityForApproximation(), variable.isLocalVariableOrParameter)
             } ?: buildErrorTypeRef {
                 diagnostic = ConeLocalVariableNoTypeOrInitializer(variable)
                 source = variable.source
