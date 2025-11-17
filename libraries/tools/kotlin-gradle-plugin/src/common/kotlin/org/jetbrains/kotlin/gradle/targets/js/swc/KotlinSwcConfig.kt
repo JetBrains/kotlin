@@ -56,7 +56,9 @@ internal abstract class KotlinSwcConfig {
     fun toConfigMap(): Map<String, Any> = buildMap {
         set("\$schema", "https://swc.rs/schema.json")
         set("sourceMaps", sourceMaps.get())
+        set("inputSourceMap", sourceMaps.get())
         if (parseMap.get()) set("parseMap", true)
+        set("exclude", arrayOf(".*\\.d\\.m?ts$"))
         set("jsc", buildMap<String, Any> {
             set("parser", buildMap {
                 set("syntax", "ecmascript")
