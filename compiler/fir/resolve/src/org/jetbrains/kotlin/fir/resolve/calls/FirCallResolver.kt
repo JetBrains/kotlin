@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.doesResolutionResultOverrideOtherToPreserveCompatibility
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -56,13 +59,14 @@ import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class FirCallResolver(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
-    private val towerResolver: FirTowerResolver = FirTowerResolver(components, components.resolutionStageRunner)
+    private val towerResolver: FirTowerResolver = FirTowerResolver(components, components.resolutionStageRunner),
 ) {
     private val session = components.session
     private val overloadByLambdaReturnTypeResolver = FirOverloadByLambdaReturnTypeResolver(components)
@@ -121,6 +125,34 @@ class FirCallResolver(
         }
         val candidate = (nameReference as? FirNamedReferenceWithCandidate)?.candidate
         candidate?.updateSourcesOfReceivers()
+
+        candidate?.let { candidate ->
+            fun isExplicitTypeArgumentSource(source: KtSourceElement?): Boolean =
+                source != null && source.kind !is KtFakeSourceElementKind.ImplicitTypeArgument
+
+            val symbol = candidate.symbol as? FirCallableSymbol<*> ?: return@let
+            val used = buildSet {
+                symbol.fir.returnTypeRef.coneType.forEachType { type ->
+                    if (type is ConeTypeParameterType) {
+                        add(type.typeConstructor(session.typeContext))
+                    }
+                }
+            }
+
+            fun rec(functionCall: FirFunctionCall) {
+                symbol.typeParameterSymbols.zip(functionCall.typeArguments).forEach { (param, type) ->
+                    if (param.toConeType().typeConstructor(session.typeContext) !in used && isExplicitTypeArgumentSource(type.source)) {
+                        functionCall.replaceNonFatalDiagnostics(functionCall.nonFatalDiagnostics + ConeMyDiagnostic(type.render()))
+                    }
+                }
+                functionCall.argumentList.arguments.forEach { argument ->
+                    if (argument is FirFunctionCall) {
+                        rec(argument)
+                    }
+                }
+            }
+            rec(functionCall)
+        }
 
         // We need desugaring
         val resultFunctionCall = if (candidate != null && candidate.callInfo != result.info) {
@@ -589,7 +621,7 @@ class FirCallResolver(
 
     fun callInfoForDelegatingConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        constructedType: ConeClassLikeType?
+        constructedType: ConeClassLikeType?,
     ): CallInfo {
         val name = SpecialNames.INIT
         val symbol = constructedType?.lookupTag?.toSymbol(components.session)
@@ -617,7 +649,7 @@ class FirCallResolver(
     fun resolveDelegatingConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
         constructedType: ConeClassLikeType?,
-        derivedClassLookupTag: ConeClassLikeLookupTag
+        derivedClassLookupTag: ConeClassLikeLookupTag,
     ): FirDelegatedConstructorCall {
         val callInfo = callInfoForDelegatingConstructorCall(delegatedConstructorCall, constructedType)
         towerResolver.reset()
@@ -754,7 +786,7 @@ class FirCallResolver(
     }
 
     private fun selectDelegatingConstructorCall(
-        call: FirDelegatedConstructorCall, name: Name, result: CandidateCollector, callInfo: CallInfo
+        call: FirDelegatedConstructorCall, name: Name, result: CandidateCollector, callInfo: CallInfo,
     ): FirDelegatedConstructorCall {
         val (reducedCandidates, applicability) = reduceCandidates(result)
 
@@ -809,7 +841,7 @@ class FirCallResolver(
         explicitReceiver: FirExpression? = null,
         createResolvedReferenceWithoutCandidateForLocalVariables: Boolean = true,
         expectedCallKind: CallKind? = null,
-        expectedCandidates: Collection<Candidate>? = null
+        expectedCandidates: Collection<Candidate>? = null,
     ): FirNamedReference {
         val source = reference.source
         val operatorToken = runIf(callInfo.origin == FirFunctionCallOrigin.Operator) {
@@ -954,7 +986,7 @@ class FirCallResolver(
         candidate: Candidate?,
         diagnostic: ConeDiagnostic,
         callInfo: CallInfo,
-        source: KtSourceElement?
+        source: KtSourceElement?,
     ): FirNamedReference {
         if (candidate == null) return buildReferenceWithErrorCandidate(callInfo, diagnostic, source)
         return when (diagnostic) {
@@ -972,7 +1004,7 @@ class FirCallResolver(
     private fun buildReferenceWithErrorCandidate(
         callInfo: CallInfo,
         diagnostic: ConeDiagnostic,
-        source: KtSourceElement?
+        source: KtSourceElement?,
     ): FirErrorReferenceWithCandidate {
         return createErrorReferenceWithErrorCandidate(
             callInfo,
@@ -990,7 +1022,7 @@ data class OverloadCandidate(val candidate: Candidate, val isInBestCandidates: B
 /** Used for IDE */
 class AllCandidatesCollector(
     components: BodyResolveComponents,
-    resolutionStageRunner: ResolutionStageRunner
+    resolutionStageRunner: ResolutionStageRunner,
 ) : CandidateCollector(components, resolutionStageRunner) {
     private val allCandidatesMap = mutableMapOf<FirBasedSymbol<*>, Candidate>()
 

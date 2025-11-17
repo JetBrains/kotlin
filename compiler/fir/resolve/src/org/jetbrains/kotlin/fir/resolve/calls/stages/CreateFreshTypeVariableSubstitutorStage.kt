@@ -61,7 +61,6 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         for (index in typeParameters.indices) {
             val typeParameter = typeParameters[index]
             val freshVariable = freshVariables[index]
-
             when (val typeArgument = candidate.typeArgumentMapping[index]) {
                 is FirTypeProjectionWithVariance -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,

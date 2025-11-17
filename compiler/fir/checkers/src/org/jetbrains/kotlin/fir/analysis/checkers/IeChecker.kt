@@ -12,13 +12,10 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.diagnostics.ConeMyDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.forEachType
 import kotlin.reflect.full.memberProperties
 
 class IEReporter(
@@ -45,8 +42,6 @@ class IEReporter(
 }
 
 data class IEData(
-    val isExplicit: Boolean? = null,
-    val isReified: Boolean? = null,
     val type: String? = null,
     val call: String? = null,
 )
@@ -56,22 +51,12 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
-        val symbol = expression.toResolvedCallableSymbol() ?: return
-        val usedParameters = buildSet {
-            symbol.fir.returnTypeRef.coneType.forEachType { type ->
-                if (type is ConeTypeParameterType) {
-                    add(type.lookupTag.typeParameterSymbol)
-                }
-            }
-        }
-        symbol.typeParameterSymbols.zip(expression.typeArguments).forEach { (param, type) ->
-            if (param !in usedParameters) {
+        expression.nonFatalDiagnostics.forEach {
+            if (it is ConeMyDiagnostic) {
                 report(
                     IEData(
-                        isExplicit = type.isExplicit,
-                        isReified = param.isReified,
-                        type = type.render(),
-                        call = symbol.name.toString(),
+                        type = it.reason,
+                        call = expression.toResolvedCallableSymbol()?.name.toString()
                     )
                 )
             }

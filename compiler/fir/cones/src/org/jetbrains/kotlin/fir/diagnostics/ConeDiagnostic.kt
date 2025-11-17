@@ -21,3 +21,5 @@ interface ConeDiagnostic {
 class ConeUnreportedDuplicateDiagnostic(val original: ConeDiagnostic) : ConeDiagnostic {
     override val reason: String get() = original.reason
 }
+
+class ConeMyDiagnostic(override val reason: String) : ConeDiagnostic
