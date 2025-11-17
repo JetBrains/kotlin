@@ -40,6 +40,12 @@ internal class XCTestHelpers : Closeable {
         internal val logger = Logger.getLogger(this::class.java.name)
     }
 
+    /**
+     * Represents a single simulator device.
+     *
+     * @property name The human-readable name of the simulator.
+     * @property udid The unique device identifier.
+     */
     @Serializable
     data class Device(val name: String, val udid: String)
 
@@ -48,15 +54,7 @@ internal class XCTestHelpers : Closeable {
 
     private val deviceIdentifier = "com.apple.CoreSimulator.SimDeviceType.iPhone-12-Pro-Max"
     private val uuid = UUID.randomUUID()
-    private val testSimulatorName = "NativeXcodeSimulatorTestsIT_${uuid}_simulator"
-
-    // https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes#Known-Issues
-    // KTI-2756 Timeout in 🍏ᵐ Gradle Integration Tests Native Mac arm64 (Macos)
-    private fun updateCache() {
-        processOutputQuick(
-            listOf("/usr/bin/xcrun", "simctl", "runtime", "dyld_shared_cache", "update", "--all")
-        )
-    }
+    val testSimulatorName = "NativeXcodeSimulatorTestsIT_${uuid}_simulator"
 
     /**
      * Creates a new simulator instance with a unique name.
@@ -65,8 +63,8 @@ internal class XCTestHelpers : Closeable {
      *
      * @return The [Device] object representing the newly created simulator.
      */
-    internal fun createSimulator(): Device {
-        updateCache()
+    fun createSimulator(): Device {
+        // updateCache() // Removed: Will be called lazily on first boot failure.
         return Device(
             testSimulatorName,
             processOutputQuick(
@@ -130,7 +128,7 @@ internal class XCTestHelpers : Closeable {
  * If an attempt times out, it will try to shut down the simulator
  * before retrying.
  *
- * @receiver The [XCTestHelpers.Device] to boot.
+ * @receiver The [XTestHelpers.Device] to boot.
  * @throws IllegalStateException if the simulator fails to boot after all retries.
  */
 internal fun XCTestHelpers.Device.boot(logger: Logger = XCTestHelpers.logger) {
@@ -150,19 +148,57 @@ internal fun XCTestHelpers.Device.boot(logger: Logger = XCTestHelpers.logger) {
             )
             logger.info("Simulator $name ($udid) booted successfully.")
             // If successful, the retry block returns and exits the loop
-        } catch (e: TimeoutException) {
-            logger.warning("Boot attempt $attempt timed out after $BOOT_TIMEOUT_MINUTES minutes.")
-            // The simulator is in a bad state. Try to shut it down before retrying.
+        } catch (e: Throwable) {
+            // Check if this was the first failed attempt
+            if (attempt == 1) {
+                logger.warning("First boot attempt failed. Running Apple's workaround (dyld_shared_cache update)...")
+                try {
+                    updateCache(logger)
+                } catch (updateEx: Throwable) {
+                    logger.log(Level.SEVERE, "Workaround 'dyld_shared_cache update' failed.", updateEx)
+                    // Don't swallow the original exception, but log this new one.
+                    // The original exception 'e' will be re-thrown by the retry block.
+                }
+            }
+
+            // Log the original failure (TimeoutException or other)
+            if (e is TimeoutException) {
+                logger.warning("Boot attempt $attempt timed out after $BOOT_TIMEOUT_MINUTES minutes.")
+            } else {
+                logger.warning("Boot attempt $attempt failed with an error: ${e.message}")
+            }
+
+            // Always try to shut down the simulator
             try {
                 processOutputQuick(listOf("/usr/bin/xcrun", "simctl", "shutdown", udid))
             } catch (shutdownError: Throwable) {
-                logger.warning("Failed to shut down simulator $udid after timeout: ${shutdownError.message}")
+                logger.warning("Failed to shut down simulator $udid after failed boot: ${shutdownError.message}")
             }
-            throw e // Re-throw the timeout to trigger the retry
-        } catch (e: Throwable) {
-            logger.warning("Boot attempt $attempt failed with an error: ${e.message}")
-            throw e // Re-throw to trigger the retry
+            throw e // Re-throw the original exception to trigger the retry or fail
         }
+    }
+}
+
+// https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes#Known-Issues
+// KTI-2756 Timeout in 🍏ᵐ Gradle Integration Tests Native Mac arm64 (Macos)
+private fun updateCache(logger: Logger = XCTestHelpers.logger) {
+    logger.info("Attempting to update dyld_shared_cache for all runtimes. This may take a few minutes...")
+    try {
+        processOutputWithTimeout(
+            arguments = listOf("/usr/bin/xcrun", "simctl", "runtime", "dyld_shared_cache", "update", "--all"),
+            timeout = BOOT_TIMEOUT_MINUTES, // Reuse the same timeout, as this can be slow
+            unit = TimeUnit.MINUTES,
+            redirectErrorStream = true,
+            logger = logger
+        )
+        logger.info("dyld_shared_cache update complete.")
+    } catch (e: TimeoutException) {
+        // This is a "best effort" workaround. If it times out, log and continue.
+        // The boot command's own timeout will be the real failure point.
+        logger.warning("dyld_shared_cache update timed out after $BOOT_TIMEOUT_MINUTES minutes. Proceeding anyway...")
+    } catch (e: Throwable) {
+        // Same as above, log and continue.
+        logger.warning("dyld_shared_cache update failed: ${e.message}. Proceeding anyway...")
     }
 }
 
