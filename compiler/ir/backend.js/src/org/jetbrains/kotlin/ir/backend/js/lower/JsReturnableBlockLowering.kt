@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
@@ -59,20 +60,46 @@ class JsReturnableBlockTransformer(val context: CommonBackendContext) : IrElemen
     private val unitType = context.irBuiltIns.unitType
     private val unitValue get() = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, unitType, context.irBuiltIns.unitClass)
 
+    private inline fun withNewVariableForReturnableBlock(
+        returnableBlock: IrReturnableBlock,
+        action: (IrVariable) -> IrExpression,
+    ): IrExpression {
+        val variable = currentScope!!.scope.createTemporaryVariable(
+            irExpression = returnableBlock,
+            nameHint = "tmp\$ret\$${labelCnt++}",
+            isMutable = true,
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            inventUniqueName = false,
+        ).apply {
+            initializer = null
+        }
+
+        val previousVariable = map.put(returnableBlock.symbol, variable)
+        check(previousVariable == null) { "Returnable block is already mapped to another variable: $previousVariable" }
+
+        val result = action(variable)
+
+        val removedVariable = map.remove(returnableBlock.symbol)
+        check(removedVariable == variable) { "Removed incorrect variable: $removedVariable, expected: $variable" }
+
+        return result
+    }
+
     override fun visitBlock(expression: IrBlock): IrExpression {
         if (expression !is IrReturnableBlock) return super.visitBlock(expression)
 
-        expression.transformChildrenVoid()
+        return withNewVariableForReturnableBlock(returnableBlock = expression) { variable ->
+            expression.transformChildrenVoid()
 
-        val variable = map.remove(expression.symbol) ?: return expression
+            val builder = context.createIrBuilder(expression.symbol)
 
-        val builder = context.createIrBuilder(expression.symbol)
-
-        expression.type = unitType
-        return builder.irComposite(expression, expression.origin, variable.type) {
-            +variable
-            +expression
-            +irGet(variable)
+            expression.type = unitType
+            return builder.irComposite(expression, expression.origin, variable.type) {
+                +variable
+                +expression
+                +irGet(variable)
+            }
         }
     }
 
@@ -82,18 +109,7 @@ class JsReturnableBlockTransformer(val context: CommonBackendContext) : IrElemen
         val targetSymbol = expression.returnTargetSymbol
         if (targetSymbol !is IrReturnableBlockSymbol) return expression
 
-        val variable = map.getOrPut(targetSymbol) {
-            currentScope!!.scope.createTemporaryVariable(
-                irExpression = targetSymbol.owner,
-                nameHint = "tmp\$ret\$${labelCnt++}",
-                isMutable = true,
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                inventUniqueName = false,
-            ).apply {
-                initializer = null
-            }
-        }
+        val variable = map[targetSymbol] ?: compilationException("Unmapped returnable block $targetSymbol", expression)
 
         val builder = context.createIrBuilder(targetSymbol)
         return builder.at(UNDEFINED_OFFSET, UNDEFINED_OFFSET).irComposite {

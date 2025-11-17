@@ -49,9 +49,9 @@ fun box(): String {
 // test.kt:30 box
 // InlineFunCallSite.kt:10 <init>
 // test.kt:30 box
-// scalars.kt:5 render
+// InlineFunDeclaration.kt:22 render
 // InlineFunCallSite.kt:13 render
-// scalars.kt:6 render
+// InlineFunDeclaration.kt:23 render
 // InlineFunCallSite.kt:12 render
 
 // EXPECTATIONS WASM
