@@ -83,3 +83,7 @@ internal fun KotlinCompilerArgument.transform(): ArgumentTransform =
 
 internal fun KotlinCompilerArgumentsLevel.filterOutDroppedArguments(): List<KotlinCompilerArgument> =
     arguments.filter { it.transform() != ArgumentTransform.Drop }
+
+internal fun KotlinCompilerArgumentsLevel.transformArguments(): List<BtaCompilerArgument> {
+    return filterOutDroppedArguments().map { BtaCompilerArgument.SSoTCompilerArgument(it) }
+}
