@@ -522,7 +522,6 @@ class CacheMetadata(
         val target: KonanTarget,
         val compilerFingerprint: String,
         val runtimeFingerprint: String?, // only present in caches using the runtime (i.e. for stdlib)
-        val fullCompilerConfiguration: String,
 )
 
 object CacheMetadataSerializer {
@@ -535,7 +534,6 @@ object CacheMetadataSerializer {
                 "target" to metadata.target.toString(),
                 "compilerFingerprint" to metadata.compilerFingerprint,
                 metadata.runtimeFingerprint?.let { "runtimeFingerprint" to it },
-                "fullCompilerConfiguration" to metadata.fullCompilerConfiguration,
         ).forEach { (key, value) ->
             writer.appendLine("$key=$value")
         }
@@ -550,7 +548,6 @@ object CacheMetadataSerializer {
                     target = KonanTarget.predefinedTargets[this["target"] as String]!!,
                     compilerFingerprint = this["compilerFingerprint"] as String,
                     runtimeFingerprint = this["runtimeFingerprint"] as String?,
-                    fullCompilerConfiguration = this["fullCompilerConfiguration"] as String,
             )
         }
     }
