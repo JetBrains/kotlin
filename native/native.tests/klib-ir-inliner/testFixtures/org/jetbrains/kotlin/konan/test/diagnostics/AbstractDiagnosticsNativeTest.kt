@@ -31,7 +31,11 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
 import org.jetbrains.kotlin.test.services.LibraryProvider
+import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
+import org.jetbrains.kotlin.test.services.TestPhase
+import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Assumptions
 import java.io.File
 
@@ -90,6 +94,12 @@ abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) :
         globalDefaults {
             targetBackend = TargetBackend.NATIVE
         }
+        defaultDirectives {
+            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
+        }
+        useAfterAnalysisCheckers(
+            ::PhasedPipelineChecker.bind(TestPhase.FRONTEND),
+        )
 
         useAdditionalService(::LibraryProvider)
 
