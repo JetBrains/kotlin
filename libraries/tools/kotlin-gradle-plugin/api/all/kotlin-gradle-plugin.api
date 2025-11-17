@@ -2268,6 +2268,10 @@ public final class org/jetbrains/kotlin/gradle/targets/js/NpmVersions : java/io/
 	public final fun getSourceMapLoader ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getSourceMapSupport ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getStyleLoader ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
+	public final fun getSwcCli ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
+	public final fun getSwcCore ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
+	public final fun getSwcHelpers ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
+	public final fun getSwcLoader ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getToStringLoader ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getTypescript ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getWebpack ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
@@ -4606,7 +4610,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpa
 	public fun getName ()Ljava/lang/String;
 	public abstract fun getTest ()Lorg/gradle/api/provider/Property;
 	public fun hashCode ()I
-	protected final fun json (Ljava/lang/Object;)Ljava/lang/String;
 	protected abstract fun loaders ()Ljava/util/List;
 	public fun validate ()Z
 }
