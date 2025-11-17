@@ -44,12 +44,15 @@ private fun KaSession.getTypeReferenceFromPossiblyRecursive(
             val upperBoundsOrNullableAny =
                 type.symbol.upperBounds.takeIf { it.isNotEmpty() } ?: listOf(this.builtinTypes.nullableAny)
 
-            TypeParam(bounds = upperBoundsOrNullableAny.map {
-                getTypeReferenceFromPossiblyRecursive(
-                    it,
-                    paramTrace + type
-                )
-            })
+            TypeParam(
+                name = type.name.asString(),
+                bounds = upperBoundsOrNullableAny.map {
+                    getTypeReferenceFromPossiblyRecursive(
+                        it,
+                        paramTrace + type
+                    )
+                }
+            )
         }
 
         is KaClassErrorType -> TypeConstructor("$ERROR_CLASS_NAME $type", emptyList())
@@ -72,6 +75,7 @@ private fun KaSession.getTypeReferenceFromPossiblyRecursive(
             type.lowerBound,
             paramTrace
         )
+
         is KaCapturedType -> throw NotImplementedError()
         is KaIntersectionType -> throw NotImplementedError()
         else -> throw NotImplementedError()
