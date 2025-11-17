@@ -70,6 +70,14 @@ internal fun KotlinCompilerArgument.extractName(): String = name.uppercase().rep
     }
 }
 
+internal fun BtaCompilerArgument.extractName(): String = name.uppercase().replace("-", "_").let {
+    when {
+        it.startsWith("XX") && it != "XX" -> it.replaceFirst("XX", "XX_")
+        it.startsWith("X") && it != "X" -> it.replaceFirst("X", "X_")
+        else -> it
+    }
+}
+
 // TODO: workaround for now, but we should expose these in the arguments module in a way that doesn't need listing enums and their accessors explicitly here
 internal val enumNameAccessors = mutableMapOf(
     JvmTarget::class to JvmTarget::targetName,
