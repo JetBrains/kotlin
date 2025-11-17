@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.fir.setUpDefaultDirectivesForJsBoxTest
 import org.jetbrains.kotlin.js.test.ir.commonConfigurationForJsTest
 import org.jetbrains.kotlin.js.test.ir.configureJsBoxHandlers
-import org.jetbrains.kotlin.js.test.services.configuration.UnsupportedFeaturesTestConfigurator
+import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder

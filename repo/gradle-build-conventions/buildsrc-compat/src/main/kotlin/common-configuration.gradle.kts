@@ -398,6 +398,7 @@ fun Project.configureTests() {
             ":native:native.tests:driver",
             ":native:native.tests:gc-fuzzing-tests",
             ":native:native.tests:gc-fuzzing-tests:engine",
+            ":native:native.tests:klib-compatibility", // Drop this line after KT-81309
             ":native:native.tests:litmus-tests",
             ":native:objcexport-header-generator",
             ":native:objcexport-header-generator-analysis-api",

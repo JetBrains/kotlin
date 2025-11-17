@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.services.configuration
+package org.jetbrains.kotlin.test.services.configuration
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -41,8 +41,5 @@ class UnsupportedFeaturesTestConfigurator(testServices: TestServices) : MetaTest
             it.major < languageVersion.major ||
                     (it.major == languageVersion.major && it.minor <= languageVersion.minor)
         } ?: false
-
-    private fun LanguageFeature.isNeededInModule(testModule: TestModule): Boolean =
-        testModule.languageVersionSettings.supportsFeature(this)
 }
 

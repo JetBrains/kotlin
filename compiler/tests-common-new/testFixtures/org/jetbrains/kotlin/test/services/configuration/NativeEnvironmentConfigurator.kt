@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
-class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+open class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object : KlibBasedEnvironmentConfiguratorUtils {
         private const val TEST_PROPERTY_NATIVE_HOME = "kotlin.internal.native.test.nativeHome"
         private const val TEST_PROPERTY_TEST_TARGET = "kotlin.internal.native.test.target"
@@ -24,9 +24,13 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String> {
             return testServices.nativeEnvironmentConfigurator.getRuntimePathsForModule(module)
         }
+
+        fun isMainModule(module: TestModule): Boolean {
+            return module.name == ModuleStructureExtractor.DEFAULT_MODULE_NAME
+        }
     }
 
-    private val nativeHome: String by lazy {
+    open val nativeHome: String by lazy {
         System.getProperty(TEST_PROPERTY_NATIVE_HOME)
             ?: testServices.assertions.fail {
                 "No '$TEST_PROPERTY_NATIVE_HOME' provided. Are you sure the test are executed within :native:native.tests?"

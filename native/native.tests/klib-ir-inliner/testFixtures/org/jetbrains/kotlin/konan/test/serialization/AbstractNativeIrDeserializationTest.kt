@@ -8,52 +8,25 @@ package org.jetbrains.kotlin.konan.test.serialization
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStage
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
-import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.FirInterpreterDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.IrMangledNameAndSignatureDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
-import org.jetbrains.kotlin.test.backend.handlers.NativeKlibInterpreterDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.SerializedIrDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
-import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
-import org.jetbrains.kotlin.test.builders.deserializedIrHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
-import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_IR_DESERIALIZATION_TEST
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.utils.bind
 
 // Base class for IR serialization/deserialization test, configured with FIR frontend, in Native-specific way.
 open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
@@ -71,19 +44,21 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
         get() = ::NativeDeserializerFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        commonConfigurationForNativeBlackBoxCodegenTest(IGNORE_IR_DESERIALIZATION_TEST)
-    }
-
-    protected fun TestConfigurationBuilder.commonConfigurationForNativeBlackBoxCodegenTest(customIgnoreDirective: ValueDirective<TargetBackend>? = null) {
-        commonConfigurationForNativeCodegenTest(
+        useConfigurators(::NativeEnvironmentConfigurator)
+        commonConfigurationForNativeFirstStage(
             targetFrontend,
             frontendFacade,
             frontendToIrConverter,
             irPreSerializationLoweringFacade,
             serializerFacade,
-            deserializerFacade,
-            customIgnoreDirective
+            IGNORE_IR_DESERIALIZATION_TEST,
         )
+        facadeStep(deserializerFacade)
+        klibArtifactsHandlersStep {
+            useHandlers(::KlibBackendDiagnosticsHandler)
+        }
+        deserializedIrHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) }) }
+
         configureFirParser(parser)
 
         defaultDirectives {
@@ -123,68 +98,4 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
             }
         }
     }
-}
-
-@Suppress("reformat")
-fun TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
-    targetFrontend: FrontendKind<FirOutputArtifact>,
-    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
-    frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
-    irPreSerializationLoweringFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>,
-    serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
-    deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
-    customIgnoreDirective: ValueDirective<TargetBackend>? = null,
-) {
-    globalDefaults {
-        frontend = targetFrontend
-        targetPlatform = NativePlatforms.unspecifiedNativePlatform
-        dependencyKind = DependencyKind.Binary
-    }
-
-    defaultDirectives {
-        +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
-        +ConfigurationDirectives.WITH_STDLIB
-    }
-
-    useConfigurators(
-        ::NativeEnvironmentConfigurator,
-    )
-
-    useAdditionalService(::LibraryProvider)
-    useAdditionalSourceProviders(
-        ::CoroutineHelpersSourceFilesProvider,
-        ::AdditionalDiagnosticsSourceFilesProvider,
-    )
-    useAfterAnalysisCheckers(
-        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, null),
-        ::FirMetaInfoDiffSuppressor,
-    )
-
-    facadeStep(frontendFacade)
-    firHandlersStep {
-        commonFirHandlersForCodegenTest()
-        useHandlers(
-            ::FirDumpHandler,
-            ::FirCfgDumpHandler,
-            ::FirCfgConsistencyHandler,
-            ::FirResolvedTypesVerifier,
-            ::FirDiagnosticsHandler,
-        )
-    }
-
-    facadeStep(frontendToIrConverter)
-
-    facadeStep(irPreSerializationLoweringFacade)
-
-    irHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) }) }
-
-    facadeStep(serializerFacade)
-    klibArtifactsHandlersStep {
-        useHandlers(::KlibAbiDumpHandler)
-    }
-    facadeStep(deserializerFacade)
-    klibArtifactsHandlersStep {
-        useHandlers(::KlibBackendDiagnosticsHandler)
-    }
-    deserializedIrHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) }) }
 }

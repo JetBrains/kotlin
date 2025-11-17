@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Assumptions
  */
 class CustomKlibCompilerFirstStageTestSuppressor(
     testServices: TestServices,
-    private val customCompilerVersion: String,
+    private val compilerVersion: String,
 ) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CustomKlibCompilerTestDirectives)
@@ -33,7 +33,7 @@ class CustomKlibCompilerFirstStageTestSuppressor(
         if (failedAssertions.isEmpty()) {
             return buildList {
                 with(testServices.moduleStructure.modules.first().directives) {
-                    with(customCompilerVersion) {
+                    with(compilerVersion) {
                         addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE))
                     }
                 }
@@ -114,7 +114,7 @@ class CustomKlibCompilerFirstStageTestSuppressor(
             return listOf(wrappedException)
 
         for (prefix in directives[IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE]) {
-            if (customCompilerVersion.startsWith(prefix))
+            if (compilerVersion.startsWith(prefix))
                 return emptyList()
         }
 
