@@ -238,6 +238,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 irFactory,
                 allowIncompleteImplementations = dce,
                 skipCommentInstructions = !generateWat,
+                skipLocations = !generateDwarf && !generateSourceMaps,
             )
             val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
 
@@ -360,6 +361,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
         signatureRetriever,
         allowIncompleteImplementations = false,
         skipCommentInstructions = !generateWat,
+        skipLocations = !generateDwarf && !generateSourceMaps,
     )
 
     val wasmCompiledFileFragments = mutableListOf<WasmCompiledFileFragment>()

@@ -27,6 +27,7 @@ sealed class IcCachesConfigurationData {
         val wasmDebug: Boolean,
         val preserveIcOrder: Boolean,
         val generateWat: Boolean,
+        val generateSourceMaps: Boolean,
     ) : IcCachesConfigurationData()
 }
 
@@ -41,9 +42,10 @@ internal fun prepareIcCaches(
 ): IcCachesArtifacts {
     val data = when {
         arguments.wasm -> IcCachesConfigurationData.Wasm(
-            arguments.wasmDebug,
-            arguments.preserveIcOrder,
-            arguments.wasmGenerateWat,
+            wasmDebug = arguments.wasmDebug,
+            preserveIcOrder = arguments.preserveIcOrder,
+            generateWat = arguments.wasmGenerateWat,
+            generateSourceMaps = arguments.sourceMap || arguments.generateDwarf
         )
         else -> IcCachesConfigurationData.Js(
             arguments.granularity
@@ -88,6 +90,7 @@ internal fun prepareIcCaches(
             skipLocalNames = !icConfigurationData.wasmDebug,
             safeFragmentTags = icConfigurationData.preserveIcOrder,
             skipCommentInstructions = !icConfigurationData.generateWat,
+            skipLocations = !icConfigurationData.generateSourceMaps
         )
     }
     val cacheUpdater = CacheUpdater(

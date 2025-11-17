@@ -24,6 +24,7 @@ open class WasmICContext(
     protected val skipLocalNames: Boolean = false,
     private val safeFragmentTags: Boolean,
     private val skipCommentInstructions: Boolean,
+    private val skipLocations: Boolean,
 ) : PlatformDependentICContext {
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForWasmIC(WholeWorldStageController())
@@ -39,7 +40,8 @@ open class WasmICContext(
             configuration = configuration,
             allowIncompleteImplementations = allowIncompleteImplementations,
             safeFragmentTags = safeFragmentTags,
-            skipCommentInstructions = skipCommentInstructions
+            skipCommentInstructions = skipCommentInstructions,
+            skipLocations = skipLocations,
         )
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
@@ -59,7 +61,13 @@ class WasmICContextForTesting(
     allowIncompleteImplementations: Boolean,
     skipLocalNames: Boolean = false,
     safeFragmentTags: Boolean = false,
-) : WasmICContext(allowIncompleteImplementations, skipLocalNames, safeFragmentTags, skipCommentInstructions = false) {
+) : WasmICContext(
+    allowIncompleteImplementations,
+    skipLocalNames,
+    safeFragmentTags,
+    skipCommentInstructions = false,
+    skipLocations = false
+) {
     override fun createCompiler(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,

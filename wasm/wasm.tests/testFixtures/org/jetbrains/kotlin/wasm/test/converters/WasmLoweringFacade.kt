@@ -96,6 +96,7 @@ class WasmLoweringFacade(
             moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
             allowIncompleteImplementations = false,
             skipCommentInstructions = !generateWat,
+            skipLocations = !generateDwarf && !generateSourceMaps,
         )
         val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
 
@@ -124,6 +125,7 @@ class WasmLoweringFacade(
             moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
             allowIncompleteImplementations = true,
             skipCommentInstructions = !generateWat,
+            skipLocations = !generateDwarf && !generateSourceMaps,
         )
         val wasmCompiledFileFragmentsDce = allModules.map { codeGeneratorDce.generateModuleAsSingleFileFragment(it) }
 

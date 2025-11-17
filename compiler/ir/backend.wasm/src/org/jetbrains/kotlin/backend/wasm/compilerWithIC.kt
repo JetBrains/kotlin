@@ -28,6 +28,7 @@ open class WasmCompilerWithIC(
     private val allowIncompleteImplementations: Boolean,
     private val safeFragmentTags: Boolean,
     private val skipCommentInstructions: Boolean,
+    private val skipLocations: Boolean,
 ) : IrCompilerICInterface {
     val context: WasmBackendContext
     private val idSignatureRetriever: IdSignatureRetriever
@@ -67,6 +68,7 @@ open class WasmCompilerWithIC(
                 allowIncompleteImplementations,
                 if (safeFragmentTags) "${irFile.module.name.asString()}${irFile.path}" else null,
                 skipCommentInstructions = skipCommentInstructions,
+                skipLocations = skipLocations,
             )
         )
     }
@@ -97,7 +99,8 @@ class WasmCompilerWithICForTesting(
     configuration,
     allowIncompleteImplementations,
     safeFragmentTags,
-    skipCommentInstructions = false
+    skipCommentInstructions = false,
+    skipLocations = false,
 ) {
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
         val testFile = dirtyFiles.firstOrNull { file ->

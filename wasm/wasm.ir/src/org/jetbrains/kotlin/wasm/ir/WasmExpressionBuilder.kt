@@ -25,62 +25,83 @@ internal fun WasmOp.isBlockEnd(): Boolean = this == WasmOp.END
  *     - at least, an API user has to think about what to pass a location
  *     - it's not taken from some context-like thing implicitly, so you will not get it implicitly from a wrong context/scope.
  */
-class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipCommentInstructions: Boolean = false) {
+class WasmExpressionBuilder(
+    val expression: MutableList<WasmInstr>,
+    val skipCommentInstructions: Boolean = true,
+    val skipLocations: Boolean = true,
+) {
     private var _numberOfNestedBlocks = 0
 
-    fun buildInstr(op: WasmOp, location: SourceLocation) =
-        WasmInstr0Located(op, location).appendInstruction()
+    fun buildInstr(
+        op: WasmOp,
+        location: SourceLocation,
+    ) {
+        if (skipLocations) {
+            check(location == SourceLocation.NoLocation)
+            WasmInstr0(op)
+        } else {
+            WasmInstr0Located(op, location)
+        }.appendInstruction()
+    }
 
-    fun buildInstr(op: WasmOp, location: SourceLocation, immediate: WasmImmediate) =
-        WasmInstr1Located(op, location, immediate).appendInstruction()
+    fun buildInstr(
+        op: WasmOp,
+        location: SourceLocation,
+        immediate: WasmImmediate,
+    ) {
+        if (skipLocations) {
+            check(location !is SourceLocation.DefinedLocation)
+            WasmInstr1(op, immediate)
+        } else {
+            WasmInstr1Located(op, location, immediate)
+        }.appendInstruction()
+    }
+
+    fun buildInstr(
+        op: WasmOp,
+        location: SourceLocation,
+        immediate1: WasmImmediate,
+        immediate2: WasmImmediate,
+    ) {
+        if (skipLocations) {
+            check(location == SourceLocation.NoLocation)
+            WasmInstr2(op, immediate1, immediate2)
+        } else {
+            WasmInstr2Located(op, location, immediate1, immediate2)
+        }.appendInstruction()
+    }
 
     fun buildInstr(
         op: WasmOp, location: SourceLocation,
         immediate1: WasmImmediate,
-        immediate2: WasmImmediate
-    ) = WasmInstr2Located(op, location, immediate1, immediate2).appendInstruction()
+        immediate2: WasmImmediate,
+        immediate3: WasmImmediate,
+    ) {
+        if (skipLocations) {
+            check(location == SourceLocation.NoLocation)
+            WasmInstr3(op, immediate1, immediate2, immediate3)
+        } else {
+            WasmInstr3Located(op, location, immediate1, immediate2, immediate3)
+        }.appendInstruction()
+    }
 
     fun buildInstr(
         op: WasmOp, location: SourceLocation,
         immediate1: WasmImmediate,
         immediate2: WasmImmediate,
         immediate3: WasmImmediate,
-    ) = WasmInstr3Located(op, location, immediate1, immediate2, immediate3).appendInstruction()
+        immediate4: WasmImmediate,
+    ) {
+        if (skipLocations) {
+            check(location == SourceLocation.NoLocation)
+            WasmInstr4(op, immediate1, immediate2, immediate3, immediate4)
+        } else {
+            WasmInstr4Located(op, location, immediate1, immediate2, immediate3, immediate4)
+        }.appendInstruction()
+    }
 
-    fun buildInstr(
-        op: WasmOp, location: SourceLocation,
-        immediate1: WasmImmediate,
-        immediate2: WasmImmediate,
-        immediate3: WasmImmediate,
-        immediate4: WasmImmediate
-    ) = WasmInstr4Located(op, location, immediate1, immediate2, immediate3, immediate4).appendInstruction()
-
-    fun buildInstr(op: WasmOp) =
-        WasmInstr0(op).appendInstruction()
-
-    fun buildInstr(op: WasmOp, immediate: WasmImmediate) =
-        WasmInstr1(op, immediate).appendInstruction()
-
-    fun buildInstr(
-        op: WasmOp,
-        immediate1: WasmImmediate,
-        immediate2: WasmImmediate
-    ) = WasmInstr2(op, immediate1, immediate2).appendInstruction()
-
-    fun buildInstr(
-        op: WasmOp,
-        immediate1: WasmImmediate,
-        immediate2: WasmImmediate,
-        immediate3: WasmImmediate,
-    ) = WasmInstr3(op, immediate1, immediate2, immediate3).appendInstruction()
-
-    fun buildInstr(
-        op: WasmOp,
-        immediate1: WasmImmediate,
-        immediate2: WasmImmediate,
-        immediate3: WasmImmediate,
-        immediate4: WasmImmediate
-    ) = WasmInstr4(op, immediate1, immediate2, immediate3, immediate4).appendInstruction()
+    val numberOfNestedBlocks: Int
+        get() = _numberOfNestedBlocks
 
     private fun WasmInstr.appendInstruction() {
         if (operator.isBlockStart()) {
@@ -90,9 +111,6 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         }
         expression += this
     }
-
-    val numberOfNestedBlocks: Int
-        get() = _numberOfNestedBlocks
 
     fun buildConstI32(value: Int, location: SourceLocation) {
         buildInstr(WasmOp.I32_CONST, location, WasmImmediate.ConstI32(value))
@@ -142,28 +160,20 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
 
     @Suppress("UNUSED_PARAMETER")
     fun buildIf(label: String?, resultType: WasmType? = null) {
-        buildInstr(WasmOp.IF, WasmImmediate.BlockType.Value(resultType))
+        buildInstr(WasmOp.IF, SourceLocation.NoLocation, WasmImmediate.BlockType.Value(resultType))
     }
 
     fun buildElse(location: SourceLocation? = null) {
-        if (location != null) {
-            buildInstr(WasmOp.ELSE, location)
-        } else {
-            buildInstr(WasmOp.ELSE)
-        }
+        buildInstr(WasmOp.ELSE, location ?: SourceLocation.NoLocation)
     }
 
     fun buildBlock(resultType: WasmType? = null): Int {
-        buildInstr(WasmOp.BLOCK, WasmImmediate.BlockType.Value(resultType))
+        buildInstr(WasmOp.BLOCK, SourceLocation.NoLocation, WasmImmediate.BlockType.Value(resultType))
         return numberOfNestedBlocks
     }
 
     fun buildEnd(location: SourceLocation? = null) {
-        if (location != null) {
-            buildInstr(WasmOp.END, location)
-        } else {
-            buildInstr(WasmOp.END)
-        }
+        buildInstr(WasmOp.END, location ?: SourceLocation.NoLocation)
     }
 
     fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int, location: SourceLocation) {
@@ -211,7 +221,7 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
     }
 
     fun buildTry(resultType: WasmType? = null, body: (Int) -> Unit) {
-        buildInstr(WasmOp.TRY, WasmImmediate.BlockType.Value(resultType))
+        buildInstr(WasmOp.TRY, SourceLocation.NoLocation, WasmImmediate.BlockType.Value(resultType))
         body(numberOfNestedBlocks)
         buildEnd()
     }
@@ -227,6 +237,7 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         if (catch2 == null) {
             buildInstr(
                 WasmOp.TRY_TABLE,
+                SourceLocation.NoLocation,
                 WasmImmediate.BlockType.Value(resultType),
                 WasmImmediate.ConstI32(catchSize),
                 catch1,
@@ -234,6 +245,7 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         } else {
             buildInstr(
                 WasmOp.TRY_TABLE,
+                SourceLocation.NoLocation,
                 WasmImmediate.BlockType.Value(resultType),
                 WasmImmediate.ConstI32(catchSize),
                 catch1,
@@ -275,7 +287,7 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
     }
 
     fun buildCatchAll() {
-        buildInstr(WasmOp.CATCH_ALL)
+        buildInstr(WasmOp.CATCH_ALL, SourceLocation.NoLocation)
     }
 
     fun buildBrIf(absoluteBlockLevel: Int, location: SourceLocation) {
