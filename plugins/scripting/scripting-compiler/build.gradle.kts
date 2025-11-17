@@ -26,6 +26,7 @@ dependencies {
     compileOnly(project(":compiler:backend.jvm.entrypoint"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(project(":kotlin-scripting-common"))
+    api(project(":kotlin-scripting-common-fir"))
     api(project(":kotlin-scripting-jvm"))
     api(project(":kotlin-scripting-compiler-impl"))
     api(kotlinStdlib())

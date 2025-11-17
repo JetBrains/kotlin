@@ -1,0 +1,28 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
+plugins {
+    kotlin("jvm")
+}
+
+project.updateJvmTarget("1.8")
+
+dependencies {
+    api(kotlinStdlib())
+    api(project(":kotlin-scripting-common"))
+    compileOnly(project(":compiler:fir:tree"))
+}
+
+sourceSets {
+    "main" { projectDefault() }
+    "test" {}
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
+}
+
+publish()
+
+runtimeJar()
+sourcesJar()
+javadocJar()
