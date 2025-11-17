@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.buildtools.options.generator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
@@ -54,7 +53,7 @@ internal class BtaApiGenerator(
                     }
                     generateGetPutFunctions(argumentTypeName)
                     addType(TypeSpec.companionObjectBuilder().apply {
-                        generateOptions(level.filterOutDroppedArguments(), argumentTypeName)
+                        generateOptions(level.transformArguments(), argumentTypeName)
                     }.build())
                 }.build()
             )
@@ -65,7 +64,7 @@ internal class BtaApiGenerator(
     }
 
     private fun TypeSpec.Builder.generateOptions(
-        arguments: Collection<KotlinCompilerArgument>,
+        arguments: Collection<BtaCompilerArgument>,
         argumentTypeName: ClassName,
     ) {
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
@@ -76,51 +75,63 @@ internal class BtaApiGenerator(
             if (skipXX && name.startsWith("XX_")) return@forEach
             val experimental = name.startsWith("XX_") || name.startsWith("X_")
 
+            /**
+             * Marks enum to be generated and returns its name
+             */
+            fun generatedEnumType(type: KClass<*>): ClassName {
+                val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
+                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, type.accessor())
+                if (type !in enumsExperimental && experimental) {
+                    enumsExperimental[type] = true
+                } else if (type in enumsExperimental && !experimental) {
+                    // if at least one option that is NOT experimental uses the enum
+                    // then the enum is not experimental itself
+                    enumsExperimental[type] = false
+                }
+                return ClassName("$targetPackage.enums", type.simpleName!!)
+            }
 
             // argument is newer than current version
-            if (argument.releaseVersionsMetadata.introducedVersion > kotlinVersion) {
+            if (argument.introducedSinceVersion > kotlinVersion) {
                 return@forEach
             }
 
             // argument was removed in or before current version - 3
-            argument.releaseVersionsMetadata.removedVersion?.let { removedVersion ->
+            argument.removedSinceVersion?.let { removedVersion ->
                 if (removedVersion <= getOldestSupportedVersion(kotlinVersion)) {
                     return@forEach
                 }
             }
 
             val wasDeprecatedInVersion =
-                argument.releaseVersionsMetadata.deprecatedVersion?.takeIf { it <= kotlinVersion }
+                argument.deprecatedSinceVersion?.takeIf { it <= kotlinVersion }
+
+            // There's no need to generate any classes for custom representations as they're expected to already be there
+            val (argumentType, shouldGenerateArgumentType) = when (argument.valueType) {
+                is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> argument.valueType.origin::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!! to true
+                is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type to false
+            }
 
             val argumentTypeParameter =
-                argument.valueType::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!.let {
+                argumentType.let {
                     when (val type = it.classifier) {
-                        is KClass<*> if type.isSubclassOf(Enum::class) && type in enumNameAccessors -> {
-                            val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
-                            enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, type.accessor())
-                            if (type !in enumsExperimental && experimental) {
-                                enumsExperimental[type] = true
-                            } else if (type in enumsExperimental && !experimental) {
-                                // if at least one option that is NOT experimental uses the enum
-                                // then the enum is not experimental itself
-                                enumsExperimental[type] = false
-                            }
-                            ClassName("$targetPackage.enums", type.simpleName!!)
+                        is KClass<*> if shouldGenerateArgumentType && type.isSubclassOf(Enum::class) && type in enumNameAccessors -> {
+                            generatedEnumType(type)
                         }
                         else -> {
                             it.asTypeName()
                         }
                     }
-                }.copy(nullable = argument.valueType.isNullable.current)
+                }.copy(nullable = argument.valueType.isNullable)
             property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
                 annotation<JvmField>()
                 // KT-28979 Need a way to escape /* in kdoc comments
                 // inserting a zero-width space is not ideal, but we do actually have one compiler argument that breaks the KDoc without it
-                addKdoc(argument.description.current.replace("/*", "/\u200B*").replace("*/", "*\u200B/"))
+                addKdoc(argument.description.replace("/*", "/\u200B*").replace("*/", "*\u200B/"))
                 maybeAddExperimentalAnnotation(experimental)
-                maybeAddDeprecatedAnnotation(argument.releaseVersionsMetadata.removedVersion, wasDeprecatedInVersion)
+                maybeAddDeprecatedAnnotation(argument.removedSinceVersion, wasDeprecatedInVersion)
 
-                val introducedVersion = argument.releaseVersionsMetadata.introducedVersion
+                val introducedVersion = argument.introducedSinceVersion
                 initializer(
                     "%T(%S, %T(%L, %L, %L))",
                     argumentTypeName,
