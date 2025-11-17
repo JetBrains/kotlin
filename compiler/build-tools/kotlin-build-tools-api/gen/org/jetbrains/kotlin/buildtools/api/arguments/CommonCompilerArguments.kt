@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -782,5 +783,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     public val PROGRESSIVE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("PROGRESSIVE", KotlinReleaseVersion(1, 2, 50))
+
+    /**
+     * List of compiler plugins to load for this compilation.
+     */
+    @JvmField
+    public val COMPILER_PLUGINS: CommonCompilerArgument<List<CompilerPlugin>> =
+        CommonCompilerArgument("COMPILER_PLUGINS", KotlinReleaseVersion(2, 3, 20))
   }
 }
