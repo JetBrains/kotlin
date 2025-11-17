@@ -683,7 +683,6 @@ include(
     ":analysis:decompiled:decompiler-js",
     ":analysis:decompiled:decompiler-native",
     ":analysis:decompiled:light-classes-for-decompiled",
-    ":prepare:analysis-api-test-framework",
     ":tools:ide-plugin-dependencies-validator"
 )
 

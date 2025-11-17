@@ -79,7 +79,6 @@ Maven:
 # It is used to declare which domains will affect IntelliJ and to infer when to run tests against kt-master
 IntelliJ:
   include:
-    - "prepare/analysis-api-*/**"
     - "prepare/ide-plugin-dependencies/**"
   fullyAffectedBy:
     - Compiler
