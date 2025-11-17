@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -81,6 +81,15 @@ abstract class FirModuleData : FirSessionComponent {
      * For others, returns null.
      */
     abstract val stableModuleName: String?
+
+    /**
+     * Whether redeclarations in this module are equivalent.
+     *
+     * Declarations from the same source module are never equivalent.
+     * We expect REDECLARATION or CONFLICTING_OVERLOADS to be reported in those cases.
+     */
+    open val areRedeclarationsEquivalent: Boolean
+        get() = session.kind == FirSession.Kind.Library
 }
 
 /**
