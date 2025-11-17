@@ -81,10 +81,10 @@ open class WasmFileCodegenContext(
     fun referenceFunction(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunction> =
         wasmFileFragment.functions.reference(irFunction.getReferenceKey())
 
-    fun referenceGlobalString(value: String): Pair<WasmSymbol<WasmGlobal>, WasmSymbol<Int>> =
+    fun referenceGlobalString(value: String, referenceValue: String = value): Pair<WasmSymbol<WasmGlobal>, WasmSymbol<Int>> =
         Pair(
             wasmFileFragment.globalLiterals.reference(value),
-            wasmFileFragment.globalLiteralsIds.reference(value)
+            wasmFileFragment.globalLiteralsIds.reference(referenceValue)
         )
 
     fun referenceGlobalField(irField: IrFieldSymbol): WasmSymbol<WasmGlobal> =

@@ -184,7 +184,6 @@ internal fun kotlinToJsStringAdapter(x: String?): JsString? {
     // Using nullable String to represent default value
     // for parameters with default values
     if (x == null) return null
-    if (x.isEmpty()) return jsEmptyString
 
     return x.internalStr
 }
@@ -193,10 +192,7 @@ internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): Externa
     // We deliberately avoid usage of `takeIf` here as type erase on the inlining stage leads to infinite recursion
     if (isNullish(x)) null else x
 
-internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
-    val jsStr: JsString = x.unsafeCast()
-    return String(jsStr, jsLength(jsStr))
-}
+internal fun jsToKotlinStringAdapter(x: JsString) = String(x, jsLength(x))
 
 
 private fun getJsEmptyString(): JsString =

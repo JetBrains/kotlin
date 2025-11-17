@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
+import com.intellij.util.applyIf
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
@@ -370,18 +371,14 @@ fun compileWasmLoweredFragmentsForSingleModule(
     // This signature needed to dynamically load module services
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     val additionalSignatureToImport =
-        if (stdlibIsMainModule) mutableSetOf() else mutableSetOf(
+        if (stdlibIsMainModule) emptySet() else mutableSetOf(
             signatureRetriever.declarationSignature(backendContext.wasmSymbols.registerModuleDescriptor.owner)!!,
             signatureRetriever.declarationSignature(backendContext.wasmSymbols.createString.owner)!!,
             signatureRetriever.declarationSignature(backendContext.wasmSymbols.tryGetAssociatedObject.owner)!!,
-        )
-
-    if (!stdlibIsMainModule && backendContext.isWasmJsTarget) {
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
-        additionalSignatureToImport.add(
-            signatureRetriever.declarationSignature(backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinStringAdapter.owner)!!,
-        )
-    }
+        ).applyIf(backendContext.isWasmJsTarget) {
+            add(signatureRetriever.declarationSignature(backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinStringAdapter.owner)!!)
+            this
+        }
 
     val importedDeclarations = getAllReferencedDeclarations(mainModuleFileFragment, additionalSignatureToImport)
 

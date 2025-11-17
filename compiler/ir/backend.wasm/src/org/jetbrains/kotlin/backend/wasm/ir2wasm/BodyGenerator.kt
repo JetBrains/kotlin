@@ -1616,6 +1616,8 @@ class BodyGenerator(
         val rttiSuperClassFieldId = WasmSymbol(1)
         val rttiQualifierGetterFieldId = WasmSymbol(6)
         val rttiSimpleNameGetterFieldId = WasmSymbol(7)
+        val rttiQualifierGlobalFieldId = WasmSymbol(8)
+        val rttiSimpleNameGlobalFieldId = WasmSymbol(9)
         private val classAssociatedObjectsGetterWrapperFieldId = WasmSymbol(0)
         private val exceptionTagId = WasmSymbol(0)
         private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx(0)

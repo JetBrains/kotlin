@@ -687,12 +687,12 @@ fun generateConstExpression(
             val stringValue = expression.value as String
             body.commentGroupStart { "const string: \"$stringValue\"" }
 
-            if (!stringValue.hasUnpairedSurrogates && backendContext.isWasmJsTarget) {
+            if (backendContext.isWasmJsTarget && !stringValue.hasUnpairedSurrogates) {
                 val stringValueSplits = stringValue.chunked(MAX_WASM_IMPORT_NAME_LENGTH).ifEmpty { listOf("") }
                 val jsConcat: WasmSymbol<WasmFunction> =
                     context.referenceFunction(backendContext.wasmSymbols.jsRelatedSymbols.jsConcat)
 
-                val (globalReferenceFirst, literalIdToStore) = context.referenceGlobalString(stringValueSplits.first())
+                val (globalReferenceFirst, literalIdToStore) = context.referenceGlobalString(stringValueSplits.first(), stringValue)
                 body.buildConstI32Symbol(literalIdToStore, location)
                 body.buildGetGlobal(globalReferenceFirst, location)
 

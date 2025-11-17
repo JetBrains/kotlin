@@ -152,11 +152,8 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     }
 }
 
-internal actual fun WasmCharArray.createString(): String {
-    val size = this.len()
-    val copy = WasmCharArray(size)
-    copyWasmArray(this, copy, 0, 0, size)
-    return String(null, size, copy)
-}
+internal actual fun WasmCharArray.createString() =
+    String(null, this.len(), this)
 
-internal actual fun String.getChars() = this.chars
+@Suppress("NOTHING_TO_INLINE")
+internal inline actual fun String.getChars() = this.chars

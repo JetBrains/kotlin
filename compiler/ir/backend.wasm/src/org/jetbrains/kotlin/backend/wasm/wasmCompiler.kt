@@ -527,7 +527,7 @@ export const importObject = {
     intrinsics: {
         tag: wasmTag
     },
-    "strings": StringConstantsProxy,
+    "'": StringConstantsProxy,
 $imports};
     """.trimIndent()
 }
@@ -550,7 +550,6 @@ import { importObject, setWasmExports$commonStdlibExports } from './${baseFileNa
     """.trimIndent()
 
     val builtinsList = jsModuleImports.filter { it.startsWith("wasm:") }.map { "${it.removePrefix("wasm:")}" }
-    val options = "{ builtins: ['${builtinsList.joinToString(", ")}'], importedStringConstants: \"strings\" }"
 
     val pathJsStringLiteral = wasmFilePath.toJsStringLiteral()
 
@@ -575,6 +574,7 @@ if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
 }
 
 const wasmFilePath = $pathJsStringLiteral;
+const wasmOptions = { builtins: ['${builtinsList.joinToString(", ")}'], importedStringConstants: "'" }
 
 try {
   if (isNodeJs) {
@@ -585,14 +585,14 @@ try {
     const url = require('url');
     const filepath = import.meta.resolve(wasmFilePath);
     const wasmBuffer = fs.readFileSync(url.fileURLToPath(filepath));
-    const wasmModule = new WebAssembly.Module(wasmBuffer, $options);
+    const wasmModule = new WebAssembly.Module(wasmBuffer, wasmOptions);
     wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
   }
 
   if (isDeno) {
     const path = await import(/* webpackIgnore: true */'https://deno.land/std/path/mod.ts');
     const binary = Deno.readFileSync(path.fromFileUrl(import.meta.resolve(wasmFilePath)));
-    const module = await WebAssembly.compile(binary, $options);
+    const module = await WebAssembly.compile(binary, wasmOptions);
     wasmInstance = await WebAssembly.instantiate(module, importObject);
   }
 
@@ -600,12 +600,12 @@ try {
     const importMeta = import.meta;
     const filepath = importMeta.url.replace(/\.mjs$/, '.wasm');
     const wasmBuffer = read(filepath, 'binary');
-    const wasmModule = new WebAssembly.Module(wasmBuffer, $options);
+    const wasmModule = new WebAssembly.Module(wasmBuffer, wasmOptions);
     wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
   }
 
   if (isBrowser) {
-    wasmInstance = (await WebAssembly.instantiateStreaming(fetch(new URL($pathJsStringLiteral,import.meta.url).href), importObject, $options)).instance;
+    wasmInstance = (await WebAssembly.instantiateStreaming(fetch(new URL($pathJsStringLiteral,import.meta.url).href), importObject, wasmOptions)).instance;
   }
 } catch (e) {
   if (e instanceof WebAssembly.CompileError) {

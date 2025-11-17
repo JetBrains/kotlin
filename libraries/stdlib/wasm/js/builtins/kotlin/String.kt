@@ -32,6 +32,14 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
         return String(jsConcat(this.internalStr, right.internalStr).unsafeCast(), this.length + right.length)
     }
 
+    /**
+     * Returns the character of this string at the specified [index].
+     *
+     * In Kotlin/Wasm, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
+     * will be raised if the [index] is out of bounds of this string,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With `-Xwasm-enable-array-range-checks` flag, [IndexOutOfBoundsException] will be thrown.
+     */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun get(index: Int): Char {
         rangeCheck(index, this.length)
@@ -57,6 +65,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
         if (this === other) return 0
         return jsCompare(this.internalStr, other.internalStr)
     }
+
     /**
      * Indicates if [other] object is equal to this [String].
      *
