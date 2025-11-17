@@ -68587,6 +68587,12 @@ public class JsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractJsCod
       }
 
       @Test
+      @TestMetadata("kt82044.kt")
+      public void testKt82044() {
+        runTest("compiler/testData/codegen/boxInline/lambdaTransformation/kt82044.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaCloning.kt")
       public void testLambdaCloning() {
         runTest("compiler/testData/codegen/boxInline/lambdaTransformation/lambdaCloning.kt");
