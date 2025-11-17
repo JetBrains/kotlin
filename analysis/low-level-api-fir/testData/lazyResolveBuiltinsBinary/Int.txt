@@ -2837,7 +2837,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    @R|kotlin/RequiresOptIn|[Types]() @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/annotation/MustBeDocumented|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class ExperimentalCollectionLiterals : R|kotlin/Annotation|, R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/annotation/MustBeDocumented|[Types]() @R|kotlin/RequiresOptIn|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class ExperimentalCollectionLiterals : R|kotlin/Annotation|, R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ExperimentalCollectionLiterals] constructor(): R|kotlin/ExperimentalCollectionLiterals| {
             super<R|kotlin/Any|>()
         }

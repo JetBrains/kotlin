@@ -17,10 +17,10 @@ import kotlin.native.HidesFromObjC
  *  annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalCollectionLiterals::class)`,
  *  or by using the compiler argument `-opt-in=kotlin.annotations.ExperimentalCollectionLiterals`.
  */
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @SinceKotlin("2.3")
 @OptIn(ExperimentalObjCRefinement::class)
 @HidesFromObjC

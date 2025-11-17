@@ -5018,14 +5018,6 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=String]
   CLASS[classId=kotlin/ExperimentalCollectionLiterals, fqName=kotlin.ExperimentalCollectionLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ExperimentalCollectionLiterals, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=RequiresOptIn]
-        valueArguments: [ level -> Level.ERROR ]
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=RequiresOptIn]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS, AnnotationTarget.FUNCTION] ]
         CONSTRUCTOR_CALLEE
@@ -5056,6 +5048,14 @@ FILE[kind=File[packageFqName=kotlin]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=RequiresOptIn]
+        valueArguments: [ level -> Level.ERROR ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=RequiresOptIn]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
         valueArguments: [ version -> "2.3" ]
         CONSTRUCTOR_CALLEE

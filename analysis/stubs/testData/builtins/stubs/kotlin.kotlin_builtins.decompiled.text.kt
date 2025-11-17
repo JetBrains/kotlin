@@ -509,7 +509,7 @@ public abstract class Enum<E : kotlin.Enum<E>> public constructor(name: kotlin.S
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.RequiresOptIn @kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class ExperimentalCollectionLiterals public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.annotation.MustBeDocumented @kotlin.RequiresOptIn @kotlin.SinceKotlin public final annotation class ExperimentalCollectionLiterals public constructor() : kotlin.Annotation {
 }
 
 @kotlin.RequiresOptIn @kotlin.annotation.Retention @kotlin.annotation.Target @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class ExperimentalStdlibApi public constructor() : kotlin.Annotation {

@@ -368,7 +368,7 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     }
 }
 
-@kotlin.RequiresOptIn(level = Level.ERROR) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "2.3") public final annotation class ExperimentalCollectionLiterals : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.RequiresOptIn(level = Level.ERROR) @kotlin.SinceKotlin(version = "2.3") public final annotation class ExperimentalCollectionLiterals : kotlin.Annotation {
     /*primary*/ public constructor ExperimentalCollectionLiterals()
 }
 
