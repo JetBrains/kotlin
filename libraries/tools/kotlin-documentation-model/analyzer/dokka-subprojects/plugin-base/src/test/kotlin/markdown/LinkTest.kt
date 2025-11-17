@@ -31,6 +31,7 @@ class LinkTest : BaseAbstractTest() {
             }
         }
     }
+
     @Test
     fun linkToClassLoader() {
         val configuration = dokkaConfiguration {
@@ -54,12 +55,13 @@ class LinkTest : BaseAbstractTest() {
             configuration
         ) {
             renderingStage = { rootPageNode, _ ->
-                assertNotNull((rootPageNode.children.single().children.single() as MemberPageNode)
-                    .content
-                    .dfs { node ->
-                        node is ContentDRILink &&
-                                node.address.toString() == "parser//test/#java.lang.ClassLoader/PointingToDeclaration/"
-                    }
+                assertNotNull(
+                    (rootPageNode.children.single().children.single() as MemberPageNode)
+                        .content
+                        .dfs { node ->
+                            node is ContentDRILink &&
+                                    node.address.toString() == "parser//test/#java.lang.ClassLoader/PointingToDeclaration/"
+                        }
                 )
             }
         }
@@ -343,7 +345,8 @@ class LinkTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                val functionDocs = (module.packages.flatMap { it.classlikes }.first() as DClass).constructors.first().documentation.values.first()
+                val functionDocs = (module.packages.flatMap { it.classlikes }
+                    .first() as DClass).constructors.first().documentation.values.first()
                 val expected = Description(
                     root = CustomDocTag(
                         children = listOf(
@@ -776,6 +779,7 @@ class LinkTest : BaseAbstractTest() {
             }
         }
     }
+
     @Test
     fun `link should be stable for overloads in different files`() {
         testInline(
@@ -851,7 +855,17 @@ class LinkTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                assertEquals(DRI("example", null, callable = Callable("bar", receiver = TypeConstructor("example.Bar", params = emptyList()), params = emptyList())), module.getLinkDRIFrom("usage"))
+                assertEquals(
+                    DRI(
+                        "example",
+                        null,
+                        callable = Callable(
+                            "bar",
+                            receiver = TypeConstructor("example.Bar", params = emptyList()),
+                            params = emptyList()
+                        )
+                    ), module.getLinkDRIFrom("usage")
+                )
             }
         }
     }
@@ -888,7 +902,15 @@ class LinkTest : BaseAbstractTest() {
                     null,
                     callable = Callable(
                         "foo",
-                        receiver = TypeConstructor("kotlin.collections.List", params = listOf(TypeParam(listOf(TypeConstructor("kotlin.Number", emptyList()))))),
+                        receiver = TypeConstructor(
+                            "kotlin.collections.List",
+                            params = listOf(
+                                TypeParam(
+                                    name = "T",
+                                    bounds = listOf(TypeConstructor("kotlin.Number", emptyList()))
+                                )
+                            )
+                        ),
                         params = emptyList()
                     )
                 )
@@ -946,7 +968,15 @@ class LinkTest : BaseAbstractTest() {
                     null,
                     callable = Callable(
                         "foo",
-                        receiver = TypeConstructor("kotlin.collections.List", params = listOf(TypeParam(listOf(TypeConstructor("kotlin.Number", emptyList()))))),
+                        receiver = TypeConstructor(
+                            "kotlin.collections.List",
+                            params = listOf(
+                                TypeParam(
+                                    name = "T",
+                                    bounds = listOf(TypeConstructor("kotlin.Number", emptyList()))
+                                )
+                            )
+                        ),
                         params = emptyList()
                     )
                 )
@@ -996,7 +1026,10 @@ class LinkTest : BaseAbstractTest() {
                     assertEquals("kotlin.collections", dri.packageName)
                     assertEquals(null, dri.classNames)
                     assertEquals(functionName, dri.callable?.name)
-                    assertEquals("kotlin.collections.Iterable", (dri.callable?.receiver as? TypeConstructor)?.fullyQualifiedName)
+                    assertEquals(
+                        "kotlin.collections.Iterable",
+                        (dri.callable?.receiver as? TypeConstructor)?.fullyQualifiedName
+                    )
                     assertEquals(PointingToDeclaration, dri.target)
                     assertEquals(null, dri.extra)
                 }
@@ -1116,7 +1149,10 @@ class LinkTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                assertEquals(DRI("example", "Storage", Callable("value", null, emptyList())), module.getLinkDRIFrom("usage"))
+                assertEquals(
+                    DRI("example", "Storage", Callable("value", null, emptyList())),
+                    module.getLinkDRIFrom("usage")
+                )
             }
         }
     }
@@ -1147,10 +1183,15 @@ class LinkTest : BaseAbstractTest() {
             documentablesMergingStage = { module ->
                 assertEquals(
                     listOf(
-                        "Storage.setValue" to DRI("example", "Storage", Callable("setValue", null, listOf(TypeConstructor("kotlin.String", emptyList())))),
+                        "Storage.setValue" to DRI(
+                            "example",
+                            "Storage",
+                            Callable("setValue", null, listOf(TypeConstructor("kotlin.String", emptyList())))
+                        ),
                         "Storage.prop" to DRI("example", "Storage", Callable("getProp", null, emptyList()))
                     ),
-                    module.getAllLinkDRIFrom("usage"))
+                    module.getAllLinkDRIFrom("usage")
+                )
             }
         }
     }
