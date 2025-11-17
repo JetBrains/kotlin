@@ -3,31 +3,32 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// Later, we can do the same thing for other foreign annotations, too.
-val jakartaAnnotationsClasspath: Configuration by configurations.creating {
+val thirdPartyAnnotationsClasspath: Configuration by configurations.creating {
     isCanBeDeclared = true
     isCanBeResolved = false
     isCanBeConsumed = false
     isVisible = false
+    isTransitive = false
 }
 
-val jakartaAnnotationsClasspathResolver: Configuration by configurations.creating {
+val thirdPartyAnnotationsClasspathResolver: Configuration by configurations.creating {
     isCanBeDeclared = false
     isCanBeResolved = true
     isCanBeConsumed = false
     isVisible = false
-    extendsFrom(jakartaAnnotationsClasspath)
+    isTransitive = false
+    extendsFrom(thirdPartyAnnotationsClasspath)
 }
 
 tasks.named<Test>("test") {
-    val jakartaAnnotationsFiles: FileCollection =
-        jakartaAnnotationsClasspathResolver
+    val annotationsFiles: FileCollection =
+        thirdPartyAnnotationsClasspathResolver
 
-    inputs.files(jakartaAnnotationsFiles)
-        .withPropertyName("jakartaAnnotationsFiles")
+    inputs.files(annotationsFiles)
+        .withPropertyName("annotationsFiles")
         .withNormalizer(ClasspathNormalizer::class)
 
     jvmArgumentProviders += CommandLineArgumentProvider {
-        listOf("-Djakarta.annotations.classpath=${jakartaAnnotationsFiles.asPath}")
+        listOf("-Dthird.party.annotations.classpath=${annotationsFiles.asPath}")
     }
 }

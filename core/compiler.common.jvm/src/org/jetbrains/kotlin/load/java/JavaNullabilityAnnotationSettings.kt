@@ -74,6 +74,11 @@ val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullability
             sinceVersion = KotlinVersion(2, 5),
             reportLevelAfter = ReportLevel.STRICT
         ),
+        FqName("io.vertx.codegen.annotations") to JavaNullabilityAnnotationsStatus(
+            reportLevelBefore = ReportLevel.WARN,
+            sinceVersion = KotlinVersion(2, 5),
+            reportLevelAfter = ReportLevel.STRICT
+        ),
     )
 )
 

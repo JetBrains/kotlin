@@ -49,7 +49,8 @@ dependencies {
     testFixturesApi(toolsJarApi())
     testRuntimeOnly(toolsJar())
 
-    jakartaAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
+    thirdPartyAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
+    thirdPartyAnnotationsClasspath(commonDependency("io.vertx", "vertx-codegen"))
 }
 
 optInToExperimentalCompilerApi()

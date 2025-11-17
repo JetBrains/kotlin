@@ -1,0 +1,14 @@
+package
+
+public fun main(/*0*/ a: A<kotlin.String>, /*1*/ a1: A<kotlin.String?>): kotlin.Unit
+
+public open class A</*0*/ T : kotlin.Any!> {
+    public constructor A</*0*/ T : kotlin.Any!>()
+    @io.vertx.codegen.annotations.Nullable public final var field: @io.vertx.codegen.annotations.Nullable kotlin.String?
+    @io.vertx.codegen.annotations.Nullable public open fun baz(/*0*/ x: T!): @io.vertx.codegen.annotations.Nullable T?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @io.vertx.codegen.annotations.Nullable public open fun foo(/*0*/ x: kotlin.String!, /*1*/ @io.vertx.codegen.annotations.Nullable y: @io.vertx.codegen.annotations.Nullable kotlin.CharSequence?): @io.vertx.codegen.annotations.Nullable kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

@@ -48,7 +48,8 @@ dependencies {
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(toolsJar())
 
-    jakartaAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
+    thirdPartyAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
+    thirdPartyAnnotationsClasspath(commonDependency("io.vertx", "vertx-codegen"))
 }
 
 sourceSets {

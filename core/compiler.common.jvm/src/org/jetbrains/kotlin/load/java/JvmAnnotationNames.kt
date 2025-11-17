@@ -119,6 +119,8 @@ val NULLABLE_ANNOTATIONS: Set<FqName> = setOf(
     FqName("org.eclipse.jdt.annotation.Nullable"),
     // Jakarta
     FqName("jakarta.annotation.Nullable"),
+    // vertx
+    FqName("io.vertx.codegen.annotations.Nullable"),
 )
 
 val FORCE_FLEXIBILITY_ANNOTATIONS: Set<FqName> = setOf(
