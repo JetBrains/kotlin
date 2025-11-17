@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.file.DuplicatesStrategy
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.swc.KotlinTranspileWithSwc
@@ -104,6 +105,7 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
 
         linkSyncTask.configure { task ->
             task.from.from(swcTask.flatMap { it.outputDirectory })
+            task.duplicatesStrategy = DuplicatesStrategy.INCLUDE
         }
     }
 
