@@ -159,22 +159,59 @@ internal class BtaImplGenerator(
             property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
                 initializer("%T(%S)", argumentTypeName, name)
             }
-            if (argument is BtaCompilerArgument.SSoTCompilerArgument) {
-                require(argument.effectiveCompilerName != null)
-                generateAutomaticArgumentsPropagators(
-                    implClassName,
-                    name,
-                    type,
-                    argument,
-                    wasRemoved,
-                    argument.effectiveCompilerName,
-                    toCompilerConverterFun,
-                    wasIntroducedRecently,
-                    applyCompilerArgumentsFun,
-                    argumentTypeParameter
-                )
+            when (argument) {
+                is BtaCompilerArgument.SSoTCompilerArgument -> {
+                    generateAutomaticArgumentsPropagators(
+                        implClassName,
+                        name,
+                        type,
+                        argument,
+                        wasRemoved,
+                        argument.effectiveCompilerName,
+                        toCompilerConverterFun,
+                        wasIntroducedRecently,
+                        applyCompilerArgumentsFun,
+                        argumentTypeParameter
+                    )
+                }
+                is BtaCompilerArgument.CustomCompilerArgument -> {
+                    generateCustomRepresentation(
+                        implClassName,
+                        name,
+                        type,
+                        argument,
+                        wasRemoved,
+                        toCompilerConverterFun,
+                        wasIntroducedRecently,
+                        applyCompilerArgumentsFun,
+                        argumentTypeParameter
+                    )
+                }
             }
         }
+    }
+
+    private fun generateCustomRepresentation(
+        implClassName: String,
+        name: String,
+        type: KType,
+        argument: BtaCompilerArgument.CustomCompilerArgument,
+        wasRemoved: Boolean,
+        toCompilerConverterFun: FunSpec.Builder,
+        wasIntroducedRecently: Boolean,
+        applyCompilerArgumentsFun: FunSpec.Builder,
+        argumentTypeParameter: TypeName,
+    ) {
+        val theClass = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
+        argument.generateConverters(
+            theClass,
+            argument,
+            name,
+            wasIntroducedRecently,
+            wasRemoved,
+            toCompilerConverterFun,
+            generateCompatLayer,
+        )
     }
 
     /**
@@ -184,7 +221,7 @@ internal class BtaImplGenerator(
         implClassName: String,
         name: String,
         type: KType,
-        argument: BtaCompilerArgument,
+        argument: BtaCompilerArgument.SSoTCompilerArgument,
         wasRemoved: Boolean,
         effectiveCompilerName: String,
         toCompilerConverterFun: FunSpec.Builder,
@@ -341,7 +378,7 @@ internal class BtaImplGenerator(
     }
 }
 
-private fun FunSpec.Builder.addSafeSetStatement(
+internal fun FunSpec.Builder.addSafeSetStatement(
     wasIntroducedRecently: Boolean,
     wasRemoved: Boolean,
     name: String,
