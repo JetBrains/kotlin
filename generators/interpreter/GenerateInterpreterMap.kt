@@ -159,6 +159,15 @@ private fun generateInterpretTernaryFunction(p: Printer, ternaryOperations: List
 }
 
 private fun generateCanInterpretFunction(p: Printer, operations: List<Operation>) {
+
+    // TODO, KT-81660: These functions are specially handled so they are not included in the other maps, but we must know that they are
+    // interpretable.
+    var operations = operations.plus(listOf(
+            Operation(callableIdOf(null, "trimMargin", "kotlin.text"), listOf("String")),
+            Operation(callableIdOf(null, "trimIndent", "kotlin.text"), listOf("String")),
+            Operation(callableIdOf(null, "trimMargin", "kotlin.text"), listOf("String", "String")),
+        ))
+
     p.println("private val knownFunctions = setOf(")
     p.pushIndent()
     for (operation in operations) {

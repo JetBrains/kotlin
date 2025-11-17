@@ -1186,8 +1186,6 @@ private val knownFunctions = setOf(
     "kotlin/UShort.toUInt(kotlin.UShort)",
     "kotlin/UShort.toULong(kotlin.UShort)",
     "kotlin/UShort.toUShort(kotlin.UShort)",
-    "kotlin/text/trimMargin(kotlin.String)",
-    "kotlin/text/trimIndent(kotlin.String)",
     "kotlin/toULong(kotlin.Long)",
     "kotlin/toUInt(kotlin.Long)",
     "kotlin/toUShort(kotlin.Long)",
@@ -1637,7 +1635,6 @@ private val knownFunctions = setOf(
     "kotlin/UShort.times(kotlin.UShort, kotlin.UInt)",
     "kotlin/UShort.times(kotlin.UShort, kotlin.ULong)",
     "kotlin/UShort.xor(kotlin.UShort, kotlin.UShort)",
-    "kotlin/text/trimMargin(kotlin.String, kotlin.String)",
     "kotlin/internal/ir/less(kotlin.Char, kotlin.Char)",
     "kotlin/internal/ir/less(kotlin.Byte, kotlin.Byte)",
     "kotlin/internal/ir/less(kotlin.Short, kotlin.Short)",
@@ -1719,6 +1716,9 @@ private val knownFunctions = setOf(
     "kotlin/LongArray.set(kotlin.LongArray, kotlin.Int, kotlin.Long)",
     "kotlin/DoubleArray.set(kotlin.DoubleArray, kotlin.Int, kotlin.Double)",
     "kotlin/Array.set(kotlin.Array, kotlin.Int, T)",
+    "kotlin/text/trimMargin(kotlin.String)",
+    "kotlin/text/trimIndent(kotlin.String)",
+    "kotlin/text/trimMargin(kotlin.String, kotlin.String)",
 )
 
 internal fun canInterpretFunction(callableId: CallableId, typeA: String, typeB: String? = null, typeC: String? = null): Boolean {
