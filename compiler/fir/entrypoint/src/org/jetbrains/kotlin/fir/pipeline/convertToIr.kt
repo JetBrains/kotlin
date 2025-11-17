@@ -569,7 +569,7 @@ private class Fir2IrPipeline(
         )
     }
 
-    fun IrPluginContext.applyIrGenerationExtensions(
+    fun Fir2IrPluginContext.applyIrGenerationExtensions(
         irModuleFragment: IrModuleFragment,
         irGenerationExtensions: Collection<IrGenerationExtension>,
     ) {
@@ -584,6 +584,7 @@ private class Fir2IrPipeline(
                 throw IrGenerationExtensionException(e, extension::class.java)
             }
         }
+        recordLookupsWithoutSpecificFile(irModuleFragment)
     }
 }
 

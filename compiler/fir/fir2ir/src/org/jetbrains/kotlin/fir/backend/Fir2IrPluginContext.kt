@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
@@ -86,10 +88,22 @@ class Fir2IrPluginContext(
     override val metadataDeclarationRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar
         get() = c.annotationsFromPluginRegistrar
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private val lookupsWithoutSpecificFile = mutableSetOf<FqName>()
+
+    @IrPluginContext.LookupWithoutUseSiteFile
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
+        return referenceClassImpl(classId, fromFile = null)
+    }
+
+    override fun referenceClass(classId: ClassId, fromFile: IrFile): IrClassSymbol? {
+        return referenceClassImpl(classId, fromFile)
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun referenceClassImpl(classId: ClassId, fromFile: IrFile?): IrClassSymbol? {
         var classIdToSearch = classId
         while (true) {
+            recordLookup(classIdToSearch.asSingleFqName(), fromFile)
             val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classIdToSearch) ?: return null
             when (firSymbol) {
                 is FirRegularClassSymbol -> return c.classifierStorage.getIrClassSymbol(firSymbol)
@@ -101,8 +115,19 @@ class Fir2IrPluginContext(
         }
     }
 
+    @IrPluginContext.LookupWithoutUseSiteFile
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun referenceClassifier(classId: ClassId): IrSymbol? {
+        return referenceClassifierImpl(classId, fromFile = null)
+    }
+
+    override fun referenceClassifier(classId: ClassId, fromFile: IrFile): IrSymbol? {
+        return referenceClassifierImpl(classId, fromFile)
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun referenceClassifierImpl(classId: ClassId, fromFile: IrFile?): IrSymbol? {
+        recordLookup(classId.asSingleFqName(), fromFile)
         val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
         return when (firSymbol) {
             is FirRegularClassSymbol -> c.classifierStorage.getIrClassSymbol(firSymbol)
@@ -111,7 +136,18 @@ class Fir2IrPluginContext(
         }
     }
 
+    @IrPluginContext.LookupWithoutUseSiteFile
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
+        return referenceConstructorsImpl(classId, fromFile = null)
+    }
+
+    override fun referenceConstructors(classId: ClassId, fromFile: IrFile): Collection<IrConstructorSymbol> {
+        return referenceConstructorsImpl(classId, fromFile)
+    }
+
+    @IrPluginContext.LookupWithoutUseSiteFile
+    private fun referenceConstructorsImpl(classId: ClassId, fromFile: IrFile?): Collection<IrConstructorSymbol> {
+        recordLookup(classId.asSingleFqName(), fromFile)
         return referenceCallableSymbols(
             classId,
             getCallablesFromScope = { getDeclaredConstructors() },
@@ -120,7 +156,17 @@ class Fir2IrPluginContext(
         )
     }
 
+    @IrPluginContext.LookupWithoutUseSiteFile
     override fun referenceFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol> {
+        return referenceFunctionsImpl(callableId, fromFile = null)
+    }
+
+    override fun referenceFunctions(callableId: CallableId, fromFile: IrFile): Collection<IrSimpleFunctionSymbol> {
+        return referenceFunctionsImpl(callableId, fromFile)
+    }
+
+    private fun referenceFunctionsImpl(callableId: CallableId, fromFile: IrFile?): Collection<IrSimpleFunctionSymbol> {
+        recordLookup(callableId.asSingleFqName(), fromFile)
         return referenceCallableSymbols(
             callableId.classId,
             getCallablesFromScope = { getFunctions(callableId.callableName) },
@@ -129,7 +175,17 @@ class Fir2IrPluginContext(
         )
     }
 
+    @IrPluginContext.LookupWithoutUseSiteFile
     override fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol> {
+        return referencePropertiesImpl(callableId, fromFile = null)
+    }
+
+    override fun referenceProperties(callableId: CallableId, fromFile: IrFile): Collection<IrPropertySymbol> {
+        return referencePropertiesImpl(callableId, fromFile)
+    }
+
+    private fun referencePropertiesImpl(callableId: CallableId, fromFile: IrFile?): Collection<IrPropertySymbol> {
+        recordLookup(callableId.asSingleFqName(), fromFile)
         return referenceCallableSymbols(
             callableId.classId,
             getCallablesFromScope = { getProperties(callableId.callableName).filterIsInstance<FirPropertySymbol>() },
@@ -157,12 +213,31 @@ class Fir2IrPluginContext(
     }
 
     override fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile) {
-        val lookupTracker = c.session.lookupTracker ?: return
-        val fqName = declaration.fqNameWhenAvailable ?: return
-        val firFile = (fromFile.metadata as? FirMetadataSource.File)?.fir ?: return
-        val fileSource = firFile.source ?: return
-        lookupTracker.recordFqNameLookup(fqName, source = null, fileSource = fileSource)
+        recordLookup(declaration.fqNameWhenAvailable, fromFile)
     }
+
+    private fun recordLookup(fqName: FqName?, fromFile: IrFile?) {
+        if (fqName == null) return
+        if (fromFile == null) {
+            lookupsWithoutSpecificFile += fqName
+        } else {
+            val lookupTracker = c.session.lookupTracker ?: return
+            lookupTracker.recordFqNameLookup(fqName, source = null, fileSource = fromFile.fileSource)
+        }
+    }
+
+    fun recordLookupsWithoutSpecificFile(moduleFragment: IrModuleFragment) {
+        val lookupTracker = c.session.lookupTracker ?: return
+        for (file in moduleFragment.files) {
+            val fileSource = file.fileSource ?: continue
+            for (fqName in lookupsWithoutSpecificFile) {
+                lookupTracker.recordFqNameLookup(fqName, source = null, fileSource = fileSource)
+            }
+        }
+    }
+
+    private val IrFile.fileSource: KtSourceElement?
+        get() = (metadata as? FirMetadataSource.File)?.fir?.source
 
     override val diagnosticReporter: IrDiagnosticReporter =
         KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)

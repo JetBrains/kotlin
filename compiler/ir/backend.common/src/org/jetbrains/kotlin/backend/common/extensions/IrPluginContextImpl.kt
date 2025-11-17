@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
-import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -111,6 +108,26 @@ open class IrPluginContextImpl(
         return symbols
     }
 
+    override fun referenceClass(classId: ClassId, fromFile: IrFile): IrClassSymbol? {
+        return referenceClass(classId)
+    }
+
+    override fun referenceConstructors(classId: ClassId, fromFile: IrFile): Collection<IrConstructorSymbol> {
+        return referenceConstructors(classId)
+    }
+
+    override fun referenceFunctions(callableId: CallableId, fromFile: IrFile): Collection<IrSimpleFunctionSymbol> {
+        return referenceFunctions(callableId)
+    }
+
+    override fun referenceProperties(callableId: CallableId, fromFile: IrFile): Collection<IrPropertySymbol> {
+        return referenceProperties(callableId)
+    }
+
+    override fun referenceClassifier(classId: ClassId, fromFile: IrFile): IrSymbol? {
+        return referenceClassifier(classId)
+    }
+
     @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override fun referenceClass(fqName: FqName): IrClassSymbol? {
@@ -162,6 +179,7 @@ open class IrPluginContextImpl(
         }
     }
 
+    @IrPluginContext.LookupWithoutUseSiteFile
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
         val fqName = classId.asSingleFqName()
@@ -174,6 +192,7 @@ open class IrPluginContextImpl(
         }
     }
 
+    @IrPluginContext.LookupWithoutUseSiteFile
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceClassifier(classId: ClassId): IrSymbol? {
         val fqName = classId.asSingleFqName()
@@ -186,14 +205,17 @@ open class IrPluginContextImpl(
         }
     }
 
+    @IrPluginContext.LookupWithoutUseSiteFile
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
         return referenceConstructors(classId.asSingleFqName())
     }
 
+    @IrPluginContext.LookupWithoutUseSiteFile
     override fun referenceFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol> {
         return referenceFunctions(callableId.asSingleFqName())
     }
 
+    @IrPluginContext.LookupWithoutUseSiteFile
     override fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol> {
         return referenceProperties(callableId.asSingleFqName())
     }

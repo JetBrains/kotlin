@@ -58,6 +58,52 @@ interface IrPluginContext : IrGeneratorContext {
      */
     val metadataDeclarationRegistrar: IrGeneratedDeclarationsRegistrar
 
+    // ------------------------------------ Reference API (IC compatible) ------------------------------------
+
+    /**
+     * Returns a class associated with given [classId].
+     * If there is a typealias with the [classId], this function returns its expansion.
+     *
+     * If you need to access a not-expanded typealias, use [referenceClassifier] instead.
+     *
+     * @param fromFile the file from which the reference is made.
+     *   This information is needed for proper reference collecting for incremental compilation.
+     */
+    fun referenceClass(classId: ClassId, fromFile: IrFile): IrClassSymbol?
+
+    /**
+     * Returns a class or typealias associated with given [classId].
+     *
+     * @param fromFile the file from which the reference is made.
+     *   This information is needed for proper reference collecting for incremental compilation.
+     */
+    fun referenceClassifier(classId: ClassId, fromFile: IrFile): IrSymbol?
+
+    /**
+     * Returns constructors of a class associated with given [classId].
+     * If there is a typealias with the [classId], this function returns constructors of its expansion.
+     *
+     * @param fromFile the file from which the reference is made.
+     *   This information is needed for proper reference collecting for incremental compilation.
+     */
+    fun referenceConstructors(classId: ClassId, fromFile: IrFile): Collection<IrConstructorSymbol>
+
+    /**
+     * Returns functions with given [callableId].
+     *
+     * @param fromFile the file from which the reference is made.
+     *   This information is needed for proper reference collecting for incremental compilation.
+     */
+    fun referenceFunctions(callableId: CallableId, fromFile: IrFile): Collection<IrSimpleFunctionSymbol>
+
+    /**
+     * Returns properties with given [callableId].
+     *
+     * @param fromFile the file from which the reference is made.
+     *   This information is needed for proper reference collecting for incremental compilation.
+     */
+    fun referenceProperties(callableId: CallableId, fromFile: IrFile): Collection<IrPropertySymbol>
+
     // ------------------------------------ Reference API (IC incompatible) ------------------------------------
 
     /**
@@ -66,27 +112,32 @@ interface IrPluginContext : IrGeneratorContext {
      *
      * If you need to access a not-expanded typealias, use [referenceClassifier] instead.
      */
+    @LookupWithoutUseSiteFile
     fun referenceClass(classId: ClassId): IrClassSymbol?
 
     /**
      * Returns a class or typealias associated with given [classId].
      */
+    @LookupWithoutUseSiteFile
     fun referenceClassifier(classId: ClassId): IrSymbol?
 
     /**
      * Returns constructors of a class associated with given [classId].
      * If there is a typealias with the [classId], this function returns constructors of its expansion.
      */
+    @LookupWithoutUseSiteFile
     fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol>
 
     /**
      * Returns functions with given [callableId].
      */
+    @LookupWithoutUseSiteFile
     fun referenceFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol>
 
     /**
      * Returns properties with given [callableId].
      */
+    @LookupWithoutUseSiteFile
     fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol>
 
     // ------------------------------------ IC API ------------------------------------
@@ -152,4 +203,16 @@ interface IrPluginContext : IrGeneratorContext {
     @FirIncompatiblePluginAPI
     @Deprecated(K1_DEPRECATION_MESSAGE, level = DeprecationLevel.WARNING)
     fun referenceTopLevel(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleDescriptor: ModuleDescriptor): IrSymbol?
+
+    // ------------------------------------ Opt-ins ------------------------------------
+
+    /**
+     * Marks declaration reference API, which automatically record lookups for incremental compilation for all the files.
+     *
+     * The acceptable use-case for them is to reference some builtin Kotlin declarations or statically known declarations
+     * from libraries that are required for the plugin to work.
+     */
+    // TODO: uncomment when official plugins are migrated (KT-82341)
+    // @RequiresOptIn("This API doesn't automatically records lookups for incremental compilation. Please use it with caution.")
+    annotation class LookupWithoutUseSiteFile
 }
