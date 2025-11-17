@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.symbols.*
@@ -60,10 +58,35 @@ interface IrPluginContext : IrGeneratorContext {
      */
     val metadataDeclarationRegistrar: IrGeneratedDeclarationsRegistrar
 
+    // ------------------------------------ Reference API (IC incompatible) ------------------------------------
+
+    /**
+     * Returns a class associated with given [classId].
+     * If there is a typealias with the [classId], this function returns its expansion.
+     *
+     * If you need to access a not-expanded typealias, use [referenceClassifier] instead.
+     */
     fun referenceClass(classId: ClassId): IrClassSymbol?
-    fun referenceTypeAlias(classId: ClassId): IrTypeAliasSymbol?
+
+    /**
+     * Returns a class or typealias associated with given [classId].
+     */
+    fun referenceClassifier(classId: ClassId): IrSymbol?
+
+    /**
+     * Returns constructors of a class associated with given [classId].
+     * If there is a typealias with the [classId], this function returns constructors of its expansion.
+     */
     fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol>
+
+    /**
+     * Returns functions with given [callableId].
+     */
     fun referenceFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol>
+
+    /**
+     * Returns properties with given [callableId].
+     */
     fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol>
 
     // ------------------------------------ IC API ------------------------------------

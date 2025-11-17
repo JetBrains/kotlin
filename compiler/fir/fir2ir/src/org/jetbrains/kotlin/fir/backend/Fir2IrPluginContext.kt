@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -16,31 +15,28 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.recordFqNameLookup
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
+import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
-import org.jetbrains.kotlin.fir.lookupTracker
-import org.jetbrains.kotlin.fir.recordFqNameLookup
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -90,14 +86,29 @@ class Fir2IrPluginContext(
     override val metadataDeclarationRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar
         get() = c.annotationsFromPluginRegistrar
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
-        val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirClassSymbol<*> ?: return null
-        return c.classifierStorage.getIrClassSymbol(firSymbol)
+        var classIdToSearch = classId
+        while (true) {
+            val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classIdToSearch) ?: return null
+            when (firSymbol) {
+                is FirRegularClassSymbol -> return c.classifierStorage.getIrClassSymbol(firSymbol)
+                is FirTypeAliasSymbol -> {
+                    classIdToSearch = firSymbol.resolvedExpandedTypeRef.coneType.classId ?: return null
+                }
+                is FirAnonymousObjectSymbol -> shouldNotBeCalled()
+            }
+        }
     }
 
-    override fun referenceTypeAlias(classId: ClassId): IrTypeAliasSymbol? {
-        val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirTypeAliasSymbol ?: return null
-        return c.classifierStorage.getIrTypeAliasSymbol(firSymbol)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    override fun referenceClassifier(classId: ClassId): IrSymbol? {
+        val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
+        return when (firSymbol) {
+            is FirRegularClassSymbol -> c.classifierStorage.getIrClassSymbol(firSymbol)
+            is FirTypeAliasSymbol -> c.classifierStorage.getIrTypeAliasSymbol(firSymbol)
+            is FirAnonymousObjectSymbol -> shouldNotBeCalled()
+        }
     }
 
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {

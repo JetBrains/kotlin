@@ -162,12 +162,28 @@ open class IrPluginContextImpl(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
-        return referenceClass(classId.asSingleFqName())
+        val fqName = classId.asSingleFqName()
+        return resolveSymbol(fqName.parent()) l@{ scope ->
+            when (val descriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND)) {
+                is TypeAliasDescriptor -> st.descriptorExtension.referenceClass(descriptor.classDescriptor ?: return@l null)
+                is ClassDescriptor -> st.descriptorExtension.referenceClass(descriptor)
+                else -> null
+            }
+        }
     }
 
-    override fun referenceTypeAlias(classId: ClassId): IrTypeAliasSymbol? {
-        return referenceTypeAlias(classId.asSingleFqName())
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override fun referenceClassifier(classId: ClassId): IrSymbol? {
+        val fqName = classId.asSingleFqName()
+        return resolveSymbol(fqName.parent()) { scope ->
+            when (val descriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND)) {
+                is TypeAliasDescriptor -> st.descriptorExtension.referenceTypeAlias(descriptor)
+                is ClassDescriptor -> st.descriptorExtension.referenceClass(descriptor)
+                else -> null
+            }
+        }
     }
 
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
