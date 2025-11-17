@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironment
  */
 class CustomWebCompilerSecondStageEnvironmentConfigurator(testServices: TestServices) : JsSecondStageEnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        configuration.verifyIr = IrVerificationMode.NONE
         super.configureCompilerConfiguration(configuration, module)
+        configuration.verifyIr = IrVerificationMode.NONE
     }
 }
