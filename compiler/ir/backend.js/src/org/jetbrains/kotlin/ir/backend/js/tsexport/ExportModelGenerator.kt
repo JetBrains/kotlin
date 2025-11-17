@@ -109,10 +109,11 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
         if (!constructor.isPrimary) return null
-        val visibility = if (constructor.constructedClass.modality == Modality.SEALED) {
-            ExportedVisibility.PRIVATE
-        } else {
-            constructor.visibility.toExportedVisibility()
+        val constructedClass = constructor.constructedClass
+        val visibility = when (constructedClass.modality) {
+            Modality.SEALED -> ExportedVisibility.PRIVATE
+            Modality.FINAL if constructor.visibility == DescriptorVisibilities.PROTECTED -> ExportedVisibility.PRIVATE
+            else -> constructor.visibility.toExportedVisibility()
         }
         return ExportedConstructor(
             parameters = constructor.nonDispatchParameters
@@ -338,8 +339,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
                 is IrField -> {
                     assert(
-                        candidate.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE ||
-                                candidate.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
+                        candidate.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
                                 candidate.correspondingPropertySymbol != null
                     ) {
                         "Unexpected field without property ${candidate.fqNameWhenAvailable}"

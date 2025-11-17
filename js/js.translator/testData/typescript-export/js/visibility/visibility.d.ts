@@ -59,8 +59,7 @@ declare namespace JS_TESTS {
             }
         }
         class classWithProtectedConstructors {
-            protected constructor();
-            protected static createWithString(arg: string): Class.classWithProtectedConstructors;
+            private constructor();
         }
         namespace classWithProtectedConstructors {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -79,47 +78,12 @@ declare namespace JS_TESTS {
         }
     }
     class FinalClass {
-        protected constructor();
-        protected static fromNumber(n: number): FinalClass;
-        protected get protectedVal(): number;
-        protected protectedFun(): number;
+        private constructor();
     }
     namespace FinalClass {
         /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
         namespace $metadata$ {
             const constructor: abstract new () => FinalClass;
-        }
-        class protectedClass {
-            constructor();
-        }
-        namespace protectedClass {
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace $metadata$ {
-                const constructor: abstract new () => protectedClass;
-            }
-        }
-        abstract class protectedNestedObject extends KtSingleton<protectedNestedObject.$metadata$.constructor>() {
-            private constructor();
-        }
-        namespace protectedNestedObject {
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace $metadata$ {
-                abstract class constructor {
-                    private constructor();
-                }
-            }
-        }
-        abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
-            private constructor();
-        }
-        namespace Companion {
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace $metadata$ {
-                abstract class constructor {
-                    get companionObjectProp(): number;
-                    private constructor();
-                }
-            }
         }
     }
     abstract class EnumClass {

@@ -225,8 +225,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
                 is IrField -> {
                     assert(
-                        candidate.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE ||
-                                candidate.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
+                        candidate.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
                                 candidate.correspondingPropertySymbol != null
                     ) {
                         "Unexpected field without property ${candidate.fqNameWhenAvailable}"

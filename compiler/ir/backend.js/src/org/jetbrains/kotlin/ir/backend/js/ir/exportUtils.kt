@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.ir
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
@@ -129,6 +131,27 @@ private fun shouldDeclarationBeExported(
 
     if (declaration.isJsExportIgnore() || (declaration as? IrDeclarationWithVisibility)?.visibility?.isPublicAPI == false)
         return false
+
+    if (declaration is IrField && declaration.isObjectInstanceField()) {
+        // Object instance fields are generated with the public visibility because after InlineObjectsWithPureInitializationLowering
+        // we replace calls to object getters with direct field accesses, which can be cross-module.
+        // But those fields aren't meant to end up in DCE roots, which they would otherwise.
+        return false
+    }
+
+    val parentModality = declaration.parentClassOrNull?.modality
+    if (declaration is IrDeclarationWithVisibility
+        && !(declaration is IrConstructor && declaration.isPrimary)
+        && declaration.visibility == DescriptorVisibilities.PROTECTED
+        && (parentModality == Modality.FINAL || parentModality == Modality.SEALED)
+    ) {
+        // Protected members inside final classes are effectively private.
+        // Protected members inside sealed classes are effectively module-private.
+        // The only exception is the primary constructor: we will set its visibility to private during
+        // TypeScript export model generation, otherwise, if no (private) primary constructor is exported, there will be
+        // a default constructor, which we don't want.
+        return false
+    }
 
     if (context.additionalExportedDeclarationNames.contains(declaration.fqNameWhenAvailable))
         return true
