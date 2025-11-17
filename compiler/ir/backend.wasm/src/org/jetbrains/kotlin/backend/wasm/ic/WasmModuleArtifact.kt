@@ -21,15 +21,15 @@ class WasmSrcFileArtifact(
         if (fragments != null) {
             return fragments
         }
-        return astArtifact?.ifExists { readBytes() }
-            ?.let {
-                WasmIrProgramFragments(
-                    WasmDeserializer(
-                        inputStream = it.inputStream(),
-                        skipLocalNames = skipLocalNames,
-                    ).deserialize()
-                )
+        return astArtifact?.ifExists {
+            val fragment = inputStream().use {
+                WasmDeserializer(
+                    inputStream = it,
+                    skipLocalNames = skipLocalNames,
+                ).deserialize()
             }
+            WasmIrProgramFragments(mainFragment = fragment)
+        }
     }
 
     override fun isModified() = fragments != null
