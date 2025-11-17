@@ -246,6 +246,7 @@ private fun Settings.applyBootstrapConfiguration(
                     ":kotlin-stdlib",
                     ":kotlin-script-runtime",
                     ":kotlin-scripting-common",
+                    ":kotlin-scripting-common-fir",
                     ":kotlin-scripting-jvm",
                 )
             ) {
