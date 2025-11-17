@@ -27,7 +27,7 @@ class RewriteSourceMapFilterReaderTest {
     fun testPrologSplitByReads() {
         // Test the case when prolog contents is splitted between reads.
         // Like, one buffer ends with `],"sourc`, and the other starts with `esContent"`
-        val prolog = sample("", "").substringBefore(RewriteSourceMapFilterReader.PROLOG_END)
+        val prolog = sample("", "").substringBefore(RewriteSourceMapFilterReader.SOURCES_CONTENT_PROLOG_END)
         doTest(1, addToProlog = "-".repeat(1024 - prolog.length - "],\"sourc".length))
     }
 

@@ -24,7 +24,8 @@ open class RewriteSourceMapFilterReader(
     // All rest contents will be passed directly from [input].
 
     companion object {
-        internal const val PROLOG_END = "],\"sourcesContent\":"
+        internal const val SOURCES_CONTENT_PROLOG_END = "],\"sourcesContent\":"
+        internal const val NAMES_PROLOG_END = "],\"names\":"
         const val UNSUPPORTED_FORMAT_MESSAGE =
             "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`"
 
@@ -71,7 +72,10 @@ open class RewriteSourceMapFilterReader(
             // Like, one buffer ends with `],"sourc`, and the other starts with `esContent"`
             val prevEnd = jsonString.length
             jsonString.append(readBuffer, 0, lastRead)
-            jsonPrologPos = jsonString.indexOf(PROLOG_END, prevEnd - PROLOG_END.length)
+            val sourceContentPrologEndPos = jsonString.indexOf(SOURCES_CONTENT_PROLOG_END, prevEnd - SOURCES_CONTENT_PROLOG_END.length)
+            jsonPrologPos = if (sourceContentPrologEndPos == -1) {
+                jsonString.indexOf(NAMES_PROLOG_END, prevEnd - NAMES_PROLOG_END.length)
+            } else sourceContentPrologEndPos
             if (jsonPrologPos == -1) {
                 if (jsonString.length + lastRead > prologLimit) {
                     writeBackUnsupported(jsonString, "Too many sources or format is not supported")
@@ -106,7 +110,7 @@ open class RewriteSourceMapFilterReader(
                     }
                     "version" -> bufferJsonWriter.name(key).value(json.nextInt())
                     "file" -> bufferJsonWriter.name(key).value(json.nextString())
-                    "sourcesContent" -> break@reading
+                    "sourcesContent", "names" -> break@reading
                     else -> throw IllegalStateException("Unknown key \"$key\"")
                 }
             }

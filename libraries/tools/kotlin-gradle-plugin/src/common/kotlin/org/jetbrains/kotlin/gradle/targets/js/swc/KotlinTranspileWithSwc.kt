@@ -142,7 +142,6 @@ internal constructor(
             add(configFile.get().absolutePath)
             add("--env-name=${mode.get().code}")
             add("--strip-leading-paths")
-            add("--copy-files")
             add("--out-dir")
             add(outputDirectory.get().asFile.absolutePath)
             add("--out-file-extension=$fileExtension")

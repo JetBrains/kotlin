@@ -45,10 +45,6 @@ internal abstract class KotlinSwcConfig {
         if (it == JsModuleKind.MODULE_ES) "nodenext" else it.kind
     }
 
-    private val parseMap: Provider<Boolean> = platformType.zip(sourceMaps) { platformType, sourceMaps ->
-        platformType == JsPlatformType.BROWSER && sourceMaps
-    }
-
     @get:Internal
     internal val fileExtension: Provider<String> =
         moduleSystemToUse.map { if (it == JsModuleKind.MODULE_ES) JsFileExtensions.MODULE else JsFileExtensions.REGULAR }
@@ -57,7 +53,6 @@ internal abstract class KotlinSwcConfig {
         set("\$schema", "https://swc.rs/schema.json")
         set("sourceMaps", sourceMaps.get())
         set("inputSourceMap", sourceMaps.get())
-        if (parseMap.get()) set("parseMap", true)
         set("exclude", arrayOf(".*\\.d\\.m?ts$"))
         set("jsc", buildMap<String, Any> {
             set("parser", buildMap {
