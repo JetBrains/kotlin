@@ -111,6 +111,7 @@ internal constructor(
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun configureExec(
         execSpec: ExecSpec,
         errorClient: TeamCityMessageCommonClient,
@@ -128,18 +129,26 @@ internal constructor(
             logger = errorClient.log
         )
 
-
         configFile.get().writeText(json(config.toConfigMap()))
 
+        val inputDirectory = inputFilesDirectory.get().asFile
+        val parentOfInputDirectory = inputDirectory.parentFile
+        val inputDirectoryName = inputDirectory.name
+
+        val fileExtension = config.fileExtension.get()
         val args = buildList {
-            add("--config-file=${configFile.get().absolutePath}")
+            add(inputDirectoryName)
+            add("--config-file")
+            add(configFile.get().absolutePath)
             add("--env-name=${mode.get().code}")
-            add("--out-dir=${outputDirectory.get().asFile.absolutePath}")
-            add("--out-file-extension=${config.fileExtension.get()}")
-            add(inputFilesDirectory.get().asFile.absolutePath)
+            add("--strip-leading-paths")
+            add("--copy-files")
+            add("--out-dir")
+            add(outputDirectory.get().asFile.absolutePath)
+            add("--out-file-extension=$fileExtension")
         }
 
-        execSpec.workingDir(npmProject.dir)
+        execSpec.workingDir(parentOfInputDirectory)
         execSpec.executable(npmProject.nodeExecutable)
 
         val modules = NpmProjectModules(npmToolingEnvDir.getFile())
