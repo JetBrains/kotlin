@@ -305,7 +305,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = ("Enable more detailed performance statistics (Experimental).\n" +
                 "For Native, the performance report includes execution time and lines processed per second for every individual lowering.\n" +
                 "For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.").asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultTrue
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_0,

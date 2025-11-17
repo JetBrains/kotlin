@@ -303,7 +303,7 @@ Multiple constraints can be specified by repeating this option. Cycles in constr
 For Native, the performance report includes execution time and lines processed per second for every individual lowering.
 For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.""",
     )
-    var detailedPerf: Boolean = false
+    var detailedPerf: Boolean = true
         set(value) {
             checkFrozen()
             field = value
