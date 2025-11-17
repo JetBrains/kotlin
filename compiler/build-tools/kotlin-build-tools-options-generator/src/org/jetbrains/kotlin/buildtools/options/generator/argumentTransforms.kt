@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 sealed interface ArgumentTransform {
     object NoOp : ArgumentTransform
     object Drop : ArgumentTransform
+    class CustomArgument(val argument: BtaCompilerArgument.CustomCompilerArgument) : ArgumentTransform
 //    data class Rename(val to: String) : ArgumentTransform // possible future operations
 }
 
@@ -31,6 +32,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xintellij-plugin-root")
             drop("Xcommon-sources")
             drop("Xenable-incremental-compilation")
+            custom(CustomCompilerArguments.compilerPlugins)
 
             // KMP related
             drop("Xmulti-platform")
@@ -78,12 +80,23 @@ private fun MutableMap<String, ArgumentTransform>.drop(name: String) {
 }
 
 context(level: KotlinCompilerArgumentsLevel)
+private fun MutableMap<String, ArgumentTransform>.custom(argument: BtaCompilerArgument.CustomCompilerArgument) {
+    put(argument.name, ArgumentTransform.CustomArgument(argument))
+}
+
+context(level: KotlinCompilerArgumentsLevel)
 internal fun KotlinCompilerArgument.transform(): ArgumentTransform =
     levelsToArgumentTransforms[level.name]?.get(name) ?: ArgumentTransform.NoOp
 
 internal fun KotlinCompilerArgumentsLevel.filterOutDroppedArguments(): List<KotlinCompilerArgument> =
     arguments.filter { it.transform() != ArgumentTransform.Drop }
 
-internal fun KotlinCompilerArgumentsLevel.transformArguments(): List<BtaCompilerArgument> {
-    return filterOutDroppedArguments().map { BtaCompilerArgument.SSoTCompilerArgument(it) }
+context(level: KotlinCompilerArgumentsLevel)
+private fun KotlinCompilerArgumentsLevel.generateCustomArguments(): List<BtaCompilerArgument> {
+    val levelTransforms = levelsToArgumentTransforms[level.name] ?: error("Level $level is not found in levelsToArgumentTransforms")
+    return levelTransforms.values.filterIsInstance<ArgumentTransform.CustomArgument>().map { it.argument }
+}
+
+internal fun KotlinCompilerArgumentsLevel.transformApiArguments(): List<BtaCompilerArgument> {
+    return filterOutDroppedArguments().map { BtaCompilerArgument.SSoTCompilerArgument(it) } + generateCustomArguments()
 }
