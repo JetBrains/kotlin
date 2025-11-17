@@ -105,14 +105,20 @@ class JavadocParserTest : BaseAbstractTest() {
                 kotlin.test.assertEquals(
                     listOf(
                         Text(body = "Identifies calls to "),
-                        CodeInline(children = listOf(Text(body = "assertThat"))),
+                        CodeInline(children = listOf(Text(body = "assertThat")), mapOf("lang" to "java")),
                         Text(body = ". "),
-                        CodeInline(children = listOf(Text(body = "\nSet<String> s;\nSystem.out.println(\"s1 = \" + s);\n")))
+                        CodeInline(
+                            children = listOf(Text(body = "\nSet<String> s;\nSystem.out.println(\"s1 = \" + s);\n")),
+                            mapOf("lang" to "java")
+                        )
                     ),
                     root.children[0].children
                 )
                 kotlin.test.assertEquals(
-                    CodeBlock(children = listOf(Text(body = "\nSet<String> s2;\nSystem.out\n        .println(\"s2 = \" + s2);\n"))),
+                    CodeBlock(
+                        children = listOf(Text(body = "\nSet<String> s2;\nSystem.out\n        .println(\"s2 = \" + s2);\n")),
+                        mapOf("lang" to "java")
+                    ),
                     root.children[1]
                 )
             }
@@ -306,7 +312,8 @@ class JavadocParserTest : BaseAbstractTest() {
                                         )
                                     ),
                                     Text("\"")
-                                )
+                                ),
+                                mapOf("lang" to "java")
                             ),
                         )
                     ),
@@ -316,7 +323,8 @@ class JavadocParserTest : BaseAbstractTest() {
                             CodeInline(
                                 listOf(
                                     Text("path")
-                                )
+                                ),
+                                mapOf("lang" to "java")
                             ),
                             Text(" attribute. ")
                         )
@@ -333,7 +341,8 @@ class JavadocParserTest : BaseAbstractTest() {
                                         )
                                     ),
                                     Text("\"")
-                                )
+                                ),
+                                mapOf("lang" to "java")
                             )
                         )
                     ),
