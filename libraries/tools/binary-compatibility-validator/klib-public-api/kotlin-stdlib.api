@@ -9750,6 +9750,11 @@ open annotation class kotlin.native.internal.test/TestInitializer : kotlin/Annot
 }
 
 // Targets: [native]
+open annotation class kotlin.native.internal.test/TestsProcessed : kotlin/Annotation { // kotlin.native.internal.test/TestsProcessed|null[0]
+    constructor <init>() // kotlin.native.internal.test/TestsProcessed.<init>|<init>(){}[0]
+}
+
+// Targets: [native]
 open annotation class kotlin.native.internal/CanBePrecreated : kotlin/Annotation { // kotlin.native.internal/CanBePrecreated|null[0]
     constructor <init>() // kotlin.native.internal/CanBePrecreated.<init>|<init>(){}[0]
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.ir
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.at
@@ -164,7 +165,7 @@ val IrFile.isJvmBuiltin: Boolean get() = hasAnnotation(StandardClassIds.Annotati
 
 val IrFile.isBytecodeGenerationSuppressed: Boolean get() = hasAnnotation(StandardClassIds.Annotations.SuppressBytecodeGeneration)
 
-fun IrFunction.wrapWithLambdaCall(parent: IrDeclarationParent, context: CommonBackendContext): IrRichFunctionReference {
+fun IrFunction.wrapWithLambdaCall(parent: IrDeclarationParent, context: LoweringContext): IrRichFunctionReference {
     require(this.typeParameters.isEmpty())
     val wrapper = factory.buildFun {
         setSourceRange(this@wrapWithLambdaCall)

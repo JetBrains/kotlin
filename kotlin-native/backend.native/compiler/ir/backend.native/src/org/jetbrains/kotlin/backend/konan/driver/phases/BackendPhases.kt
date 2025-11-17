@@ -100,9 +100,13 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2
             irDiagnosticReporter,
     )
     val preSerializationLowered = newEngine(loweringContext) { engine ->
+        // TODO: move to nativeLoweringsOfTheFirstPhase after they moved to NativeLoweringPhases.kt
+        // Unfortunately, this needs K/N to be turned on by default in the Kotlin repository.
+        val lowerings = listOf(testProcessorModulePhase) +
+                nativeLoweringsOfTheFirstPhase(environment.configuration.languageVersionSettings)
         engine.runPreSerializationLoweringPhases(
                 fir2IrOutput.fir2irActualizedResult,
-                nativeLoweringsOfTheFirstPhase(environment.configuration.languageVersionSettings),
+                lowerings,
         )
     }
     // TODO: After KT-73624, generate native diagnostic tests for `compiler/testData/diagnostics/irInliner/syntheticAccessors`

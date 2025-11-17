@@ -3,6 +3,7 @@ Kotlin to Native compiler performance report
              ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s
    TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s
      IR PRE-LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (TestProcessor)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (UpgradeCallableReferences)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (AssertionWrapperLowering)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (AvoidLocalFOsInInlineFunctionsLowering)

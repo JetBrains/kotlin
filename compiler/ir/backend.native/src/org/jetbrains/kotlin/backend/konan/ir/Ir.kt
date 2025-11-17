@@ -9,17 +9,13 @@ import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.lower.TestProcessorFunctionKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -126,13 +122,6 @@ private object ClassIds {
     val baseContinuationImpl = "BaseContinuationImpl".internalCoroutinesClassId
     val restrictedContinuationImpl = "RestrictedContinuationImpl".internalCoroutinesClassId
     val continuationImpl = "ContinuationImpl".internalCoroutinesClassId
-
-    // Test classes
-    private val String.internalTestClassId get() = ClassId(RuntimeNames.kotlinNativeInternalTestPackageName, Name.identifier(this))
-    val baseClassSuite = "BaseClassSuite".internalTestClassId
-    val topLevelSuite = "TopLevelSuite".internalTestClassId
-    val testFunctionKind = "TestFunctionKind".internalTestClassId
-    val testInitializer = "TestInitializer".internalTestClassId
 }
 
 // TODO: KT-77494 - move this callable ids into more appropriate places.
@@ -666,26 +655,7 @@ class KonanSymbols(
 
     val isAssertionThrowingErrorEnabled = CallableIds.isAssertionThrowingErrorEnabled.functionSymbol()
 
-    val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
-    val topLevelSuite = ClassIds.topLevelSuite.classSymbol()
-    val testFunctionKind = ClassIds.testFunctionKind.classSymbol()
-    val testInitializer = ClassIds.testInitializer.classSymbol()
-
     override val getWithoutBoundCheckName: Name? = KonanNameConventions.getWithoutBoundCheck
 
     override val setWithoutBoundCheckName: Name? = KonanNameConventions.setWithoutBoundCheck
-
-    private val testFunctionKindCache by lazy {
-        TestProcessorFunctionKind.entries.associateWith { kind ->
-            if (kind.runtimeKindString.isEmpty())
-                null
-            else
-                testFunctionKind.owner.declarations
-                        .filterIsInstance<IrEnumEntry>()
-                        .single { it.name == Name.identifier(kind.runtimeKindString) }
-                        .symbol
-        }
-    }
-
-    fun getTestFunctionKind(kind: TestProcessorFunctionKind) = testFunctionKindCache[kind]!!
 }

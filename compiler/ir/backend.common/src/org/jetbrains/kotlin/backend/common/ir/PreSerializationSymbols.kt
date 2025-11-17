@@ -273,11 +273,25 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
     val asserts: Iterable<IrSimpleFunctionSymbol>
     val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
 
+    val testInitializer: IrClassSymbol
+    val testsProcessed: IrClassSymbol
+
+    val topLevelSuite: IrClassSymbol
+    val baseClassSuite: IrClassSymbol
+    val testFunctionKind: IrClassSymbol
+
     open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationNativeSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns) {
         override val asserts: Iterable<IrSimpleFunctionSymbol> = CallableIds.asserts.functionSymbols()
 
         override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol =
             CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
+
+        override val testInitializer = ClassIds.testInitializer.classSymbol()
+        override val testsProcessed = ClassIds.testsProcessed.classSymbol()
+
+        override val topLevelSuite = ClassIds.topLevelSuite.classSymbol()
+        override val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
+        override val testFunctionKind = ClassIds.testFunctionKind.classSymbol()
 
         override val coroutineContextGetter: IrSimpleFunctionSymbol by CallableIds.coroutineContext.getterSymbol()
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
@@ -304,6 +318,18 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
                     get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(this))
                 val asserts: CallableId = "assert".builtInsCallableId
                 val isAssertionArgumentEvaluationEnabled: CallableId = "isAssertionArgumentEvaluationEnabled".builtInsCallableId
+            }
+
+            private object ClassIds {
+                val kotlinNativeInternalTestPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal", "test"))
+                private val String.internalTestClassId
+                    get() = ClassId(kotlinNativeInternalTestPackageName, Name.identifier(this))
+                val testInitializer = "TestInitializer".internalTestClassId
+                val testsProcessed = "TestsProcessed".internalTestClassId
+
+                val baseClassSuite = "BaseClassSuite".internalTestClassId
+                val topLevelSuite = "TopLevelSuite".internalTestClassId
+                val testFunctionKind = "TestFunctionKind".internalTestClassId
             }
         }
     }
