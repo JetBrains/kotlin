@@ -120,12 +120,7 @@ internal class JsAstMapperVisitor(
 
     override fun visitVariableDeclarationList(ctx: JavaScriptParser.VariableDeclarationListContext): JsVars {
         val modifier = ctx.varModifier()
-        val variant = when {
-            modifier.Var() != null -> JsVars.Variant.Var
-            modifier.let_() != null -> JsVars.Variant.Let
-            modifier.Const() != null -> JsVars.Variant.Const
-            else -> reportError("Invalid variable declaration statement: ${ctx.text}", ctx)
-        }
+        val variant = modifier.toVarVariant() ?: reportError("Invalid variable declaration statement: ${ctx.text}", ctx)
 
         return JsVars(variant).apply {
             ctx.variableDeclaration().forEach {
@@ -215,12 +210,10 @@ internal class JsAstMapperVisitor(
             val modifier = namedDeclaration.varModifier()
             val declaration = visitNode<JsVars.JsVar>(namedDeclaration)
             return JsForIn(
-                bindingVarVariant = when {
-                    modifier.Var() != null -> JsVars.Variant.Var
-                    modifier.let_() != null -> JsVars.Variant.Let
-                    modifier.Const() != null -> JsVars.Variant.Const
-                    else -> reportError("Invalid binding variable declaration: ${namedDeclaration.text}", ctx)
-                },
+                bindingVarVariant = modifier.toVarVariant() ?: reportError(
+                    "Invalid binding variable declaration: ${namedDeclaration.text}",
+                    ctx
+                ),
                 bindingVarName = declaration.name,
                 bindingExpression = declaration.initExpression,
                 iterableExpression = iterableExpression,
@@ -231,8 +224,38 @@ internal class JsAstMapperVisitor(
         reportError("Invalid 'for .. in' statement: ${ctx.text}", ctx)
     }
 
-    override fun visitForOfStatement(ctx: JavaScriptParser.ForOfStatementContext): JsNode {
-        reportError("'for .. of' is not supported yet", ctx)
+    override fun visitForOfStatement(ctx: JavaScriptParser.ForOfStatementContext): JsForOf {
+        check(ctx.Await() == null) { "Async iterators for loops are not supported yet" }
+
+        val iterableExpression = visitNode<JsExpression>(ctx.expressionSequence())
+        val bodyStatement = visitNode<JsStatement?>(ctx.statement()) ?: JsEmpty
+
+        ctx.singleExpression()?.let { unnamedExpression ->
+            return JsForOf(
+                bindingVarVariant = null,
+                bindingVarName = null,
+                bindingExpression = visitNode<JsExpression>(unnamedExpression),
+                iterableExpression = iterableExpression,
+                body = bodyStatement
+            ).applyLocation(ctx)
+        }
+
+        ctx.singleVariableDeclaration()?.let { namedDeclaration ->
+            val modifier = namedDeclaration.varModifier()
+            val declaration = visitNode<JsVars.JsVar>(namedDeclaration)
+            return JsForOf(
+                bindingVarVariant = modifier.toVarVariant() ?: reportError(
+                    "Invalid binding variable declaration: ${namedDeclaration.text}",
+                    ctx
+                ),
+                bindingVarName = declaration.name,
+                bindingExpression = declaration.initExpression,
+                iterableExpression = iterableExpression,
+                body = bodyStatement
+            ).applyLocation(ctx)
+        }
+
+        reportError("Invalid 'for .. in' statement: ${ctx.text}", ctx)
     }
 
     override fun visitVarModifier(ctx: JavaScriptParser.VarModifierContext): JsNode {

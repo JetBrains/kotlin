@@ -224,6 +224,15 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                                 readStatement()
                             )
                         }
+                        FOR_OF -> {
+                            JsForOf(
+                                ifTrue { jsVarVariants[readInt()] },
+                                ifTrue { nameTable[readInt()] },
+                                ifTrue { readExpression() },
+                                readExpression(),
+                                readStatement()
+                            )
+                        }
                         TRY -> {
                             JsTry(
                                 readBlock(),

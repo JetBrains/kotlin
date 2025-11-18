@@ -100,6 +100,11 @@ internal class DeadCodeElimination(private val root: JsStatement) {
             visitLoop(x.body) { true }
         }
 
+        override fun visitForOf(x: JsForOf) {
+            EliminationVisitor().accept(x.bindingExpression)
+            visitLoop(x.body) { true }
+        }
+
         private fun visitLoop(body: JsStatement?, additionalExitCondition: () -> Boolean) {
             val localBreakExistsBackup = localBreakExists
 

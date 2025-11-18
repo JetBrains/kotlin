@@ -31,6 +31,7 @@ object StatementIds {
     const val MULTI_LINE_COMMENT = 19
     const val IMPORT = 20
     const val EXPORT = 21
+    const val FOR_OF = 22
 }
 
 object ImportType {

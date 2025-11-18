@@ -87,6 +87,9 @@ abstract class JsVisitor {
     open fun visitForIn(x: JsForIn): Unit =
             visitLoop(x)
 
+    open fun visitForOf(x: JsForOf): Unit =
+            visitLoop(x)
+
     open fun visitFunction(x: JsFunction): Unit =
             visitElement(x)
 

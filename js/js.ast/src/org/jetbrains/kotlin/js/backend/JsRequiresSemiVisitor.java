@@ -49,6 +49,13 @@ public class JsRequiresSemiVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitForOf(@NotNull JsForOf x) {
+        if (x.getBody() instanceof JsEmpty) {
+            needsSemicolon = true;
+        }
+    }
+
+    @Override
     public void visitIf(@NotNull JsIf x) {
         JsStatement thenStmt = x.getThenStatement();
         JsStatement elseStmt = x.getElseStatement();

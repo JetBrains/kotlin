@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.js.backend.ast.JsDoubleLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsStringLiteral
+import org.jetbrains.kotlin.js.backend.ast.JsVars
 import org.jetbrains.kotlin.js.parser.antlr.JsAstMapper.Companion.createParserException
+import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 
 internal val ParserRuleContext.startPosition: CodePosition
     get() = start.startPosition
@@ -86,6 +88,14 @@ internal fun String.toOctalLiteral(): JsNumberLiteral {
     else
         JsDoubleLiteral(longValue.toDouble())
 }
+
+internal fun JavaScriptParser.VarModifierContext.toVarVariant(): JsVars.Variant? =
+    when {
+        Var() != null -> JsVars.Variant.Var
+        let_() != null -> JsVars.Variant.Let
+        Const() != null -> JsVars.Variant.Const
+        else -> null
+    }
 
 internal fun String.unescapeString(ctx: ParserRuleContext): String {
     val chars = this.toCharArray()

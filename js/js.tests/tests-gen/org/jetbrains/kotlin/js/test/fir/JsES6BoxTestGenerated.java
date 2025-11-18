@@ -7638,6 +7638,12 @@ public class JsES6BoxTestGenerated extends AbstractJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("forOf.kt")
+    public void testForOf() {
+      runTest("js/js.translator/testData/box/jsCode/forOf.kt");
+    }
+
+    @Test
     @TestMetadata("forWithoutInit.kt")
     public void testForWithoutInit() {
       runTest("js/js.translator/testData/box/jsCode/forWithoutInit.kt");

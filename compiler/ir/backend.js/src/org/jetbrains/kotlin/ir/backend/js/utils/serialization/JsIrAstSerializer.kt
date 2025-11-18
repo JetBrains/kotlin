@@ -290,6 +290,11 @@ private class JsIrAstSerializer {
                 writeIterableLoop(x)
             }
 
+            override fun visitForOf(x: JsForOf) {
+                writeByte(StatementIds.FOR_OF)
+                writeIterableLoop(x)
+            }
+
             override fun visitTry(x: JsTry) {
                 writeByte(StatementIds.TRY)
                 writeBlock(x.tryBlock)

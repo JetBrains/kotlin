@@ -131,6 +131,10 @@ public abstract class JsVisitorWithContext {
         endVisit((JsLoop) x, ctx);
     }
 
+    public void endVisit(@NotNull JsForOf x, @NotNull JsContext ctx) {
+        endVisit((JsLoop) x, ctx);
+    }
+
     public void endVisit(@NotNull JsFunction x, @NotNull JsContext ctx) {
         endVisit((JsExpression) x, ctx);
     }
@@ -313,6 +317,10 @@ public abstract class JsVisitorWithContext {
     }
 
     public boolean visit(@NotNull JsForIn x, @NotNull JsContext ctx) {
+        return visit((JsLoop) x, ctx);
+    }
+
+    public boolean visit(@NotNull JsForOf x, @NotNull JsContext ctx) {
         return visit((JsLoop) x, ctx);
     }
 

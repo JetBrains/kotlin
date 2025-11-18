@@ -7455,6 +7455,12 @@ public class LightTreeJsBoxTestGenerated extends AbstractLightTreeJsBoxTest {
     }
 
     @Test
+    @TestMetadata("forOf.kt")
+    public void testForOf() {
+      runTest("js/js.translator/testData/box/jsCode/forOf.kt");
+    }
+
+    @Test
     @TestMetadata("forWithoutInit.kt")
     public void testForWithoutInit() {
       runTest("js/js.translator/testData/box/jsCode/forWithoutInit.kt");

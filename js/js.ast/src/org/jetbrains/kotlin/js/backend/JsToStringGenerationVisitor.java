@@ -42,6 +42,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_SET = "set".toCharArray();
     private static final char[] CHARS_IF = "if".toCharArray();
     private static final char[] CHARS_IN = "in".toCharArray();
+    private static final char[] CHARS_OF = "of".toCharArray();
     private static final char[] CHARS_NEW = "new".toCharArray();
     private static final char[] CHARS_NULL = "null".toCharArray();
     private static final char[] CHARS_RETURN = "return".toCharArray();
@@ -645,6 +646,11 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitForIn(@NotNull JsForIn x) {
         visitIterableLoop(x, CHARS_IN);
+    }
+
+    @Override
+    public void visitForOf(@NotNull JsForOf x) {
+        visitIterableLoop(x, CHARS_OF);
     }
 
     private void visitIterableLoop(@NotNull JsIterableLoop x, char[] separatorChars) {
