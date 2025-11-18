@@ -800,7 +800,7 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
         """
         ) {
             with((this / "inheritors" / "NamedDomainObjectContainerScope" / "namer").cast<DProperty>()) {
-                dri equals DRI("inheritors", "NamedDomainObjectContainerDelegate", org.jetbrains.dokka.links.Callable("namer", null, emptyList()) )
+                dri equals DRI("inheritors", "NamedDomainObjectContainerDelegate", org.jetbrains.dokka.links.Callable("namer", null, emptyList(), isProperty = true) )
             }
         }
     }

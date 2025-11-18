@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import kotlin.collections.List
 
 /**
  * [DRI] stands for DokkaResourceIdentifier
@@ -87,8 +88,16 @@ public data class Callable(
     val receiver: TypeReference? = null,
     val params: List<TypeReference>,
     @property:ExperimentalDokkaApi
-    val contextParameters: List<TypeReference> = emptyList<TypeReference>()
+    val contextParameters: List<TypeReference> = emptyList(),
+    val isProperty: Boolean = false
 ) {
+    init {
+        if (isProperty) require(
+            params.isEmpty(),
+            { "Callable $name is property, but has the following parameters: $params" })
+
+    }
+
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
     public constructor(
         name: String,
@@ -102,6 +111,22 @@ public data class Callable(
         receiver: TypeReference? = this.receiver,
         params: List<TypeReference> = this.params
     ): Callable = Callable(name, receiver, params)
+
+    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+    public constructor(
+        name: String,
+        receiver: TypeReference? = null,
+        params: List<TypeReference>,
+        contextParameters: List<TypeReference>,
+    ) : this(name, receiver, params, contextParameters)
+
+    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+    public fun copy(
+        name: String = this.name,
+        receiver: TypeReference? = this.receiver,
+        params: List<TypeReference> = this.params,
+        contextParameters: List<TypeReference>
+    ): Callable = Callable(name, receiver, params, contextParameters)
 
     public fun signature(): String {
         /**

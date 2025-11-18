@@ -689,7 +689,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 dri equals DRI(
                     "classes",
                     "CookieJarImpl",
-                    Callable("prop", params =  emptyList())
+                    Callable("prop", params =  emptyList(), isProperty = true)
                 )
             }
             with((this / "classes" / "JavaNetCookieJar"/ "prop").cast<DProperty>()) {
@@ -697,7 +697,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 dri equals DRI(
                     "classes",
                     "CookieJar",
-                    Callable("prop", params =  emptyList())
+                    Callable("prop", params =  emptyList(), isProperty = true)
                 )
             }
         }

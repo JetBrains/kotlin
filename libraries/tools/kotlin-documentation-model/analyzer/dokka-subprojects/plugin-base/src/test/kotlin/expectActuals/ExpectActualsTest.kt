@@ -16,6 +16,7 @@ import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.MemberPageNode
+import org.junit.jupiter.api.Nested
 import utils.OnlySymbols
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -445,9 +446,15 @@ class ExpectActualsTest : BaseAbstractTest() {
         }
     }
 
-    @Test
-    fun `should merge an implicit-expectActual function with a single property #3685`() = testInline(
-        """
+    /**
+     * This is a corner case because a property and a function have the same DRI in the same source set
+     */
+    @Nested
+    inner class MergingPropertyAndFunction {
+
+        @Test
+        fun `should merge an implicit-expectActual function with a single property #3685`() = testInline(
+            """
         /src/common/test.kt
         expect class Skiko
 
@@ -466,21 +473,25 @@ class ExpectActualsTest : BaseAbstractTest() {
             }
         }
         """.trimMargin(),
-        multiplatformConfiguration
-    ) {
-        pagesGenerationStage = { root ->
-            val cl = root.dfs { it.name == "Skiko" && it is ClasslikePageNode } ?: throw IllegalStateException()
-            assertEquals(2, cl.children.count { it.name == "[jvm]isShowing" })
-        }
-        renderingStage = { root, _ ->
-            val documentables = (root.dfs { it.name == "[jvm]isShowing" } as MemberPageNode).documentables
-            assertEquals(listOf(DFunction::class, DProperty::class), documentables.map { it::class })
-        }
-    }
+            multiplatformConfiguration
+        ) {
+            pagesGenerationStage = { root ->
+                val cl = root.dfs { it.name == "Skiko" && it is ClasslikePageNode } ?: throw IllegalStateException()
+                assertEquals(1, cl.children.count { it.name == "[jvm]isShowing" })
+                assertEquals(1, cl.children.count { it.name == "isShowing" })
+            }
+            renderingStage = { root, _ ->
+                val documentables = (root.dfs { it.name == "[jvm]isShowing" } as MemberPageNode).documentables
+                assertEquals(listOf(DFunction::class), documentables.map { it::class })
 
-    @Test
-    fun `should merge an implicit-expectActual property with a single function #3685`() = testInline(
-        """
+                val documentableOfIsShowing = (root.dfs { it.name == "isShowing" } as MemberPageNode).documentables
+                assertEquals(listOf(DProperty::class), documentableOfIsShowing.map { it::class })
+            }
+        }
+
+        @Test
+        fun `should merge an implicit-expectActual property with a single function #3685`() = testInline(
+            """
         /src/common/test.kt
         expect class Skiko
 
@@ -497,15 +508,127 @@ class ExpectActualsTest : BaseAbstractTest() {
             val isShowing = false
         }
         """.trimMargin(),
-        multiplatformConfiguration
-    ) {
-        pagesGenerationStage = { root ->
-            val cl = root.dfs { it.name == "Skiko" && it is ClasslikePageNode } ?: throw IllegalStateException()
-            assertEquals(2, cl.children.count { it.name == "[jvm]isShowing" })
+            multiplatformConfiguration
+        ) {
+            pagesGenerationStage = { root ->
+                val cl = root.dfs { it.name == "Skiko" && it is ClasslikePageNode } ?: throw IllegalStateException()
+                assertEquals(1, cl.children.count { it.name == "[jvm]isShowing" })
+                assertEquals(1, cl.children.count { it.name == "isShowing" })
+            }
+            renderingStage = { root, _ ->
+                val documentables = (root.dfs { it.name == "[jvm]isShowing" } as MemberPageNode).documentables
+                assertEquals(listOf(DProperty::class), documentables.map { it::class })
+
+                val documentableOfIsShowing = (root.dfs { it.name == "isShowing" } as MemberPageNode).documentables
+                assertEquals(listOf(DFunction::class), documentableOfIsShowing.map { it::class })
+            }
         }
-        renderingStage = { root, _ ->
-            val documentables = (root.dfs { it.name == "[jvm]isShowing" } as MemberPageNode).documentables
-            assertEquals(listOf(DFunction::class, DProperty::class), documentables.map { it::class })
+
+        @Test
+        fun `should merge an explicit-expectActual property with a single function #3685`() = testInline(
+            """
+        /src/common/test.kt
+        expect class Skiko {
+            val isShowing
+        }
+
+        /src/jvm/test.kt
+        actual class Skiko actual constructor() {
+             actual val isShowing = false
+             fun isShowing(): Boolean {
+                return false
+            }
+        }
+        
+        /src/native/test.kt
+        actual class Skiko actual constructor(){
+            actual val isShowing = false
+        }
+        """.trimMargin(),
+            multiplatformConfiguration
+        ) {
+            pagesGenerationStage = { root ->
+                val cl = root.dfs { it.name == "Skiko" && it is ClasslikePageNode } ?: throw IllegalStateException()
+                // before page merging
+                assertEquals(2, cl.children.count { it.name == "isShowing" })
+            }
+            renderingStage = { root, _ ->
+                val documentables = (root.dfs { it.name == "isShowing" } as MemberPageNode).documentables
+                // after page merging
+                assertEquals(listOf(DFunction::class, DProperty::class), documentables.map { it::class })
+            }
+        }
+
+        @Test
+        fun `should merge an explicit-expectActual function with a single property #3685`() = testInline(
+            """
+        /src/common/test.kt
+        expect class Skiko {
+            fun isShowing(): Boolean
+        }
+
+        /src/jvm/test.kt
+        actual class Skiko actual constructor() {
+             val isShowing = false
+             actual fun isShowing(): Boolean {
+                return false
+            }
+        }
+        
+        /src/native/test.kt
+        actual class Skiko actual constructor(){
+            actual fun isShowing(): Boolean
+        }
+        """.trimMargin(),
+            multiplatformConfiguration
+        ) {
+            pagesGenerationStage = { root ->
+                val cl = root.dfs { it.name == "Skiko" && it is ClasslikePageNode } ?: throw IllegalStateException()
+                // before page merging
+                assertEquals(2, cl.children.count { it.name == "isShowing" })
+            }
+            renderingStage = { root, _ ->
+                val documentables = (root.dfs { it.name == "isShowing" } as MemberPageNode).documentables
+                // after page merging
+                assertEquals(listOf(DFunction::class, DProperty::class), documentables.map { it::class })
+            }
+        }
+
+        @Test
+        fun `should merge an explicit-expectActual function with a single function #3685`() = testInline(
+            """
+        /src/common/test.kt
+        expect class Skiko {
+            fun isShowing(): Boolean
+        }
+
+        /src/jvm/test.kt
+        actual class Skiko actual constructor() {
+             fun isShowing(b: Boolean): Boolean {
+                return b
+            }
+             actual fun isShowing(): Boolean {
+                return false
+            }
+        }
+        
+        /src/native/test.kt
+        actual class Skiko actual constructor(){
+            actual fun isShowing(): Boolean
+        }
+        """.trimMargin(),
+            multiplatformConfiguration
+        ) {
+            pagesGenerationStage = { root ->
+                val cl = root.dfs { it.name == "Skiko" && it is ClasslikePageNode } ?: throw IllegalStateException()
+                // before page merging
+                assertEquals(2, cl.children.count { it.name == "isShowing" })
+            }
+            renderingStage = { root, _ ->
+                val documentables = (root.dfs { it.name == "isShowing" } as MemberPageNode).documentables
+                // after page merging
+                assertEquals(listOf(DFunction::class, DFunction::class), documentables.map { it::class })
+            }
         }
     }
 
