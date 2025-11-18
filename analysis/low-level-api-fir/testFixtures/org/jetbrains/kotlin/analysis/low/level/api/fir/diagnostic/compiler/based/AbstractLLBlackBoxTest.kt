@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirOnlyNonReversedTestSuppressor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithoutPreresolve
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractLLBlackBoxTest : AbstractLLBlackBoxTestBase() {
+abstract class AbstractLLBlackBoxTest(targetPlatform: TargetPlatform = JvmPlatforms.defaultJvmPlatform) :
+    AbstractLLBlackBoxTestBase(targetPlatform) {
     override fun facade(): Constructor<LowLevelFirFrontendFacade> {
         return ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve)
     }

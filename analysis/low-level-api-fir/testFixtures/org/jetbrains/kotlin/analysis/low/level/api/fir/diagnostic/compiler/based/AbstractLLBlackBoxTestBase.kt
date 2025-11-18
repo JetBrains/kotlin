@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLLCompilerBasedTest
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
@@ -28,7 +31,8 @@ import java.io.File
  * to prevent missed broken analysis (e.g., contract violation).
  * This test case does not interact with the backend at all.
  */
-abstract class AbstractLLBlackBoxTestBase : AbstractLLCompilerBasedTest() {
+abstract class AbstractLLBlackBoxTestBase(private val targetPlatform: TargetPlatform) :
+    AbstractLLCompilerBasedTest() {
     abstract fun facade(): Constructor<LowLevelFirFrontendFacade>
     abstract fun facadeSpecificSuppressor(): Constructor<AfterAnalysisChecker>
 
@@ -36,10 +40,8 @@ abstract class AbstractLLBlackBoxTestBase : AbstractLLCompilerBasedTest() {
         with(builder) {
             facadeStep(facade())
             baseFirBlackBoxCodegenTestDirectivesConfiguration()
-            configureModernJavaWhenNeeded()
             useConfigurators(
                 ::CommonEnvironmentConfigurator,
-                ::JvmEnvironmentConfigurator,
             )
 
             useAdditionalSourceProviders(
@@ -58,12 +60,26 @@ abstract class AbstractLLBlackBoxTestBase : AbstractLLCompilerBasedTest() {
             }
 
             useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor, facadeSpecificSuppressor())
+
+            globalDefaults {
+                targetPlatform = this@AbstractLLBlackBoxTestBase.targetPlatform
+            }
+
+            when {
+                targetPlatform.isJvm() -> configureForJvmBlackBoxTests()
+                targetPlatform.isJs() -> {}
+                else -> error("Unsupported platform: $targetPlatform")
+            }
         }
     }
 
     override fun shouldSkipTest(filePath: String, configuration: TestConfiguration): Boolean {
         val testDataFile = File(filePath)
-        val targetBackend = TargetBackend.JVM_IR
+        val targetBackend = when {
+            targetPlatform.isJvm() -> TargetBackend.JVM
+            targetPlatform.isJs() -> TargetBackend.JS_IR
+            else -> error("Unsupported platform: $targetPlatform")
+        }
         if (!InTextDirectivesUtils.isCompatibleTarget(targetBackend, testDataFile)) return true
 
         return InTextDirectivesUtils.isIgnoredTarget(
@@ -74,4 +90,11 @@ abstract class AbstractLLBlackBoxTestBase : AbstractLLCompilerBasedTest() {
             InTextDirectivesUtils.IGNORE_BACKEND_K2_DIRECTIVE_PREFIX,
         )
     }
+}
+
+private fun TestConfigurationBuilder.configureForJvmBlackBoxTests() {
+    configureModernJavaWhenNeeded()
+    useConfigurators(
+        ::JvmEnvironmentConfigurator,
+    )
 }

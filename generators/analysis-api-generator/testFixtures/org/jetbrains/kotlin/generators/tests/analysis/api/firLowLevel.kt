@@ -528,7 +528,15 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 blackBoxTestsInit()
             }
 
+            testClass<AbstractLLJsBlackBoxTest> {
+                blackBoxTestsInit()
+            }
+
             testClass<AbstractLLReversedBlackBoxTest> {
+                blackBoxTestsInit()
+            }
+
+            testClass<AbstractLLReversedJsBlackBoxTest> {
                 blackBoxTestsInit()
             }
         }
