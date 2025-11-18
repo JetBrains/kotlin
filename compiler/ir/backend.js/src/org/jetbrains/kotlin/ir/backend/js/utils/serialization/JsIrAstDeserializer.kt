@@ -217,6 +217,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         }
                         FOR_IN -> {
                             JsForIn(
+                                ifTrue { jsVarVariants[readInt()] },
                                 ifTrue { nameTable[readInt()] },
                                 ifTrue { readExpression() },
                                 readExpression(),

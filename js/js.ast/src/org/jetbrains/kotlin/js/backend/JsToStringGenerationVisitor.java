@@ -644,6 +644,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitForIn(@NotNull JsForIn x) {
+        visitIterableLoop(x, CHARS_IN);
+    }
+
+    private void visitIterableLoop(@NotNull JsIterableLoop x, char[] separatorChars) {
         pushSourceInfo(x.getSource());
         printCommentsBeforeNode(x);
 
@@ -651,28 +655,33 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         space();
         leftParen();
 
-        if (x.getIterVarName() != null) {
-            var();
-            space();
-            nameDef(x.getIterVarName());
+        JsName name = x.getBindingVarName();
+        JsVars.Variant variant = x.getBindingVarVariant();
+        JsExpression bindingExpression = x.getBindingExpression();
+        JsExpression iterableExpression = x.getIterableExpression();
 
-            if (x.getIterExpression() != null) {
+        if (name != null && variant != null) {
+            varModifier(variant);
+            space();
+            nameDef(name);
+
+            if (bindingExpression != null) {
                 space();
                 assignment();
                 space();
-                accept(x.getIterExpression());
+                accept(bindingExpression);
             }
         }
         else {
             // Just a name ref.
             //
-            accept(x.getIterExpression());
+            accept(bindingExpression);
         }
 
         space();
-        p.print(CHARS_IN);
+        p.print(separatorChars);
         space();
-        accept(x.getObjectExpression());
+        accept(iterableExpression);
 
         rightParen();
 
@@ -1305,12 +1314,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         pushSourceInfo(vars.getSource());
         printCommentsBeforeNode(vars);
 
-        switch (vars.getVariant()) {
-            case Var: var(); break;
-            case Let: let(); break;
-            case Const: _const(); break;
-        }
-
+        varModifier(vars.getVariant());
         space();
         boolean sep = false;
         for (JsVar var : vars) {
@@ -1836,6 +1840,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             }
         }
         return false;
+    }
+
+    private void varModifier(JsVars.Variant variant) {
+        switch (variant) {
+            case Var: var(); break;
+            case Let: let(); break;
+            case Const: _const(); break;
+        }
     }
 
     private void var() {

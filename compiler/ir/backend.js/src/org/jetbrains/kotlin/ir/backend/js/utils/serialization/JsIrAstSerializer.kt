@@ -287,12 +287,7 @@ private class JsIrAstSerializer {
 
             override fun visitForIn(x: JsForIn) {
                 writeByte(StatementIds.FOR_IN)
-                ifNotNull(x.iterVarName) {
-                    writeInt(internalizeName(it))
-                }
-                ifNotNull(x.iterExpression) { writeExpression(it) }
-                writeExpression(x.objectExpression)
-                writeStatement(x.body)
+                writeIterableLoop(x)
             }
 
             override fun visitTry(x: JsTry) {
@@ -573,6 +568,18 @@ private class JsIrAstSerializer {
         writeInt(internalizeString(module.externalName))
         writeInt(internalizeName(module.internalName))
         ifNotNull(module.plainReference) { writeExpression(it) }
+    }
+
+    private fun DataWriter.writeIterableLoop(x: JsIterableLoop) {
+        ifNotNull(x.bindingVarVariant) {
+            writeInt(it.ordinal)
+        }
+        ifNotNull(x.bindingVarName) {
+            writeInt(internalizeName(it))
+        }
+        ifNotNull(x.bindingExpression) { writeExpression(it) }
+        writeExpression(x.iterableExpression)
+        writeStatement(x.body)
     }
 
     private fun DataWriter.writeFunction(function: JsFunction) {
