@@ -3,9 +3,14 @@ package org.jetbrains.kotlin.konan.util
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.*
 
-// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove the whole file!
+fun Properties.substituteFor(target: KonanTarget): Properties {
+    val result = Properties()
+    result.putAll(this)
+    substitute(result, defaultTargetSubstitutions(target))
+    return result
+}
 
-fun defaultTargetSubstitutions(target: KonanTarget) =
+private fun defaultTargetSubstitutions(target: KonanTarget) =
         mapOf<String, String>(
             "target" to target.visibleName,
             "arch" to target.architecture.visibleName,
@@ -13,7 +18,7 @@ fun defaultTargetSubstitutions(target: KonanTarget) =
 
 // Performs substitution similar to:
 //  foo = ${foo} ${foo.${arch}} ${foo.${os}}
-fun substitute(properties: Properties, substitutions: Map<String, String>) {
+private fun substitute(properties: Properties, substitutions: Map<String, String>) {
     val propertyNames = properties.stringPropertyNames().toList()
     for (substitution in substitutions.values) {
         for (key in propertyNames) {

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.konan.util
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.util.DefFile.DefFileConfig
 import org.jetbrains.kotlin.konan.util.DefFileProperty.NullableStringProperty.*
 import org.jetbrains.kotlin.konan.util.DefFileProperty.BooleanProperty.*
 import org.jetbrains.kotlin.konan.util.DefFileProperty.StringListProperty.*
@@ -26,15 +27,6 @@ import java.util.*
 import kotlin.reflect.KProperty
 
 class DefFile(val file: File?, val config: DefFileConfig, val manifestAddendProperties: Properties, val defHeaderLines: List<String>) {
-    private constructor(file: File?, triple: Triple<Properties, Properties, List<String>>) : this(
-        file,
-        DefFileConfig(triple.first),
-        triple.second,
-        triple.third
-    )
-
-    constructor(file: File?, substitutions: Map<String, String>) : this(file, parseDefFile(file, substitutions))
-
     val name by lazy {
         file?.nameWithoutExtension ?: ""
     }
@@ -82,7 +74,7 @@ class DefFile(val file: File?, val config: DefFileConfig, val manifestAddendProp
     }
 }
 
-private fun parseDefFile(file: File?, substitutions: Map<String, String>): Triple<Properties, Properties, List<String>> {
+private fun parseDefFile(file: File?, target: KonanTarget): Triple<Properties, Properties, List<String>> {
     val properties = Properties()
 
     if (file == null) {
@@ -122,11 +114,13 @@ private fun parseDefFile(file: File?, substitutions: Map<String, String>): Tripl
     // to compiler `-manifest`.
     val manifestAddendProperties = properties.duplicate()
 
-    substitute(properties, substitutions)
-
-    return Triple(properties, manifestAddendProperties, headerLines)
+    return Triple(properties.substituteFor(target), manifestAddendProperties, headerLines)
 }
 
 private fun Properties.duplicate() = Properties().apply { putAll(this@duplicate) }
 
-fun DefFile(file: File?, target: KonanTarget) = DefFile(file, defaultTargetSubstitutions(target))
+fun DefFile(file: File?, target: KonanTarget): DefFile {
+    val (substitutedProperties, originalProperties, headerLines) = parseDefFile(file, target)
+
+    return DefFile(file, DefFileConfig(substitutedProperties), originalProperties, headerLines)
+}

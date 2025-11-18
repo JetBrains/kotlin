@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
-import org.jetbrains.kotlin.konan.util.substitute
+import org.jetbrains.kotlin.konan.util.substituteFor
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.*
 import java.nio.file.Paths
@@ -38,8 +36,7 @@ open class TargetedLibraryImpl(
 
     override val manifestProperties: Properties by lazy {
         val properties = base.manifestProperties
-        target?.let { substitute(properties, defaultTargetSubstitutions(it)) }
-        properties
+        target?.let { properties.substituteFor(it) } ?: properties
     }
 }
 

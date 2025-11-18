@@ -61,7 +61,7 @@ abstract class InteropTestsBase {
         ))
         return buildNativeLibrary(
                 tool,
-                DefFile(defFile, tool.substitutions),
+                DefFile(defFile, tool.target),
                 cinteropArguments,
                 imports
         )
