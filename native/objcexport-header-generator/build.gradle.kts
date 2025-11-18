@@ -115,15 +115,18 @@ tasks.withType<Test>().configureEach {
 }
 
 projectTests {
+    val testK1Task = tasks.named<Test>("testK1")
+    val testAnalysisApiTask = tasks.named<Test>("testAnalysisApi")
+
     objCExportHeaderGeneratorTestTask("testIntegration", testDisplayNameTag = "testIntegration") {
         filter {
             includeTestsMatching("org.jetbrains.kotlin.backend.konan.tests.integration.ObjCExportIntegrationTest")
         }
 
-        inputs.files(tasks.named("testK1"))
+        inputs.files(testK1Task.map { it.outputs.files })
             .withPropertyName("testK1Outputs")
             .withPathSensitivity(PathSensitivity.RELATIVE)
-        inputs.files(tasks.named("testAnalysisApi"))
+        inputs.files(testAnalysisApiTask.map { it.outputs.files })
             .withPropertyName("testAnalysisApiOutputs")
             .withPathSensitivity(PathSensitivity.RELATIVE)
     }
