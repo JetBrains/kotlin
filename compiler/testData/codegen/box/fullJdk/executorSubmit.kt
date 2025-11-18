@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-7052
 
 import java.util.concurrent.Executors

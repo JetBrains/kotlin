@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-49401
 
@@ -19,11 +19,11 @@ fun create4(code: () -> Unit) {}
 fun <S> create4(code: () -> S): S = TODO()
 
 fun main() {
-    val x11 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create1<!> { "a" }
-    val x12 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create1<!> { println(123) }
+    val x11 = create1 { "a" }
+    val x12 = create1 { println(123) }
 
-    val x21 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create2<!> { "a" }
-    val x22 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create2<!> { println(123) }
+    val x21 = create2 { "a" }
+    val x22 = create2 { println(123) }
 
     val x31 = create3 { "a" }
     val x32 = create3 { println(123) }
@@ -31,11 +31,11 @@ fun main() {
     val x41 = create4 { "a" }
     val x42 = create4 { println(123) }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: create1, [/create1, /create1]")!>x11<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: create1, [/create1, /create1]")!>x12<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: create2, [/create2, /create2]")!>x21<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: create2, [/create2, /create2]")!>x22<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x31<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x11<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x12<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x21<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x22<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x31<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x32<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x41<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x42<!>
