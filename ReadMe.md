@@ -44,7 +44,7 @@ Support for multiplatform programming is one of Kotlin’s key benefits. It redu
 ## Build environment requirements
 
 This repository is using [Gradle toolchains](https://docs.gradle.org/current/userguide/toolchains.html) feature
-to select and auto-provision required JDKs from [AdoptOpenJdk](https://adoptopenjdk.net) project.
+to select and auto-provision required JDKs from [Eclipse Adoptium](https://adoptium.net) project.
 
 Alternatively, it is still possible to only provide required JDKs via environment variables 
 (see [gradle.properties](./gradle.properties#L5) for supported variable names). To ensure Gradle uses only JDKs 
