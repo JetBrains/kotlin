@@ -18,6 +18,7 @@ import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.Paths
+import kotlin.io.path.absolutePathString
 
 private typealias RandomAccessFileAndBuffer = Pair<RandomAccessFile, LargeDynamicMappedBuffer>
 
@@ -77,7 +78,7 @@ class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByte
         fun splitPath(path: String): Couple<String> {
             val separator = path.indexOf("!/")
             require(separator >= 0) { "Path in JarFileSystem must contain a separator: $path" }
-            val localPath = Paths.get(path.substring(0, separator)).toString()
+            val localPath = Paths.get(path.substring(0, separator)).toAbsolutePath().normalize().toString()
             val pathInJar = path.substring(separator + 2)
             return Couple.of(localPath, pathInJar)
         }

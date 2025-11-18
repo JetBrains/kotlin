@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
+import org.junit.jupiter.api.Assumptions.abort
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.reflect.full.declaredMemberFunctions
@@ -280,11 +281,7 @@ class CustomK2ReplTest {
         )
     }
 
-    @Test
-    fun testKotlinCoroutines() {
-        if (!isK2) return
-        val coroutinesCoreClasspath = System.getProperty("kotlin.script.test.kotlinx.coroutines.core.classpath")!!
-            .split(File.pathSeparator).map { File(it) }
+    fun doTestKotlinCoroutinesWithProvidedClasspath(coroutinesCoreClasspath: List<File>) {
         evalAndCheckSnippetsResultVals(
             sequenceOf(
                 """
@@ -309,6 +306,23 @@ class CustomK2ReplTest {
                 }
             }
         )
+    }
+
+    @Test
+    fun testKotlinCoroutines() {
+        if (!isK2) return
+        val coroutinesCoreClasspath = System.getProperty("kotlin.script.test.kotlinx.coroutines.core.classpath")!!
+            .split(File.pathSeparator).map(::File)
+        doTestKotlinCoroutinesWithProvidedClasspath(coroutinesCoreClasspath)
+    }
+
+    @Test
+    fun testKotlinCoroutinesWithRelativeClasspath() {
+        if (!isK2) return
+        val currentDir = File(".").absoluteFile
+        val coroutinesCoreClasspath = System.getProperty("kotlin.script.test.kotlinx.coroutines.core.classpath")!!
+            .split(File.pathSeparator).map { File(it).relativeToOrNull(currentDir) ?: abort("Cannot relativize $it to $currentDir") }
+        doTestKotlinCoroutinesWithProvidedClasspath(coroutinesCoreClasspath)
     }
 
     @Test

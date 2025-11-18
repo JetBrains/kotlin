@@ -191,7 +191,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
     val moduleDataHistory: MutableList<FirModuleData> = mutableListOf()
 
     init {
-        baseLibraryPaths.associateTo(pathToModuleData) { it to baseDependenciesModuleData }
+        baseLibraryPaths.map { it.toAbsolutePath().normalize() }.associateTo(pathToModuleData) { it to baseDependenciesModuleData }
         moduleDataHistory.add(baseDependenciesModuleData)
     }
 
@@ -202,7 +202,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         get() = baseDependenciesModuleData
 
     override fun getModuleData(path: Path?): FirModuleData? {
-        val normalizedPath = path?.normalize() ?: return null
+        val normalizedPath = path?.toAbsolutePath()?.normalize() ?: return null
         pathToModuleData[normalizedPath]?.let { return it }
         for ((libPath, moduleData) in pathToModuleData) {
             if (normalizedPath.startsWith(libPath)) return moduleData
@@ -214,7 +214,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         pathToModuleData.entries.mapNotNullTo(mutableSetOf()) { if (it.value == moduleData) it.key else null }.takeIf { it.isNotEmpty() }
 
     fun addNewLibraryModuleDataIfNeeded(libraryPaths: List<Path>): Pair<FirModuleData?, List<Path>> {
-        val newLibraryPaths = libraryPaths.filter { it !in pathToModuleData }
+        val newLibraryPaths = libraryPaths.map { it.toAbsolutePath().normalize() }.filter { it !in pathToModuleData }
         if (newLibraryPaths.isEmpty()) return null to emptyList()
         val newDependenciesModuleData = makeLibraryModuleData(Name.special("<REPL-lib-${moduleDataHistory.size + 1}>"))
         newLibraryPaths.associateTo(pathToModuleData) { it to newDependenciesModuleData }
