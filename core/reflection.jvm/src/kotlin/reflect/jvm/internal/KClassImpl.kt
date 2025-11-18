@@ -103,8 +103,8 @@ internal class KClassImpl<T : Any>(
         }
 
         val annotations: List<Annotation> by ReflectProperties.lazySoft {
-            val allAnnotations = jClass.annotations
-            val declaredAnnotations = jClass.declaredAnnotations
+            val allAnnotations = jClass.annotationsSafe()
+            val declaredAnnotations = jClass.declaredAnnotationsSafe()
             val hasInheritedAnnotations = allAnnotations.size != declaredAnnotations.size
 
             val filteredAnnotations = if (!hasInheritedAnnotations) {
@@ -126,7 +126,7 @@ internal class KClassImpl<T : Any>(
                 val unwrappedAnnotationClassesHosts = mutableMapOf<KClass<out Annotation>, Class<out Any>>()
                 var currentClass: Class<out Any> = jClass
                 while (true) {
-                    val currentClassAnnotations = currentClass.declaredAnnotations
+                    val currentClassAnnotations = currentClass.declaredAnnotationsSafe()
                     for (i in currentClassAnnotations.size - 1 downTo 0) {
                         val annotation = currentClassAnnotations[i]
 
@@ -609,4 +609,26 @@ internal class KClassImpl<T : Any>(
             it.asSingleFqName().toString()
         }
     }
+}
+
+
+// Safe helpers to guard against annotation retrieval failures due to missing classes
+private fun Class<*>.annotationsSafe(): Array<Annotation> = try {
+    this.annotations
+} catch (_: ArrayStoreException) {
+    emptyArray()
+} catch (_: TypeNotPresentException) {
+    emptyArray()
+} catch (_: LinkageError) {
+    emptyArray()
+}
+
+private fun Class<*>.declaredAnnotationsSafe(): Array<Annotation> = try {
+    this.declaredAnnotations
+} catch (_: ArrayStoreException) {
+    emptyArray()
+} catch (_: TypeNotPresentException) {
+    emptyArray()
+} catch (_: LinkageError) {
+    emptyArray()
 }

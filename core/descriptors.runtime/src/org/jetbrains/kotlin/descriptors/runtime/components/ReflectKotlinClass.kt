@@ -81,7 +81,7 @@ class ReflectKotlinClass private constructor(
 
 private object ReflectClassStructure {
     fun loadClassAnnotations(klass: Class<*>, visitor: KotlinJvmBinaryClass.AnnotationVisitor) {
-        for (annotation in klass.declaredAnnotations) {
+        for (annotation in klass.declaredAnnotationsSafe()) {
             processAnnotation(visitor, annotation)
         }
         visitor.visitEnd()
@@ -97,11 +97,12 @@ private object ReflectClassStructure {
         for (method in klass.declaredMethods) {
             val visitor = memberVisitor.visitMethod(Name.identifier(method.name), SignatureSerializer.methodDesc(method)) ?: continue
 
-            for (annotation in method.declaredAnnotations) {
+            for (annotation in method.declaredAnnotationsSafe()) {
                 processAnnotation(visitor, annotation)
             }
 
-            for ((parameterIndex, annotations) in method.parameterAnnotations.withIndex()) {
+            val paramAnns = method.parameterAnnotationsSafe()
+            for ((parameterIndex, annotations) in paramAnns.withIndex()) {
                 for (annotation in annotations) {
                     val annotationType = annotation.annotationClass.java
                     visitor.visitParameterAnnotation(parameterIndex, annotationType.classId, ReflectAnnotationSource(annotation))?.let {
@@ -118,11 +119,11 @@ private object ReflectClassStructure {
         for (constructor in klass.declaredConstructors) {
             val visitor = memberVisitor.visitMethod(SpecialNames.INIT, SignatureSerializer.constructorDesc(constructor)) ?: continue
 
-            for (annotation in constructor.declaredAnnotations) {
+            for (annotation in constructor.declaredAnnotationsSafe()) {
                 processAnnotation(visitor, annotation)
             }
 
-            val parameterAnnotations = constructor.parameterAnnotations
+            val parameterAnnotations = constructor.parameterAnnotationsSafe()
             if (parameterAnnotations.isNotEmpty()) {
                 // Constructors of some classes have additional synthetic parameters:
                 // - inner classes have one parameter, instance of the outer class
@@ -152,7 +153,7 @@ private object ReflectClassStructure {
         for (field in klass.declaredFields) {
             val visitor = memberVisitor.visitField(Name.identifier(field.name), SignatureSerializer.fieldDesc(field), null) ?: continue
 
-            for (annotation in field.declaredAnnotations) {
+            for (annotation in field.declaredAnnotationsSafe()) {
                 processAnnotation(visitor, annotation)
             }
 
@@ -286,4 +287,66 @@ private object SignatureSerializer {
     fun fieldDesc(field: Field): String {
         return field.type.desc
     }
+}
+
+
+// Safe helpers to guard against missing classes referenced by annotations
+private fun Class<*>.declaredAnnotationsSafe(): Array<Annotation> = try {
+    this.declaredAnnotations
+} catch (_: ArrayStoreException) {
+    emptyArray()
+} catch (_: TypeNotPresentException) {
+    emptyArray()
+} catch (_: LinkageError) {
+    emptyArray()
+}
+
+private fun java.lang.reflect.Method.declaredAnnotationsSafe(): Array<Annotation> = try {
+    this.declaredAnnotations
+} catch (_: ArrayStoreException) {
+    emptyArray()
+} catch (_: TypeNotPresentException) {
+    emptyArray()
+} catch (_: LinkageError) {
+    emptyArray()
+}
+
+private fun java.lang.reflect.Constructor<*>.declaredAnnotationsSafe(): Array<Annotation> = try {
+    this.declaredAnnotations
+} catch (_: ArrayStoreException) {
+    emptyArray()
+} catch (_: TypeNotPresentException) {
+    emptyArray()
+} catch (_: LinkageError) {
+    emptyArray()
+}
+
+private fun java.lang.reflect.Field.declaredAnnotationsSafe(): Array<Annotation> = try {
+    this.declaredAnnotations
+} catch (_: ArrayStoreException) {
+    emptyArray()
+} catch (_: TypeNotPresentException) {
+    emptyArray()
+} catch (_: LinkageError) {
+    emptyArray()
+}
+
+private fun java.lang.reflect.Method.parameterAnnotationsSafe(): Array<Array<Annotation>> = try {
+    this.parameterAnnotations
+} catch (_: ArrayStoreException) {
+    emptyArray()
+} catch (_: TypeNotPresentException) {
+    emptyArray()
+} catch (_: LinkageError) {
+    emptyArray()
+}
+
+private fun java.lang.reflect.Constructor<*>.parameterAnnotationsSafe(): Array<Array<Annotation>> = try {
+    this.parameterAnnotations
+} catch (_: ArrayStoreException) {
+    emptyArray()
+} catch (_: TypeNotPresentException) {
+    emptyArray()
+} catch (_: LinkageError) {
+    emptyArray()
 }

@@ -24,10 +24,10 @@ interface ReflectJavaAnnotationOwner : JavaAnnotationOwner {
     val element: AnnotatedElement?
 
     override val annotations: List<ReflectJavaAnnotation>
-        get() = element?.declaredAnnotations?.getAnnotations() ?: emptyList()
+        get() = element?.declaredAnnotationsSafe()?.getAnnotations() ?: emptyList()
 
     override fun findAnnotation(fqName: FqName) =
-        element?.declaredAnnotations?.findAnnotation(fqName)
+        element?.declaredAnnotationsSafe()?.findAnnotation(fqName)
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = false
@@ -39,4 +39,14 @@ fun Array<Annotation>.getAnnotations(): List<ReflectJavaAnnotation> {
 
 fun Array<Annotation>.findAnnotation(fqName: FqName): ReflectJavaAnnotation? {
     return firstOrNull { it.annotationClass.java.classId.asSingleFqName() == fqName }?.let(::ReflectJavaAnnotation)
+}
+
+private fun AnnotatedElement.declaredAnnotationsSafe(): Array<Annotation> = try {
+    this.declaredAnnotations
+} catch (_: ArrayStoreException) {
+    emptyArray()
+} catch (_: TypeNotPresentException) {
+    emptyArray()
+} catch (_: LinkageError) {
+    emptyArray()
 }
