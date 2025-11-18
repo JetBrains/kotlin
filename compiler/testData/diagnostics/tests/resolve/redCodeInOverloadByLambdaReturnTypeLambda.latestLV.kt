@@ -3,7 +3,7 @@
 // LATEST_LV_DIFFERENCE
 private fun foo(seq: Sequence<String>) {
     // flatMap should not be unresolved
-    seq.<!CANNOT_INFER_PARAMETER_TYPE!>flatMap<!> { it.<!UNRESOLVED_REFERENCE!>length2<!> }
+    seq.<!OVERLOAD_RESOLUTION_AMBIGUITY!>flatMap<!> { it.<!UNRESOLVED_REFERENCE!>length2<!> }
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral */

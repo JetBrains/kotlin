@@ -511,6 +511,7 @@ enum class LanguageFeature(
     ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
     ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
     WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
+    EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107"),
 
     // End of 2.* language features --------------------------------------------------
 

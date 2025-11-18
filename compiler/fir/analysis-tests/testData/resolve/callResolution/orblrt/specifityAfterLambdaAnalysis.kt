@@ -1,6 +1,7 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: FIR2IR
 // ISSUE: KT-42648
 // WITH_STDLIB
+// LANGUAGE: +EagerLambdaAnalysis
 
 @JvmName("takeLambdaNullable")
 fun takeLambda(block: () -> Double) { // (1)
@@ -13,7 +14,7 @@ fun takeLambda(block: () -> Double?) { // (2)
 
 fun main() {
     takeLambda { 1.0 } // OK (1)
-    takeLambda { <!NULL_FOR_NONNULL_TYPE!>null<!> } // Fail (1)
+    takeLambda { null } // Fail (1)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, stringLiteral */

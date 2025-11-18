@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-63596
 // LATEST_LV_DIFFERENCE
 
@@ -9,8 +8,8 @@ fun c(block: (x: Int) -> String): String = ""
 fun c(block: (x: Int) -> Unit): Int = 0
 
 fun test() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>e<!> {}
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>c<!> {}
+    e {}
+    c {}
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, stringLiteral */

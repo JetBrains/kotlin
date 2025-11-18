@@ -8,10 +8,10 @@ public inline fun <T, R> Iterable<T>.foo(transform: (T) -> Iterable<R>): List<R>
 public inline fun <T, R> Iterable<T>.foo(transform: (T) -> (MutableList<R>.() -> Unit)): List<R> = listOf()
 
 fun testIt(l: List<Int>) {
-    l.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!> {
-        it -> <!CANNOT_INFER_IT_PARAMETER_TYPE!>{
-            <!UNRESOLVED_REFERENCE!>add<!>(it)
-        }<!>
+    l.foo {
+        it -> {
+            add(it)
+        }
     }
 }
 

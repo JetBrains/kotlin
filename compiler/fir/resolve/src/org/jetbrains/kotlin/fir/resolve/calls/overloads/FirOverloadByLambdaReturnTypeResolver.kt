@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.resolve.calls.CandidateChosenUsingOverloadResolutionByLambdaAnnotation
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.same
  * Note: the resolver may modify the passed FIR (calleeReference and lambdas)
  */
 @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
+@OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EagerLambdaAnalysis)
 class FirOverloadByLambdaReturnTypeResolver(
     val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
 ) {

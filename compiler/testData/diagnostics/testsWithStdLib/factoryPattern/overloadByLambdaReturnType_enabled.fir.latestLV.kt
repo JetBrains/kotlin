@@ -33,7 +33,7 @@ fun test_2() {
 }
 
 fun test_3() {
-    val x = <!CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION!>create { <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }<!>
+    val x = create { <!RETURN_TYPE_MISMATCH!>1.0<!> }
 }
 
 @OverloadResolutionByLambdaReturnType
@@ -59,7 +59,7 @@ fun foo(f: () -> A): Int = 1
 fun foo(f: () -> B): String = ""
 
 fun test_6(c: C) {
-    val x = <!CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION!>foo { c }<!>
+    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { c }
     takeString(x)
 }
 

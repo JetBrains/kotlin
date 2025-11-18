@@ -6,7 +6,7 @@ interface Flow<T>
 interface MutableSharedFlow<T> : Flow<T>
 
 fun test(output: ((ScrapingOffOutput) -> Unit)) {
-    val p = <!OVERLOAD_RESOLUTION_AMBIGUITY!>presenter<!>(output) { ScrapingOffPresenter() }
+    val p = presenter(output) { ScrapingOffPresenter() }
 }
 
 abstract class Presenter<Events, Model, Output>(outputExtraBufferCapacity: Int = 16) {

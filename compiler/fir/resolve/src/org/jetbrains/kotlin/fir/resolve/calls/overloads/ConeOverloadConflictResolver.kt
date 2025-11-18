@@ -7,17 +7,13 @@ package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.disableCompatibilityModeForNewInference
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedCallableReferenceAtom
@@ -39,7 +35,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -97,20 +92,38 @@ class ConeOverloadConflictResolver(
                 candidates
 
         // The same logic as at
-        val candidatesWithoutOverrides = filterOverrides(fixedCandidates)
+        var current = filterOverrides(fixedCandidates)
+        // noCompatibilityMode == true in K2 by default
         val noCompatibilityMode = with(transformerComponents) { disableCompatibilityModeForNewInference() }
-        return chooseMaximallySpecificCandidates(
-            candidatesWithoutOverrides,
-            DiscriminationFlags(
-                // (in compatibility mode the next two are already filtered on tower resolver level)
-                lowPrioritySAMs = noCompatibilityMode,
-                adaptationsInPostponedAtoms = noCompatibilityMode,
-                generics = discriminateGenerics,
-                SAMs = true,
-                suspendConversions = true,
-                byUnwrappedSmartCastOrigin = true,
-            )
+        val discriminationFlags = DiscriminationFlags(
+            // (in compatibility mode the next two are already filtered on tower resolver level)
+            lowPrioritySAMs = noCompatibilityMode,
+            adaptationsInPostponedAtoms = noCompatibilityMode,
+            generics = discriminateGenerics,
+
+            SAMs = true,
+            suspendConversions = true,
+            byUnwrappedSmartCastOrigin = true,
         )
+
+        if (LanguageFeature.EagerLambdaAnalysis.isDisabled()) {
+            return chooseMaximallySpecificCandidates(
+                current,
+                discriminationFlags
+            )
+        }
+
+        while (true) {
+            val reduced =
+                runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(current, components = transformerComponents) ?: current
+            val next = chooseMaximallySpecificCandidates(
+                reduced,
+                discriminationFlags
+            )
+
+            if (next.size <= 1 || current.size == next.size) return next
+            current = next
+        }
     }
 
     /**
