@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
@@ -27,7 +28,6 @@ import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
-import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
@@ -235,6 +235,9 @@ internal class DescriptorKFunction private constructor(
 
     override val isSuspend: Boolean
         get() = descriptor.isSuspend
+
+    override val isPrimaryConstructor: Boolean
+        get() = (descriptor as? ConstructorDescriptor)?.isPrimary == true
 
     override fun equals(other: Any?): Boolean {
         val that = other.asReflectFunction() ?: return false

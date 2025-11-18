@@ -53495,6 +53495,12 @@ public class JsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractJsCod
           }
 
           @Test
+          @TestMetadata("result.kt")
+          public void testResult() {
+            runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/result.kt");
+          }
+
+          @Test
           @TestMetadata("secondaryConstructorVisibilies.kt")
           public void testSecondaryConstructorVisibilies() {
             runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt");
@@ -54040,6 +54046,12 @@ public class JsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractJsCod
           @Test
           public void testAllFilesPresentInInlineClasses() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("result.kt")
+          public void testResult() {
+            runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/result.kt");
           }
 
           @Nested
@@ -54973,12 +54985,6 @@ public class JsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractJsCod
         @TestMetadata("constructor.kt")
         public void testConstructor() {
           runTest("compiler/testData/codegen/box/reflection/mapping/constructor.kt");
-        }
-
-        @Test
-        @TestMetadata("constructorWithInlineClassParameters.kt")
-        public void testConstructorWithInlineClassParameters() {
-          runTest("compiler/testData/codegen/box/reflection/mapping/constructorWithInlineClassParameters.kt");
         }
 
         @Test

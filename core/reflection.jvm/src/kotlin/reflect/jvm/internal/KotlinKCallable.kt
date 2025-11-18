@@ -40,9 +40,14 @@ internal fun KotlinKCallable<*>.computeParameters(
 ): List<KParameter> = buildList {
     val callable = this@computeParameters
     if (includeReceivers) {
-        if (!isLocalDelegatedProperty) {
-            (container as? KClassImpl<*>)?.let { klass ->
-                add(InstanceParameter(callable, klass))
+        val container = container
+        if (container is KClassImpl<*>) {
+            if (isConstructor) {
+                if (container.isInner) {
+                    add(InstanceParameter(callable, container.java.declaringClass.kotlin as KClassImpl<*>))
+                }
+            } else if (!isLocalDelegatedProperty) {
+                add(InstanceParameter(callable, container))
             }
         }
         for (contextParameter in contextParameters) {

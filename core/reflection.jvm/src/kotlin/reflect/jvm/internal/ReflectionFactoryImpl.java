@@ -6,7 +6,9 @@
 
 package kotlin.reflect.jvm.internal;
 
+import kotlin.Metadata;
 import kotlin.jvm.internal.*;
+import kotlin.metadata.KmConstructor;
 import kotlin.metadata.KmFunction;
 import kotlin.metadata.KmProperty;
 import kotlin.reflect.*;
@@ -69,14 +71,21 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     @Override
     public KFunction function(FunctionReference f) {
         KDeclarationContainerImpl container = getOwner(f);
+        String name = f.getName();
         String signature = f.getSignature();
         if (!SystemPropertiesKt.getUseK1Implementation()) {
-            if (container instanceof KPackageImpl) {
-                KmFunction kmFunction = container.findFunctionMetadata(f.getName(), signature);
+            if (name.equals("<init>")) {
+                if (container instanceof KClassImpl && container.getJClass().getAnnotation(Metadata.class) != null) {
+                    KmConstructor kmConstructor = container.findConstructorMetadata(signature);
+                    return new KotlinKConstructor(container, signature, f.getBoundReceiver(), kmConstructor);
+                }
+            }
+            else if (container instanceof KPackageImpl) {
+                KmFunction kmFunction = container.findFunctionMetadata(name, signature);
                 return new KotlinKNamedFunction(container, signature, f.getBoundReceiver(), kmFunction);
             }
         }
-        return new DescriptorKFunction(container, f.getName(), signature, f.getBoundReceiver());
+        return new DescriptorKFunction(container, name, signature, f.getBoundReceiver());
     }
 
     // Properties
