@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXcodeSetu
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SetUpSwiftExportAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.internal.XcodeConfigurationSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.internal.XcodeDSLSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.DeprecatedMppGradlePropertiesMigrationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataForKMPSetupAction
@@ -94,6 +95,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, CInteropCommonizedCInteropApiElementsConfigurationsSetupAction)
             register(project, XcodeVersionSetupAction)
             register(project, XcodeConfigurationSetupAction)
+            register(project, XcodeDSLSetupAction)
             register(project, AddBuildListenerForXcodeSetupAction)
             register(project, CreateFatFrameworksSetupAction)
             register(project, KotlinRegisterCompilationArchiveTasksExtension)

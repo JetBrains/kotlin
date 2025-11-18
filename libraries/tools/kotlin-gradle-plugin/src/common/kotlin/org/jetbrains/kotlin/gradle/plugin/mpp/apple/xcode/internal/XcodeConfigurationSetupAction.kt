@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-private const val XCODE_TASK_GROUP = "xcode"
+private const val XCODE_TASK_GROUP = "Xcode"
 
 /**
  * Registers two tasks:
