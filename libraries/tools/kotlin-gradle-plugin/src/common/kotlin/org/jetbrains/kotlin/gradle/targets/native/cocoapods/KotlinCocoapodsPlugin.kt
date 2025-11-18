@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.EmbedAndSignTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.FrameworkCopy
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.KotlinArtifactsPodspecExtension
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.kotlinArtifactsPodspecExtension

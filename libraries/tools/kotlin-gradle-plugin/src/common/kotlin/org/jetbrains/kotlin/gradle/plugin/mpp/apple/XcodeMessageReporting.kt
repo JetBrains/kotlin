@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.AppleEmbedXcodeTasks
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.util.Optional
 import javax.inject.Inject
@@ -34,8 +35,8 @@ private val Project.isXcodeTasksRequested: Provider<Boolean>
         gradle.startParameter.taskNames.any { requestedTask ->
             val name = requestedTask.substringAfterLast(':')
             val isSyncTask = name == KotlinCocoapodsPlugin.SYNC_TASK_NAME
-            val isEmbedAndSignTask = name.startsWith(AppleXcodeTasks.embedAndSignTaskPrefix) &&
-                    name.endsWith(AppleXcodeTasks.embedAndSignTaskPostfix)
+            val isEmbedAndSignTask = name.startsWith(AppleEmbedXcodeTasks.embedAndSignTaskPrefix) &&
+                    name.endsWith(AppleEmbedXcodeTasks.embedAndSignTaskPostfix)
             isSyncTask || isEmbedAndSignTask
         }
     }

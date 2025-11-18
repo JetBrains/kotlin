@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.apple
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CheckXcodeTargetsConfigurationTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ConvertPbxprojToJsonTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.tasks.CheckXcodeTargetsConfigurationTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.tasks.ConvertPbxprojToJsonTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName

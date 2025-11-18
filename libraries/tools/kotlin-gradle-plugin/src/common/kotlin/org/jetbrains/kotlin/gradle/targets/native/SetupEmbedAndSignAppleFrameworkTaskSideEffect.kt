@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeEnvironment
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 
 internal val SetupEmbedAndSignAppleFrameworkTaskSideEffect = KotlinTargetSideEffect<KotlinNativeTarget> { target ->

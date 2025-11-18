@@ -3,171 +3,25 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp.apple
+package org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.tasks
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
-import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import java.io.File
 import java.io.Serializable
-import javax.inject.Inject
-
-/**
- * Registers two tasks:
- * 1. A producer task that converts the `.pbxproj` file to JSON.
- * 2. A consumer task that reads the JSON and performs the configuration check.
- * This ensures the expensive `plutil` command is only run when the Xcode project changes,
- * while the cheap validation task runs whenever the JSON changes, consistently re-issuing warnings.
- */
-internal val CheckXcodeTargetsConfigurationSetupAction = KotlinProjectSetupCoroutine {
-    // 1. Check if there are any apple targets with frameworks. If not, the check is not needed.
-    if (!shouldSetupXcodeConfiguration()) {
-        return@KotlinProjectSetupCoroutine
-    }
-
-    // 2. Check for the Xcode project path. If it's not found, log an informational message.
-    val projectPath = project.xcodeProjectPath
-    if (projectPath == null) {
-        val searchedPaths = project.xcodeProjectSearchedPaths
-        logger.info(
-            "Kotlin Xcode project checker: .xcodeproj directory not found. Searched in:\n" +
-                    searchedPaths.joinToString("\n") { " - ${it.path}" } +
-                    "\nSkipping task registration."
-        )
-        return@KotlinProjectSetupCoroutine
-    }
-
-    // 3. If everything is in place, register the tasks.
-    val appleTargets = getAppleTargetsWithFrameworkBinaries()
-    val convertTask = registerConvertPbxprojToJsonTask(projectPath)
-    registerCheckXcodeTargetsConfigurationTask(appleTargets, projectPath, convertTask)
-}
-
-private suspend fun Project.shouldSetupXcodeConfiguration(): Boolean {
-    val targets = multiplatformExtension
-        .awaitTargets()
-        .filterIsInstance<KotlinNativeTarget>()
-        .filter { it.konanTarget.family.isAppleFamily }
-
-    if (targets.isEmpty()) return false
-
-    val hasBinaries = targets.flatMap { it.binaries }.filterIsInstance<Framework>().isNotEmpty()
-    if (!hasBinaries) return false
-
-    return project.xcodeProjectPath != null
-}
-
-private suspend fun Project.getAppleTargetsWithFrameworkBinaries(): List<KonanTarget> {
-    return multiplatformExtension
-        .awaitTargets()
-        .filterIsInstance<KotlinNativeTarget>()
-        .filter { target ->
-            target.konanTarget.family.isAppleFamily &&
-                    target.binaries.filterIsInstance<Framework>().isNotEmpty()
-        }
-        .map { it.konanTarget }
-}
-
-private fun Project.registerConvertPbxprojToJsonTask(
-    projectPath: File,
-): TaskProvider<ConvertPbxprojToJsonTask> {
-    return locateOrRegisterTask(ConvertPbxprojToJsonTask.TASK_NAME) {
-        it.group = "xcode"
-        it.description = "Converts .pbxproj file to JSON for inspection"
-        it.pbxprojFile.set(projectPath.resolve("project.pbxproj"))
-        it.jsonFile.set(layout.buildDirectory.file("xcode-check/project.json"))
-    }
-}
-
-private fun Project.registerCheckXcodeTargetsConfigurationTask(
-    targets: List<KonanTarget>,
-    projectPath: File,
-    convertTask: TaskProvider<ConvertPbxprojToJsonTask>,
-) {
-    locateOrRegisterTask<CheckXcodeTargetsConfigurationTask>(
-        CheckXcodeTargetsConfigurationTask.TASK_NAME,
-        invokeWhenRegistered = {
-            @OptIn(Idea222Api::class)
-            ideaImportDependsOn(this)
-        },
-        configureTask = {
-            group = "xcode"
-            description = "Checks for configuration mismatches between Xcode and Kotlin Gradle project"
-
-            appleTargets.set(targets)
-            xcodeProjectPath.set(projectPath)
-            pbxprojJson.set(convertTask.flatMap { it.jsonFile })
-        }
-    )
-}
-
-/**
- * Producer Task: Converts the `.pbxproj` file to JSON using `plutil`.
- * This task is fully cacheable.
- */
-@CacheableTask
-internal abstract class ConvertPbxprojToJsonTask : DefaultTask() {
-    init {
-        onlyIf("Task can only run on macOS") { HostManager.hostIsMac }
-    }
-
-    companion object {
-        const val TASK_NAME = "convertPbxprojToJson"
-    }
-
-    @get:Inject
-    abstract val execOperations: ExecOperations
-
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val pbxprojFile: RegularFileProperty
-
-    @get:OutputFile
-    abstract val jsonFile: RegularFileProperty
-
-    @TaskAction
-    fun run() {
-        try {
-            execOperations.exec { spec ->
-                spec.commandLine(
-                    "plutil",
-                    "-convert", "json",
-                    "-o", jsonFile.get().asFile.absolutePath,
-                    pbxprojFile.get().asFile.absolutePath
-                )
-            }
-        } catch (exception: Exception) {
-            logger.error(
-                "Failed to execute 'plutil' on '${pbxprojFile.get().asFile.path}'. The file might be malformed or 'plutil' is not in PATH.",
-                exception
-            )
-            jsonFile.get().asFile.writeText("{}") // Write empty JSON on failure
-        }
-    }
-}
-
 
 /**
  * Consumer Task: Reads the JSON file and performs the validation checks,
@@ -376,15 +230,3 @@ private fun getExpectedSdkRoot(target: KonanTarget) = when (target.family) {
     Family.WATCHOS -> "watchos"
     else -> unknownSdkRoot
 }
-
-private val Project.xcodeProjectSearchedPaths: List<File>
-    get() {
-        val commonPath = "iosApp/iosApp.xcodeproj"
-        return listOf(
-            layout.projectDirectory.asFile.resolve(commonPath),
-            rootDir.resolve(commonPath)
-        )
-    }
-
-private val Project.xcodeProjectPath: File?
-    get() = xcodeProjectSearchedPaths.firstOrNull { it.exists() }

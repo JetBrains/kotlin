@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.HEADER_PATHS_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.FrameworkCopy
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.util.*

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CopyDsymDuringArchiving
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.FrameworkCopy
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SymbolicLinkToFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink

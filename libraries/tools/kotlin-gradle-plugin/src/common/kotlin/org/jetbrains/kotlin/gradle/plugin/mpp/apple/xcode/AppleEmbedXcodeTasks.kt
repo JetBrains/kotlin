@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp.apple
+package org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
@@ -15,13 +15,16 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CheckSandboxAndWriteProtectionTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CopyDsymDuringArchiving
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CreateBuildSystemDirectory
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SymbolicLinkToFrameworkTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeEnvironment
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.registerSwiftExportTask
@@ -36,7 +39,7 @@ import java.io.File
 import javax.inject.Inject
 
 @Suppress("ConstPropertyName")
-internal object AppleXcodeTasks {
+internal object AppleEmbedXcodeTasks {
     const val embedAndSignTaskPrefix = "embedAndSign"
     const val embedAndSignTaskPostfix = "AppleFrameworkForXcode"
     const val checkSandboxAndWriteProtection = "checkSandboxAndWriteProtection"
@@ -366,7 +369,7 @@ private fun Project.checkSandboxAndWriteProtectionTask(
     environment: XcodeEnvironment,
     userScriptSandboxingEnabled: Boolean,
 ) =
-    locateOrRegisterTask<CheckSandboxAndWriteProtectionTask>(AppleXcodeTasks.checkSandboxAndWriteProtection) { task ->
+    locateOrRegisterTask<CheckSandboxAndWriteProtectionTask>(AppleEmbedXcodeTasks.checkSandboxAndWriteProtection) { task ->
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Check BUILT_PRODUCTS_DIR accessible and ENABLE_USER_SCRIPT_SANDBOXING not enabled"
 
@@ -392,9 +395,9 @@ private fun Project.shouldRegisterEmbedTask(environment: XcodeEnvironment, frame
 }
 
 private fun NativeBinary.embedAndSignTaskName(): String = lowerCamelCaseName(
-    AppleXcodeTasks.embedAndSignTaskPrefix,
+    AppleEmbedXcodeTasks.embedAndSignTaskPrefix,
     namePrefix,
-    AppleXcodeTasks.embedAndSignTaskPostfix
+    AppleEmbedXcodeTasks.embedAndSignTaskPostfix
 )
 
 private fun embedSwiftExportTaskName(): String = lowerCamelCaseName(

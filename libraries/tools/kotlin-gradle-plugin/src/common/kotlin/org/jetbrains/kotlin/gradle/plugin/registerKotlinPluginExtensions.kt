@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTaskSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXcodeSetupAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CheckXcodeTargetsConfigurationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SetUpSwiftExportAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.xcode.internal.XcodeConfigurationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.DeprecatedMppGradlePropertiesMigrationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataForKMPSetupAction
@@ -93,7 +93,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, IdeResolveDependenciesTaskSetupAction)
             register(project, CInteropCommonizedCInteropApiElementsConfigurationsSetupAction)
             register(project, XcodeVersionSetupAction)
-            register(project, CheckXcodeTargetsConfigurationSetupAction)
+            register(project, XcodeConfigurationSetupAction)
             register(project, AddBuildListenerForXcodeSetupAction)
             register(project, CreateFatFrameworksSetupAction)
             register(project, KotlinRegisterCompilationArchiveTasksExtension)
