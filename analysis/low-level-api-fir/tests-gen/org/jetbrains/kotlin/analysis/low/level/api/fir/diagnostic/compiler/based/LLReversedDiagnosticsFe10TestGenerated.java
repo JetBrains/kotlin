@@ -2802,6 +2802,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("companionObjectUnderRequiresOptIn.kt")
+      public void testCompanionObjectUnderRequiresOptIn() {
+        runTest("compiler/testData/diagnostics/tests/annotations/companionObjectUnderRequiresOptIn.kt");
+      }
+
+      @Test
       @TestMetadata("constantFromOuterScopeAsAnnotaionParameter.kt")
       public void testConstantFromOuterScopeAsAnnotaionParameter() {
         runTest("compiler/testData/diagnostics/tests/annotations/constantFromOuterScopeAsAnnotaionParameter.kt");
