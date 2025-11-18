@@ -38,7 +38,7 @@ class WasmExpressionBuilder(
     ) {
         if (skipLocations) {
             check(location == SourceLocation.NoLocation)
-            WasmInstr0(op)
+            WasmInstr0.getOrCreate(op)
         } else {
             WasmInstr0Located(op, location)
         }.appendInstruction()

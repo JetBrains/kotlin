@@ -252,7 +252,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 LOCATED4 ->
                     WasmInstr4Located(op, deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
                 NOT_LOCATED0 ->
-                    WasmInstr0(op)
+                    WasmInstr0.getOrCreate(op)
                 NOT_LOCATED1 ->
                     WasmInstr1(op, deserializeImmediate())
                 NOT_LOCATED2 ->
