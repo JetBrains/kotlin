@@ -23217,6 +23217,12 @@ public class FirWasmJsCodegenSplittingWithInlinedFunInKlibTestGenerated extends 
       }
 
       @Test
+      @TestMetadata("executorSubmit.kt")
+      public void testExecutorSubmit() {
+        runTest("compiler/testData/codegen/box/fullJdk/executorSubmit.kt");
+      }
+
+      @Test
       @TestMetadata("ifInWhile.kt")
       public void testIfInWhile() {
         runTest("compiler/testData/codegen/box/fullJdk/ifInWhile.kt");
