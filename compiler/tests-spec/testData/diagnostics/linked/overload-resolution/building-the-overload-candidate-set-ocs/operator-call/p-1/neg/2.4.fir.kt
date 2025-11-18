@@ -25,9 +25,9 @@ import LibPackCase1.b.*
 
 fun case1 (){
     var b: B? = B()
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> { C() }<!>
+    <!DEBUG_INFO_CALL("fqName: LibPackCase1.b.plusAssign; typeCall: operator extension function")!>b += { C() }<!>
 
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> {1}<!>
+    <!DEBUG_INFO_CALL("fqName: LibPackCase1.a.plusAssign; typeCall: operator extension function")!>b += {1}<!>
 }
 
 class B {
@@ -62,9 +62,9 @@ import LibPackCase2.b.*
 
 fun case2 (){
     var b: B = B()
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> { C() }<!>
+    <!DEBUG_INFO_CALL("fqName: LibPackCase2.b.plusAssign; typeCall: operator extension function")!>b += { C() }<!>
 
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> {1}<!>
+    <!DEBUG_INFO_CALL("fqName: LibPackCase2.a.plusAssign; typeCall: operator extension function")!>b += {1}<!>
 }
 
 class B {

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Callable.java
 
 public interface Callable<V> {
@@ -22,7 +22,7 @@ fun f(): String = "test"
 
 class A {
     fun schedule1(e: Executor): Future<String> = e.submit(::f)
-    fun schedule2(e: Executor): Future<String> = <!RETURN_TYPE_MISMATCH!>e.submit { f() }<!>
+    fun schedule2(e: Executor): Future<String> = e.submit { f() }
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType,

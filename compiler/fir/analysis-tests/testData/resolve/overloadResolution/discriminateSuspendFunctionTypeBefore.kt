@@ -26,10 +26,10 @@ fun test() {
     accept<String>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo0Receiver<!>({}))
     accept<Int>(foo0Receiver(suspend {}))
 
-    accept<String>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo1<!>({ <!UNRESOLVED_REFERENCE!>it<!> }))
+    accept<String>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo1<!>({ it }))
     accept<Int>(foo1(suspend { it }))
 
-    accept<String>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo1<!>({ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> }))
+    accept<String>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo1<!>({ x -> }))
     accept<Int>(foo1(suspend { x -> }))
 
     accept<String>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo1Receiver<!>({}))
