@@ -25,8 +25,10 @@ echo "DEPLOY_VERSION=$DEPLOY_VERSION"
 echo "BUILD_NUMBER=$BUILD_NUMBER"
 echo "KOTLIN_NATIVE_VERSION=$KOTLIN_NATIVE_VERSION"
 
+cd libraries
 # Update versions in pom.xml
-./libraries/mvnw -DnewVersion=$DEPLOY_VERSION -DgenerateBackupPoms=false -DprocessAllModules=true -f libraries/pom.xml versions:set
+./mvnw -DnewVersion=$DEPLOY_VERSION -DgenerateBackupPoms=false -DprocessAllModules=true versions:set
+cd ..
 
 # Build part of kotlin and publish it to the local maven repository and to build/repo directory
 ./gradlew \
@@ -38,12 +40,14 @@ echo "KOTLIN_NATIVE_VERSION=$KOTLIN_NATIVE_VERSION"
   --info \
   publish publishToMavenLocal
 
+BASE_DIR=$(pwd)
+cd libraries
 # Build maven part and publish it to the same build/repo
-./libraries/mvnw \
-  -f libraries/pom.xml \
+./mvnw \
   clean deploy \
-  -Ddeploy-url=file://$(pwd)/build/repo \
+  -Ddeploy-url=file://$BASE_DIR/build/repo \
   -DskipTests
+cd ..
 
 # Prepare for reproducibility check
 mkdir -p build/repo-reproducible
