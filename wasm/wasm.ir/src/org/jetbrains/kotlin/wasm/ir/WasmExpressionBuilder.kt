@@ -331,7 +331,7 @@ class WasmExpressionBuilder(
         buildInstr(WasmOp.GLOBAL_SET, location, WasmImmediate.GlobalIdx(global))
     }
 
-    fun buildStructGet(struct: WasmSymbol<WasmTypeDeclaration>, fieldId: WasmSymbol<Int>, location: SourceLocation) {
+    fun buildStructGet(struct: WasmSymbol<WasmTypeDeclaration>, fieldId: Int, location: SourceLocation) {
         buildInstr(
             WasmOp.STRUCT_GET,
             location,
@@ -344,7 +344,7 @@ class WasmExpressionBuilder(
         buildInstr(WasmOp.STRUCT_NEW, location, WasmImmediate.GcType(struct))
     }
 
-    fun buildStructSet(struct: WasmSymbol<WasmTypeDeclaration>, fieldId: WasmSymbol<Int>, location: SourceLocation) {
+    fun buildStructSet(struct: WasmSymbol<WasmTypeDeclaration>, fieldId: Int, location: SourceLocation) {
         buildInstr(
             WasmOp.STRUCT_SET,
             location,

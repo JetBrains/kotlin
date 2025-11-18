@@ -56,11 +56,11 @@ class BodyGenerator(
         )
     }
 
-    fun getStructFieldRef(field: IrField): WasmSymbol<Int> {
+    fun getStructFieldId(field: IrField): Int {
         val klass = field.parentAsClass
         val metadata = wasmModuleMetadataCache.getClassMetadata(klass.symbol)
         val fieldId = metadata.fields.indexOf(field) + 3 //Implicit vtable, itable and rtti fields
-        return WasmSymbol(fieldId)
+        return fieldId
     }
 
     // Generates code for the given IR element. Leaves something on the stack unless expression was of the type Void.
@@ -583,7 +583,7 @@ class BodyGenerator(
             opcode,
             location,
             WasmImmediate.GcType(wasmFileCodegenContext.referenceGcType(field.parentAsClass.symbol)),
-            WasmImmediate.StructFieldIdx(getStructFieldRef(field))
+            WasmImmediate.StructFieldIdx(getStructFieldId(field))
         )
         body.commentPreviousInstr { "name: ${field.name.asString()}, type: ${field.type.render()}" }
     }
@@ -599,7 +599,7 @@ class BodyGenerator(
             generateExpression(expression.value)
             body.buildStructSet(
                 struct = wasmFileCodegenContext.referenceGcType(field.parentAsClass.symbol),
-                fieldId = getStructFieldRef(field),
+                fieldId = getStructFieldId(field),
                 location
             )
             body.commentPreviousInstr { "name: ${field.name}, type: ${field.type.render()}" }
@@ -766,7 +766,7 @@ class BodyGenerator(
             val fieldIndex = (call.arguments[0] as? IrConst)?.value as? Int ?: error("Invalid field index")
             generateExpression(call.arguments[1]!!)
             body.buildRefCastStatic(wasmFileCodegenContext.rttiType, location)
-            body.buildStructGet(wasmFileCodegenContext.rttiType, WasmSymbol(fieldIndex), location)
+            body.buildStructGet(wasmFileCodegenContext.rttiType, fieldIndex, location)
             return
         }
 
@@ -824,7 +824,7 @@ class BodyGenerator(
                 generateRefCast(receiver.type, klass.defaultType, isRefNullCast = false, location)
 
                 body.buildStructGet(wasmFileCodegenContext.referenceGcType(klassSymbol), anyVtableFieldId, location)
-                val vTableSlotId = WasmSymbol(vfSlot + 1) //First element is always contains Special ITable
+                val vTableSlotId = vfSlot + 1 //First element is always contains Special ITable
                 body.buildStructGet(vTableGcTypeReference, vTableSlotId, location)
                 body.buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(functionTypeReference))
             } else {
@@ -836,7 +836,7 @@ class BodyGenerator(
                     generateSpecialITableFromAny(location)
                     body.buildStructGet(
                         wasmFileCodegenContext.interfaceTableTypes.specialSlotITableType,
-                        WasmSymbol(specialITableSlot),
+                        specialITableSlot,
                         location
                     )
                 } else if (klassSymbol.isFunction()) {
@@ -846,7 +846,7 @@ class BodyGenerator(
                     generateSpecialITableFromAny(location)
                     body.buildStructGet(
                         wasmFileCodegenContext.interfaceTableTypes.specialSlotITableType,
-                        WasmSymbol(backendContext.specialSlotITableTypes.size),
+                        backendContext.specialSlotITableTypes.size,
                         location
                     )
                     body.buildConstI32(functionalInterfaceSlot, location)
@@ -864,7 +864,7 @@ class BodyGenerator(
                 body.buildRefCastStatic(vTableGcTypeReference, location)
                 val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
                     .indexOfFirst { it.function == function }
-                body.buildStructGet(vTableGcTypeReference, WasmSymbol(vfSlot), location)
+                body.buildStructGet(vTableGcTypeReference, vfSlot, location)
 
                 body.buildInstr(
                     WasmOp.CALL_REF,
@@ -1047,7 +1047,7 @@ class BodyGenerator(
                             body.buildBrInstr(WasmOp.BR_ON_NULL, fail, location)
                             body.buildStructGet(
                                 wasmFileCodegenContext.interfaceTableTypes.specialSlotITableType,
-                                WasmSymbol(specialSlotIndex),
+                                specialSlotIndex,
                                 location
                             )
                             body.buildInstr(WasmOp.REF_IS_NULL, location)
@@ -1070,7 +1070,7 @@ class BodyGenerator(
                                 body.buildBrInstr(WasmOp.BR_ON_NULL, fail, location)
                                 body.buildStructGet(
                                     wasmFileCodegenContext.interfaceTableTypes.specialSlotITableType,
-                                    WasmSymbol(backendContext.specialSlotITableTypes.size),
+                                    backendContext.specialSlotITableTypes.size,
                                     location
                                 )
                                 body.buildBrInstr(WasmOp.BR_ON_NULL, fail, location)
@@ -1168,7 +1168,7 @@ class BodyGenerator(
             }
 
             wasmSymbols.getWasmAbiVersion -> {
-                body.buildConstI32Symbol(wasmAbiVersion, location)
+                body.buildConstI32(wasmAbiVersion, location)
             }
 
             wasmSymbols.wasmArrayNewData0 -> {
@@ -1613,16 +1613,16 @@ class BodyGenerator(
     }
 
     companion object {
-        val wasmAbiVersion = WasmSymbol(1)
-        val anyVtableFieldId = WasmSymbol(0)
-        val anyITableFieldId = WasmSymbol(1)
-        val anyRttiFieldId = WasmSymbol(2)
-        val vTableSpecialITableFieldId = WasmSymbol(0)
-        val rttiImplementedIFacesFieldId = WasmSymbol(0)
-        val rttiSuperClassFieldId = WasmSymbol(1)
-        val rttiQualifierGetterFieldId = WasmSymbol(6)
-        val rttiSimpleNameGetterFieldId = WasmSymbol(7)
-        private val classAssociatedObjectsGetterWrapperFieldId = WasmSymbol(0)
+        val wasmAbiVersion = 1
+        val anyVtableFieldId = 0
+        val anyITableFieldId = 1
+        val anyRttiFieldId = 2
+        val vTableSpecialITableFieldId = 0
+        val rttiImplementedIFacesFieldId = 0
+        val rttiSuperClassFieldId = 1
+        val rttiQualifierGetterFieldId = 6
+        val rttiSimpleNameGetterFieldId = 7
+        private val classAssociatedObjectsGetterWrapperFieldId = 0
         private val exceptionTagId = WasmSymbol(0)
         private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx(0)
     }

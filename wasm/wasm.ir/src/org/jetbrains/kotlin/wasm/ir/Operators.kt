@@ -59,8 +59,8 @@ sealed class WasmImmediate {
         constructor(value: WasmFunction) : this(WasmSymbol(value))
     }
 
-    class LocalIdx(val value: WasmSymbol<WasmLocal>) : WasmImmediate() {
-        constructor(value: WasmLocal) : this(WasmSymbol(value))
+    class LocalIdx(val value: Int) : WasmImmediate() {
+        constructor(value: WasmLocal) : this(value.id)
     }
 
     class GlobalIdx(val value: WasmSymbol<WasmGlobal>) : WasmImmediate() {
@@ -94,7 +94,7 @@ sealed class WasmImmediate {
         constructor(value: WasmTypeDeclaration) : this(WasmSymbol(value))
     }
 
-    class StructFieldIdx(val value: WasmSymbol<Int>) : WasmImmediate()
+    class StructFieldIdx(val value: Int) : WasmImmediate()
 
     class HeapType(val value: WasmHeapType) : WasmImmediate() {
         constructor(type: WasmType) : this(type.getHeapType())

@@ -296,7 +296,7 @@ class WasmIrToBinary(
             }
             is WasmImmediate.BlockType -> appendBlockType(x)
             is WasmImmediate.FuncIdx -> appendModuleFieldReference(x.value.owner)
-            is WasmImmediate.LocalIdx -> appendLocalReference(x.value.owner)
+            is WasmImmediate.LocalIdx -> appendLocalReference(x.value)
             is WasmImmediate.GlobalIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.TypeIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.MemoryIdx -> b.writeVarUInt32(x.value)
@@ -318,7 +318,7 @@ class WasmIrToBinary(
                 }
             }
             is WasmImmediate.GcType -> appendModuleFieldReference(x.value.owner)
-            is WasmImmediate.StructFieldIdx -> b.writeVarUInt32(x.value.owner)
+            is WasmImmediate.StructFieldIdx -> b.writeVarUInt32(x.value)
             is WasmImmediate.HeapType -> appendHeapType(x.value)
             is WasmImmediate.ConstString ->
                 error("Instructions with pseudo immediates should be skipped")
@@ -640,8 +640,8 @@ class WasmIrToBinary(
         }
     }
 
-    fun appendLocalReference(local: WasmLocal) {
-        b.writeVarUInt32(local.id)
+    fun appendLocalReference(local: Int) {
+        b.writeVarUInt32(local)
     }
 
     fun appendModuleFieldReference(field: WasmNamedModuleField) {
