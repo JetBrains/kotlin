@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.util.DefFileProperty
-import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
-import org.jetbrains.kotlin.konan.util.substitute
+import org.jetbrains.kotlin.konan.util.substituteFor
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_INTEROP
@@ -62,8 +61,7 @@ class PropertySubstitutionTest {
             val basePropertyRawValue: String? = propertiesRaw.getProperty(basePropertyName)
 
             for (target in KonanTarget.predefinedTargets.values) {
-                val substitutions = defaultTargetSubstitutions(target)
-                val propertiesSubstituted = propertiesRaw.duplicate().also { substitute(it, substitutions) }
+                val propertiesSubstituted = propertiesRaw.substituteFor(target)
 
                 val allButBasePropertiesSubstituted: Map<String, String> = propertiesSubstituted.stringPropertyNames()
                     .filterNot { it == basePropertyName }
@@ -120,7 +118,5 @@ class PropertySubstitutionTest {
 
             return result
         }
-
-        private fun Properties.duplicate() = Properties().apply { putAll(this@duplicate) }
     }
 }

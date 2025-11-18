@@ -265,7 +265,7 @@ private fun processCLib(
 
     val tool = prepareTool(cinteropArguments.target, flavor, runFromDaemon, parseKeyValuePairs(cinteropArguments.overrideKonanProperties), konanDataDir = cinteropArguments.konanDataDir)
 
-    val def = DefFile(defFile, tool.substitutions)
+    val def = DefFile(defFile, tool.target)
 
     checkCCallModeCompatibility(cinteropArguments, def)
     checkKlibAbiCompatibilityLevel(cinteropArguments)
