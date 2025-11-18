@@ -14,6 +14,7 @@
 #define MANGLED_CLASS_NAME_PREFIX "_kclass:"
 
 struct KotlinDynamicLibrary {
+    std::string dylibPath;
     std::vector<std::string_view> functions{};
     std::vector<std::string_view> classes{};
 };
@@ -124,7 +125,7 @@ inline KotlinDynamicLibrary parseDynamicLibrary(const std::string& dylibPath) {
         }
     }
 
-    return {functions, classes};
+    return {dylibPath, functions, classes};
 }
 
 } // namespace dyld

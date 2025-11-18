@@ -35,19 +35,13 @@ public:
         std::deque<LibraryHandle> handles{};
     };
 
-    struct ReloadRequest {
-        friend class HotReloader;
-        std::vector<std::string> artifactOutputs;
-        explicit ReloadRequest(const std::vector<std::string>& artifact_outputs) : artifactOutputs(artifact_outputs) {}
-    };
-
     static HotReloader& Instance() noexcept;
     HotReloader();
     static void InitModule() noexcept;
 
     /// Start checking if a hot-reload request is pending.
     /// If that's the case, perform class hot-reloading, preserving the existing state.
-    void performIfNeeded(mm::ThreadData& currentThreadData) noexcept;
+    void perform(mm::ThreadData& currentThreadData, const KotlinDynamicLibrary& libraryToLoad) noexcept;
 
 private:
 
@@ -70,7 +64,6 @@ private:
     SymbolLoader _reloader{};
     HotReloadServer _server{};
 
-    std::deque<ReloadRequest> _requests{};
     std::atomic_bool _processing{};
 };
 

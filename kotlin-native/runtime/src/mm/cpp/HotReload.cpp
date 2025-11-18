@@ -128,9 +128,9 @@ int visitObjectGraph(ObjHeader* startObject, F processingFunction) {
 void Kotlin_native_internal_HotReload_perform(ObjHeader* obj) {
     AssertThreadState(ThreadState::kRunnable);
 
-    const mm::ThreadRegistry& threadRegistry = mm::ThreadRegistry::Instance();
-    mm::ThreadData* currentThreadData = threadRegistry.CurrentThreadData();
-    HotReloader::Instance().performIfNeeded(*currentThreadData);
+    //const mm::ThreadRegistry& threadRegistry = mm::ThreadRegistry::Instance();
+    //mm::ThreadData* currentThreadData = threadRegistry.CurrentThreadData();
+    //HotReloader::Instance().perform(*currentThreadData);
 }
 
 HotReloader::HotReloader() {
@@ -138,9 +138,41 @@ HotReloader::HotReloader() {
     if (_server.start()) {
         _server.run([this](const std::vector<std::string>& dylibPaths) {
             HRLogDebug("A new reload request has arrived, containing: ");
-            for (auto& dylib : dylibPaths) HRLogDebug("\t%s", dylib.c_str());
+            for (auto& dylib : dylibPaths) HRLogDebug("\t* %s", dylib.c_str());
             HRLogWarning("Note that only dylib at time is supported right now");
-            _requests.emplace_front(dylibPaths);
+
+            const auto& dylibPath = dylibPaths[0];
+
+            /// 1. Load the new library into memory with `dlopen`
+            if (!_reloader.loadLibraryFromPath(dylibPath)) {
+                HRLogError("Cannot load dylib in memory space!?");
+                return;
+            }
+
+            /// 2. Locate the **new** TypeInfo (@"kclass:kotlin.Function0")
+            auto parsedDynamicLib = dyld::parseDynamicLibrary(dylibPath);
+
+            {
+                // STOP-ZA-WARUDO!
+                CalledFromNativeGuard guard(true);
+
+                HRLogDebug("Switching to K/N state and requestion threads suspension");
+                auto mainGCLock = mm::GlobalData::Instance().gc().gcLock(); // Serialize global State
+
+                auto* currentThreadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+                currentThreadData->suspensionData().requestThreadsSuspension("Hot-Reload");
+
+                CallsCheckerIgnoreGuard allowWait;
+
+                try {
+                    mm::WaitForThreadsSuspension();
+                    perform(*currentThreadData, parsedDynamicLib);
+                    mm::ResumeThreads();
+                } catch (const std::exception& e) {
+                    HRLogError("Hot-reload failed with exception: %s", e.what());
+                    mm::ResumeThreads();
+                }
+            }
         });
     }
 }
@@ -196,44 +228,12 @@ void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlin
     }
 }
 
-void HotReloader::performIfNeeded(mm::ThreadData& currentThreadData) noexcept {
-    if (_requests.empty()) {
-        // HRLogDebug("Cannot perform hot-reloading since there is no upcoming request");
-        return;
-    }
+void HotReloader::perform(mm::ThreadData& currentThreadData, const KotlinDynamicLibrary& libraryToLoad) noexcept {
+    _processing = true; // TODO: should not be necessary if the pre-conditions are held
 
-    if (_processing.load(std::memory_order_relaxed)) {
-        HRLogDebug("Processing a previous request...");
-        return;
-    }
-
-    _processing = true;
     HRLogInfo("Starting Hot-Reloading..." );
 
-    const ReloadRequest reloadRequest = _requests.front();
-    _requests.pop_front();
-
-    const std::string dylibPath = reloadRequest.dylibPathsToLoad[0]; // TODO: handle more dylibs
-
-    /// 1. Load the new library into memory with `dlopen`
-    if (!_reloader.loadLibraryFromPath(dylibPath)) {
-        _processing = false;
-        return;
-    }
-
-    const uint64_t epoch = getCurrentEpoch();
-
-    auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
-    const auto gcHandle = gc::GCHandle::create(epoch);
-
-    // STOP-ZA-WARUDO!
-
-    kotlin::gc::stopTheWorld(gcHandle, "hot-reload");
-
-    /// 2. Locate the **new** TypeInfo (@"kclass:kotlin.Function0")
-    auto parsedDynamicLib = dyld::parseDynamicLibrary(dylibPath);
-
-    for (const auto& classMangledName : parsedDynamicLib.classes) {
+    for (const auto& classMangledName : libraryToLoad.classes) {
         if (NON_RELOADABLE_CLASS_SYMBOLS.find(classMangledName) != NON_RELOADABLE_CLASS_SYMBOLS.end()) {
             HRLogWarning("Cannot reload class of type: %s", classMangledName.data());
             continue;
@@ -262,9 +262,8 @@ void HotReloader::performIfNeeded(mm::ThreadData& currentThreadData) noexcept {
     }
 
     /// 4. Also, interpose new function symbols
-    interposeNewFunctionSymbols(parsedDynamicLib);
+    interposeNewFunctionSymbols(libraryToLoad);
 
-    kotlin::gc::resumeTheWorld(gcHandle);
     _processing = false;
 
     HRLogInfo("Ending Hot-Reloading..." );
