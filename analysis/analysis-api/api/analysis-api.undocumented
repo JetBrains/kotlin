@@ -571,7 +571,6 @@ org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference
 org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference.resolveToSymbols()
 org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNavigationTargetsProvider
 org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.Companion.EP_NAME
-org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.Companion.provideExtensionsFor(KaModule)
 org.jetbrains.kotlin.analysis.api.scopes.KaScopeLike
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.analyze(KaModule, KaSession.() -> R)

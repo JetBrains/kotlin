@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.resolve.extensions
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -39,8 +41,24 @@ public abstract class KaResolveExtensionProvider {
         public val EP_NAME: ExtensionPointName<KaResolveExtensionProvider> =
             ExtensionPointName<KaResolveExtensionProvider>("org.jetbrains.kotlin.kaResolveExtensionProvider")
 
-        public fun provideExtensionsFor(module: KaModule): List<KaResolveExtension> {
-            return EP_NAME.getExtensionList(module.project).flatMap { it.provideExtensionsFor(module) }
+        /**
+         * Creates [resolve extensions][KaResolveExtension] for the provided [KaModule].
+         * The [Disposable] provided by the factory will be used as a parent for all returned extensions.
+         *
+         * @param module The [KaModule] for which to create extensions.
+         * @param parentDisposableFactory A factory method to retrieve a parent [Disposable] for the returned
+         *   extensions. This factory will only be invoked if at least one extension is created.
+         */
+        public fun provideExtensionsFor(
+            module: KaModule,
+            parentDisposableFactory: () -> Disposable,
+        ): List<KaResolveExtension> {
+            val extensions = EP_NAME.getExtensionList(module.project).flatMap { it.provideExtensionsFor(module) }
+            if (extensions.isEmpty()) return emptyList()
+
+            val parentDisposable = parentDisposableFactory()
+            extensions.forEach { Disposer.register(parentDisposable, it) }
+            return extensions
         }
     }
 }
