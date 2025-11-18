@@ -24,8 +24,7 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
 
     @Deprecated(
         CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG,
-        ReplaceWith("createTestExecutionSpec(task, launchOpts, nodeJsArgs, debug)"),
-        DeprecationLevel.ERROR
+        level = DeprecationLevel.ERROR
     )
     fun createTestExecutionSpec(
         task: KotlinJsTest,

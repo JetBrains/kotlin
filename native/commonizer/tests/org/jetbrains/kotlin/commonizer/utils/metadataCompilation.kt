@@ -69,7 +69,7 @@ fun loadStdlibMetadata() = loadStdlibMetadata(KotlinTestUtils.newConfiguration()
 
 fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
     val kotlinLoaderResult = KlibLoader {
-        libraryPaths(stdlibPath().absolutePath)
+        libraryPaths(stdlibPath())
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
     }.load()
         .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = true) }

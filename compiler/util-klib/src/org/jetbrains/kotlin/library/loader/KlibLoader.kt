@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.Incompat
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.InvalidLibraryFormat
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.LibraryNotFound
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblematicLibrary
+import java.io.File
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -54,6 +55,14 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
 
             override fun libraryPaths(vararg paths: String) {
                 libraryPaths += paths
+            }
+
+            override fun libraryPaths(vararg paths: File) {
+                paths.mapTo(libraryPaths) { it.path }
+            }
+
+            override fun libraryPaths(vararg paths: Path) {
+                paths.mapTo(libraryPaths) { it.toString() }
             }
 
             override fun platformChecker(checker: KlibPlatformChecker) {
@@ -161,6 +170,9 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
 interface KlibLoaderSpec {
     fun libraryPaths(paths: List<String>)
     fun libraryPaths(vararg paths: String)
+    fun libraryPaths(vararg paths: File)
+    fun libraryPaths(vararg paths: Path)
+
     fun platformChecker(checker: KlibPlatformChecker)
     fun maxPermittedAbiVersion(abiVersion: KotlinAbiVersion)
     fun zipFileSystemAccessor(accessor: ZipFileSystemAccessor)

@@ -29,7 +29,7 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
                 val nativeMainKlib = projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain")
                 assertDirectoryExists(nativeMainKlib)
 
-                val libraryFile = KlibLoader { libraryPaths(nativeMainKlib.toString()) }.load().librariesStdlibFirst.single()
+                val libraryFile = KlibLoader { libraryPaths(nativeMainKlib) }.load().librariesStdlibFirst.single()
 
                 if (libraryFile.unresolvedDependencies.isNotEmpty()) {
                     fail("Expected metadata klib to not list dependencies. Found ${libraryFile.unresolvedDependencies}")
