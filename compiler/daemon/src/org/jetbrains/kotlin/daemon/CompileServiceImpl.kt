@@ -349,6 +349,7 @@ abstract class CompileServiceImplBase(
         getICReporter: (ServicesFacadeT, CompilationResultsT?, IncrementalCompilationOptions) -> RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
         compilationId: Int? = null,
     ) = kotlin.run {
+        maybeWaitForTestStart()
         val messageCollector = createMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = createReporter(servicesFacade, compilationOptions)
         val targetPlatform = compilationOptions.targetPlatform
@@ -448,6 +449,21 @@ abstract class CompileServiceImplBase(
         }
     }
 
+    @PublishedApi
+    internal fun maybeWaitForTestStart() {
+        if (CompilerSystemProperties.COMPILE_WAIT_BEFORE_COMPILATION_FOR_TESTS.value == "true") {
+            val daemonStartFile = Path(daemonOptions.runFilesPathOrDefault, "daemon-test-start")
+            log.info("Waiting for file ${daemonStartFile.absolutePathString()} to appear...")
+            repeat(10) {
+                if (daemonStartFile.exists()) {
+                    log.info("Found ${daemonStartFile.absolutePathString()}. Starting compilation.")
+                    return@repeat
+                }
+                Thread.sleep(500)
+            }
+            log.info("Didn't find ${daemonStartFile.absolutePathString()} after 5000ms, starting compilation anyway.")
+        }
+    }
 
     protected inline fun doCompile(
         sessionId: Int,
