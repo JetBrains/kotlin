@@ -1,2 +1,2 @@
-error: opt-in requirement marker Error is deprecated. Error
+error: diagnostic "CLI_OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED_ERROR" is an error. Changing the severity of errors is prohibited
 COMPILATION_ERROR

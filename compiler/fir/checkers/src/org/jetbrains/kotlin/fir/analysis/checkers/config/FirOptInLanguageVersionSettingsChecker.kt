@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.config
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics
 import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
@@ -36,25 +36,31 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
         val symbol = (packageOrClass as? PackageResolutionResult.PackageOrClass)?.classSymbol
 
         if (symbol == null) {
-            reporter.reportWarning(
-                "Opt-in requirement marker $fqNameAsString is unresolved. Please make sure it's present in the module dependencies"
+            reporter.reportIfNeeded(
+                CliDiagnostics.CLI_OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED,
+                "Opt-in requirement marker $fqNameAsString is unresolved. Please make sure it's present in the module dependencies",
+                context,
             )
             return
         }
 
         if (!symbol.hasAnnotationWithClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session)) {
-            reporter.reportWarning("Class $fqNameAsString is not an opt-in requirement marker")
+            reporter.reportIfNeeded(
+                CliDiagnostics.CLI_NOT_AN_OPT_IN_REQUIREMENT_MARKER,
+                "Class $fqNameAsString is not an opt-in requirement marker",
+                context,
+            )
             return
         }
         val deprecationInfo = symbol.getOwnDeprecation(context.languageVersionSettings)?.all ?: return
-        val severity = when (deprecationInfo.deprecationLevel) {
-            DeprecationLevelValue.WARNING -> CompilerMessageSeverity.WARNING
-            else -> CompilerMessageSeverity.ERROR
-        }
-        reporter.report(
-            "Opt-in requirement marker $fqNameAsString is deprecated" +
-                    deprecationInfo.getMessage(context.session)?.let { ". $it" }.orEmpty(),
-            severity
+        val diagnosticFactory = if (deprecationInfo.deprecationLevel == DeprecationLevelValue.WARNING)
+            CliDiagnostics.CLI_OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED
+        else
+            CliDiagnostics.CLI_OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED_ERROR
+        reporter.reportIfNeeded(
+            diagnosticFactory,
+            "Opt-in requirement marker $fqNameAsString is deprecated" + deprecationInfo.getMessage(context.session)?.let { ". $it" }.orEmpty(),
+            context,
         )
     }
 }
