@@ -25,7 +25,7 @@ sourceSets {
 projectTests {
     nativeTestTask(
         "test",
-        allowParallelExecution = false, // some of the tests may spawn quite a lot of threads
+        allowParallelExecution = false, // some tests may spawn quite a lot of threads
     ) {
         // nativeTest sets workingDir to rootDir so here we need to override it
         workingDir = projectDir
@@ -35,5 +35,8 @@ projectTests {
         }
         systemProperty("gcfuzzing.timelimit", project.findProperty("gcfuzzing.timelimit") ?: "1h")
         systemProperty("gcfuzzing.seed", project.findProperty("gcfuzzing.seed") ?: Random.nextInt())
+        doNotTrackState(
+            "Fuzzer is randomized + certain race conditions can manifest unreproducibly even from the fixed seed"
+        )
     }
 }
