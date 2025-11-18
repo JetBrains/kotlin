@@ -12,6 +12,14 @@
 // CHECK_COMMENT_EXISTS: text="The header multiline\ncomment" multiline=true
 // CHECK_COMMENT_EXISTS: text="The header multiline\ncomment before anonymous function" multiline=true
 // CHECK_COMMENT_EXISTS: text="The header multiline\ncomment before arrow function" multiline=true
+// CHECK_COMMENT_EXISTS: text="before regular function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="after regular function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="before anonymous function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="after anonymous function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="before arrow function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="after arrow function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="before single arrow function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="after single arrow function param" multiline=true
 // CHECK_COMMENT_EXISTS: text="1Multi line comment\n" multiline=true
 // CHECK_COMMENT_EXISTS: text="2Multi line comment\n\n\n" multiline=true
 // CHECK_COMMENT_EXISTS: text="3Multi line\n\n\n\n\ncomment\n" multiline=true
@@ -38,7 +46,7 @@ fun box(): String {
     js("""
         /* The header multiline
         comment */
-        function foo() {
+        function foo(/* before regular function param */ param /* after regular function param */) {
             // Single line comment inside function
             Object;
             /*Multi line comment inside function*/
@@ -46,7 +54,7 @@ fun box(): String {
 
         /* The header multiline
         comment before anonymous function*/
-        var foo2 = function(param) {
+        var foo2 = function(/* before anonymous function param */ param /* after anonymous function param */) {
             // Single line comment inside anonymous function
             Object;
             /*Multi line comment inside anonymous function*/
@@ -54,8 +62,8 @@ fun box(): String {
 
         /* The header multiline
         comment before arrow function*/
-        var foo3 = (param) => Object;
-        var foo4 = param => Object;
+        var foo3 = (/* before arrow function param */ param /* after arrow function param */) => Object;
+        var foo4 = /* before single arrow function param */ param /* after single arrow function param */ => Object;
         
         // Single line comment
         // Second single line comment

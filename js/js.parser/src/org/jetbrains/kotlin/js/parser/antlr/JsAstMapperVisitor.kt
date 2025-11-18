@@ -417,7 +417,9 @@ internal class JsAstMapperVisitor(
             ?: reportError("Only identifier parameters are supported yet", ctx)
         val paramName = scopeContext.localNameFor(identifier.text)
 
-        return JsParameter(paramName).applyLocation(ctx)
+        return JsParameter(paramName)
+            .applyLocation(ctx)
+            .applyComments(ctx)
     }
 
     override fun visitRestParameterArg(ctx: JavaScriptParser.RestParameterArgContext?): JsNode? {
