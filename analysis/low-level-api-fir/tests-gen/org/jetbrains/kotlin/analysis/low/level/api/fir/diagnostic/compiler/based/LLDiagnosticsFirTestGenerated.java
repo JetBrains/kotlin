@@ -1562,6 +1562,58 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public void testUselessMultipleBounds() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/uselessMultipleBounds.kt");
       }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Orblrt {
+        @Test
+        public void testAllFilesPresentInOrblrt() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("dataFrameCase.kt")
+        public void testDataFrameCase() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/dataFrameCase.kt");
+        }
+
+        @Test
+        @TestMetadata("executorSubmit.kt")
+        public void testExecutorSubmit() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/executorSubmit.kt");
+        }
+
+        @Test
+        @TestMetadata("genericVsInapplicableNonGeneric.kt")
+        public void testGenericVsInapplicableNonGeneric() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/genericVsInapplicableNonGeneric.kt");
+        }
+
+        @Test
+        @TestMetadata("specifityAfterLambdaAnalysis.kt")
+        public void testSpecifityAfterLambdaAnalysis() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/specifityAfterLambdaAnalysis.kt");
+        }
+
+        @Test
+        @TestMetadata("specifityAfterLambdaAnalysisComplex.kt")
+        public void testSpecifityAfterLambdaAnalysisComplex() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/specifityAfterLambdaAnalysisComplex.kt");
+        }
+
+        @Test
+        @TestMetadata("typeParameterReturnTypeVsList.kt")
+        public void testTypeParameterReturnTypeVsList() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/typeParameterReturnTypeVsList.kt");
+        }
+
+        @Test
+        @TestMetadata("valueVsUnit.kt")
+        public void testValueVsUnit() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/valueVsUnit.kt");
+        }
+      }
     }
 
     @Nested
