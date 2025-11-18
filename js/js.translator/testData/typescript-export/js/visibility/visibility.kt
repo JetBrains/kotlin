@@ -82,6 +82,27 @@ class FinalClass protected constructor() {
 }
 
 @JsExport
+class FinalClassWithPublicPrimaryProtectedSecondaryCtor(s: String) {
+    @JsName("fromInt")
+    protected constructor(n: Int): this(n.toString())
+}
+
+@JsExport
+class FinalClassWithProtectedPrimaryPublicSecondaryCtor protected constructor(s: String) {
+    @JsName("fromInt")
+    public constructor(n: Int): this(n.toString())
+}
+
+@JsExport
+class FinalClassWithOnlySecondaryCtorsMixedVisibility {
+    @JsName("fromInt")
+    protected constructor(n: Int)
+
+    @JsName("fromString")
+    public constructor(s: String)
+}
+
+@JsExport
 enum class EnumClass {
     EC1,
     EC2
