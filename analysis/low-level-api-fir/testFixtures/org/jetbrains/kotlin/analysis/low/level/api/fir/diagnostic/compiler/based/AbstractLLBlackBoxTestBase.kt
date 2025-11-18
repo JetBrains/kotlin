@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLL
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.wasm.isWasm
+import org.jetbrains.kotlin.platform.wasm.isWasmJs
+import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
@@ -67,7 +70,7 @@ abstract class AbstractLLBlackBoxTestBase(private val targetPlatform: TargetPlat
 
             when {
                 targetPlatform.isJvm() -> configureForJvmBlackBoxTests()
-                targetPlatform.isJs() -> {}
+                targetPlatform.isJs() || targetPlatform.isWasm() -> {}
                 else -> error("Unsupported platform: $targetPlatform")
             }
         }
@@ -78,6 +81,8 @@ abstract class AbstractLLBlackBoxTestBase(private val targetPlatform: TargetPlat
         val targetBackend = when {
             targetPlatform.isJvm() -> TargetBackend.JVM
             targetPlatform.isJs() -> TargetBackend.JS_IR
+            targetPlatform.isWasmJs() -> TargetBackend.WASM_JS
+            targetPlatform.isWasmWasi() -> TargetBackend.WASM_WASI
             else -> error("Unsupported platform: $targetPlatform")
         }
         if (!InTextDirectivesUtils.isCompatibleTarget(targetBackend, testDataFile)) return true

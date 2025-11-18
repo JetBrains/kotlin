@@ -247,7 +247,7 @@ object TestModuleStructureFactory {
                     KtTestUtil.createFile(testFile.name, fileText, project)
                 }
 
-                testFile.isJavaFile || testFile.isExternalAnnotation -> {
+                testFile.isJavaFile || testFile.isExternalAnnotation || testFile.isMjsFile -> {
                     val filePath = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(testFile)
                     val virtualFile =
                         testServices.environmentManager.getApplicationEnvironment().localFileSystem.findFileByIoFile(filePath)
