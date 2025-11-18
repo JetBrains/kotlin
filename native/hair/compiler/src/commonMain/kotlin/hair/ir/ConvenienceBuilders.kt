@@ -15,6 +15,8 @@ import hair.ir.nodes.Unwind
 import hair.ir.nodes.WriteField
 import hair.ir.nodes.WriteGlobal
 import hair.ir.nodes.set
+import hair.sym.HairType
+import hair.sym.HairType.*
 import hair.sym.Type
 import hair.utils.ensuring
 
@@ -24,13 +26,6 @@ fun ReturnVoid(control: Controlling?) = Return(control, null)
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 fun ReturnVoid() = Return(null)
-
-// logic
-context(nodeBuilder: NodeBuilder)
-fun True() = ConstI(1)
-
-context(nodeBuilder: NodeBuilder)
-fun False() = ConstI(0)
 
 // CFG structures
 private typealias BodyBuilder = context(NodeBuilder, ControlFlowBuilder) () -> Unit
@@ -121,7 +116,7 @@ fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<Type.Reference, context(No
         // TODO how do we handle nested try blocks?
         val unwinds = throwers.map { it.unwind ?: Unwind(it) }.toTypedArray()
         val handlerBlock = BlockEntry(*unwinds)
-        val exception = Catch(Phi(handlerBlock, *unwinds))
+        val exception = Catch(Phi(EXCEPTION)(handlerBlock, *unwinds))
 
         for ((type, catchBody) in catches) {
             // FIXME what do we know about the catchers order? Are all the type checks always possible?

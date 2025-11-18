@@ -9,6 +9,7 @@ object Utils : ModelDSL() {
     // TODO move to Kotlin?
     val unitValue by node {}
 
+    // used in tests
     val use by node(ControlFlow.blockBody) {
         param("value")
     }

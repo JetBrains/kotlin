@@ -28,9 +28,13 @@ class Session: SessionBase() {
 
     internal val unwindForm = Unwind.form(this).also { register(it) }
 
-    internal val phiForm = Phi.form(this).also { register(it) }
-
     internal val catchForm = Catch.form(this).also { register(it) }
+
+    internal val trueForm = True.form(this).also { register(it) }
+
+    internal val falseForm = False.form(this).also { register(it) }
+
+    internal val nullForm = Null.form(this).also { register(it) }
 
     
 
@@ -39,6 +43,8 @@ class Session: SessionBase() {
     internal val readVarMetaForm = ReadVar.metaForm(this)
 
     internal val assignVarMetaForm = AssignVar.metaForm(this)
+
+    internal val phiMetaForm = Phi.metaForm(this)
 
     internal val phiPlaceholderMetaForm = PhiPlaceholder.metaForm(this)
 
@@ -51,8 +57,6 @@ class Session: SessionBase() {
     internal val constFMetaForm = ConstF.metaForm(this)
 
     internal val constDMetaForm = ConstD.metaForm(this)
-
-    internal val nullMetaForm = Null.metaForm(this)
 
     internal val addMetaForm = Add.metaForm(this)
 
@@ -90,7 +94,7 @@ class Session: SessionBase() {
 
     internal val isInstanceOfMetaForm = IsInstanceOf.metaForm(this)
 
-    internal val castMetaForm = Cast.metaForm(this)
+    internal val checkCastMetaForm = CheckCast.metaForm(this)
 
     internal val invokeStaticMetaForm = InvokeStatic.metaForm(this)
 

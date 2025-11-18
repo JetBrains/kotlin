@@ -1,13 +1,13 @@
 package hair.ir.generator
 
 import hair.ir.generator.toolbox.ModelDSL
-import hair.sym.ArithmeticType
 import hair.sym.CmpOp
+import hair.sym.HairType
 
 object Arithmetics : ModelDSL() {
 
     val constAny by nodeInterface {
-        formParam("value", Any::class) // TODO nullable?
+        //formParam("value", Any::class) // TODO nullable?
     }
 
     val constI by node {
@@ -30,12 +30,20 @@ object Arithmetics : ModelDSL() {
         formParam("value", Double::class)
     }
 
+    val `true` by node {
+        interfaces(constAny)
+    }
+
+    val `false` by node {
+        interfaces(constAny)
+    }
+
     val `null` by node {
         interfaces(constAny)
     }
 
     val binaryOp by abstractClass {
-        formParam("type", ArithmeticType::class)
+        formParam("type", HairType::class)
         param("lhs")
         param("rhs")
     }

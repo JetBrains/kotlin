@@ -1,6 +1,7 @@
 package hair.transform
 
 import hair.ir.*
+import hair.ir.Add
 import hair.ir.nodes.AssignVar
 import hair.ir.nodes.NodeBuilder
 import hair.test.Var
@@ -8,6 +9,8 @@ import hair.ir.nodes.Phi
 import hair.ir.nodes.ReadVar
 import hair.ir.nodes.Throw
 import hair.sym.HairFunction
+import hair.sym.HairType.*
+import hair.test.Fun
 import hair.utils.printGraphviz
 import kotlin.test.*
 
@@ -31,7 +34,7 @@ class SSATest : IrTest {
 
             ReturnVoid()
 
-            buildSSA()
+            buildSSA { INT }
 
             printGraphviz()
 
@@ -57,11 +60,11 @@ class SSATest : IrTest {
                 AssignVar(var1)(ConstI(22))
                 AssignVar(var0)(ConstI(20))
             })
-            AssignVar(var0)(AddI(ReadVar(var0), ConstI(1)))
+            AssignVar(var0)(Add(INT)(ReadVar(var0), ConstI(1)))
             AssignVar(var2)(ConstI(0))
             branch(ReadVar(var1), {
                 whileLoop(cond()) {
-                    AssignVar(var2)(AddI(ReadVar(var2), ConstI(1)))
+                    AssignVar(var2)(Add(INT)(ReadVar(var2), ConstI(1)))
                 }
             }, {
                 AssignVar(var2)(ReadVar(var1))
@@ -70,7 +73,7 @@ class SSATest : IrTest {
 
             ReturnVoid()
 
-            buildSSA()
+            buildSSA { INT }
 
             printGraphviz()
 
@@ -88,17 +91,17 @@ class SSATest : IrTest {
                 Use(ConstI(23))
             }, {
                 branch(cond(), {
-                    Use(AddI(ConstI(23), ConstI(42)))
+                    Use(Add(INT)(ConstI(23), ConstI(42)))
                 }, {
                     whileLoop(cond()) {
-                        Use(AddI(ConstI(23), ConstI(42)))
+                        Use(Add(INT)(ConstI(23), ConstI(42)))
                     }
                 })
             })
 
             ReturnVoid()
 
-            buildSSA()
+            buildSSA { INT }
 
             printGraphviz()
         }
@@ -106,15 +109,13 @@ class SSATest : IrTest {
 
     @Test
     fun testTwoThrowsSameBlock() = withTestSession {
-        data class Fun(val name: String) : HairFunction
-
         buildInitialIR {
             val v = Var.nextNumbered()
 
             val v1 = ConstI(23)
             AssignVar(v)(v1)
 
-            val call = StaticCall(Fun("foo"))()
+            val call = InvokeStatic(Fun("foo"))()
 
             val v2 = ConstI(42)
             AssignVar(v)(v2)
@@ -127,7 +128,7 @@ class SSATest : IrTest {
             BlockEntry(callUnwind, throwUnwind)
             val ret = Return(ReadVar(v))
 
-            buildSSA()
+            buildSSA { INT }
 
             printGraphviz()
 
@@ -139,15 +140,13 @@ class SSATest : IrTest {
 
     @Test
     fun testTryCatchComplex() = withTestSession {
-        data class Fun(val name: String) : HairFunction
-
         buildInitialIR {
             val v = Var.nextNumbered()
 
             val v1 = ConstI(23)
             AssignVar(v)(v1)
 
-            val call = StaticCall(Fun("foo"))()
+            val call = InvokeStatic(Fun("foo"))()
 
             val v2 = ConstI(42)
             AssignVar(v)(v2)
@@ -172,7 +171,7 @@ class SSATest : IrTest {
             BlockEntry(callUnwind, throwUnwind)
             val retHandler = Return(ReadVar(v))
 
-            buildSSA()
+            buildSSA { INT }
 
             printGraphviz()
 
