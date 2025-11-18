@@ -7,13 +7,16 @@
 
 package kotlin.reflect.full
 
+import org.jetbrains.kotlin.load.java.JvmAbi
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
+import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.asReflectCallable
 import kotlin.reflect.jvm.internal.callDefaultMethod
+import kotlin.reflect.jvm.internal.calls.toInlineClass
 
 /**
  * Returns a parameter representing the `this` instance needed to call this callable,
@@ -85,5 +88,86 @@ suspend fun <R> KCallable<R>.callSuspendBy(args: Map<KParameter, Any?>): R {
     // In this case, return Unit manually.
     @Suppress("UNCHECKED_CAST")
     if (returnType.classifier == Unit::class && !returnType.isMarkedNullable) return (Unit as R)
+    return result
+}
+
+/**
+ * Calls this callable with a mapping of parameters to arguments where value-class parameters may be provided unboxed,
+ * and returns the result with value-class return value unboxed as well.
+ * If a parameter is not found in the mapping and is not optional (as per [KParameter.isOptional]),
+ * or its type does not match the type of the provided value (after boxing), an exception is thrown.
+ */
+@SinceKotlin("2.3")
+fun <R> KCallable<R>.callByUnboxed(args: Map<KParameter, Any?>): R {
+    val boxedArgs: Map<KParameter, Any?> = boxValueClassArgsIfNeeded(this, args)
+    val result = callBy(boxedArgs)
+    @Suppress("UNCHECKED_CAST")
+    return unboxValueClassReturnIfNeeded(this, result) as R
+}
+
+/**
+ * Calls this callable in the current suspend context with a mapping of parameters to arguments where value-class
+ * parameters may be provided unboxed, and returns the result with value-class return value unboxed as well.
+ * If the callable is not a suspend function, behaves as [callByUnboxed].
+ */
+@SinceKotlin("2.3")
+suspend fun <R> KCallable<R>.callSuspendByUnboxed(args: Map<KParameter, Any?>): R {
+    if (!this.isSuspend) return callByUnboxed(args)
+    if (this !is KFunction<*>) throw IllegalArgumentException("Cannot callSuspendByUnboxed on a property $this: suspend properties are not supported yet")
+    val boxedArgs: Map<KParameter, Any?> = boxValueClassArgsIfNeeded(this, args)
+    val result = callSuspendBy(boxedArgs)
+    @Suppress("UNCHECKED_CAST")
+    return unboxValueClassReturnIfNeeded(this, result) as R
+}
+
+// --- Helpers ---
+
+private fun boxValueClassArgsIfNeeded(callable: KCallable<*>, args: Map<KParameter, Any?>): Map<KParameter, Any?> {
+    if (args.isEmpty()) return args
+    val out = HashMap<KParameter, Any?>(args.size)
+    for ((param, value) in args) {
+        out[param] = boxValueClassParamIfNeeded(param.type, value)
+    }
+    return out
+}
+
+private fun boxValueClassParamIfNeeded(paramType: KType, value: Any?): Any? {
+    val inlineClass = paramType.toInlineClass() ?: return value
+    if (value == null) return null
+    if (inlineClass.isInstance(value)) return value
+
+    val unboxMethod = try {
+        inlineClass.getDeclaredMethod("unbox" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS)
+    } catch (_: NoSuchMethodException) {
+        null
+    }
+    val boxMethod = try {
+        if (unboxMethod != null) inlineClass.getDeclaredMethod(
+            "box" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS,
+            unboxMethod.returnType
+        ) else null
+    } catch (_: NoSuchMethodException) {
+        null
+    }
+
+    if (boxMethod != null) {
+        if (!boxMethod.canAccess(null)) boxMethod.isAccessible = true
+        return boxMethod.invoke(null, value)
+    }
+    return value
+}
+
+private fun unboxValueClassReturnIfNeeded(callable: KCallable<*>, result: Any?): Any? {
+    val inlineClass = callable.returnType.toInlineClass() ?: return result
+    if (result == null) return null
+    val unboxMethod = try {
+        inlineClass.getDeclaredMethod("unbox" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS)
+    } catch (_: NoSuchMethodException) {
+        null
+    }
+    if (unboxMethod != null) {
+        if (!unboxMethod.canAccess(result)) unboxMethod.isAccessible = true
+        return unboxMethod.invoke(result)
+    }
     return result
 }

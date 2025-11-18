@@ -13,6 +13,8 @@ public final class kotlin/reflect/full/KAnnotatedElements {
 public final class kotlin/reflect/full/KCallables {
 	public static final fun callSuspend (Lkotlin/reflect/KCallable;[Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun callSuspendBy (Lkotlin/reflect/KCallable;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun callSuspendByUnboxed (Lkotlin/reflect/KCallable;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun callByUnboxed (Lkotlin/reflect/KCallable;Ljava/util/Map;)Ljava/lang/Object;
 	public static final fun findParameterByName (Lkotlin/reflect/KCallable;Ljava/lang/String;)Lkotlin/reflect/KParameter;
 	public static final fun getContextParameters (Lkotlin/reflect/KCallable;)Ljava/util/List;
 	public static final fun getExtensionReceiverParameter (Lkotlin/reflect/KCallable;)Lkotlin/reflect/KParameter;
