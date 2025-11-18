@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.CompilationCanceledException
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.util.PhaseType
 import java.io.File
 
@@ -64,6 +66,7 @@ open class IncrementalFirJvmCompilerRunner(
     kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     generateCompilerRefIndex: Boolean = false,
+    val compilationCanceledStatus: CompilationCanceledStatus? = null,
 ) : IncrementalJvmCompilerRunner(
     workingDir,
     reporter,
@@ -72,6 +75,7 @@ open class IncrementalFirJvmCompilerRunner(
     kotlinSourceFilesExtensions,
     icFeatures,
     generateCompilerRefIndex,
+    compilationCanceledStatus = compilationCanceledStatus
 ) {
 
     override fun runCompiler(
@@ -84,6 +88,8 @@ open class IncrementalFirJvmCompilerRunner(
         isIncremental: Boolean
     ): Pair<ExitCode, Collection<File>> {
 //        val isIncremental = true // TODO
+        ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(compilationCanceledStatus)
+
         val collector = GroupingMessageCollector(messageCollector, args.allWarningsAsErrors, args.reportAllWarnings)
         val allSourcesWithJava = allSources + args.javaSources()
         // from K2JVMCompiler (~)
