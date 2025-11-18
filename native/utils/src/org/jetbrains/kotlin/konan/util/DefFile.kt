@@ -22,9 +22,15 @@ import java.io.File
 import java.io.StringReader
 import java.util.*
 
-class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProperties:Properties, val defHeaderLines:List<String>) {
-    private constructor(file0:File?, triple: Triple<Properties, Properties, List<String>>): this(file0, DefFileConfig(triple.first), triple.second, triple.third)
-    constructor(file:File?, substitutions: Map<String, String>) : this(file, parseDefFile(file, substitutions))
+class DefFile(val file: File?, val config: DefFileConfig, val manifestAddendProperties: Properties, val defHeaderLines: List<String>) {
+    private constructor(file: File?, triple: Triple<Properties, Properties, List<String>>) : this(
+        file,
+        DefFileConfig(triple.first),
+        triple.second,
+        triple.third
+    )
+
+    constructor(file: File?, substitutions: Map<String, String>) : this(file, parseDefFile(file, substitutions))
 
     val name by lazy {
         file?.nameWithoutExtension ?: ""
@@ -148,51 +154,51 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
 }
 
 private fun Properties.getSpaceSeparated(name: String): List<String> =
-        this.getProperty(name)?.let { parseSpaceSeparatedArgs(it) } ?: emptyList()
+    this.getProperty(name)?.let { parseSpaceSeparatedArgs(it) } ?: emptyList()
 
 private fun parseDefFile(file: File?, substitutions: Map<String, String>): Triple<Properties, Properties, List<String>> {
-     val properties = Properties()
+    val properties = Properties()
 
-     if (file == null) {
-         return Triple(properties, Properties(), emptyList())
-     }
+    if (file == null) {
+        return Triple(properties, Properties(), emptyList())
+    }
 
-     val lines = file.readLines()
+    val lines = file.readLines()
 
-     val separator = "---"
-     val separatorIndex = lines.indexOf(separator)
+    val separator = "---"
+    val separatorIndex = lines.indexOf(separator)
 
-     val propertyLines: List<String>
-     val headerLines: List<String>
+    val propertyLines: List<String>
+    val headerLines: List<String>
 
-     if (separatorIndex != -1) {
-         propertyLines = lines.subList(0, separatorIndex)
-         headerLines = lines.subList(separatorIndex + 1, lines.size)
-     } else {
-         propertyLines = lines
-         headerLines = emptyList()
-     }
+    if (separatorIndex != -1) {
+        propertyLines = lines.subList(0, separatorIndex)
+        headerLines = lines.subList(separatorIndex + 1, lines.size)
+    } else {
+        propertyLines = lines
+        headerLines = emptyList()
+    }
 
-     // \ isn't escaping character in quotes, so replace them with \\.
-     val joinedLines = propertyLines.joinToString(System.lineSeparator())
-     val escapedTokens = joinedLines.split('"')
-     val postprocessProperties = escapedTokens.mapIndexed { index, token ->
-         if (index % 2 != 0) {
-             token.replace("""\\(?=.)""".toRegex(), Regex.escapeReplacement("""\\"""))
-         } else {
-             token
-         }
-     }.joinToString("\"")
-     val propertiesReader = StringReader(postprocessProperties)
-     properties.load(propertiesReader)
+    // \ isn't escaping character in quotes, so replace them with \\.
+    val joinedLines = propertyLines.joinToString(System.lineSeparator())
+    val escapedTokens = joinedLines.split('"')
+    val postprocessProperties = escapedTokens.mapIndexed { index, token ->
+        if (index % 2 != 0) {
+            token.replace("""\\(?=.)""".toRegex(), Regex.escapeReplacement("""\\"""))
+        } else {
+            token
+        }
+    }.joinToString("\"")
+    val propertiesReader = StringReader(postprocessProperties)
+    properties.load(propertiesReader)
 
-     // Pass unsubstituted copy of properties we have obtained from `.def`
-     // to compiler `-manifest`.
-     val manifestAddendProperties = properties.duplicate()
+    // Pass unsubstituted copy of properties we have obtained from `.def`
+    // to compiler `-manifest`.
+    val manifestAddendProperties = properties.duplicate()
 
-     substitute(properties, substitutions)
+    substitute(properties, substitutions)
 
-     return Triple(properties, manifestAddendProperties, headerLines)
+    return Triple(properties, manifestAddendProperties, headerLines)
 }
 
 private fun Properties.duplicate() = Properties().apply { putAll(this@duplicate) }
