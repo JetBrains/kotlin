@@ -9,3 +9,6 @@ $TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
 -opt-in=kotlin.RequiresOptIn
 -opt-in=Warning
 -Werror
+-Xwarning-level=OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED\:disabled
+-Xwarning-level=NOT_AN_OPT_IN_REQUIREMENT_MARKER\:disabled
+-Xwarning-level=OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED\:disabled

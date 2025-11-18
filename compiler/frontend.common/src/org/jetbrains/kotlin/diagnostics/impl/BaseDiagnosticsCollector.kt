@@ -24,10 +24,6 @@ abstract class BaseDiagnosticsCollector : DiagnosticReporter() {
 
         fun report(message: String, severity: CompilerMessageSeverity)
 
-        fun reportWarning(message: String) {
-            report(message, CompilerMessageSeverity.WARNING)
-        }
-
         fun reportError(message: String) {
             report(message, CompilerMessageSeverity.ERROR)
         }

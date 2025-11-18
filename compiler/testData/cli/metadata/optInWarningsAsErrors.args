@@ -8,3 +8,6 @@ $TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
 -opt-in=NotAnAnnotation
 -opt-in=kotlin.RequiresOptIn
 -opt-in=Warning
+-Xwarning-level=OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED\:error
+-Xwarning-level=NOT_AN_OPT_IN_REQUIREMENT_MARKER\:error
+-Xwarning-level=OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED\:error

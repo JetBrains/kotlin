@@ -5,3 +5,4 @@ $TEMP_DIR$
 $TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
 -Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
 -opt-in=Error
+-Xwarning-level=OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED_ERROR\:disabled
