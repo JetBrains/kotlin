@@ -41,7 +41,7 @@ class SerialInfoImplJvmIrGenerator(
             parent = createClass(createPackage("kotlin.jvm"), "JvmClassMappingKt", ClassKind.CLASS).owner
             addGetter().apply {
                 annotations = listOf(
-                    IrConstructorCallImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
+                    IrAnnotationImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
                         arguments[0] = IrConstImpl.string(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,

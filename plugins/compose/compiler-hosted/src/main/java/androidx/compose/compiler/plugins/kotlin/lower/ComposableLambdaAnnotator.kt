@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -63,7 +64,7 @@ class ComposableLambdaAnnotator(context: IrPluginContext) : IrVisitorVoid() {
 
     private fun IrFunction.mark() {
         if (!hasComposableAnnotation()) {
-            annotations = annotations + IrConstructorCallImpl.fromSymbolOwner(
+            annotations = annotations + IrAnnotationImpl.fromSymbolOwner(
                 composableSymbol.owner.defaultType,
                 composableSymbol.constructors.single(),
             )
