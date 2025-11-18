@@ -34,6 +34,12 @@ open class WasmFileCodegenContext(
     open fun handleClassITableWithImport(declaration: IrClassSymbol): Boolean = false
     open fun handleRTTIWithImport(declaration: IrClassSymbol, superType: IrClassSymbol?): Boolean = false
 
+    private val wasmRefNullTypeCache = mutableMapOf<IrClassSymbol, WasmRefNullType>()
+    fun getCachedRefNullType(symbol: IrClassSymbol): WasmRefNullType =
+        wasmRefNullTypeCache.getOrPut(symbol) {
+            WasmRefNullType(WasmHeapType.Type(referenceGcType(symbol)))
+        }
+
     private fun IrSymbol.getReferenceKey(): IdSignature =
         idSignatureRetriever.declarationSignature(this.owner as IrDeclaration)!!
 

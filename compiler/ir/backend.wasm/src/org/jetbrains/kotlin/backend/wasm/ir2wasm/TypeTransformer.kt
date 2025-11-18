@@ -47,7 +47,7 @@ class WasmTypeTransformer(
         }
 
     private fun IrType.toWasmGcRefType(): WasmType =
-        WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(getRuntimeClass(backendContext.irBuiltIns).symbol)))
+        wasmFileCodegenContext.getCachedRefNullType(getRuntimeClass(backendContext.irBuiltIns).symbol)
 
     fun IrType.toBoxedInlineClassType(): WasmType =
         toWasmGcRefType()
