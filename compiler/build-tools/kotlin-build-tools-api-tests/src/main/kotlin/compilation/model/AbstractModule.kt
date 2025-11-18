@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException
 
 private class CompilationOutcomeImpl(
     rawLogLines: Map<LogLevel, Collection<String>>,
-    override val actualResult: CompilationResult
+    override val actualResult: CompilationResult?,
 ) : CompilationOutcome {
     private val _logLines by lazy {
         rawLogLines.mapValues { (_, lines) -> lines.toList() }
@@ -33,7 +33,7 @@ private class CompilationOutcomeImpl(
 
     var maxLogLevel: LogLevel = LogLevel.ERROR
         private set
-    var expectedResult = CompilationResult.COMPILATION_SUCCESS
+    var expectedResult: CompilationResult? = CompilationResult.COMPILATION_SUCCESS
         private set
 
     override fun requireLogLevel(logLevel: LogLevel) {
@@ -44,7 +44,7 @@ private class CompilationOutcomeImpl(
         expectedResult = CompilationResult.COMPILATION_ERROR
     }
 
-    override fun expectCompilationResult(compilationResult: CompilationResult) {
+    override fun expectCompilationResult(compilationResult: CompilationResult?) {
         expectedResult = compilationResult
     }
 }
@@ -84,6 +84,25 @@ abstract class AbstractModule(
     override val scenarioDslCacheKey =
         AbstractModuleCacheKey(moduleName, dependencies.map { it.scenarioDslCacheKey }, moduleCompilationConfigAction)
 
+    override fun compileAndThrow(
+        strategyConfig: ExecutionPolicy,
+        forceOutput: LogLevel?,
+        compilationConfigAction: (JvmCompilationOperation) -> Unit,
+        assertions: context(Module) CompilationOutcome.(Throwable) -> Unit,
+    ): Throwable {
+        val kotlinLogger = TestKotlinLogger()
+        try {
+            compileImpl(strategyConfig, compilationConfigAction, kotlinLogger)
+        } catch (e: Throwable) {
+            processOutcome(kotlinLogger, null, {
+                expectCompilationResult(null)
+                assertions(e)
+            }, forceOutput)
+            return e
+        }
+        throw AssertionError("Compilation was successful, but expected failure")
+    }
+
     override fun compile(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
@@ -92,6 +111,16 @@ abstract class AbstractModule(
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
         val result = compileImpl(strategyConfig, compilationConfigAction, kotlinLogger)
+        processOutcome(kotlinLogger, result, assertions, forceOutput)
+        return result
+    }
+
+    private fun processOutcome(
+        kotlinLogger: TestKotlinLogger,
+        result: CompilationResult?,
+        assertions: context(Module) CompilationOutcome.() -> Unit,
+        forceOutput: LogLevel?,
+    ) {
         val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel, result)
         try {
             assertions(outcome)
@@ -110,7 +139,6 @@ abstract class AbstractModule(
             kotlinLogger.printBuildOutput(maxLogLevel)
             throw e
         }
-        return result
     }
 
     protected abstract fun compileImpl(

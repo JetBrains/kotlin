@@ -57,7 +57,7 @@ class JvmModule(
      */
     private val dependencyFiles: List<Path>
         get() = dependencies.map { it.location }.plus(stdlibLocation)
-    private val compileClasspath: String
+    val compileClasspath: String
         get() = dependencyFiles.joinToString(File.pathSeparator)
 
     override fun compileImpl(

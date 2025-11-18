@@ -27,6 +27,11 @@ dependencies {
     embedded(project(":kotlin-scripting-compiler-impl-embeddable")) { isTransitive = false }
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
+
+
+    testCompileOnly(project(":compiler:cli"))
+    testCompileOnly(intellijPlatformUtil())
+    testImplementation(kotlinTest("junit"))
 }
 
 publish()

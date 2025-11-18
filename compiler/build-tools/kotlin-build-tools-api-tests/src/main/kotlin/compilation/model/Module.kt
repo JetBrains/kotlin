@@ -49,6 +49,13 @@ interface Module : Dependency {
 
     val defaultStrategyConfig: ExecutionPolicy
 
+    fun compileAndThrow(
+        strategyConfig: ExecutionPolicy = defaultStrategyConfig,
+        forceOutput: LogLevel? = null,
+        compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
+        assertions: context(Module) CompilationOutcome.(Throwable) -> Unit = {},
+    ): Throwable
+
     fun compile(
         strategyConfig: ExecutionPolicy = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
