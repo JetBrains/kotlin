@@ -35,14 +35,14 @@ public:
         // Create socket
         serverFd = socket(AF_INET, SOCK_STREAM, 0);
         if (serverFd == -1) {
-            utility::log("Failed to create socket", utility::LogLevel::ERR);
+            HRLogError("(HotReloadServer) Failed to create TCP socket for reload requests");
             return false;
         }
 
         // Set socket options to reuse address
         int opt = 1;
         if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
-            utility::log("Failed to set socket options", utility::LogLevel::ERR);
+            HRLogError("(HotReloadServer) Failed to set socket options");
             close(serverFd);
             return false;
         }
@@ -54,20 +54,20 @@ public:
         address.sin_port = htons(port);
 
         if (bind(serverFd, reinterpret_cast<sockaddr*>(&address), sizeof(address)) < 0) {
-            utility::log("Failed to bind to port 127.0.0.1:" + std::to_string(port), utility::LogLevel::ERR);
+            HRLogError("(HotReloadServer) Failed to bind to port %s:%d", kServerEndpoint, port);
             close(serverFd);
             return false;
         }
 
         // Listen for connections
         if (listen(serverFd, 3) < 0) {
-            utility::log("Failed to listen on socket", utility::LogLevel::ERR);
+            HRLogError("(HotReloadServer) Failed to listen on socket");
             close(serverFd);
             return false;
         }
 
         running = true;
-        utility::log("HotReloadServer listening on localhost:" + std::to_string(port));
+        HRLogInfo("(HotReloadServer) Listening on %s:%d", kServerEndpoint, port);
         return true;
     }
 
@@ -81,7 +81,7 @@ public:
 #endif
 
             if (!running) {
-                utility::log("Server not started", utility::LogLevel::ERR);
+                HRLogError("(HotReloadServer) Server not started!");
                 return;
             }
 
@@ -92,12 +92,12 @@ public:
                 const int clientSocket = accept(serverFd, reinterpret_cast<struct sockaddr*>(&clientAddress), &clientLen);
                 if (clientSocket < 0) {
                     if (running) {
-                        utility::log("Failed to accept connection, next...", utility::LogLevel::ERR);
+                        HRLogError("(HotReloadServer) Failed to accept connection, moving to next one...");
                     }
                     continue;
                 }
 
-                utility::log("Accepting incoming client");
+                HRLogDebug("(HotReloadServer) Accepting incoming client");
                 handleReloadMessage(clientSocket, onReloadMessageCallback);
                 close(clientSocket);
             }
@@ -111,7 +111,7 @@ public:
                 close(serverFd);
                 serverFd = -1;
             }
-            utility::log("Stopping HotReload server...");
+            HRLogInfo("(HotReloadServer) Stopping server...");
             if (runningThread != nullptr) {
                 runningThread->join();
             }
@@ -145,7 +145,7 @@ private:
     static void handleReloadMessage(const int clientSocket, F&& onReloadCallback) {
         uint32_t numDylibs{0};
         if (!readExact(clientSocket, &numDylibs, sizeof(numDylibs))) {
-            log("Failed to read number of dylibs", utility::LogLevel::ERR);
+            HRLogError("(HotReloadServer) Failed to read number of dylibs");
             return;
         }
 
@@ -155,14 +155,14 @@ private:
             // Read path length
             uint32_t pathLength;
             if (!readExact(clientSocket, &pathLength, sizeof(pathLength))) {
-                utility::log("Failed to read path length for dylib " + std::to_string(i), utility::LogLevel::ERR);
+                HRLogError("(HotReloadServer) Failed to read path length for dylib %u", i);
                 return;
             }
 
             // Read path string
             std::vector<char> pathBuffer(pathLength);
             if (!readExact(clientSocket, pathBuffer.data(), pathLength)) {
-                utility::log("Failed to read path for dylib " + std::to_string(i), utility::LogLevel::ERR);
+                HRLogError("Failed to read path for dylib %u", i);
                 return;
             }
 
@@ -173,7 +173,6 @@ private:
             }
 
             dylibPaths.push_back(path);
-            utility::log("dylib " + std::to_string(i) + ": " + path, utility::LogLevel::INFO);
         }
 
         onReloadCallback(dylibPaths);

@@ -27,6 +27,7 @@
 #include "hot/fishhook.h"
 
 #include <set>
+#include <utility>
 
 using namespace kotlin;
 
@@ -36,22 +37,26 @@ void stopTheWorld(GCHandle gcHandle, const char* reason) noexcept;
 void resumeTheWorld(GCHandle gcHandle) noexcept;
 } // namespace kotlin::gc
 
+static uint64_t getCurrentEpoch() {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
 ManuallyScoped<HotReloader> globalDataInstance{};
 
-const std::set<std::string_view> NON_RELOADABLE_CLASS_SYMBOLS = {
-    "kclass:kotlin.Annotation"
-};
+const std::set<std::string_view> NON_RELOADABLE_CLASS_SYMBOLS = {"kclass:kotlin.Annotation"};
 
-enum class Origin {
-    Global, ShadowStack, ObjRef
-};
+enum class Origin { Global, ShadowStack, ObjRef };
 
 const char* originToString(const Origin origin) noexcept {
     switch (origin) {
-        case Origin::Global: return "Global";
-        case Origin::ShadowStack: return "ShadowStack";
-        case Origin::ObjRef: return "Object Reference";
-        default: return "Unknown";
+        case Origin::Global:
+            return "Global";
+        case Origin::ShadowStack:
+            return "ShadowStack";
+        case Origin::ObjRef:
+            return "Object Reference";
+        default:
+            return "Unknown";
     }
 }
 
@@ -85,13 +90,10 @@ int visitObjectGraph(ObjHeader* startObject, F processingFunction) {
     // Let's start collecting the root set
     auto processObject = [&](ObjHeader* obj, Origin origin) {
         // const char* originString = originToString(origin);
-
-        if (obj != nullptr) {
-            // hot::utility::log("processing object of type: " + obj->type_info()->fqName() + " from: " + originString);
-        }
-
-        if (const auto visited = visitedObjects.find(obj); visited != visitedObjects.end()) return;
         if (obj == nullptr || isNullOrMarker(obj)) return;
+
+        // HRLogDebug("processing object of type %s from %s", obj->type_info()->fqName().c_str(), originString);
+        if (const auto visited = visitedObjects.find(obj); visited != visitedObjects.end()) return;
 
         visitedObjects.insert(obj);
         objectsToVisit.push(obj);
@@ -112,7 +114,7 @@ int visitObjectGraph(ObjHeader* startObject, F processingFunction) {
 
     processObject(startObject, Origin::ObjRef);
 
-    utility::log("Starting visit with: " + std::to_string(objectsToVisit.size()), utility::LogLevel::DEBUG);
+    HRLogDebug("Starting object graph visit with %ld nodes", objectsToVisit.size());
 
     while (!objectsToVisit.empty()) {
         const auto nextObject = objectsToVisit.front();
@@ -124,17 +126,20 @@ int visitObjectGraph(ObjHeader* startObject, F processingFunction) {
 }
 
 void Kotlin_native_internal_HotReload_perform(ObjHeader* obj) {
-    HotReloader::Instance().performIfNeeded(obj);
+    AssertThreadState(ThreadState::kRunnable);
+
+    const mm::ThreadRegistry& threadRegistry = mm::ThreadRegistry::Instance();
+    mm::ThreadData* currentThreadData = threadRegistry.CurrentThreadData();
+    HotReloader::Instance().performIfNeeded(*currentThreadData);
 }
 
 HotReloader::HotReloader() {
-    utility::initializeHotReloadLogs();
-    utility::log("Initializing HotReload module and server");
+    HRLogInfo("Initializing HotReload module and server");
     if (_server.start()) {
         _server.run([this](const std::vector<std::string>& dylibPaths) {
-            utility::log("A new reload request has arrived, containing: ", utility::LogLevel::DEBUG);
-            for (auto& dylib : dylibPaths) utility::log("\t" + dylib, utility::LogLevel::DEBUG);
-            utility::log("Note that only dylib at time is supported right now.", utility::LogLevel::WARN);
+            HRLogDebug("A new reload request has arrived, containing: ");
+            for (auto& dylib : dylibPaths) HRLogDebug("\t%s", dylib.c_str());
+            HRLogWarning("Note that only dylib at time is supported right now");
             _requests.emplace_front(dylibPaths);
         });
     }
@@ -149,23 +154,22 @@ HotReloader& HotReloader::Instance() noexcept {
 }
 
 void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlinDynamicLibrary) const {
-
     std::vector<rebinding> rebindingsToPerform{};
+    rebindingsToPerform.reserve(kotlinDynamicLibrary.functions.size());
+
     // std::vector<void*> originalFuncs{};
-    rebindingsToPerform.reserve(kotlinDynamicLibrary.functions.size()); // This is a pessimistic assumption
     // originalFuncs.resize(functions.size());
 
     for (const auto& mangledFunctionName : kotlinDynamicLibrary.functions) {
-
         void* symbolAddress = nullptr;
 
         for (auto& handle : _reloader.handles) {
-            utility::log("Checking handle: " + handle.path + ", epoch: " + std::to_string(handle.epoch), utility::LogLevel::DEBUG);
+            HRLogDebug("Checking handle '%s' with epoch %llu", handle.path.c_str(), handle.epoch);
             if (void* symbol = dlsym(handle.handle, mangledFunctionName.data()); symbol != nullptr) {
                 symbolAddress = symbol;
                 break;
             }
-            utility::log("dlerror: " + std::string{dlerror()}, utility::LogLevel::WARN);
+            HRLogWarning("dlerror: %s", dlerror());
         }
 
         if (symbolAddress == nullptr) continue;
@@ -177,33 +181,34 @@ void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlin
 
         rebindingsToPerform.push_back(reb);
 
-        utility::log("Function '" + std::string{mangledFunctionName} + "' is going to be rebound.", utility::LogLevel::DEBUG);
+        HRLogDebug("Function '%s' is going to be rebound", mangledFunctionName.data());
     }
 
     // Perform symbol interposition with the collected function symbols
     if (!rebindingsToPerform.empty()) {
-        utility::log("Performing rebinding of " + std::to_string(rebindingsToPerform.size()) + " symbols");
+        HRLogInfo("Performing rebinding of %ld symbols", rebindingsToPerform.size());
 
         if (rebind_symbols(rebindingsToPerform.data(), rebindingsToPerform.size()) != 0) {
-            utility::log("Rebinding failed for an unknown reason", utility::LogLevel::ERR);
+            HRLogError("Rebinding failed for an unknown reason");
         } else {
-            utility::log("Rebinding performed successfully!");
+            HRLogInfo("Rebinding performed successfully");
         }
     }
 }
 
-void HotReloader::performIfNeeded(ObjHeader* _) noexcept {
+void HotReloader::performIfNeeded(mm::ThreadData& currentThreadData) noexcept {
     if (_requests.empty()) {
-        // utility::log("Cannot perform hot-reloading since there is no upcoming request", utility::LogLevel::WARN);
+        // HRLogDebug("Cannot perform hot-reloading since there is no upcoming request");
         return;
     }
 
-    if (_processing) {
-        utility::log("Processing a previous request...", utility::LogLevel::WARN);
+    if (_processing.load(std::memory_order_relaxed)) {
+        HRLogDebug("Processing a previous request...");
         return;
     }
 
     _processing = true;
+    HRLogInfo("Starting Hot-Reloading..." );
 
     const ReloadRequest reloadRequest = _requests.front();
     _requests.pop_front();
@@ -216,163 +221,144 @@ void HotReloader::performIfNeeded(ObjHeader* _) noexcept {
         return;
     }
 
-    const uint64_t epoch =
-            std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const uint64_t epoch = getCurrentEpoch();
 
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
     const auto gcHandle = gc::GCHandle::create(epoch);
 
     // STOP-ZA-WARUDO!
-    utility::log("Starting reloading instances for new class layouts");
 
-    kotlin::gc::stopTheWorld(gcHandle, "starting hot reloading");
+    kotlin::gc::stopTheWorld(gcHandle, "hot-reload");
 
     /// 2. Locate the **new** TypeInfo (@"kclass:kotlin.Function0")
     auto parsedDynamicLib = dyld::parseDynamicLibrary(dylibPath);
 
     for (const auto& classMangledName : parsedDynamicLib.classes) {
         if (NON_RELOADABLE_CLASS_SYMBOLS.find(classMangledName) != NON_RELOADABLE_CLASS_SYMBOLS.end()) {
-            utility::log("Cannot reload class of type: " + std::string(classMangledName));
+            HRLogWarning("Cannot reload class of type: %s", classMangledName.data());
             continue;
         }
-        
-        auto temp = std::string{classMangledName};
+
+        auto temp = std::string{classMangledName}; // TODO: do not allocate new string, change lookForTypeInfo API
 
         const TypeInfo* oldTypeInfo = _reloader.lookForTypeInfo(temp, 0);
         if (oldTypeInfo == nullptr) {
-            // utility::log("Cannot find the old TypeInfo for: " + temp, utility::LogLevel::WARN);
+            // HRLogWarning("Cannot find the new TypeInfo for class: %s", temp.data());
             continue;
         }
 
         const TypeInfo* newTypeInfo = _reloader.lookForTypeInfo(temp, 1);
         if (newTypeInfo == nullptr) {
-            utility::log("Cannot find the new TypeInfo for: " + temp, utility::LogLevel::WARN);
+            HRLogWarning("Cannot find the new TypeInfo for class: %s", temp.data());
             continue;
         }
         auto objectsToReload = findObjectsToReload(oldTypeInfo);
         /// 3. For each new redefined TypeInfo, reload the instances
         for (const auto& obj : objectsToReload) {
-            const auto newInstance = stateTransfer(obj, newTypeInfo);
+            const auto newInstance = stateTransfer(currentThreadData, obj, newTypeInfo);
             updateShadowStackReferences(obj, newInstance);
             updateHeapReferences(obj, newInstance);
         }
     }
 
-        /// 5. Also, interpose new function symbols
-        interposeNewFunctionSymbols(parsedDynamicLib);
+    /// 4. Also, interpose new function symbols
+    interposeNewFunctionSymbols(parsedDynamicLib);
 
-        kotlin::gc::resumeTheWorld(gcHandle);
-        _processing = false;
+    kotlin::gc::resumeTheWorld(gcHandle);
+    _processing = false;
 
-        utility::log("code has been hot-reloaded.");
+    HRLogInfo("Ending Hot-Reloading..." );
+}
+
+ObjHeader* HotReloader::stateTransfer(mm::ThreadData& currentThreadData, ObjHeader* oldObject, const TypeInfo* newTypeInfo) {
+    struct FieldData {
+        std::string type;
+        int32_t offset;
+        Konan_RuntimeType runtimeType;
+
+        FieldData() : offset(0), runtimeType(RT_INVALID) {}
+
+        FieldData(std::string type, const int32_t offset, const Konan_RuntimeType _runtimeType) :
+            type(std::move(type)), offset(offset), runtimeType(_runtimeType) {}
+    };
+
+    ObjHeader* newObject = currentThreadData.allocator().allocateObject(newTypeInfo);
+    if (newObject == nullptr) {
+        HRLogError("allocation of new object of type %s failed!?", newTypeInfo->fqName().c_str());
+        return nullptr;
     }
 
-    ObjHeader* HotReloader::stateTransfer(ObjHeader * oldObject, const TypeInfo* newTypeInfo) {
-        struct FieldData {
-            std::string type;
-            int32_t offset;
-            Konan_RuntimeType runtimeType;
+    const auto oldObjectTypeInfo = oldObject->type_info();
+    const auto newClassName = newTypeInfo->fqName();
+    const auto oldClassName = oldObjectTypeInfo->fqName();
 
-            FieldData() : offset(0), runtimeType(RT_INVALID) {}
+    const ExtendedTypeInfo* oldObjExtendedInfo = oldObjectTypeInfo->extendedInfo_;
+    const int32_t oldFieldsCount = oldObjExtendedInfo->fieldsCount_; // How many fields the old objects declared
+    const char** oldFieldNames = oldObjExtendedInfo->fieldNames_; // field names are null-terminated
+    const int32_t* oldFieldOffsets = oldObjExtendedInfo->fieldOffsets_;
+    const auto oldFieldRuntimeTypes = oldObjExtendedInfo->fieldTypes_;
+    const auto oldFieldTypes = oldObjExtendedInfo->getExtendedFieldTypes();
 
-            FieldData(const std::string type, const int32_t offset, Konan_RuntimeType _runtimeType) : type(type), offset(offset), runtimeType(_runtimeType) {}
-        };
+    std::unordered_map<std::string, FieldData> oldObjectFields{};
 
-        // // TODO: Do we need two class tables here (the old and the new one)?
-        //
-        // // TODO: INHERITANCE
-        // // TODO: At the moment we are not considering inheritance. We should consider three cases:
-        // // TODO: a. Parent class does not change.
-        // // TODO: b. Parent class changes.
-        // // TODO: c. Parent class gets removed.
-
-        const mm::ThreadRegistry& threadRegistry = mm::ThreadRegistry::Instance();
-        mm::ThreadData* currentThreadData = threadRegistry.CurrentThreadData();
-
-        ObjHeader* newObject = currentThreadData->allocator().allocateObject(newTypeInfo);
-        if (newObject == nullptr) {
-            utility::log("allocation of new object failed!?", utility::LogLevel::ERR);
-            return nullptr;
-        }
-
-        const auto oldObjectTypeInfo = oldObject->type_info();
-        const auto newClassName = newTypeInfo->fqName();
-        const auto oldClassName = oldObjectTypeInfo->fqName();
-
-        const ExtendedTypeInfo* oldObjExtendedInfo = oldObjectTypeInfo->extendedInfo_;
-        const int32_t oldFieldsCount = oldObjExtendedInfo->fieldsCount_; // How many fields the old objects declared
-        const char** oldFieldNames = oldObjExtendedInfo->fieldNames_; // field names are null-terminated
-        const int32_t* oldFieldOffsets = oldObjExtendedInfo->fieldOffsets_;
-        const auto oldFieldRuntimeTypes = oldObjExtendedInfo->fieldTypes_;
-        const auto oldFieldTypes = oldObjExtendedInfo->getExtendedFieldTypes();
-
-        std::unordered_map<std::string, FieldData> oldObjectFields{};
-
-        for (int32_t i = 0; i < oldFieldsCount; i++) {
-            std::string fieldName{oldFieldNames[i]};
-            FieldData fieldData{oldFieldTypes[i], oldFieldOffsets[i], static_cast<Konan_RuntimeType>(oldFieldRuntimeTypes[i])};
-            oldObjectFields[fieldName] = fieldData;
-        }
-
-        const ExtendedTypeInfo* newObjExtendedInfo = newObject->type_info()->extendedInfo_;
-        const int32_t newFieldsCount = newObjExtendedInfo->fieldsCount_; // How many fields the old objects declared
-        const char** newFieldNames = newObjExtendedInfo->fieldNames_; // field names are null-terminated
-        const int32_t* newFieldOffsets = newObjExtendedInfo->fieldOffsets_;
-        const auto newFieldTypes = newObjExtendedInfo->getExtendedFieldTypes();
-
-        for (int32_t i = 0; i < newFieldsCount; i++) {
-            const std::string newFieldName{newFieldNames[i]};
-
-            const auto& newFieldType = newFieldTypes[i];
-            const uint8_t newFieldOffset = newFieldOffsets[i];
-
-            if (const auto foundField = oldObjectFields.find(newFieldName); foundField == oldObjectFields.end()) {
-                utility::log("field `" + newFieldName + "` is new field in '" + newClassName + "'. It won't be copied.");
-                continue;
-            }
-
-            // Performs type-checking. Note that this type checking is shallow, i.e., it does not check the object classes.
-            const auto& [oldFieldType, oldFieldOffset, oldFieldRuntimeType] = oldObjectFields[newFieldName];
-            if (oldFieldType != newFieldType) {
-                std::stringstream ss;
-                ss << "failed type-checking: " << newClassName << "::" << newFieldName << ":" << utility::kTypeNames[oldFieldRuntimeType];
-                ss << " != ";
-                ss << oldClassName << "::" << newFieldName << ":" << utility::kTypeNames[oldFieldRuntimeType];
-                utility::log(ss.str());
-                continue;
-            }
-
-            // Handle Kotlin Objects in a different way, the updates must be notified to the GC
-            if (oldFieldRuntimeType == RT_OBJECT) {
-                const auto oldFieldLocation = reinterpret_cast<ObjHeader**>(reinterpret_cast<uint8_t*>(oldObject) + oldFieldOffset);
-                const auto newFieldLocation = reinterpret_cast<ObjHeader**>(reinterpret_cast<uint8_t*>(newObject) + newFieldOffset);
-
-                // std::stringstream ss;
-                // ss << "copying reference field '" << newFieldName << '\n';
-                // ss << "\t" << newFieldName << ':' << actualNewFieldType << " = ";
-                // ss << std::showbase << std::hex << *oldFieldLocation << std::dec << std::endl;
-                // utility::log(ss.str());
-
-                UpdateHeapRef(newFieldLocation, *oldFieldLocation);
-                *newFieldLocation = *oldFieldLocation; // just copy the reference to the previous object
-                utility::log("Obj reference updated!", utility::LogLevel::DEBUG);
-
-                continue;
-            }
-
-            const auto oldFieldData = reinterpret_cast<uint8_t*>(oldObject) + oldFieldOffset;
-            const auto newFieldData = reinterpret_cast<uint8_t*>(newObject) + newFieldOffset;
-
-            // utility::log(
-            //     "copying field " + utility::field2String(newFieldName.c_str(), oldFieldData, oldFieldType),
-            //     utility::LogLevel::DEBUG);
-
-            // Perform byte-copy of the field
-            std::memcpy(newFieldData, oldFieldData, utility::kRuntimeTypeSize[oldFieldRuntimeType]);
-        }
-
-        return newObject;
+    for (int32_t i = 0; i < oldFieldsCount; i++) {
+        std::string fieldName{oldFieldNames[i]};
+        FieldData fieldData{oldFieldTypes[i], oldFieldOffsets[i], static_cast<Konan_RuntimeType>(oldFieldRuntimeTypes[i])};
+        oldObjectFields[fieldName] = fieldData;
     }
+
+    const ExtendedTypeInfo* newObjExtendedInfo = newObject->type_info()->extendedInfo_;
+    const int32_t newFieldsCount = newObjExtendedInfo->fieldsCount_; // How many fields the old objects declared
+    const char** newFieldNames = newObjExtendedInfo->fieldNames_; // field names are null-terminated
+    const int32_t* newFieldOffsets = newObjExtendedInfo->fieldOffsets_;
+    const auto newFieldTypes = newObjExtendedInfo->getExtendedFieldTypes();
+
+    for (int32_t i = 0; i < newFieldsCount; i++) {
+        const std::string newFieldName{newFieldNames[i]};
+
+        const auto& newFieldType = newFieldTypes[i];
+        const uint8_t newFieldOffset = newFieldOffsets[i];
+
+        if (const auto foundField = oldObjectFields.find(newFieldName); foundField == oldObjectFields.end()) {
+            HRLogDebug("Field '%s::%s' is new, it won't be copied", newFieldName.c_str(), newClassName.c_str());
+            continue;
+        }
+
+        // Performs type-checking. Note that this type checking is shallow, i.e., it does not check the object classes.
+        const auto& [oldFieldType, oldFieldOffset, oldFieldRuntimeType] = oldObjectFields[newFieldName];
+        if (oldFieldType != newFieldType) {
+            HRLogInfo("Failed type-checking: %s::%s:%s != %s::%s:%s",
+                newClassName.c_str(), newFieldName.c_str(), utility::kTypeNames[oldFieldRuntimeType],
+                oldClassName.c_str(), newFieldName.c_str(), utility::kTypeNames[oldFieldRuntimeType]);
+            continue;
+        }
+
+        // Handle Kotlin Objects in a different way, the updates must be notified to the GC
+
+        // TODO: investigate null discussion
+        if (oldFieldRuntimeType == RT_OBJECT) {
+            const auto oldFieldLocation = reinterpret_cast<ObjHeader**>(reinterpret_cast<uint8_t*>(oldObject) + oldFieldOffset);
+            const auto newFieldLocation = reinterpret_cast<ObjHeader**>(reinterpret_cast<uint8_t*>(newObject) + newFieldOffset);
+
+            UpdateHeapRef(newFieldLocation, *oldFieldLocation);
+            *newFieldLocation = *oldFieldLocation; // Just copy the reference to the previous object
+
+            // HRLogDebug("Copying reference field '%s'\n\t%s:%s = %p", newFieldName.c_str(), newFieldName.c_str(), utility::kTypeNames[oldFieldRuntimeType], *oldFieldLocation);
+            HRLogDebug("Object reference updated from '%p' to '%p'", *oldFieldLocation, *newFieldLocation);
+            continue;
+        }
+
+        const auto oldFieldData = reinterpret_cast<uint8_t*>(oldObject) + oldFieldOffset;
+        const auto newFieldData = reinterpret_cast<uint8_t*>(newObject) + newFieldOffset;
+
+        // HRLogDebug("copying field %s", utility::field2String(newFieldName.c_str(), oldFieldData, oldFieldRuntimeType).c_str());
+
+        // Perform byte-copy of the field
+        std::memcpy(newFieldData, oldFieldData, utility::kRuntimeTypeSize[oldFieldRuntimeType]);
+    }
+
+    return newObject;
+}
 
 std::vector<ObjHeader*> HotReloader::findObjectsToReload(const TypeInfo* oldTypeInfo) const {
     std::vector<ObjHeader*> existingObjects{};
@@ -380,12 +366,11 @@ std::vector<ObjHeader*> HotReloader::findObjectsToReload(const TypeInfo* oldType
 
     visitObjectGraph(nullptr, [&existingObjects, &oldTypeFqName](ObjHeader* nextObject, auto processObject) {
         // Traverse object references inside class properties
-        traverseObjectFieldsInternal(nextObject, [&](const mm::RefFieldAccessor& fieldAccessor) {
-            processObject(fieldAccessor.direct(), Origin::ObjRef);
-        });
+        traverseObjectFieldsInternal(
+                nextObject, [&](const mm::RefFieldAccessor& fieldAccessor) { processObject(fieldAccessor.direct(), Origin::ObjRef); });
 
         if (nextObject->type_info()->fqName() == oldTypeFqName) {
-            utility::log("Instance of " + nextObject->type_info()->fqName() + " must change!", utility::LogLevel::DEBUG);
+            HRLogDebug("Instance of class '%s' at '%p', must be reloaded", nextObject->type_info()->fqName().c_str(), nextObject);
             existingObjects.emplace_back(nextObject);
         }
     });
@@ -401,13 +386,10 @@ int HotReloader::updateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject
     // Let's start collecting the root set
     auto processObject = [&](ObjHeader* obj, Origin origin) {
         const char* originString = originToString(origin);
-
-        if (obj != nullptr) {
-            utility::log("processing object of type: " + obj->type_info()->fqName() + " from: " + originString, utility::LogLevel::DEBUG);
-        }
+        if (obj == nullptr || isNullOrMarker(obj)) return;
 
         if (const auto visited = visitedObjects.find(obj); visited != visitedObjects.end()) return;
-        if (obj == nullptr || isNullOrMarker(obj)) return;
+        HRLogDebug("processing object of type '%s' from %s", obj->type_info()->fqName().c_str(), originString);
 
         visitedObjects.insert(obj);
         objectsToVisit.push(obj);
@@ -445,7 +427,8 @@ int HotReloader::updateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject
 
     processObject(oldObject, Origin::ObjRef);
 
-    utility::log("Updating Heap References - Starting visit with: " + std::to_string(objectsToVisit.size()), utility::LogLevel::DEBUG);
+    HRLogDebug("Updating Heap References");
+    HRLogDebug("Starting visit with %ld objects", objectsToVisit.size());
 
     while (!objectsToVisit.empty()) {
         const auto nextObject = objectsToVisit.front();
@@ -481,15 +464,12 @@ void HotReloader::updateShadowStackReferences(const ObjHeader* oldObject, ObjHea
 bool HotReloader::SymbolLoader::loadLibraryFromPath(const std::string& fileName) {
     void* libraryHandle = dlopen(fileName.c_str(), RTLD_LAZY);
     if (libraryHandle == nullptr) {
-        utility::log("An error occurred while loading library from: " + fileName, utility::LogLevel::ERR);
-        utility::log("Details: " + std::string{dlerror()}, utility::LogLevel::ERR);
+        HRLogError("Could not open dylib at '%s'. Details: %s", fileName.c_str(), dlerror());
         return false;
     }
 
-    const uint64_t epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
-    const LibraryHandle newHandle{epoch, libraryHandle, fileName};
-    utility::log("Loaded library from path: " + fileName, utility::LogLevel::DEBUG);
+    const LibraryHandle newHandle{getCurrentEpoch(), libraryHandle, fileName};
+    HRLogDebug("Loaded library from path: %s", fileName.c_str());
 
     handles.push_front(newHandle);
     return true;
@@ -502,18 +482,15 @@ TypeInfo* HotReloader::SymbolLoader::lookForTypeInfo(const std::string& mangledC
     const int actualOffset = startingFrom - 1;
 
     if (actualOffset == -1 && handles.size() == 1) { // we need this to handle the base case
-        if (void* symbol = dlsym(RTLD_MAIN_ONLY, mangledClassName.c_str()); symbol != nullptr)
-            return static_cast<TypeInfo*>(symbol);
-        utility::log("dlerror: " + std::string{dlerror()}, utility::LogLevel::ERR);
+        if (void* symbol = dlsym(RTLD_MAIN_ONLY, mangledClassName.c_str()); symbol != nullptr) return static_cast<TypeInfo*>(symbol);
+        HRLogError("dlerror: %s", dlerror());
         return nullptr;
     }
 
     for (size_t i = actualOffset; i < handles.size(); i++) {
-        utility::log("Checking library at path: " + handles[i].path, utility::LogLevel::DEBUG);
-
-        void* symbol = dlsym(handles[i].handle, mangledClassName.c_str());
-        if (symbol != nullptr) return static_cast<TypeInfo*>(symbol);
-        utility::log("dlerror: " + std::string{dlerror()}, utility::LogLevel::ERR);
+        HRLogDebug("Checking library at path '%s'", handles[i].path.c_str());
+        if (void* symbol = dlsym(handles[i].handle, mangledClassName.c_str()); symbol != nullptr) return static_cast<TypeInfo*>(symbol);
+        HRLogError("dlerror: %s", dlerror());
     }
 
     return nullptr;

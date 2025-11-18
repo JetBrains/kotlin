@@ -6,13 +6,15 @@
 #define HOTRELOADUTILITY_HPP
 
 #include <string>
-#include <fstream>
 #include <sstream>
 
 #include <TypeInfo.h>
+#include <Logging.hpp>
 
-#define LOG_FILENAME "/tmp/kn_hot_reload.log"
-#define ENV_LOG_PARAM "HOT_RELOAD_LOG"
+#define HRLogInfo(format, ...) RuntimeLogInfo({kotlin::kTagHotReloader}, format, ##__VA_ARGS__)
+#define HRLogDebug(format, ...) RuntimeLogDebug({kotlin::kTagHotReloader}, format, ##__VA_ARGS__)
+#define HRLogWarning(format, ...) RuntimeLogWarning({kotlin::kTagHotReloader}, format, ##__VA_ARGS__)
+#define HRLogError(format, ...) RuntimeLogError({kotlin::kTagHotReloader}, format, ##__VA_ARGS__)
 
 namespace kotlin::hot::utility {
 
@@ -42,67 +44,6 @@ inline static constexpr int kRuntimeTypeSize[] = {
         1, // BOOLEAN
         16 // VECTOR128
 };
-
-/**
- * Defines logging levels for the hot reload system using bit flags.
- * Multiple log levels can be combined using bitwise operations.
- * Example: DEBUG + INFO = 6 (00110 in binary)
- */
-enum class LogLevel : uint8_t {
-    NONE = 0, ///< Disable all logging
-    DEBUG = 1 << 1, ///< Debug level logging (2)
-    INFO = 1 << 2, ///< Information level logging (4)
-    WARN = 1 << 3, ///< Warning level logging (8)
-    ERR = 1 << 4 ///< Error level logging (16)
-};
-
-static auto CurrentLogLevel = LogLevel::NONE;
-
-inline void log(const std::string& message, const LogLevel level = LogLevel::INFO) {
-    // if (!(static_cast<uint8_t>(CurrentLogLevel) & static_cast<uint8_t>(level)))
-    //     return;
-
-    auto now = std::chrono::system_clock::now();
-    auto timestamp = std::chrono::system_clock::to_time_t(now);
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&timestamp), "%Y-%m-%d %H:%M:%S");
-
-    const char* levelStr;
-    switch (level) {
-        case LogLevel::DEBUG:
-            levelStr = "DEBUG";
-            break;
-        case LogLevel::INFO:
-            levelStr = "INFO";
-            break;
-        case LogLevel::WARN:
-            levelStr = "WARN";
-            break;
-        case LogLevel::ERR:
-            levelStr = "ERROR";
-            break;
-        default:
-            levelStr = "UNKNW";
-            break;
-    }
-
-    std::string logMessage = "[" + ss.str() + "][kn-hot-reload][" + levelStr + "] :: " + message + "\n";
-    std::cout << logMessage;
-
-    std::ofstream logFile;
-    logFile.open(LOG_FILENAME, std::ios::app);
-    if (logFile.is_open()) {
-        logFile << logMessage;
-        logFile.close();
-    }
-}
-
-inline void initializeHotReloadLogs() {
-    const char* logEnabledEnv = std::getenv(ENV_LOG_PARAM);
-    if (logEnabledEnv == nullptr) return;
-    const auto level = static_cast<LogLevel>(strtol(logEnabledEnv, nullptr, 10));
-    CurrentLogLevel = level;
-}
 
 inline std::string field2String(const char* fieldName, const uint8_t* fieldValue, const Konan_RuntimeType fieldType) {
     std::stringstream ss;

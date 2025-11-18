@@ -10,7 +10,7 @@
 #include <deque>
 #include <atomic>
 
-#include "main/cpp/Memory.h"
+#include "SafePoint.hpp"
 
 #include "hot/HotReloadServer.hpp"
 #include "hot/MachOParser.hpp"
@@ -49,7 +49,7 @@ public:
 
     /// Start checking if a hot-reload request is pending.
     /// If that's the case, perform class hot-reloading, preserving the existing state.
-    void performIfNeeded(ObjHeader* _) noexcept;
+    void performIfNeeded(mm::ThreadData& currentThreadData) noexcept;
 
 private:
 
@@ -57,7 +57,7 @@ private:
 
     /// Given an instance provided by <code>existingObject</code>, create a new class of the
     /// type provided by <code>newTypeInfo</code>, while preserving existing properties.
-    static ObjHeader* stateTransfer(ObjHeader* existingObject, const TypeInfo* newTypeInfo);
+    static ObjHeader* stateTransfer(mm::ThreadData& currentThreadData, ObjHeader* existingObject, const TypeInfo* newTypeInfo);
 
     /// Search for all the classes with instance <code>oldTypeInfo</code> and create
     /// new instances provided by <code>newTypeInfo</code>.
@@ -75,6 +75,12 @@ private:
     std::deque<ReloadRequest> _requests{};
     std::atomic_bool _processing{};
 };
+
+
+struct HotReloadActivator : mm::ExtraSafePointActionActivator<HotReloadActivator> {
+    // ~HotReloadActivator() override = default;
+};
+
 } // namespace kotlin::hot
 
 extern "C" {
