@@ -151,7 +151,7 @@ object KlibTestUtil {
     }
 
     fun deserializeKlibToCommonModule(klibFile: File): ModuleDescriptorImpl {
-        val library = KlibLoader { libraryPaths(klibFile.path) }.load().librariesStdlibFirst.single()
+        val library = KlibLoader { libraryPaths(klibFile) }.load().librariesStdlibFirst.single()
 
         val metadataFactories = KlibMetadataFactories({ DefaultBuiltIns.Instance }, NullFlexibleTypeDeserializer)
 
