@@ -56,4 +56,6 @@ internal class KotlinKNamedFunction(
     override val isExternal: Boolean get() = kmFunction.isExternal
     override val isOperator: Boolean get() = kmFunction.isOperator
     override val isInfix: Boolean get() = kmFunction.isInfix
+
+    override val isPrimaryConstructor: Boolean get() = false
 }

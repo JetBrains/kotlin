@@ -54511,6 +54511,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("constructorParameters.kt")
+      public void testConstructorParameters() {
+        runTest("compiler/testData/codegen/box/reflection/annotations/constructorParameters.kt");
+      }
+
+      @Test
       @TestMetadata("findAnnotation.kt")
       public void testFindAnnotation() {
         runTest("compiler/testData/codegen/box/reflection/annotations/findAnnotation.kt");
@@ -55114,6 +55120,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("result.kt")
+        public void testResult() {
+          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/result.kt");
+        }
+
+        @Test
         @TestMetadata("secondaryConstructorVisibilies.kt")
         public void testSecondaryConstructorVisibilies() {
           runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt");
@@ -55661,6 +55673,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
+        @Test
+        @TestMetadata("result.kt")
+        public void testResult() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/result.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject")
         @TestDataPath("$PROJECT_ROOT")
@@ -56179,6 +56197,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("innerClassOfGenericClass.kt")
+      public void testInnerClassOfGenericClass() {
+        runTest("compiler/testData/codegen/box/reflection/constructors/innerClassOfGenericClass.kt");
+      }
+
+      @Test
       @TestMetadata("primaryConstructor.kt")
       public void testPrimaryConstructor() {
         runTest("compiler/testData/codegen/box/reflection/constructors/primaryConstructor.kt");
@@ -56592,12 +56616,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       @TestMetadata("constructor.kt")
       public void testConstructor() {
         runTest("compiler/testData/codegen/box/reflection/mapping/constructor.kt");
-      }
-
-      @Test
-      @TestMetadata("constructorWithInlineClassParameters.kt")
-      public void testConstructorWithInlineClassParameters() {
-        runTest("compiler/testData/codegen/box/reflection/mapping/constructorWithInlineClassParameters.kt");
       }
 
       @Test

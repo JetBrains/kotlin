@@ -5,12 +5,11 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.name.SpecialNames
 import kotlin.metadata.KmType
 import kotlin.metadata.KmValueParameter
 import kotlin.metadata.Modality
 import kotlin.reflect.KParameter
-import kotlin.reflect.KType
-import kotlin.reflect.full.createDefaultType
 
 internal abstract class KotlinKCallable<out R> : ReflectKCallableImpl<R>() {
     abstract val modality: Modality
@@ -40,9 +39,16 @@ internal fun KotlinKCallable<*>.computeParameters(
 ): List<KParameter> = buildList {
     val callable = this@computeParameters
     if (includeReceivers) {
-        if (!isLocalDelegatedProperty) {
-            (container as? KClassImpl<*>)?.let { klass ->
-                add(InstanceParameter(callable, klass))
+        val container = container
+        if (container is KClassImpl<*>) {
+            if (isConstructor) {
+                if (container.isInner) {
+                    add(InstanceParameter(callable, container.java.declaringClass.kotlin))
+                }
+            } else {
+                require(isLocalDelegatedProperty) {
+                    "Only top-level callables are supported for now: ${this@computeParameters}"
+                }
             }
         }
         for (contextParameter in contextParameters) {
@@ -50,23 +56,12 @@ internal fun KotlinKCallable<*>.computeParameters(
         }
         if (receiverParameterType != null) {
             // The name below is only used to create an instance of `KmValueParameter`. It should not leak to the user, because
-            // `KotlinKParameter.name` has a check for parameter kind, and returns null for extension receiver parameters.
-            val kmParameter = KmValueParameter("<this>").apply { type = receiverParameterType }
+            // `KotlinKParameter.name` returns null if the name is special (starts with a `<`).
+            val kmParameter = KmValueParameter(SpecialNames.THIS.asString()).apply { type = receiverParameterType }
             add(KotlinKParameter(callable, kmParameter, size, KParameter.Kind.EXTENSION_RECEIVER, typeParameterTable))
         }
     }
     for (valueParameter in valueParameters) {
         add(KotlinKParameter(callable, valueParameter, size, KParameter.Kind.VALUE, typeParameterTable))
     }
-}
-
-private class InstanceParameter(override val callable: KotlinKCallable<*>, klass: KClassImpl<*>) : ReflectKParameter() {
-    override val index: Int get() = 0
-    override val type: KType = klass.createDefaultType()
-    override val name: String? get() = null
-    override val kind: KParameter.Kind get() = KParameter.Kind.INSTANCE
-    override val isOptional: Boolean get() = false
-    override val isVararg: Boolean get() = false
-    override val annotations: List<Annotation> get() = emptyList()
-    override val declaresDefaultValue: Boolean get() = false
 }

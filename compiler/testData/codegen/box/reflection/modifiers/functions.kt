@@ -34,6 +34,8 @@ var inlineSetter: Unit
     get() = Unit
     inline set(value) {}
 
+class Ctor
+
 fun box(): String {
     assertTrue(::inline.isInline)
     assertFalse(::inline.isExternal)
@@ -101,6 +103,12 @@ fun box(): String {
     assertFalse(J::external.isInfix)
     assertFalse(J::external.isSuspend)
     assertTrue(JImpl::external.isExternal)
+
+    assertFalse(::Ctor.isInline)
+    assertFalse(::Ctor.isExternal)
+    assertFalse(::Ctor.isOperator)
+    assertFalse(::Ctor.isInfix)
+    assertFalse(::Ctor.isSuspend)
 
     return "OK"
 }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
+import kotlin.metadata.KmConstructor
 import kotlin.metadata.KmFunction
 import kotlin.metadata.KmProperty
 import kotlin.metadata.isVar
@@ -50,6 +51,8 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     abstract val functionsMetadata: Collection<KmFunction>
 
     abstract val propertiesMetadata: Collection<KmProperty>
+
+    abstract val constructorsMetadata: Collection<KmConstructor>
 
     abstract val constructorDescriptors: Collection<ConstructorDescriptor>
 
@@ -175,6 +178,19 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
 
         return functions.single()
+    }
+
+    fun findConstructorMetadata(signature: String): KmConstructor {
+        val constructors = constructorsMetadata.filter { it.signature.toString() == signature }
+        if (constructors.size != 1) {
+            val allMembers = constructorsMetadata.joinToString("\n") { constructor -> constructor.signature.toString() }
+            throw KotlinReflectionInternalError(
+                "Constructor (JVM signature: $signature) not resolved in $this:" +
+                        if (allMembers.isEmpty()) " no constructors found" else " several matching constructors found:\n$allMembers"
+            )
+        }
+
+        return constructors.single()
     }
 
     private fun Class<*>.lookupMethod(

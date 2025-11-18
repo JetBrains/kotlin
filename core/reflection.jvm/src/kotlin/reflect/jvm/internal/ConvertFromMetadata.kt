@@ -316,3 +316,11 @@ internal fun createUnboundFunction(function: KmFunction, container: KDeclaration
         ?: throw KotlinReflectionInternalError("No signature for function: ${function.name}")
     return KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, function)
 }
+
+internal fun createUnboundConstructor(constructor: KmConstructor, container: KDeclarationContainerImpl): KotlinKFunction {
+    val signature = constructor.signature?.toString()
+        ?: throw KotlinReflectionInternalError(
+            "No signature for constructor (${constructor.valueParameters.size} parameters, declared in $container)"
+        )
+    return KotlinKConstructor(container, signature, CallableReference.NO_RECEIVER, constructor)
+}

@@ -37,6 +37,13 @@ open class Foo<in T> {
 public var publicVarPrivateSetter = Unit
     private set
 
+class Constructors {
+    public constructor(public: Int)
+    protected constructor(protected: String)
+    internal constructor(internal: Long)
+    private constructor(private: Double)
+}
+
 fun box(): String {
     val f = Foo<String>()
 
@@ -59,6 +66,12 @@ fun box(): String {
     assertEquals(KVisibility.PUBLIC, ::publicVarPrivateSetter.visibility)
     assertEquals(KVisibility.PUBLIC, ::publicVarPrivateSetter.getter.visibility)
     assertEquals(KVisibility.PRIVATE, ::publicVarPrivateSetter.setter.visibility)
+
+    fun ctor(visibility: String) = Constructors::class.constructors.single { it.parameters.single().name == visibility }
+    assertEquals(KVisibility.PUBLIC, ctor("public").visibility)
+    assertEquals(KVisibility.PROTECTED, ctor("protected").visibility)
+    assertEquals(KVisibility.INTERNAL, ctor("internal").visibility)
+    assertEquals(KVisibility.PRIVATE, ctor("private").visibility)
 
     return "OK"
 }

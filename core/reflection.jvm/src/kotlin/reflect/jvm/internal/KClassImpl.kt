@@ -194,8 +194,20 @@ internal class KClassImpl<T : Any>(
 
         @Suppress("UNCHECKED_CAST")
         val constructors: Collection<KFunction<T>> by ReflectProperties.lazySoft {
-            constructorDescriptors.map { descriptor ->
-                DescriptorKFunction(this@KClassImpl, descriptor) as KFunction<T>
+            if (classKind == ClassKind.INTERFACE || classKind == ClassKind.OBJECT || classKind == ClassKind.COMPANION_OBJECT ||
+                classKind == ClassKind.ENUM_ENTRY
+            ) {
+                return@lazySoft emptyList()
+            }
+
+            if (useK1Implementation || kmClass == null) {
+                constructorDescriptors.map { descriptor ->
+                    DescriptorKFunction(this@KClassImpl, descriptor) as KFunction<T>
+                }
+            } else {
+                constructorsMetadata.map { kmConstructor ->
+                    createUnboundConstructor(kmConstructor, this@KClassImpl) as KFunction<T>
+                }
             }
         }
 
@@ -446,14 +458,11 @@ internal class KClassImpl<T : Any>(
     override val propertiesMetadata: Collection<KmProperty>
         get() = kmClass?.properties.orEmpty()
 
+    override val constructorsMetadata: Collection<KmConstructor>
+        get() = kmClass?.constructors.orEmpty()
+
     override val constructorDescriptors: Collection<ConstructorDescriptor>
-        get() {
-            val descriptor = descriptor
-            if (descriptor.kind == DescriptorClassKind.INTERFACE || descriptor.kind == DescriptorClassKind.OBJECT) {
-                return emptyList()
-            }
-            return descriptor.constructors
-        }
+        get() = descriptor.constructors
 
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
         (memberScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION) +

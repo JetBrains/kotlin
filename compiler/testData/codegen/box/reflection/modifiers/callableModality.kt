@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
-
 // WITH_REFLECT
 
+import kotlin.reflect.KCallable
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
 
@@ -16,38 +16,39 @@ abstract class AbstractClass {
     abstract var abstractVar: Unit
 }
 
+class Constructor
+
+private fun checkFinal(callable: KCallable<*>) {
+    assertTrue(callable.isFinal)
+    assertFalse(callable.isOpen)
+    assertFalse(callable.isAbstract)
+}
+
+private fun checkOpen(callable: KCallable<*>) {
+    assertFalse(callable.isFinal)
+    assertTrue(callable.isOpen)
+    assertFalse(callable.isAbstract)
+}
+
+private fun checkAbstract(callable: KCallable<*>) {
+    assertFalse(callable.isFinal)
+    assertFalse(callable.isOpen)
+    assertTrue(callable.isAbstract)
+}
+
 fun box(): String {
-    assertFalse(Interface::openFun.isFinal)
-    assertTrue(Interface::openFun.isOpen)
-    assertFalse(Interface::openFun.isAbstract)
+    checkOpen(Interface::openFun)
+    checkAbstract(Interface::abstractFun)
 
-    assertFalse(Interface::abstractFun.isFinal)
-    assertFalse(Interface::abstractFun.isOpen)
-    assertTrue(Interface::abstractFun.isAbstract)
+    checkFinal(AbstractClass::finalVal)
+    checkFinal(AbstractClass::finalVal.getter)
+    checkOpen(AbstractClass::openVal)
+    checkOpen(AbstractClass::openVal.getter)
+    checkAbstract(AbstractClass::abstractVar)
+    checkAbstract(AbstractClass::abstractVar.getter)
+    checkAbstract(AbstractClass::abstractVar.setter)
 
-    assertTrue(AbstractClass::finalVal.isFinal)
-    assertFalse(AbstractClass::finalVal.isOpen)
-    assertFalse(AbstractClass::finalVal.isAbstract)
-    assertTrue(AbstractClass::finalVal.getter.isFinal)
-    assertFalse(AbstractClass::finalVal.getter.isOpen)
-    assertFalse(AbstractClass::finalVal.getter.isAbstract)
-
-    assertFalse(AbstractClass::openVal.isFinal)
-    assertTrue(AbstractClass::openVal.isOpen)
-    assertFalse(AbstractClass::openVal.isAbstract)
-    assertFalse(AbstractClass::openVal.getter.isFinal)
-    assertTrue(AbstractClass::openVal.getter.isOpen)
-    assertFalse(AbstractClass::openVal.getter.isAbstract)
-
-    assertFalse(AbstractClass::abstractVar.isFinal)
-    assertFalse(AbstractClass::abstractVar.isOpen)
-    assertTrue(AbstractClass::abstractVar.isAbstract)
-    assertFalse(AbstractClass::abstractVar.getter.isFinal)
-    assertFalse(AbstractClass::abstractVar.getter.isOpen)
-    assertTrue(AbstractClass::abstractVar.getter.isAbstract)
-    assertFalse(AbstractClass::abstractVar.setter.isFinal)
-    assertFalse(AbstractClass::abstractVar.setter.isOpen)
-    assertTrue(AbstractClass::abstractVar.setter.isAbstract)
+    checkFinal(::Constructor)
 
     return "OK"
 }
