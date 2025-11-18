@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fir.cli.CliDiagnostics
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.progress.CompilationCanceledException

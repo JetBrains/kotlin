@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrorsDefaultMessages
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnosticMessagesCli
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrorsDefaultMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -19,8 +21,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrorsDefaultMessages
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrorsDefaultMessages
-import org.jetbrains.kotlin.fir.cli.CliDiagnostics
-import org.jetbrains.kotlin.fir.cli.KtDiagnosticMessagesCli
 import org.jetbrains.kotlin.test.utils.verifyMessages
 import org.junit.Test
 
