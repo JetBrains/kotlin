@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -148,7 +149,7 @@ class SerializableCompanionIrGenerator(
         val annotationCtor = annotationMarkerClass.constructors.single { it.owner.isPrimary }
         val annotationType = annotationMarkerClass.defaultType
 
-        val annotationCtorCall = IrConstructorCallImpl.fromSymbolOwner(
+        val annotationCtorCall = IrAnnotationImpl.fromSymbolOwner(
             serializableIrClass.startOffset,
             serializableIrClass.endOffset,
             annotationType,

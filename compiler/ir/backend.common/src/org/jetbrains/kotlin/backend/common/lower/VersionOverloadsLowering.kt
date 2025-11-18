@@ -177,7 +177,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
             .single { it.name.toString() == "HIDDEN" }.symbol
     }
 
-    fun buildDeprecationCall(version: MavenComparableVersion?): IrConstructorCall = IrConstructorCallImpl.fromSymbolOwner(
+    fun buildDeprecationCall(version: MavenComparableVersion?): IrAnnotation = IrAnnotationImpl.fromSymbolOwner(
         SYNTHETIC_OFFSET,
         SYNTHETIC_OFFSET,
         irBuiltIns.deprecatedSymbol.defaultType,

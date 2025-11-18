@@ -142,11 +142,11 @@ interface IrBuilderWithPluginContext {
         return prop
     }
 
-    fun IrElement.createAnnotationCallWithoutArgs(annotationSymbol: IrClassSymbol): IrConstructorCall {
+    fun IrElement.createAnnotationCallWithoutArgs(annotationSymbol: IrClassSymbol): IrAnnotation {
         val annotationCtor = annotationSymbol.constructors.single { it.owner.isPrimary }
         val annotationType = annotationSymbol.defaultType
 
-        return IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+        return IrAnnotationImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
     }
 
     fun IrClass.addValPropertyWithJvmField(

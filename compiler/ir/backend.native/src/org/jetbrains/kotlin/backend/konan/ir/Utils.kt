@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
@@ -51,11 +53,11 @@ fun IrValueParameter.isInlineParameter(): Boolean =
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
 fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: Int,
-                          annotationClass: IrClass, vararg args: String): IrConstructorCall {
+                          annotationClass: IrClass, vararg args: String): IrAnnotation {
     val constructor = annotationClass.constructors.let {
         it.singleOrNull() ?: it.single { ctor -> ctor.parameters.size == args.size }
     }
-    return IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, constructor.returnType, constructor.symbol).apply {
+    return IrAnnotationImpl.fromSymbolOwner(startOffset, endOffset, constructor.returnType, constructor.symbol).apply {
         args.forEachIndexed { index, arg ->
             assert(constructor.parameters[index].type == irBuiltIns.stringType) {
                 "String type expected but was ${constructor.parameters[index].type}"

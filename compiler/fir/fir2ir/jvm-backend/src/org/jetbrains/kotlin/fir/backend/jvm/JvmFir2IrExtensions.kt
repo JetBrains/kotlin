@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
@@ -69,9 +71,9 @@ class JvmFir2IrExtensions(
     private val rawTypeAnnotationClassConstructor: IrConstructor =
         createSpecialAnnotationClass(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage).constructors.single()
 
-    override fun generateRawTypeAnnotationCall(): IrConstructorCall =
+    override fun generateRawTypeAnnotationCall(): IrAnnotation =
         rawTypeAnnotationClassConstructor.let {
-            IrConstructorCallImpl.fromSymbolOwner(
+            IrAnnotationImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 it.constructedClassType,

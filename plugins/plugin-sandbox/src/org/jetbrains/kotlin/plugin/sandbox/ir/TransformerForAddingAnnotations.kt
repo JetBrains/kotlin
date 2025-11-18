@@ -91,7 +91,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
                     context.irBuiltIns.arrayClass.typeWith(arrayAnnotationClass.defaultType),
                     arrayAnnotationClass.defaultType,
                     0.rangeTo(2).map { i ->
-                        IrConstructorCallImpl.fromSymbolOwner(
+                        IrAnnotationImpl.fromSymbolOwner(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
                             arrayAnnotationClass.defaultType,
@@ -103,7 +103,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
                                 context.irBuiltIns.arrayClass.typeWith(simpleAnnotationClass.defaultType),
                                 simpleAnnotationClass.defaultType,
                                 0.rangeUntil(i).map { j ->
-                                    IrConstructorCallImpl.fromSymbolOwner(
+                                    IrAnnotationImpl.fromSymbolOwner(
                                         UNDEFINED_OFFSET,
                                         UNDEFINED_OFFSET,
                                         simpleAnnotationClass.defaultType,
