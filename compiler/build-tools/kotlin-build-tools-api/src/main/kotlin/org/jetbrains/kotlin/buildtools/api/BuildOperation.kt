@@ -55,3 +55,28 @@ public interface BuildOperation<R> {
         public fun <V> createCustomOption(id: String): Option<V> = Option(id)
     }
 }
+
+/**
+ * A type of [BuildOperation] that can be cancelled after it starts executing.
+ *
+ * @since 2.3.20
+ */
+@ExperimentalBuildToolsApi
+public interface CancellableBuildOperation<R> : BuildOperation<R> {
+    /**
+     * Attempts to cancel the running operation.
+     *
+     * Upon cancellation, the [KotlinToolchains.BuildSession.executeOperation] call that is executing this operation
+     * will throw an [OperationCancelledException].
+     *
+     * Please note: There are no guarantees as to when and if the operation will be cancelled.
+     * The exact behavior and timing of the cancellation depend on the implementation of the operation.
+     * Even after a call to `cancel` returns, it's still possible that the operation completes successfully and delivers its result.
+     *
+     * @throws IllegalStateException if cancellation is not supported by the implementation (support was added in compiler version 2.3.20)
+     * @since 2.3.20
+     */
+    public fun cancel() {
+        error("Cancellation is supported from compiler version 2.3.20.")
+    }
+}
