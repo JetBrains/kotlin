@@ -10,8 +10,6 @@
 #include <deque>
 #include <atomic>
 
-#include "SafePoint.hpp"
-
 #include "hot/HotReloadServer.hpp"
 #include "hot/MachOParser.hpp"
 
@@ -74,11 +72,6 @@ private:
 
     std::deque<ReloadRequest> _requests{};
     std::atomic_bool _processing{};
-};
-
-
-struct HotReloadActivator : mm::ExtraSafePointActionActivator<HotReloadActivator> {
-    // ~HotReloadActivator() override = default;
 };
 
 } // namespace kotlin::hot
