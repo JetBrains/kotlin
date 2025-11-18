@@ -73,16 +73,15 @@ class PropertySubstitutionTest {
                 // All untouched properties should stay the same.
                 assertEquals(allButBasePropertiesRaw, allButBasePropertiesSubstituted)
 
-                // TODO: need to keep stable order: base -> target -> arch -> family
-                val basePropertySubstitutedValue: Set<String> = propertiesSubstituted.getProperty(basePropertyName).split(' ').toSet()
-                val basePropertyExpectedValue: Set<String> = buildSet {
+                val basePropertySubstitutedValue: String = propertiesSubstituted.getProperty(basePropertyName)
+                val basePropertyExpectedValue: String = buildString {
                     if (!basePropertyRawValue.isNullOrBlank()) {
-                        this += basePropertyRawValue.split(' ')
+                        append(basePropertyRawValue).append(' ')
                     }
-                    this += target.visibleName
-                    this += target.visibleName.uppercase()
-                    this += target.architecture.visibleName
-                    this += target.family.visibleName
+                    append(target.visibleName).append(' ')
+                    append(target.visibleName.uppercase()).append(' ')
+                    append(target.architecture.visibleName).append(' ')
+                    append(target.family.visibleName)
                 }
 
                 assertEquals(basePropertyExpectedValue, basePropertySubstitutedValue)

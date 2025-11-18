@@ -14,8 +14,9 @@ fun defaultTargetSubstitutions(target: KonanTarget) =
 // Performs substitution similar to:
 //  foo = ${foo} ${foo.${arch}} ${foo.${os}}
 fun substitute(properties: Properties, substitutions: Map<String, String>) {
-    for (key in properties.stringPropertyNames()) {
-        for (substitution in substitutions.values) {
+    val propertyNames = properties.stringPropertyNames().toList()
+    for (substitution in substitutions.values) {
+        for (key in propertyNames) {
             val suffix = ".$substitution"
             if (key.endsWith(suffix)) {
                 val baseKey = key.removeSuffix(suffix)
