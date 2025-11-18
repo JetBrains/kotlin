@@ -225,6 +225,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DestructuringDeclaration {
+    @Test
+    public void testAllFilesPresentInDestructuringDeclaration() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions")
   @TestDataPath("$PROJECT_ROOT")
   public class Expressions {

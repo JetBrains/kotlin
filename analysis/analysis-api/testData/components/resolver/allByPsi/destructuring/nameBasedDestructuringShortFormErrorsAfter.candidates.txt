@@ -1,0 +1,2079 @@
+KtFile: 'nameBasedDestructuringShortFormErrorsAfter.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(0,137): '// LANGUAGE: +NameBasedDestructuring, +EnableNameBasedDestructuringShortForm'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(110,137): '(val a: String, val b: Int)'
+  NO_CANDIDATES
+
+KtParameterList(110,137): '(val a: String, val b: Int)'
+  NO_CANDIDATES
+
+KtParameter(111,124): 'val a: String'
+  NO_CANDIDATES
+
+KtTypeReference(118,124): 'String'
+  NO_CANDIDATES
+
+KtUserType(118,124): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(118,124): 'String'
+  NO_CANDIDATES
+
+KtParameter(126,136): 'val b: Int'
+  NO_CANDIDATES
+
+KtTypeReference(133,136): 'Int'
+  NO_CANDIDATES
+
+KtUserType(133,136): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(133,136): 'Int'
+  NO_CANDIDATES
+
+KtNamedFunction(139,689): 'fun declaration(x: Tuple) {'
+  NO_CANDIDATES
+
+KtParameterList(154,164): '(x: Tuple)'
+  NO_CANDIDATES
+
+KtParameter(155,163): 'x: Tuple'
+  NO_CANDIDATES
+
+KtTypeReference(158,163): 'Tuple'
+  NO_CANDIDATES
+
+KtUserType(158,163): 'Tuple'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(158,163): 'Tuple'
+  NO_CANDIDATES
+
+KtBlockExpression(165,689): '{'
+  NO_CANDIDATES
+
+KtIfExpression(171,205): 'if (true) { val (a, second,) = x }'
+  NO_CANDIDATES
+
+KtContainerNode(175,179): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(175,179): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(181,205): '{ val (a, second,) = x }'
+  NO_CANDIDATES
+
+KtBlockExpression(181,205): '{ val (a, second,) = x }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(183,203): 'val (a, second,) = x'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(188,189): 'a'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(191,197): 'second'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(202,203): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = Tuple
+          symbol = x: Tuple
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtIfExpression(210,239): 'if (true) { var (first) = x }'
+  NO_CANDIDATES
+
+KtContainerNode(214,218): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(214,218): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(220,239): '{ var (first) = x }'
+  NO_CANDIDATES
+
+KtBlockExpression(220,239): '{ var (first) = x }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(222,237): 'var (first) = x'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(227,232): 'first'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(236,237): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = Tuple
+          symbol = x: Tuple
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtIfExpression(244,281): 'if (true) { val (first: String) = x }'
+  NO_CANDIDATES
+
+KtContainerNode(248,252): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(248,252): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(254,281): '{ val (first: String) = x }'
+  NO_CANDIDATES
+
+KtBlockExpression(254,281): '{ val (first: String) = x }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(256,279): 'val (first: String) = x'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(261,274): 'first: String'
+  NO_CANDIDATES
+
+KtTypeReference(268,274): 'String'
+  NO_CANDIDATES
+
+KtUserType(268,274): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(268,274): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(278,279): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = Tuple
+          symbol = x: Tuple
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtIfExpression(286,311): 'if (true) { val (first) }'
+  NO_CANDIDATES
+
+KtContainerNode(290,294): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(290,294): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(296,311): '{ val (first) }'
+  NO_CANDIDATES
+
+KtBlockExpression(296,311): '{ val (first) }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(298,309): 'val (first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(303,308): 'first'
+  NO_CANDIDATES
+
+KtIfExpression(316,357): 'if (true) { val (a: Int, b: String) = x }'
+  NO_CANDIDATES
+
+KtContainerNode(320,324): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(320,324): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(326,357): '{ val (a: Int, b: String) = x }'
+  NO_CANDIDATES
+
+KtBlockExpression(326,357): '{ val (a: Int, b: String) = x }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(328,355): 'val (a: Int, b: String) = x'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(333,339): 'a: Int'
+  NO_CANDIDATES
+
+KtTypeReference(336,339): 'Int'
+  NO_CANDIDATES
+
+KtUserType(336,339): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(336,339): 'Int'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(341,350): 'b: String'
+  NO_CANDIDATES
+
+KtTypeReference(344,350): 'String'
+  NO_CANDIDATES
+
+KtUserType(344,350): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(344,350): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(354,355): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = Tuple
+          symbol = x: Tuple
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtIfExpression(362,420): 'if (true) { val (first: Int = a, second: String = b) = x }'
+  NO_CANDIDATES
+
+KtContainerNode(366,370): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(366,370): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(372,420): '{ val (first: Int = a, second: String = b) = x }'
+  NO_CANDIDATES
+
+KtBlockExpression(372,420): '{ val (first: Int = a, second: String = b) = x }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(374,418): 'val (first: Int = a, second: String = b) = x'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(379,393): 'first: Int = a'
+  NO_CANDIDATES
+
+KtTypeReference(386,389): 'Int'
+  NO_CANDIDATES
+
+KtUserType(386,389): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(386,389): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(392,393): 'a'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(395,413): 'second: String = b'
+  NO_CANDIDATES
+
+KtTypeReference(403,409): 'String'
+  NO_CANDIDATES
+
+KtUserType(403,409): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(403,409): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(412,413): 'b'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(417,418): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = Tuple
+          symbol = x: Tuple
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtIfExpression(425,450): 'if (true) { val (_) = x }'
+  NO_CANDIDATES
+
+KtContainerNode(429,433): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(429,433): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(435,450): '{ val (_) = x }'
+  NO_CANDIDATES
+
+KtBlockExpression(435,450): '{ val (_) = x }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(437,448): 'val (_) = x'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(442,443): '_'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(447,448): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = Tuple
+          symbol = x: Tuple
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtIfExpression(455,488): 'if (true) { val (_: String) = x }'
+  NO_CANDIDATES
+
+KtContainerNode(459,463): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(459,463): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(465,488): '{ val (_: String) = x }'
+  NO_CANDIDATES
+
+KtBlockExpression(465,488): '{ val (_: String) = x }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(467,486): 'val (_: String) = x'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(472,481): '_: String'
+  NO_CANDIDATES
+
+KtTypeReference(475,481): 'String'
+  NO_CANDIDATES
+
+KtUserType(475,481): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(475,481): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(485,486): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = Tuple
+          symbol = x: Tuple
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtIfExpression(509,543): 'if (true) { val (aa = first) = x }'
+  NO_CANDIDATES
+
+KtContainerNode(513,517): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(513,517): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(519,543): '{ val (aa = first) = x }'
+  NO_CANDIDATES
+
+KtBlockExpression(519,543): '{ val (aa = first) = x }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(521,541): 'val (aa = first) = x'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(526,536): 'aa = first'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(531,536): 'first'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(540,541): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = Tuple
+          symbol = x: Tuple
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtIfExpression(548,590): 'if (true) { val (aa: String = first) = x }'
+  NO_CANDIDATES
+
+KtContainerNode(552,556): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(552,556): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(558,590): '{ val (aa: String = first) = x }'
+  NO_CANDIDATES
+
+KtBlockExpression(558,590): '{ val (aa: String = first) = x }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(560,588): 'val (aa: String = first) = x'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(565,583): 'aa: String = first'
+  NO_CANDIDATES
+
+KtTypeReference(569,575): 'String'
+  NO_CANDIDATES
+
+KtUserType(569,575): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(569,575): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(578,583): 'first'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(587,588): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = Tuple
+          symbol = x: Tuple
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtIfExpression(595,624): 'if (true) { val (a = first) }'
+  NO_CANDIDATES
+
+KtContainerNode(599,603): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(599,603): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(605,624): '{ val (a = first) }'
+  NO_CANDIDATES
+
+KtBlockExpression(605,624): '{ val (a = first) }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(607,622): 'val (a = first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(612,621): 'a = first'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(616,621): 'first'
+  NO_CANDIDATES
+
+KtIfExpression(629,687): 'if (true) { val (first: Int = a, second: String = b) = x }'
+  NO_CANDIDATES
+
+KtContainerNode(633,637): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(633,637): 'true'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(639,687): '{ val (first: Int = a, second: String = b) = x }'
+  NO_CANDIDATES
+
+KtBlockExpression(639,687): '{ val (first: Int = a, second: String = b) = x }'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(641,685): 'val (first: Int = a, second: String = b) = x'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(646,660): 'first: Int = a'
+  NO_CANDIDATES
+
+KtTypeReference(653,656): 'Int'
+  NO_CANDIDATES
+
+KtUserType(653,656): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(653,656): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(659,660): 'a'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(662,680): 'second: String = b'
+  NO_CANDIDATES
+
+KtTypeReference(670,676): 'String'
+  NO_CANDIDATES
+
+KtUserType(670,676): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(670,676): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(679,680): 'b'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(684,685): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = Tuple
+          symbol = x: Tuple
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNamedFunction(691,1046): 'fun loop(x: List<Tuple>) {'
+  NO_CANDIDATES
+
+KtParameterList(699,715): '(x: List<Tuple>)'
+  NO_CANDIDATES
+
+KtParameter(700,714): 'x: List<Tuple>'
+  NO_CANDIDATES
+
+KtTypeReference(703,714): 'List<Tuple>'
+  NO_CANDIDATES
+
+KtUserType(703,714): 'List<Tuple>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(703,707): 'List'
+  NO_CANDIDATES
+
+KtTypeArgumentList(707,714): '<Tuple>'
+  NO_CANDIDATES
+
+KtTypeProjection(708,713): 'Tuple'
+  NO_CANDIDATES
+
+KtTypeReference(708,713): 'Tuple'
+  NO_CANDIDATES
+
+KtUserType(708,713): 'Tuple'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(708,713): 'Tuple'
+  NO_CANDIDATES
+
+KtBlockExpression(716,1046): '{'
+  NO_CANDIDATES
+
+KtForExpression(722,752): 'for ((first, second,) in x) {}'
+  NO_CANDIDATES
+
+KtParameter(727,743): '(first, second,)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(727,743): '(first, second,)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(728,733): 'first'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(735,741): 'second'
+  NO_CANDIDATES
+
+KtContainerNode(747,748): 'x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(747,748): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.collections.List<Tuple>
+          symbol = x: kotlin.collections.List<Tuple>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNodeForControlStructureBody(750,752): '{}'
+  NO_CANDIDATES
+
+KtBlockExpression(750,752): '{}'
+  NO_CANDIDATES
+
+KtForExpression(757,778): 'for ((first) in x) {}'
+  NO_CANDIDATES
+
+KtParameter(762,769): '(first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(762,769): '(first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(763,768): 'first'
+  NO_CANDIDATES
+
+KtContainerNode(773,774): 'x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(773,774): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.collections.List<Tuple>
+          symbol = x: kotlin.collections.List<Tuple>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNodeForControlStructureBody(776,778): '{}'
+  NO_CANDIDATES
+
+KtBlockExpression(776,778): '{}'
+  NO_CANDIDATES
+
+KtForExpression(783,812): 'for ((first: String) in x) {}'
+  NO_CANDIDATES
+
+KtParameter(788,803): '(first: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(788,803): '(first: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(789,802): 'first: String'
+  NO_CANDIDATES
+
+KtTypeReference(796,802): 'String'
+  NO_CANDIDATES
+
+KtUserType(796,802): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(796,802): 'String'
+  NO_CANDIDATES
+
+KtContainerNode(807,808): 'x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(807,808): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.collections.List<Tuple>
+          symbol = x: kotlin.collections.List<Tuple>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNodeForControlStructureBody(810,812): '{}'
+  NO_CANDIDATES
+
+KtBlockExpression(810,812): '{}'
+  NO_CANDIDATES
+
+KtForExpression(817,850): 'for ((a: Int, b: String) in x) {}'
+  NO_CANDIDATES
+
+KtParameter(822,841): '(a: Int, b: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(822,841): '(a: Int, b: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(823,829): 'a: Int'
+  NO_CANDIDATES
+
+KtTypeReference(826,829): 'Int'
+  NO_CANDIDATES
+
+KtUserType(826,829): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(826,829): 'Int'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(831,840): 'b: String'
+  NO_CANDIDATES
+
+KtTypeReference(834,840): 'String'
+  NO_CANDIDATES
+
+KtUserType(834,840): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(834,840): 'String'
+  NO_CANDIDATES
+
+KtContainerNode(845,846): 'x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(845,846): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.collections.List<Tuple>
+          symbol = x: kotlin.collections.List<Tuple>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNodeForControlStructureBody(848,850): '{}'
+  NO_CANDIDATES
+
+KtBlockExpression(848,850): '{}'
+  NO_CANDIDATES
+
+KtForExpression(855,872): 'for ((_) in x) {}'
+  NO_CANDIDATES
+
+KtParameter(860,863): '(_)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(860,863): '(_)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(861,862): '_'
+  NO_CANDIDATES
+
+KtContainerNode(867,868): 'x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(867,868): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.collections.List<Tuple>
+          symbol = x: kotlin.collections.List<Tuple>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNodeForControlStructureBody(870,872): '{}'
+  NO_CANDIDATES
+
+KtBlockExpression(870,872): '{}'
+  NO_CANDIDATES
+
+KtForExpression(877,902): 'for ((_: String) in x) {}'
+  NO_CANDIDATES
+
+KtParameter(882,893): '(_: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(882,893): '(_: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(883,892): '_: String'
+  NO_CANDIDATES
+
+KtTypeReference(886,892): 'String'
+  NO_CANDIDATES
+
+KtUserType(886,892): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(886,892): 'String'
+  NO_CANDIDATES
+
+KtContainerNode(897,898): 'x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(897,898): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.collections.List<Tuple>
+          symbol = x: kotlin.collections.List<Tuple>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNodeForControlStructureBody(900,902): '{}'
+  NO_CANDIDATES
+
+KtBlockExpression(900,902): '{}'
+  NO_CANDIDATES
+
+KtForExpression(924,950): 'for ((aa = first) in x) {}'
+  NO_CANDIDATES
+
+KtParameter(929,941): '(aa = first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(929,941): '(aa = first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(930,940): 'aa = first'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(935,940): 'first'
+  NO_CANDIDATES
+
+KtContainerNode(945,946): 'x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(945,946): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.collections.List<Tuple>
+          symbol = x: kotlin.collections.List<Tuple>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNodeForControlStructureBody(948,950): '{}'
+  NO_CANDIDATES
+
+KtBlockExpression(948,950): '{}'
+  NO_CANDIDATES
+
+KtForExpression(955,989): 'for ((aa: String = first) in x) {}'
+  NO_CANDIDATES
+
+KtParameter(960,980): '(aa: String = first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(960,980): '(aa: String = first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(961,979): 'aa: String = first'
+  NO_CANDIDATES
+
+KtTypeReference(965,971): 'String'
+  NO_CANDIDATES
+
+KtUserType(965,971): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(965,971): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(974,979): 'first'
+  NO_CANDIDATES
+
+KtContainerNode(984,985): 'x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(984,985): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.collections.List<Tuple>
+          symbol = x: kotlin.collections.List<Tuple>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNodeForControlStructureBody(987,989): '{}'
+  NO_CANDIDATES
+
+KtBlockExpression(987,989): '{}'
+  NO_CANDIDATES
+
+KtForExpression(994,1044): 'for ((first: Int = a, second: String = b) in x) {}'
+  NO_CANDIDATES
+
+KtParameter(999,1035): '(first: Int = a, second: String = b)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(999,1035): '(first: Int = a, second: String = b)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1000,1014): 'first: Int = a'
+  NO_CANDIDATES
+
+KtTypeReference(1007,1010): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1007,1010): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1007,1010): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1013,1014): 'a'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1016,1034): 'second: String = b'
+  NO_CANDIDATES
+
+KtTypeReference(1024,1030): 'String'
+  NO_CANDIDATES
+
+KtUserType(1024,1030): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1024,1030): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1033,1034): 'b'
+  NO_CANDIDATES
+
+KtContainerNode(1039,1040): 'x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1039,1040): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.collections.List<Tuple>
+          symbol = x: kotlin.collections.List<Tuple>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNodeForControlStructureBody(1042,1044): '{}'
+  NO_CANDIDATES
+
+KtBlockExpression(1042,1044): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(1048,1400): 'fun lambda() {'
+  NO_CANDIDATES
+
+KtParameterList(1058,1060): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(1061,1400): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(1067,1097): 'fun foo(f: (Tuple) -> Unit) {}'
+  NO_CANDIDATES
+
+KtParameterList(1074,1094): '(f: (Tuple) -> Unit)'
+  NO_CANDIDATES
+
+KtParameter(1075,1093): 'f: (Tuple) -> Unit'
+  NO_CANDIDATES
+
+KtTypeReference(1078,1093): '(Tuple) -> Unit'
+  NO_CANDIDATES
+
+KtFunctionType(1078,1093): '(Tuple) -> Unit'
+  NO_CANDIDATES
+
+KtParameterList(1078,1085): '(Tuple)'
+  NO_CANDIDATES
+
+KtParameter(1079,1084): 'Tuple'
+  NO_CANDIDATES
+
+KtTypeReference(1079,1084): 'Tuple'
+  NO_CANDIDATES
+
+KtUserType(1079,1084): 'Tuple'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1079,1084): 'Tuple'
+  NO_CANDIDATES
+
+KtTypeReference(1089,1093): 'Unit'
+  NO_CANDIDATES
+
+KtUserType(1089,1093): 'Unit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1089,1093): 'Unit'
+  NO_CANDIDATES
+
+KtBlockExpression(1095,1097): '{}'
+  NO_CANDIDATES
+
+KtCallExpression(1103,1130): 'foo { (first, second,) -> }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (first, second,) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1103,1106): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (first, second,) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtLambdaArgument(1107,1130): '{ (first, second,) -> }'
+  NO_CANDIDATES
+
+KtLambdaExpression(1107,1130): '{ (first, second,) -> }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(1107,1130): '{ (first, second,) -> }'
+  NO_CANDIDATES
+
+KtParameterList(1109,1125): '(first, second,)'
+  NO_CANDIDATES
+
+KtParameter(1109,1125): '(first, second,)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(1109,1125): '(first, second,)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1110,1115): 'first'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1117,1123): 'second'
+  NO_CANDIDATES
+
+KtBlockExpression(1129,1129): ''
+  NO_CANDIDATES
+
+KtCallExpression(1135,1153): 'foo { (first) -> }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (first) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1135,1138): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (first) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtLambdaArgument(1139,1153): '{ (first) -> }'
+  NO_CANDIDATES
+
+KtLambdaExpression(1139,1153): '{ (first) -> }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(1139,1153): '{ (first) -> }'
+  NO_CANDIDATES
+
+KtParameterList(1141,1148): '(first)'
+  NO_CANDIDATES
+
+KtParameter(1141,1148): '(first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(1141,1148): '(first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1142,1147): 'first'
+  NO_CANDIDATES
+
+KtBlockExpression(1152,1152): ''
+  NO_CANDIDATES
+
+KtCallExpression(1158,1184): 'foo { (first: String) -> }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (first: String) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1158,1161): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (first: String) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtLambdaArgument(1162,1184): '{ (first: String) -> }'
+  NO_CANDIDATES
+
+KtLambdaExpression(1162,1184): '{ (first: String) -> }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(1162,1184): '{ (first: String) -> }'
+  NO_CANDIDATES
+
+KtParameterList(1164,1179): '(first: String)'
+  NO_CANDIDATES
+
+KtParameter(1164,1179): '(first: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(1164,1179): '(first: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1165,1178): 'first: String'
+  NO_CANDIDATES
+
+KtTypeReference(1172,1178): 'String'
+  NO_CANDIDATES
+
+KtUserType(1172,1178): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1172,1178): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(1183,1183): ''
+  NO_CANDIDATES
+
+KtCallExpression(1189,1219): 'foo { (a: Int, b: String) -> }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (a: Int, b: String) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1189,1192): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (a: Int, b: String) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtLambdaArgument(1193,1219): '{ (a: Int, b: String) -> }'
+  NO_CANDIDATES
+
+KtLambdaExpression(1193,1219): '{ (a: Int, b: String) -> }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(1193,1219): '{ (a: Int, b: String) -> }'
+  NO_CANDIDATES
+
+KtParameterList(1195,1214): '(a: Int, b: String)'
+  NO_CANDIDATES
+
+KtParameter(1195,1214): '(a: Int, b: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(1195,1214): '(a: Int, b: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1196,1202): 'a: Int'
+  NO_CANDIDATES
+
+KtTypeReference(1199,1202): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1199,1202): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1199,1202): 'Int'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1204,1213): 'b: String'
+  NO_CANDIDATES
+
+KtTypeReference(1207,1213): 'String'
+  NO_CANDIDATES
+
+KtUserType(1207,1213): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1207,1213): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(1218,1218): ''
+  NO_CANDIDATES
+
+KtCallExpression(1224,1238): 'foo { (_) -> }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (_) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1224,1227): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (_) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtLambdaArgument(1228,1238): '{ (_) -> }'
+  NO_CANDIDATES
+
+KtLambdaExpression(1228,1238): '{ (_) -> }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(1228,1238): '{ (_) -> }'
+  NO_CANDIDATES
+
+KtParameterList(1230,1233): '(_)'
+  NO_CANDIDATES
+
+KtParameter(1230,1233): '(_)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(1230,1233): '(_)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1231,1232): '_'
+  NO_CANDIDATES
+
+KtBlockExpression(1237,1237): ''
+  NO_CANDIDATES
+
+KtCallExpression(1243,1265): 'foo { (_: String) -> }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (_: String) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1243,1246): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (_: String) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtLambdaArgument(1247,1265): '{ (_: String) -> }'
+  NO_CANDIDATES
+
+KtLambdaExpression(1247,1265): '{ (_: String) -> }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(1247,1265): '{ (_: String) -> }'
+  NO_CANDIDATES
+
+KtParameterList(1249,1260): '(_: String)'
+  NO_CANDIDATES
+
+KtParameter(1249,1260): '(_: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(1249,1260): '(_: String)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1250,1259): '_: String'
+  NO_CANDIDATES
+
+KtTypeReference(1253,1259): 'String'
+  NO_CANDIDATES
+
+KtUserType(1253,1259): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1253,1259): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(1264,1264): ''
+  NO_CANDIDATES
+
+KtCallExpression(1287,1310): 'foo { (aa = first) -> }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (aa = first) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1287,1290): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (aa = first) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtLambdaArgument(1291,1310): '{ (aa = first) -> }'
+  NO_CANDIDATES
+
+KtLambdaExpression(1291,1310): '{ (aa = first) -> }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(1291,1310): '{ (aa = first) -> }'
+  NO_CANDIDATES
+
+KtParameterList(1293,1305): '(aa = first)'
+  NO_CANDIDATES
+
+KtParameter(1293,1305): '(aa = first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(1293,1305): '(aa = first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1294,1304): 'aa = first'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1299,1304): 'first'
+  NO_CANDIDATES
+
+KtBlockExpression(1309,1309): ''
+  NO_CANDIDATES
+
+KtCallExpression(1315,1346): 'foo { (aa: String = first) -> }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (aa: String = first) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1315,1318): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (aa: String = first) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtLambdaArgument(1319,1346): '{ (aa: String = first) -> }'
+  NO_CANDIDATES
+
+KtLambdaExpression(1319,1346): '{ (aa: String = first) -> }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(1319,1346): '{ (aa: String = first) -> }'
+  NO_CANDIDATES
+
+KtParameterList(1321,1341): '(aa: String = first)'
+  NO_CANDIDATES
+
+KtParameter(1321,1341): '(aa: String = first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(1321,1341): '(aa: String = first)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1322,1340): 'aa: String = first'
+  NO_CANDIDATES
+
+KtTypeReference(1326,1332): 'String'
+  NO_CANDIDATES
+
+KtUserType(1326,1332): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1326,1332): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1335,1340): 'first'
+  NO_CANDIDATES
+
+KtBlockExpression(1345,1345): ''
+  NO_CANDIDATES
+
+KtCallExpression(1351,1398): 'foo { (first: Int = a, second: String = b) -> }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (first: Int = a, second: String = b) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1351,1354): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { (first: Int = a, second: String = b) -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = (Tuple) -> kotlin.Unit
+          symbol = f: (Tuple) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = (Tuple) -> kotlin.Unit
+              symbol = f: (Tuple) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtLambdaArgument(1355,1398): '{ (first: Int = a, second: String = b) -> }'
+  NO_CANDIDATES
+
+KtLambdaExpression(1355,1398): '{ (first: Int = a, second: String = b) -> }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(1355,1398): '{ (first: Int = a, second: String = b) -> }'
+  NO_CANDIDATES
+
+KtParameterList(1357,1393): '(first: Int = a, second: String = b)'
+  NO_CANDIDATES
+
+KtParameter(1357,1393): '(first: Int = a, second: String = b)'
+  NO_CANDIDATES
+
+KtDestructuringDeclaration(1357,1393): '(first: Int = a, second: String = b)'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1358,1372): 'first: Int = a'
+  NO_CANDIDATES
+
+KtTypeReference(1365,1368): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1365,1368): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1365,1368): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1371,1372): 'a'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(1374,1392): 'second: String = b'
+  NO_CANDIDATES
+
+KtTypeReference(1382,1388): 'String'
+  NO_CANDIDATES
+
+KtUserType(1382,1388): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1382,1388): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1391,1392): 'b'
+  NO_CANDIDATES
+
+KtBlockExpression(1397,1397): ''
+  NO_CANDIDATES

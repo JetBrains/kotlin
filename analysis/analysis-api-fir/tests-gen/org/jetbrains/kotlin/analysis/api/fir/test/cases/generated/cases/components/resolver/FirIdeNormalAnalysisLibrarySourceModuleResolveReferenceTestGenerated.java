@@ -2535,6 +2535,52 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DestructuringDeclaration {
+    @Test
+    public void testAllFilesPresentInDestructuringDeclaration() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "cloneable");
+    }
+
+    @Test
+    @TestMetadata("dataClassAnotherName.kt")
+    public void testDataClassAnotherName() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration/dataClassAnotherName.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassLocalDefinition.kt")
+    public void testDataClassLocalDefinition() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration/dataClassLocalDefinition.kt");
+    }
+
+    @Test
+    @TestMetadata("namedFull.kt")
+    public void testNamedFull() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration/namedFull.kt");
+    }
+
+    @Test
+    @TestMetadata("namedShort.kt")
+    public void testNamedShort() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration/namedShort.kt");
+    }
+
+    @Test
+    @TestMetadata("positionalFull.kt")
+    public void testPositionalFull() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration/positionalFull.kt");
+    }
+
+    @Test
+    @TestMetadata("positionalShort.kt")
+    public void testPositionalShort() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration/positionalShort.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions")
   @TestDataPath("$PROJECT_ROOT")
   public class Expressions {

@@ -1,0 +1,934 @@
+KtNameReferenceExpression(118,124): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(133,136): 'Int'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(158,163): 'Tuple'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Tuple(a: kotlin.String, b: kotlin.Int)
+
+KtDestructuringDeclarationEntry(188,189): 'a'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val a: kotlin.String
+
+KtDestructuringDeclarationEntry(191,197): 'second'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val second: ERROR_TYPE(Unresolved name: second)
+
+KtNameReferenceExpression(202,203): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: Tuple
+
+KtDestructuringDeclarationEntry(227,232): 'first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) var first: ERROR_TYPE(Unresolved name: first)
+
+KtNameReferenceExpression(236,237): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: Tuple
+
+KtDestructuringDeclarationEntry(261,274): 'first: String'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val first: kotlin.String
+
+KtNameReferenceExpression(268,274): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(278,279): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: Tuple
+
+KtDestructuringDeclarationEntry(303,308): 'first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val first: ERROR_TYPE(Unresolved name: first)
+
+KtDestructuringDeclarationEntry(333,339): 'a: Int'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val a: kotlin.Int
+
+KtNameReferenceExpression(336,339): 'Int'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtDestructuringDeclarationEntry(341,350): 'b: String'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val b: kotlin.String
+
+KtNameReferenceExpression(344,350): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(354,355): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: Tuple
+
+KtDestructuringDeclarationEntry(379,393): 'first: Int = a'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val first: kotlin.Int
+
+KtNameReferenceExpression(386,389): 'Int'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(392,393): 'a'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtDestructuringDeclarationEntry(395,413): 'second: String = b'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val second: kotlin.String
+
+KtNameReferenceExpression(403,409): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(412,413): 'b'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(417,418): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: Tuple
+
+KtDestructuringDeclarationEntry(442,443): '_'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val `<unused var>`: ERROR(Underscore without renaming in destructuring)
+
+KtNameReferenceExpression(447,448): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: Tuple
+
+KtDestructuringDeclarationEntry(472,481): '_: String'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val `<unused var>`: kotlin.String
+
+KtNameReferenceExpression(475,481): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(485,486): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: Tuple
+
+KtDestructuringDeclarationEntry(526,536): 'aa = first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val aa: ERROR_TYPE(Unresolved name: first)
+
+KtNameReferenceExpression(531,536): 'first'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(540,541): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: Tuple
+
+KtDestructuringDeclarationEntry(565,583): 'aa: String = first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val aa: kotlin.String
+
+KtNameReferenceExpression(569,575): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(578,583): 'first'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(587,588): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: Tuple
+
+KtDestructuringDeclarationEntry(612,621): 'a = first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val a: ERROR_TYPE(Unresolved name: first)
+
+KtNameReferenceExpression(616,621): 'first'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtDestructuringDeclarationEntry(646,660): 'first: Int = a'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val first: kotlin.Int
+
+KtNameReferenceExpression(653,656): 'Int'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(659,660): 'a'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtDestructuringDeclarationEntry(662,680): 'second: String = b'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: declaration) val second: kotlin.String
+
+KtNameReferenceExpression(670,676): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(679,680): 'b'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(684,685): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: Tuple
+
+KtNameReferenceExpression(703,707): 'List'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+
+KtNameReferenceExpression(708,713): 'Tuple'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Tuple(a: kotlin.String, b: kotlin.Int)
+
+KtForExpression(722,752): 'for ((first, second,) in x) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+      1: (in kotlin.collections.Iterator) operator fun next(): T
+      2: (in kotlin.collections.List) override operator fun iterator(): kotlin.collections.Iterator<E>
+
+KtDestructuringDeclarationEntry(728,733): 'first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val first: ERROR_TYPE(Unresolved name: first)
+
+KtDestructuringDeclarationEntry(735,741): 'second'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val second: ERROR_TYPE(Unresolved name: second)
+
+KtNameReferenceExpression(747,748): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: kotlin.collections.List<Tuple>
+
+KtForExpression(757,778): 'for ((first) in x) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+      1: (in kotlin.collections.Iterator) operator fun next(): T
+      2: (in kotlin.collections.List) override operator fun iterator(): kotlin.collections.Iterator<E>
+
+KtDestructuringDeclarationEntry(763,768): 'first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val first: ERROR_TYPE(Unresolved name: first)
+
+KtNameReferenceExpression(773,774): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: kotlin.collections.List<Tuple>
+
+KtForExpression(783,812): 'for ((first: String) in x) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+      1: (in kotlin.collections.Iterator) operator fun next(): T
+      2: (in kotlin.collections.List) override operator fun iterator(): kotlin.collections.Iterator<E>
+
+KtDestructuringDeclarationEntry(789,802): 'first: String'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val first: kotlin.String
+
+KtNameReferenceExpression(796,802): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(807,808): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: kotlin.collections.List<Tuple>
+
+KtForExpression(817,850): 'for ((a: Int, b: String) in x) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+      1: (in kotlin.collections.Iterator) operator fun next(): T
+      2: (in kotlin.collections.List) override operator fun iterator(): kotlin.collections.Iterator<E>
+
+KtDestructuringDeclarationEntry(823,829): 'a: Int'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val a: kotlin.Int
+
+KtNameReferenceExpression(826,829): 'Int'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtDestructuringDeclarationEntry(831,840): 'b: String'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val b: kotlin.String
+
+KtNameReferenceExpression(834,840): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(845,846): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: kotlin.collections.List<Tuple>
+
+KtForExpression(855,872): 'for ((_) in x) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+      1: (in kotlin.collections.Iterator) operator fun next(): T
+      2: (in kotlin.collections.List) override operator fun iterator(): kotlin.collections.Iterator<E>
+
+KtDestructuringDeclarationEntry(861,862): '_'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val `<unused var>`: ERROR(Underscore without renaming in destructuring)
+
+KtNameReferenceExpression(867,868): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: kotlin.collections.List<Tuple>
+
+KtForExpression(877,902): 'for ((_: String) in x) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+      1: (in kotlin.collections.Iterator) operator fun next(): T
+      2: (in kotlin.collections.List) override operator fun iterator(): kotlin.collections.Iterator<E>
+
+KtDestructuringDeclarationEntry(883,892): '_: String'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val `<unused var>`: kotlin.String
+
+KtNameReferenceExpression(886,892): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(897,898): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: kotlin.collections.List<Tuple>
+
+KtForExpression(924,950): 'for ((aa = first) in x) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+      1: (in kotlin.collections.Iterator) operator fun next(): T
+      2: (in kotlin.collections.List) override operator fun iterator(): kotlin.collections.Iterator<E>
+
+KtDestructuringDeclarationEntry(930,940): 'aa = first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val aa: ERROR_TYPE(Unresolved name: first)
+
+KtNameReferenceExpression(935,940): 'first'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(945,946): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: kotlin.collections.List<Tuple>
+
+KtForExpression(955,989): 'for ((aa: String = first) in x) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+      1: (in kotlin.collections.Iterator) operator fun next(): T
+      2: (in kotlin.collections.List) override operator fun iterator(): kotlin.collections.Iterator<E>
+
+KtDestructuringDeclarationEntry(961,979): 'aa: String = first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val aa: kotlin.String
+
+KtNameReferenceExpression(965,971): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(974,979): 'first'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(984,985): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: kotlin.collections.List<Tuple>
+
+KtForExpression(994,1044): 'for ((first: Int = a, second: String = b) in x) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+      1: (in kotlin.collections.Iterator) operator fun next(): T
+      2: (in kotlin.collections.List) override operator fun iterator(): kotlin.collections.Iterator<E>
+
+KtDestructuringDeclarationEntry(1000,1014): 'first: Int = a'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val first: kotlin.Int
+
+KtNameReferenceExpression(1007,1010): 'Int'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(1013,1014): 'a'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtDestructuringDeclarationEntry(1016,1034): 'second: String = b'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: loop.<destruct>) val second: kotlin.String
+
+KtNameReferenceExpression(1024,1030): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(1033,1034): 'b'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1039,1040): 'x'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      x: kotlin.collections.List<Tuple>
+
+KtNameReferenceExpression(1079,1084): 'Tuple'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Tuple(a: kotlin.String, b: kotlin.Int)
+
+KtNameReferenceExpression(1089,1093): 'Unit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) object Unit
+
+KtCallExpression(1103,1130): 'foo { (first, second,) -> }'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1103,1106): 'foo'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
+
+KtDestructuringDeclarationEntry(1110,1115): 'first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val first: ERROR_TYPE(Unresolved name: first)
+
+KtDestructuringDeclarationEntry(1117,1123): 'second'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val second: ERROR_TYPE(Unresolved name: second)
+
+KtCallExpression(1135,1153): 'foo { (first) -> }'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1135,1138): 'foo'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
+
+KtDestructuringDeclarationEntry(1142,1147): 'first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val first: ERROR_TYPE(Unresolved name: first)
+
+KtCallExpression(1158,1184): 'foo { (first: String) -> }'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1158,1161): 'foo'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
+
+KtDestructuringDeclarationEntry(1165,1178): 'first: String'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val first: kotlin.String
+
+KtNameReferenceExpression(1172,1178): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtCallExpression(1189,1219): 'foo { (a: Int, b: String) -> }'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1189,1192): 'foo'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
+
+KtDestructuringDeclarationEntry(1196,1202): 'a: Int'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val a: kotlin.Int
+
+KtNameReferenceExpression(1199,1202): 'Int'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtDestructuringDeclarationEntry(1204,1213): 'b: String'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val b: kotlin.String
+
+KtNameReferenceExpression(1207,1213): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtCallExpression(1224,1238): 'foo { (_) -> }'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1224,1227): 'foo'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
+
+KtDestructuringDeclarationEntry(1231,1232): '_'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val `<unused var>`: ERROR(Underscore without renaming in destructuring)
+
+KtCallExpression(1243,1265): 'foo { (_: String) -> }'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1243,1246): 'foo'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
+
+KtDestructuringDeclarationEntry(1250,1259): '_: String'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val `<unused var>`: kotlin.String
+
+KtNameReferenceExpression(1253,1259): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtCallExpression(1287,1310): 'foo { (aa = first) -> }'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1287,1290): 'foo'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
+
+KtDestructuringDeclarationEntry(1294,1304): 'aa = first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val aa: ERROR_TYPE(Unresolved name: first)
+
+KtNameReferenceExpression(1299,1304): 'first'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtCallExpression(1315,1346): 'foo { (aa: String = first) -> }'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1315,1318): 'foo'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
+
+KtDestructuringDeclarationEntry(1322,1340): 'aa: String = first'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val aa: kotlin.String
+
+KtNameReferenceExpression(1326,1332): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(1335,1340): 'first'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtCallExpression(1351,1398): 'foo { (first: Int = a, second: String = b) -> }'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1351,1354): 'foo'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
+
+KtDestructuringDeclarationEntry(1358,1372): 'first: Int = a'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val first: kotlin.Int
+
+KtNameReferenceExpression(1365,1368): 'Int'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(1371,1372): 'a'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtDestructuringDeclarationEntry(1374,1392): 'second: String = b'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: lambda.<no name>.<destruct>) val second: kotlin.String
+
+KtNameReferenceExpression(1382,1388): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(1391,1392): 'b'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
