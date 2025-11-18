@@ -15,7 +15,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
     compilerArgument {
         name = "Xklib-relative-path-base"
         compilerName = "relativePathBases"
-        description = "Provide a base path to compute the source's relative paths in klib (default is empty).".asReleaseDependent()
+        description = """Relativize all the paths stored in a klib using the given path prefixes.
+The supplied prefixes should be absolute paths to the directories containing the source code files.
+Note: The prefixes are applied in the same order as they are passed in this CLI argument.""".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
 
         lifecycle(
