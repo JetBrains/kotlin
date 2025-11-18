@@ -131,18 +131,18 @@ class FirCallResolver(
                 source != null && source.kind !is KtFakeSourceElementKind.ImplicitTypeArgument
 
             val symbol = candidate.symbol as? FirCallableSymbol<*> ?: return@let
-            val used = buildSet {
-                symbol.fir.returnTypeRef.coneType.forEachType { type ->
-                    if (type is ConeTypeParameterType) {
-                        add(type.typeConstructor(session.typeContext))
-                    }
-                }
-            }
 
             fun rec(functionCall: FirFunctionCall) {
                 symbol.typeParameterSymbols.zip(functionCall.typeArguments).forEach { (param, type) ->
-                    if (param.toConeType().typeConstructor(session.typeContext) !in used && isExplicitTypeArgumentSource(type.source)) {
-                        functionCall.replaceNonFatalDiagnostics(functionCall.nonFatalDiagnostics + ConeMyDiagnostic(type.render()))
+                    if (isExplicitTypeArgumentSource(type.source)) {
+                        functionCall.replaceNonFatalDiagnostics(
+                            functionCall.nonFatalDiagnostics + ConeMyDiagnostic(
+                                type.render(),
+                                param.toConeType().typeConstructor(
+                                    session.typeContext
+                                )
+                            )
+                        )
                     }
                 }
                 functionCall.argumentList.arguments.forEach { argument ->

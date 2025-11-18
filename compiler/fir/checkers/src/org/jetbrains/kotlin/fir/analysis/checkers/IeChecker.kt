@@ -16,6 +16,11 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeMyDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.forEachType
+import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.types.model.typeConstructor
 import kotlin.reflect.full.memberProperties
 
 class IEReporter(
@@ -51,8 +56,16 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
+
+        val used = buildSet {
+            (expression.toResolvedCallableSymbol() ?: return).fir.returnTypeRef.coneType.forEachType { type ->
+                if (type is ConeTypeParameterType) {
+                    add(type.typeConstructor(context.session.typeContext))
+                }
+            }
+        }
         expression.nonFatalDiagnostics.forEach {
-            if (it is ConeMyDiagnostic) {
+            if (it is ConeMyDiagnostic && it.typeConstructor !in used) {
                 report(
                     IEData(
                         type = it.reason,

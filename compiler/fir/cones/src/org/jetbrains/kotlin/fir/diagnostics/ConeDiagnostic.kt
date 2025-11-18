@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.diagnostics
 
+import org.jetbrains.kotlin.fir.types.ConeTypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+
 interface ConeDiagnostic {
     val reason: String
 
@@ -22,4 +25,4 @@ class ConeUnreportedDuplicateDiagnostic(val original: ConeDiagnostic) : ConeDiag
     override val reason: String get() = original.reason
 }
 
-class ConeMyDiagnostic(override val reason: String) : ConeDiagnostic
+class ConeMyDiagnostic(override val reason: String, val typeConstructor: TypeConstructorMarker) : ConeDiagnostic
