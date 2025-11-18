@@ -1,0 +1,11 @@
+$TESTDATA_DIR$/optInDiagnostics.kt
+-d
+$TEMP_DIR$
+-cp
+$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
+-opt-in=Unresolved
+-opt-in=NotAnAnnotation
+-opt-in=kotlin.RequiresOptIn
+-opt-in=Warning
+-Werror
