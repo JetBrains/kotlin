@@ -11,16 +11,16 @@ sealed interface DefFileProperty<T> {
     val propertyName: String
     fun parse(rawValue: String?): T
 
-    enum class StringListProperty(override val propertyName: String) : DefFileProperty<List<String>> {
-        Headers("headers"),
-        Modules("modules"),
-        CompilerOpts("compilerOpts"),
+    enum class StringListProperty(override val propertyName: String, val isSubstitutable: Boolean = false) : DefFileProperty<List<String>> {
+        Headers("headers", isSubstitutable = true),
+        Modules("modules", isSubstitutable = true),
+        CompilerOpts("compilerOpts", isSubstitutable = true),
         EntryPoints("entryPoint"),
-        LinkerOpts("linkerOpts"),
-        ExcludedFunctions("excludedFunctions"),
+        LinkerOpts("linkerOpts", isSubstitutable = true),
+        ExcludedFunctions("excludedFunctions", isSubstitutable = true),
         ExcludedMacros("excludedMacros"),
-        StaticLibraries("staticLibraries"),
-        LibraryPaths("libraryPaths"),
+        StaticLibraries("staticLibraries", isSubstitutable = true),
+        LibraryPaths("libraryPaths", isSubstitutable = true),
         HeaderFilter("headerFilter"),
         ExcludeFilter("excludeFilter"),
         StrictEnums("strictEnums"),
@@ -51,6 +51,12 @@ sealed interface DefFileProperty<T> {
         AllowIncludingObjCCategoriesFromDefFile("allowIncludingObjCCategoriesFromDefFile");
 
         override fun parse(rawValue: String?): Boolean = rawValue.toBoolean()
+    }
+
+    companion object {
+        val substitutablePropertyNames: Set<String> by lazy {
+            StringListProperty.values().filter { it.isSubstitutable }.map { it.propertyName }.toSet()
+        }
     }
 }
 

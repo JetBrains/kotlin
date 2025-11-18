@@ -21,14 +21,15 @@ import org.junit.jupiter.api.Assertions.assertEquals
 class PropertySubstitutionTest {
     @Test
     fun `Test substitution works for the limited list of known properties`() {
-        DefFileProperty.StringListProperty.entries.forEach { property ->
-            doTestSuccessfulSubstitution(basePropertyName = property.propertyName)
+        DefFileProperty.StringListProperty.entries.filter { it.isSubstitutable }.forEach { property ->
+            doTestSubstitution(basePropertyName = property.propertyName, isSuccessExpected = true)
         }
     }
 
     @Test
     fun `Test substitution does not work for other properties`() {
         buildSet {
+            DefFileProperty.StringListProperty.entries.filterNot { it.isSubstitutable }.mapTo(this) { it.propertyName }
             DefFileProperty.NullableStringProperty.entries.mapTo(this) { it.propertyName }
             DefFileProperty.BooleanProperty.entries.mapTo(this) { it.propertyName }
 
@@ -38,12 +39,11 @@ class PropertySubstitutionTest {
             this += KLIB_PROPERTY_INTEROP
             this += KLIB_PROPERTY_IR_PROVIDER
         }.forEach { basePropertyName ->
-            // TODO: there should be no substitution at all
-            doTestSuccessfulSubstitution(basePropertyName)
+            doTestSubstitution(basePropertyName, isSuccessExpected = false)
         }
     }
 
-    private fun doTestSuccessfulSubstitution(basePropertyName: String) {
+    private fun doTestSubstitution(basePropertyName: String, isSuccessExpected: Boolean) {
         val stringListValues: List<List<String>?> = listOf<List<String>?>(null) + buildList {
             repeat(5) { listSize ->
                 this + List(listSize) { KlibMockDSL.generateRandomName(20) }
@@ -71,15 +71,19 @@ class PropertySubstitutionTest {
                 // All untouched properties should stay the same.
                 assertEquals(allButBasePropertiesRaw, allButBasePropertiesSubstituted)
 
-                val basePropertySubstitutedValue: String = propertiesSubstituted.getProperty(basePropertyName)
-                val basePropertyExpectedValue: String = buildString {
-                    if (!basePropertyRawValue.isNullOrBlank()) {
-                        append(basePropertyRawValue).append(' ')
+                val basePropertySubstitutedValue: String? = propertiesSubstituted.getProperty(basePropertyName)
+                val basePropertyExpectedValue: String? = if (isSuccessExpected) {
+                    buildString {
+                        if (!basePropertyRawValue.isNullOrBlank()) {
+                            append(basePropertyRawValue).append(' ')
+                        }
+                        append(target.visibleName).append(' ')
+                        append(target.visibleName.uppercase()).append(' ')
+                        append(target.architecture.visibleName).append(' ')
+                        append(target.family.visibleName)
                     }
-                    append(target.visibleName).append(' ')
-                    append(target.visibleName.uppercase()).append(' ')
-                    append(target.architecture.visibleName).append(' ')
-                    append(target.family.visibleName)
+                } else {
+                    basePropertyRawValue
                 }
 
                 assertEquals(basePropertyExpectedValue, basePropertySubstitutedValue)
