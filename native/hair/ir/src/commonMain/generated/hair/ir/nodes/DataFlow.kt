@@ -66,6 +66,11 @@ class AssignVar internal constructor(form: Form, control: Controlling?, assigned
 
 
 class Phi internal constructor(form: Form, block: BlockEntry?, vararg joinedValues: Node?) : NodeBase(form, listOf(block, *joinedValues)) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
+    }
+    
+    val type: HairType by form::type
     val block: BlockEntry
         get() = args[0] as BlockEntry
     val blockOrNull: BlockEntry?
@@ -90,7 +95,7 @@ class Phi internal constructor(form: Form, block: BlockEntry?, vararg joinedValu
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitPhi(this)
     
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "Phi")
+        internal fun metaForm(session: Session) = MetaForm(session, "Phi")
     }
 }
 

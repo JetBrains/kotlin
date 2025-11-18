@@ -141,9 +141,10 @@ fun performGCM(session: Session): GCMResult {
     return GCMResult(bestBlock)
 }
 
-fun GCMResult.linearize(block: ControlFlow): List<Node> {
+fun GCMResult.linearize(block: BlockEntry): List<Node> {
 
     val blockNodes = blocks.entries.filter { it.value == block }.map { it.key }
+    val blockEnd = block.blockEnd
 
     // TODO optimize
     val graph = object : DiGraph<Node> {
@@ -152,7 +153,12 @@ fun GCMResult.linearize(block: ControlFlow): List<Node> {
         }
 
         override fun succs(n: Node): Sequence<Node> {
-            return n.uses.filter { block(it) == block }
+            val usesInBlock = n.uses.filter { block(it) == block }
+            if (n == blockEnd) {
+                return usesInBlock
+            }
+            require(block(blockEnd) == block)
+            return usesInBlock + sequenceOf(blockEnd)
         }
     }
 
@@ -163,7 +169,7 @@ fun GCMResult.linearize(block: ControlFlow): List<Node> {
         }
     }
 
-    val postOrder = postOrder(roots, graph)
+    val postOrder = postOrder(graph, roots)
 
     val topSort = postOrder.toList().reversed()
 

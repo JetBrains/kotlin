@@ -4,6 +4,9 @@ import hair.ir.*
 import hair.ir.nodes.*
 import hair.opt.inline
 import hair.sym.HairFunction
+import hair.sym.HairType
+import hair.sym.HairType.*
+import hair.test.Fun
 import hair.utils.printGraphviz
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -11,8 +14,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class InlineTest : AbstractInlinerTest {
-
-    data class Fun(val name: String) : HairFunction
 
     @Test
     fun testSimpleReturn() = inlinerTest {

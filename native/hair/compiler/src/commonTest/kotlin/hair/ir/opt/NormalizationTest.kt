@@ -1,11 +1,14 @@
 package hair.ir.opt
 
 import hair.ir.*
-import hair.ir.nodes.AddI
+import hair.ir.Add
+import hair.ir.nodes.Add
 import hair.ir.nodes.ConstI
 import hair.ir.nodes.Node
 import hair.ir.nodes.Return
 import hair.ir.nodes.Use
+import hair.sym.HairType
+import hair.sym.HairType.*
 import kotlin.test.*
 
 class NormalizationTest : IrTest {
@@ -18,7 +21,7 @@ class NormalizationTest : IrTest {
         buildInitialIR {
             val a = 23
             val b = 42
-            assertEquals(ConstI(a + b), AddI(ConstI(a), ConstI(b)))
+            assertEquals(ConstI(a + b), Add(INT)(ConstI(a), ConstI(b)))
         }
     }
 
@@ -33,11 +36,11 @@ class NormalizationTest : IrTest {
             val f = 42
             assertEquals(
                 ConstI(a + b + c + d + e + f),
-                AddI(
-                    AddI(ConstI(a), ConstI(b)),
-                    AddI(
-                        AddI(ConstI(c), ConstI(d)),
-                        AddI(ConstI(e), ConstI(f))
+                Add(INT)(
+                    Add(INT)(ConstI(a), ConstI(b)),
+                    Add(INT)(
+                        Add(INT)(ConstI(c), ConstI(d)),
+                        Add(INT)(ConstI(e), ConstI(f))
                     )
                 )
             )
@@ -54,12 +57,12 @@ class NormalizationTest : IrTest {
         lateinit var expected: Node
 
         buildInitialIR {
-            use = Use( AddI(ConstI(a), Param(0)) )
+            use = Use(Add(INT)(ConstI(a), Param(0)))
             expected = ConstI(a + b)
             Return(expected)
         }
         modifyIR {
-            (use.value as AddI).rhs = ConstI(b)
+            (use.value as Add).rhs = ConstI(b)
         }
         assertEquals(expected, use.value)
     }
