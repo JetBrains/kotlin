@@ -30,9 +30,6 @@ private const val BOOT_TIMEOUT_MINUTES = 3L
  * This class creates a unique simulator, provides a robust boot mechanism,
  * and ensures it is deleted (cleaned up) when done.
  *
- * Implements [Closeable] to be used with `use` blocks for automatic cleanup.
- *
- * @property testSimulatorName The unique name generated for this test simulator.
  */
 internal class XCTestHelpers : Closeable {
 
@@ -40,12 +37,6 @@ internal class XCTestHelpers : Closeable {
         internal val logger = Logger.getLogger(this::class.java.name)
     }
 
-    /**
-     * Represents a single simulator device.
-     *
-     * @property name The human-readable name of the simulator.
-     * @property udid The unique device identifier.
-     */
     @Serializable
     data class Device(val name: String, val udid: String)
 
@@ -54,17 +45,14 @@ internal class XCTestHelpers : Closeable {
 
     private val deviceIdentifier = "com.apple.CoreSimulator.SimDeviceType.iPhone-12-Pro-Max"
     private val uuid = UUID.randomUUID()
-    val testSimulatorName = "NativeXcodeSimulatorTestsIT_${uuid}_simulator"
+    private val testSimulatorName = "NativeXcodeSimulatorTestsIT_${uuid}_simulator"
 
     /**
      * Creates a new simulator instance with a unique name.
      *
-     * This also runs the `dyld_shared_cache update` workaround before creation.
-     *
      * @return The [Device] object representing the newly created simulator.
      */
     fun createSimulator(): Device {
-        // updateCache() // Removed: Will be called lazily on first boot failure.
         return Device(
             testSimulatorName,
             processOutputQuick(
@@ -136,7 +124,7 @@ internal fun XCTestHelpers.Device.boot(logger: Logger = XCTestHelpers.logger) {
     // and then wait for the boot to complete. This is the command that can hang.
     val bootCommand = listOf("/usr/bin/xcrun", "simctl", "bootstatus", udid, "-b")
 
-    retry(BOOT_RETRIES, logger) { attempt ->
+    retry(logger) { attempt ->
         logger.info("Attempt $attempt/$BOOT_RETRIES to boot simulator $name ($udid)...")
         try {
             processOutputWithTimeout(
@@ -319,27 +307,25 @@ private fun processOutputWithTimeout(
  * A utility function to execute a block of code with a retry mechanism.
  *
  * @param T The return type of the block.
- * @param retries The total number of attempts (e.g., 3).
  * @param block The code block to execute, receiving the current attempt number.
  * @throws IllegalStateException if all retry attempts fail.
  * @return The result of the block if successful.
  */
 private fun <T> retry(
-    retries: Int,
     logger: Logger,
     block: (attempt: Int) -> T
 ): T {
     var lastException: Throwable? = null
-    for (attempt in 1..retries) {
+    for (attempt in 1..BOOT_RETRIES) {
         try {
             return block(attempt) // Eagerly return on success
         } catch (e: Throwable) {
             lastException = e
-            logger.warning("Attempt $attempt/$retries failed: ${e.message}")
-            if (attempt == retries) {
+            logger.warning("Attempt $attempt/$BOOT_RETRIES failed: ${e.message}")
+            if (attempt == BOOT_RETRIES) {
                 // All retries failed
                 throw IllegalStateException(
-                    "Operation failed after $retries attempts. Last error: ${lastException?.message}",
+                    "Operation failed after $BOOT_RETRIES attempts. Last error: ${lastException.message}",
                     lastException
                 )
             }
