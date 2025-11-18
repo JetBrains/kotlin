@@ -67,5 +67,11 @@ class KlibMetadataVersion(val major: Int, val minor: Int, val patch: Int) : Comp
          * @see KlibModuleMetadata.readStrict
          */
         val LATEST_STABLE_SUPPORTED: KlibMetadataVersion = KlibMetadataVersion(MetadataVersion.INSTANCE.toArray())
+
+        /**
+         * Starting with this version, klib annotations are written to the common metadata instead of klib-specific extensions.
+         */
+        val FIRST_WITH_ANNOTATIONS_IN_COMMON_METADATA: KlibMetadataVersion =
+            KlibMetadataVersion(2, 4, 0)
     }
 }

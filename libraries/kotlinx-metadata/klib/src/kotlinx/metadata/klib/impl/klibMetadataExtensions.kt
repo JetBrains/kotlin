@@ -8,10 +8,12 @@ package kotlinx.metadata.klib.impl
 import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.StringTableImpl
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.metadata.*
 import kotlin.metadata.internal.*
 import kotlin.metadata.internal.common.KmModuleFragment
@@ -25,6 +27,13 @@ internal class KlibMetadataExtensions : MetadataExtensions {
 
     private fun WriteContext.getIndexOf(file: KlibSourceFile) =
         strings.getStringIndex(file.name)
+
+    private fun WriteContext.shouldWriteKlibAnnotationsToCommonMetadata(): Boolean =
+        getMetadataVersion() >= KlibMetadataVersion.FIRST_WITH_ANNOTATIONS_IN_COMMON_METADATA
+
+    private fun WriteContext.getMetadataVersion(): KlibMetadataVersion =
+        contextExtensions.firstIsInstanceOrNull<KlibMetadataVersionWriteExtension>()?.version
+            ?: error("No KlibMetadataVersionWriteExtension found")
 
     private fun readAnnotations(
         commonMetadataSource: List<ProtoBuf.Annotation>,

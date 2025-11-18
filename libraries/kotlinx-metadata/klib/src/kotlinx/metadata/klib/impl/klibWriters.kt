@@ -8,6 +8,7 @@ package kotlinx.metadata.klib.impl
 import kotlin.metadata.internal.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.KlibSourceFile
+import kotlinx.metadata.klib.KlibMetadataVersion
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
@@ -25,6 +26,8 @@ class ReverseSourceFileIndexWriteExtension : WriteContextExtension {
         filesReverseIndex.size
     }
 }
+
+class KlibMetadataVersionWriteExtension(val version: KlibMetadataVersion) : WriteContextExtension
 
 class KlibModuleFragmentWriter(
     stringTable: ApproximatingStringTable,

@@ -8,6 +8,7 @@ package kotlinx.metadata.klib
 import kotlinx.metadata.klib.impl.*
 import kotlinx.metadata.klib.impl.readHeader
 import kotlinx.metadata.klib.impl.writeHeader
+import kotlinx.metadata.klib.impl.KlibMetadataVersionWriteExtension
 import kotlin.metadata.KmAnnotation
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.*
@@ -176,9 +177,10 @@ class KlibModuleMetadata(
             groupedFragments.filter { it.value.all(KmModuleFragment::isEmpty) }.map { it.key },
             annotations
         )
+        val versionExt = KlibMetadataVersionWriteExtension(metadataVersion)
         val groupedProtos = groupedFragments.mapValues { (_, fragments) ->
             fragments.map { mf ->
-                val c = WriteContext(ApproximatingStringTable(), listOf(reverseIndex))
+                val c = WriteContext(ApproximatingStringTable(), listOf(reverseIndex, versionExt))
                 KlibModuleFragmentWriter(c.strings as ApproximatingStringTable, c.contextExtensions).also { it.writeModuleFragment(mf) }.write()
             }
         }
