@@ -15,7 +15,6 @@ sealed class Element(val name: String, val nestedIn: Element?) {
         }
         override fun hashCode(): Int = name.hashCode()
         override fun toString(): String = "FormParam($name)"
-
     }
     data class NodeParam(val name: String, var type: Element?, var variable: Boolean, var optional: Boolean) {
         override fun equals(other: Any?): Boolean {
@@ -115,5 +114,3 @@ class Node(name: String, parent: AbstractClass?, nestedIn: Element? = null) : El
         require(variadicDefs.containsAll(listOfNotNull(promisedVariadic())))
     }
 }
-
-

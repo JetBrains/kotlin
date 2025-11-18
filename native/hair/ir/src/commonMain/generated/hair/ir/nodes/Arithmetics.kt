@@ -5,7 +5,6 @@ import hair.ir.*
 import hair.sym.Type.*
 
 sealed interface ConstAny : Node {
-    val value: Any
     
     
     
@@ -17,7 +16,7 @@ class ConstI internal constructor(form: Form) : NodeBase(form, listOf()), ConstA
         override val args = listOf<Any>(value)
     }
     
-    override val value: Int by form::value
+    val value: Int by form::value
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -37,7 +36,7 @@ class ConstL internal constructor(form: Form) : NodeBase(form, listOf()), ConstA
         override val args = listOf<Any>(value)
     }
     
-    override val value: Long by form::value
+    val value: Long by form::value
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -57,7 +56,7 @@ class ConstF internal constructor(form: Form) : NodeBase(form, listOf()), ConstA
         override val args = listOf<Any>(value)
     }
     
-    override val value: Float by form::value
+    val value: Float by form::value
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -77,7 +76,7 @@ class ConstD internal constructor(form: Form) : NodeBase(form, listOf()), ConstA
         override val args = listOf<Any>(value)
     }
     
-    override val value: Double by form::value
+    val value: Double by form::value
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -92,12 +91,37 @@ class ConstD internal constructor(form: Form) : NodeBase(form, listOf()), ConstA
 }
 
 
-class Null internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
-    class Form internal constructor(metaForm: MetaForm, val value: Any) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
-        override val args = listOf<Any>(value)
+class True internal constructor(form: Form, ) : NodeBase(form, listOf()), ConstAny {
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
     }
     
-    override val value: Any by form::value
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitTrue(this)
+    
+    companion object {
+        internal fun form(session: Session) = SimpleValueForm(session, "True")
+    }
+}
+
+
+class False internal constructor(form: Form, ) : NodeBase(form, listOf()), ConstAny {
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitFalse(this)
+    
+    companion object {
+        internal fun form(session: Session) = SimpleValueForm(session, "False")
+    }
+}
+
+
+class Null internal constructor(form: Form, ) : NodeBase(form, listOf()), ConstAny {
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -107,7 +131,7 @@ class Null internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitNull(this)
     
     companion object {
-        internal fun metaForm(session: Session) = MetaForm(session, "Null")
+        internal fun form(session: Session) = SimpleValueForm(session, "Null")
     }
 }
 
@@ -143,11 +167,11 @@ sealed class BinaryOp(form: Form, args: List<Node?>) : NodeBase(form, args) {
 
 
 class Add internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -165,11 +189,11 @@ class Add internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 
 
 class Sub internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -187,11 +211,11 @@ class Sub internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 
 
 class Mul internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -209,11 +233,11 @@ class Mul internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 
 
 class Div internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -231,11 +255,11 @@ class Div internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 
 
 class Rem internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -253,11 +277,11 @@ class Rem internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 
 
 class And internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -275,11 +299,11 @@ class And internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 
 
 class Or internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -297,11 +321,11 @@ class Or internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(for
 
 
 class Xor internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -319,11 +343,11 @@ class Xor internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 
 
 class Shl internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -341,11 +365,11 @@ class Shl internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 
 
 class Shr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -363,11 +387,11 @@ class Shr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 
 
 class Ushr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -385,11 +409,11 @@ class Ushr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(f
 
 
 class Cmp internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
-    class Form internal constructor(metaForm: MetaForm, val type: ArithmeticType, val op: CmpOp) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType, val op: CmpOp) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type, op)
     }
     
-    val type: ArithmeticType by form::type
+    val type: HairType by form::type
     val op: CmpOp by form::op
     
     

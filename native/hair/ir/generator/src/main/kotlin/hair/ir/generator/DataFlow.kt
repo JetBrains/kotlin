@@ -1,6 +1,7 @@
 package hair.ir.generator
 
 import hair.ir.generator.toolbox.ModelDSL
+import hair.sym.HairType
 
 object DataFlow : ModelDSL() {
 
@@ -15,6 +16,7 @@ object DataFlow : ModelDSL() {
     }
 
     val phi by node {
+        formParam("type", HairType::class)
         param("block", ControlFlow.blockEntry)
         variadicParam("joinedValues")
     }

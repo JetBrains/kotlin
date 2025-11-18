@@ -38,6 +38,13 @@ val BlockEntry.spine: Sequence<Controlled>
 val BlockEntry.blockEnd: BlockEnd
     get() = blockEndOrNull!!
 
+val BlockExit.blockEnd: BlockEnd
+    get() = when (this) {
+        is BlockEnd -> this
+        is IfProjection -> owner
+        is Unwind -> error("Should not reach here") // FIXME
+    }
+
 // TODO cache in block ?
 val BlockEntry.blockEndOrNull: BlockEnd?
     get() = spine.lastOrNull() as? BlockEnd

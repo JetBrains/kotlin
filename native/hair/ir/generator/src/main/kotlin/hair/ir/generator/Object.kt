@@ -11,7 +11,7 @@ object Object : ModelDSL() {
 
     val new by node(ControlFlow.blockBody) {
         interfaces(anyNew)
-        formParam("type", Class::class)
+        formParam("objectType", Class::class)
     }
 
     // memory
@@ -75,13 +75,13 @@ object Object : ModelDSL() {
     // type-checks
 
     val typeCheck by abstractClass {
-        formParam("type", Type.Reference::class)
+        formParam("targetType", Type.Reference::class)
         param("obj")
     }
 
     val isInstanceOf by node(typeCheck)
 
-    val cast by node(typeCheck)
+    val checkCast by node(typeCheck)
 
 
     // utils
