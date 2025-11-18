@@ -26,10 +26,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.packageFqName
@@ -157,10 +155,6 @@ fun disposeRootInWriteAction(disposable: Disposable) {
 }
 
 fun CompilerConfiguration.reportIfNeeded(factory: KtSourcelessDiagnosticFactory, message: String) {
-    val diagnostic = factory.create(message, object : DiagnosticBaseContext {
-        override val languageVersionSettings: LanguageVersionSettings
-            get() = this@reportIfNeeded.languageVersionSettings
-
-    }) ?: return
-    messageCollector.report(diagnostic.severity.toCompilerMessageSeverity(), message)
+    val effectiveSeverity = factory.getEffectiveSeverity(languageVersionSettings) ?: return
+    messageCollector.report(effectiveSeverity.toCompilerMessageSeverity(), message)
 }
