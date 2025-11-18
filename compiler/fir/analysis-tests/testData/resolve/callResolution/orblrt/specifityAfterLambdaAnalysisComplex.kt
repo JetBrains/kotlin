@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-43981
 
@@ -10,10 +10,10 @@ fun <T : Comparable<T>> ClosedRange<T>.mapBounds(transform: (T) -> Int): IntRang
 
 fun main() {
     val words = "aardvark" .. "zyzzyva"
-    val uppercaseWords = words.mapBounds { <!RETURN_TYPE_MISMATCH!>it.uppercase()<!> } // [TYPE_MISMATCH] Type mismatch. Required: Int. Found: String.
+    val uppercaseWords = words.mapBounds { it.uppercase() } // [TYPE_MISMATCH] Type mismatch. Required: Int. Found: String.
     val wordLengths = words.mapBounds { it.length } // IntRange
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.ranges.IntRange")!>uppercaseWords<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.ranges.ClosedRange<kotlin.String>")!>uppercaseWords<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.ranges.IntRange")!>wordLengths<!>
 }
 
