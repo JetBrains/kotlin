@@ -169,8 +169,7 @@ class KotlinMocha internal constructor(
 
     @Deprecated(
         CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG,
-        ReplaceWith("createTestExecutionSpec(task, launchOpts, nodeJsArgs, debug)"),
-        DeprecationLevel.ERROR
+        level = DeprecationLevel.ERROR
     )
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
