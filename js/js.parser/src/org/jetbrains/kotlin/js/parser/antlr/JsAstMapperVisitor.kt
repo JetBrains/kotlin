@@ -9,6 +9,10 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsBlock
+import org.jetbrains.kotlin.js.backend.ast.JsFunction
+import org.jetbrains.kotlin.js.backend.ast.JsFunction.Modifier
+import org.jetbrains.kotlin.js.backend.ast.JsParameter
 import org.jetbrains.kotlin.js.parser.AbortParsingException
 import org.jetbrains.kotlin.js.parser.CodePosition
 import org.jetbrains.kotlin.js.parser.ErrorReporter
@@ -357,15 +361,23 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitFunctionDeclaration(ctx: JavaScriptParser.FunctionDeclarationContext): JsFunction {
-        val name = ctx.identifier()
+        val id = ctx.identifier()
+        check(ctx.Async() == null) { "Async functions are not supported yet"}
         val isGenerator = ctx.Multiply() != null
         val paramList = ctx.formalParameterList()
         val restParam = paramList?.restParameterArg()
         val formalParams = paramList?.formalParameterArg() ?: emptyList()
         check(restParam == null) { "Rest parameters are not supported yet" }
 
-        return mapFunction(name?.text, ctx.functionBody(), formalParams, isGenerator)
-            .applyLocation(ctx)
+        return scopeContext.enterFunction().apply {
+            this.name = scopeContext.localNameFor(id.text)
+            if (isGenerator) modifiers.add(Modifier.GENERATOR)
+            formalParams.mapTo(parameters) {
+                visitNode<JsParameter>(it).applyLocation(it)
+            }
+            body = visitNode<JsBlock>(ctx.functionBody())
+            scopeContext.exitFunction()
+        }.applyLocation(ctx)
     }
 
     override fun visitClassDeclaration(ctx: JavaScriptParser.ClassDeclarationContext): JsNode? {
@@ -905,17 +917,7 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitNamedFunction(ctx: JavaScriptParser.NamedFunctionContext): JsFunction {
-        val declaration = ctx.functionDeclaration()
-        val name = declaration.identifier()
-        check(declaration.Async() == null) { "Async functions are not supported yet"}
-        val isGenerator = declaration.Multiply() != null
-        val paramList = declaration.formalParameterList()
-        val restParam = paramList?.restParameterArg()
-        val formalParams = paramList?.formalParameterArg() ?: emptyList()
-        check(restParam == null) { "Rest parameters are not supported yet" }
-
-        return mapFunction(name?.text, declaration.functionBody(), formalParams, isGenerator)
-            .applyLocation(declaration.OpenParen())
+        return visitNode<JsFunction>(ctx.functionDeclaration())
     }
 
     override fun visitAnonymousFunctionDecl(ctx: JavaScriptParser.AnonymousFunctionDeclContext): JsFunction {
@@ -925,20 +927,67 @@ internal class JsAstMapperVisitor(
         val formalParams = paramList?.formalParameterArg() ?: emptyList()
         check(restParam == null) { "Rest parameters are not supported yet" }
 
-        return mapFunction(null, ctx.functionBody(), formalParams, isGenerator)
-            .applyLocation(ctx.OpenParen())
+        return scopeContext.enterFunction().apply {
+            this.name = null
+            if (isGenerator) modifiers.add(Modifier.GENERATOR)
+            formalParams.mapTo(parameters) {
+                visitNode<JsParameter>(it).applyLocation(it)
+            }
+            body = visitNode<JsBlock>(ctx.functionBody())
+            scopeContext.exitFunction()
+        }.applyLocation(ctx.OpenParen())
     }
 
     override fun visitArrowFunction(ctx: JavaScriptParser.ArrowFunctionContext): JsFunction {
-        reportError("Arrow functions are not supported yet", ctx)
+        fun mapParams(): List<JsParameter> {
+            val params = ctx.arrowFunctionParameters()
+            val parenthesizedParamList = params.formalParameterList()
+            val restParam = parenthesizedParamList?.restParameterArg()
+            check(restParam == null) { "Rest parameters are not supported yet" }
+
+            params?.identifierName()?.let { singleIdentifier ->
+                return JsParameter(scopeContext.localNameFor(singleIdentifier.text))
+                    .applyLocation(singleIdentifier)
+                    .applyComments(singleIdentifier)
+                    .let(::listOf)
+            }
+
+            parenthesizedParamList?.formalParameterArg()?.let { formalParams ->
+                return formalParams.map { param ->
+                    visitNode<JsParameter>(param).applyLocation(param)
+                }
+            }
+
+            return emptyList()
+        }
+
+        return scopeContext.enterFunction().apply {
+            name = null
+            isEs6Arrow = true
+            parameters.addAll(mapParams())
+            body = when (val functionBody = visitNode<JsNode>(ctx.arrowFunctionBody())) {
+                is JsBlock -> functionBody
+                is JsExpression -> JsBlock(JsReturn(functionBody))
+                else -> raiseParserException("Invalid function body")
+            }
+            scopeContext.exitFunction()
+        }.applyLocation(ctx)
     }
 
     override fun visitArrowFunctionParameters(ctx: JavaScriptParser.ArrowFunctionParametersContext): JsNode? {
         raiseParserException("JS AST doesn't have specific nodes for arrow function parameters", ctx)
     }
 
-    override fun visitArrowFunctionBody(ctx: JavaScriptParser.ArrowFunctionBodyContext): JsBlock {
-        reportError("Arrow functions are not supported yet", ctx)
+    override fun visitArrowFunctionBody(ctx: JavaScriptParser.ArrowFunctionBodyContext): JsNode {
+        ctx.functionBody()?.let {
+            return visitNode<JsBlock>(it)
+        }
+
+        ctx.singleExpression()?.let {
+            return visitNode<JsExpression>(it).applyLocation(it)
+        }
+
+        raiseParserException("Invalid arrow function body '${ctx.text}'", ctx)
     }
 
     override fun visitAssignmentOperator(ctx: JavaScriptParser.AssignmentOperatorContext): JsNode? {
@@ -1065,32 +1114,6 @@ internal class JsAstMapperVisitor(
             .forEach { block.statements.add(it) }
 
         return block
-    }
-
-    private fun mapFunction(
-        functionName: String?,
-        functionBody: JavaScriptParser.FunctionBodyContext,
-        params: List<JavaScriptParser.FormalParameterArgContext>,
-        isGenerator: Boolean,
-    ): JsFunction {
-        return scopeContext.enterFunction().apply {
-            name = when {
-                functionName.isNullOrEmpty() -> null
-                else -> scopeContext.localNameFor(functionName)
-            }
-
-            if (isGenerator)
-                modifiers.add(JsFunction.Modifier.GENERATOR)
-
-            params.forEach {
-                val jsParam = visitNode<JsParameter>(it)
-                parameters.add(jsParam.applyLocation(it))
-            }
-
-            body = visitNode<JsBlock>(functionBody)
-
-            scopeContext.exitFunction()
-        }
     }
 
     private fun makeRefNode(identifier: String): JsNameRef {

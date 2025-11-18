@@ -8,6 +8,7 @@
 // CHECK_COMMENT_EXISTS: text="After call single line comment" multiline=false
 // CHECK_COMMENT_EXISTS: text="After call multi line comment" multiline=true
 // CHECK_COMMENT_EXISTS: text="The header multiline\ncomment" multiline=true
+// CHECK_COMMENT_EXISTS: text="The header multiline\ncomment before arrow function" multiline=true
 // CHECK_COMMENT_EXISTS: text="1Multi line comment\n" multiline=true
 // CHECK_COMMENT_EXISTS: text="2Multi line comment\n\n\n" multiline=true
 // CHECK_COMMENT_EXISTS: text="3Multi line\n\n\n\n\ncomment\n" multiline=true
@@ -42,6 +43,10 @@ fun box(): String {
             Object;
             /*Multi line comment inside function*/
         }
+        /* The header multiline
+        comment before arrow function*/
+        var foo3 = (param) => Object;
+        var foo4 = param => Object;
         
         // Single line comment
         // Second single line comment
