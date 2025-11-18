@@ -292,13 +292,13 @@ class FirCallCompleter(
         return origin == FirDeclarationOrigin.Synthetic.FakeFunction && (this as? FirCallableSymbol)?.callableId == SyntheticCallableId.ELVIS_NOT_NULL
     }
 
-    fun <T> runCompletionForCall(
+    fun runCompletionForCall(
         candidate: Candidate,
         completionMode: ConstraintSystemCompletionMode,
-        call: T,
+        call: FirExpression,
         initialType: ConeKotlinType,
         analyzer: PostponedArgumentsAnalyzer? = null,
-    ) where T : FirExpression, T : FirResolvable {
+    ) {
         @Suppress("NAME_SHADOWING")
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         completer.complete(
