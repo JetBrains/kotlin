@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.metadata.KmConstructor
 import kotlin.metadata.KmFunction
 import kotlin.metadata.KmPackage
 import kotlin.metadata.KmProperty
@@ -138,6 +139,9 @@ internal class KPackageImpl(
 
     override val propertiesMetadata: Collection<KmProperty>
         get() = data.value.kmPackages.flatMap(KmPackage::properties)
+
+    override val constructorsMetadata: Collection<KmConstructor>
+        get() = emptyList()
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() = emptyList()

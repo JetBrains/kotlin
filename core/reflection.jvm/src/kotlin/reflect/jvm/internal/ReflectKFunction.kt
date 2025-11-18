@@ -21,6 +21,8 @@ internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunction<Any?>, K
 
     val overridden: Collection<ReflectKFunction>
 
+    val isPrimaryConstructor: Boolean
+
     override fun findJavaDeclaration(): GenericDeclaration? = container.findMethodBySignature(signature)
 }
 

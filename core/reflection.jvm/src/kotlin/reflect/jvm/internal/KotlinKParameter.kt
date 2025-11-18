@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.Constructor
+import java.lang.reflect.Field
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -27,9 +28,9 @@ internal class KotlinKParameter(
 
     override val type: KType by lazy(PUBLICATION) {
         kmParameter.type.toKType(callable.container.jClass.classLoader, typeParameterTable) {
-            require(callable.container is KPackageImpl) {
+            require(callable.container is KPackageImpl || callable.isConstructor) {
                 // For class callables, we'll also need to tweak instance receiver parameter type (see `DescriptorKParameter`).
-                "Only top-level callables are supported for now: $callable"
+                "Only constructors and top-level callables are supported for now: $callable"
             }
             callable.caller.parameterTypes[index]
         }
@@ -37,9 +38,9 @@ internal class KotlinKParameter(
 
     override val isOptional: Boolean
         get() {
-            require(callable is KotlinKProperty<*> || callable.container is KPackageImpl) {
+            require(callable is KotlinKProperty<*> || callable.container is KPackageImpl || callable.isConstructor) {
                 // For class functions, we'll also need to check the flag for parameters from inherited functions.
-                "Only top-level callables are supported for now: $callable"
+                "Only constructors and top-level callables are supported for now: $callable"
             }
             return kmParameter.declaresDefaultValue
         }
@@ -78,6 +79,10 @@ private val KotlinKParameter.javaParameter: JavaParameter?
                 require(Modifier.isStatic(callable.modifiers)) { "Only static methods are supported for now: $callable" }
                 JavaParameter(callable, index)
             }
-            else -> error("Only methods are supported for now: $callable")
+            is Constructor<*> -> {
+                // TODO: constructors of inner classes
+                JavaParameter(callable, index)
+            }
+            else -> throw KotlinReflectionInternalError("Unsupported parameter owner: $callable")
         }
     }
