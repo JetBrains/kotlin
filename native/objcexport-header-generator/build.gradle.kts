@@ -120,11 +120,12 @@ projectTests {
             includeTestsMatching("org.jetbrains.kotlin.backend.konan.tests.integration.ObjCExportIntegrationTest")
         }
 
-        inputs.dir(
-            layout.buildDirectory.dir(integrationTestOutputsDir)
-        ).withPathSensitivity(
-            PathSensitivity.RELATIVE
-        )
+        inputs.files(tasks.named("testK1"))
+            .withPropertyName("testK1Outputs")
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+        inputs.files(tasks.named("testAnalysisApi"))
+            .withPropertyName("testAnalysisApiOutputs")
+            .withPathSensitivity(PathSensitivity.RELATIVE)
     }
 }
 
