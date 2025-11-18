@@ -46,6 +46,20 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
      * */
     KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY("kotlin.environment.keepalive"),
     COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS("kotlin.daemon.custom.run.files.path.for.tests"),
+
+    /**
+     * Represents a system property used to introduce a wait period before starting a compilation
+     * when executing tests.
+     * This property can be used for synchronization with external processes or conditions.
+     *
+     * The property key is `kotlin.daemon.wait.before.compilation.for.tests`,
+     * and its value determines if the compilation should wait for either 5 seconds or a file named "daemon-test-start"
+     * in the daemon's run directory.
+     *
+     * Typically, this is used in the context of tests where a wait period can ensure
+     * required preconditions are met before starting the compilation process.
+     */
+    COMPILE_WAIT_BEFORE_COMPILATION_FOR_TESTS("kotlin.daemon.wait.before.compilation.for.tests"),
     COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS("kotlin.daemon.environment.variables.for.tests"),
     KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
     LANGUAGE_VERSION_SETTINGS("kotlin.language.settings"),
