@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.jvm.operations
 
-import org.jetbrains.kotlin.buildtools.api.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
  * @since 2.3.0
  */
 @ExperimentalBuildToolsApi
-public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
+public interface JvmCompilationOperation : CancellableBuildOperation<CompilationResult> {
     /**
      * Base class for [JvmCompilationOperation] options.
      *
