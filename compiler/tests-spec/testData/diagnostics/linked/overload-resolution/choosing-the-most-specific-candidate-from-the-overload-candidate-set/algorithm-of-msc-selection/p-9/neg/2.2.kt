@@ -22,8 +22,8 @@ import LibPackCase1.a.boo
 import LibPackCase1.b.boo
 
 fun case1 (b: B?){
-    b.<!OVERLOAD_RESOLUTION_AMBIGUITY!>boo<!>({ C() })
-    b.<!OVERLOAD_RESOLUTION_AMBIGUITY!>boo<!>({1})
+    b.boo({ C() })
+    b.boo({1})
 }
 
 class B {
@@ -57,8 +57,8 @@ import LibPackCase2.a.*
 import LibPackCase2.b.*
 
 fun case2 (b: B?){
-    b.<!OVERLOAD_RESOLUTION_AMBIGUITY!>boo<!>({ C() })
-    b.<!OVERLOAD_RESOLUTION_AMBIGUITY!>boo<!>({1})
+    b.boo({ C() })
+    b.boo({1})
 }
 
 class B {

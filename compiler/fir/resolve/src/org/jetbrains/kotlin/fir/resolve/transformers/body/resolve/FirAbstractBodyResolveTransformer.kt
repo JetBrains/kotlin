@@ -112,7 +112,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val session: FirSession,
         override val scopeSession: ScopeSession,
         val transformer: FirAbstractBodyResolveTransformerDispatcher,
-        val context: BodyResolveContext,
+        override val context: BodyResolveContext,
         expandTypeAliases: Boolean,
     ) : BodyResolveComponents() {
         override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
@@ -164,5 +164,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
                 by lazy(LazyThreadSafetyMode.NONE) {
                     IntegerLiteralAndOperatorApproximationTransformer(session, scopeSession)
                 }
+
+        override val resolutionContext: ResolutionContext
+            get() = transformer.resolutionContext
     }
 }

@@ -23,7 +23,7 @@ fun main() {
     }
 
     bar {
-        <!ILLEGAL_SUSPEND_FUNCTION_CALL!>mySuspend<!>()
+        mySuspend()
         ""
     }
 

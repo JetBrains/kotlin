@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-61580
 
@@ -12,7 +12,7 @@ fun <B> String.funA(selector: Any?.(Any?) -> Type1<B>) {}
 fun String.funA(selector: Any?.(Any?) -> Type2) {}
 
 fun main() {
-    "".funA { <!RETURN_TYPE_MISMATCH!>Type1<Int>()<!> } // Type mismatch, expects Type2
+    "".funA { Type1<Int>() } // Type mismatch, expects Type2
     "".funA { Type2() } // works
 }
 

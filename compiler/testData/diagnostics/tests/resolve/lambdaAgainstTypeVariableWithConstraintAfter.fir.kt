@@ -125,17 +125,17 @@ fun testWithStringSuper(box: Inv<CharSequence>) {
 }
 
 fun testWithCallableString(box: Inv<() -> String>) {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload<!>({ "hello" }, (box))
+    topLevelOverload({ "hello" }, (box))
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload1<!>(box) { { "hello" } }
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload3<!>(box) { { param: CharSequence -> } }
-    box.<!OVERLOAD_RESOLUTION_AMBIGUITY!>extensionOverload<!> { "hello" }
+    box.extensionOverload { "hello" }
 }
 
 fun testWithCallableAny(box: Inv<() -> Any?>) {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload<!>({ "hello" }, (box))
+    topLevelOverload({ "hello" }, (box))
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload1<!>(box) { { "hello" } }
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload3<!>(box) { { param: CharSequence -> } }
-    box.<!OVERLOAD_RESOLUTION_AMBIGUITY!>extensionOverload<!> { "hello" }
+    box.extensionOverload { "hello" }
 }
 
 fun interface SAM<T> {
