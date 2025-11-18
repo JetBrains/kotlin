@@ -764,9 +764,16 @@ internal class JsAstMapperVisitor(
         return JsPostfixOperation(JsUnaryOperator.INC, expression).applyLocation(ctx.PlusPlus())
     }
 
-    override fun visitYieldExpression(ctx: JavaScriptParser.YieldExpressionContext): JsYield {
-        val expression = ctx.expressionSequence()?.let { visitNode<JsExpression>(it) }
-        return JsYield(expression).applyLocation(ctx)
+    override fun visitYieldExpression(ctx: JavaScriptParser.YieldExpressionContext): JsExpression {
+        return ctx.run {
+            val expression = expressionSequence()?.let { visitNode<JsExpression>(it) }
+
+            when {
+                YieldStar() != null -> JsYieldStar(expression).applyLocation(ctx)
+                Yield() != null -> JsYield(expression).applyLocation(ctx)
+                else -> raiseParserException("Invalid yield statement: ${ctx.text}", ctx)
+            }
+        }
     }
 
     override fun visitBitNotExpression(ctx: JavaScriptParser.BitNotExpressionContext): JsPrefixOperation {
