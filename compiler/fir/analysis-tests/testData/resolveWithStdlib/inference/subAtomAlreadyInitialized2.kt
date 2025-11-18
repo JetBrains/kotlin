@@ -2,9 +2,9 @@
 // ISSUE: KT-71704
 
 @<!OPT_IN_USAGE_ERROR!>OverloadResolutionByLambdaReturnType<!>
-public inline fun <T, R> Iterable<T>.foo(transform: (T) -> Iterable<R>): List<R> = listOf()
+public inline fun <T, R> Iterable<T>.foo(transform: (T) -> Iterable<R>) {}
 
-public inline fun <T, R> Iterable<T>.foo(transform: (T) -> (MutableList<R>.() -> Unit)): List<R> = listOf()
+public inline fun <T, R> Iterable<T>.foo(transform: (T) -> (MutableList<R>.() -> Unit)) {}
 
 fun testIt(l: List<Int>) {
     l.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!> {

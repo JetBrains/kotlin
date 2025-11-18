@@ -4,7 +4,7 @@ FILE: kt50386.kt
     public abstract interface MutableSharedFlow<T> : R|Flow<T>| {
     }
     public final fun test(output: R|(ScrapingOffOutput) -> kotlin/Unit|): R|kotlin/Unit| {
-        lval p: <ERROR TYPE REF: Ambiguity: presenter, [/presenter, /presenter]> = <Ambiguity: presenter, [/presenter, /presenter]>#(R|<local>/output|, <L> = presenter@fun <anonymous>(): R|ScrapingOffPresenter| <inline=Unknown>  {
+        lval p: R|PresentedData<ScrapingOffModel, MutableSharedFlow<ScrapingOffEvent>>| = R|/presenter|<R|ScrapingOffEvent|, R|ScrapingOffModel|, R|ScrapingOffOutput|>(R|<local>/output|, <L> = presenter@fun <anonymous>(): R|Presenter<Flow<ScrapingOffEvent>, ScrapingOffModel, ScrapingOffOutput>| <inline=NoInline>  {
             ^ R|/ScrapingOffPresenter.ScrapingOffPresenter|()
         }
         )

@@ -98,21 +98,32 @@ class ConeOverloadConflictResolver(
                 candidates
 
         // The same logic as at
-        val candidatesWithoutOverrides = filterOverrides(fixedCandidates)
+        var current = filterOverrides(fixedCandidates)
+        // noCompatibilityMode == true in K2 by default
         val noCompatibilityMode = with(transformerComponents) { disableCompatibilityModeForNewInference() }
-        return chooseMaximallySpecificCandidates(
-            candidatesWithoutOverrides,
-            DiscriminationFlags(
-                // (in compatibility mode the next two are already filtered on tower resolver level)
-                lowPrioritySAMs = noCompatibilityMode,
-                adaptationsInPostponedAtoms = noCompatibilityMode,
-                generics = discriminateGenerics,
-                abstracts = discriminateAbstracts,
-                SAMs = true,
-                suspendConversions = true,
-                byUnwrappedSmartCastOrigin = true,
-            )
+        val discriminationFlags = DiscriminationFlags(
+            // (in compatibility mode the next two are already filtered on tower resolver level)
+            lowPrioritySAMs = noCompatibilityMode,
+            adaptationsInPostponedAtoms = noCompatibilityMode,
+            generics = discriminateGenerics,
+            abstracts = discriminateAbstracts,
+            SAMs = true,
+            suspendConversions = true,
+            byUnwrappedSmartCastOrigin = true,
         )
+
+        val newOverloadByLambdaReturnTypeResolver = NewOverloadByLambdaReturnTypeResolver(components = transformerComponents)
+
+        while (true) {
+            val reduced = newOverloadByLambdaReturnTypeResolver.reduceCandidates(current)
+            val next = chooseMaximallySpecificCandidates(
+                reduced,
+                discriminationFlags
+            )
+
+            if (next.size <= 1 || current.size == next.size) return next
+            current = next
+        }
     }
 
     /**

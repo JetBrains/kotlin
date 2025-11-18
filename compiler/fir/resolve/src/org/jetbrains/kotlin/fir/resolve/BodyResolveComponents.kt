@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralAndOperatorApproximationTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
@@ -47,6 +49,8 @@ abstract class BodyResolveComponents : SessionAndScopeSessionHolder {
     abstract val outerClassManager: FirOuterClassManager
     abstract val integerLiteralAndOperatorApproximationTransformer: IntegerLiteralAndOperatorApproximationTransformer
     abstract val inlineFunction: FirFunction?
+    abstract val context: BodyResolveContext
+    abstract val resolutionContext: ResolutionContext
 }
 
 // --------------------------------------- Utils ---------------------------------------

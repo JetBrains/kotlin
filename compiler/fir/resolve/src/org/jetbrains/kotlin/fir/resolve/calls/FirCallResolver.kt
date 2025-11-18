@@ -258,7 +258,7 @@ class FirCallResolver(
 
         val resultCollector: CandidateCollector = towerResolver.runResolver(info, resolutionContext, collector, candidateFactory)
         var (reducedCandidates, applicability) = reduceCandidates(resultCollector, explicitReceiver, resolutionContext)
-        reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
+        //reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
         return ResolutionResult(info, applicability, reducedCandidates, resultCollector.forwardedDiagnostics())
     }
@@ -279,8 +279,9 @@ class FirCallResolver(
 
         val candidates = collector.bestCandidates()
 
+        val currentApplicability = collector.currentApplicability
         if (collector.isSuccess) {
-            return chooseMostSpecific(candidates) to collector.currentApplicability
+            return chooseMostSpecific(candidates) to currentApplicability
         }
 
         if (candidates.isNotEmpty()) {
@@ -296,7 +297,7 @@ class FirCallResolver(
             }
         }
 
-        return candidates.toSet() to collector.currentApplicability
+        return candidates.toSet() to currentApplicability
     }
 
     fun resolveVariableAccessAndSelectCandidate(
