@@ -162,5 +162,5 @@ fun CompilerConfiguration.reportIfNeeded(factory: KtSourcelessDiagnosticFactory,
             get() = this@reportIfNeeded.languageVersionSettings
 
     }) ?: return
-    messageCollector.report(AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity), message)
+    messageCollector.report(diagnostic.severity.toCompilerMessageSeverity(), message)
 }
