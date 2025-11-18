@@ -131,14 +131,6 @@ class AnalyzerWithCompilerReport(
     }
 
     companion object {
-
-        fun convertSeverity(severity: Severity): CompilerMessageSeverity = when (severity) {
-            Severity.INFO -> INFO
-            Severity.ERROR -> ERROR
-            Severity.WARNING -> WARNING
-            Severity.FIXED_WARNING -> FIXED_WARNING
-        }
-
         private val SYNTAX_ERROR_FACTORY = DiagnosticFactory0.create<PsiErrorElement>(Severity.ERROR)
 
         private fun reportDiagnostic(diagnostic: Diagnostic, reporter: DiagnosticMessageReporter, renderDiagnosticName: Boolean): Boolean {

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendInputHandler
@@ -39,7 +38,7 @@ class NoIrCompilationErrorsHandler(testServices: TestServices) : BackendInputHan
                     diagnostic.severity == Severity.ERROR &&
                     diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factoryName, diagnostic.severity)
                 ) {
-                    val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity).toString().toLowerCaseAsciiOnly()
+                    val severity = diagnostic.severity.toCompilerMessageSeverity().toString().toLowerCaseAsciiOnly()
                     val message = diagnostic.renderMessage()
                     error("/$file:${diagnostic.firstRange}: $severity: $message")
                 }

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -115,7 +114,7 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
 }
 
 private fun renderDiagnosticMessage(fileName: String, severity: Severity, message: String?, line: Int, column: Int): String {
-    val severityString = AnalyzerWithCompilerReport.convertSeverity(severity).toString().toLowerCaseAsciiOnly()
+    val severityString = severity.toCompilerMessageSeverity().toString().toLowerCaseAsciiOnly()
     return "/${fileName}:$line:$column: $severityString: $message"
 }
 
