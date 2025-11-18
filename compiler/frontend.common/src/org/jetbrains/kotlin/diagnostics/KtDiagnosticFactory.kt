@@ -29,7 +29,7 @@ sealed class AbstractKtDiagnosticFactory(
         get() = rendererFactory.MAP[this]
             ?: error("Renderer is not found for factory $this inside ${rendererFactory.MAP.name} renderer map")
 
-    protected fun getEffectiveSeverity(languageVersionSettings: LanguageVersionSettings): Severity? {
+    fun getEffectiveSeverity(languageVersionSettings: LanguageVersionSettings): Severity? {
         return when (languageVersionSettings.getFlag(AnalysisFlags.warningLevels)[name]) {
             WarningLevel.Error -> Severity.ERROR
             WarningLevel.Warning -> Severity.FIXED_WARNING
