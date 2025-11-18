@@ -24,7 +24,8 @@ KtDestructuringDeclarationEntry(145,150): 'val a'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: declaration) val a: kotlin.String
+      0: (in <local>: declaration) val a: kotlin.String
+      1: (in Tuple) val a: kotlin.String
 
 KtDestructuringDeclarationEntry(152,162): 'var second'
   KtDestructuringDeclarationReference:
@@ -157,7 +158,8 @@ KtDestructuringDeclarationEntry(423,433): 'val a: Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: declaration) val a: kotlin.Int
+      0: (in <local>: declaration) val a: kotlin.Int
+      1: (in Tuple) val a: kotlin.String
 
 KtNameReferenceExpression(430,433): 'Int'
   KtSimpleNameReference:
@@ -171,7 +173,8 @@ KtDestructuringDeclarationEntry(435,448): 'val b: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: declaration) val b: kotlin.String
+      0: (in <local>: declaration) val b: kotlin.String
+      1: (in Tuple) val b: kotlin.Int
 
 KtNameReferenceExpression(442,448): 'String'
   KtSimpleNameReference:
@@ -192,7 +195,8 @@ KtDestructuringDeclarationEntry(473,491): 'val first: Int = a'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: declaration) val first: kotlin.Int
+      0: (in <local>: declaration) val first: kotlin.Int
+      1: (in Tuple) val a: kotlin.String
 
 KtNameReferenceExpression(484,487): 'Int'
   KtSimpleNameReference:
@@ -213,7 +217,8 @@ KtDestructuringDeclarationEntry(493,515): 'val second: String = b'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: declaration) val second: kotlin.String
+      0: (in <local>: declaration) val second: kotlin.String
+      1: (in Tuple) val b: kotlin.Int
 
 KtNameReferenceExpression(505,511): 'String'
   KtSimpleNameReference:
@@ -449,7 +454,8 @@ KtDestructuringDeclarationEntry(820,830): 'val a: Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: loop.<destruct>) val a: kotlin.Int
+      0: (in <local>: loop.<destruct>) val a: kotlin.Int
+      1: (in Tuple) val a: kotlin.String
 
 KtNameReferenceExpression(827,830): 'Int'
   KtSimpleNameReference:
@@ -463,7 +469,8 @@ KtDestructuringDeclarationEntry(832,845): 'val b: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: loop.<destruct>) val b: kotlin.String
+      0: (in <local>: loop.<destruct>) val b: kotlin.String
+      1: (in Tuple) val b: kotlin.Int
 
 KtNameReferenceExpression(839,845): 'String'
   KtSimpleNameReference:
@@ -493,7 +500,8 @@ KtDestructuringDeclarationEntry(866,884): 'val first: Int = a'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: loop.<destruct>) val first: kotlin.Int
+      0: (in <local>: loop.<destruct>) val first: kotlin.Int
+      1: (in Tuple) val a: kotlin.String
 
 KtNameReferenceExpression(877,880): 'Int'
   KtSimpleNameReference:
@@ -514,7 +522,8 @@ KtDestructuringDeclarationEntry(886,908): 'val second: String = b'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: loop.<destruct>) val second: kotlin.String
+      0: (in <local>: loop.<destruct>) val second: kotlin.String
+      1: (in Tuple) val b: kotlin.Int
 
 KtNameReferenceExpression(898,904): 'String'
   KtSimpleNameReference:
@@ -763,7 +772,8 @@ KtDestructuringDeclarationEntry(1218,1228): 'val a: Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: lambda.<no name>.<destruct>) val a: kotlin.Int
+      0: (in <local>: lambda.<no name>.<destruct>) val a: kotlin.Int
+      1: (in Tuple) val a: kotlin.String
 
 KtNameReferenceExpression(1225,1228): 'Int'
   KtSimpleNameReference:
@@ -777,7 +787,8 @@ KtDestructuringDeclarationEntry(1230,1243): 'val b: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: lambda.<no name>.<destruct>) val b: kotlin.String
+      0: (in <local>: lambda.<no name>.<destruct>) val b: kotlin.String
+      1: (in Tuple) val b: kotlin.Int
 
 KtNameReferenceExpression(1237,1243): 'String'
   KtSimpleNameReference:
@@ -805,7 +816,8 @@ KtDestructuringDeclarationEntry(1261,1279): 'val first: Int = a'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: lambda.<no name>.<destruct>) val first: kotlin.Int
+      0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.Int
+      1: (in Tuple) val a: kotlin.String
 
 KtNameReferenceExpression(1272,1275): 'Int'
   KtSimpleNameReference:
@@ -826,7 +838,8 @@ KtDestructuringDeclarationEntry(1281,1303): 'val second: String = b'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: lambda.<no name>.<destruct>) val second: kotlin.String
+      0: (in <local>: lambda.<no name>.<destruct>) val second: kotlin.String
+      1: (in Tuple) val b: kotlin.Int
 
 KtNameReferenceExpression(1293,1299): 'String'
   KtSimpleNameReference:
