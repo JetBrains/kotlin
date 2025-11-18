@@ -30,7 +30,7 @@ class IrAnnotationImpl internal constructor(
     override var symbol: IrConstructorSymbol,
     override var source: SourceElement,
     override var constructorTypeArgumentsCount: Int,
-    override var classId: ClassId,
+    override var classId: ClassId?,
     override var argumentMapping: Map<Name, IrExpression>,
 ) : IrAnnotation() {
     override var attributeOwnerId: IrElement = this
