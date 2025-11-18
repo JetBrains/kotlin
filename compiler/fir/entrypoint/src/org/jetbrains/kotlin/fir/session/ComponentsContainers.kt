@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.FirInlineCheckerPlatformSpecif
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPrimaryConstructorSuperTypeCheckerPlatformComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTrackerImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirGenericArrayClassLiteralSupport
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirComposedDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilityHelper
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmInlineCheckerCompone
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
-import org.jetbrains.kotlin.fir.cli.CliDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
