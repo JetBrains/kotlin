@@ -525,4 +525,29 @@ class DRITest : BaseAbstractTest() {
             }
         }
     }
+
+    @Test
+    fun `DRI for a property`() {
+        testInline(
+            """
+        |/src/main/kotlin/Test.kt
+        |package test
+        |val prop: Int = 0
+        """.trimMargin(),
+            defaultConfiguration
+        ) {
+            documentablesMergingStage = { module ->
+                val propDRI = module.dfs { it.name == "prop" }?.dri
+
+                assertEquals(
+                    DRI("test", null, Callable("prop", null, emptyList(), isProperty = true)),
+                    propDRI
+                )
+                assertEquals(
+                    "test//prop/#/PointingToDeclaration/",
+                    propDRI.toString()
+                )
+            }
+        }
+    }
 }
