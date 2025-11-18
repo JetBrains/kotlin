@@ -88,6 +88,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions {
         freeCompilerArgs.set(
             listOf(
+                "-opt-in=kotlin.ExperimentalContextParameters",
                 "-Xallow-kotlin-package",
                 "-Xno-new-java-annotation-targets",
                 "-Xdont-warn-on-error-suppression",

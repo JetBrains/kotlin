@@ -73,7 +73,6 @@ internal fun ReflectKCallable<*>.computeAbsentArguments(): Array<Any?> {
     val parameters = parameters
     val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
 
-    @OptIn(ExperimentalContextParameters::class)
     val parametersWithAllocatedBitInMask = parameters.count { it.kind == KParameter.Kind.VALUE || it.kind == KParameter.Kind.CONTEXT }
     val maskSize = (parametersWithAllocatedBitInMask + Integer.SIZE - 1) / Integer.SIZE
 
@@ -135,7 +134,6 @@ internal fun <R> ReflectKCallable<R>.callDefaultMethod(args: Map<KParameter, Any
                 throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
             }
         }
-        @OptIn(ExperimentalContextParameters::class)
         if (parameter.kind == KParameter.Kind.VALUE || parameter.kind == KParameter.Kind.CONTEXT) {
             valueParameterIndex++
         }

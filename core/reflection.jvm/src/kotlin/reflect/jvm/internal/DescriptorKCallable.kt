@@ -52,7 +52,6 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
 
             val contextParameters = descriptor.computeContextParameters()
             for (i in contextParameters.indices) {
-                @OptIn(ExperimentalContextParameters::class)
                 result.add(DescriptorKParameter(this, result.size, KParameter.Kind.CONTEXT) { contextParameters[i] })
             }
 

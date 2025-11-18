@@ -362,7 +362,6 @@ internal class KClassImpl<T : Any>(
                 kmClass.inlineClassUnderlyingType != null ->
                     kmClass.inlineClassUnderlyingType?.toKType(jClass.classLoader, typeParameterTable)
                 else -> {
-                    @OptIn(ExperimentalContextParameters::class)
                     val underlyingProperty = kmClass.properties.single {
                         it.name == kmClass.inlineClassUnderlyingPropertyName &&
                                 it.contextParameters.isEmpty() && it.receiverParameterType == null
