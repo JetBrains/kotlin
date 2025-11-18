@@ -21,28 +21,9 @@ fun <N> dfs(graph: FlowGraph<N>): Sequence<N> {
     }
 }
 
-fun <N> postOrder(graph: FlowGraph<N>): Sequence<N> {
-    val stack = mutableListOf(graph.root to graph.succs(graph.root).iterator())
-    val visited = mutableSetOf<N>()
-    return generateSequence {
-        while (stack.isNotEmpty()) {
-            val (top, topsNext) = stack.last()
-            if (topsNext.hasNext()) {
-                val next = topsNext.next()
-                if (next !in visited) {
-                    visited += next
-                    stack += next to graph.succs(next).iterator()
-                }
-            } else {
-                stack.removeLast()
-                return@generateSequence top
-            }
-        }
-        null
-    }
-}
+fun <N> postOrder(graph: FlowGraph<N>): Sequence<N> = postOrder(graph, listOf(graph.root))
 
-fun <N> postOrder(roots: List<N>, graph: DiGraph<N>): Sequence<N> {
+fun <N> postOrder(graph: DiGraph<N>, roots: List<N>): Sequence<N> {
     val stack = mutableListOf<Pair<N, Iterator<N>>>()
     for (root in roots) {
         stack += root to graph.succs(root).iterator()

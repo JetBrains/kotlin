@@ -4,6 +4,7 @@ import hair.graph.Dominators
 import hair.ir.Session
 import hair.ir.*
 import hair.ir.nodes.*
+import hair.sym.HairType
 import hair.utils.closure
 import hair.utils.indexOfSingle
 import hair.utils.printGraphvizNoGCM
@@ -11,7 +12,7 @@ import kotlin.collections.set
 
 private typealias Var = Any
 
-fun Session.buildSSA() {
+fun Session.buildSSA(variableType: (Any) -> HairType) {
     val cfg = cfg()
     val doms = Dominators.sfda(cfg)
 
@@ -82,7 +83,8 @@ fun Session.buildSSA() {
         search(entry, emptyMap())
 
         for (placeholder in allNodes().filterIsInstance<PhiPlaceholder>().toList()) {
-            val phi = Phi(placeholder.block, *placeholder.joinedValues.toTypedArray<Node>())
+            val type = variableType(placeholder.origin)
+            val phi = Phi(type)(placeholder.block, *placeholder.joinedValues.toTypedArray<Node>())
             placeholder.replaceValueUses(phi)
         }
     }

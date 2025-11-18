@@ -12,11 +12,11 @@ sealed interface AnyNew : Node {
 
 
 class New internal constructor(form: Form, control: Controlling?) : BlockBody(form, listOf(control)), AnyNew {
-    class Form internal constructor(metaForm: MetaForm, val type: Class) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
-        override val args = listOf<Any>(type)
+    class Form internal constructor(metaForm: MetaForm, val objectType: Class) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
+        override val args = listOf<Any>(objectType)
     }
     
-    val type: Class by form::type
+    val objectType: Class by form::objectType
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -257,11 +257,11 @@ sealed class TypeCheck(form: Form, args: List<Node?>) : NodeBase(form, args) {
 
 
 class IsInstanceOf internal constructor(form: Form, obj: Node?) : TypeCheck(form, listOf(obj)) {
-    class Form internal constructor(metaForm: MetaForm, val type: Reference) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
-        override val args = listOf<Any>(type)
+    class Form internal constructor(metaForm: MetaForm, val targetType: Reference) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(targetType)
     }
     
-    val type: Reference by form::type
+    val targetType: Reference by form::targetType
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -277,12 +277,12 @@ class IsInstanceOf internal constructor(form: Form, obj: Node?) : TypeCheck(form
 }
 
 
-class Cast internal constructor(form: Form, obj: Node?) : TypeCheck(form, listOf(obj)) {
-    class Form internal constructor(metaForm: MetaForm, val type: Reference) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
-        override val args = listOf<Any>(type)
+class CheckCast internal constructor(form: Form, obj: Node?) : TypeCheck(form, listOf(obj)) {
+    class Form internal constructor(metaForm: MetaForm, val targetType: Reference) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(targetType)
     }
     
-    val type: Reference by form::type
+    val targetType: Reference by form::targetType
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -290,10 +290,10 @@ class Cast internal constructor(form: Form, obj: Node?) : TypeCheck(form, listOf
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitCast(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitCheckCast(this)
     
     companion object {
-        internal fun metaForm(session: Session) = MetaForm(session, "Cast")
+        internal fun metaForm(session: Session) = MetaForm(session, "CheckCast")
     }
 }
 

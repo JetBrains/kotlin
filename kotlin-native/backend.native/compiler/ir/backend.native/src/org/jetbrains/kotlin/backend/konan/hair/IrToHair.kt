@@ -19,6 +19,7 @@ import hair.ir.nodes.*
 import hair.sym.ArithmeticType
 import hair.sym.ArithmeticType.*
 import hair.sym.CmpOp
+import hair.sym.HairType
 import hair.utils.*
 import hair.transform.*
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
@@ -86,9 +87,9 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
         if (context.config.enableHair && container is IrSimpleFunction) {
             try {
                 funCompilations[container] = generateHair(container)
-                context.log { "# Successfully generated HaIR for ${container.name.toString()}" }
+                context.log { "# Successfully generated HaIR for ${container.computeFullName()}" }
             } catch (e: Throwable) {
-                context.reportWarning("Failed to generate HaIR for ${container.name.toString()}: $e\n${e.stackTraceToString()}", container.fileOrNull, container)
+                context.reportWarning("Failed to generate HaIR for ${container.computeFullName()}: $e\n${e.stackTraceToString()}", container.fileOrNull, container)
             }
         }
     }
@@ -96,7 +97,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
     fun generateHair(f: IrSimpleFunction): FunctionCompilation {
         val hairFun = HairFunctionImpl(f)
         val funCompilation = FunctionCompilation(moduleCompilation, hairFun)
-        context.log {"# Generating hair for ${f.name}, compilation = $funCompilation" }
+        context.log {"# Generating hair for ${f.computeFullName()}, compilation = $funCompilation" }
 
         // TODO parse directly into SSA ignoing Vars?
         val vars = mutableMapOf<IrValueSymbol, IrValueSymbol>()
@@ -124,13 +125,13 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     override fun visitBlockBody(body: IrBlockBody, data: Unit): Node {
                         return body.statements.fold(null) { acc, st ->
                             st.accept(this, Unit)
-                        }!!
+                        } ?: NoValue()
                     }
 
                     override fun visitContainerExpression(expression: IrContainerExpression, data: Unit): Node {
                         return expression.statements.fold(null) { acc, st ->
                             st.accept(this, Unit)
-                        }!!
+                        } ?: NoValue()
                     }
 
                     override fun visitSetValue(expression: IrSetValue, data: Unit): Node {
@@ -154,13 +155,21 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
                     override fun visitConst(expression: IrConst, data: Unit): Node {
                         return when (expression.kind) {
+                            IrConstKind.Boolean -> if (expression.value as Boolean) True() else False()
+                            IrConstKind.Byte -> ConstI((expression.value as Byte).toInt())
+                            IrConstKind.Short -> ConstI((expression.value as Short).toInt())
+                            IrConstKind.Char -> ConstI((expression.value as Byte).toInt())
                             IrConstKind.Int -> ConstI(expression.value as Int)
-                            else -> TODO(expression.render())
+                            IrConstKind.Long -> ConstL(expression.value as Long)
+                            IrConstKind.Float -> ConstF(expression.value as Float)
+                            IrConstKind.Double -> ConstD(expression.value as Double)
+                            IrConstKind.Null -> Null()
+                            IrConstKind.String -> TODO("String literals")
                         }
                     }
 
                     override fun visitCall(expression: IrCall, data: Unit): Node {
-                        val resultType = expression.type.computeBinaryType().asArithmeticTypeOrNull()
+                        val resultType = expression.type.asHairType()
                         val args = expression.arguments.map { it?.accept(this, Unit) }
 
                         val function = expression.symbol.owner
@@ -174,7 +183,6 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             function.origin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> TODO(expression.render())
                             !function.isReal -> TODO(expression.render())
                             else -> if (expression.isVirtual()) TODO("InvokeVirtual ${expression.render()}") else {
-                                TODO("calls :c")
                                 val call = InvokeStatic(HairFunctionImpl(function))(callArgs = args.toTypedArray())
                                 // TODO insert Halt if function returns Notihing ?
                                 if (function.returnType.isUnit()) UnitValue() else call
@@ -182,17 +190,17 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         }
                     }
 
-                    private fun generateIntrinsic(call: IrCall, resType: ArithmeticType?, args: List<Node?>): Node = when (tryGetIntrinsicType(call)) {
-                        IntrinsicType.PLUS -> Add(resType!!)(args[0]!!, args[1]!!)
+                    private fun generateIntrinsic(call: IrCall, resType: HairType, args: List<Node?>): Node = when (tryGetIntrinsicType(call)) {
+                        IntrinsicType.PLUS -> Add(resType)(args[0]!!, args[1]!!)
                         IntrinsicType.THE_UNIT_INSTANCE -> UnitValue()
                         else -> TODO("Intrinsic: ${call.render()}")
                     }
 
-                    private fun generateBuiltinOperator(call: IrCall, resType: ArithmeticType?, args: List<Node?>): Node {
+                    private fun generateBuiltinOperator(call: IrCall, resType: HairType, args: List<Node?>): Node {
                         val ib = context.irBuiltIns
                         val functionSymbol = call.symbol
                         val function = functionSymbol.owner
-                        val argType = function.parameters[0].type.computeBinaryType().asArithmeticTypeOrNull()!!
+                        val argType = function.parameters[0].type.asHairType()
                         return when (functionSymbol) {
                             ib.eqeqeqSymbol -> {
                                 Cmp(argType, CmpOp.EQ)(args[0]!!, args[1]!!)
@@ -267,7 +275,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         val result = if (exits.isNotEmpty()) {
                             require(exits.size == values.size)
                             val merge = BlockEntry(*exits.toTypedArray())
-                            Phi(merge, *values.toTypedArray())
+                            Phi(expression.type.asHairType())(merge, *values.toTypedArray())
                         } else NoValue()
 
                         return result
@@ -358,7 +366,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         val (exits, results) = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).filter { it.first != null }.unzip()
                         require(exits.all { it != null })
                         val exitBlock = BlockEntry(*exits.toTypedArray())
-                        return Phi(exitBlock, *results.toTypedArray())
+                        return Phi(expression.type.asHairType())(exitBlock, *results.toTypedArray())
                     }
 
                     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Node {
@@ -385,7 +393,10 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 //            println("HaIR of ${f.name} before SSA:")
 //            printGraphvizNoGCM()
 
-            buildSSA()
+            buildSSA {
+                it as IrValueSymbol
+                it.owner.type.asHairType()
+            }
 
             println("HaIR of ${f.name} after SSA:")
             printGraphviz()

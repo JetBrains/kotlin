@@ -29,7 +29,7 @@ fun Compilation.inline(call: InvokeStatic) {
 
             val resultBlock = BlockEntry(*returns.toTypedArray())
             call.next.control = resultBlock
-            call.replaceValueUsesAndKill(Phi(resultBlock, *returnedValues.toTypedArray()))
+            call.replaceValueUsesAndKill(Phi(call.function.resultHairType)(resultBlock, *returnedValues.toTypedArray()))
         }
     }
 }

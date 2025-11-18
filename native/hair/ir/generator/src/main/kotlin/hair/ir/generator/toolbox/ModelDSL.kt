@@ -1,6 +1,7 @@
 package hair.ir.generator.toolbox
 
 import hair.ir.generator.ControlFlow
+import hair.sym.HairType
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
@@ -54,10 +55,10 @@ abstract class ModelDSL {
         return Element.NodeParam(name, type, variable, optional).also { nodeParams.add(it) }
     }
 
-    fun Element.variadicParam(name: String, type: Element? = null, optional: Boolean = false): Element.NodeParam? {
+    fun Element.variadicParam(name: String, type: Element? = null, optional: Boolean = false): Element.NodeParam {
         require(variadicParam == null)
         variadicParam = Element.NodeParam(name, type, optional = optional, variable = true)
-        return variadicParam
+        return variadicParam!!
     }
 
     fun Element.inheritFormParam(name: String): Element.FormParam {
