@@ -2858,6 +2858,10 @@ public inline fun UShortArray.reverse(fromIndex: Int, toIndex: Int): Unit {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [reversedArray] instead.
+ * 
+ * @see reversedArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2870,6 +2874,10 @@ public fun UIntArray.reversed(): List<UInt> {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [reversedArray] instead.
+ * 
+ * @see reversedArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2882,6 +2890,10 @@ public fun ULongArray.reversed(): List<ULong> {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [reversedArray] instead.
+ * 
+ * @see reversedArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2894,6 +2906,10 @@ public fun UByteArray.reversed(): List<UByte> {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [reversedArray] instead.
+ * 
+ * @see reversedArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2906,6 +2922,10 @@ public fun UShortArray.reversed(): List<UShort> {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [reversed] instead.
+ * 
+ * @see reversed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2916,6 +2936,10 @@ public inline fun UIntArray.reversedArray(): UIntArray {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [reversed] instead.
+ * 
+ * @see reversed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2926,6 +2950,10 @@ public inline fun ULongArray.reversedArray(): ULongArray {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [reversed] instead.
+ * 
+ * @see reversed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2936,6 +2964,10 @@ public inline fun UByteArray.reversedArray(): UByteArray {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [reversed] instead.
+ * 
+ * @see reversed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3094,6 +3126,10 @@ public fun UShortArray.sortDescending(): Unit {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [sortedArray] instead.
+ * 
+ * @see sortedArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3103,6 +3139,10 @@ public fun UIntArray.sorted(): List<UInt> {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [sortedArray] instead.
+ * 
+ * @see sortedArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3112,6 +3152,10 @@ public fun ULongArray.sorted(): List<ULong> {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [sortedArray] instead.
+ * 
+ * @see sortedArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3121,6 +3165,10 @@ public fun UByteArray.sorted(): List<UByte> {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [sortedArray] instead.
+ * 
+ * @see sortedArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3130,6 +3178,10 @@ public fun UShortArray.sorted(): List<UShort> {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [sorted] instead.
+ * 
+ * @see sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3140,6 +3192,10 @@ public fun UIntArray.sortedArray(): UIntArray {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [sorted] instead.
+ * 
+ * @see sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3150,6 +3206,10 @@ public fun ULongArray.sortedArray(): ULongArray {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [sorted] instead.
+ * 
+ * @see sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3160,6 +3220,10 @@ public fun UByteArray.sortedArray(): UByteArray {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [sorted] instead.
+ * 
+ * @see sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3170,6 +3234,10 @@ public fun UShortArray.sortedArray(): UShortArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [sortedDescending] instead.
+ * 
+ * @see sortedDescending
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3180,6 +3248,10 @@ public fun UIntArray.sortedArrayDescending(): UIntArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [sortedDescending] instead.
+ * 
+ * @see sortedDescending
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3190,6 +3262,10 @@ public fun ULongArray.sortedArrayDescending(): ULongArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [sortedDescending] instead.
+ * 
+ * @see sortedDescending
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3200,6 +3276,10 @@ public fun UByteArray.sortedArrayDescending(): UByteArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted to a [List], consider using [sortedDescending] instead.
+ * 
+ * @see sortedDescending
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3210,6 +3290,10 @@ public fun UShortArray.sortedArrayDescending(): UShortArray {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [sortedArrayDescending] instead.
+ * 
+ * @see sortedArrayDescending
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3219,6 +3303,10 @@ public fun UIntArray.sortedDescending(): List<UInt> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [sortedArrayDescending] instead.
+ * 
+ * @see sortedArrayDescending
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3228,6 +3316,10 @@ public fun ULongArray.sortedDescending(): List<ULong> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [sortedArrayDescending] instead.
+ * 
+ * @see sortedArrayDescending
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3237,6 +3329,10 @@ public fun UByteArray.sortedDescending(): List<UByte> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * If the result of this operation has to be converted back to array, consider using [sortedArrayDescending] instead.
+ * 
+ * @see sortedArrayDescending
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

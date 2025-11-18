@@ -86,10 +86,33 @@ object Ordering : TemplateGroupBase() {
         }
     }
 
+    fun MemberBuilder.appendNoteAboutOverloadReturningArray(suggestedOverload: String) {
+        doc {
+            doc.orEmpty().trimIndent() + "\n\n" + """
+                If the result of this operation has to be converted back to array, consider using [$suggestedOverload] instead.
+                
+                @see $suggestedOverload
+            """.trimIndent()
+        }
+    }
+
+    fun MemberBuilder.appendNoteAboutOverloadReturningList(suggestedOverload: String) {
+        doc {
+            doc.orEmpty().trimIndent() + "\n\n" + """
+                If the result of this operation has to be converted to a [List], consider using [$suggestedOverload] instead.
+                
+                @see $suggestedOverload
+            """.trimIndent()
+        }
+    }
+
     val f_reversed = fn("reversed()") {
         include(Iterables, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, Strings)
     } builder {
         doc { "Returns a list with elements in reversed order." }
+        specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            appendNoteAboutOverloadReturningArray("reversedArray")
+        }
         returns("List<T>")
         body {
             """
@@ -123,6 +146,7 @@ object Ordering : TemplateGroupBase() {
         include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns an array with elements of this array in reversed order." }
+        appendNoteAboutOverloadReturningList("reversed")
         returns("SELF")
         body(InvariantArraysOfObjects) {
             """
@@ -188,6 +212,9 @@ object Ordering : TemplateGroupBase() {
         if (f != ArraysOfPrimitives && f != ArraysOfUnsigned) {
             appendStableSortNote()
         }
+        specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            appendNoteAboutOverloadReturningArray("sortedArray")
+        }
         returns("List<T>")
         typeParam("T : Comparable<T>")
         body {
@@ -247,6 +274,7 @@ object Ordering : TemplateGroupBase() {
         specialFor(InvariantArraysOfObjects) {
             appendStableSortNote()
         }
+        appendNoteAboutOverloadReturningList("sorted")
         typeParam("T : Comparable<T>")
         returns("SELF")
         body {
@@ -296,6 +324,9 @@ object Ordering : TemplateGroupBase() {
         if (f != ArraysOfPrimitives && f != ArraysOfUnsigned) {
             appendStableSortNote()
         }
+        specialFor(ArraysOfPrimitives, ArraysOfUnsigned, ArraysOfObjects) {
+            appendNoteAboutOverloadReturningArray("sortedArrayDescending")
+        }
         returns("List<T>")
         typeParam("T : Comparable<T>")
         body {
@@ -329,6 +360,7 @@ object Ordering : TemplateGroupBase() {
         specialFor(InvariantArraysOfObjects) {
             appendStableSortNote()
         }
+        appendNoteAboutOverloadReturningList("sortedDescending")
         typeParam("T : Comparable<T>")
         returns("SELF")
         body(InvariantArraysOfObjects) {
@@ -356,6 +388,9 @@ object Ordering : TemplateGroupBase() {
         }
         if (f != ArraysOfPrimitives) {
             appendStableSortNote()
+        }
+        specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            appendNoteAboutOverloadReturningArray("sortedArrayWith")
         }
         body {
             """
@@ -406,6 +441,7 @@ object Ordering : TemplateGroupBase() {
             "Returns an array with all elements of this array sorted according the specified [comparator]."
         }
         appendStableSortNote()
+        appendNoteAboutOverloadReturningList("sortedWith")
         returns("SELF")
         body {
             """
@@ -424,7 +460,7 @@ object Ordering : TemplateGroupBase() {
         returns("Unit")
         typeParam("R : Comparable<R>")
         specialFor(Lists) { receiver("MutableList<T>") }
-        
+
         sample("samples.collections.Collections.Sorting.sortBy")
 
         body { """if (size > 1) sortWith(compareBy(selector))""" }
