@@ -29,5 +29,5 @@ class CompilerDistContentsTest {
         kotlincPath,
         Integer.MAX_VALUE,
         { path: Path, fileAttributes: BasicFileAttributes -> fileAttributes.isRegularFile }
-    ).asSequence().map { it.toAbsolutePath().relativeTo(kotlincPath).toString() }
+    ).asSequence().map { it.toAbsolutePath().relativeTo(kotlincPath).toString().replace("\\", "/") }
 }
