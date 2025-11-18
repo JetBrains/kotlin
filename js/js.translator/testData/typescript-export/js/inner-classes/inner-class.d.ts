@@ -20,7 +20,7 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => TestInner;
             }
             class Inner {
-                private constructor($outer: foo.TestInner, a: string);
+                private constructor();
                 get a(): string;
                 get concat(): string;
                 static fromNumber(a: number): foo.TestInner.Inner;
@@ -34,7 +34,7 @@ declare namespace JS_TESTS {
                     const constructor: abstract new () => Inner;
                 }
                 class SecondLayerInner {
-                    private constructor($outer: foo.TestInner.Inner, a: string);
+                    private constructor();
                     get a(): string;
                     get concat(): string;
                 }

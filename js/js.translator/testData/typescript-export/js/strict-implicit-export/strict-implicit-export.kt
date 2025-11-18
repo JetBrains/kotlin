@@ -184,3 +184,13 @@ class SomeEvent : Event<SomeService>
 
 @JsExport
 class SomeServiceRequest : Service<SomeService, SomeEvent>
+
+// This class should not appear in the .d.ts, since it's only referenced in constructors
+// that are generated with private visibility in .d.ts.
+class NonExportedTypeOnlyReferencedInPrivateConstructors
+
+@JsExport
+class FinalClass protected constructor(x: NonExportedTypeOnlyReferencedInPrivateConstructors)
+
+@JsExport
+sealed class SealedClass(x: NonExportedTypeOnlyReferencedInPrivateConstructors)

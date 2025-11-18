@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isPromisifiedWrapper
 import org.jetbrains.kotlin.ir.backend.js.tsexport.Exportability
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedVisibility
+import org.jetbrains.kotlin.ir.backend.js.tsexport.toExportedVisibility
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
@@ -271,4 +273,11 @@ fun IrDeclarationWithName.getExportedIdentifier(): String =
                 withIrEntry("this", this@getExportedIdentifier)
             }
         else identifier
+    }
+
+internal val IrConstructor.exportedVisibility: ExportedVisibility
+    get() = when (constructedClass.modality) {
+        Modality.SEALED -> ExportedVisibility.PRIVATE
+        Modality.FINAL if visibility == DescriptorVisibilities.PROTECTED -> ExportedVisibility.PRIVATE
+        else -> visibility.toExportedVisibility()
     }

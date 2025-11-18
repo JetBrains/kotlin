@@ -179,6 +179,24 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => SomeServiceRequest;
             }
         }
+        class FinalClass {
+            private constructor();
+        }
+        namespace FinalClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => FinalClass;
+            }
+        }
+        abstract class SealedClass {
+            private constructor();
+        }
+        namespace SealedClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => SealedClass;
+            }
+        }
         interface NonExportedParent {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.NonExportedParent": unique symbol;

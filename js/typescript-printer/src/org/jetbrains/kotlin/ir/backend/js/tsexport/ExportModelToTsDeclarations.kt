@@ -432,7 +432,8 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         return (this as ExportedRegularClass).copy(members = members.map {
             if (it !is ExportedConstructor) return@map it
             val visibility = if (isFinal) ExportedVisibility.PRIVATE else ExportedVisibility.PROTECTED
-            it.copy(visibility = visibility)
+            val parameters = if (visibility == ExportedVisibility.PRIVATE) emptyList() else it.parameters
+            it.copy(parameters = parameters, visibility = visibility)
         })
     }
 

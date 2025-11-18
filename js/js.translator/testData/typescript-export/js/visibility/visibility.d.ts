@@ -96,7 +96,7 @@ declare namespace JS_TESTS {
         }
     }
     class FinalClassWithProtectedPrimaryPublicSecondaryCtor {
-        private constructor(s: string);
+        private constructor();
         static fromInt(n: number): FinalClassWithProtectedPrimaryPublicSecondaryCtor;
     }
     namespace FinalClassWithProtectedPrimaryPublicSecondaryCtor {

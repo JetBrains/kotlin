@@ -109,16 +109,20 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
         if (!constructor.isPrimary) return null
-        val constructedClass = constructor.constructedClass
-        val visibility = when (constructedClass.modality) {
-            Modality.SEALED -> ExportedVisibility.PRIVATE
-            Modality.FINAL if constructor.visibility == DescriptorVisibilities.PROTECTED -> ExportedVisibility.PRIVATE
-            else -> constructor.visibility.toExportedVisibility()
+        val visibility = constructor.exportedVisibility
+        val parameters = if (visibility == ExportedVisibility.PRIVATE) {
+            // There is no point in generating private constructor parameters, since you can't call this constructor,
+            // and it leaks implementation details.
+            // We only generate a private constructor because otherwise there would be an implicit default public constructor,
+            // which we don't want.
+            emptyList()
+        } else {
+            constructor.nonDispatchParameters
+                .filterNot { it.isBoxParameter }
+                .memoryOptimizedMap { exportParameter(it, it.hasDefaultValue) }
         }
         return ExportedConstructor(
-            parameters = constructor.nonDispatchParameters
-                .filterNot { it.isBoxParameter }
-                .memoryOptimizedMap { exportParameter(it, it.hasDefaultValue) },
+            parameters = parameters,
             visibility = visibility,
         )
     }

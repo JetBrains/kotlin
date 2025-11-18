@@ -3,7 +3,7 @@ declare namespace JS_TESTS {
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
         abstract class TestSealed {
-            private constructor(name: string);
+            private constructor();
             get name(): string;
         }
         namespace TestSealed {

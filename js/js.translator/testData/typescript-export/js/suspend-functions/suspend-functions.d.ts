@@ -45,7 +45,7 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => WithSuspendFunInsideInnerClass;
             }
             class Inner {
-                private constructor($outer: foo.WithSuspendFunInsideInnerClass);
+                private constructor();
                 suspendFun(): Promise<number>;
             }
             namespace Inner {

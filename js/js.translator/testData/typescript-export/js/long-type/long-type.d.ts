@@ -89,7 +89,7 @@ declare namespace JS_TESTS {
                 }
             }
             class I {
-                private constructor($outer: foo.D, i: bigint);
+                private constructor();
                 get i(): bigint;
             }
             namespace I {
