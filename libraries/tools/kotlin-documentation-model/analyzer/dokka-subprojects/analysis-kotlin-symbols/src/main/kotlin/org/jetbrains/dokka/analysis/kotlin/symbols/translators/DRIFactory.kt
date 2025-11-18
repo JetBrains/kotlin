@@ -18,14 +18,15 @@ internal fun ClassId.createDRI(): DRI = DRI(
     packageName = this.packageFqName.asString(), classNames = this.relativeClassName.asString()
 )
 
-private fun CallableId.createDRI(receiver: TypeReference?, params: List<TypeReference>, contextParams: List<TypeReference>): DRI = DRI(
+private fun CallableId.createDRI(receiver: TypeReference?, params: List<TypeReference>, contextParams: List<TypeReference>, isProperty: Boolean): DRI = DRI(
     packageName = this.packageName.asString(),
     classNames = this.className?.asString(),
     callable = Callable(
         this.callableName.asString(),
         params = params,
         receiver = receiver,
-        contextParameters = contextParams
+        contextParameters = contextParams,
+        isProperty = isProperty
     )
 )
 
@@ -66,7 +67,7 @@ internal fun KaSession.getDRIFromVariable(symbol: KaVariableSymbol): DRI {
     val callableId = symbol.callableId ?: throw IllegalStateException("Can not get callable Id due to it is local")
     val receiver = symbol.receiverType?.let(::getTypeReferenceFrom)
     val contextParams = @OptIn(KaExperimentalApi::class) symbol.contextParameters.map { getTypeReferenceFrom(it.returnType) }
-    return callableId.createDRI(receiver, emptyList(), contextParams)
+    return callableId.createDRI(receiver, emptyList(), contextParams, true)
 }
 
 
@@ -76,7 +77,7 @@ internal fun KaSession.getDRIFromFunction(symbol: KaFunctionSymbol): DRI {
     val receiver = symbol.receiverType?.let {
         getTypeReferenceFrom(it)
     }
-    return symbol.callableId?.createDRI(receiver, params, contextParams) ?: getDRIFromLocalFunction(symbol)
+    return symbol.callableId?.createDRI(receiver, params, contextParams, false) ?: getDRIFromLocalFunction(symbol)
 }
 
 internal fun getDRIFromClassLike(symbol: KaClassLikeSymbol): DRI =

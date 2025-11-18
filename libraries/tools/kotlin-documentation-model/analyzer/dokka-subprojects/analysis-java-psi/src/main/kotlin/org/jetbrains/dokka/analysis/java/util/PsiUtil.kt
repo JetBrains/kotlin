@@ -55,7 +55,8 @@ internal fun Callable.Companion.from(psi: PsiField): Callable {
     return Callable(
         name = psi.name,
         receiver = null,
-        params = emptyList()
+        params = emptyList(),
+        isProperty = true
     )
 }
 

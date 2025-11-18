@@ -31,7 +31,6 @@ class LinkTest : BaseAbstractTest() {
             }
         }
     }
-
     @Test
     fun linkToClassLoader() {
         val configuration = dokkaConfiguration {
@@ -309,7 +308,7 @@ class LinkTest : BaseAbstractTest() {
                                         dri = DRI(
                                             packageName = "example",
                                             classNames = "Testing",
-                                            callable = Callable("property", null, emptyList()),
+                                            callable = Callable("property", null, emptyList(), isProperty = true),
                                             target = PointingToDeclaration
                                         ),
                                         children = listOf(
@@ -588,7 +587,8 @@ class LinkTest : BaseAbstractTest() {
                                             target = PointingToDeclaration,
                                             callable = Callable(
                                                 "x",
-                                                params = emptyList()
+                                                params = emptyList(),
+                                                isProperty = true
                                             )
                                         ),
                                         children = listOf(
@@ -779,7 +779,6 @@ class LinkTest : BaseAbstractTest() {
             }
         }
     }
-
     @Test
     fun `link should be stable for overloads in different files`() {
         testInline(
@@ -1069,7 +1068,7 @@ class LinkTest : BaseAbstractTest() {
                         "String.length" to DRI(
                             "kotlin",
                             "String",
-                            Callable(name = "length", receiver = null, params = emptyList())
+                            Callable(name = "length", receiver = null, params = emptyList(), isProperty = true)
                         )
                     ),
                     module.getAllLinkDRIFrom("usage")
@@ -1150,7 +1149,7 @@ class LinkTest : BaseAbstractTest() {
         ) {
             documentablesMergingStage = { module ->
                 assertEquals(
-                    DRI("example", "Storage", Callable("value", null, emptyList())),
+                    DRI("example", "Storage", Callable("value", null, emptyList(), isProperty = true)),
                     module.getLinkDRIFrom("usage")
                 )
             }
