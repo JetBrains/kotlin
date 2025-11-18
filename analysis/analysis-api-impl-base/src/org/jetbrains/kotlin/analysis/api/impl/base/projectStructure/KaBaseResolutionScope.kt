@@ -9,6 +9,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
+import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
@@ -60,6 +61,10 @@ internal class KaBaseResolutionScope(
     }
 
     override fun contains(element: PsiElement): Boolean {
+        if (element is PsiDirectory) {
+            return cachedSearchScopeContains(element.virtualFile)
+        }
+
         /**
          * We check the *virtual file* here instead of calling [org.jetbrains.kotlin.psi.psiUtil.contains] on the search scope directly.
          * This is because `psiUtil.contains` queries the search scope with the element's *original file*, so search scope membership of any
