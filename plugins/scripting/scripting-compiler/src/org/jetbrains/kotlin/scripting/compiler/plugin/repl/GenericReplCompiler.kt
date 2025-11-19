@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFieldDataAttr
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import java.io.File
 import java.net.URL
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -64,7 +66,7 @@ open class GenericReplCompiler(
 
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult = checker.check(state, codeLine)
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class, UnsafeDuringIrConstructionAPI::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class, UnsafeDuringIrConstructionAPI::class, K1SpecificScriptingServiceAccessor::class)
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult {
         state.lock.write {
             val compilerState = state.asState(GenericReplCompilerState::class.java)
@@ -81,7 +83,7 @@ open class GenericReplCompiler(
                 Pair(compilerState.lastLineState!!.psiFile, compilerState.lastLineState!!.errorHolder)
             }
 
-            val wrapper = ScriptConfigurationsProvider.getInstance(checker.environment.project)?.getScriptConfiguration(psiFile)
+            val wrapper = ScriptConfigurationsProvider.getInstance(checker.environment.project)?.getScriptCompilationConfiguration(KtFileScriptSource(psiFile))?.valueOrNull()
             val newDependencies = wrapper?.configuration?.toDependencies(wrapper.dependenciesClassPath)
             var classpathAddendum: List<File>? = null
             if (compilerState.lastDependencies != newDependencies) {

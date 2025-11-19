@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplImplicitsExtensionsResolutionFilter
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicits
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicitsExceptInnermost
@@ -55,7 +56,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
     override var lastCompiledSnippet: LinkedSnippetImpl<KJvmCompiledScript>? = null
         protected set
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class, ObsoleteDescriptorBasedAPI::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class, ObsoleteDescriptorBasedAPI::class, K1SpecificScriptingServiceAccessor::class)
     override suspend fun compile(
         snippets: Iterable<SourceCode>,
         configuration: ScriptCompilationConfiguration
@@ -100,6 +101,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 // registerPackageFragmentProvidersIfNeeded already tries to avoid duplicated registering, but impact on
                 // executing it on every snippet needs to be evaluated first
                 if (state.history.isEmpty()) {
+                    @Suppress("DEPRECATION")
                     val updatedConfiguration = ScriptConfigurationsProvider.getInstance(context.environment.project)
                         ?.getScriptConfigurationResult(snippetKtFile, context.baseScriptCompilationConfiguration)?.valueOrNull()?.configuration
                         ?: context.baseScriptCompilationConfiguration

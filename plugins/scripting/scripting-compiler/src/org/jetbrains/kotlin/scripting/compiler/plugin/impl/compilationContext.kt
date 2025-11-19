@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginR
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
@@ -367,6 +368,7 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
     return sourceFiles to sourceDependencies
 }
 
+@OptIn(K1SpecificScriptingServiceAccessor::class)
 private fun CompilerConfiguration.updateWithRefinedConfigurations(
     context: SharedScriptCompilationContext,
     sourceFiles: List<KtFile>,

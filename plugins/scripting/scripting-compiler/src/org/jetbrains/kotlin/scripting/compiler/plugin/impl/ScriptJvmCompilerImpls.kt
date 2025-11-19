@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompil
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.ScriptResultFieldData
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFieldDataAttr
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
@@ -122,6 +123,7 @@ private fun withScriptCompilationCache(
         }
 }
 
+@OptIn(K1SpecificScriptingServiceAccessor::class)
 private fun compileImpl(
     script: SourceCode,
     context: SharedScriptCompilationContext,
@@ -295,7 +297,7 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
     return analyzerWithCompilerReport.analysisResult
 }
 
-@OptIn(LegacyK2CliPipeline::class)
+@OptIn(LegacyK2CliPipeline::class, K1SpecificScriptingServiceAccessor::class)
 private fun doCompileWithK2(
     context: SharedScriptCompilationContext,
     script: SourceCode,

@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScript
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 import java.io.File
@@ -233,7 +234,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         ).also { moduleDataHistory.add(it) }
 }
 
-@OptIn(LegacyK2CliPipeline::class)
+@OptIn(LegacyK2CliPipeline::class, K1SpecificScriptingServiceAccessor::class)
 private fun compileImpl(
     state: K2ReplCompilationState,
     snippet: SourceCode,
