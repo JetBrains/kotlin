@@ -42,15 +42,13 @@ public class PropertyBuildingContext(
 ) : DeclarationBuildingContext<FirProperty>(session, key, owner) {
     private var setterVisibility: Visibility? = null
     private var extensionReceiverTypeProvider: ((List<FirTypeParameter>) -> ConeKotlinType)? = null
-    private var generateDefaultInitializer: Boolean = true
+    private var generateDefaultInitializer: Boolean = false
 
     /**
-     * By default, if the property has backing field and is not abstract, the
-     * default throwing initializer will be generated.
-     * Call this function to disable this behavior.
+     * Generate the default throwing initializer if the property has a backing field and is not abstract.
      */
-    public fun doNotGenerateDefaultInitializer() {
-        generateDefaultInitializer = false
+    public fun withGeneratedDefaultInitializer() {
+        generateDefaultInitializer = true
     }
 
     /**

@@ -41,7 +41,7 @@ public class SimpleFunctionBuildingContext(
     private val containingFileName: String?,
 ) : FunctionBuildingContext<FirNamedFunction>(callableId, session, key, owner) {
     private var extensionReceiverTypeProvider: ((List<FirTypeParameter>) -> ConeKotlinType)? = null
-    private var generateDefaultBody: Boolean = true
+    private var generateDefaultBody: Boolean = false
 
     /**
      * Sets [type] as extension receiver type of the function.
@@ -61,12 +61,10 @@ public class SimpleFunctionBuildingContext(
     }
 
     /**
-     * By default, if the function is not abstract, the
-     * default throwing body will be generated.
-     * Call this function to disable this behavior.
+     * Generate the default throwing body if the function is not abstract.
      */
-    public fun doNotGenerateDefaultBody() {
-        generateDefaultBody = false
+    public fun withGeneratedDefaultBody() {
+        generateDefaultBody = true
     }
 
     override fun build(): FirNamedFunction {

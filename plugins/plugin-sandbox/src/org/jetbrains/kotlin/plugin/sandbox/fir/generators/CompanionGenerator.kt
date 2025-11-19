@@ -39,7 +39,9 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         val ownerKey = (owner.origin as? FirDeclarationOrigin.Plugin)?.key ?: return emptyList()
         if (ownerKey != Key) return emptyList()
         if (callableId.callableName != FOO_NAME) return emptyList()
-        val function = createMemberFunction(owner, Key, callableId.callableName, session.builtinTypes.intType.coneType)
+        val function = createMemberFunction(owner, Key, callableId.callableName, session.builtinTypes.intType.coneType) {
+            withGeneratedDefaultBody()
+        }
         return listOf(function.symbol)
     }
 

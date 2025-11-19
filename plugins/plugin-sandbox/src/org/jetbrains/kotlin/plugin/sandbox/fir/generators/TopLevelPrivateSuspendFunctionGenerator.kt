@@ -47,6 +47,7 @@ internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : Fi
         val function = createTopLevelFunction(Key, callableId, session.builtinTypes.unitType.coneType) {
             visibility = Visibilities.Private
             status { isSuspend = true }
+            withGeneratedDefaultBody()
         }
         return listOf(function.symbol)
     }

@@ -258,7 +258,6 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             }
 
             visibility = if (isPublic) Visibilities.Public else Visibilities.Internal
-            doNotGenerateDefaultBody()
         }
 
         function.excludeFromJsExport(session)
@@ -277,9 +276,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             SerializationPluginKey,
             callableId.callableName,
             target.resolvedReturnType
-        ) {
-            doNotGenerateDefaultInitializer()
-        }
+        )
 
         property.excludeFromJsExport(session)
 

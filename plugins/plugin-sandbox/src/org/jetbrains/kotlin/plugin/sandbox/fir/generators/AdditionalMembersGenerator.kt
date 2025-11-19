@@ -59,7 +59,9 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         val function = when (callableId.callableName) {
             MATERIALIZE_NAME -> {
                 val matchedClassSymbol = matchedClasses.firstOrNull { it == context.owner } ?: return emptyList()
-                createMemberFunction(context.owner, Key, callableId.callableName, matchedClassSymbol.constructStarProjectedType())
+                createMemberFunction(context.owner, Key, callableId.callableName, matchedClassSymbol.constructStarProjectedType()) {
+                    withGeneratedDefaultBody()
+                }
             }
             ID_WITH_DEFAULT_NAME -> {
                 createMemberFunction(context.owner, Key, callableId.callableName, session.builtinTypes.stringType.coneType) {
@@ -68,6 +70,7 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
                         type = session.builtinTypes.stringType.coneType,
                         hasDefaultValue = true,
                     )
+                    withGeneratedDefaultBody()
                 }
             }
             else -> return emptyList()

@@ -89,6 +89,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
                     isMarkedNullable = false
                 )
             }
+            withGeneratedDefaultInitializer()
         }
     }
 
@@ -103,6 +104,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             session.builtinTypes.intType.coneType
         ) {
             visibility = Visibilities.Local
+            withGeneratedDefaultInitializer()
         }
     }
 
@@ -124,6 +126,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             // Note: we create here a member property with local visibility, and
             // it does not match common compiler practice (a property has local visibility only if it's a local variable)
             visibility = Visibilities.Local
+            withGeneratedDefaultInitializer()
         }
     }
 }

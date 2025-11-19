@@ -55,6 +55,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
             containingFileName = containingFileName,
         ) {
             valueParameter(Name.identifier("value"), matchedClassSymbol.constructStarProjectedType())
+            withGeneratedDefaultBody()
         }
         return listOf(function.symbol)
     }
