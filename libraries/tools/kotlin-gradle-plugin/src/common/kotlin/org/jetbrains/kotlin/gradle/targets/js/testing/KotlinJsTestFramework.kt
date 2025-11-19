@@ -15,11 +15,37 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 
+/**
+ * Base options used to control how JS, WasmJS, and WasmWASI tests are executed.
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ *
+ * @see KotlinJsTest
+ */
 interface KotlinJsTestFramework : RequiresNpmDependencies {
+
+    /**
+     * Provide a string that will be registered as a task input of [KotlinJsTest].
+     *
+     * The task will re-execute when this string has changed.
+     *
+     * It can be used to encode configuration specific to the implemented test framework.
+     *
+     * @see KotlinJsTest.testFrameworkSettings
+     */
+    // Note: currently the JS tests aren't build-cacheable KT-78586,
+    // and they don't use the Provider API KT-77134.
+    // This string encodes non-relocatable inputs (e.g. file paths)
     val settingsState: String
 
+    /**
+     *
+     */
     val workingDir: Provider<Directory>
 
+    /**
+     *
+     */
     val executable: Provider<String>
 
     @Deprecated(
@@ -33,6 +59,9 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec
 
+    /**
+     *
+     */
     fun createTestExecutionSpec(
         task: KotlinJsTest,
         launchOpts: ProcessLaunchOptions,

@@ -91,7 +91,10 @@ class KotlinMocha internal constructor(
 
     override fun getPath() = "$basePath:kotlinMocha"
 
-    // https://mochajs.org/#-timeout-ms-t-ms
+    /**
+     * Specifies the test case timeout.
+     * See https://mochajs.org/#-timeout-ms-t-ms
+     */
     var timeout: String = DEFAULT_TIMEOUT
 
     private val platformType = compilation.platformType

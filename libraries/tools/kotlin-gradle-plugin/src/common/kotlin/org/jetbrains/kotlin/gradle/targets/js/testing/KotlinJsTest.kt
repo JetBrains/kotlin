@@ -26,6 +26,11 @@ import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import javax.inject.Inject
 
+/**
+ * Runs tests for JS, WasmJS and WasmWASI targets.
+ */
+// Eventually we should split the JS/WasmJS/WasmWASI classes
+// https://youtrack.jetbrains.com/issue/KT-66911
 @DisableCachingByDefault
 abstract class KotlinJsTest
 @Inject
