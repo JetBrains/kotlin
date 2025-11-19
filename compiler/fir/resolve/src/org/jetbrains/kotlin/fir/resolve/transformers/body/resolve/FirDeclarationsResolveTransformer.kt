@@ -1645,8 +1645,12 @@ open class FirDeclarationsResolveTransformer(
 
     private val FirVariable.initializerResolved: Boolean
         get() {
-            val initializer = initializer ?: return false
-            return initializer.isResolved && initializer !is FirErrorExpression
+            val initializer = initializer?.takeIf { it.isResolved } ?: return false
+            // This place is potentially dangerous as sometimes presence of a resolved type
+            // does not mean that an expression was really analyzed here
+            // (some expressions like return, throw or a < b can have a resolved type from the beginning)
+            val type = initializer.resolvedType
+            return !type.isNothing && !type.isBoolean && initializer !is FirErrorExpression
         }
 
     private val FirFunction.bodyResolved: Boolean
