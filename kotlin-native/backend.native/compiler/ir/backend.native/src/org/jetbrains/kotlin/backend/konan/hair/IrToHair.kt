@@ -98,6 +98,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
         val hairFun = HairFunctionImpl(f)
         val funCompilation = FunctionCompilation(moduleCompilation, hairFun)
         context.log {"# Generating hair for ${f.computeFullName()}, compilation = $funCompilation" }
+        println("# Generating hair for ${f.computeFullName()}")
 
         // TODO parse directly into SSA ignoing Vars?
         val vars = mutableMapOf<IrValueSymbol, IrValueSymbol>()
@@ -169,6 +170,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     }
 
                     override fun visitCall(expression: IrCall, data: Unit): Node {
+                        println("generating ${expression.render()} nodes: ${allNodes().toList()}")
                         val resultType = expression.type.asHairType()
                         val args = expression.arguments.map { it?.accept(this, Unit) }
 
@@ -334,14 +336,14 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     override fun visitBreak(jump: IrBreak, data: Unit): Node {
                         val goto = Goto()
                         loopBreaks.getOrPut(jump.loop) { mutableListOf() } += goto
-                        // TODO why? BlockEntry()
+                        BlockEntry() // FIXME unreachable
                         return NoValue()
                     }
 
                     override fun visitContinue(jump: IrContinue, data: Unit): Node {
                         val goto = Goto()
                         loopContinues.getOrPut(jump.loop) { mutableListOf() } += goto
-                        // TODO why? BlockEntry()
+                        BlockEntry() // FIXME unreachable
                         return NoValue()
                     }
 
@@ -353,10 +355,11 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         if (target is IrReturnableBlockSymbol) {
                             val goto = Goto()
                             returns.getOrPut(target) { mutableListOf() } += goto to value
+                            BlockEntry() // FIXME unreachable
                             return goto
                         }
                         // FIXME what if return Unit?
-                        return Return(value)
+                        return Return(value).also { BlockEntry() } // FIXME unreachable
                     }
 
                     override fun visitReturnableBlock(expression: IrReturnableBlock, data: Unit): Node {
