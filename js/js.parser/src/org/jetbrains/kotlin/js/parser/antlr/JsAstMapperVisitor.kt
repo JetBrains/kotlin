@@ -1073,6 +1073,9 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitNumericLiteral(ctx: JavaScriptParser.NumericLiteralContext): JsNumberLiteral {
+        if ('_' in ctx.text)
+            reportError("Numeric separators are not supported yet", ctx)
+
         ctx.BinaryIntegerLiteral()?.run {
             reportError("Binary integer literals are not supported yet", ctx)
         }
