@@ -1834,6 +1834,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("delegationWithReturn.kt")
+      public void testDelegationWithReturn() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/checkers/delegationWithReturn.kt");
+      }
+
+      @Test
       @TestMetadata("dnnTypeWithAdditionalNullableBound.kt")
       public void testDnnTypeWithAdditionalNullableBound() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/dnnTypeWithAdditionalNullableBound.kt");
