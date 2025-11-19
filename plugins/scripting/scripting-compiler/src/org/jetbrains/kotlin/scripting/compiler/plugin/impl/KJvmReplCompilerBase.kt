@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
@@ -35,8 +36,12 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplImplicitsExtensionsResolutionFilter
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
+import org.jetbrains.kotlin.scripting.resolve.getKtFile
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicits
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicitsExceptInnermost
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -60,8 +65,14 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
     override suspend fun compile(
         snippets: Iterable<SourceCode>,
         configuration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<LinkedSnippet<KJvmCompiledScript>> =
-        snippets.map { snippet ->
+    ): ResultWithDiagnostics<LinkedSnippet<KJvmCompiledScript>> {
+        val definition =
+            ScriptDefinition.FromConfigurations(
+                configuration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration,
+                configuration,
+                null
+            )
+        return snippets.map { snippet ->
             // TODO: get rid of messageCollector to avoid creation of additional entities
             withMessageCollector(snippet) { messageCollector ->
                 val initialConfiguration = configuration.refineBeforeParsing(snippet).valueOr {
@@ -80,12 +91,10 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     failOnSyntaxErrors = true
                 ).valueOr { return@withMessageCollector it }
 
-                val (sourceFiles, sourceDependencies) = collectRefinedSourcesAndUpdateEnvironment(
-                    context,
-                    snippetKtFile,
-                    initialConfiguration,
-                    messageCollector
-                )
+                val (sourceFiles, sourceDependencies) =
+                    collectRefinedSourcesAndUpdateEnvironment(context, KtFileScriptSource(snippetKtFile), messageCollector) {
+                        context.scriptConfigurationsProvider?.getScriptCompilationConfiguration(it, initialConfiguration)
+                    }
 
                 val firstFailure = sourceDependencies.firstOrNull { it.sourceDependencies is ResultWithDiagnostics.Failure }
                     ?.let { it.sourceDependencies as ResultWithDiagnostics.Failure }
@@ -93,7 +102,9 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 if (firstFailure != null)
                     return firstFailure
 
-                checkKotlinPackageUsageForPsi(context.environment.configuration, sourceFiles, messageCollector)
+                val ktFiles = sourceFiles.map { it.getKtFile(definition, context.environment.project) }
+
+                checkKotlinPackageUsageForPsi(context.environment.configuration, ktFiles, messageCollector)
 
                 if (messageCollector.hasErrors()) return failure(messageCollector)
 
@@ -103,7 +114,8 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 if (state.history.isEmpty()) {
                     @Suppress("DEPRECATION")
                     val updatedConfiguration = ScriptConfigurationsProvider.getInstance(context.environment.project)
-                        ?.getScriptConfigurationResult(snippetKtFile, context.baseScriptCompilationConfiguration)?.valueOrNull()?.configuration
+                        ?.getScriptConfigurationResult(snippetKtFile, context.baseScriptCompilationConfiguration)
+                        ?.valueOrNull()?.configuration
                         ?: context.baseScriptCompilationConfiguration
                     registerPackageFragmentProvidersIfNeeded(
                         updatedConfiguration,
@@ -118,7 +130,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 val analysisResult =
                     compilationState.analyzerEngine.analyzeReplLineWithImportedScripts(
                         snippetKtFile,
-                        sourceFiles.drop(1),
+                        ktFiles.drop(1),
                         snippet,
                         lineId.no
                     )
@@ -143,14 +155,15 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 )
 
                 val generatorExtensions = object : JvmGeneratorExtensionsImpl(compilationState.environment.configuration) {
-                    override fun getPreviousScripts() = state.history.map { compilationState.symbolTable.descriptorExtension.referenceScript(it.item) }
+                    override fun getPreviousScripts() =
+                        state.history.map { compilationState.symbolTable.descriptorExtension.referenceScript(it.item) }
                 }
                 val codegenFactory = JvmIrCodegenFactory(
                     compilationState.environment.configuration,
                     compilationState.mangler, compilationState.symbolTable, generatorExtensions
                 )
                 val irBackendInput = codegenFactory.convertToIr(
-                    generationState, sourceFiles, compilationState.analyzerEngine.trace.bindingContext
+                    generationState, ktFiles, compilationState.analyzerEngine.trace.bindingContext
                 )
 
                 if (codegenDiagnosticsCollector.hasErrors) {
@@ -169,10 +182,11 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 makeCompiledScript(
                     generationState,
                     snippet,
-                    sourceFiles.first(),
+                    { it.getKtFile(definition, context.environment.project).declarations.firstIsInstance<KtScript>().fqName },
                     sourceDependencies,
-                    { ktFile ->
-                        configurationsProvider?.getScriptConfigurationResult(ktFile, context.baseScriptCompilationConfiguration)?.valueOrNull()?.configuration
+                    { source ->
+                        configurationsProvider?.getScriptCompilationConfiguration(source, context.baseScriptCompilationConfiguration)
+                            ?.valueOrNull()?.configuration
                             ?: context.baseScriptCompilationConfiguration
                     },
                     extractResultFields(irBackendInput.irModuleFragment)
@@ -189,6 +203,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 }
             }
         }.last()
+    }
 
     override suspend fun invoke(
         script: SourceCode,

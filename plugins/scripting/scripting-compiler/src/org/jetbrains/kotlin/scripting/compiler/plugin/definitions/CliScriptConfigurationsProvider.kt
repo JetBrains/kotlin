@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.*
@@ -33,6 +34,7 @@ class CliScriptConfigurationsProvider(project: Project) : ScriptConfigurationsPr
         calculateRefinedConfiguration(file, providedConfiguration)
     }
 
+    @OptIn(K1SpecificScriptingServiceAccessor::class)
     private fun calculateRefinedConfiguration(
         file: KtFile, providedConfiguration: ScriptCompilationConfiguration?
     ): ScriptCompilationConfigurationResult? {
