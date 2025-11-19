@@ -9,7 +9,7 @@ package foo
 
 @JsExport
 @Deprecated("message 1")
-fun foo() {}
+fun funktion() {}
 
 @JsExport
 @Deprecated("message 2")
@@ -52,4 +52,12 @@ object TestObject {
     fun bar() {}
     @Deprecated("message 11")
     val baz: String = "Test"
+}
+
+@JsExport
+@Deprecated("Whole enum")
+enum class TestEnum {
+    @Deprecated("Only first entry")
+    A,
+    B,
 }

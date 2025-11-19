@@ -1,5 +1,5 @@
 import bar = JS_TESTS.foo.bar
-import foo = JS_TESTS.foo.foo
+import funktion = JS_TESTS.foo.funktion
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -9,7 +9,7 @@ function assert(condition: boolean) {
 
 function box(): string {
     assert(bar == "Test");
-    assert(foo() == undefined);
+    assert(funktion() == undefined);
 
     return "OK";
 }
