@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLLCompilerBasedTest
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
@@ -73,7 +74,7 @@ abstract class AbstractLLBlackBoxTestBase(private val targetPlatform: TargetPlat
             when {
                 targetPlatform.isJvm() -> configureForJvmBlackBoxTests()
                 targetPlatform.isNative() -> configureForNativeBlackBoxTests()
-                targetPlatform.isJs() || targetPlatform.isWasm() -> {}
+                targetPlatform.isJs() || targetPlatform.isWasm() || targetPlatform.isCommon() -> {}
                 else -> error("Unsupported platform: $targetPlatform")
             }
         }
@@ -81,6 +82,10 @@ abstract class AbstractLLBlackBoxTestBase(private val targetPlatform: TargetPlat
 
     override fun shouldSkipTest(filePath: String, configuration: TestConfiguration): Boolean {
         val testDataFile = File(filePath)
+        if (targetPlatform.isCommon()) {
+            return shouldSkipTestForCommon(testDataFile)
+        }
+
         val targetBackend = when {
             targetPlatform.isJvm() -> TargetBackend.JVM
             targetPlatform.isJs() -> TargetBackend.JS_IR
@@ -89,6 +94,7 @@ abstract class AbstractLLBlackBoxTestBase(private val targetPlatform: TargetPlat
             targetPlatform.isNative() -> TargetBackend.NATIVE
             else -> error("Unsupported platform: $targetPlatform")
         }
+
         if (!InTextDirectivesUtils.isCompatibleTarget(targetBackend, testDataFile)) return true
 
         return InTextDirectivesUtils.isIgnoredTarget(
@@ -98,6 +104,28 @@ abstract class AbstractLLBlackBoxTestBase(private val targetPlatform: TargetPlat
             InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX,
             InTextDirectivesUtils.IGNORE_BACKEND_K2_DIRECTIVE_PREFIX,
         )
+    }
+
+    /**
+     * Compiler black box tests do not support COMMON target platform.
+     * As a workaround, we need to check if there is at least one incompatible pair of target platforms
+     * the test is supposed to pass on.
+     */
+    private fun shouldSkipTestForCommon(testDataFile: File): Boolean {
+        val allPassingTargets = TargetBackend.entries.filter { targetBackend ->
+            targetBackend != TargetBackend.ANY &&
+                    InTextDirectivesUtils.isPassingTarget(targetBackend, testDataFile)
+        }
+
+        val hasIncompatibleTargets = allPassingTargets.any { targetBackend ->
+            allPassingTargets.any { other ->
+                targetBackend != other &&
+                        !targetBackend.isTransitivelyCompatibleWith(other) &&
+                        !other.isTransitivelyCompatibleWith(targetBackend)
+            }
+        }
+
+        return !hasIncompatibleTargets
     }
 }
 

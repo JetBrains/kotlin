@@ -541,6 +541,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 model("codegen/boxWasmWasi")
             }
 
+            testClass<AbstractLLCommonBlackBoxTest> {
+                blackBoxTestsInit()
+            }
+
             testClass<AbstractLLReversedBlackBoxTest> {
                 blackBoxTestsInit()
             }
@@ -556,6 +560,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             testClass<AbstractLLReversedWasmWasiBlackBoxTest> {
                 blackBoxTestsInit()
                 model("codegen/boxWasmWasi")
+            }
+
+            testClass<AbstractLLReversedCommonBlackBoxTest> {
+                blackBoxTestsInit()
             }
         }
 
