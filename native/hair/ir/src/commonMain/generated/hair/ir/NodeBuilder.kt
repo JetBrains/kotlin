@@ -12,52 +12,52 @@ context(nodeBuilder: NodeBuilder)
 fun UnitValue(): UnitValue = nodeBuilder.register(UnitValue(nodeBuilder.session.unitValueForm))
 
 context(nodeBuilder: NodeBuilder)
-fun Use(control: Controlling?, value: Node?): Use = nodeBuilder.register(Use(nodeBuilder.session.useForm, control, value))
+fun Use(control: Controlling?, value: Node?): Node = nodeBuilder.normalize(Use(nodeBuilder.session.useForm, control, value)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun Use(value: Node?): Use = controlBuilder.appendControlled { ctrl -> Use(ctrl, value) }
+fun Use(value: Node?): Node = controlBuilder.appendControlled { ctrl -> Use(ctrl, value) }
 
 context(nodeBuilder: NodeBuilder)
-fun BlockEntryNoCtrl(vararg preds: BlockExit?): BlockEntry = nodeBuilder.register(BlockEntry(nodeBuilder.session.blockEntryForm, *preds))
+fun BlockEntryNoCtrl(vararg preds: BlockExit?): Node = nodeBuilder.normalize(BlockEntry(nodeBuilder.session.blockEntryForm, *preds)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
-fun BlockEntry(vararg preds: BlockExit?): BlockEntry = BlockEntryNoCtrl(*preds)
+fun BlockEntry(vararg preds: BlockExit?): Node = BlockEntryNoCtrl(*preds)
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun BlockEntry(vararg preds: BlockExit?): BlockEntry = controlBuilder.appendControl { BlockEntryNoCtrl(*preds) }
+fun BlockEntry(vararg preds: BlockExit?): Node = controlBuilder.appendControl { BlockEntryNoCtrl(*preds) }
 
 context(nodeBuilder: NodeBuilder)
-fun Return(control: Controlling?, result: Node?): Return = nodeBuilder.register(Return(nodeBuilder.session.returnForm, control, result))
+fun Return(control: Controlling?, result: Node?): Node = nodeBuilder.normalize(Return(nodeBuilder.session.returnForm, control, result)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun Return(result: Node?): Return = controlBuilder.appendControlled { ctrl -> Return(ctrl, result) }
+fun Return(result: Node?): Node = controlBuilder.appendControlled { ctrl -> Return(ctrl, result) }
 
 context(nodeBuilder: NodeBuilder)
-fun Goto(control: Controlling?): Goto = nodeBuilder.register(Goto(nodeBuilder.session.gotoForm, control))
+fun Goto(control: Controlling?): Node = nodeBuilder.normalize(Goto(nodeBuilder.session.gotoForm, control)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun Goto(): Goto = controlBuilder.appendControlled { ctrl -> Goto(ctrl) }
+fun Goto(): Node = controlBuilder.appendControlled { ctrl -> Goto(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
-fun IfTrue(owner: If?): If.True = nodeBuilder.register(If.True(nodeBuilder.session.ifTrueForm, owner))
+fun IfTrue(owner: If?): Node = nodeBuilder.normalize(If.True(nodeBuilder.session.ifTrueForm, owner)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder)
-fun IfFalse(owner: If?): If.False = nodeBuilder.register(If.False(nodeBuilder.session.ifFalseForm, owner))
+fun IfFalse(owner: If?): Node = nodeBuilder.normalize(If.False(nodeBuilder.session.ifFalseForm, owner)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder)
-fun If(control: Controlling?, cond: Node?): If = nodeBuilder.register(If(nodeBuilder.session.ifForm, control, cond))
+fun If(control: Controlling?, cond: Node?): Node = nodeBuilder.normalize(If(nodeBuilder.session.ifForm, control, cond)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun If(cond: Node?): If = controlBuilder.appendControlled { ctrl -> If(ctrl, cond) }
+fun If(cond: Node?): Node = controlBuilder.appendControlled { ctrl -> If(ctrl, cond) }
 
 context(nodeBuilder: NodeBuilder)
-fun Throw(control: Controlling?, exception: Node?): Throw = nodeBuilder.register(Throw(nodeBuilder.session.throwForm, control, exception))
+fun Throw(control: Controlling?, exception: Node?): Node = nodeBuilder.normalize(Throw(nodeBuilder.session.throwForm, control, exception)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun Throw(exception: Node?): Throw = controlBuilder.appendControlled { ctrl -> Throw(ctrl, exception) }
+fun Throw(exception: Node?): Node = controlBuilder.appendControlled { ctrl -> Throw(ctrl, exception) }
 
 context(nodeBuilder: NodeBuilder)
-fun Unwind(thrower: Throwing?): Unwind = nodeBuilder.register(Unwind(nodeBuilder.session.unwindForm, thrower))
+fun Unwind(thrower: Throwing?): Node = nodeBuilder.normalize(Unwind(nodeBuilder.session.unwindForm, thrower)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder)
 private fun ReadVarForm(variable: Any): ReadVar.Form = ReadVar.Form(nodeBuilder.session.readVarMetaForm, variable).ensureFormUniq()
@@ -66,22 +66,22 @@ context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
 fun ReadVar(variable: Any): ReadVar.Form = ReadVarForm(variable)
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun ReadVar(variable: Any): ReadVar = ReadVarForm(variable)()
+fun ReadVar(variable: Any): Node = ReadVarForm(variable)()
 
 context(nodeBuilder: NodeBuilder)
-operator fun ReadVar.Form.invoke(control: Controlling?): ReadVar = nodeBuilder.register(ReadVar(this@invoke, control))
+operator fun ReadVar.Form.invoke(control: Controlling?): Node = nodeBuilder.normalize(ReadVar(this@invoke, control)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun ReadVar.Form.invoke(): ReadVar = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
+operator fun ReadVar.Form.invoke(): Node = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
 fun AssignVar(variable: Any): AssignVar.Form = AssignVar.Form(nodeBuilder.session.assignVarMetaForm, variable).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun AssignVar.Form.invoke(control: Controlling?, assignedValue: Node?): AssignVar = nodeBuilder.register(AssignVar(this@invoke, control, assignedValue))
+operator fun AssignVar.Form.invoke(control: Controlling?, assignedValue: Node?): Node = nodeBuilder.normalize(AssignVar(this@invoke, control, assignedValue)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun AssignVar.Form.invoke(assignedValue: Node?): AssignVar = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, assignedValue) }
+operator fun AssignVar.Form.invoke(assignedValue: Node?): Node = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, assignedValue) }
 
 context(nodeBuilder: NodeBuilder)
 fun Phi(type: HairType): Phi.Form = Phi.Form(nodeBuilder.session.phiMetaForm, type).ensureFormUniq()
@@ -231,22 +231,22 @@ context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
 fun New(objectType: Class): New.Form = NewForm(objectType)
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun New(objectType: Class): New = NewForm(objectType)()
+fun New(objectType: Class): Node = NewForm(objectType)()
 
 context(nodeBuilder: NodeBuilder)
-operator fun New.Form.invoke(control: Controlling?): New = nodeBuilder.register(New(this@invoke, control))
+operator fun New.Form.invoke(control: Controlling?): Node = nodeBuilder.normalize(New(this@invoke, control)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun New.Form.invoke(): New = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
+operator fun New.Form.invoke(): Node = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
 fun ReadFieldPinned(field: Field): ReadFieldPinned.Form = ReadFieldPinned.Form(nodeBuilder.session.readFieldPinnedMetaForm, field).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun ReadFieldPinned.Form.invoke(control: Controlling?, obj: Node?): ReadFieldPinned = nodeBuilder.register(ReadFieldPinned(this@invoke, control, obj))
+operator fun ReadFieldPinned.Form.invoke(control: Controlling?, obj: Node?): Node = nodeBuilder.normalize(ReadFieldPinned(this@invoke, control, obj)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun ReadFieldPinned.Form.invoke(obj: Node?): ReadFieldPinned = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj) }
+operator fun ReadFieldPinned.Form.invoke(obj: Node?): Node = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj) }
 
 context(nodeBuilder: NodeBuilder)
 private fun ReadGlobalPinnedForm(field: Global): ReadGlobalPinned.Form = ReadGlobalPinned.Form(nodeBuilder.session.readGlobalPinnedMetaForm, field).ensureFormUniq()
@@ -255,31 +255,31 @@ context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
 fun ReadGlobalPinned(field: Global): ReadGlobalPinned.Form = ReadGlobalPinnedForm(field)
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun ReadGlobalPinned(field: Global): ReadGlobalPinned = ReadGlobalPinnedForm(field)()
+fun ReadGlobalPinned(field: Global): Node = ReadGlobalPinnedForm(field)()
 
 context(nodeBuilder: NodeBuilder)
-operator fun ReadGlobalPinned.Form.invoke(control: Controlling?): ReadGlobalPinned = nodeBuilder.register(ReadGlobalPinned(this@invoke, control))
+operator fun ReadGlobalPinned.Form.invoke(control: Controlling?): Node = nodeBuilder.normalize(ReadGlobalPinned(this@invoke, control)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun ReadGlobalPinned.Form.invoke(): ReadGlobalPinned = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
+operator fun ReadGlobalPinned.Form.invoke(): Node = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
 fun WriteField(field: Field): WriteField.Form = WriteField.Form(nodeBuilder.session.writeFieldMetaForm, field).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun WriteField.Form.invoke(control: Controlling?, obj: Node?, value: Node?): WriteField = nodeBuilder.register(WriteField(this@invoke, control, obj, value))
+operator fun WriteField.Form.invoke(control: Controlling?, obj: Node?, value: Node?): Node = nodeBuilder.normalize(WriteField(this@invoke, control, obj, value)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun WriteField.Form.invoke(obj: Node?, value: Node?): WriteField = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj, value) }
+operator fun WriteField.Form.invoke(obj: Node?, value: Node?): Node = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj, value) }
 
 context(nodeBuilder: NodeBuilder)
 fun WriteGlobal(field: Global): WriteGlobal.Form = WriteGlobal.Form(nodeBuilder.session.writeGlobalMetaForm, field).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun WriteGlobal.Form.invoke(control: Controlling?, value: Node?): WriteGlobal = nodeBuilder.register(WriteGlobal(this@invoke, control, value))
+operator fun WriteGlobal.Form.invoke(control: Controlling?, value: Node?): Node = nodeBuilder.normalize(WriteGlobal(this@invoke, control, value)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun WriteGlobal.Form.invoke(value: Node?): WriteGlobal = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, value) }
+operator fun WriteGlobal.Form.invoke(value: Node?): Node = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, value) }
 
 context(nodeBuilder: NodeBuilder)
 fun IsInstanceOf(targetType: Reference): IsInstanceOf.Form = IsInstanceOf.Form(nodeBuilder.session.isInstanceOfMetaForm, targetType).ensureFormUniq()
@@ -297,17 +297,17 @@ context(nodeBuilder: NodeBuilder)
 fun InvokeStatic(function: HairFunction): InvokeStatic.Form = InvokeStatic.Form(nodeBuilder.session.invokeStaticMetaForm, function).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun InvokeStatic.Form.invoke(control: Controlling?, vararg callArgs: Node?): InvokeStatic = nodeBuilder.register(InvokeStatic(this@invoke, control, *callArgs))
+operator fun InvokeStatic.Form.invoke(control: Controlling?, vararg callArgs: Node?): Node = nodeBuilder.normalize(InvokeStatic(this@invoke, control, *callArgs)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun InvokeStatic.Form.invoke(vararg callArgs: Node?): InvokeStatic = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, *callArgs) }
+operator fun InvokeStatic.Form.invoke(vararg callArgs: Node?): Node = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, *callArgs) }
 
 context(nodeBuilder: NodeBuilder)
 fun InvokeVirtual(function: HairFunction): InvokeVirtual.Form = InvokeVirtual.Form(nodeBuilder.session.invokeVirtualMetaForm, function).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun InvokeVirtual.Form.invoke(control: Controlling?, vararg callArgs: Node?): InvokeVirtual = nodeBuilder.register(InvokeVirtual(this@invoke, control, *callArgs))
+operator fun InvokeVirtual.Form.invoke(control: Controlling?, vararg callArgs: Node?): Node = nodeBuilder.normalize(InvokeVirtual(this@invoke, control, *callArgs)).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun InvokeVirtual.Form.invoke(vararg callArgs: Node?): InvokeVirtual = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, *callArgs) }
+operator fun InvokeVirtual.Form.invoke(vararg callArgs: Node?): Node = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, *callArgs) }
 

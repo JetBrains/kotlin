@@ -317,7 +317,7 @@ class Generator(private val generationPath: File) {
         )
     }
 
-    private fun isNormalizable(node: Node): Boolean = !node.isControlFlow() && node.nodeParamsList().isNotEmpty()
+    private fun isNormalizable(node: Node): Boolean = node.nodeParamsList().isNotEmpty()
 
     private fun StringBuilder.appendIndented(indent: String, string: String) {
         string.lines().forEach { appendLine("$indent$it") }
