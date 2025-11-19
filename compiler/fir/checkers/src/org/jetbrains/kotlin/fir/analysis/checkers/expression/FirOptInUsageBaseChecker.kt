@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.resolve.checkers.OptInInheritanceDiagnosticMessagePr
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.checkers.OptInUsagesDiagnosticMessageProvider
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_ANNOTATION_CLASS
+import org.jetbrains.kotlin.resolve.checkers.OptInUsagesDiagnosticMessageProviderForDeprecation
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -161,12 +162,50 @@ object FirOptInUsageBaseChecker {
         return result
     }
 
+    /**
+     * For ERROR experimentalities that are found via the companion object symbol, but not via its outer class symbol,
+     *  we report deprecation warnings instead of errors in case LF is not enabled.
+     *
+     * @return a pair of experimentalities found via outer class symbol and experimentalities found via companion object symbol only.
+     */
+    context(context: CheckerContext)
+    fun FirBasedSymbol<*>.loadExperimentalitiesForQualifier(
+        companionObjectSymbol: FirClassLikeSymbol<*>?
+    ): Pair<Set<Experimentality>, Set<Experimentality>> {
+        val visited = mutableSetOf<FirBasedSymbol<*>>()
+        val allExperimentalities =
+            loadExperimentalities(
+                knownExperimentalities = null,
+                visited = visited,
+                fromSetter = false,
+                dispatchReceiverType = null,
+                fromSupertype = false,
+            )
+
+        if (companionObjectSymbol == null) return allExperimentalities to emptySet()
+
+        // copy here because loadExperimentalities mutates its first argument
+        val hardExperimentalities = allExperimentalities.toCollection(SmartSet.create())
+
+        companionObjectSymbol.loadExperimentalities(
+            knownExperimentalities = allExperimentalities,
+            visited = visited,
+            fromSetter = false,
+            dispatchReceiverType = null,
+            fromSupertype = false,
+        )
+
+        return hardExperimentalities to allExperimentalities - hardExperimentalities
+    }
+
     context(context: CheckerContext)
     fun FirBasedSymbol<*>.loadExperimentalities(
         fromSetter: Boolean, dispatchReceiverType: ConeKotlinType?,
-    ): Set<Experimentality> = loadExperimentalities(
-        knownExperimentalities = null, visited = mutableSetOf(), fromSetter, dispatchReceiverType, fromSupertype = false
-    )
+    ): Set<Experimentality> {
+        return loadExperimentalities(
+            knownExperimentalities = null, visited = mutableSetOf(), fromSetter, dispatchReceiverType, fromSupertype = false
+        )
+    }
 
     context(context: CheckerContext)
     fun FirClassLikeSymbol<*>.loadExperimentalitiesFromSupertype(): Set<Experimentality> =
@@ -185,8 +224,8 @@ object FirOptInUsageBaseChecker {
         fromSetter: Boolean,
         dispatchReceiverType: ConeKotlinType?,
         fromSupertype: Boolean,
-    ): Set<Experimentality> {
-        if (!visited.add(this)) return emptySet()
+    ): SmartSet<Experimentality> {
+        if (!visited.add(this)) return SmartSet.create()
         val result = knownExperimentalities ?: SmartSet.create()
         val session = context.session
         when (this) {
@@ -316,6 +355,7 @@ object FirOptInUsageBaseChecker {
         experimentalities: Collection<Experimentality>,
         element: FirElement,
         source: KtSourceElement? = element.source,
+        reportErrorsAsDeprecationWarnings: Boolean = false,
     ) {
         val isSubclassOptInApplicable = (context.containingDeclarations.lastOrNull() as? FirClassSymbol)
             ?.let { getSubclassOptInApplicabilityAndMessage(it).first }
@@ -336,6 +376,11 @@ object FirOptInUsageBaseChecker {
                     Experimentality.Severity.ERROR if fromSupertype -> Triple(
                         FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
                         OptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable),
+                        "must"
+                    )
+                    Experimentality.Severity.ERROR if reportErrorsAsDeprecationWarnings -> Triple(
+                        FirErrors.OPT_IN_USAGE,
+                        OptInUsagesDiagnosticMessageProviderForDeprecation,
                         "must"
                     )
                     Experimentality.Severity.ERROR -> Triple(

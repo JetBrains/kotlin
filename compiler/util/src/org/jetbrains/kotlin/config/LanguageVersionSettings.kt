@@ -484,6 +484,7 @@ enum class LanguageFeature(
     ForbidClassLiteralWithPotentiallyNullableReifiedLhs(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-370"),
     ForbidOverriddenDefaultParametersInInline(KOTLIN_2_4, enabledInProgressiveMode = true, issue = "KT-49722"),
     ForbidRootIdePackageInCli(KOTLIN_2_4, enabledInProgressiveMode = true, issue = "KT-81357"),
+    ReportOptInUsageOnCompanionObjectAccesses(KOTLIN_2_4, enabledInProgressiveMode = true, issue = "KT-82524"),
 
     // 2.5
 

@@ -1057,6 +1057,11 @@ fun FirResolvedQualifier.resolvedSymbolOrCompanionSymbol(): FirClassLikeSymbol<*
     }
 }
 
+context(context: SessionHolder)
+fun FirResolvedQualifier.resolvedCompanionSymbol(): FirClassLikeSymbol<*>? {
+    return symbol.takeIf { resolvedToCompanionObject }?.fullyExpandedClass()?.resolvedCompanionObjectSymbol
+}
+
 context(context: CheckerContext)
 fun FirExpression.isDispatchReceiver(): Boolean {
     val parentElement = context.containingElements.elementAtOrNull(context.containingElements.size - 2)

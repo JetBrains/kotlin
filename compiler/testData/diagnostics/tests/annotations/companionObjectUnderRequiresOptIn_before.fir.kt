@@ -1,5 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-82524
+// LANGUAGE: -ReportOptInUsageOnCompanionObjectAccesses
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 @RequiresOptIn
 annotation class ExperimentalForTest
@@ -30,11 +32,11 @@ class WithExperimentalStdlib {
 typealias WithMarkedCompanionTypealias = WithMarkedCompanion
 
 fun test() {
-    val withMarkedCompanion = WithMarkedCompanion
+    val withMarkedCompanion = <!OPT_IN_USAGE!>WithMarkedCompanion<!>
     val withMarkedOuter = <!OPT_IN_USAGE_ERROR!>WithMarkedOuter<!>
-    val withMarkedCompanionWarning = WithMarkedCompanionWarning
-    val withExperimentalStdlibApi = WithExperimentalStdlib
-    val withMarkedCompanionViaTypealias = WithMarkedCompanionTypealias
+    val withMarkedCompanionWarning = <!OPT_IN_USAGE!>WithMarkedCompanionWarning<!>
+    val withExperimentalStdlibApi = <!OPT_IN_USAGE!>WithExperimentalStdlib<!>
+    val withMarkedCompanionViaTypealias = <!OPT_IN_USAGE!>WithMarkedCompanionTypealias<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, functionDeclaration, localProperty,

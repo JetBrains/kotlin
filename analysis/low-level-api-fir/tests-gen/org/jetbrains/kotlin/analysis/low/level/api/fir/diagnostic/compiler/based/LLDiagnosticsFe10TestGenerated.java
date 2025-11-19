@@ -2802,9 +2802,15 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
-      @TestMetadata("companionObjectUnderRequiresOptIn.kt")
-      public void testCompanionObjectUnderRequiresOptIn() {
-        runTest("compiler/testData/diagnostics/tests/annotations/companionObjectUnderRequiresOptIn.kt");
+      @TestMetadata("companionObjectUnderRequiresOptIn_after.kt")
+      public void testCompanionObjectUnderRequiresOptIn_after() {
+        runTest("compiler/testData/diagnostics/tests/annotations/companionObjectUnderRequiresOptIn_after.kt");
+      }
+
+      @Test
+      @TestMetadata("companionObjectUnderRequiresOptIn_before.kt")
+      public void testCompanionObjectUnderRequiresOptIn_before() {
+        runTest("compiler/testData/diagnostics/tests/annotations/companionObjectUnderRequiresOptIn_before.kt");
       }
 
       @Test
