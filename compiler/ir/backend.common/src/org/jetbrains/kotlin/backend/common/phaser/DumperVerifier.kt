@@ -59,8 +59,8 @@ private fun dumpIrElement(actionState: ActionState, data: IrElement): String {
     var dumpText = ""
     val elementName: String
 
-    val dumpStrategy = System.getProperty("org.jetbrains.kotlin.compiler.ir.dump.strategy")
-    val dump: IrElement.() -> String = if (dumpStrategy == "KotlinLike") IrElement::dumpKotlinLike else IrElement::dump
+    //val dumpStrategy = System.getProperty("org.jetbrains.kotlin.compiler.ir.dump.strategy")
+    val dump: IrElement.() -> String = IrElement::dumpKotlinLike
 
     val dumpOnlyFqName = actionState.config.dumpOnlyFqName
     if (dumpOnlyFqName != null) {
