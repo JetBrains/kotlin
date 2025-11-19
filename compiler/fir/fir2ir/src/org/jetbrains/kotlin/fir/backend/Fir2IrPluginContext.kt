@@ -169,13 +169,13 @@ class Fir2IrPluginContext(
 
     @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @FirIncompatiblePluginAPI
-    override fun referenceClass(fqName: FqName): IrClassSymbol? {
+    override fun referenceClass(fqName: FqName): IrClassSymbol {
         error(ERROR_MESSAGE)
     }
 
     @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @FirIncompatiblePluginAPI
-    override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol? {
+    override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol {
         error(ERROR_MESSAGE)
     }
 
@@ -203,7 +203,7 @@ class Fir2IrPluginContext(
         signature: IdSignature,
         kind: IrDeserializer.TopLevelSymbolKind,
         moduleDescriptor: ModuleDescriptor
-    ): IrSymbol? {
+    ): IrSymbol {
         error(ERROR_MESSAGE)
     }
 }
