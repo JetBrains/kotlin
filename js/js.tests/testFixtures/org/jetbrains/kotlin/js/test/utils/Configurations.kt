@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
-import java.lang.Boolean.getBoolean
 
 fun TestConfigurationBuilder.configureLineNumberTests(createLineNumberHandler: (testServices: TestServices) -> JsBinaryArtifactHandler) {
     defaultDirectives {
@@ -35,7 +34,7 @@ fun TestConfigurationBuilder.configureSteppingTests() {
     }
     useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)
     jsArtifactsHandlersStep {
-        useHandlers(::JsDebugRunner.bind(false))
+        useHandlers(::JsDebugRunner)
     }
 }
 

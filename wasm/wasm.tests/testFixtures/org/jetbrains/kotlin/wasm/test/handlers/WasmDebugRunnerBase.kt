@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
 abstract class WasmDebugRunnerBase(testServices: TestServices) :
-    D8BasedDebugRunner<BinaryArtifacts.Wasm>(testServices, ArtifactKinds.Wasm), WasmArtifactsCollector {
+    D8BasedDebugRunner<BinaryArtifacts.Wasm>(testServices, ArtifactKinds.Wasm, includeColumnInformation = true),
+    WasmArtifactsCollector {
     protected val modulesToArtifact = mutableMapOf<TestModule, BinaryArtifacts.Wasm>()
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
@@ -33,7 +34,10 @@ abstract class WasmDebugRunnerBase(testServices: TestServices) :
     override val htmlCodeToIncludeBinaryArtifact = ""
 
     // language=js
-    override val jsCodeToGetModuleWithBoxFunction = "await import('./index.mjs')"
+    override val jsCodeToGetModuleWithBoxFunction = """
+        const jsModule = await import('./index.mjs')
+        const box = jsModule.box;
+    """.trimIndent()
 
     override val debugMode: DebugMode get() = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
@@ -44,11 +48,6 @@ abstract class WasmDebugRunnerBase(testServices: TestServices) :
             is SourceMapSuccess -> parseResult.value
             is SourceMapError -> error(parseResult.message)
         }
-
-
-    override fun writeCompilationResult(artifact: BinaryArtifacts.Wasm, outputDir: File, compiledFileBaseName: String) {
-        writeCompilationResult(artifact.compilerResult, outputDir, compiledFileBaseName)
-    }
 
     override fun saveEntryFile(outputDir: File, content: String) {
         File(outputDir, "test.mjs").writeText(content)

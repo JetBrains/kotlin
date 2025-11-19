@@ -26,23 +26,27 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
 import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
 import org.jetbrains.kotlin.test.utils.formatAsSteppingTestExpectation
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
     testServices: TestServices,
     artifactKind: ArtifactKind<A>,
     failureDisablesNextSteps: Boolean = false,
-    doNotRunIfThereWerePreviousFailures: Boolean = false
+    doNotRunIfThereWerePreviousFailures: Boolean = false,
+    private val includeColumnInformation: Boolean = false,
+    private val preserveSteppingOnTheSamePlace: Boolean = false,
 ) : BinaryArtifactHandler<A>(testServices, artifactKind, failureDisablesNextSteps, doNotRunIfThereWerePreviousFailures) {
     abstract val debugMode: DebugMode
     abstract val jsCodeToGetModuleWithBoxFunction: String
     abstract val htmlCodeToIncludeBinaryArtifact: String
 
-    abstract fun writeCompilationResult(artifact: A, outputDir: File, compiledFileBaseName: String)
     abstract fun saveEntryFile(outputDir: File, content: String)
     abstract fun runSavedCode(outputDir: File): String
 
-    fun writeToFilesAndRunTest(outputDir: File, sourceMaps: List<SourceMap>, compiledFileBase: String) {
+    protected open fun SourceMapSegment.mapOrNull(): SourceMapSegment? = this
+
+    open fun writeToFilesAndRunTest(outputDir: File, sourceMaps: List<SourceMap>, compiledFileName: String) {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
 
         // language=js
@@ -85,8 +89,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
                 }
             }
             
-            const jsModule = $jsCodeToGetModuleWithBoxFunction;
-            const box = jsModule.box;
+            $jsCodeToGetModuleWithBoxFunction;
             
             enableDebugger();
             setBreakpoint(box);
@@ -145,21 +148,23 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
         val exception = try {
             val result = runSavedCode(outputDir)
             val debuggerSteps = FrameParser(result).parse().mapNotNull { frame ->
-                val pausedLocation = sourceMaps.firstNotNullOfOrNull { map ->
+                val (pausedLocation, functionLocation) = sourceMaps.firstNotNullOfOrNull { map ->
                     val functionLocation = map.findSegmentForTheGeneratedLocation(
                         frame.currentFunctionStartLocation.line,
                         frame.currentFunctionStartLocation.column
-                    )?.takeIf { segment -> segment.sourceLineNumber >= 0 }
+                    )
 
                     if (functionLocation?.isIgnored == true) return@firstNotNullOfOrNull null
 
-                    map.findSegmentForTheGeneratedLocation(frame.pausedLocation.line, frame.pausedLocation.column)
+                    val pausedLocation = map.findSegmentForTheGeneratedLocation(frame.pausedLocation.line, frame.pausedLocation.column)
                         ?: return@firstNotNullOfOrNull null
+
+                    pausedLocation to functionLocation
                 } ?: return@mapNotNull null
 
                 ProcessedStep(
-                    pausedLocation.sourceFileName ?: "$compiledFileBase.wasm",
-                    frame.functionName,
+                    pausedLocation.sourceFileName ?: compiledFileName,
+                    functionLocation?.name ?: frame.functionName,
                     Location(
                         pausedLocation.sourceLineNumber.takeIf { it >= 0 } ?: frame.pausedLocation.line,
                         pausedLocation.sourceColumnNumber.takeIf { it >= 0 } ?: frame.pausedLocation.column
@@ -168,18 +173,17 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
             }
 
             val groupedByLinesSteppingTestLoggedData = buildList {
-                var lastStep = ProcessedStep("DUMMY", "DUMMY", Location(-1, -1))
+                val dummy = ProcessedStep("DUMMY", "DUMMY", Location(-1, -1))
+                var lastStep = dummy
                 var columns = mutableListOf<Int>()
 
                 for (step in debuggerSteps.plus(lastStep)) {
-                    if (lastStep == step) {
-                        continue
-                    }
+                    if (!preserveSteppingOnTheSamePlace && lastStep == step) continue
 
-                    if (!lastStep.isOnTheSameLineAs(step) && columns.isNotEmpty()) {
+                    if ((!includeColumnInformation && lastStep != dummy) || (!lastStep.isOnTheSameLineAs(step) && columns.isNotEmpty())) {
                         val (fileName, functionName, location) = lastStep
                         val lineNumber = location.line + 1
-                        val aggregatedColumns = " (${columns.joinToString(", ")})"
+                        val aggregatedColumns = runIf(includeColumnInformation) { " (${columns.joinToString(", ")})" }.orEmpty()
                         val formatedSteppingExpectation = formatAsSteppingTestExpectation(fileName, lineNumber, functionName, false)
                         push(SteppingTestLoggedData(lineNumber, false, formatedSteppingExpectation + aggregatedColumns))
                         columns = mutableListOf()
@@ -192,7 +196,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
 
             checkSteppingTestResult(
                 frontendKind = testServices.defaultsProvider.frontendKind,
-                testServices.defaultsProvider.targetBackend ?: TargetBackend.WASM,
+                testServices.defaultsProvider.targetBackend!!,
                 originalFile,
                 groupedByLinesSteppingTestLoggedData,
                 testServices.defaultDirectives
@@ -222,11 +226,9 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
     }
 
     private fun SourceMap.findSegmentForTheGeneratedLocation(lineNumber: Int, columnNumber: Int): SourceMapSegment? {
-        val group = groups.getOrNull(lineNumber)?.takeIf { it.segments.isNotEmpty() } ?: return null
-        return group.segments
-            .indexOfLast { columnNumber >= it.generatedColumnNumber }
-            .takeIf { it >= 0 }
-            ?.let(group.segments::get)
+        return segmentForGeneratedLocation(lineNumber, columnNumber)
+            ?.takeIf { it.sourceLineNumber >= 0 && it.sourceFileName != null }
+            ?.mapOrNull()
     }
 
 

@@ -30,7 +30,7 @@ class WasmDebugRunnerWithPrecompiled(testServices: TestServices) : WasmDebugRunn
         if (!someAssertionWasFailed) {
             val sourceMaps = modulesToArtifact.values.map { it.compilerResult.parsedSourceMaps }
             val outputDirBase = testServices.getWasmTestOutputDirectory()
-            writeToFilesAndRunTest(outputDir = outputDirBase, sourceMaps = sourceMaps, "index")
+            writeToFilesAndRunTest(outputDir = outputDirBase, sourceMaps = sourceMaps, "index.wasm")
         }
     }
 }

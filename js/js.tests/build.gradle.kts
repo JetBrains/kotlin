@@ -1,5 +1,4 @@
 import com.github.gradle.node.npm.task.NpmTask
-import com.github.gradle.node.variant.computeNodeExec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
@@ -85,18 +84,7 @@ dependencies {
     // also needs one of these dependencies but of different
     // version (e.g. tests of kotlinx.serialization)
     testFixturesCompileOnly(libs.kotlinx.serialization.json)
-    testFixturesCompileOnly(libs.ktor.client.cio)
-    testFixturesCompileOnly(libs.ktor.client.core)
-    testFixturesCompileOnly(libs.ktor.client.websockets)
     testRuntimeOnly(libs.kotlinx.serialization.json)
-    testRuntimeOnly(libs.ktor.client.cio)
-    testRuntimeOnly(libs.ktor.client.core)
-    testRuntimeOnly(libs.ktor.client.websockets)
-
-    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:win-x64@zip")
-    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:linux-x64@tar.gz")
-    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:darwin-x64@tar.gz")
-    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:darwin-arm64@tar.gz")
 }
 
 optInToExperimentalCompilerApi()
@@ -157,22 +145,11 @@ val generateTypeScriptTests by parallel(
         .map { generateTypeScriptTestFor(it.name) }
 )
 
-fun Test.setupNodeJs() {
-    systemProperty(
-        "javascript.engine.path.NodeJs",
-        com.github.gradle.node.variant.VariantComputer()
-            .let { variantComputer ->
-                computeNodeExec(node, variantComputer.computeNodeBinDir(node.resolvedNodeDir, node.resolvedPlatform)).get()
-            }
-    )
-}
-
 fun Test.setUpJsBoxTests(tags: String?) {
     with(d8KotlinBuild) {
         setupV8()
     }
 
-    setupNodeJs()
     dependsOn(npmInstall)
 
     inputs.files(rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))

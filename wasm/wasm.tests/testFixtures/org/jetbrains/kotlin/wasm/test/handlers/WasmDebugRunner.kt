@@ -18,12 +18,12 @@ class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServ
             val devDir = File(outputDirBase, "dev")
             devDir.mkdirs()
             writeCompilationResult(artifacts.compilerResult, devDir, "index")
-            writeToFilesAndRunTest(outputDir = devDir, sourceMaps = listOf(artifacts.compilerResult.parsedSourceMaps), "index")
+            writeToFilesAndRunTest(outputDir = devDir, sourceMaps = listOf(artifacts.compilerResult.parsedSourceMaps), "index.wasm")
 
             val dceDir = File(outputDirBase, "dce")
             dceDir.mkdirs()
             writeCompilationResult(artifacts.compilerResultWithDCE, dceDir, "index")
-            writeToFilesAndRunTest(outputDir = dceDir, sourceMaps = listOf(artifacts.compilerResultWithDCE.parsedSourceMaps), "index")
+            writeToFilesAndRunTest(outputDir = dceDir, sourceMaps = listOf(artifacts.compilerResultWithDCE.parsedSourceMaps), "index.wasm")
         }
     }
 }
