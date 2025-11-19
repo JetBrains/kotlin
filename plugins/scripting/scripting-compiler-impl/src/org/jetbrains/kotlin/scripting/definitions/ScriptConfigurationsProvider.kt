@@ -18,8 +18,10 @@ import kotlin.script.experimental.api.valueOrNull
 annotation class K1SpecificScriptingServiceAccessor
 
 
-// TODO: support SourceCode (or KtSourceFile) as a key
-open class ScriptConfigurationsProvider(protected val project: Project) {
+open class ScriptConfigurationsProvider(
+    @property:K1SpecificScriptingServiceAccessor
+    protected val project: Project
+) {
 
     /**
      * Currently the main method that should be used to get the configuration, others should be deprecated

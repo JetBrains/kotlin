@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
+import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
@@ -11,17 +12,15 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.scriptingHostConfiguration
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
@@ -46,9 +46,14 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFi
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
+import org.jetbrains.kotlin.scripting.resolve.getKtFile
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.topologicalSort
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -56,6 +61,7 @@ import kotlin.script.experimental.impl._languageVersion
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
 import kotlin.script.experimental.jvm.compilationCache
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
 
@@ -145,23 +151,19 @@ private fun compileImpl(
 
     if (messageCollector.hasErrors()) return failure(messageCollector)
 
-    val (sourceFiles, sourceDependencies) = collectRefinedSourcesAndUpdateEnvironment(
-        context,
-        mainKtFile,
-        initialConfiguration,
-        messageCollector
-    )
-
-    checkKotlinPackageUsageForPsi(context.environment.configuration, sourceFiles, messageCollector)
+    val mainKtSource = KtFileScriptSource(mainKtFile)
+    val (sourceFiles, sourceDependencies) =
+        collectRefinedSourcesAndUpdateEnvironment(context, mainKtSource, messageCollector) {
+            context.scriptConfigurationsProvider?.getScriptCompilationConfiguration(it, initialConfiguration)
+        }
 
     if (messageCollector.hasErrors() || sourceDependencies.any { it.sourceDependencies is ResultWithDiagnostics.Failure }) {
         return failure(messageCollector)
     }
 
-    val configurationsProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)
-    val getScriptConfiguration = { ktFile: KtFile ->
+    val getScriptConfiguration = { sourceCode: SourceCode ->
         val refinedConfiguration =
-            configurationsProvider?.getScriptConfigurationResult(ktFile, context.baseScriptCompilationConfiguration)
+            context.scriptConfigurationsProvider?.getScriptCompilationConfiguration(sourceCode, context.baseScriptCompilationConfiguration)
                 ?.valueOrNull()?.configuration ?: context.baseScriptCompilationConfiguration
         refinedConfiguration.with {
             _languageVersion(context.environment.configuration.languageVersionSettings.languageVersion.versionString)
@@ -189,9 +191,9 @@ private fun compileImpl(
     }
 
     return if (context.environment.configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-        doCompileWithK2(context, script, sourceFiles, sourceDependencies, messageCollector, getScriptConfiguration)
+        doCompileWithK2(context, mainKtSource, sourceFiles, sourceDependencies, messageCollector, getScriptConfiguration)
     } else {
-        doCompile(context, script, sourceFiles, sourceDependencies, messageCollector, getScriptConfiguration)
+        doCompile(context, mainKtSource, sourceFiles, sourceDependencies, messageCollector, getScriptConfiguration)
     }
 }
 
@@ -223,15 +225,35 @@ internal fun registerPackageFragmentProvidersIfNeeded(
 private fun doCompile(
     context: SharedScriptCompilationContext,
     script: SourceCode,
-    sourceFiles: List<KtFile>,
+    sourceFiles: List<SourceCode>,
     sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
+    getScriptConfiguration: (SourceCode) -> ScriptCompilationConfiguration
 ): ResultWithDiagnostics<KJvmCompiledScript> {
+
+    val definition =
+        ScriptDefinition.FromConfigurations(
+            context.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]
+                ?: defaultJvmScriptingHostConfiguration,
+            context.baseScriptCompilationConfiguration,
+            null
+        )
+
+    val ktFiles = sourceFiles.map { (it as KtFileScriptSource).ktFile }
+
+    checkKotlinPackageUsageForPsi(context.environment.configuration, ktFiles, messageCollector)
+
+    val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
+        AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
+    }
+
+    if (syntaxErrors || messageCollector.hasErrors()) {
+        return failure(messageCollector)
+    }
 
     registerPackageFragmentProvidersIfNeeded(getScriptConfiguration(sourceFiles.first()), context.environment)
 
-    val analysisResult = analyze(sourceFiles, context.environment)
+    val analysisResult = analyze(ktFiles, context.environment)
 
     if (!analysisResult.shouldGenerateCode) return failure(
         script,
@@ -244,7 +266,7 @@ private fun doCompile(
 
     val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
     val generationState = GenerationState(
-        sourceFiles.first().project,
+        ktFiles.first().project,
         analysisResult.moduleDescriptor,
         context.environment.configuration,
         diagnosticReporter = diagnosticsReporter,
@@ -252,7 +274,7 @@ private fun doCompile(
 
     val codegenFactory = JvmIrCodegenFactory(context.environment.configuration)
 
-    val backendInput = codegenFactory.convertToIr(generationState, sourceFiles, analysisResult.bindingContext)
+    val backendInput = codegenFactory.convertToIr(generationState, ktFiles, analysisResult.bindingContext)
 
     codegenFactory.generateModule(generationState, backendInput)
 
@@ -269,7 +291,7 @@ private fun doCompile(
     return makeCompiledScript(
         generationState,
         script,
-        sourceFiles.first(),
+        { it.getKtFile(definition, context.environment.project).declarations.firstIsInstanceOrNull<KtScript>()?.fqName },
         sourceDependencies,
         getScriptConfiguration,
         extractResultFields(backendInput.irModuleFragment)
@@ -305,16 +327,27 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
 private fun doCompileWithK2(
     context: SharedScriptCompilationContext,
     script: SourceCode,
-    sourceFiles: List<KtFile>,
+    sourceFiles: List<SourceCode>,
     sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
+    getScriptConfiguration: (SourceCode) -> ScriptCompilationConfiguration
 ): ResultWithDiagnostics<KJvmCompiledScript> {
-    val syntaxErrors = sourceFiles.fold(false) { errorsFound, ktFile ->
+    val definition =
+        ScriptDefinition.FromConfigurations(
+            context.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]
+                ?: defaultJvmScriptingHostConfiguration,
+            context.baseScriptCompilationConfiguration,
+            null
+        )
+    val ktFiles = sourceFiles.map { it.getKtFile(definition, context.environment.project) }
+
+    checkKotlinPackageUsageForPsi(context.environment.configuration, ktFiles, messageCollector)
+
+    val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
         AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
     }
 
-    if (syntaxErrors) {
+    if (syntaxErrors || messageCollector.hasErrors()) {
         return failure(messageCollector)
     }
 
@@ -343,7 +376,7 @@ private fun doCompileWithK2(
     val session = prepareJvmSessionsForScripting(
         projectEnvironment,
         configuration,
-        sourceFiles,
+        ktFiles,
         rootModuleNameAsString = targetId.name,
         friendPaths = emptyList(),
         librariesScope,
@@ -370,14 +403,14 @@ private fun doCompileWithK2(
         configurationProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)
     }
 
-    val rawFir = session.buildFirFromKtFiles(sourceFiles) //.reversed()
+    val rawFir = session.buildFirFromKtFiles(ktFiles) //.reversed()
 
     val orderedRawFir =
         if (scriptDefinitionProviderService == null) rawFir
         else {
             val rawFirDeps = rawFir.associateWith { firFile ->
                 ((firFile.sourceFile as? KtPsiSourceFile)?.psiFile as? KtFile)?.let { ktFile ->
-                    val scriptCompilationConfiguration =
+                    @Suppress("DEPRECATION") val scriptCompilationConfiguration =
                         scriptDefinitionProviderService.configurationProvider?.getScriptConfiguration(ktFile)?.configuration
                     scriptCompilationConfiguration?.get(ScriptCompilationConfiguration.resolvedImportScripts)?.mapNotNull { depSource ->
                         (depSource as? VirtualFileScriptSource)?.virtualFile?.let { depVFile ->
@@ -431,7 +464,7 @@ private fun doCompileWithK2(
     return makeCompiledScript(
         generationState,
         script,
-        sourceFiles.first(),
+        { it.getKtFile(definition, context.environment.project).declarations.firstIsInstanceOrNull<KtScript>()?.fqName },
         sourceDependencies,
         getScriptConfiguration,
         extractResultFields(irInput.irModuleFragment)
