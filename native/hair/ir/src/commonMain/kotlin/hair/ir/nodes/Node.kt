@@ -64,9 +64,9 @@ class ControlFlowBuilder(at: Controlling) {
     inline fun <N : Controlling> appendControl(next: () -> N): N = next().also { lastControl = it }
 
     inline fun <N : Controlled> appendControlled(next: (Controlling) -> N): N =
-        next(lastControl ?: error("No lastControl")).also {
+        next(lastControl ?: run { println("No lastControl"); error("No lastControl") }).also {
             // TODO make separate appendBlockBody ?
-            lastControl = it as? Controlling
+            lastControl = (it as? Controlling).also { _ -> println("Setting lastControl to $it") }
         }
 }
 

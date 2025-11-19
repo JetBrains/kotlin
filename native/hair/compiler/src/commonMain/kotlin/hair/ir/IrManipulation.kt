@@ -3,6 +3,7 @@ package hair.ir
 import hair.ir.nodes.*
 import hair.ir.nodes.Node
 import hair.opt.NormalizationImpl
+import hair.opt.eliminateDead
 import hair.utils.Worklist
 import hair.utils.forEachInWorklist
 import hair.utils.isEmpty
@@ -34,7 +35,10 @@ fun <T> Session.buildInitialIR(
     builderAction: context(NodeBuilder, ArgsUpdater, ControlFlowBuilder) () -> T
 ): T {
     return context(nodeBuilder, SimpleArgsUpdater, ControlFlowBuilder(entry)) {
-        builderAction()
+        builderAction().also {
+            eliminateDead()
+            // TODO merge with modifyIR
+        }
     }
 }
 
@@ -44,6 +48,8 @@ fun <T> Session.modifyIR(
     val argsWatcher = ArgUpdatesWatcher()
     val result = context(nodeBuilder, argsWatcher, NoControlFlowBuilder) {
         val result = builderAction()
+
+        eliminateDead()
 
         forEachInWorklist(allNodes()) { node ->
             // FIXME what about cyclic dependencies?
