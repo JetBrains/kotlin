@@ -5093,6 +5093,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ExternalTypeExtendsNonExternalType : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExternalTypeExtendsNonExternalType::class
+        val superType: KaType
     }
 
     interface EnumClassInExternalDeclarationWarning : KaFirDiagnostic<KtDeclaration> {

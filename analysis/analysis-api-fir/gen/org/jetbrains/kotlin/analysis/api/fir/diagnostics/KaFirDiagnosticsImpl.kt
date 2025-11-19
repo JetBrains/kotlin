@@ -6125,6 +6125,7 @@ internal class ExternalEnumEntryWithBodyImpl(
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExternalEnumEntryWithBody
 
 internal class ExternalTypeExtendsNonExternalTypeImpl(
+    override val superType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExternalTypeExtendsNonExternalType

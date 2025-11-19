@@ -113,7 +113,11 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Reflection is not supported in JavaScript target; therefore, annotations cannot be read at runtime."
         )
         map.put(EXTERNAL_ENUM_ENTRY_WITH_BODY, "Entry of external enum class cannot have a body.")
-        map.put(EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE, "External type extends non-external type.")
+        map.put(
+            EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE,
+            "External type extends non-external type ''{0}''.",
+            FirDiagnosticRenderers.RENDER_TYPE
+        )
         map.put(
             INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING,
             "Using value classes as parameter type or return type of external declarations is experimental."
