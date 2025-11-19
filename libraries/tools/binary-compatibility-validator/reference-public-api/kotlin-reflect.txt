@@ -75,6 +75,8 @@ public abstract interface annotation class kotlin/reflect/jvm/ExperimentalReflec
 }
 
 public final class kotlin/reflect/jvm/KCallablesJvm {
+	public static final fun callByUnboxed (Lkotlin/reflect/KCallable;Ljava/util/Map;)Ljava/lang/Object;
+	public static final fun callSuspendByUnboxed (Lkotlin/reflect/KCallable;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun isAccessible (Lkotlin/reflect/KCallable;)Z
 	public static final fun setAccessible (Lkotlin/reflect/KCallable;Z)V
 }

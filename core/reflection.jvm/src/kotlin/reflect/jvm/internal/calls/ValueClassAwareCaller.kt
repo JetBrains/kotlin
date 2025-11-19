@@ -17,6 +17,28 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.createDefaultType
 import kotlin.reflect.jvm.internal.*
 
+// Invocation mode for value-class-aware calls. Internal, thread-local controlled.
+internal enum class InlineClassCallMode(val acceptUnboxedArgs: Boolean, val returnUnboxed: Boolean) {
+    NORMAL(acceptUnboxedArgs = false, returnUnboxed = false),
+    FULLY_UNBOXED(acceptUnboxedArgs = true, returnUnboxed = true),
+}
+
+internal object InlineClassCallContext {
+    private val threadLocal = ThreadLocal<InlineClassCallMode>()
+
+    inline fun <T> with(mode: InlineClassCallMode, block: () -> T): T {
+        val prev = threadLocal.get()
+        threadLocal.set(mode)
+        try {
+            return block()
+        } finally {
+            if (prev == null) threadLocal.remove() else threadLocal.set(prev)
+        }
+    }
+
+    fun currentMode(): InlineClassCallMode = threadLocal.get() ?: InlineClassCallMode.NORMAL
+}
+
 /**
  * A caller that is used whenever the declaration has value classes in its parameter types or inline class in return type.
  * Each argument of a value class type is unboxed, and the return value (if it's of an inline class type) is boxed.
@@ -127,25 +149,49 @@ internal class ValueClassAwareCaller<out M : Member?>(
         val unbox = data.unboxParameters
         val box = data.box
 
-        val unboxedArguments = Array(args.size) { index ->
-            val arg = args[index]
-            if (index in range) {
-                // Note that arg may be null in case we're calling a $default method, and it's an optional parameter of an inline class type
-                val method = unbox[index]
-                when {
-                    method == null -> arg
-                    arg != null -> method.invoke(arg)
-                    else -> defaultPrimitiveValue(method.returnType)
+        val mode = InlineClassCallContext.currentMode()
+
+        val effectiveArguments: Array<*> = if (mode.acceptUnboxedArgs) {
+            // Treat all value-class value parameters as already unboxed and pass them as-is,
+            // but still unbox the dispatch receiver when needed (index 0 in the effective range),
+            // because frameworks typically pass the boxed receiver instance.
+            if (range.isEmpty()) args else {
+                val firstIndex = range.first
+                if (firstIndex == 0) {
+                    // Potential dispatch receiver position for unbound instance calls
+                    val method = unbox[0]
+                    if (method != null) {
+                        val copy = args.copyOf()
+                        val rec = copy[0]
+                        copy[0] = when {
+                            rec == null -> defaultPrimitiveValue(method.returnType)
+                            else -> method.invoke(rec)
+                        }
+                        copy
+                    } else args
+                } else args
+            }
+        } else {
+            Array(args.size) { index ->
+                val arg = args[index]
+                if (index in range) {
+                    // Note that arg may be null in case we're calling a $default method, and it's an optional parameter of an inline class type
+                    val method = unbox[index]
+                    when {
+                        method == null -> arg
+                        arg != null -> method.invoke(arg)
+                        else -> defaultPrimitiveValue(method.returnType)
+                    }
+                } else {
+                    arg
                 }
-            } else {
-                arg
             }
         }
 
-        val result = caller.call(unboxedArguments)
+        val result = caller.call(effectiveArguments)
         if (result === COROUTINE_SUSPENDED) return result
 
-        return box?.invoke(null, result) ?: result
+        return if (mode.returnUnboxed) result else box?.invoke(null, result) ?: result
     }
 }
 
