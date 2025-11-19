@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.klib
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.util.KlibNativeManifestTransformer
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.KlibMockDSL.Companion.generateRandomMetadata
 import org.jetbrains.kotlin.library.KlibMockDSL.Companion.generateRandomName
@@ -31,8 +32,12 @@ class NativeKlibLoaderWithPropertySubstitutionTest {
     fun `Library is loaded without property substitution`() {
         val klibPath = generateKlib()
 
-        val manifestOfNativeKlib = loadManifestOfNativeKlib(klibPath)
+        val manifestOfNativeKlib = loadManifestOfNativeKlib(klibPath, target = null)
         manifestOfNativeKlib.assertContainsAllProperties(CUSTOM_MANIFEST_PROPERTIES)
+
+        val manifestOfNativeKlib2 = loadManifestOfNativeKlib(klibPath, target = KonanTarget.MACOS_X64) // irrelevant target
+        manifestOfNativeKlib2.assertContainsAllProperties(CUSTOM_MANIFEST_PROPERTIES)
+        assertEquals(manifestOfNativeKlib, manifestOfNativeKlib2)
 
         val manifestOfLegacyNativeKlib = loadManifestOfLegacyNativeKlib(klibPath, target = null)
         manifestOfLegacyNativeKlib.assertContainsAllProperties(CUSTOM_MANIFEST_PROPERTIES)
@@ -47,15 +52,15 @@ class NativeKlibLoaderWithPropertySubstitutionTest {
     fun `Library is loaded with property substitution`() {
         val klibPath = generateKlib()
 
-        val manifestOfNativeKlib = loadManifestOfNativeKlib(klibPath)
-        // TODO: This should be fixed in KT-81411.
-        manifestOfNativeKlib.assertContainsAllProperties(CUSTOM_MANIFEST_PROPERTIES)
+        val manifestOfNativeKlib = loadManifestOfNativeKlib(klibPath, target = KonanTarget.LINUX_ARM64)
+        manifestOfNativeKlib.assertContainsAllProperties(CUSTOM_MANIFEST_PROPERTIES - BASE_SUBSTITUTED_PROPERTY)
+        manifestOfNativeKlib.assertContainsAllProperties(mapOf(BASE_SUBSTITUTED_PROPERTY to RESULTING_SUBSTITUTED_PROPERTY_VALUE))
 
         val manifestOfLegacyNativeKlib = loadManifestOfLegacyNativeKlib(klibPath, target = KonanTarget.LINUX_ARM64)
         manifestOfLegacyNativeKlib.assertContainsAllProperties(CUSTOM_MANIFEST_PROPERTIES - BASE_SUBSTITUTED_PROPERTY)
         manifestOfLegacyNativeKlib.assertContainsAllProperties(mapOf(BASE_SUBSTITUTED_PROPERTY to RESULTING_SUBSTITUTED_PROPERTY_VALUE))
 
-        assertEquals(manifestOfLegacyNativeKlib - BASE_SUBSTITUTED_PROPERTY, manifestOfNativeKlib - BASE_SUBSTITUTED_PROPERTY)
+        assertEquals(manifestOfLegacyNativeKlib, manifestOfNativeKlib)
     }
 
     private fun generateKlib(): String = mockKlib(tmpDir.resolve(generateRandomName(10))) {
@@ -84,8 +89,11 @@ class NativeKlibLoaderWithPropertySubstitutionTest {
         ).manifestProperties
     }
 
-    private fun loadManifestOfNativeKlib(klibPath: String): Properties {
-        val result = KlibLoader { libraryPaths(klibPath) }.load()
+    private fun loadManifestOfNativeKlib(klibPath: String, target: KonanTarget?): Properties {
+        val result = KlibLoader {
+            libraryPaths(klibPath)
+            target?.let { manifestTransformer(KlibNativeManifestTransformer(target)) }
+        }.load()
         assertFalse(result.hasProblems)
         assertEquals(1, result.librariesStdlibFirst.size)
         return result.librariesStdlibFirst[0].manifestProperties

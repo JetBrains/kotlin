@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.KlibLayoutReaderFactory
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
+import org.jetbrains.kotlin.library.loader.KlibManifestTransformer
 import org.jetbrains.kotlin.library.readKonanLibraryVersioning
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 internal class KlibImpl(
     override val location: KlibFile,
     zipFileSystemAccessor: ZipFileSystemAccessor,
+    manifestTransformer: KlibManifestTransformer?,
 ) : KotlinLibrary {
 
     private val components: KlibComponentsCache
@@ -34,7 +36,8 @@ internal class KlibImpl(
 
         // Note: readInPlace() will fail in case there is no manifest file or the file is malformed.
         manifestProperties = layoutReaderFactory.createLayoutReader<KlibManifestComponentLayout>(::KlibManifestComponentLayout)
-            .readInPlace { it.manifestFile.loadProperties() }
+            .readInPlace { layout -> layout.manifestFile.loadProperties() }
+            .let { properties -> manifestTransformer?.transform(properties) ?: properties }
 
         components = KlibComponentsCache(layoutReaderFactory)
     }
