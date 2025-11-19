@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
 import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -44,6 +46,7 @@ internal interface K2ScriptingCompilerEnvironmentInternal : K2ScriptingCompilerE
     val predefinedJavaComponents: FirSharableJavaComponents
     val compilerContext: SharedScriptCompilationContext
     val packagePartProvider: PackagePartProvider
+    val sessionFactoryContext: FirJvmSessionFactory.Context
 }
 
 internal open class K2ScriptingCompilerEnvironmentImpl(
@@ -56,6 +59,7 @@ internal open class K2ScriptingCompilerEnvironmentImpl(
     override val compilerContext: SharedScriptCompilationContext,
     override val packagePartProvider: PackagePartProvider,
     override val sharedLibrarySession: FirSession,
+    override val sessionFactoryContext: FirJvmSessionFactory.Context
 ) : K2ScriptingCompilerEnvironmentInternal
 
 open class ScriptingModuleDataProvider(private val baseName: String, baseLibraryPaths: List<Path>) : ModuleDataProvider() {
@@ -95,6 +99,15 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
         moduleDataHistory.add(newDependenciesModuleData)
         return newDependenciesModuleData to newLibraryPaths
     }
+
+    fun addNewSscriptModuleData(name: Name): FirModuleData =
+        FirSourceModuleData(
+            name,
+            dependencies = moduleDataHistory.filter { it.dependencies.isEmpty() },
+            dependsOnDependencies = emptyList(),
+            friendDependencies = moduleDataHistory.filter { it.dependencies.isNotEmpty() },
+            JvmPlatforms.defaultJvmPlatform,
+        ).also { moduleDataHistory.add(it) }
 }
 
 fun createCompilerState(
@@ -159,6 +172,7 @@ fun createCompilerState(
         messageCollector,
         compilerContext,
         packagePartProvider,
-        sharedLibrarySession
+        sharedLibrarySession,
+        sessionFactoryContext,
     )
 }
