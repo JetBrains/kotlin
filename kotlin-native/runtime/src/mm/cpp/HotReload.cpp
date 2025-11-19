@@ -20,6 +20,7 @@
 
 #include "HotReload.hpp"
 
+#include "KString.h"
 #include "hot/HotReloadServer.hpp"
 #include "hot/HotReloadUtility.hpp"
 #include "hot/MachOParser.hpp"
@@ -37,13 +38,18 @@ void stopTheWorld(GCHandle gcHandle, const char* reason) noexcept;
 void resumeTheWorld(GCHandle gcHandle) noexcept;
 } // namespace kotlin::gc
 
+namespace {
+[[clang::no_destroy]] ObjHeader* gOnSuccess = nullptr;
+[[clang::no_destroy]] std::once_flag gOnSuccessRegOnce;
+}
+
 static uint64_t getCurrentEpoch() {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 ManuallyScoped<HotReloader> globalDataInstance{};
 
-const std::set<std::string_view> NON_RELOADABLE_CLASS_SYMBOLS = {"kclass:kotlin.Annotation"};
+const std::unordered_set<std::string_view> NON_RELOADABLE_CLASS_SYMBOLS = {"kclass:kotlin.Annotation"};
 
 enum class Origin { Global, ShadowStack, ObjRef };
 
@@ -125,12 +131,26 @@ int visitObjectGraph(ObjHeader* startObject, F processingFunction) {
     return updatedObjects;
 }
 
-void Kotlin_native_internal_HotReload_perform(ObjHeader* obj) {
-    AssertThreadState(ThreadState::kRunnable);
+extern "C" {
+    void Kotlin_native_internal_HotReload_perform(ObjHeader* obj, ObjHeader* dylibPathStr) {
+        AssertThreadState(ThreadState::kRunnable);
+        // TODO: segmentation fault :(
+        const auto dylibPath = kotlin::to_string<KStringConversionMode::UNCHECKED>(dylibPathStr);
+        HotReloader::Instance().reload(dylibPath);
+    }
 
-    //const mm::ThreadRegistry& threadRegistry = mm::ThreadRegistry::Instance();
-    //mm::ThreadData* currentThreadData = threadRegistry.CurrentThreadData();
-    //HotReloader::Instance().perform(*currentThreadData);
+    RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_registerSuccessCallback(ObjHeader* obj, ObjHeader* fn) {
+        AssertThreadState(ThreadState::kRunnable);
+
+        std::call_once(gOnSuccessRegOnce, []() noexcept {
+            // Register the storage as a GC root once.
+            InitAndRegisterGlobal(&gOnSuccess, nullptr);
+        });
+
+        // Replace the callback atomically with write barriers.
+        HRLogDebug("Registering success callback: %p", fn);
+        UpdateHeapRef(&gOnSuccess, fn);
+    }
 }
 
 HotReloader::HotReloader() {
@@ -142,37 +162,7 @@ HotReloader::HotReloader() {
             HRLogWarning("Note that only dylib at time is supported right now");
 
             const auto& dylibPath = dylibPaths[0];
-
-            /// 1. Load the new library into memory with `dlopen`
-            if (!_reloader.loadLibraryFromPath(dylibPath)) {
-                HRLogError("Cannot load dylib in memory space!?");
-                return;
-            }
-
-            /// 2. Locate the **new** TypeInfo (@"kclass:kotlin.Function0")
-            auto parsedDynamicLib = dyld::parseDynamicLibrary(dylibPath);
-
-            {
-                // STOP-ZA-WARUDO!
-                CalledFromNativeGuard guard(true);
-
-                HRLogDebug("Switching to K/N state and requestion threads suspension");
-                auto mainGCLock = mm::GlobalData::Instance().gc().gcLock(); // Serialize global State
-
-                auto* currentThreadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-                currentThreadData->suspensionData().requestThreadsSuspension("Hot-Reload");
-
-                CallsCheckerIgnoreGuard allowWait;
-
-                try {
-                    mm::WaitForThreadsSuspension();
-                    perform(*currentThreadData, parsedDynamicLib);
-                    mm::ResumeThreads();
-                } catch (const std::exception& e) {
-                    HRLogError("Hot-reload failed with exception: %s", e.what());
-                    mm::ResumeThreads();
-                }
-            }
+            reload(dylibPath);
         });
     }
 }
@@ -196,12 +186,11 @@ void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlin
         void* symbolAddress = nullptr;
 
         for (auto& handle : _reloader.handles) {
-            HRLogDebug("Checking handle '%s' with epoch %llu", handle.path.c_str(), handle.epoch);
             if (void* symbol = dlsym(handle.handle, mangledFunctionName.data()); symbol != nullptr) {
                 symbolAddress = symbol;
                 break;
             }
-            HRLogWarning("dlerror: %s", dlerror());
+            HRLogWarning("dlerror: %s, symbol: %s not found in handle %p with epoch %llu", dlerror(), mangledFunctionName.data(), handle.handle, handle.epoch);
         }
 
         if (symbolAddress == nullptr) continue;
@@ -213,7 +202,7 @@ void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlin
 
         rebindingsToPerform.push_back(reb);
 
-        HRLogDebug("Function '%s' is going to be rebound", mangledFunctionName.data());
+        HRLogDebug("Function '%s' is going to be rebound at address %p", mangledFunctionName.data(), symbolAddress);
     }
 
     // Perform symbol interposition with the collected function symbols
@@ -224,6 +213,45 @@ void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlin
             HRLogError("Rebinding failed for an unknown reason");
         } else {
             HRLogInfo("Rebinding performed successfully");
+        }
+    }
+}
+
+void HotReloader::reload(const std::string& dylibPath) noexcept {
+    /// 1. Load the new library into memory with `dlopen`
+    if (!_reloader.loadLibraryFromPath(dylibPath)) {
+        HRLogError("Cannot load dylib in memory space!?");
+        return;
+    }
+
+    /// 2. Locate the **new** TypeInfo (@"kclass:kotlin.Function0")
+    auto parsedDynamicLib = dyld::parseDynamicLibrary(dylibPath);
+
+    {
+        // STOP-ZA-WARUDO!
+        CalledFromNativeGuard guard(true);
+
+        HRLogDebug("Switching to K/N state and requestion threads suspension");
+        auto mainGCLock = mm::GlobalData::Instance().gc().gcLock(); // Serialize global State
+
+        auto* currentThreadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+        currentThreadData->suspensionData().requestThreadsSuspension("Hot-Reload");
+
+        CallsCheckerIgnoreGuard allowWait;
+
+        try {
+            mm::WaitForThreadsSuspension();
+            perform(*currentThreadData, parsedDynamicLib);
+            mm::ResumeThreads();
+
+            if (gOnSuccess != nullptr) {
+                // Call into a tiny Kotlin stub to perform `invoke()`.
+                HRLogDebug("Calling Kotlin success-callback: %p", gOnSuccess);
+                Kotlin_native_internal_HotReload_invokeSuccessCallback(gOnSuccess);
+            }
+        } catch (const std::exception& e) {
+            HRLogError("Hot-reload failed with exception: %s", e.what());
+            mm::ResumeThreads();
         }
     }
 }
@@ -365,8 +393,9 @@ std::vector<ObjHeader*> HotReloader::findObjectsToReload(const TypeInfo* oldType
 
     visitObjectGraph(nullptr, [&existingObjects, &oldTypeFqName](ObjHeader* nextObject, auto processObject) {
         // Traverse object references inside class properties
-        traverseObjectFieldsInternal(
-                nextObject, [&](const mm::RefFieldAccessor& fieldAccessor) { processObject(fieldAccessor.direct(), Origin::ObjRef); });
+        traverseObjectFieldsInternal(nextObject, [&](const mm::RefFieldAccessor& fieldAccessor) {
+            processObject(fieldAccessor.direct(), Origin::ObjRef);
+        });
 
         if (nextObject->type_info()->fqName() == oldTypeFqName) {
             HRLogDebug("Instance of class '%s' at '%p', must be reloaded", nextObject->type_info()->fqName().c_str(), nextObject);

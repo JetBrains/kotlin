@@ -39,11 +39,12 @@ public:
     HotReloader();
     static void InitModule() noexcept;
 
-    /// Start checking if a hot-reload request is pending.
-    /// If that's the case, perform class hot-reloading, preserving the existing state.
-    void perform(mm::ThreadData& currentThreadData, const KotlinDynamicLibrary& libraryToLoad) noexcept;
+    void reload(const std::string& dylibPath) noexcept;
 
 private:
+
+    /// Perform class hot-reloading, preserving the existing state.
+    void perform(mm::ThreadData& currentThreadData, const KotlinDynamicLibrary& libraryToLoad) noexcept;
 
     void interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlinDynamicLibrary) const;
 
@@ -70,7 +71,10 @@ private:
 } // namespace kotlin::hot
 
 extern "C" {
-void Kotlin_native_internal_HotReload_perform(ObjHeader*);
+    void Kotlin_native_internal_HotReload_perform(ObjHeader*, ObjHeader* dylibPath);
+    void Kotlin_native_internal_HotReload_invokeSuccessCallback(ObjHeader*);
+
+    RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_registerSuccessCallback(ObjHeader*, ObjHeader* fn);
 }
 
 #endif // HOTRELOAD_HPP
