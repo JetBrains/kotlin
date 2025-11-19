@@ -249,6 +249,17 @@ Modes:
             field = value
         }
 
+    @Argument(
+        value = "-friend-modules",
+        valueDescription = "<path>",
+        description = "Paths to friend modules.",
+    )
+    var friendModules: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
     override fun copyOf(): Freezable = TODO() // copyK2JKlibCompilerArguments(this, K2JKlibCompilerArguments())
 
     override val configurator: CommonCompilerArgumentsConfigurator = K2JKlibCompilerArgumentsConfigurator()
