@@ -38,7 +38,7 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
         if (symbol == null) {
             reporter.reportIfNeeded(
                 CliDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED,
-                "Opt-in requirement marker $fqNameAsString is unresolved. Please make sure it's present in the module dependencies",
+                "Opt-in requirement marker '$fqNameAsString' is unresolved. Make sure it's present in the module dependencies.",
                 context,
             )
             return
@@ -47,7 +47,7 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
         if (!symbol.hasAnnotationWithClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session)) {
             reporter.reportIfNeeded(
                 CliDiagnostics.NOT_AN_OPT_IN_REQUIREMENT_MARKER,
-                "Class $fqNameAsString is not an opt-in requirement marker",
+                "Class '$fqNameAsString' is not an opt-in requirement marker.",
                 context,
             )
             return
@@ -59,7 +59,8 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
         }
         reporter.reportIfNeeded(
             diagnosticFactory,
-            "Opt-in requirement marker $fqNameAsString is deprecated" + deprecationInfo.getMessage(context.session)?.let { ". $it" }.orEmpty(),
+            "Opt-in requirement marker '$fqNameAsString' is deprecated" +
+                    deprecationInfo.getMessage(context.session)?.let { " ($it)" }.orEmpty() + ".",
             context,
         )
     }
