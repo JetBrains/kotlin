@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.UnstableSystemMergeMode
 import org.jetbrains.kotlin.types.model.safeSubstitute
@@ -240,9 +241,10 @@ class PostponedArgumentsAnalyzer(
         val parameters = lambda.parameterTypes.map(::substitute)
         val lambdaReturnType = lambda.returnType
 
+        val forEagerLambdaAnalysis = forOverloadByLambdaReturnType && LanguageFeature.EagerLambdaAnalysis.isEnabled()
         val expectedTypeForReturnArguments = when {
             // Do not use the expected type from the first candidate in the case of ELA
-            forOverloadByLambdaReturnType && LanguageFeature.EagerLambdaAnalysis.isEnabled() -> null
+            forEagerLambdaAnalysis -> null
             c.canBeProper(lambdaReturnType) -> substitute(lambdaReturnType)
 
             // For Unit-coercion
@@ -281,6 +283,7 @@ class PostponedArgumentsAnalyzer(
             lambda,
             candidate,
             results,
+            forEagerLambdaAnalysis,
             ::substitute
         )
         return results
@@ -291,6 +294,7 @@ class PostponedArgumentsAnalyzer(
         lambda: ConeResolvedLambdaAtom,
         candidate: Candidate,
         results: ReturnArgumentsAnalysisResult,
+        forEagerLambdaAnalysis: Boolean,
         substituteAlreadyFixedVariables: (ConeKotlinType) -> ConeKotlinType,
     ) {
         val (returnAtoms, additionalConstraintStorage) = results
@@ -343,6 +347,18 @@ class PostponedArgumentsAnalyzer(
                         expression.resolvedType, returnTypeRef.coneType,
                         ConeLambdaArgumentConstraintPositionWithCoercionToUnit(lambda.anonymousFunction, expression)
                     )
+                }
+
+                if (forEagerLambdaAnalysis) {
+                    check(expression.hasResolvedType || atom is ConeResolutionAtomWithPostponedChild) {
+                        "The only known case lambda return expression is not resolved is when it's a postponed atom, thus it's not Unit"
+                    }
+
+                    if (!expression.hasResolvedType ||
+                        !builder.isSubtypeConstraintCompatible(expression.resolvedType, session.builtinTypes.unitType.coneType)
+                    ) {
+                        candidate.usesCoercionToUnitInLambda = true
+                    }
                 }
                 continue
             }

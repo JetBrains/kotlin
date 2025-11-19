@@ -154,6 +154,7 @@ class FirOverloadByLambdaReturnTypeResolver(
                             else it.makeFreshCopy()
                         }
                     ),
+                    forEagerLambdaAnalysis = false,
                 ) { substitutor.substituteOrSelf(it) }
             }
 

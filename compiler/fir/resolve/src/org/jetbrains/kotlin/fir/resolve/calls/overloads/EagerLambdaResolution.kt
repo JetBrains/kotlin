@@ -97,6 +97,7 @@ fun runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(
                         else it.makeFreshCopy()
                     }
                 ),
+                forEagerLambdaAnalysis = true,
             ) { substitutor.substituteOrSelf(it) }
         }
 
