@@ -1,0 +1,12 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package test
+
+public val explicitInt: suspend () -> kotlin.Int /* from: test.MySuspendAlias<kotlin.Int> */ /* compiled code */
+    public final get() { /* compiled code */ }
+
+public val explicitAny: suspend () -> kotlin.Any? /* from: test.MySuspendAlias<kotlin.Any?> */ /* compiled code */
+    public final get() { /* compiled code */ }
+
+public typealias MySuspendAlias<T> = suspend () -> T
