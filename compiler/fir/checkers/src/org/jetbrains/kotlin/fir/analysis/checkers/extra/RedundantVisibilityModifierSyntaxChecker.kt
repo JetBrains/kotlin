@@ -206,6 +206,16 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
                 // If explicit visibility allows more than implicit one, it's not "effectively hidden by"
                 return false
             }
+            if (effectiveVisibility.privateApi && this == Visibilities.Public && implicitVisibility.normalize() == Visibilities.Protected) {
+                // Corner case from KT-82487. Normally, the previous "return false" should work here, as
+                // Public & Private should be Private, but Protected & Private should be less visible in a general case.
+                // Unfortunately, it can damage exposed visibility diagnostic for cases like 'private fun foo(x: SomeProtected)',
+                // so it seems safer to support here with an additional check.
+                // To support it properly, we need to know effective visibility details like
+                // Private(in class C) or Protected(in class D), with Private(in class C) < Protected(in class C),
+                // but Private(in class C) <> Protected(in class D) -- we can't provide order relation for these two visibilities.
+                return false
+            }
         }
 
         val difference = this.compareTo(containerVisibility) ?: return false

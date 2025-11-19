@@ -13,20 +13,20 @@ abstract class Abs {
 
 class Owner {
     private object Obj : Abs() {
-        <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun foo() {}
+        public override fun foo() {}
     }
 
     private object ObjJava : JavaParent() {
-        <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun foo() {}
+        public override fun foo() {}
     }
 }
 
 private object Obj : Abs() {
-    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun foo() {}
+    public override fun foo() {}
 }
 
 private object ObjJava : JavaParent() {
-    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun foo() {}
+    public override fun foo() {}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nestedClass, objectDeclaration, override */
