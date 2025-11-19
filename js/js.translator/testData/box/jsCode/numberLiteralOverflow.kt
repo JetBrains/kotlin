@@ -14,5 +14,11 @@ fun box(): String {
     val e = js("-037700000000")
     if (e != -4278190080.0) return "fail5: $e"
 
+    val f = js("0o37700000000")
+    if (f != 4278190080.0) return "fail6: $f"
+
+    val g = js("-0o37700000000")
+    if (g != -4278190080.0) return "fail7: $g"
+
     return "OK"
 }

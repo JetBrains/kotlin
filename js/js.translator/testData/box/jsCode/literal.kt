@@ -34,6 +34,11 @@ fun box(): String {
     assertEquals(8, js("010"), "Octal (Int)")
     assertEquals(0, js("00"), "Zero octal (Int)")
 
+    assertEquals(8, js("0o010"), "Octal ES6 (Int)")
+    assertEquals(8, js("0O010"), "Uppercase octal ES6 (Int)")
+    assertEquals(0, js("0o0"), "Zero octal ES6 (Int)")
+    assertEquals(0, js("0O0"), "Zero uppercase octal ES6 (Int)")
+
     assertEquals("10", js("'10'"), "String")
     assertEquals(true, js("true"), "True")
     assertEquals(false, js("false"), "False")

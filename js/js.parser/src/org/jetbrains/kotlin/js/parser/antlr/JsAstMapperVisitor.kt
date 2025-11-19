@@ -1093,8 +1093,8 @@ internal class JsAstMapperVisitor(
             return value.toOctalLiteral().applyLocation(ctx)
         }
 
-        ctx.OctalIntegerLiteral2()?.run {
-            reportError("Octal integer literals are not supported yet", ctx)
+        ctx.OctalIntegerLiteral2()?.let { newOctalLiteral ->
+            return newOctalLiteral.text.toOctalLiteral().applyLocation(ctx)
         }
 
         ctx.DecimalLiteral()?.let { decimalTerminal ->
