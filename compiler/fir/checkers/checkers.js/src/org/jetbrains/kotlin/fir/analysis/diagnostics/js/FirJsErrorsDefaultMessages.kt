@@ -11,14 +11,12 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.DELEGATION_BY_DYNAMIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_ENUM_ENTRY_WITH_BODY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_EXTERNAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_EXTERNAL_INHERITORS_ONLY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_FAKE_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_IS_NOT_ON_ALL_ACCESSORS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_ON_ACCESSOR_AND_PROPERTY
@@ -36,9 +33,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROHIBITED_FOR_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_STATIC_NOT_IN_CLASS_COMPANION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NAMED_COMPANION_IN_EXPORTED_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_STATIC_ON_CONST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_STATIC_ON_NON_PUBLIC_MEMBER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_SYMBOL_ON_TOP_LEVEL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_SYMBOL_PROHIBITED_FOR_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NAMED_COMPANION_IN_EXPORTED_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE
@@ -46,10 +45,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEXER_WRONG_PARAMETER_COUNT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_SETTER_WRONG_RETURN_TYPE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_JS_MODULE_PROHIBITED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_CONSUMABLE_EXPORTED_IDENTIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXPORTABLE_TYPE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE
@@ -60,24 +57,15 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.SPREAD_OPERA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_EXPORTED_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_MULTIPLE_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_SYMBOL_ON_TOP_LEVEL_DECLARATION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_SYMBOL_PROHIBITED_FOR_OVERRIDE
 
 @Suppress("unused")
 object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("FIR") { map ->
         map.put(
-            JS_MODULE_PROHIBITED_ON_VAR,
-            "'@JsModule' and '@JsNonModule' annotations are prohibited for 'var' declarations. Use 'val' instead."
-        )
-        map.put(
             JS_MODULE_PROHIBITED_ON_NON_NATIVE,
             "'@JsModule' and '@JsNonModule' annotations are prohibited for non-external declarations."
         )
-        map.put(
-            NESTED_JS_MODULE_PROHIBITED,
-            "'@JsModule' and '@JsNonModule' cannot appear here since the file is already marked by either '@JsModule' or '@JsNonModule'."
-        )
+
         map.put(
             CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE,
             "When accessing module declarations from UMD, they must be marked with both @JsModule and @JsNonModule."
@@ -106,18 +94,12 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Overriding ''external'' function with optional parameters by declaration from superclass: {0}.",
             FirDiagnosticRenderers.SYMBOL
         )
-        map.put(CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION, "This property can only be used from external declarations.")
         map.put(RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION, "Runtime annotation cannot be put on external declaration.")
         map.put(
             RUNTIME_ANNOTATION_NOT_SUPPORTED,
             "Reflection is not supported in JavaScript target; therefore, annotations cannot be read at runtime."
         )
         map.put(EXTERNAL_ENUM_ENTRY_WITH_BODY, "Entry of external enum class cannot have a body.")
-        map.put(
-            EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE,
-            "External type extends non-external type ''{0}''.",
-            FirDiagnosticRenderers.RENDER_TYPE
-        )
         map.put(
             INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING,
             "Using value classes as parameter type or return type of external declarations is experimental."
@@ -151,11 +133,6 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NATIVE_INDEXER_WRONG_PARAMETER_COUNT, "Expected {0} parameters for native {1}.",
             KtDiagnosticRenderers.TO_STRING,
             CommonRenderers.STRING
-        )
-        map.put(
-            NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
-            "Only external declarations are allowed in files marked with ''{0}'' annotation.",
-            FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(
             JS_EXTERNAL_INHERITORS_ONLY,

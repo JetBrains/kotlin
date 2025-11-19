@@ -1517,20 +1517,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR) { firDiagnostic ->
-        JsModuleProhibitedOnVarImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE) { firDiagnostic ->
         JsModuleProhibitedOnNonNativeImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.NESTED_JS_MODULE_PROHIBITED) { firDiagnostic ->
-        NestedJsModuleProhibitedImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -1692,6 +1680,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirWebCommonErrors.WRONG_JS_QUALIFIER) { firDiagnostic ->
         WrongJsQualifierImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR) { firDiagnostic ->
+        JsModuleProhibitedOnVarImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.NESTED_JS_MODULE_PROHIBITED) { firDiagnostic ->
+        NestedJsModuleProhibitedImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -7266,21 +7266,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJsErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION) { firDiagnostic ->
-        CallToDefinedExternallyFromNonExternalDeclarationImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJsErrors.EXTERNAL_ENUM_ENTRY_WITH_BODY) { firDiagnostic ->
         ExternalEnumEntryWithBodyImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE) { firDiagnostic ->
-        ExternalTypeExtendsNonExternalTypeImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -7305,13 +7292,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirJsErrors.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION) { firDiagnostic ->
         ExtensionFunctionInExternalDeclarationImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE) { firDiagnostic ->
-        NonExternalDeclarationInInappropriateFileImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -7530,6 +7510,26 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirWebCommonErrors.NAMED_COMPANION_IN_EXTERNAL_INTERFACE) { firDiagnostic ->
         NamedCompanionInExternalInterfaceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION) { firDiagnostic ->
+        CallToDefinedExternallyFromNonExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE) { firDiagnostic ->
+        ExternalTypeExtendsNonExternalTypeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE) { firDiagnostic ->
+        NonExternalDeclarationInInappropriateFileImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

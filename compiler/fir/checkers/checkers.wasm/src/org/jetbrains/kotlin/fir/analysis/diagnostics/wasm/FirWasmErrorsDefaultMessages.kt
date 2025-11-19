@@ -10,25 +10,20 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.ASSOCIATED_OBJECT_INVALID_BINDING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JSCODE_INVALID_PARAMETER_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JSCODE_WRONG_CONTEXT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL
-import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JS_MODULE_PROHIBITED_ON_VAR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NESTED_JS_MODULE_PROHIBITED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NESTED_WASM_EXPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NESTED_WASM_IMPORT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_EXPORT_ON_EXTERNAL_DECLARATION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE
@@ -40,7 +35,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WRONG_JS
 @Suppress("unused")
 object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("FIR") { map ->
-        map.put(JS_MODULE_PROHIBITED_ON_VAR, "'@JsModule' annotation is prohibited for 'var' declarations. Use 'val' instead.")
         map.put(JS_MODULE_PROHIBITED_ON_NON_EXTERNAL, "'@JsModule' annotation is prohibited for non-external declarations.")
         map.put(
             NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN,
@@ -48,30 +42,14 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(
-            NESTED_JS_MODULE_PROHIBITED,
-            "'@JsModule' cannot appear here since the file is already marked by either '@JsModule'."
-        )
-
-        map.put(
             NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE,
             "Non-external type extends external type ''{0}''.",
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(
-            EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE,
-            "External type extends non-external type ''{0}''.",
-            FirDiagnosticRenderers.RENDER_TYPE
-        )
-        map.put(CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION, "This property can only be used from external declarations.")
-        map.put(
             WRONG_JS_INTEROP_TYPE,
             "Type ''{0}'' cannot be used as {1}. Only external, primitive, string, and function types are supported in Kotlin/Wasm JS interop.",
             FirDiagnosticRenderers.RENDER_TYPE, TO_STRING
-        )
-        map.put(
-            NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
-            "Only external declarations are allowed in files marked with ''{0}'' annotation.",
-            FirDiagnosticRenderers.RENDER_TYPE
         )
 
         map.put(WRONG_JS_FUN_TARGET, "Only top-level external functions can be implemented using '@JsFun'.")

@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.psi.*
 @OptIn(PrivateForInline::class)
 object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
     val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
-        val JS_MODULE_PROHIBITED_ON_VAR by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val JS_MODULE_PROHIBITED_ON_NON_NATIVE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
-        val NESTED_JS_MODULE_PROHIBITED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<FirBasedSymbol<*>>("callee")
@@ -87,18 +85,11 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<FirNamedFunctionSymbol>("function")
         }
-        val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION by error<PsiElement>()
         val EXTERNAL_ENUM_ENTRY_WITH_BODY by error<KtElement>()
-        val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<ConeKotlinType>("superType")
-        }
         val ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING by warning<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val INLINE_CLASS_IN_EXTERNAL_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION by error<KtElement>(PositioningStrategy.FUNCTION_TYPE_RECEIVER)
-        val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<ConeKotlinType>("type")
-        }
         val JS_EXTERNAL_INHERITORS_ONLY by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<FirClassLikeSymbol<*>>("parent")
             parameter<FirClassLikeSymbol<*>>("kid")

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics.web.common
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
@@ -29,6 +30,8 @@ import org.jetbrains.kotlin.psi.KtParameter
 object FirWebCommonErrors : KtDiagnosticsContainer() {
     // Annotations
     val WRONG_JS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val JS_MODULE_PROHIBITED_ON_VAR: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_VAR", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val NESTED_JS_MODULE_PROHIBITED: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_JS_MODULE_PROHIBITED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
 
     // Externals
     val NESTED_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtExpression::class, getRendererFactory())
@@ -48,6 +51,9 @@ object FirWebCommonErrors : KtDiagnosticsContainer() {
     val EXTERNAL_INTERFACE_AS_CLASS_LITERAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_INTERFACE_AS_CLASS_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NAMED_COMPANION_IN_EXTERNAL_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NAMED_COMPANION_IN_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
 
     // Export
     val NESTED_JS_EXPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_JS_EXPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())

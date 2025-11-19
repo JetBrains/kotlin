@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
-import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
@@ -32,7 +32,7 @@ object FirWasmExternalFileChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         if (targetAnnotations != null) {
             reporter.reportOn(
                 declaration.source,
-                FirWasmErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
+                FirWebCommonErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
                 targetAnnotations.resolvedType
             )
         }

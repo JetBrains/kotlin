@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.util.PrivateForInline
 object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
     val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
         val WRONG_JS_QUALIFIER by error<KtElement>()
+        val JS_MODULE_PROHIBITED_ON_VAR by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val NESTED_JS_MODULE_PROHIBITED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
     }
 
     val EXTERNALS by object : DiagnosticGroup("Externals") {
@@ -45,6 +48,13 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
             parameter<ConeKotlinType>("typeArgument")
         }
         val NAMED_COMPANION_IN_EXTERNAL_INTERFACE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION by error<PsiElement>()
+        val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("superType")
+        }
+        val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("type")
+        }
     }
 
     val EXPORT by object : DiagnosticGroup("Export") {

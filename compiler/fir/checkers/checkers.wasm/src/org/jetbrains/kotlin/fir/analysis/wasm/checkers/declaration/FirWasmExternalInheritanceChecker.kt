@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
@@ -60,7 +61,7 @@ sealed class FirWasmExternalInheritanceChecker(mppKind: MppCheckerKind) : FirCla
 
                 reporter.reportOn(
                     declaration.source,
-                    FirWasmErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE,
+                    FirWebCommonErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE,
                     superTypeRef.coneType
                 )
             }

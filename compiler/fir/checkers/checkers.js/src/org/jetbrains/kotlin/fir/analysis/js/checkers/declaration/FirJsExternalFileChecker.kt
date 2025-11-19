@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.closestNonLocalWith
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
@@ -35,7 +35,7 @@ object FirJsExternalFileChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
 
         reporter.reportOn(
             declaration.source,
-            FirJsErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
+            FirWebCommonErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
             targetAnnotations.resolvedType
         )
     }

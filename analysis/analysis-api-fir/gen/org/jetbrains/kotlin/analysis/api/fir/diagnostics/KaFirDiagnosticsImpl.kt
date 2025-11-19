@@ -1305,20 +1305,10 @@ internal class DslMarkerAppliedToWrongTargetImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.DslMarkerAppliedToWrongTarget
 
-internal class JsModuleProhibitedOnVarImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedOnVar
-
 internal class JsModuleProhibitedOnNonNativeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedOnNonNative
-
-internal class NestedJsModuleProhibitedImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NestedJsModuleProhibited
 
 internal class CallFromUmdMustBeJsModuleAndJsNonModuleImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -1452,6 +1442,16 @@ internal class WrongJsQualifierImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongJsQualifier
+
+internal class JsModuleProhibitedOnVarImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedOnVar
+
+internal class NestedJsModuleProhibitedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NestedJsModuleProhibited
 
 internal class OptInUsageImpl(
     override val optInMarkerClassId: ClassId,
@@ -6114,21 +6114,10 @@ internal class OverridingExternalFunWithOptionalParamsWithFakeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.OverridingExternalFunWithOptionalParamsWithFake
 
-internal class CallToDefinedExternallyFromNonExternalDeclarationImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CallToDefinedExternallyFromNonExternalDeclaration
-
 internal class ExternalEnumEntryWithBodyImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExternalEnumEntryWithBody
-
-internal class ExternalTypeExtendsNonExternalTypeImpl(
-    override val superType: KaType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExternalTypeExtendsNonExternalType
 
 internal class EnumClassInExternalDeclarationWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -6149,12 +6138,6 @@ internal class ExtensionFunctionInExternalDeclarationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExtensionFunctionInExternalDeclaration
-
-internal class NonExternalDeclarationInInappropriateFileImpl(
-    override val type: KaType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonExternalDeclarationInInappropriateFile
 
 internal class JsExternalInheritorsOnlyImpl(
     override val parent: KaClassLikeSymbol,
@@ -6339,6 +6322,23 @@ internal class NamedCompanionInExternalInterfaceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NamedCompanionInExternalInterface
+
+internal class CallToDefinedExternallyFromNonExternalDeclarationImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CallToDefinedExternallyFromNonExternalDeclaration
+
+internal class ExternalTypeExtendsNonExternalTypeImpl(
+    override val superType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExternalTypeExtendsNonExternalType
+
+internal class NonExternalDeclarationInInappropriateFileImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonExternalDeclarationInInappropriateFile
 
 internal class JscodeArgumentNonConstExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,

@@ -1086,16 +1086,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val actualTarget: String
     }
 
-    interface JsModuleProhibitedOnVar : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = JsModuleProhibitedOnVar::class
-    }
-
     interface JsModuleProhibitedOnNonNative : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = JsModuleProhibitedOnNonNative::class
-    }
-
-    interface NestedJsModuleProhibited : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = NestedJsModuleProhibited::class
     }
 
     interface CallFromUmdMustBeJsModuleAndJsNonModule : KaFirDiagnostic<KtElement> {
@@ -1205,6 +1197,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface WrongJsQualifier : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = WrongJsQualifier::class
+    }
+
+    interface JsModuleProhibitedOnVar : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsModuleProhibitedOnVar::class
+    }
+
+    interface NestedJsModuleProhibited : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NestedJsModuleProhibited::class
     }
 
     interface OptInUsage : KaFirDiagnostic<PsiElement> {
@@ -5083,17 +5083,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val function: KaFunctionSymbol
     }
 
-    interface CallToDefinedExternallyFromNonExternalDeclaration : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = CallToDefinedExternallyFromNonExternalDeclaration::class
-    }
-
     interface ExternalEnumEntryWithBody : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExternalEnumEntryWithBody::class
-    }
-
-    interface ExternalTypeExtendsNonExternalType : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = ExternalTypeExtendsNonExternalType::class
-        val superType: KaType
     }
 
     interface EnumClassInExternalDeclarationWarning : KaFirDiagnostic<KtDeclaration> {
@@ -5110,11 +5101,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ExtensionFunctionInExternalDeclaration : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExtensionFunctionInExternalDeclaration::class
-    }
-
-    interface NonExternalDeclarationInInappropriateFile : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = NonExternalDeclarationInInappropriateFile::class
-        val type: KaType
     }
 
     interface JsExternalInheritorsOnly : KaFirDiagnostic<KtDeclaration> {
@@ -5265,6 +5251,20 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface NamedCompanionInExternalInterface : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NamedCompanionInExternalInterface::class
+    }
+
+    interface CallToDefinedExternallyFromNonExternalDeclaration : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = CallToDefinedExternallyFromNonExternalDeclaration::class
+    }
+
+    interface ExternalTypeExtendsNonExternalType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ExternalTypeExtendsNonExternalType::class
+        val superType: KaType
+    }
+
+    interface NonExternalDeclarationInInappropriateFile : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NonExternalDeclarationInInappropriateFile::class
+        val type: KaType
     }
 
     interface JscodeArgumentNonConstExpression : KaFirDiagnostic<KtElement> {

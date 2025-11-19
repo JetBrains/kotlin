@@ -24,17 +24,12 @@ import org.jetbrains.kotlin.psi.KtElement
 @Suppress("IncorrectFormatting")
 object FirWasmErrors : KtDiagnosticsContainer() {
     // Annotations
-    val JS_MODULE_PROHIBITED_ON_VAR: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_VAR", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val JS_MODULE_PROHIBITED_ON_NON_EXTERNAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_NON_EXTERNAL", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
-    val NESTED_JS_MODULE_PROHIBITED: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_JS_MODULE_PROHIBITED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
 
     // Externals
     val NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
-    val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
-    val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val WRONG_JS_INTEROP_TYPE: KtDiagnosticFactory2<ConeKotlinType, String> = KtDiagnosticFactory2("WRONG_JS_INTEROP_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
-    val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
 
     // JsFun
     val WRONG_JS_FUN_TARGET: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_FUN_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

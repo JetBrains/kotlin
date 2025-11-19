@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.closestNonLocal
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isPredefinedObject
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -31,7 +31,7 @@ object FirJsDefinedExternallyCallChecker : FirBasicExpressionChecker(MppCheckerK
         val container = context.closestNonLocal ?: return
 
         if (!container.isNativeObject() && !container.isPredefinedObject()) {
-            reporter.reportOn(expression.source, FirJsErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION)
+            reporter.reportOn(expression.source, FirWebCommonErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION)
         }
     }
 }
