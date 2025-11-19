@@ -33,11 +33,11 @@ fun main() {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x11<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x12<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x21<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x21<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x22<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x31<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x32<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x41<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x41<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x42<!>
 }
 

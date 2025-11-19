@@ -127,14 +127,14 @@ fun testWithStringSuper(box: Inv<CharSequence>) {
 fun testWithCallableString(box: Inv<() -> String>) {
     topLevelOverload({ "hello" }, (box))
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload1<!>(box) { { "hello" } }
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload3<!>(box) { { param: CharSequence -> } }
+    topLevelOverload3(box) <!ARGUMENT_TYPE_MISMATCH!>{ <!RETURN_TYPE_MISMATCH!>{ param: CharSequence -> }<!> }<!>
     box.extensionOverload { "hello" }
 }
 
 fun testWithCallableAny(box: Inv<() -> Any?>) {
     topLevelOverload({ "hello" }, (box))
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload1<!>(box) { { "hello" } }
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload3<!>(box) { { param: CharSequence -> } }
+    topLevelOverload3(box) <!ARGUMENT_TYPE_MISMATCH!>{ <!RETURN_TYPE_MISMATCH!>{ param: CharSequence -> }<!> }<!>
     box.extensionOverload { "hello" }
 }
 

@@ -35,7 +35,7 @@ fun main() {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.String")!>x1<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>x2<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("java.util.function.Consumer<kotlin.String>")!>x3<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("java.util.function.Function<kotlin.String, kotlin.String>")!>x3<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("java.util.function.Consumer<kotlin.String>")!>x4<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("(java.util.concurrent.CompletableFuture<(kotlin.String..kotlin.String?)>..java.util.concurrent.CompletableFuture<(kotlin.String..kotlin.String?)>?)")!>x5<!>
 }
