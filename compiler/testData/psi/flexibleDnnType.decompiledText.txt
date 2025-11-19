@@ -4,5 +4,5 @@
 public abstract class FlexibleDnnType<T> public constructor() {
     public abstract val block: () -> T
 
-    public final val propertyWithFlexibleDnnImplicitType: java.util.function.Function<kotlin.String /* platform type */, T /* platform type */ & Any> /* platform type */ /* compiled code */
+    public final val propertyWithFlexibleDnnImplicitType: java.util.function.Function<kotlin.String /* platform type */, T /* platform type */ & kotlin.Any> /* platform type */ /* compiled code */
 }

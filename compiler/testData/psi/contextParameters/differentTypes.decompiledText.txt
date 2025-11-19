@@ -13,7 +13,7 @@ Foo.class:
       context(@Anno _: @Anno suspend () -> kotlin.Unit, _: suspend kotlin.String.() -> kotlin.Int) public final val contextParameter2: kotlin.Int /* compiled code */
           public final get() { /* compiled code */ }
 
-      context(_: A & Any, _: B & Any) public final val <A, B, C> (C & Any).dnnP: kotlin.Int /* compiled code */
+      context(_: A & kotlin.Any, _: B & kotlin.Any) public final val <A, B, C> (C & kotlin.Any).dnnP: kotlin.Int /* compiled code */
           public final get() { /* compiled code */ }
 
       context(@Anno _: @Anno suspend context(kotlin.Int) () -> kotlin.Unit, _: suspend context(kotlin.String) () -> kotlin.Boolean) public final val contextParameter3: kotlin.Int /* compiled code */
@@ -24,7 +24,7 @@ Foo.class:
 
       context(@Anno _: @Anno suspend () -> kotlin.Unit, _: suspend kotlin.String.() -> kotlin.Int) public final fun contextParameter(): kotlin.Unit { /* compiled code */ }
 
-      context(_: A & Any, _: B & Any) public final fun <A, B, C> (C & Any).dnnF(): kotlin.Unit { /* compiled code */ }
+      context(_: A & kotlin.Any, _: B & kotlin.Any) public final fun <A, B, C> (C & kotlin.Any).dnnF(): kotlin.Unit { /* compiled code */ }
 
       context(@Anno _: @Anno suspend context(kotlin.Int) () -> kotlin.Unit, _: suspend context(kotlin.String) () -> kotlin.Boolean) public final fun contextParameter4(): kotlin.Unit { /* compiled code */ }
   }

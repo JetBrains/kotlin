@@ -16,6 +16,8 @@ FILE[kind=File[packageFqName=<root>]]
                   REFERENCE_EXPRESSION[referencedName=T]
               TYPE_REFERENCE
                 USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Any]
     CLASS_BODY
       PROPERTY[fqName=DefinitelyNotNullTypes.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=x]
@@ -27,6 +29,8 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=T]
             TYPE_REFERENCE
               USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Any]
       FUN[fqName=DefinitelyNotNullTypes.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[public final]
@@ -48,6 +52,8 @@ FILE[kind=File[packageFqName=<root>]]
                             REFERENCE_EXPRESSION[referencedName=T]
                         TYPE_REFERENCE
                           USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=Any]
         TYPE_REFERENCE
           INTERSECTION_TYPE
@@ -56,6 +62,8 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=T]
             TYPE_REFERENCE
               USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Any]
       FUN[fqName=DefinitelyNotNullTypes.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         MODIFIER_LIST[public final]
@@ -70,6 +78,8 @@ FILE[kind=File[packageFqName=<root>]]
                     REFERENCE_EXPRESSION[referencedName=R]
                 TYPE_REFERENCE
                   USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Any]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=action]
             TYPE_REFERENCE
@@ -83,6 +93,8 @@ FILE[kind=File[packageFqName=<root>]]
                             REFERENCE_EXPRESSION[referencedName=R]
                         TYPE_REFERENCE
                           USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=Any]
                 TYPE_REFERENCE
                   INTERSECTION_TYPE
@@ -91,6 +103,8 @@ FILE[kind=File[packageFqName=<root>]]
                         REFERENCE_EXPRESSION[referencedName=R]
                     TYPE_REFERENCE
                       USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
         TYPE_REFERENCE
           INTERSECTION_TYPE
@@ -99,4 +113,6 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=R]
             TYPE_REFERENCE
               USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Any]

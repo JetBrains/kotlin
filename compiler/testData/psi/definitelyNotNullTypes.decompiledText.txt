@@ -1,10 +1,10 @@
 // IntelliJ API Decompiler stub source generated from a class file
 // Implementation of methods is not available
 
-public final class DefinitelyNotNullTypes<T> public constructor(x: T & Any) {
-    private final val x: T & Any /* compiled code */
+public final class DefinitelyNotNullTypes<T> public constructor(x: T & kotlin.Any) {
+    private final val x: T & kotlin.Any /* compiled code */
 
-    public final fun foo(xs: kotlin.collections.List<T & Any>): T & Any { /* compiled code */ }
+    public final fun foo(xs: kotlin.collections.List<T & kotlin.Any>): T & kotlin.Any { /* compiled code */ }
 
-    public final fun <R> bar(x: R & Any, action: (R & Any) -> R & Any): R & Any { /* compiled code */ }
+    public final fun <R> bar(x: R & kotlin.Any, action: (R & kotlin.Any) -> R & kotlin.Any): R & kotlin.Any { /* compiled code */ }
 }

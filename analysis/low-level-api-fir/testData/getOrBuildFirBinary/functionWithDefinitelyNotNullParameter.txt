@@ -1,6 +1,6 @@
 KT element: KtNamedFunction
 KT element text:
-public final fun <T> functionWithTAndAnyValue(otherVal: T & Any): kotlin.Unit { /* compiled code */ }
+public final fun <T> functionWithTAndAnyValue(otherVal: T & kotlin.Any): kotlin.Unit { /* compiled code */ }
 FIR element: FirNamedFunctionImpl
 FIR source kind: KtRealSourceElementKind
 

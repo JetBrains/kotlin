@@ -46,4 +46,6 @@ FILE[kind=File[packageFqName=<root>]]
                         REFERENCE_EXPRESSION[referencedName=T]
                     TYPE_REFERENCE
                       USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]

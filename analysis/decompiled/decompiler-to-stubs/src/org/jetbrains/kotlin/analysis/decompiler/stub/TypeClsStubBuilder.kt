@@ -90,14 +90,9 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val intersectionType = KotlinPlaceHolderStubImpl<KtIntersectionType>(parent, KtStubElementTypes.INTERSECTION_TYPE)
         val leftReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
         createStubForTypeName(classId, leftReference, upperBoundFun = { upperBoundType })
-        val rightReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
-        val userType = KotlinUserTypeStubImpl(
-            parent = rightReference,
-            upperBound = null,
-            abbreviatedType = null,
-        )
 
-        KotlinNameReferenceExpressionStubImpl(userType, StandardNames.FqNames.any.shortName().ref(), true)
+        val rightReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
+        createStubForTypeName(StandardClassIds.Any, rightReference)
     }
 
     private fun createClassReferenceTypeStub(

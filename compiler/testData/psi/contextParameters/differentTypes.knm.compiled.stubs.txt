@@ -98,6 +98,8 @@
                         REFERENCE_EXPRESSION[referencedName=A]
                     TYPE_REFERENCE
                       USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
@@ -107,6 +109,8 @@
                         REFERENCE_EXPRESSION[referencedName=B]
                     TYPE_REFERENCE
                       USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, name=A]
@@ -119,6 +123,8 @@
                   REFERENCE_EXPRESSION[referencedName=C]
               TYPE_REFERENCE
                 USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Any]
           TYPE_REFERENCE
             USER_TYPE
@@ -272,6 +278,8 @@
                         REFERENCE_EXPRESSION[referencedName=A]
                     TYPE_REFERENCE
                       USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
@@ -281,6 +289,8 @@
                         REFERENCE_EXPRESSION[referencedName=B]
                     TYPE_REFERENCE
                       USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, name=A]
@@ -293,6 +303,8 @@
                   REFERENCE_EXPRESSION[referencedName=C]
               TYPE_REFERENCE
                 USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Any]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
