@@ -1,7 +1,6 @@
 val resolvedBootstrap = configurations.resolvable("kotlinBuildToolsApiImplBootstrapClasspath") {
-    dependencies.addLater(providers.provider {
-        project.dependencies.create("org.jetbrains.kotlin:kotlin-build-tools-impl:${bootstrapKotlinVersion}")
-    })
+    val dependency: Dependency = project.dependencies.create("org.jetbrains.kotlin:kotlin-build-tools-impl:${bootstrapKotlinVersion}")
+    dependencies.addLater(providers.provider { dependency })
 }
 
 configurations.consumable("buildToolsApiImplElements") {

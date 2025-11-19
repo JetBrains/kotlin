@@ -61,7 +61,7 @@ private val SanitizerKind?.description
  * Similar to [NamedDomainObjectContainer.maybeCreate] but with [action] argument that will be applied only if
  * an object is being created.
  */
-private fun <T> NamedDomainObjectContainer<T>.getOrCreate(name: String, action: Action<in T>): T = try {
+private fun <T : Any> NamedDomainObjectContainer<T>.getOrCreate(name: String, action: Action<in T>): T = try {
     this.create(name, action)
 } catch (e: InvalidUserDataException) {
     this.getByName(name)

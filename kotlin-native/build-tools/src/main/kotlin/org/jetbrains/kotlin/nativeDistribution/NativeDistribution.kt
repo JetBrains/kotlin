@@ -189,7 +189,7 @@ value class NativeDistributionProperty internal constructor(private val director
     private inline fun <T : Any?> fwdNullable(value: NativeDistribution?, f: DirectoryProperty.(Directory?) -> T) = directoryProperty.f(value?.root)
 
     private inline fun <T : Any?> fwd(value: NativeDistribution, f: DirectoryProperty.(Directory) -> T) = directoryProperty.f(value.root)
-    private inline fun <T : Any?> fwd(provider: Provider<out NativeDistribution?>, f: DirectoryProperty.(Provider<out Directory?>) -> T) = directoryProperty.f(provider.map { it.root })
+    private inline fun <T : Any?> fwd(provider: Provider<out NativeDistribution>, f: DirectoryProperty.(Provider<out Directory>) -> T) = directoryProperty.f(provider.map { it.root })
 
     private fun ret(value: Directory): NativeDistribution = NativeDistribution(value)
     private fun retNullable(value: Directory?): NativeDistribution? = value?.let(::NativeDistribution)
@@ -198,12 +198,12 @@ value class NativeDistributionProperty internal constructor(private val director
     private fun ret(property: DirectoryProperty): NativeDistributionProperty = NativeDistributionProperty(property)
 
     override fun set(value: NativeDistribution?) = fwdNullable(value, DirectoryProperty::set)
-    override fun set(provider: Provider<out NativeDistribution?>) = fwd(provider, DirectoryProperty::set)
+    override fun set(provider: Provider<out NativeDistribution>) = fwd(provider, DirectoryProperty::set)
     override fun value(value: NativeDistribution?) = ret(fwdNullable(value, DirectoryProperty::value))
-    override fun value(provider: Provider<out NativeDistribution?>) = ret(fwd(provider, DirectoryProperty::value))
+    override fun value(provider: Provider<out NativeDistribution>) = ret(fwd(provider, DirectoryProperty::value))
     override fun unset() = ret(fwd(DirectoryProperty::unset))
     override fun convention(value: NativeDistribution?) = ret(fwdNullable(value, DirectoryProperty::convention))
-    override fun convention(provider: Provider<out NativeDistribution?>) = ret(fwd(provider, DirectoryProperty::convention))
+    override fun convention(provider: Provider<out NativeDistribution>) = ret(fwd(provider, DirectoryProperty::convention))
     override fun unsetConvention() = ret(fwd(DirectoryProperty::unsetConvention))
     override fun finalizeValue() = fwd(DirectoryProperty::finalizeValue)
     override fun get() = ret(fwd(DirectoryProperty::get))
@@ -211,25 +211,25 @@ value class NativeDistributionProperty internal constructor(private val director
     override fun getOrElse(defaultValue: NativeDistribution) = ret(fwd(defaultValue, DirectoryProperty::getOrElse))
     override fun isPresent(): Boolean = fwd(DirectoryProperty::isPresent)
     override fun orElse(value: NativeDistribution) = ret(fwd(value, DirectoryProperty::orElse))
-    override fun orElse(provider: Provider<out NativeDistribution?>) = ret(fwd(provider, DirectoryProperty::orElse))
+    override fun orElse(provider: Provider<out NativeDistribution>) = ret(fwd(provider, DirectoryProperty::orElse))
     override fun finalizeValueOnRead() = fwd(DirectoryProperty::finalizeValueOnRead)
     override fun disallowChanges() = fwd(DirectoryProperty::disallowChanges)
     override fun disallowUnsafeRead() = fwd(DirectoryProperty::disallowUnsafeRead)
 
-    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION") // TODO Drop this when updating to Gradle 9.0
     override fun forUseAtConfigurationTime() = ret(fwd(DirectoryProperty::forUseAtConfigurationTime))
 
-    override fun <S : Any?> map(transformer: Transformer<out S?, in NativeDistribution>): Provider<S> = directoryProperty.map {
+    override fun <S : Any> map(transformer: Transformer<out S?, in NativeDistribution>): Provider<S> = directoryProperty.map {
         transformer.transform(NativeDistribution(it))
     }
 
     override fun filter(spec: Spec<in NativeDistribution>): Provider<NativeDistribution> = ret(directoryProperty.filter { spec.isSatisfiedBy(NativeDistribution(it)) })
 
-    override fun <S : Any?> flatMap(transformer: Transformer<out Provider<out S?>?, in NativeDistribution>): Provider<S> = directoryProperty.flatMap {
+    override fun <S : Any> flatMap(transformer: Transformer<out Provider<out S>?, in NativeDistribution>): Provider<S> = directoryProperty.flatMap {
         transformer.transform(NativeDistribution(it))
     }
 
-    override fun <U : Any?, R : Any?> zip(right: Provider<U?>, combiner: BiFunction<in NativeDistribution, in U, out R?>): Provider<R> = directoryProperty.zip<U, R>(right) { lhs, rhs -> combiner.apply(ret(lhs), rhs) }
+    override fun <U : Any, R : Any> zip(right: Provider<U>, combiner: BiFunction<in NativeDistribution, in U, out R?>): Provider<R> = directoryProperty.zip<U, R>(right) { lhs, rhs -> combiner.apply(ret(lhs), rhs) }
 }
 
 /**

@@ -12,7 +12,8 @@ import org.gradle.tooling.internal.adapter.ProtocolToModelAdapter
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-inline fun <reified T> createProxyInstance(obj: Any): T? {
+@Suppress("RedundantNullableReturnType")
+inline fun <reified T : Any> createProxyInstance(obj: Any?): T? {
     return ProtocolToModelAdapter().adapt(T::class.java, obj)
 }
 

@@ -19,7 +19,7 @@ import kotlin.io.path.pathString
  * buildScriptReturn injections execute in the FlowAction build finish callback. Unfortunately Gradle prohibits resolving configurations
  * there, but we can use this workaround to suppress the check
  */
-fun <T> Project.ignoreAccessViolations(code: () -> (T)) = (project.gradle as GradleInternal).services.get(
+fun <T : Any> Project.ignoreAccessViolations(code: () -> (T)) = (project.gradle as GradleInternal).services.get(
     ProjectStateRegistry::class.java
 ).allowUncontrolledAccessToAnyProject { code() }
 
