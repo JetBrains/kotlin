@@ -120,7 +120,7 @@ abstract class WasmBoxRunnerBase(
             }
 
 
-            for (mjsFile: AdditionalFile in collectedJsArtifacts.mjsFiles) {
+            for (mjsFile: WasmArtifactsCollector.AdditionalFile in collectedJsArtifacts.mjsFiles) {
                 println(" ------ $mark External ESM file://$outputPath/${mjsFile.name}")
             }
         }

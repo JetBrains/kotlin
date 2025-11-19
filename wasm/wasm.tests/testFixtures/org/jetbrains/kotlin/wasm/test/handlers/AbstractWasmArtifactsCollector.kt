@@ -16,93 +16,13 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
-abstract class AbstractWasmArtifactsCollector(testServices: TestServices) : WasmBinaryArtifactHandler(testServices) {
+abstract class AbstractWasmArtifactsCollector(testServices: TestServices) :
+    WasmBinaryArtifactHandler(testServices), WasmArtifactsCollector {
     val modulesToArtifact = mutableMapOf<TestModule, BinaryArtifacts.Wasm>()
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
         modulesToArtifact[module] = info
     }
-
-    protected fun collectJsArtifacts(originalFile: File): JsArtifacts {
-        val jsFiles = mutableListOf<AdditionalFile>()
-        val mjsFiles = mutableListOf<AdditionalFile>()
-        var entryMjs: String? = "test.mjs"
-
-        testServices.moduleStructure.modules.forEach { m ->
-            m.files.forEach { file: TestFile ->
-                val name = file.name
-                when {
-                    name.endsWith(".js") ->
-                        jsFiles += AdditionalFile(file.name, file.originalContent)
-
-                    name.endsWith(".mjs") -> {
-                        mjsFiles += AdditionalFile(file.name, file.originalContent)
-                        if (name == "entry.mjs") {
-                            entryMjs = name
-                        }
-                    }
-                }
-            }
-        }
-
-        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_EXTENSION)
-            .takeIf { it.exists() }
-            ?.let {
-                jsFiles += AdditionalFile(it.name, it.readText())
-            }
-
-        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_MODULE_EXTENSION)
-            .takeIf { it.exists() }
-            ?.let {
-                mjsFiles += AdditionalFile(it.name, it.readText())
-            }
-
-
-        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main${JavaScript.DOT_EXTENSION}")
-            .takeIf { it.exists() }
-            ?.let {
-                entryMjs = it.name
-                mjsFiles += AdditionalFile(it.name, it.readText())
-            }
-
-        return JsArtifacts(entryMjs, jsFiles, mjsFiles)
-    }
-
-    protected fun JsArtifacts.saveJsArtifacts(baseDir: File): SavedJsArtifacts {
-        val mjsFilePaths = mutableListOf<String>()
-        for (mjsFile: AdditionalFile in mjsFiles) {
-            val file = File(baseDir, mjsFile.name)
-            file.writeText(mjsFile.content)
-            mjsFilePaths += file.canonicalPath
-        }
-
-        val jsFilePaths = mutableListOf<String>()
-        for (jsFile: AdditionalFile in jsFiles) {
-            val file = File(baseDir, jsFile.name)
-            file.writeText(jsFile.content)
-            jsFilePaths += file.canonicalPath
-        }
-
-        return SavedJsArtifacts(jsFilePaths, mjsFilePaths)
-    }
-
-    protected fun processExceptions(exceptions: List<Throwable>) {
-        when (exceptions.size) {
-            0 -> {} // Everything OK
-            1 -> {
-                throw exceptions.single()
-            }
-            else -> {
-                throw AssertionError("Failed with several exceptions. Look at suppressed exceptions below.").apply {
-                    exceptions.forEach { addSuppressed(it) }
-                }
-            }
-        }
-    }
-
-    protected class AdditionalFile(val name: String, val content: String)
-    protected class JsArtifacts(val entryPath: String?, val jsFiles: List<AdditionalFile>, val mjsFiles: List<AdditionalFile>)
-    protected data class SavedJsArtifacts(val jsFilePaths: List<String>, val mjsFilePaths: List<String>)
 }
 
 fun TestServices.getWasmTestOutputDirectory(): File {
