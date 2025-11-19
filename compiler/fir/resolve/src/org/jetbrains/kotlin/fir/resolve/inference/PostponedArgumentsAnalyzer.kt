@@ -344,7 +344,7 @@ class PostponedArgumentsAnalyzer(
         lambda: ConeResolvedLambdaAtom,
         candidate: Candidate,
         results: ReturnArgumentsAnalysisResult,
-        substituteAlreadyFixedVariables: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis(),
+        substituteAlreadyFixedVariables: (ConeKotlinType) -> ConeKotlinType,
     ) {
         val (returnAtoms, additionalConstraintStorage) = results
         val returnArguments = returnAtoms.map { it.expression }
@@ -470,12 +470,6 @@ class PostponedArgumentsAnalyzer(
                 )
             }
         }
-    }
-
-    private fun PostponedArgumentsAnalyzerContext.createSubstituteFunctorForLambdaAnalysis(): (ConeKotlinType) -> ConeKotlinType {
-        val stubsForPostponedVariables = bindingStubsForPostponedVariables()
-        val currentSubstitutor = buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(this) })
-        return { currentSubstitutor.safeSubstitute(this, it).asCone() }
     }
 }
 
