@@ -12,18 +12,18 @@ import org.jetbrains.kotlin.native.FirOutput
 import org.jetbrains.kotlin.native.FirSerializerInput
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.native.fir2IrSerializer
 import org.jetbrains.kotlin.native.firSerializer
 
-internal val FirSerializerPhase: NamedCompilerPhase<PhaseContext, FirOutput, SerializerOutput<KonanLibrary>?> = createSimpleNamedCompilerPhase(
+internal val FirSerializerPhase: NamedCompilerPhase<PhaseContext, FirOutput, SerializerOutput<KotlinLibrary>?> = createSimpleNamedCompilerPhase(
         "FirSerializer",
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, listOf()) }
 ) { context: PhaseContext, input: FirOutput ->
     context.firSerializer(input)
 }
 
-internal val Fir2IrSerializerPhase: NamedCompilerPhase<PhaseContext, FirSerializerInput, SerializerOutput<KonanLibrary>> = createSimpleNamedCompilerPhase(
+internal val Fir2IrSerializerPhase: NamedCompilerPhase<PhaseContext, FirSerializerInput, SerializerOutput<KotlinLibrary>> = createSimpleNamedCompilerPhase(
         "Fir2IrSerializer",
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, listOf()) }
 ) { context: PhaseContext, input: FirSerializerInput ->

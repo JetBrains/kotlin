@@ -6,6 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
-import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 
-typealias SerializerOutput = SerializerOutput<KonanLibrary>
+typealias SerializerOutput = SerializerOutput<KotlinLibrary>

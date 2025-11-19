@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
-import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
@@ -131,8 +131,8 @@ private abstract class BaseInteropIrTransformer(
             override val symbols get() = context.symbols
             override val typeSystem: IrTypeSystemContext get() = context.typeSystem
 
-            val klib: KonanLibrary? get() {
-                return (element as? IrCall)?.symbol?.owner?.konanLibrary as? KonanLibrary
+            val klib: KotlinLibrary? get() {
+                return (element as? IrCall)?.symbol?.owner?.konanLibrary
             }
 
             override val language: String

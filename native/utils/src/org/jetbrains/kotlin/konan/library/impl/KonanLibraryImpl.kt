@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.*
 import java.nio.file.Paths
 
-open class TargetedLibraryImpl(
+private class TargetedLibraryImpl(
     private val access: TargetedLibraryAccess<TargetedKotlinLibraryLayout>,
     private val base: BaseKotlinLibrary
-) : TargetedLibrary, BaseKotlinLibrary by base {
+) : BaseKotlinLibrary by base {
 
     private val target: KonanTarget? get() = access.target
 
@@ -40,13 +40,12 @@ open class TargetedLibraryImpl(
     }
 }
 
-class KonanLibraryImpl(
+private class KonanLibraryImpl(
     override val location: File,
     zipFileSystemAccessor: ZipFileSystemAccessor,
     targeted: TargetedLibraryImpl,
-) : KonanLibrary,
-    BaseKotlinLibrary by targeted,
-    TargetedLibrary by targeted {
+) : KotlinLibrary,
+    BaseKotlinLibrary by targeted {
 
     private val components = KlibComponentsCache(
         layoutReaderFactory = KlibLayoutReaderFactory(
@@ -65,7 +64,7 @@ fun createKonanLibrary(
     target: KonanTarget? = null,
     isDefault: Boolean = false,
     zipFileSystemAccessor: ZipFileSystemAccessor? = null,
-): KonanLibrary {
+): KotlinLibrary {
     val nonNullZipFileSystemAccessor = zipFileSystemAccessor ?: ZipFileSystemInPlaceAccessor
 
     // KT-58979: The following access classes need normalized klib path to correctly provide symbols from resolved klibs
@@ -84,7 +83,7 @@ fun createKonanLibraryComponents(
     target: KonanTarget? = null,
     isDefault: Boolean = true,
     zipFileSystemAccessor: ZipFileSystemAccessor? = null,
-) : List<KonanLibrary> {
+) : List<KotlinLibrary> {
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null)
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     return base.componentList.map {
