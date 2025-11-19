@@ -2,8 +2,8 @@
 // ISSUE: KT-71704
 
 fun testIt(l: List<Int>) {
-    l.<!OVERLOAD_RESOLUTION_AMBIGUITY!>flatMap<!> {
-        f -> {}
+    l.<!CANNOT_INFER_PARAMETER_TYPE!>flatMap<!> {
+        f -> <!RETURN_TYPE_MISMATCH!>{}<!>
     }
 }
 

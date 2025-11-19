@@ -8,35 +8,24 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.isEnabled
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.lookupTracker
-import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
-import org.jetbrains.kotlin.fir.resolve.companionObjectIfDefinedOperatorOf
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
-import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
-import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
-import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
-import org.jetbrains.kotlin.fir.resolve.runCollectionLiteralResolution
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.UnstableSystemMergeMode
-import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
 
 data class ReturnArgumentsAnalysisResult(
@@ -282,6 +271,7 @@ class PostponedArgumentsAnalyzer(
         val lambdaReturnType = lambda.returnType
 
         val expectedTypeForReturnArguments = when {
+            forOverloadByLambdaReturnType -> null
             c.canBeProper(lambdaReturnType) -> substitute(lambdaReturnType)
 
             // For Unit-coercion
@@ -325,6 +315,7 @@ class PostponedArgumentsAnalyzer(
         return results
     }
 
+
     fun applyResultsOfAnalyzedLambdaToCandidateSystem(
         c: PostponedArgumentsAnalyzerContext,
         lambda: ConeResolvedLambdaAtom,
@@ -351,8 +342,9 @@ class PostponedArgumentsAnalyzer(
                 lambda.anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.ImplicitFunctionReturnType)
             )
         }
+        val isExpectedReturnTypeUnit = returnTypeRef.coneType.isUnitOrFlexibleUnit
         val isLastExpressionCoercedToUnit =
-            returnTypeRef.coneType.isUnitOrFlexibleUnit || lambda.anonymousFunction.lambdaWithExplicitEmptyReturns(returnArguments)
+            isExpectedReturnTypeUnit || lambda.anonymousFunction.lambdaWithExplicitEmptyReturns(returnArguments)
 
         for (atom in returnAtoms) {
             val expression = atom.expression
@@ -372,16 +364,20 @@ class PostponedArgumentsAnalyzer(
                 // That "if" is necessary because otherwise we would force a lambda return type
                 // to be inferred from completed last expression.
                 // See `test1` at testData/diagnostics/tests/inference/coercionToUnit/afterBareReturn.kt
-                if (haveSubsystem) {
+                if (haveSubsystem || isExpectedReturnTypeUnit) {
                     // We don't force it because of the cases like
                     // buildMap {
                     //    put("a", 1) // While `put` returns V, we should not enforce the latter to be a subtype of Unit
                     // }
                     // See KT-63602 for details.
-                    builder.addSubtypeConstraintIfCompatible(
-                        expression.resolvedType, returnTypeRef.coneType,
-                        ConeLambdaArgumentConstraintPositionWithCoercionToUnit(lambda.anonymousFunction, expression)
-                    )
+                    @OptIn(UnresolvedExpressionTypeAccess::class)
+                    if (expression.coneTypeOrNull == null || !builder.addSubtypeConstraintIfCompatible(
+                            expression.resolvedType, returnTypeRef.coneType,
+                            ConeLambdaArgumentConstraintPositionWithCoercionToUnit(lambda.anonymousFunction, expression)
+                        )
+                    ) {
+                        candidate.usesCoercionToUnitInLambda = true
+                    }
                 }
                 continue
             }
