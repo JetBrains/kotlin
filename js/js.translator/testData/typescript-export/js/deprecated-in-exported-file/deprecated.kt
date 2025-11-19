@@ -14,7 +14,7 @@ package foo
 
 
 @Deprecated("message 1")
-fun foo() {}
+fun funktion() {}
 
 
 @Deprecated("message 2")
@@ -57,4 +57,12 @@ object TestObject {
     fun bar() {}
     @Deprecated("message 11")
     val baz: String = "Test"
+}
+
+
+@Deprecated("Whole enum")
+enum class TestEnum {
+    @Deprecated("Only first entry")
+    A,
+    B,
 }

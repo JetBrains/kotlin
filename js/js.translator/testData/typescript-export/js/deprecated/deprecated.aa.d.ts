@@ -4,7 +4,8 @@ declare namespace JS_TESTS {
 
     namespace foo {
         const bar: string;
-        function foo(): void;
+        function funktion(): void;
+        /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */

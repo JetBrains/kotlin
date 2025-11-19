@@ -205,7 +205,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             isMember = true,
             isStatic = true,
             isProtected = parentClass.visibility == DescriptorVisibilities.PROTECTED,
-        )
+        ).withAttributesFor(irEnumEntry)
     }
 
     private fun classExportability(klass: IrClass): Exportability {
