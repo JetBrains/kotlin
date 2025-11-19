@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.zipDirAs
-import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_BITCODE_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.components.KlibNativeConstants.KLIB_TARGETS_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesConstants.KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
@@ -105,7 +105,7 @@ class NonExistingNativeDirectoriesInKlibTest {
         return klibDir
     }
 
-    private fun KFile.readLibrary(): KonanLibrary =
+    private fun KFile.readLibrary(): KotlinLibrary =
         createKonanLibrary(libraryFilePossiblyDenormalized = this, component = KLIB_DEFAULT_COMPONENT_NAME, target = TEST_TARGET)
 
     private fun KFile.compressKlib(): KFile {

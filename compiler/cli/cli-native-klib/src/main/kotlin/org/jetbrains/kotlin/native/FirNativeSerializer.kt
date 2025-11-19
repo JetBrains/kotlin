@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 
 fun PhaseContext.firSerializer(input: FirOutput): SerializerOutput? = when (input) {
@@ -63,7 +62,7 @@ private fun PhaseContext.firSerializerBase(
                 produceHeaderKlib = produceHeaderKlib,
             ),
             cleanFiles = emptyList(),
-            dependencies = usedResolvedLibraries?.map { it.library as KonanLibrary }.orEmpty(),
+            dependencies = usedResolvedLibraries?.map { it.library }.orEmpty(),
             createModuleSerializer = { irDiagnosticReporter ->
                 KonanIrModuleSerializer(
                     settings = IrSerializationSettings(

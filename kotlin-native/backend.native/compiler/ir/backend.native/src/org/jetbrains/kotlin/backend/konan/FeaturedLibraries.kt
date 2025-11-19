@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
@@ -21,7 +21,7 @@ internal fun ModuleDescriptor.getExportedDependencies(konanConfig: KonanConfig):
 internal fun ModuleDescriptor.getIncludedLibraryDescriptors(konanConfig: KonanConfig): List<ModuleDescriptor> =
         getDescriptorsFromLibraries(konanConfig.includedLibraries.toSet())
 
-private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KonanLibrary>) =
+private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KotlinLibrary>) =
     allDependencyModules.filter {
         when (val origin = it.klibModuleOrigin) {
             CurrentKlibModuleOrigin, SyntheticModulesOrigin -> false
@@ -32,9 +32,9 @@ private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KonanLib
 internal fun getExportedLibraries(
     configuration: CompilerConfiguration,
     resolvedLibraries: KotlinLibraryResolveResult,
-    resolver: SearchPathResolver<KonanLibrary>,
+    resolver: SearchPathResolver<KotlinLibrary>,
     report: Boolean
-): List<KonanLibrary> = getFeaturedLibraries(
+): List<KotlinLibrary> = getFeaturedLibraries(
         configuration.getList(KonanConfigKeys.EXPORTED_LIBRARIES),
         resolvedLibraries,
         resolver,
@@ -46,7 +46,7 @@ internal fun getIncludedLibraries(
     includedLibraryFiles: List<File>,
     configuration: CompilerConfiguration,
     resolvedLibraries: KotlinLibraryResolveResult
-): List<KonanLibrary> = getFeaturedLibraries(
+): List<KotlinLibrary> = getFeaturedLibraries(
         includedLibraryFiles.toSet(),
         resolvedLibraries,
         FeaturedLibrariesReporter.forIncludedLibraries(configuration),
@@ -55,10 +55,10 @@ internal fun getIncludedLibraries(
 
 private sealed class FeaturedLibrariesReporter {
 
-    abstract fun reportIllegalKind(library: KonanLibrary)
-    abstract fun reportNotIncludedLibraries(includedLibraries: List<KonanLibrary>, remainingFeaturedLibraries: Set<File>)
+    abstract fun reportIllegalKind(library: KotlinLibrary)
+    abstract fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<File>)
 
-    protected val KonanLibrary.reportedKind: String
+    protected val KotlinLibrary.reportedKind: String
         get() = when {
             isCInteropLibrary() -> "Interop"
             isDefault -> "Default"
@@ -66,22 +66,22 @@ private sealed class FeaturedLibrariesReporter {
         }
 
     object Silent: FeaturedLibrariesReporter() {
-        override fun reportIllegalKind(library: KonanLibrary) {}
-        override fun reportNotIncludedLibraries(includedLibraries: List<KonanLibrary>, remainingFeaturedLibraries: Set<File>) {}
+        override fun reportIllegalKind(library: KotlinLibrary) {}
+        override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<File>) {}
     }
 
     abstract class BaseReporter(val configuration: CompilerConfiguration) : FeaturedLibrariesReporter() {
         protected abstract fun illegalKindMessage(kind: String, libraryName: String): String
         protected abstract fun notIncludedLibraryMessageTitle(): String
 
-        override fun reportIllegalKind(library: KonanLibrary) {
+        override fun reportIllegalKind(library: KotlinLibrary) {
             configuration.report(
                     CompilerMessageSeverity.STRONG_WARNING,
                     illegalKindMessage(library.reportedKind, library.libraryName)
             )
         }
 
-        override fun reportNotIncludedLibraries(includedLibraries: List<KonanLibrary>, remainingFeaturedLibraries: Set<File>) {
+        override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<File>) {
             val message = buildString {
                 appendLine(notIncludedLibraryMessageTitle())
                 remainingFeaturedLibraries.forEach { appendLine(it) }
@@ -95,13 +95,13 @@ private sealed class FeaturedLibrariesReporter {
     }
 
     private class IncludedLibrariesReporter(val configuration: CompilerConfiguration) : FeaturedLibrariesReporter() {
-        override fun reportIllegalKind(library: KonanLibrary) = with(library) {
+        override fun reportIllegalKind(library: KotlinLibrary) = with(library) {
             val message = "$reportedKind library $libraryName cannot be passed with -Xinclude " +
                     "(library path: ${libraryFile.absolutePath})"
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
         }
 
-        override fun reportNotIncludedLibraries(includedLibraries: List<KonanLibrary>, remainingFeaturedLibraries: Set<File>) {
+        override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<File>) {
             error("An included library is not found among resolved libraries")
         }
     }
@@ -135,7 +135,7 @@ private sealed class FeaturedLibrariesReporter {
 private fun getFeaturedLibraries(
         featuredLibraries: List<String>,
         resolvedLibraries: KotlinLibraryResolveResult,
-        resolver: SearchPathResolver<KonanLibrary>,
+        resolver: SearchPathResolver<KotlinLibrary>,
         reporter: FeaturedLibrariesReporter,
         allowDefaultLibs: Boolean
 ) = getFeaturedLibraries(
@@ -150,11 +150,11 @@ private fun getFeaturedLibraries(
     resolvedLibraries: KotlinLibraryResolveResult,
     reporter: FeaturedLibrariesReporter,
     allowDefaultLibs: Boolean
-) : List<KonanLibrary> {
+) : List<KotlinLibrary> {
     val remainingFeaturedLibraries = featuredLibraryFiles.toMutableSet()
-    val result = mutableListOf<KonanLibrary>()
+    val result = mutableListOf<KotlinLibrary>()
     //TODO: please add type checks before cast.
-    val libraries = resolvedLibraries.getFullList(null).map { it as KonanLibrary }
+    val libraries = resolvedLibraries.getFullList(null)
 
     for (library in libraries) {
         val libraryFile = library.libraryFile

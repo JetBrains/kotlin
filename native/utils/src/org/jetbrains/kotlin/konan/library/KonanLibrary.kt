@@ -8,15 +8,11 @@ import org.jetbrains.kotlin.library.nativeTargets
 const val KLIB_PROPERTY_LINKED_OPTS = "linkerOpts"
 const val KLIB_PROPERTY_INCLUDED_HEADERS = "includedHeaders"
 
-interface TargetedLibrary
-
-interface KonanLibrary : KotlinLibrary, TargetedLibrary
-
-val KonanLibrary.includedHeaders
+val KotlinLibrary.includedHeaders
     get() = manifestProperties.propertyList(KLIB_PROPERTY_INCLUDED_HEADERS, escapeInQuotes = true)
 
-val KonanLibrary.supportedTargetList: List<String>
+val KotlinLibrary.supportedTargetList: List<String>
     get() = commonizerNativeTargets?.takeIf(Collection<String>::isNotEmpty) ?: nativeTargets
 
-val KonanLibrary.linkerOpts: List<String>
+val KotlinLibrary.linkerOpts: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_LINKED_OPTS, escapeInQuotes = true)

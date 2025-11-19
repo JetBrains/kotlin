@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.KotlinNativePaths
@@ -387,16 +387,16 @@ class KonanConfig(
 
     override val resolvedLibraries get() = resolve.resolvedLibraries
 
-    val includedLibraries: List<KonanLibrary>
+    val includedLibraries: List<KotlinLibrary>
         get() = resolve.includedLibraries
 
-    val exportedLibraries: List<KonanLibrary>
+    val exportedLibraries: List<KotlinLibrary>
         get() = resolve.exportedLibraries
 
-    fun librariesWithDependencies(): List<KonanLibrary> {
+    fun librariesWithDependencies(): List<KotlinLibrary> {
         return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(
                 TopologicalLibraryOrder
-        ).map { it as KonanLibrary }
+        )
     }
 
     internal val externalDependenciesFile = configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES)?.let(::File)

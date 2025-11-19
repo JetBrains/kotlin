@@ -174,7 +174,7 @@ private fun selectNativeLanguage(config: DefFile.DefFileConfig): Language {
 }
 
 private fun parseImports(dependencies: List<KotlinLibrary>): ImportsImpl =
-        dependencies.filterIsInstance<KonanLibrary>().mapNotNull { library ->
+        dependencies.mapNotNull { library ->
             // TODO: handle missing properties?
             library.packageFqName?.let { packageFqName ->
                 val headerIds = library.includedHeaders
@@ -561,7 +561,7 @@ private fun compileSources(
 
 private fun getLibraryResolver(
         cinteropArguments: CInteropArguments, target: KonanTarget
-): KotlinLibraryResolverImpl<KonanLibrary> {
+): KotlinLibraryResolverImpl<KotlinLibrary> {
     return defaultResolver(
         directLibs = cinteropArguments.library,
         target,
@@ -570,7 +570,7 @@ private fun getLibraryResolver(
 }
 
 private fun resolveDependencies(
-        resolver: KotlinLibraryResolverImpl<KonanLibrary>, cinteropArguments: CInteropArguments
+        resolver: KotlinLibraryResolverImpl<KotlinLibrary>, cinteropArguments: CInteropArguments
 ): List<KotlinLibrary> {
     val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
     val noEndorsedLibs = cinteropArguments.noendorsedlibs

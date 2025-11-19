@@ -20,7 +20,7 @@ fun defaultResolver(
     logger: Logger = DummyLogger,
     skipCurrentDir: Boolean = false,
     zipFileSystemAccessor: ZipFileSystemAccessor? = null,
-): SearchPathResolverWithTarget<KonanLibrary> = KonanLibraryProperResolver(
+): SearchPathResolverWithTarget<KotlinLibrary> = KonanLibraryProperResolver(
     directLibs = directLibs,
     target = target,
     distributionKlib = distribution.klib,
@@ -36,20 +36,20 @@ class KonanLibraryProperResolver(
     skipCurrentDir: Boolean,
     override val logger: Logger,
     val zipFileSystemAccessor: ZipFileSystemAccessor? = null,
-) : KotlinLibraryProperResolverWithAttributes<KonanLibrary>(
+) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
     directLibs = directLibs,
     distributionKlib = distributionKlib,
     skipCurrentDir = skipCurrentDir,
     logger = logger,
     knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
-), SearchPathResolverWithTarget<KonanLibrary> {
+), SearchPathResolverWithTarget<KotlinLibrary> {
     override fun libraryComponentBuilder(file: File, isDefault: Boolean) =
         createKonanLibraryComponents(file, target, isDefault, zipFileSystemAccessor)
 
     override val distPlatformHead: File?
         get() = distributionKlib?.File()?.child("platform")?.child(target.visibleName)
 
-    override fun libraryMatch(candidate: KonanLibrary, unresolved: UnresolvedLibrary): Boolean {
+    override fun libraryMatch(candidate: KotlinLibrary, unresolved: UnresolvedLibrary): Boolean {
         val resolverTarget = this.target
         val candidatePath = candidate.libraryFile.absolutePath
 
