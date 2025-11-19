@@ -749,8 +749,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 dependencies(configuration.jvmClasspathRoots.map { it.absolutePath })
                 dependencies(configuration.jvmModularRoots.map { it.absolutePath })
                 dependencies(resolvedLibraries.map { it.library.libraryFile.absolutePath })
-                friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
-                friendDependencies(module.getFriendPaths())
+                friendDependencies(arguments.friendModules?.split(File.pathSeparator) ?: emptyList())
             }
 
             val librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
