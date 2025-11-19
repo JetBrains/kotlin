@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.DAEMON_RUN_DIR_PATH
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.JVM_ARGUMENTS
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.SHUTDOWN_DELAY_MILLIS
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -180,6 +182,18 @@ internal class JvmCompilationOperationImpl(
             createSessionIsAliveFlagFile()
         }
 
+        val daemonOptions = configureDaemonOptions(
+            DaemonOptions().apply {
+                executionPolicy[SHUTDOWN_DELAY_MILLIS]?.let { shutdownDelay ->
+                    shutdownDelayMilliseconds = shutdownDelay
+                }
+
+                runFilesPath = executionPolicy[DAEMON_RUN_DIR_PATH].absolutePathString()
+                executionPolicy[JVM_ARGUMENTS] = (executionPolicy[JVM_ARGUMENTS] ?: emptyList()) +
+                        "D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=$runFilesPath"
+
+            })
+
         val jvmOptions = configureDaemonJVMOptions(
             inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true
         ).also { opts ->
@@ -189,13 +203,6 @@ internal class JvmCompilationOperationImpl(
                 )
             }
         }
-
-        val daemonOptions = configureDaemonOptions(
-            DaemonOptions().apply {
-                executionPolicy[SHUTDOWN_DELAY_MILLIS]?.let { shutdownDelay ->
-                    shutdownDelayMilliseconds = shutdownDelay
-                }
-            })
 
         val (daemon, sessionId) = KotlinCompilerRunnerUtils.newDaemonConnection(
             compilerId,

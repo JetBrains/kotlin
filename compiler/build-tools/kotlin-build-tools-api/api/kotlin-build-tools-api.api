@@ -48,6 +48,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerExec
 	public abstract fun useInProcessStrategy ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/DelicateBuildToolsApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/DeprecatedCompilerArgument : java/lang/annotation/Annotation {
 }
 
@@ -59,6 +62,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPol
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon : org/jetbrains/kotlin/buildtools/api/ExecutionPolicy {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Companion;
+	public static final field DAEMON_RUN_DIR_PATH Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;
 	public static final field JVM_ARGUMENTS Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;
 	public static final field SHUTDOWN_DELAY_MILLIS Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;)Ljava/lang/Object;

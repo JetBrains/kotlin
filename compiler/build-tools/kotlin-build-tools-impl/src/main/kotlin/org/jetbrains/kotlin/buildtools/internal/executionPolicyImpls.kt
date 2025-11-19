@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.daemon.common.DaemonOptions
+import java.nio.file.Path
+import kotlin.io.path.Path
 
 internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 
@@ -43,5 +46,13 @@ internal class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon {
          * The time in milliseconds that the daemon process continues to live after all clients have disconnected.
          */
         val SHUTDOWN_DELAY_MILLIS: Option<Long?> = Option("SHUTDOWN_DELAY_MILLIS", null)
+
+        /**
+         * Specify a custom path for daemon runtime files.
+         *
+         * This is mainly useful for tests,
+         * so that the invoker can make sure that a specific daemon is spun up for a test and no stale daemons are used.
+         */
+        val DAEMON_RUN_DIR_PATH: Option<Path> = Option("DAEMON_RUN_DIR_PATH", Path(DaemonOptions().runFilesPath))
     }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import java.nio.file.Path
 
 /**
  * An execution policy for a build operation.
@@ -61,6 +62,18 @@ public sealed interface ExecutionPolicy {
              */
             @JvmField
             public val SHUTDOWN_DELAY_MILLIS: Option<Long?> = Option("SHUTDOWN_DELAY_MILLIS")
+
+            /**
+             * Specify a custom path for daemon runtime files.
+             *
+             * This is mainly useful for tests,
+             * so that the invoker can make sure that a specific daemon is spun up for a test and no stale daemons are used.
+             *
+             * @since 2.3.20
+             */
+            @JvmField
+            @DelicateBuildToolsApi
+            public val DAEMON_RUN_DIR_PATH: Option<Path> = Option("DAEMON_RUN_DIR_PATH")
         }
     }
 }
