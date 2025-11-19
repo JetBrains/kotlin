@@ -1,4 +1,4 @@
-package foo
+// FILE: a.kt
 
 fun countKeysVar(a: Array<Int>): Int = js("""
     let result = 0;
@@ -40,6 +40,9 @@ fun countKeysInExpression(a: Array<Int>): Int = js("""
     }
     return result;
 """)
+
+// FILE: b.kt
+// RECOMPILE
 
 fun box(): String {
     assertEquals(3, countKeysVar(arrayOf(1,2,3)))

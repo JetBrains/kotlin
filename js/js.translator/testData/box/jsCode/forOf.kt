@@ -1,4 +1,4 @@
-package foo
+// FILE: a.kt
 
 fun sumValuesVar(a: Array<Int>): Int = js("""
     let result = 0;
@@ -40,6 +40,9 @@ fun sumValuesInExpression(a: Array<Int>): Int = js("""
     }
     return result;
 """)
+
+// FILE: b.kt
+// RECOMPILE
 
 fun box(): String {
     assertEquals(6, sumValuesVar(arrayOf(1,2,3)))
