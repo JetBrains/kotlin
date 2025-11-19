@@ -5,7 +5,7 @@
 #ifndef DYNAMICLINKERREGISTRY_HPP
 #define DYNAMICLINKERREGISTRY_HPP
 
-#include <vector>
+#include <unordered_set>
 #include <mach-o/dyld.h>
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
@@ -15,8 +15,8 @@
 
 struct KotlinDynamicLibrary {
     std::string dylibPath;
-    std::vector<std::string_view> functions{};
-    std::vector<std::string_view> classes{};
+    std::unordered_set<std::string_view> functions{};
+    std::unordered_set<std::string_view> classes{};
 };
 
 static bool startsWith(const std::string_view str, const std::string_view prefix) {
@@ -109,19 +109,19 @@ inline KotlinDynamicLibrary parseDynamicLibrary(const std::string& dylibPath) {
     const auto symtab = reinterpret_cast<const nlist_64*>(linkeditBase + symtabCmd->symoff);
     const auto stringtab = reinterpret_cast<const char*>(linkeditBase + symtabCmd->stroff);
 
-    std::vector<std::string_view> functions{};
-    std::vector<std::string_view> classes{};
+    std::unordered_set<std::string_view> functions{};
+    std::unordered_set<std::string_view> classes{};
 
     for (uint32_t i = 0; i < symtabCmd->nsyms; ++i) {
         const nlist_64& sym = symtab[i];
         // Ignore undefined symbols, we can't reload them
         if ((sym.n_type & N_TYPE) == N_UNDF && (sym.n_type & N_EXT)) continue;
-        const auto symbolName = dyld::getSymbolNameFromStringTable(stringtab, sym.n_un.n_strx);
+        const auto symbolName = getSymbolNameFromStringTable(stringtab, sym.n_un.n_strx);
         // Perform filtering based on how the name stars
         if (startsWith(symbolName, MANGLED_FUN_NAME_PREFIX)) {
-            functions.push_back(symbolName.substr(1));
+            functions.insert(symbolName.substr(1));
         } else if (startsWith(symbolName, MANGLED_CLASS_NAME_PREFIX)) {
-            classes.push_back(symbolName.substr(1));
+            classes.insert(symbolName.substr(1));
         }
     }
 
