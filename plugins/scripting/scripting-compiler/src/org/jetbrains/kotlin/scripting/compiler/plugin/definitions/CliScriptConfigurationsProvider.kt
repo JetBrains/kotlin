@@ -7,45 +7,65 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.resolve.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.SourceCode
 
-class CliScriptConfigurationsProvider(project: Project) : ScriptConfigurationsProvider(project) {
+class CliScriptConfigurationsProvider(
+    project: Project,
+    getScriptDefinitionProvider: () -> ScriptDefinitionProvider
+) : ScriptConfigurationsProvider(project) {
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, ScriptCompilationConfigurationResult?>()
     private val knownVirtualFileSources = mutableMapOf<String, VirtualFileScriptSource>()
-
-    override fun getScriptConfigurationResult(file: KtFile): ScriptCompilationConfigurationResult? = cacheLock.read {
-        calculateRefinedConfiguration(file, null)
+    private val scriptDefinitionProvider by lazy(LazyThreadSafetyMode.NONE) {
+        getScriptDefinitionProvider()
     }
 
+    @Deprecated("Use getScriptConfigurationResult(KtFileScriptSource(ktFile)) instead")
+    override fun getScriptConfigurationResult(file: KtFile): ScriptCompilationConfigurationResult? = cacheLock.read {
+        calculateRefinedConfiguration(KtFileScriptSource(file), null)
+    }
+
+    @Deprecated("Use getScriptConfigurationResult(KtFileScriptSource(ktFile), providedConfiguration) instead")
     override fun getScriptConfigurationResult(
         file: KtFile,
         providedConfiguration: ScriptCompilationConfiguration?
     ): ScriptCompilationConfigurationResult? = cacheLock.read {
-        calculateRefinedConfiguration(file, providedConfiguration)
+        calculateRefinedConfiguration(KtFileScriptSource(file), providedConfiguration)
     }
 
+    override fun getScriptCompilationConfiguration(
+        scriptSource: SourceCode,
+        providedConfiguration: ScriptCompilationConfiguration?,
+    ): ScriptCompilationConfigurationResult? = cacheLock.read {
+        calculateRefinedConfiguration(scriptSource, providedConfiguration)
+    }
+
+    @OptIn(K1SpecificScriptingServiceAccessor::class)
     private fun calculateRefinedConfiguration(
-        file: KtFile, providedConfiguration: ScriptCompilationConfiguration?
+        source: SourceCode, providedConfiguration: ScriptCompilationConfiguration?
     ): ScriptCompilationConfigurationResult? {
-        val path = file.virtualFilePath
+        val path = source.locationId ?: return null
         val cached = cache[path]
         return if (cached != null) cached
         else {
-            val scriptDef = file.findScriptDefinition()
+            val scriptDef = scriptDefinitionProvider.findDefinition(source)
             if (scriptDef != null) {
                 val result =
                     refineScriptCompilationConfiguration(
-                        KtFileScriptSource(file), scriptDef, project, providedConfiguration, knownVirtualFileSources
+                        source, scriptDef, project, providedConfiguration, knownVirtualFileSources
                     )
 
-                project.getService(ScriptReportSink::class.java)?.attachReports(file.virtualFile, result.reports)
+                if (source is VirtualFileScriptSource) {
+                    project.getService(ScriptReportSink::class.java)?.attachReports(source.virtualFile, result.reports)
+                }
 
                 cacheLock.write {
                     cache.put(path, result)

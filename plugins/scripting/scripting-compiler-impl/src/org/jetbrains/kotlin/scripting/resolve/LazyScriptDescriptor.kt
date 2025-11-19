@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(K1SpecificScriptingServiceAccessor::class)
+
 package org.jetbrains.kotlin.scripting.resolve
 
 import com.intellij.psi.PsiElement
@@ -121,6 +123,7 @@ class LazyScriptDescriptor(
         run {
             val containingFile = scriptInfo.script.containingKtFile
             val provider = ScriptConfigurationsProvider.getInstance(containingFile.project)
+            @Suppress("DEPRECATION")
             provider?.getScriptConfiguration(containingFile)?.configuration
                 ?: containingFile.findScriptDefinition()?.compilationConfiguration
         }
@@ -211,6 +214,7 @@ class LazyScriptDescriptor(
     private val scriptImplicitReceivers: () -> List<ClassDescriptor> = resolveSession.storageManager.createLazyValue {
         val res = ArrayList<ClassDescriptor>()
 
+        @Suppress("DEPRECATION")
         val importedScriptsFiles = ScriptConfigurationsProvider.getInstance(scriptInfo.script.project)
             ?.getScriptConfiguration(scriptInfo.script.containingKtFile)?.importedScripts
         if (importedScriptsFiles != null) {

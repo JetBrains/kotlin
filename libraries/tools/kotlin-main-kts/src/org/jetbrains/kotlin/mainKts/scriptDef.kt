@@ -109,7 +109,7 @@ fun configureScriptFileLocationPathVariablesForEvaluation(context: ScriptEvaluat
 }
 
 fun configureScriptFileLocationPathVariablesForCompilation(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val scriptFile = (context.script as? FileBasedScriptSource)?.file ?: return context.compilationConfiguration.asSuccess()
+    val scriptFile = context.script.locationId?.let(::File) ?: return context.compilationConfiguration.asSuccess()
     val scriptFileLocationVariableName = context.compilationConfiguration[ScriptCompilationConfiguration.scriptFileLocationVariable]
         ?: SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 

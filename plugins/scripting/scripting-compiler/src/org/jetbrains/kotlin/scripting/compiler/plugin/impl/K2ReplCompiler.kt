@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 import com.intellij.openapi.Disposable
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
+import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForLightTree
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -49,14 +49,20 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
+import org.jetbrains.kotlin.scripting.resolve.getKtFile
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.*
@@ -101,6 +107,7 @@ class K2ReplCompiler(
 
     companion object {
 
+        @OptIn(K1SpecificScriptingServiceAccessor::class)
         fun createCompilationState(
             messageCollector: ScriptDiagnosticsMessageCollector,
             rootDisposable: Disposable,
@@ -164,6 +171,7 @@ class K2ReplCompiler(
                 compilerContext,
                 sharedLibrarySession,
                 sessionFactoryContext,
+                ScriptConfigurationsProvider.getInstance(project),
             )
         }
     }
@@ -178,6 +186,7 @@ class K2ReplCompilationState(
     internal val compilerContext: SharedScriptCompilationContext,
     internal val sharedLibrarySession: FirSession,
     internal val sessionFactoryContext: FirJvmSessionFactory.Context,
+    internal val scriptConfigurationsProvider: ScriptConfigurationsProvider?,
 ) {
     var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
 }
@@ -239,6 +248,12 @@ private fun compileImpl(
     snippet: SourceCode,
     scriptCompilationConfiguration: ScriptCompilationConfiguration
 ): ResultWithDiagnostics<CompiledSnippet> {
+    val definition =
+        ScriptDefinition.FromConfigurations(
+            scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration,
+            scriptCompilationConfiguration,
+            null
+        )
 
     val initialScriptCompilationConfiguration = scriptCompilationConfiguration.refineBeforeParsing(snippet).valueOr {
         return it
@@ -268,32 +283,30 @@ private fun compileImpl(
     }
 
     // configuration refinement with the additional sources collection
-    val allSourceFiles = mutableListOf(snippetKtFile)
+    val allSourceFiles = mutableListOf<SourceCode>(KtFileScriptSource(snippetKtFile))
     val (classpath, newSources, sourceDependencies) =
-        collectScriptsCompilationDependencies(
-            compilerConfiguration,
-            project,
-            allSourceFiles,
-            initialScriptCompilationConfiguration
-        )
+        @Suppress("DEPRECATION")
+        collectScriptsCompilationDependencies(allSourceFiles) {
+            state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(it, initialScriptCompilationConfiguration)
+        }
     allSourceFiles.addAll(newSources)
 
     var hasSyntaxErrors = false
     // PSI syntax errors reporting
     allSourceFiles.forEach {
-        val syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(it, messageCollector)
-        if (syntaxErrorReport.isHasErrors && it == snippetKtFile && syntaxErrorReport.isAllErrorsAtEof) {
-            messageCollector.report(ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code"))
+        if (it is KtFileScriptSource) {
+            val syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(it.ktFile, messageCollector)
+            if (syntaxErrorReport.isHasErrors && it.ktFile == snippetKtFile && syntaxErrorReport.isAllErrorsAtEof) {
+                messageCollector.report(ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code"))
+            }
+            hasSyntaxErrors = hasSyntaxErrors || syntaxErrorReport.isHasErrors
         }
-        hasSyntaxErrors = hasSyntaxErrors || syntaxErrorReport.isHasErrors
     }
-    checkKotlinPackageUsageForPsi(compilerConfiguration, allSourceFiles, messageCollector)
 
     // Updating compiler options
-    val configurationsProvider = ScriptConfigurationsProvider.getInstance(project)
     val baseCompilerOptions = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
     val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf<String>()) { file ->
-        configurationsProvider?.getScriptConfiguration(file)?.configuration?.get(
+        state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(file)?.valueOrNull()?.configuration?.get(
             ScriptCompilationConfiguration.compilerOptions
         )?.takeIf { it != baseCompilerOptions } ?: emptyList()
     }
@@ -332,7 +345,12 @@ private fun compileImpl(
         isForLeafHmppModule = false,
         init = {},
     )
-    val rawFir = session.buildFirFromKtFiles(allSourceFiles)
+    val rawFir = allSourceFiles.partition { it is KtFileScriptSource }.let { (ktSources, otherSources) ->
+        session.buildFirFromKtFiles(ktSources.map { (it as KtFileScriptSource).ktFile }) +
+                session.buildFirViaLightTree(otherSources.mapNotNull { it.toKtSourceFile() }, diagnosticsReporter, reportFilesAndLines = null)
+    }
+
+    checkKotlinPackageUsageForLightTree(compilerConfiguration, rawFir, messageCollector)
 
     val (scopeSession, fir) = session.runResolution(rawFir)
     // checkers
@@ -359,10 +377,10 @@ private fun compileImpl(
     return makeCompiledScript(
         generationState,
         snippet,
-        snippetKtFile,
+        { it.getKtFile(definition, state.projectEnvironment.project).declarations.firstIsInstance<KtScript>().fqName },
         sourceDependencies,
-        { ktFile ->
-            configurationsProvider?.getScriptConfigurationResult(ktFile, initialScriptCompilationConfiguration)
+        { script ->
+            state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(script, initialScriptCompilationConfiguration)
                 ?.valueOrNull()?.configuration ?: initialScriptCompilationConfiguration
         },
         extractResultFields(irInput.irModuleFragment)

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 class FirScriptDefinitionProviderService(
     session: FirSession,
     private val makeDefaultDefinitionProvider: () -> ScriptDefinitionProvider,
-    private val makeDefaultConfigurationProvider: () -> ScriptConfigurationsProvider,
+    private val makeDefaultConfigurationProvider: (ScriptDefinitionProvider) -> ScriptConfigurationsProvider,
 ) : FirExtensionSessionComponent(session) {
 
     // TODO: get rid of project-based implementation, write and use own singleton in K2
@@ -36,7 +36,7 @@ class FirScriptDefinitionProviderService(
     private var _configurationProvider: ScriptConfigurationsProvider? = null
     var configurationProvider: ScriptConfigurationsProvider?
         get() = synchronized(this) {
-            if (_configurationProvider == null) _configurationProvider = makeDefaultConfigurationProvider()
+            if (_configurationProvider == null) _configurationProvider = makeDefaultConfigurationProvider(definitionProvider!!)
             _configurationProvider
         }
         set(value) {
@@ -59,19 +59,21 @@ class FirScriptDefinitionProviderService(
                     }
                 }
 
-            val makeConfigurationProvider = configurationProvider?.let { { it } }
-                ?: {
-                    // TODO: check if memory can leak in MockProject (probably not too important, since currently the providers are set externaly in important cases)
-                    CliScriptConfigurationsProvider(
-                        MockProject(
-                            null,
-                            Disposer.newDisposable(
-                                "Disposable for project of ${CliScriptConfigurationsProvider::class.simpleName} created by" +
-                                        " ${FirScriptDefinitionProviderService::class.simpleName}"
+            val makeConfigurationProvider: (ScriptDefinitionProvider) -> ScriptConfigurationsProvider =
+                configurationProvider?.let { cp -> { cp } }
+                    ?: { definitionProvider ->
+                        // TODO: check if memory can leak in MockProject (probably not too important, since currently the providers are set externaly in important cases)
+                        CliScriptConfigurationsProvider(
+                            MockProject(
+                                null,
+                                Disposer.newDisposable(
+                                    "Disposable for project of ${CliScriptConfigurationsProvider::class.simpleName} created by" +
+                                            " ${FirScriptDefinitionProviderService::class.simpleName}"
+                                ),
                             ),
-                        ),
-                    )
-                }
+                            { definitionProvider }
+                        )
+                    }
 
             return Factory { session -> FirScriptDefinitionProviderService(session, makeDefinitionsProvider, makeConfigurationProvider) }
         }

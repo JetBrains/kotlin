@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.sam.SamWithReceiverResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
@@ -46,12 +45,12 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginR
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.compilerOptions
-import kotlin.script.experimental.api.dependencies
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.util.KotlinJars
@@ -62,9 +61,11 @@ class SharedScriptCompilationContext(
     val disposable: Disposable?,
     val baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     val environment: KotlinCoreEnvironment,
-    val ignoredOptionsReportingState: IgnoredOptionsReportingState
+    val ignoredOptionsReportingState: IgnoredOptionsReportingState,
+    val scriptConfigurationsProvider: ScriptConfigurationsProvider?
 )
 
+@OptIn(K1SpecificScriptingServiceAccessor::class)
 fun createIsolatedCompilationContext(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
@@ -90,10 +91,12 @@ fun createIsolatedCompilationContext(
         )
 
     return SharedScriptCompilationContext(
-        parentDisposable, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState
+        parentDisposable, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState,
+        ScriptConfigurationsProvider.getInstance(environment.project)
     ).applyConfigure()
 }
 
+@OptIn(K1SpecificScriptingServiceAccessor::class)
 internal fun createCompilationContextFromEnvironment(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     environment: KotlinCoreEnvironment,
@@ -109,7 +112,8 @@ internal fun createCompilationContextFromEnvironment(
     }
 
     return SharedScriptCompilationContext(
-        null, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState
+        null, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState,
+        ScriptConfigurationsProvider.getInstance(environment.project)
     ).applyConfigure()
 }
 
@@ -257,7 +261,7 @@ private fun createInitialCompilerConfiguration(
 
         val definedTarget = scriptCompilationConfiguration[ScriptCompilationConfiguration.jvm.jvmTarget]
         if (definedTarget != null) {
-            val target = JvmTarget.values().find { it.description == definedTarget }
+            val target = JvmTarget.entries.find { it.description == definedTarget }
             if (target == null) {
                 messageCollector.report(
                     CompilerMessageSeverity.STRONG_WARNING, "Unknown JVM target \"$definedTarget\", using default"
@@ -345,36 +349,32 @@ private fun createInitialCompilerConfiguration(
 
 internal fun collectRefinedSourcesAndUpdateEnvironment(
     context: SharedScriptCompilationContext,
-    mainKtFile: KtFile,
-    initialConfiguration: ScriptCompilationConfiguration,
-    messageCollector: ScriptDiagnosticsMessageCollector
-): Pair<List<KtFile>, List<ScriptsCompilationDependencies.SourceDependencies>> {
-    val sourceFiles = arrayListOf(mainKtFile)
+    mainSource: SourceCode,
+    messageCollector: ScriptDiagnosticsMessageCollector,
+    getScriptCompilationConfiguration: (SourceCode) -> ScriptCompilationConfigurationResult?
+): Pair<List<SourceCode>, List<ScriptsCompilationDependencies.SourceDependencies>> {
+    val sourceFiles = arrayListOf(mainSource)
     val (classpath, newSources, sourceDependencies) =
-        collectScriptsCompilationDependencies(
-            context.environment.configuration,
-            context.environment.project,
-            sourceFiles,
-            initialConfiguration
-        )
+        @Suppress("DEPRECATION")
+        collectScriptsCompilationDependencies(sourceFiles, getScriptCompilationConfiguration)
 
     context.environment.updateClasspath(classpath.map(::JvmClasspathRoot))
 
     sourceFiles.addAll(newSources)
 
     // collectScriptsCompilationDependencies calls resolver for every file, so at this point all updated configurations are collected in the ScriptDependenciesProvider
-    context.environment.configuration.updateWithRefinedConfigurations(context, sourceFiles, messageCollector)
+    context.environment.configuration.updateWithRefinedConfigurations(context, sourceFiles, messageCollector, getScriptCompilationConfiguration)
     return sourceFiles to sourceDependencies
 }
 
 private fun CompilerConfiguration.updateWithRefinedConfigurations(
     context: SharedScriptCompilationContext,
-    sourceFiles: List<KtFile>,
-    messageCollector: ScriptDiagnosticsMessageCollector
+    sourceFiles: List<SourceCode>,
+    messageCollector: ScriptDiagnosticsMessageCollector,
+    getScriptCompilationConfiguration: (SourceCode) -> ScriptCompilationConfigurationResult?
 ) {
-    val configurationsProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)
-    val updatedCompilerOptions = sourceFiles.flatMapTo(mutableListOf<String>()) {
-        configurationsProvider?.getScriptConfiguration(it)?.configuration?.get(
+    val updatedCompilerOptions = sourceFiles.flatMapTo(mutableListOf()) {
+        getScriptCompilationConfiguration(it)?.valueOrNull()?.configuration?.get(
             ScriptCompilationConfiguration.compilerOptions
         ) ?: emptyList()
     }

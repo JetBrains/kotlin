@@ -43,16 +43,11 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
-import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
-import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.StringScriptSource
 
 
 class FirScriptConfiguratorExtensionImpl(
@@ -250,15 +245,8 @@ class FirScriptConfiguratorExtensionImpl(
     }
 }
 
-private fun SourceCode.originalKtFile(): KtFile =
-    (this as? KtFileScriptSource)?.ktFile?.originalFile as? KtFile
-        ?: error("only PSI scripts are supported at the moment")
-
-private fun FirScriptDefinitionProviderService.configurationFor(file: KtFile): ScriptCompilationConfiguration? =
-    configurationProvider?.getScriptConfigurationResult(file)?.valueOrNull()?.configuration
-
 private fun FirScriptDefinitionProviderService.configurationFor(sourceCode: SourceCode): ScriptCompilationConfiguration? =
-    definitionProvider?.findDefinition(sourceCode)?.compilationConfiguration
+    configurationProvider?.getScriptCompilationConfiguration(sourceCode)?.valueOrNull()?.configuration
 
 private fun FirScriptDefinitionProviderService.defaultConfiguration(): ScriptCompilationConfiguration? =
     definitionProvider?.getDefaultDefinition()?.compilationConfiguration
@@ -266,10 +254,8 @@ private fun FirScriptDefinitionProviderService.defaultConfiguration(): ScriptCom
 internal fun getOrLoadConfiguration(session: FirSession, file: KtSourceFile): ScriptCompilationConfiguration? {
     val service = checkNotNull(session.scriptDefinitionProviderService)
     val sourceCode = file.toSourceCode()
-    val ktFile = sourceCode?.originalKtFile()
     val configuration = with(service) {
-        ktFile?.let { asKtFile -> configurationFor(asKtFile) }
-            ?: sourceCode?.let { asSourceCode -> configurationFor(asSourceCode) }
+        sourceCode?.let { asSourceCode -> configurationFor(asSourceCode) }
             ?: defaultConfiguration()
     }
     return configuration

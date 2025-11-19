@@ -308,8 +308,8 @@ internal fun SourceCode.addNo(no: Int) = SourceCodeByReplLine(text, no, name, lo
 data class SourceCodeByReplLine(
     override val text: String,
     val no: Int,
-    override val name: String? = null,
-    override val locationId: String? = null
+    override val name: String? = "Line_$no",
+    override val locationId: String? = "$name.kts"
 ) : SourceCode
 
 private typealias ReplSourceHistoryList<ResultT> = List<CompiledHistoryItem<SourceCodeByReplLine, ResultT>>

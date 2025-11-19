@@ -89,7 +89,10 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
 }
 
 fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
-    is KtPsiSourceFile -> (psiFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(psiFile.virtualFile)
+    is KtPsiSourceFile -> {
+        val originalFile = psiFile.originalFile
+        (originalFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(originalFile.virtualFile)
+    }
     is KtVirtualFileSourceFile -> VirtualFileScriptSource(virtualFile)
     is KtIoFileSourceFile -> FileScriptSource(file)
     is KtInMemoryTextSourceFile -> StringScriptSource(text.toString(), name)
@@ -219,7 +222,7 @@ fun ScriptCompilationConfiguration.resolveImportsToVirtualFiles(
     return updatedConfiguration.asSuccess()
 }
 
-fun SourceCode.getVirtualFile(definition: ScriptDefinition): VirtualFile {
+fun SourceCode.getVirtualFile(definition: ScriptDefinition?): VirtualFile {
     if (this is VirtualFileScriptSource) return virtualFile
     if (this is KtFileScriptSource) {
         return virtualFile
@@ -228,18 +231,18 @@ fun SourceCode.getVirtualFile(definition: ScriptDefinition): VirtualFile {
         val vFile = LocalFileSystem.getInstance().findFileByIoFile(file)
         if (vFile != null) return vFile
     }
-    val scriptName = withCorrectExtension(name ?: definition.defaultClassName, definition.fileExtension)
+    val scriptName = withCorrectExtension(name ?: definition?.defaultClassName ?: "script", definition?.fileExtension)
     val scriptPath = when (this) {
         is FileScriptSource -> file.path
         is ExternalSourceCode -> externalLocation.toString()
         else -> null
     }
-    val scriptText = getMergedScriptText(this, definition.compilationConfiguration)
+    val scriptText = getMergedScriptText(this, definition?.compilationConfiguration)
 
     return ScriptLightVirtualFile(scriptName, scriptPath, scriptText)
 }
 
-fun SourceCode.getKtFile(definition: ScriptDefinition, project: Project): KtFile =
+fun SourceCode.getKtFile(definition: ScriptDefinition?, project: Project): KtFile =
     if (this is KtFileScriptSource) ktFile
     else {
         val file = getVirtualFile(definition)
