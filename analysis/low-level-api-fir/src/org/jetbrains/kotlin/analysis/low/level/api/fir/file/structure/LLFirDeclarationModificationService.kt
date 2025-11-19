@@ -254,7 +254,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             .afterModification(declaration, module)
     }
 
-    private val publishGlobalModificationEvents = false
+    private val publishGlobalModificationEvents = true
 
     private fun outOfBlockModification(element: PsiElement) {
         if (publishGlobalModificationEvents) {
