@@ -1,0 +1,42 @@
+FILE: some.kt
+    package some
+
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|some/Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|some/Some.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: main.kt
+    public final enum class E : R|kotlin/Enum<E>| {
+        private constructor(): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final static enum entry Some: R|E|
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+        public final static fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E>|
+            public get(): R|kotlin/enums/EnumEntries<E>|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|some/Some|
+        Q|some/Some|.<Unresolved name: foo>#()
+        Q|some/Some|::<Unresolved reference: foo>#
+        <getClass>(Q|some/Some|)
+    }
