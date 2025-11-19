@@ -7574,6 +7574,30 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("returnExpressionInOverrideAfter.kt")
+      public void testReturnExpressionInOverrideAfter() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnExpressionInOverrideAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("returnExpressionInOverrideBefore.kt")
+      public void testReturnExpressionInOverrideBefore() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnExpressionInOverrideBefore.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInAnonymousExpressionBodyAfter.kt")
+      public void testReturnInAnonymousExpressionBodyAfter() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInAnonymousExpressionBodyAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInAnonymousExpressionBodyBefore.kt")
+      public void testReturnInAnonymousExpressionBodyBefore() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInAnonymousExpressionBodyBefore.kt");
+      }
+
+      @Test
       @TestMetadata("returnInExpressionBodyBefore.kt")
       public void testReturnInExpressionBodyBefore() {
         runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInExpressionBodyBefore.kt");
@@ -7595,6 +7619,54 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       @TestMetadata("returnInExpressionBodyProgressiveMode.kt")
       public void testReturnInExpressionBodyProgressiveMode() {
         runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInExpressionBodyProgressiveMode.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInGetterSetterAfter.kt")
+      public void testReturnInGetterSetterAfter() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInGetterSetterAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInGetterSetterBefore.kt")
+      public void testReturnInGetterSetterBefore() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInGetterSetterBefore.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInInlineLambdaWithTypeParamAfter.kt")
+      public void testReturnInInlineLambdaWithTypeParamAfter() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInInlineLambdaWithTypeParamAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInInlineLambdaWithTypeParamBefore.kt")
+      public void testReturnInInlineLambdaWithTypeParamBefore() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInInlineLambdaWithTypeParamBefore.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInLocalPropertyInWhenAfter.kt")
+      public void testReturnInLocalPropertyInWhenAfter() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInLocalPropertyInWhenAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInLocalPropertyInWhenBefore.kt")
+      public void testReturnInLocalPropertyInWhenBefore() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInLocalPropertyInWhenBefore.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInNestedCallAfter.kt")
+      public void testReturnInNestedCallAfter() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInNestedCallAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInNestedCallBefore.kt")
+      public void testReturnInNestedCallBefore() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInNestedCallBefore.kt");
       }
     }
 
