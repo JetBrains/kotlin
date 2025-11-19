@@ -949,6 +949,18 @@ public class DecompiledJsTextTestGenerated extends AbstractDecompiledJsTextTest 
   }
 
   @Test
+  @TestMetadata("parameterizedSuspendFunctionType.kt")
+  public void testParameterizedSuspendFunctionType() {
+    runTest("compiler/testData/psi/parameterizedSuspendFunctionType.kt");
+  }
+
+  @Test
+  @TestMetadata("parameterizedSuspendFunctionTypeComplex.kt")
+  public void testParameterizedSuspendFunctionTypeComplex() {
+    runTest("compiler/testData/psi/parameterizedSuspendFunctionTypeComplex.kt");
+  }
+
+  @Test
   @TestMetadata("Precedence.kt")
   public void testPrecedence() {
     runTest("compiler/testData/psi/Precedence.kt");

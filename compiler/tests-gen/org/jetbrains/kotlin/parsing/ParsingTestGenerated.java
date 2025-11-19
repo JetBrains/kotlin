@@ -801,6 +801,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/ParameterType_ERR.kt");
     }
 
+    @TestMetadata("parameterizedSuspendFunctionType.kt")
+    public void testParameterizedSuspendFunctionType() {
+      runTest("compiler/testData/psi/parameterizedSuspendFunctionType.kt");
+    }
+
+    @TestMetadata("parameterizedSuspendFunctionTypeComplex.kt")
+    public void testParameterizedSuspendFunctionTypeComplex() {
+      runTest("compiler/testData/psi/parameterizedSuspendFunctionTypeComplex.kt");
+    }
+
     @TestMetadata("Precedence.kt")
     public void testPrecedence() {
       runTest("compiler/testData/psi/Precedence.kt");
