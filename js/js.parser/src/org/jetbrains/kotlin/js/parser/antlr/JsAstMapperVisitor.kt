@@ -1076,8 +1076,8 @@ internal class JsAstMapperVisitor(
         if ('_' in ctx.text)
             reportError("Numeric separators are not supported yet", ctx)
 
-        ctx.BinaryIntegerLiteral()?.run {
-            reportError("Binary integer literals are not supported yet", ctx)
+        ctx.BinaryIntegerLiteral()?.let { binaryLiteral ->
+            return binaryLiteral.text.toBinaryLiteral().applyLocation(ctx)
         }
 
         ctx.OctalIntegerLiteral()?.let {

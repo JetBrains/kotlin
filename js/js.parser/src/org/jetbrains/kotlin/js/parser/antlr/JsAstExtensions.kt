@@ -98,6 +98,16 @@ internal fun JavaScriptParser.VarModifierContext.toVarVariant(): JsVars.Variant?
         else -> null
     }
 
+internal fun String.toBinaryLiteral(): JsNumberLiteral {
+    val longValue = removePrefix("0b").removePrefix("0B")
+        .toLong(2)
+
+    return if (longValue in Int.MIN_VALUE..Int.MAX_VALUE)
+        JsIntLiteral(longValue.toInt())
+    else
+        JsDoubleLiteral(longValue.toDouble())
+}
+
 internal fun String.unescapeString(ctx: ParserRuleContext): String {
     val chars = this.toCharArray()
 
