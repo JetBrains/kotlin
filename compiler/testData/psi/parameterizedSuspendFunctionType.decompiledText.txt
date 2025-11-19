@@ -9,4 +9,7 @@ public val explicitInt: suspend () -> kotlin.Int /* from: test.MySuspendAlias<ko
 public val explicitAny: suspend () -> kotlin.Any? /* from: test.MySuspendAlias<kotlin.Any?> */ /* compiled code */
     public final get() { /* compiled code */ }
 
+public val explicitStar: suspend () -> kotlin.Any? /* from: test.MySuspendAlias<*> */ /* compiled code */
+    public final get() { /* compiled code */ }
+
 public typealias MySuspendAlias<T> = suspend () -> T

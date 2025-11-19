@@ -131,3 +131,33 @@ KtFile: parameterizedSuspendFunctionTypeComplex.kt
           PsiElement(null)('null')
         OPERATION_REFERENCE
           PsiElement(EXCLEXCL)('!!')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('explicitStar')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('MySuspendAlias')
+        TYPE_ARGUMENT_LIST
+          PsiElement(LT)('<')
+          TYPE_PROJECTION
+            PsiElement(MUL)('*')
+          PsiElement(GT)('>')
+    PsiWhiteSpace('\n    ')
+    PROPERTY_ACCESSOR
+      PsiElement(get)('get')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      POSTFIX_EXPRESSION
+        NULL
+          PsiElement(null)('null')
+        OPERATION_REFERENCE
+          PsiElement(EXCLEXCL)('!!')

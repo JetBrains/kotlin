@@ -20,7 +20,7 @@ object KotlinStubVersions {
      * or changes are made to the core stub building code (org.jetbrains.kotlin.idea.decompiler.stubBuilder).
      * Increasing this version will lead to reindexing of all binary files that are potentially kotlin binaries (including all class files).
      * */
-    private const val BINARY_STUB_VERSION = 185
+    private const val BINARY_STUB_VERSION = 186
 
     /**
      * Classfile stub version should be increased if changes are made to classfile stub building subsystem (org.jetbrains.kotlin.idea.decompiler.classFile)

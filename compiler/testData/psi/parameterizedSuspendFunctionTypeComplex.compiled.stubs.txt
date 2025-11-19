@@ -82,6 +82,46 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterizedSuspendFunct
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
+  PROPERTY[fqName=test.explicitStar, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=explicitStar]
+    origin: Facade(className=test/ParameterizedSuspendFunctionTypeComplexKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        abbreviatedType: test.MySuspendAlias<STAR>
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              MODIFIER_LIST[suspend]
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=String]
+                TYPE_REFERENCE
+                  NULLABLE_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=Any]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Any]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+      MODIFIER_LIST[public final]
+      VALUE_PARAMETER_LIST
   TYPEALIAS[classId=test/MySuspendAlias, fqName=test.MySuspendAlias, isTopLevel=true, name=MySuspendAlias]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST

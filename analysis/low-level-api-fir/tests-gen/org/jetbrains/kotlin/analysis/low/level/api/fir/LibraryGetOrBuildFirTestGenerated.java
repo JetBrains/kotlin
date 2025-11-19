@@ -319,6 +319,18 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("parameterizedSuspendFunctionType.kt")
+  public void testParameterizedSuspendFunctionType() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameterizedSuspendFunctionType.kt");
+  }
+
+  @Test
+  @TestMetadata("parameterizedSuspendFunctionTypeComplex.kt")
+  public void testParameterizedSuspendFunctionTypeComplex() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameterizedSuspendFunctionTypeComplex.kt");
+  }
+
+  @Test
   @TestMetadata("properties.kt")
   public void testProperties() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/properties.kt");

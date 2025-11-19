@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
@@ -342,8 +343,21 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val returnType = typeArgumentList.last().type(c.typeTable)!!
             createTypeReferenceStub(functionType, returnType)
         } else {
-            val continuationArgumentType = suspendParameterType.getArgument(0).type(c.typeTable)!!
-            createTypeReferenceStub(functionType, continuationArgumentType)
+            val returnType = suspendParameterType.getArgument(0)
+
+            // This is possible in the case of a type alias with a star projection as a type argument
+            // typealias MyAlias <T> = suspend () -> T
+            // val usage: MyAlias<*>
+            if (returnType.projection == Projection.STAR) {
+                KotlinPlaceHolderStubImpl<KtTypeReference>(functionType, KtStubElementTypes.TYPE_REFERENCE).apply {
+                    KotlinPlaceHolderStubImpl<KtNullableType>(this, KtStubElementTypes.NULLABLE_TYPE).apply {
+                        createStubForTypeName(StandardClassIds.Any, this)
+                    }
+                }
+            } else {
+                val continuationArgumentType = returnType.type(c.typeTable)!!
+                createTypeReferenceStub(functionType, continuationArgumentType)
+            }
         }
     }
 

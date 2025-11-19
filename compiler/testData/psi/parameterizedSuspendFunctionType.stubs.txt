@@ -37,3 +37,11 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterizedSuspendFunct
                   REFERENCE_EXPRESSION[referencedName=Any]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+  PROPERTY[fqName=test.explicitStar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=explicitStar]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=MySuspendAlias]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=STAR]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
+      VALUE_PARAMETER_LIST
