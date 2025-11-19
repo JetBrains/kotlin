@@ -26,11 +26,9 @@ internal abstract class KotlinKProperty<out V>(
             return emptyList()
         }
 
-    private val _returnType: Lazy<KType> = lazy(PUBLICATION) {
+    override val returnType: KType by lazy(PUBLICATION) {
         kmProperty.returnType.toKType(container.jClass.classLoader, typeParameterTable.value)
     }
-
-    override val returnType: KType get() = _returnType.value
 
     override val boundReceiver: Any?
         get() {

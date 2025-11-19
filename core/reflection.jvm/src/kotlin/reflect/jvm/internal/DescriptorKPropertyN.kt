@@ -23,9 +23,7 @@ import kotlin.reflect.KMutableProperty
 internal open class DescriptorKPropertyN<out V> : DescriptorKProperty<V> {
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    private val _getter = lazy(PUBLICATION) { Getter(this) }
-
-    override val getter: Getter<V> get() = _getter.value
+    override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
 
     class Getter<out V>(override val property: DescriptorKPropertyN<V>) : DescriptorKProperty.Getter<V>()
 }
@@ -33,9 +31,7 @@ internal open class DescriptorKPropertyN<out V> : DescriptorKProperty<V> {
 internal class DescriptorKMutablePropertyN<V> : DescriptorKPropertyN<V>, KMutableProperty<V> {
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    private val _setter = lazy(PUBLICATION) { Setter(this) }
-
-    override val setter: Setter<V> get() = _setter.value
+    override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }
 
     class Setter<V>(override val property: DescriptorKMutablePropertyN<V>) : DescriptorKProperty.Setter<V>()
 }

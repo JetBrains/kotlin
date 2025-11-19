@@ -47,7 +47,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     override val boundReceiver: Any?
         get() = rawBoundReceiver.coerceToExpectedReceiverType(this, descriptor)
 
-    private val _javaField = lazy(PUBLICATION) {
+    override val javaField: Field? by lazy(PUBLICATION) {
         when (val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)) {
             is KotlinProperty -> {
                 val descriptor = jvmSignature.descriptor
@@ -74,8 +74,6 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         }
     }
 
-    override val javaField: Field? get() = _javaField.value
-
     protected fun computeDelegateSource(): Member? {
         if (!descriptor.isDelegated) return null
         val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)
@@ -91,11 +89,9 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
     abstract override val getter: Getter<V>
 
-    private val _descriptor = ReflectProperties.lazySoft(descriptorInitialValue) {
+    override val descriptor: PropertyDescriptor by ReflectProperties.lazySoft(descriptorInitialValue) {
         container.findPropertyDescriptor(name, signature)
     }
-
-    override val descriptor: PropertyDescriptor get() = _descriptor()
 
     override val caller: Caller<*> get() = getter.caller
 

@@ -28,9 +28,7 @@ internal open class DescriptorKProperty0<out V> : KProperty0<V>, DescriptorKProp
         container, name, signature, boundReceiver
     )
 
-    private val _getter = lazy(PUBLICATION) { Getter(this) }
-
-    override val getter: Getter<V> get() = _getter.value
+    override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun get(): V = getter.call()
 
@@ -52,9 +50,7 @@ internal class DescriptorKMutableProperty0<V> : DescriptorKProperty0<V>, KMutabl
         container, name, signature, boundReceiver
     )
 
-    private val _setter = lazy(PUBLICATION) { Setter(this) }
-
-    override val setter: Setter<V> get() = _setter.value
+    override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }
 
     override fun set(value: V) = setter.call(value)
 

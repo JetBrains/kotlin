@@ -13,9 +13,7 @@ import kotlin.reflect.KProperty0
 internal open class KotlinKProperty0<out V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
 ) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty), KProperty0<V> {
-    private val _getter: Lazy<Getter<V>> = lazy(PUBLICATION) { Getter(this) }
-
-    override val getter: Getter<V> get() = _getter.value
+    override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun get(): V = getter.call()
 
@@ -34,9 +32,7 @@ internal open class KotlinKProperty0<out V>(
 internal class KotlinKMutableProperty0<V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
 ) : KotlinKProperty0<V>(container, signature, rawBoundReceiver, kmProperty), KMutableProperty0<V> {
-    private val _setter: Lazy<Setter<V>> = lazy(PUBLICATION) { Setter(this) }
-
-    override val setter: Setter<V> get() = _setter.value
+    override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }
 
     override fun set(value: V): Unit = setter.call(value)
 
