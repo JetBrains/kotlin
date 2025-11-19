@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptConfiguratorExtensionImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptDefinitionProviderService
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptResolutionConfigurationExtensionImpl
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
@@ -29,6 +30,7 @@ internal class FirScriptingCompilerExtensionIdeRegistrar(
     private val scriptDefinitions: List<ScriptDefinition>,
 ) : FirExtensionRegistrar() {
 
+    @OptIn(K1SpecificScriptingServiceAccessor::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
         val definitionSources = scriptDefinitionSources
         val definitions = scriptDefinitions

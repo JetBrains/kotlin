@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
@@ -32,6 +33,7 @@ data class ScriptsCompilationDependencies(
 }
 
 // recursively collect dependencies from initial and imported scripts
+@OptIn(K1SpecificScriptingServiceAccessor::class)
 fun collectScriptsCompilationDependencies(
     configuration: CompilerConfiguration,
     project: Project,

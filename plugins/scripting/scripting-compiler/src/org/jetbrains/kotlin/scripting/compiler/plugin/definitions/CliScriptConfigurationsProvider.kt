@@ -20,10 +20,12 @@ class CliScriptConfigurationsProvider(project: Project) : ScriptConfigurationsPr
     private val cache = hashMapOf<String, ScriptCompilationConfigurationResult?>()
     private val knownVirtualFileSources = mutableMapOf<String, VirtualFileScriptSource>()
 
+    @Deprecated("Use getScriptConfigurationResult(KtFileScriptSource(ktFile)) instead")
     override fun getScriptConfigurationResult(file: KtFile): ScriptCompilationConfigurationResult? = cacheLock.read {
         calculateRefinedConfiguration(file, null)
     }
 
+    @Deprecated("Use getScriptConfigurationResult(KtFileScriptSource(ktFile), provided configuration) instead")
     override fun getScriptConfigurationResult(
         file: KtFile,
         providedConfiguration: ScriptCompilationConfiguration?
