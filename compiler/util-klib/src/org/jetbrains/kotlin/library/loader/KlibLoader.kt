@@ -45,6 +45,7 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
     private var platformChecker: KlibPlatformChecker? = null
     private var maxPermittedAbiVersion: KotlinAbiVersion? = null
     private var zipFileSystemAccessor: ZipFileSystemAccessor? = null
+    private var manifestTransformer: KlibManifestTransformer? = null
 
     init {
         object : KlibLoaderSpec {
@@ -74,6 +75,10 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
 
             override fun zipFileSystemAccessor(accessor: ZipFileSystemAccessor) {
                 zipFileSystemAccessor = accessor
+            }
+
+            override fun manifestTransformer(transformer: KlibManifestTransformer) {
+                manifestTransformer = transformer
             }
         }.init()
     }
@@ -122,6 +127,7 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
                 KlibImpl(
                     location = KFile(validPath),
                     zipFileSystemAccessor = zipFileSystemAccessor ?: ZipFileSystemInPlaceAccessor,
+                    manifestTransformer = manifestTransformer,
                 )
             } catch (_: Exception) {
                 problematicLibraries += ProblematicLibrary(rawPath, InvalidLibraryFormat)
@@ -171,4 +177,6 @@ interface KlibLoaderSpec {
     fun platformChecker(checker: KlibPlatformChecker)
     fun maxPermittedAbiVersion(abiVersion: KotlinAbiVersion)
     fun zipFileSystemAccessor(accessor: ZipFileSystemAccessor)
+
+    fun manifestTransformer(transformer: KlibManifestTransformer)
 }
