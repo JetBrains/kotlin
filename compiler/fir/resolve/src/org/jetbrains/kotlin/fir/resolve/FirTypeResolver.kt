@@ -40,13 +40,34 @@ class TypeResolutionConfiguration private constructor(
     // the class symbol would point to MySealed.
     // It's guaranteed to be sealed.
     val sealedClassForContextSensitiveResolution: FirRegularClassSymbol? = null,
+    val annotationResolution: Boolean,
 ) {
     constructor(
         scopes: Iterable<FirScope>,
         containingClassDeclarations: List<FirClass>,
         useSiteFile: FirFile?,
         topContainer: FirDeclaration? = null,
-    ) : this(scopes, containingClassDeclarations, useSiteFile, topContainer, sealedClassForContextSensitiveResolution = null)
+        annotationResolution: Boolean = false,
+    ) : this(
+        scopes,
+        containingClassDeclarations,
+        useSiteFile,
+        topContainer,
+        sealedClassForContextSensitiveResolution = null,
+        annotationResolution
+    )
+
+    fun withAnnotationResolution(annotationResolution: Boolean): TypeResolutionConfiguration {
+        if (this.annotationResolution == annotationResolution) return this
+        return TypeResolutionConfiguration(
+            scopes,
+            containingClassDeclarations,
+            useSiteFile,
+            topContainer,
+            sealedClassForContextSensitiveResolution,
+            annotationResolution,
+        )
+    }
 
     companion object {
         fun createForContextSensitiveResolution(
@@ -60,6 +81,7 @@ class TypeResolutionConfiguration private constructor(
                 scopes = emptyList(),
                 containingClassDeclarations, useSiteFile, topContainer,
                 sealedClassForContextSensitiveResolution,
+                annotationResolution = false,
             )
         }
     }

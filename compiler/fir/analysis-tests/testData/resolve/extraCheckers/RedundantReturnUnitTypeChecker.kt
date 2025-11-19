@@ -6,7 +6,7 @@ interface I {
 }
 
 class A {
-    fun too(): <!WRONG_ANNOTATION_TARGET!>@<!NOT_AN_ANNOTATION_CLASS!>Annotation<!><!> Unit {}
+    fun too(): @<!NOT_AN_ANNOTATION_CLASS!>Annotation<!> Unit {}
 
     fun foo(): <!REDUNDANT_RETURN_UNIT_TYPE!>Unit<!>
     {

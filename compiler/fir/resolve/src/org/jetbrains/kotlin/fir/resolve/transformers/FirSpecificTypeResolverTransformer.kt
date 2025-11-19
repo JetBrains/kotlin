@@ -71,8 +71,18 @@ class FirSpecificTypeResolverTransformer(
 
     @OptIn(PrivateForInline::class)
     override fun transformTypeRef(typeRef: FirTypeRef, data: TypeResolutionConfiguration): FirResolvedTypeRef {
-        withBareTypes(allowed = false) {
-            typeRef.transformChildren(this, data)
+        when (typeRef) {
+            is FirUserTypeRef -> {
+                typeRef.transformAnnotations(this, data.withAnnotationResolution(annotationResolution = true))
+                withBareTypes(allowed = false) {
+                    typeRef.transformQualifier(this, data.withAnnotationResolution(annotationResolution = false))
+                }
+            }
+            else -> {
+                withBareTypes(allowed = false) {
+                    typeRef.transformChildren(this, data.withAnnotationResolution(annotationResolution = false))
+                }
+            }
         }
         val (resolvedType, diagnostic, isContextSensitiveResolved) = resolveType(typeRef, data, expandTypeAliases)
         return transformType(typeRef, resolvedType, diagnostic, data, isContextSensitiveResolved)

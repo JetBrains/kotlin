@@ -34,4 +34,6 @@ abstract class FirUserTypeRef : FirUnresolvedTypeRef() {
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirUserTypeRef
+
+    abstract fun <D> transformQualifier(transformer: FirTransformer<D>, data: D): FirUserTypeRef
 }

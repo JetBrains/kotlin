@@ -10,7 +10,7 @@ FILE: typeAnnotationArgument2.kt
     }
     public abstract interface MyList : R|kotlin/collections/List<@R|Alias|(value = <Unresolved name: CONST>#)  ERROR CLASS: Incomplete code>| {
     }
-    public abstract interface MyListProper : R|kotlin/collections/List<@R|Alias|(value = R|/CORRECT|)  kotlin/String>| {
+    public abstract interface MyListProper : R|kotlin/collections/List<@<ERROR TYPE REF: Not a legal annotation: Alias>(value = R|/CORRECT|)  kotlin/String>| {
     }
     public final const val CORRECT: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(Int(2))
         public get(): R|kotlin/Int|

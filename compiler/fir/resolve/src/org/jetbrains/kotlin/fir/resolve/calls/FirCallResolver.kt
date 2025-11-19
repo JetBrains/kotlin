@@ -694,18 +694,12 @@ class FirCallResolver(
 
             buildReferenceWithErrorCandidate(
                 callInfo,
-                if (annotationClassSymbol != null) {
-                    ConeIllegalAnnotationError(reference.name)
-                } else if (annotationConeType is ConeErrorType || annotationConeType !is ConeClassLikeType) {
-                    //calleeReference and annotationTypeRef are both error nodes so we need to avoid doubling of the diagnostic report
-                    ConeUnreportedDuplicateDiagnostic(
-                        //prefer diagnostic with symbol, e.g. to use the symbol during navigation in IDE
-                        (annotationConeType as? ConeErrorType)?.diagnostic as? ConeDiagnosticWithSymbol<*>
-                            ?: ConeUnresolvedNameError(reference.name)
-                    )
-                } else {
-                    ConeIllegalAnnotationError(reference.name)
-                },
+                //calleeReference and annotationTypeRef are both error nodes so we need to avoid doubling of the diagnostic report
+                ConeUnreportedDuplicateDiagnostic(
+                    //prefer diagnostic with symbol, e.g. to use the symbol during navigation in IDE
+                    (annotationConeType as? ConeErrorType)?.diagnostic as? ConeDiagnosticWithSymbol<*>
+                        ?: ConeUnresolvedNameError(reference.name)
+                ),
                 reference.source
             )
         }

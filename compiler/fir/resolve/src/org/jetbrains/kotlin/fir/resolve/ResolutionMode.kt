@@ -125,6 +125,11 @@ sealed class ResolutionMode(
         override fun toString(): String = "AssignmentLValue: ${variableAssignment.render()}"
     }
 
+    /**
+     * Used for resolution of the annotation type for annotations on statements.
+     */
+    data object AnnotationType : ResolutionMode(forceFullCompletion = true)
+
     private companion object {
         private fun FirTypeRef?.prettyString(): String {
             if (this == null) return "null"

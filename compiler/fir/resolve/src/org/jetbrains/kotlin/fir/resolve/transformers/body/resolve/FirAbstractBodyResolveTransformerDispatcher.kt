@@ -104,10 +104,11 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
             typeResolverTransformer.transformTypeRef(
                 typeRef,
                 TypeResolutionConfiguration(
-                    components.createCurrentScopeList(),
+                    scopes = components.createCurrentScopeList(),
                     context.containingClassDeclarations,
-                    context.file,
-                    context.topContainerForTypeResolution,
+                    useSiteFile = context.file,
+                    topContainer = context.topContainerForTypeResolution,
+                    annotationResolution = data is ResolutionMode.AnnotationType
                 )
             )
         }

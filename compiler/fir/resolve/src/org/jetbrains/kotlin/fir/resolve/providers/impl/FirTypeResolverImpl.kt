@@ -66,9 +66,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         val collector = FirTypeCandidateCollector(
             session,
             configuration.useSiteFile,
-            configuration.containingClassDeclarations,
+            containingDeclarations = configuration.containingClassDeclarations,
             supertypeSupplier,
-            resolveDeprecations
+            resolveDeprecations,
+            annotationResolution = configuration.annotationResolution,
         )
 
         if (configuration.sealedClassForContextSensitiveResolution != null) {

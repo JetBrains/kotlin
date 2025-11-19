@@ -267,6 +267,7 @@ class FirPCLAInferenceSession(
             is ResolutionMode.ContextDependent,
             is ResolutionMode.ContextIndependent,
             is ResolutionMode.ReceiverResolution,
+            is ResolutionMode.AnnotationType
             -> {
                 // Regular cases, just continue execution.
                 // Enumerating all the cases just to make sure we don't forget to handle some mode.

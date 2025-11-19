@@ -1239,7 +1239,7 @@ open class FirDeclarationsResolveTransformer(
                 is ResolutionMode.ReceiverResolution,
                 is ResolutionMode.Delegate,
                     -> transformTopLevelAnonymousFunctionExpression(anonymousFunctionExpression, null)
-                is ResolutionMode.WithStatus, is ResolutionMode.UpdateImplicitTypeRef -> error("Should not be here in ${data::class} mode")
+                is ResolutionMode.WithStatus, is ResolutionMode.UpdateImplicitTypeRef, is ResolutionMode.AnnotationType -> error("Should not be here in ${data::class} mode")
             }
         }
     }

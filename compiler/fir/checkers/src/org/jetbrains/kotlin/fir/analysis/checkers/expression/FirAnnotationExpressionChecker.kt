@@ -24,10 +24,6 @@ import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.unwrapVarargValue
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -58,7 +54,6 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         checkAnnotationsWithVersion(fqName, expression)
         checkDeprecatedSinceKotlin(expression.source, fqName, argumentMapping)
         checkAnnotationsInsideAnnotationCall(expression)
-        checkNotAClass(expression)
         checkErrorSuppression(annotationClassId, argumentMapping)
         checkContextFunctionTypeParams(expression.source, annotationClassId)
     }
@@ -222,19 +217,6 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
             if (unwrappedErrorExpression is FirCollectionLiteral) {
                 checkAnnotationsInsideAnnotationCall(unwrappedErrorExpression)
             }
-        }
-    }
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkNotAClass(
-        expression: FirAnnotationCall,
-    ) {
-        val annotationTypeRef = expression.annotationTypeRef
-        if (expression.calleeReference is FirErrorNamedReference &&
-            annotationTypeRef !is FirErrorTypeRef &&
-            annotationTypeRef.coneType !is ConeClassLikeType
-        ) {
-            reporter.reportOn(annotationTypeRef.source, FirErrors.NOT_A_CLASS)
         }
     }
 

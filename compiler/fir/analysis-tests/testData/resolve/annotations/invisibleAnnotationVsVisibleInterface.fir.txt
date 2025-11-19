@@ -35,16 +35,16 @@ FILE: module_b_invisibleAnnotationVsVisibleInterface.kt
     public abstract interface FooAnnotationUser : R|kotlin/Any| {
         @<ERROR TYPE REF: HIDDEN: OuterTypeA.TargetTypeAA is invisible>() public abstract fun annotationUserAAOuter(): R|kotlin/Unit|
 
-        @R|TargetTypeAA|() public abstract fun annotationUserAAInner(): R|kotlin/Unit|
+        @<ERROR TYPE REF: HIDDEN: OuterTypeA.TargetTypeAA is invisible>() public abstract fun annotationUserAAInner(): R|kotlin/Unit|
 
         @<ERROR TYPE REF: HIDDEN: OuterTypeB.TargetTypeBA is invisible>() public abstract fun annotationUserBAOuter(): R|kotlin/Unit|
 
-        @R|TargetTypeBA|() public abstract fun annotationUserBAInner(): R|kotlin/Unit|
+        @<ERROR TYPE REF: HIDDEN: OuterTypeB.TargetTypeBA is invisible>() public abstract fun annotationUserBAInner(): R|kotlin/Unit|
 
     }
     public final fun test(): R|kotlin/Unit| {
         @<ERROR TYPE REF: HIDDEN: OuterTypeA.TargetTypeAA is invisible>() lval a: R|kotlin/Int| = Int(1)
-        @R|TargetTypeAA|() lval b: R|kotlin/Int| = Int(1)
+        @<ERROR TYPE REF: HIDDEN: OuterTypeA.TargetTypeAA is invisible>() lval b: R|kotlin/Int| = Int(1)
         @<ERROR TYPE REF: HIDDEN: OuterTypeB.TargetTypeBA is invisible>() lval c: R|kotlin/Int| = Int(1)
-        @R|TargetTypeBA|() lval d: R|kotlin/Int| = Int(1)
+        @<ERROR TYPE REF: HIDDEN: OuterTypeB.TargetTypeBA is invisible>() lval d: R|kotlin/Int| = Int(1)
     }

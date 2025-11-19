@@ -33,10 +33,15 @@ internal class FirUserTypeRefImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirUserTypeRefImpl {
+        transformQualifier(transformer, data)
+        transformAnnotations(transformer, data)
+        return this
+    }
+
+    override fun <D> transformQualifier(transformer: FirTransformer<D>, data: D): FirUserTypeRef {
         for (part in qualifier) {
             (part.typeArgumentList.typeArguments as MutableList<FirTypeProjection>).transformInplace(transformer, data)
         }
-        transformAnnotations(transformer, data)
         return this
     }
 

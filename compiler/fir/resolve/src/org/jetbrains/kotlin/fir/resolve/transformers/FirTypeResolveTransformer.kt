@@ -340,9 +340,18 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
+        return transformTypeRefImpl(typeRef, annotationResolution = false)
+    }
+
+    private fun transformTypeRefImpl(typeRef: FirTypeRef, annotationResolution: Boolean): FirResolvedTypeRef {
         return typeRef.transform(
             typeResolverTransformer,
-            TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile)
+            TypeResolutionConfiguration(
+                scopes.asReversed(),
+                containingClassDeclarations = classDeclarationsStack,
+                useSiteFile = currentFile,
+                annotationResolution = annotationResolution
+            )
         )
     }
 
@@ -406,7 +415,10 @@ open class FirTypeResolveTransformer(
                 }
             }
             else -> {
-                val transformedTypeRef = originalTypeRef.transformSingle(this, data)
+                val transformedTypeRef = when (originalTypeRef) {
+                    is FirUserTypeRef -> transformTypeRefImpl(originalTypeRef, annotationResolution = true)
+                    else -> originalTypeRef.transformSingle(this, data)
+                }
                 annotationCall.transformTypeArguments(this, data)
                 annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
                 annotationCall.replaceAnnotationTypeRef(transformedTypeRef)

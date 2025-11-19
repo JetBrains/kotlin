@@ -1385,7 +1385,9 @@ object FirTree : AbstractFirTreeBuilder() {
     val userTypeRef: Element by element(TypeRefElement) {
         parent(unresolvedTypeRef)
 
-        +listField("qualifier", firQualifierPartType)
+        +listField("qualifier", firQualifierPartType) {
+            withTransform = true
+        }
     }
 
     val functionTypeRef: Element by element(TypeRefElement) {

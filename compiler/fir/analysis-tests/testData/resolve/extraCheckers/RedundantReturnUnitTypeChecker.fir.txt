@@ -22,7 +22,7 @@ FILE: RedundantReturnUnitTypeChecker.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun too(): R|@R|kotlin/Annotation|()  kotlin/Unit| {
+        public final fun too(): R|@<ERROR TYPE REF: Not a legal annotation: Annotation>()  kotlin/Unit| {
         }
 
         public final fun foo(): R|kotlin/Unit| {

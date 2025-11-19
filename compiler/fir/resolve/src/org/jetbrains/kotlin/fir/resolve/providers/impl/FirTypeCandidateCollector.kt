@@ -5,17 +5,22 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeIllegalAnnotationError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedClass
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -26,6 +31,7 @@ class FirTypeCandidateCollector(
     private val containingDeclarations: List<FirDeclaration>,
     private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
     private val resolveDeprecations: Boolean = true,
+    private val annotationResolution: Boolean = false,
 ) {
     private val candidates: MutableSet<TypeCandidate> = mutableSetOf()
 
@@ -34,7 +40,7 @@ class FirTypeCandidateCollector(
 
     fun processCandidate(symbol: FirBasedSymbol<*>, substitutor: ConeSubstitutor? = null, resolvedSymbolOrigin: FirResolvedSymbolOrigin?) {
         var symbolApplicability = CandidateApplicability.RESOLVED
-        var diagnostic: ConeVisibilityError? = null
+        var diagnostic: ConeDiagnostic? = null
 
         if (!symbol.isVisible(useSiteFile, containingDeclarations, supertypeSupplier)) {
             val fromCodeFragment = containingDeclarations.getOrNull(1) is FirCodeFragment
@@ -50,6 +56,19 @@ class FirTypeCandidateCollector(
             if (symbol.isDeprecationLevelHidden(session)) {
                 symbolApplicability = minOf(CandidateApplicability.HIDDEN, symbolApplicability)
                 diagnostic = null
+            }
+        }
+
+        if (annotationResolution) {
+            val annotationClassSymbol = when (symbol) {
+                is FirRegularClassSymbol -> symbol
+                is FirTypeAliasSymbol -> symbol.fir.fullyExpandedClass(session)?.symbol as FirRegularClassSymbol?
+                else -> null
+            }
+            if (annotationClassSymbol?.classKind != ClassKind.ANNOTATION_CLASS) {
+                symbolApplicability = minOf(CandidateApplicability.INAPPLICABLE, symbolApplicability)
+                val name = (symbol as? FirClassLikeSymbol)?.classId?.shortClassName
+                diagnostic = ConeIllegalAnnotationError(name)
             }
         }
 

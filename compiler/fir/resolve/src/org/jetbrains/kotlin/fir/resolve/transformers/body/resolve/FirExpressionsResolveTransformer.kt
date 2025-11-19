@@ -1522,7 +1522,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode
     ): FirStatement = whileAnalysing(session, annotationCall) {
         if (annotationCall.resolved) return annotationCall
-        annotationCall.transformAnnotationTypeRef(transformer, ResolutionMode.ContextIndependent)
+        annotationCall.transformAnnotationTypeRef(transformer, ResolutionMode.AnnotationType)
         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
         return withFirArrayOfCallTransformer {
             dataFlowAnalyzer.enterAnnotation()

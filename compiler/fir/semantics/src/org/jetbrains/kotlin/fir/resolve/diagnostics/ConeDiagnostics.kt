@@ -277,7 +277,7 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
     }
 }
 
-class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic {
+class ConeIllegalAnnotationError(val name: Name?) : ConeDiagnostic {
     override val reason: String get() = "Not a legal annotation: $name"
 }
 

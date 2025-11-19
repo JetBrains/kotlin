@@ -20,23 +20,23 @@ import OuterTypeA.TargetTypeAA
 import <!INVISIBLE_REFERENCE!>OuterTypeB<!>.TargetTypeBA
 
 interface FooAnnotationUser {
-    @OuterTypeA.<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>TargetTypeAA<!> fun annotationUserAAOuter()
+    @<!INVISIBLE_REFERENCE!>OuterTypeA<!>.<!INVISIBLE_REFERENCE!>TargetTypeAA<!> fun annotationUserAAOuter()
 
-    @<!NOT_AN_ANNOTATION_CLASS!>TargetTypeAA<!> fun annotationUserAAInner()
+    @<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>TargetTypeAA<!> fun annotationUserAAInner()
 
     @<!INVISIBLE_REFERENCE!>OuterTypeB<!>.<!INVISIBLE_REFERENCE!>TargetTypeBA<!> fun annotationUserBAOuter()
 
-    @<!NOT_AN_ANNOTATION_CLASS!>TargetTypeBA<!> fun annotationUserBAInner()
+    @<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>TargetTypeBA<!> fun annotationUserBAInner()
 }
 
 fun test() {
-    @OuterTypeA.<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>TargetTypeAA<!>
+    @<!INVISIBLE_REFERENCE!>OuterTypeA<!>.<!INVISIBLE_REFERENCE!>TargetTypeAA<!>
     val a = 1
-    @<!NOT_AN_ANNOTATION_CLASS!>TargetTypeAA<!>
+    @<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>TargetTypeAA<!>
     val b = 1
     @<!INVISIBLE_REFERENCE!>OuterTypeB<!>.<!INVISIBLE_REFERENCE!>TargetTypeBA<!>
     val c = 1
-    @<!NOT_AN_ANNOTATION_CLASS!>TargetTypeBA<!>
+    @<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>TargetTypeBA<!>
     val d = 1
 }
 

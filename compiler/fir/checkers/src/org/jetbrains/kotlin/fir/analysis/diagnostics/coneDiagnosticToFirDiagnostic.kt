@@ -578,7 +578,10 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
         "for type parameters",
         session
     )
-    is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.createOn(source, this.name.asString(), session)
+    is ConeIllegalAnnotationError -> when (val name = this.name) {
+        null -> FirErrors.NOT_A_CLASS.createOn(source, session)
+        else -> FirErrors.NOT_AN_ANNOTATION_CLASS.createOn(source, name.asString(), session)
+    }
     is ConePlaceholderProjectionInQualifierResolution -> FirErrors.PLACEHOLDER_PROJECTION_IN_QUALIFIER.createOn(source, session)
     is ConeWrongNumberOfTypeArgumentsError ->
         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(this.source, this.desiredCount, this.symbol, session)
