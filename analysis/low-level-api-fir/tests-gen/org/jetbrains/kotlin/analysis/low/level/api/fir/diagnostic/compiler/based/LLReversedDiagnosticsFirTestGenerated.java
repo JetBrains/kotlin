@@ -5823,6 +5823,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantVisibilityOfProtectedOverride.kt");
       }
 
+      @Test
+      @TestMetadata("RedundantVisibilityPrivateVsProtected.kt")
+      public void testRedundantVisibilityPrivateVsProtected() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantVisibilityPrivateVsProtected.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker")
       @TestDataPath("$PROJECT_ROOT")
