@@ -606,8 +606,10 @@ internal class JsAstMapperVisitor(
         return visitNode<JsObjectLiteral>(ctx.objectLiteral())
     }
 
-    override fun visitMetaExpression(ctx: JavaScriptParser.MetaExpressionContext): JsNode? {
-        reportError("Meta expressions are not supported yet", ctx)
+    override fun visitMetaExpression(ctx: JavaScriptParser.MetaExpressionContext): JsNameRef {
+        return makeRefNode(ctx.Target().text).apply {
+            qualifier = makeRefNode(ctx.New().text).applyLocation(ctx.New())
+        }.applyLocation(ctx.Target())
     }
 
     override fun visitInExpression(ctx: JavaScriptParser.InExpressionContext): JsBinaryOperation {

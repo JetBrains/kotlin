@@ -7581,6 +7581,12 @@ public class PsiJsBoxTestGenerated extends AbstractPsiJsBoxTest {
     }
 
     @Test
+    @TestMetadata("newTarget.kt")
+    public void testNewTarget() {
+      runTest("js/js.translator/testData/box/jsCode/newTarget.kt");
+    }
+
+    @Test
     @TestMetadata("numberLiteralOverflow.kt")
     public void testNumberLiteralOverflow() {
       runTest("js/js.translator/testData/box/jsCode/numberLiteralOverflow.kt");
