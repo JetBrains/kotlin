@@ -12873,6 +12873,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("simple4.kt")
+      public void testSimple4() {
+        runTest("compiler/testData/codegen/box/coroutines/simple4.kt");
+      }
+
+      @Test
       @TestMetadata("simpleException.kt")
       public void testSimpleException() {
         runTest("compiler/testData/codegen/box/coroutines/simpleException.kt");
