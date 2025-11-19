@@ -25,6 +25,15 @@ fun <T> assertArrayEquals(expected: Array<T>, actual: Array<T>) {
 fun box(): String {
     assertEquals(10, js("10"), "Int")
     assertEquals(10.5, js("10.5"), "Float")
+
+    assertEquals(255, js("0xFF"), "Hex (Int)")
+    assertEquals(255, js("0XFF"), "Uppercase hex (Int)")
+    assertEquals(0, js("0x0"), "Zero hex (Int)")
+    assertEquals(0, js("0X0"), "Zero uppercase hex (Int)")
+
+    assertEquals(8, js("010"), "Octal (Int)")
+    assertEquals(0, js("00"), "Zero octal (Int)")
+
     assertEquals("10", js("'10'"), "String")
     assertEquals(true, js("true"), "True")
     assertEquals(false, js("false"), "False")
