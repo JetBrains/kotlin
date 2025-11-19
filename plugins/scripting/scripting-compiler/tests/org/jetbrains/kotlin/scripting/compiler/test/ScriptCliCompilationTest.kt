@@ -152,13 +152,14 @@ object TestScriptWithRequireConfiguration : ScriptCompilationConfiguration(
         refineConfiguration {
             onAnnotations(Import::class, DependsOn::class) { context: ScriptConfigurationRefinementContext ->
                 val scriptBaseDir = (context.script as? FileBasedScriptSource)?.file?.parentFile
-                val sources = context.collectedData?.get(ScriptCollectedData.foundAnnotations)
+                val annotations = context.collectedData?.get(ScriptCollectedData.collectedAnnotations)?.map { it.annotation }
+                val sources = annotations
                     ?.flatMap {
                         (it as? Import)?.sources?.map { sourceName ->
                             FileScriptSource(scriptBaseDir?.resolve(sourceName) ?: File(sourceName))
                         } ?: emptyList()
                     }
-                val deps = context.collectedData?.get(ScriptCollectedData.foundAnnotations)
+                val deps = annotations
                     ?.mapNotNull {
                         (it as? DependsOn)?.path?.let(::File)
                     }

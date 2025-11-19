@@ -19,6 +19,8 @@ dependencies {
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:fir:raw-fir:raw-fir.common"))
     compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:providers"))
+    compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
     compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":core:descriptors.runtime"))
@@ -33,6 +35,7 @@ dependencies {
     compileOnly(intellijCore())
 
     implementation(project(":kotlin-power-assert-compiler-plugin")) // TODO: KT-74787
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testImplementation(project(":compiler:frontend"))
     testImplementation(project(":compiler:plugin-api"))

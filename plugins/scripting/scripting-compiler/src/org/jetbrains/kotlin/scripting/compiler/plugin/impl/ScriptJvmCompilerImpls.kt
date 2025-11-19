@@ -54,12 +54,8 @@ import org.jetbrains.kotlin.utils.topologicalSort
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.impl._languageVersion
-import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
-import kotlin.script.experimental.jvm.compilationCache
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-import kotlin.script.experimental.jvm.jvm
 
 class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
 
@@ -244,11 +240,10 @@ private fun doCompile(
     script: SourceCode,
     ktFiles: List<KtFile>,
     sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
-    definition: ScriptDefinition,
+    definition: ScriptDefinition?,
     messageCollector: ScriptDiagnosticsMessageCollector,
     getScriptConfiguration: (SourceCode) -> ScriptCompilationConfiguration
 ): ResultWithDiagnostics<KJvmCompiledScript> {
-
     val analysisResult = analyze(ktFiles, context.environment)
 
     if (!analysisResult.shouldGenerateCode) return failure(
@@ -325,10 +320,11 @@ private fun doCompileWithK2(
     script: SourceCode,
     ktFiles: List<KtFile>,
     sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
-    definition: ScriptDefinition,
+    definition: ScriptDefinition?,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    getScriptConfiguration: (SourceCode) -> ScriptCompilationConfiguration
+    getScriptConfiguration: (SourceCode) -> ScriptCompilationConfiguration,
 ): ResultWithDiagnostics<KJvmCompiledScript> {
+
     val configuration = context.environment.configuration
 
     val targetId = TargetId(

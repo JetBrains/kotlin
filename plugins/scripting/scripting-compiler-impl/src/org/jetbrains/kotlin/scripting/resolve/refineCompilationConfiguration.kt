@@ -16,11 +16,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.kotlin.KtInMemoryTextSourceFile
-import org.jetbrains.kotlin.KtIoFileSourceFile
-import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.KtVirtualFileSourceFile
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
@@ -95,7 +91,7 @@ fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
     }
     is KtVirtualFileSourceFile -> VirtualFileScriptSource(virtualFile)
     is KtIoFileSourceFile -> FileScriptSource(file)
-    is KtInMemoryTextSourceFile -> StringScriptSource(text.toString(), name)
+    is KtInMemoryTextSourceFile -> StringScriptSource(text.toString(), name, path)
     else -> null
 }
 
@@ -283,12 +279,7 @@ fun getScriptCollectedData(
         scriptFile.viewProvider.document,
         scriptFile.virtualFilePath
     )
-    return ScriptCollectedData(
-        mapOf(
-            ScriptCollectedData.collectedAnnotations to annotations,
-            ScriptCollectedData.foundAnnotations to annotations.map { it.annotation }
-        )
-    )
+    return ScriptCollectedData(mapOf(ScriptCollectedData.collectedAnnotations to annotations))
 }
 
 private fun Iterable<KtAnnotationEntry>.construct(

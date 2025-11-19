@@ -34,7 +34,10 @@ object ScriptWithMavenDepsConfiguration : ScriptCompilationConfiguration(
             onAnnotations(DependsOn::class, Repository::class, handler = ::configureMavenDepsOnAnnotations)
         }
     }
-)
+) {
+    @Suppress("unused")
+    private fun readResolve(): Any = ScriptWithMavenDepsConfiguration
+}
 
 private val resolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
 
@@ -49,4 +52,3 @@ fun configureMavenDepsOnAnnotations(context: ScriptConfigurationRefinementContex
         }.asSuccess()
     }
 }
-

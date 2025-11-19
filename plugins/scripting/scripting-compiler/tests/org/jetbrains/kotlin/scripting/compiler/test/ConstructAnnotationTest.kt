@@ -150,7 +150,7 @@ class ConstructAnnotationTest {
         }
 
         val data = getScriptCollectedData(ktFile, configuration, environment.project, null)
-        val annotations = data[ScriptCollectedData.foundAnnotations] ?: emptyList()
+        val annotations = data[ScriptCollectedData.collectedAnnotations]?.map { it.annotation } ?: emptyList()
 
         annotations
             .filterIsInstance(InvalidScriptResolverAnnotation::class.java)
