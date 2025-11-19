@@ -754,6 +754,10 @@ tasks.register("createIdeaHomeForTests") {
 
 tasks {
     register("compileAll") {
+        /*
+         * Build cache tests don't work properly with KMP projects,
+         * so such projects are temporary excluded from them (KTI-2822)
+         */
         val excludedNativePrefixes = listOf(
             ":native",
             ":libraries:tools:analysis-api-based-klib-reader:testProject",
