@@ -8,5 +8,6 @@ KtNameReferenceExpression(144,147): 'foo'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'setFoo' !in [foo]
     symbols:
       (in JavaClass) open fun setFoo(v: kotlin.Int)

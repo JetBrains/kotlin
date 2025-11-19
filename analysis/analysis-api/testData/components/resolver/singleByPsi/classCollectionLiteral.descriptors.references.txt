@@ -9,5 +9,6 @@ KtValueArgument(206,256): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)

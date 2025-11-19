@@ -2,5 +2,6 @@ KtNameReferenceExpression(64,68): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in Foo) val kotlin.String.foo: kotlin.Any

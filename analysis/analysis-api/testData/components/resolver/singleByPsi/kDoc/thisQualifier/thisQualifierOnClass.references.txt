@@ -2,5 +2,6 @@ KDocName(8,12): 'this'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       Nothing (Unresolved reference)

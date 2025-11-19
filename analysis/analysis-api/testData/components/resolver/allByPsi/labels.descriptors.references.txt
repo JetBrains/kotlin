@@ -49,6 +49,7 @@ KtLabelReferenceExpression(68,74): 'label@'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [label] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -56,6 +57,7 @@ KtLabelReferenceExpression(90,96): '@label'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [label] provided
     symbols:
       (in <local>: usage) fun(): kotlin.Unit
 
@@ -63,6 +65,7 @@ KtLabelReferenceExpression(108,114): 'myFor@'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myFor] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -86,5 +89,6 @@ KtLabelReferenceExpression(149,155): '@myFor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myFor] provided
     symbols:
       Nothing (Unresolved reference)

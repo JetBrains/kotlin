@@ -164,6 +164,7 @@ KtLabelReferenceExpression(397,415): '@myRunWithMySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRunWithMySealed] provided
     symbols:
       (in <local>: main) fun(): MySealed
 
@@ -230,6 +231,7 @@ KtLabelReferenceExpression(480,498): '@myRunWithMySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRunWithMySealed] provided
     symbols:
       (in <local>: main) fun(): MySealed
 
@@ -343,6 +345,7 @@ KtLabelReferenceExpression(569,575): '@myRun'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRun] provided
     symbols:
       (in <local>: main) fun(): MySealed
 
@@ -429,6 +432,7 @@ KtLabelReferenceExpression(644,650): '@myRun'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRun] provided
     symbols:
       (in <local>: main) fun(): MySealed
 
@@ -502,6 +506,7 @@ KtLabelReferenceExpression(735,741): '@myRun'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRun] provided
     symbols:
       (in <local>: main) fun(): MySealed
 
@@ -568,6 +573,7 @@ KtLabelReferenceExpression(794,800): '@myRun'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRun] provided
     symbols:
       (in <local>: main) fun(): ERROR(Cannot infer a type variable T)
 
@@ -634,6 +640,7 @@ KtLabelReferenceExpression(852,858): '@myRun'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRun] provided
     symbols:
       (in <local>: main) fun(): MySealed.X
 

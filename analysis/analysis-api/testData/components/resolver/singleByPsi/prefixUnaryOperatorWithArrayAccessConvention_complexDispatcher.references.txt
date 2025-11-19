@@ -2,11 +2,13 @@ KtOperationReferenceExpression(182,184): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'set' !in [inc]
     symbols:
       (in Foo) operator fun <K2, V2> MyMap<K2, V2>.set(k: K2, v: V2)
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'set' !in [inc]
     symbols:
       (in Foo) operator fun <K2, V2> MyMap<K2, V2>.set(k: K2, v: V2)

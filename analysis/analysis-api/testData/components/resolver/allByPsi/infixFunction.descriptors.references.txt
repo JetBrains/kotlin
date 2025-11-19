@@ -23,6 +23,7 @@ KtNameReferenceExpression(37,41): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) infix fun kotlin.Int.myMinus(i: kotlin.Int): kotlin.Int
 

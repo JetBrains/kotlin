@@ -107,6 +107,7 @@ KtValueArgument(438,447): '[1, 2, 3]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -155,6 +156,7 @@ KtValueArgument(496,515): 'intArrayOf(7, 8, 9)'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -182,6 +184,7 @@ KtValueArgument(507,508): '7'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -189,6 +192,7 @@ KtValueArgument(510,511): '8'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -196,6 +200,7 @@ KtValueArgument(513,514): '9'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -210,6 +215,7 @@ KtValueArgument(533,554): 'AnnoWithKClass::class'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -237,6 +243,7 @@ KtValueArgument(573,598): 'one.AnnoWithKClass::class'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -277,6 +284,7 @@ KtValueArgument(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -337,6 +345,7 @@ KtValueArgument(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArra
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -364,6 +373,7 @@ KtValueArgument(711,742): 'one.AnnoWithArray([10, 11, 12])'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -404,6 +414,7 @@ KtValueArgument(729,741): '[10, 11, 12]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -418,6 +429,7 @@ KtValueArgument(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -445,6 +457,7 @@ KtValueArgument(758,780): 'intArrayOf(13, 14, 15)'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -472,6 +485,7 @@ KtValueArgument(769,771): '13'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -479,6 +493,7 @@ KtValueArgument(773,775): '14'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -486,6 +501,7 @@ KtValueArgument(777,779): '15'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -500,6 +516,7 @@ KtValueArgument(800,825): 'stringConstant + " 1.2.3"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 

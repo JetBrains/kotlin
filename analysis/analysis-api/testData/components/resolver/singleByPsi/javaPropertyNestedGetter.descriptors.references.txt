@@ -8,5 +8,6 @@ KtNameReferenceExpression(76,79): 'sub'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'getSub' !in [sub]
     symbols:
       (in JavaClass) open fun getSub(): JavaSubClass!

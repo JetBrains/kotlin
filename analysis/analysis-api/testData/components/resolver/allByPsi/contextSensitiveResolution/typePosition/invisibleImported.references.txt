@@ -44,6 +44,7 @@ KtNameReferenceExpression(182,186): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type MySealed
 
@@ -86,6 +87,7 @@ KtNameReferenceExpression(257,261): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type kotlin.Any
 

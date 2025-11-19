@@ -86,6 +86,7 @@ KtNameReferenceExpression(299,303): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) fun <E, A> Either<E, A>.getOrElse(default: A): A
 

@@ -9,6 +9,7 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      resolvesByNamesViolations: 'getFoo' !in [foo]
       symbols:
         (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>
 
@@ -23,6 +24,7 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      resolvesByNamesViolations: 'setFoo' !in [foo]
       symbols:
         (in KotlinClass) override fun setFoo(foo: Foo<kotlin.Any>)
 
@@ -37,5 +39,6 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      resolvesByNamesViolations: 'getFoo' !in [foo]
       symbols:
         (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>

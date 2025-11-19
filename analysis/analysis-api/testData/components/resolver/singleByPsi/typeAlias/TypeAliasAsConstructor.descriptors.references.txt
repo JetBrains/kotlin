@@ -2,6 +2,7 @@ KtNameReferenceExpression(76,83): 'MyAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'MyClass' !in [MyAlias]
     symbols:
       (in test.MyClass) constructor()
 

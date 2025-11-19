@@ -44,6 +44,7 @@ KtNameReferenceExpression(232,236): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type T
 
@@ -114,6 +115,7 @@ KtNameReferenceExpression(346,350): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type T
 

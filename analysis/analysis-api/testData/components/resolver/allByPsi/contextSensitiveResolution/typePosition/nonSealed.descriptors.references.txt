@@ -37,6 +37,7 @@ KtNameReferenceExpression(220,224): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) fun NonSealed.getOrElse(): ERROR(Cannot infer a type variable <TYPE-PARAMETER-FOR-WHEN-RESOLVE>)
 

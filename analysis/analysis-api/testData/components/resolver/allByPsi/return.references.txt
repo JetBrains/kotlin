@@ -107,6 +107,7 @@ KtLabelReferenceExpression(295,300): '@foo3'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [foo3] provided
     symbols:
       (in <local>: usage.<no name>.<no name>) fun(it: kotlin.Boolean): kotlin.Unit
 
@@ -114,6 +115,7 @@ KtLabelReferenceExpression(331,336): '@foo2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [foo2] provided
     symbols:
       (in <local>: usage.<no name>) fun(it: kotlin.String): kotlin.Unit
 
@@ -121,6 +123,7 @@ KtLabelReferenceExpression(367,372): '@foo1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [foo1] provided
     symbols:
       (in <local>: usage.<no name>.<no name>.<no name>) fun(it: kotlin.Int): kotlin.Unit
 
@@ -142,6 +145,7 @@ KtLabelReferenceExpression(436,442): 'label@'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [label] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -156,6 +160,7 @@ KtLabelReferenceExpression(513,519): '@label'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [label] provided
     symbols:
       (in <local>: usage.<no name>.<no name>.<no name>) fun(s: kotlin.String): kotlin.Unit
 
@@ -163,6 +168,7 @@ KtLabelReferenceExpression(546,551): '@foo3'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [foo3] provided
     symbols:
       (in <local>: usage.<no name>.<no name>) fun(it: kotlin.Boolean): kotlin.Unit
 
@@ -170,6 +176,7 @@ KtLabelReferenceExpression(578,583): '@foo2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [foo2] provided
     symbols:
       (in <local>: usage.<no name>) fun(it: kotlin.String): kotlin.Unit
 
@@ -177,6 +184,7 @@ KtLabelReferenceExpression(610,615): '@foo1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [foo1] provided
     symbols:
       (in <local>: usage) fun(it: kotlin.Int): kotlin.Unit
 
@@ -184,6 +192,7 @@ KtLabelReferenceExpression(658,663): '@foo3'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [foo3] provided
     symbols:
       (in <local>: usage.<no name>.<no name>) fun(it: kotlin.Boolean): kotlin.Unit
 
@@ -191,6 +200,7 @@ KtLabelReferenceExpression(686,691): '@foo2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [foo2] provided
     symbols:
       (in <local>: usage.<no name>) fun(it: kotlin.String): kotlin.Unit
 
@@ -198,5 +208,6 @@ KtLabelReferenceExpression(714,719): '@foo1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [foo1] provided
     symbols:
       (in <local>: usage) fun(it: kotlin.Int): kotlin.Unit

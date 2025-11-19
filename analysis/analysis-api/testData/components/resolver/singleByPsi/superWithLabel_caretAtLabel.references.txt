@@ -2,5 +2,6 @@ KtLabelReferenceExpression(76,80): '@Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [Foo] provided
     symbols:
       (in ROOT) class Foo : A

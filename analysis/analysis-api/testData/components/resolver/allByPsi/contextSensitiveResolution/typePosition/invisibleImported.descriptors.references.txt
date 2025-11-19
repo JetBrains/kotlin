@@ -44,6 +44,7 @@ KtNameReferenceExpression(182,186): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) fun MySealed.getOrElse1(): ERROR(Cannot infer a type variable <TYPE-PARAMETER-FOR-WHEN-RESOLVE>)
 
@@ -98,6 +99,7 @@ KtNameReferenceExpression(257,261): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) fun kotlin.Any.getOrElse2(): ERROR(Cannot infer a type variable <TYPE-PARAMETER-FOR-WHEN-RESOLVE>)
 

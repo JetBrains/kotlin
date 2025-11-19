@@ -2,5 +2,6 @@ KtLabelReferenceExpression(68,72): '@foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [foo] provided
     symbols:
       (in Foo) val kotlin.String.foo: kotlin.Any

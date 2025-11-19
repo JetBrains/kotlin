@@ -3,6 +3,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      resolvesByNamesViolations: 'getValue' !in [value]
       symbols:
         (in Storage) open fun getValue(): kotlin.String!
 

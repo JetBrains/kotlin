@@ -142,6 +142,7 @@ KtNameReferenceExpression(337,341): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type A
 
@@ -240,6 +241,7 @@ KtNameReferenceExpression(753,757): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) class SimpleOperators
 
@@ -247,6 +249,7 @@ KtLabelReferenceExpression(757,773): '@SimpleOperators'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [SimpleOperators] provided
     symbols:
       (in ROOT) class SimpleOperators
 
@@ -310,6 +313,7 @@ KtNameReferenceExpression(877,881): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type A
 
@@ -422,6 +426,7 @@ KtOperationReferenceExpression(999,1000): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'set' !in []
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -459,6 +464,7 @@ KtOperationReferenceExpression(1018,1019): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'set' !in []
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -671,6 +677,7 @@ KtOperationReferenceExpression(1179,1180): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'set' !in []
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun set(b: kotlin.Int, x: A)
@@ -839,6 +846,7 @@ KtOperationReferenceExpression(1338,1339): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'set' !in []
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -979,6 +987,7 @@ KtOperationReferenceExpression(1407,1408): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'set' !in []
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun set(b: kotlin.Int, x: A)

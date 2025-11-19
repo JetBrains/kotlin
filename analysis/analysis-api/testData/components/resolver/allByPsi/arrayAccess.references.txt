@@ -107,12 +107,14 @@ KtOperationReferenceExpression(183,185): '--'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'set' !in [dec]
     symbols:
       (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'set' !in [dec]
     symbols:
       (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 

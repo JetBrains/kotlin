@@ -114,6 +114,7 @@ KtLabelReferenceExpression(330,346): '@myRunWithMyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRunWithMyEnum] provided
     symbols:
       (in <local>: main) fun(): MyEnum
 
@@ -156,6 +157,7 @@ KtLabelReferenceExpression(409,425): '@myRunWithMyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRunWithMyEnum] provided
     symbols:
       (in <local>: main) fun(): MyEnum
 
@@ -233,6 +235,7 @@ KtLabelReferenceExpression(494,500): '@myRun'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRun] provided
     symbols:
       (in <local>: main) fun(): MyEnum
 
@@ -289,6 +292,7 @@ KtLabelReferenceExpression(569,575): '@myRun'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRun] provided
     symbols:
       (in <local>: main) fun(): MyEnum
 
@@ -338,6 +342,7 @@ KtLabelReferenceExpression(658,664): '@myRun'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRun] provided
     symbols:
       (in <local>: main.z) fun(): MyEnum
 
@@ -380,6 +385,7 @@ KtLabelReferenceExpression(717,723): '@myRun'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRun] provided
     symbols:
       (in <local>: main) fun(): ERROR(CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y)
 
@@ -422,6 +428,7 @@ KtLabelReferenceExpression(775,781): '@myRun'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: shouldn't predict, but [myRun] provided
     symbols:
       (in <local>: main) fun(): MyEnum
 
