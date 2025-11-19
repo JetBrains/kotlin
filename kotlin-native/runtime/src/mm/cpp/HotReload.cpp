@@ -175,7 +175,7 @@ HotReloader& HotReloader::Instance() noexcept {
     return *globalDataInstance;
 }
 
-void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlinDynamicLibrary) const {
+void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlinDynamicLibrary) {
     std::vector<rebinding> rebindingsToPerform{};
     rebindingsToPerform.reserve(kotlinDynamicLibrary.functions.size());
 
@@ -208,6 +208,7 @@ void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlin
     // Perform symbol interposition with the collected function symbols
     if (!rebindingsToPerform.empty()) {
         HRLogInfo("Performing rebinding of %ld symbols", rebindingsToPerform.size());
+        statsCollector.registerReboundSymbols(static_cast<int>(rebindingsToPerform.size()));
 
         if (rebind_symbols(rebindingsToPerform.data(), rebindingsToPerform.size()) != 0) {
             HRLogError("Rebinding failed for an unknown reason");
@@ -218,9 +219,16 @@ void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlin
 }
 
 void HotReloader::reload(const std::string& dylibPath) noexcept {
+
+    // TODO: here there may be a concurrency issue, threads are not yet suspended!
+    statsCollector.registerStart(static_cast<int64_t>(getCurrentEpoch()));
+    statsCollector.registerLoadedLibrary(dylibPath);
+
     /// 1. Load the new library into memory with `dlopen`
     if (!_reloader.loadLibraryFromPath(dylibPath)) {
         HRLogError("Cannot load dylib in memory space!?");
+        statsCollector.registerEnd(static_cast<int64_t>(getCurrentEpoch()));
+        statsCollector.registerSuccessful(false);
         return;
     }
 
@@ -242,15 +250,18 @@ void HotReloader::reload(const std::string& dylibPath) noexcept {
         try {
             mm::WaitForThreadsSuspension();
             perform(*currentThreadData, parsedDynamicLib);
+            statsCollector.registerEnd(static_cast<int64_t>(getCurrentEpoch()));
+            statsCollector.registerSuccessful(true);
             mm::ResumeThreads();
 
             if (gOnSuccess != nullptr) {
-                // Call into a tiny Kotlin stub to perform `invoke()`.
                 HRLogDebug("Calling Kotlin success-callback: %p", gOnSuccess);
                 Kotlin_native_internal_HotReload_invokeSuccessCallback(gOnSuccess);
             }
         } catch (const std::exception& e) {
             HRLogError("Hot-reload failed with exception: %s", e.what());
+            statsCollector.registerEnd(static_cast<int64_t>(getCurrentEpoch()));
+            statsCollector.registerSuccessful(false);
             mm::ResumeThreads();
         }
     }

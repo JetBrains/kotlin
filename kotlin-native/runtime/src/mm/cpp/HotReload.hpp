@@ -12,6 +12,7 @@
 
 #include "hot/HotReloadServer.hpp"
 #include "hot/MachOParser.hpp"
+#include "hot/HotReloadStats.hpp"
 
 namespace kotlin::hot {
 
@@ -36,17 +37,21 @@ public:
     };
 
     static HotReloader& Instance() noexcept;
-    HotReloader();
+
     static void InitModule() noexcept;
 
+    HotReloader();
+
     void reload(const std::string& dylibPath) noexcept;
+
+    StatsCollector statsCollector;
 
 private:
 
     /// Perform class hot-reloading, preserving the existing state.
     void perform(mm::ThreadData& currentThreadData, const KotlinDynamicLibrary& libraryToLoad) noexcept;
 
-    void interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlinDynamicLibrary) const;
+    void interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlinDynamicLibrary);
 
     /// Given an instance provided by <code>existingObject</code>, create a new class of the
     /// type provided by <code>newTypeInfo</code>, while preserving existing properties.
