@@ -17,6 +17,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModificationType
+import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalSourceOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishModuleOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -90,6 +91,13 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         processQueue { value, iterator ->
             if (value.ktModule == ktModuleWithOutOfBlockModification) iterator.remove()
         }
+    }
+
+    /**
+     * NOTE: We want to avoid [KotlinProjectStructureProvider.getModule] at all costs due to potential freezes during invalidation!
+     */
+    private fun dropGlobalOutdatedModifications() {
+        inBlockModificationQueue = null
     }
 
     /**
@@ -246,12 +254,20 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             .afterModification(declaration, module)
     }
 
-    private fun outOfBlockModification(element: PsiElement) {
-        val module = KotlinProjectStructureProvider.getModule(project, element, useSiteModule = null)
+    private val publishGlobalModificationEvents = false
 
-        // We should check outdated modifications before to avoid cache dropping (e.g., KaModule cache)
-        dropOutdatedModifications(module)
-        module.publishModuleOutOfBlockModificationEvent()
+    private fun outOfBlockModification(element: PsiElement) {
+        if (publishGlobalModificationEvents) {
+            // TODO: Document.
+            dropGlobalOutdatedModifications()
+            project.publishGlobalSourceOutOfBlockModificationEvent()
+        } else {
+            val module = KotlinProjectStructureProvider.getModule(project, element, useSiteModule = null)
+
+            // We should check outdated modifications before to avoid cache dropping (e.g., KaModule cache)
+            dropOutdatedModifications(module)
+            module.publishModuleOutOfBlockModificationEvent()
+        }
     }
 
     /**
