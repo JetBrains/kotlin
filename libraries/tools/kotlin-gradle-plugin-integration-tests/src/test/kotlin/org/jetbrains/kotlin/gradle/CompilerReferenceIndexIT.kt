@@ -14,15 +14,24 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.FILE_IDS_T
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.LOOKUPS_FILENAME
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.SUBTYPES_FILENAME
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.cri
+import org.jetbrains.kotlin.buildtools.api.cri.FileIdToPathEntry
+import org.jetbrains.kotlin.buildtools.api.cri.LookupEntry
+import org.jetbrains.kotlin.buildtools.api.cri.SubtypeEntry
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback
 import org.junit.jupiter.api.extension.RegisterExtension
 import java.nio.file.Path
 import kotlin.io.path.*
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+@OptIn(ExperimentalBuildToolsApi::class)
 @JvmGradlePluginTests
 @DisplayName("Gradle / Compiler Reference Index")
 class CompilerReferenceIndexIT : KGPBaseTest() {
@@ -44,20 +53,28 @@ class CompilerReferenceIndexIT : KGPBaseTest() {
         customKotlinDaemonRunFilesDirectory = kotlinDaemonRunFilesDir.toFile(),
     )
 
-    @GradleTest
-    @DisplayName("Smoke test for Gradle / CRI data generation and deserialization")
-    @OptIn(ExperimentalBuildToolsApi::class)
-    @GradleTestExtraStringArguments("in-process", "daemon")
-    fun smokeTestCriDataGeneration(gradleVersion: GradleVersion, strategy: String) {
-        project(
+    private fun project(
+        gradleVersion: GradleVersion,
+        strategy: String,
+        test: TestProject.() -> Unit = {},
+    ): TestProject? {
+        return project(
             "kotlinProject",
             gradleVersion,
             buildOptions = when (strategy) {
                 "in-process" -> defaultInProcessBuildOptions
                 "daemon" -> defaultDaemonBuildOptions
-                else -> return // `out-of-process` strategy is not supported by BTA
-            }
-        ) {
+                else -> return null // `out-of-process` strategy is not supported by BTA
+            },
+            test = test,
+        )
+    }
+
+    @GradleTest
+    @DisplayName("Smoke test for Gradle / CRI data generation and deserialization")
+    @GradleTestExtraStringArguments("in-process", "daemon")
+    fun smokeTestCriDataGeneration(gradleVersion: GradleVersion, strategy: String) {
+        project(gradleVersion, strategy) {
             kotlinSourcesDir().source("main.kt") {
                 //language=kotlin
                 """
@@ -71,29 +88,130 @@ class CompilerReferenceIndexIT : KGPBaseTest() {
                 if (strategy == "in-process") assertOutputContains("Generating Compiler Reference Index...")
             }
 
-            val criDir = projectPath.resolve("build/kotlin/compileKotlin/cacheable").resolve(DATA_PATH)
-            val lookups = criDir.resolve(LOOKUPS_FILENAME)
-            val fileIdsToPaths = criDir.resolve(FILE_IDS_TO_PATHS_FILENAME)
-            val subtypes = criDir.resolve(SUBTYPES_FILENAME)
+            val (lookups, fileIdsToPaths, subtypes) = deserializeCriData()
+            assertTrue(lookups.isNotEmpty(), "Expected non-empty CRI lookup entries")
+            assertTrue(fileIdsToPaths.isNotEmpty(), "Expected non-empty CRI fileIdToPath entries")
+            assertTrue(subtypes.isNotEmpty(), "Expected non-empty CRI subtype entries")
+        }
+    }
 
-            assertFilesExist(lookups, fileIdsToPaths, subtypes)
-
-            val toolchain = KotlinToolchains.loadImplementation(this::class.java.classLoader)
-            toolchain.createBuildSession().use { session ->
-                val lookupEntries = session.executeOperation(
-                    toolchain.cri.createCriLookupDataDeserializationOperation(lookups.readBytes())
-                ).toList()
-                val fileIdToPathEntries = session.executeOperation(
-                    toolchain.cri.createCriFileIdToPathDataDeserializationOperation(fileIdsToPaths.readBytes())
-                ).toList()
-                val subtypeEntries = session.executeOperation(
-                    toolchain.cri.createCriSubtypeDataDeserializationOperation(subtypes.readBytes())
-                ).toList()
-
-                assertTrue(lookupEntries.isNotEmpty(), "Expected non-empty CRI lookup entries")
-                assertTrue(fileIdToPathEntries.isNotEmpty(), "Expected non-empty CRI fileIdToPath entries")
-                assertTrue(subtypeEntries.isNotEmpty(), "Expected non-empty CRI subtype entries")
+    @GradleTest
+    @DisplayName("Incremental CRI data generation tracks old and new entries, and rebuild resets old ones")
+    @GradleTestExtraStringArguments("in-process", "daemon")
+    fun testIncrementalCriDataGeneration(gradleVersion: GradleVersion, strategy: String) {
+        project(gradleVersion, strategy) {
+            val source1Filename = "file1.kt"
+            val source2Filename = "file2.kt"
+            kotlinSourcesDir().source(source1Filename) {
+                //language=kotlin
+                """
+                open class Base
+                class Derived : Base()
+                fun use(d: Derived) = d.toString()
+                """.trimIndent()
             }
+
+            build("assemble")
+
+            val (initialLookups, initialFileIdsToPaths, initialSubtypes) = deserializeCriData()
+
+            val requiredSource1Path = kotlinSourcesDir().resolve(source1Filename).relativeTo(projectPath).toString()
+            val source1FileIdToPath = assertNotNull(initialFileIdsToPaths.singleOrNull { it.path == requiredSource1Path })
+            val baseHash = hashCode("Base")
+            val derivedHash = hashCode("Derived")
+            val derived2Hash = hashCode("Derived2")
+
+            val derivedLookupEntry = assertNotNull(
+                initialLookups.singleOrNull { it.fqNameHashCode == derivedHash }
+            )
+            assertContains(derivedLookupEntry.fileIds, source1FileIdToPath.fileId)
+
+            val baseSubtypeEntry = assertNotNull(
+                initialSubtypes.singleOrNull { it.fqNameHashCode == baseHash }
+            )
+            assertEquals(listOf("Derived"), baseSubtypeEntry.subtypes)
+
+            // adding new subtype and lookup entries to another source file
+            kotlinSourcesDir().source(source2Filename) {
+                //language=kotlin
+                """
+                class Derived2 : Base()
+                fun use(d: Derived2) = d.toString()
+                """.trimIndent()
+            }
+            // and removing old subtype and lookup entries from the first source file
+            kotlinSourcesDir().source(source1Filename) {
+                //language=kotlin
+                """
+                open class Base
+                """.trimIndent()
+            }
+
+            build("assemble")
+
+            val (modifiedLookups, modifiedFileIdsToPaths, modifiedSubtypes) = deserializeCriData()
+
+            // TODO KT-82000 Find better approach for generating CRI data with IC instead of appending new data
+            // after the incremental compilation there will be 2 entries for the same source file
+            // they should have the same (hash-based) id
+            val source1FileIdsToPaths = modifiedFileIdsToPaths.filter { it.path == requiredSource1Path }
+            assertEquals(2, source1FileIdsToPaths.size)
+            assertEquals(source1FileIdsToPaths.first().fileId, source1FileIdsToPaths.last().fileId)
+
+            val requiredSource2Path = kotlinSourcesDir().resolve(source2Filename).relativeTo(projectPath).toString()
+            val source2FileIdToPath = assertNotNull(modifiedFileIdsToPaths.singleOrNull { it.path == requiredSource2Path })
+
+            val oldDerivedLookupEntry = assertNotNull(modifiedLookups.singleOrNull { it.fqNameHashCode == derivedHash })
+            assertContains(oldDerivedLookupEntry.fileIds, source1FileIdToPath.fileId)
+            val derived2LookupEntry = assertNotNull(modifiedLookups.singleOrNull { it.fqNameHashCode == derived2Hash })
+            assertContains(derived2LookupEntry.fileIds, source2FileIdToPath.fileId)
+
+            val baseSubtypeEntries = modifiedSubtypes.filter { it.fqNameHashCode == baseHash }
+            assertEquals(2, baseSubtypeEntries.size)
+            assertEquals(listOf("Derived"), baseSubtypeEntries.first().subtypes)
+            assertEquals(listOf("Derived2"), baseSubtypeEntries.last().subtypes)
+
+            // Force rebuild
+            build("assemble", "--rerun-tasks")
+
+            val (afterRebuildLookups, afterRebuildFileIdsToPaths, afterRebuildSubtypes) = deserializeCriData()
+
+            assertNotNull(afterRebuildFileIdsToPaths.singleOrNull { it.path == requiredSource2Path })
+
+            assertNull(afterRebuildLookups.firstOrNull { it.fqNameHashCode == derivedHash })
+            val afterRebuildDerived2LookupEntry = assertNotNull(afterRebuildLookups.singleOrNull { it.fqNameHashCode == derived2Hash })
+            assertContains(afterRebuildDerived2LookupEntry.fileIds, source2FileIdToPath.fileId)
+
+            val afterRebuildBaseSubtypeEntry = assertNotNull(afterRebuildSubtypes.singleOrNull { it.fqNameHashCode == baseHash })
+            assertEquals(listOf("Derived2"), afterRebuildBaseSubtypeEntry.subtypes)
+        }
+    }
+
+    private fun hashCode(fqName: String): Int = FqName(fqName).hashCode()
+
+    private fun TestProject.deserializeCriData(): Triple<List<LookupEntry>, List<FileIdToPathEntry>, List<SubtypeEntry>> {
+        val criDir = projectPath.resolve("build/kotlin/compileKotlin/cacheable").resolve(DATA_PATH)
+        val lookups = criDir.resolve(LOOKUPS_FILENAME)
+        val fileIdsToPaths = criDir.resolve(FILE_IDS_TO_PATHS_FILENAME)
+        val subtypes = criDir.resolve(SUBTYPES_FILENAME)
+
+        assertFilesExist(lookups, fileIdsToPaths, subtypes)
+
+        val toolchain = KotlinToolchains.loadImplementation(this::class.java.classLoader)
+        return toolchain.createBuildSession().use { session ->
+            val lookupEntries = session.executeOperation(
+                toolchain.cri.createCriLookupDataDeserializationOperation(lookups.readBytes())
+            ).toList()
+
+            val fileIdToPathEntries = session.executeOperation(
+                toolchain.cri.createCriFileIdToPathDataDeserializationOperation(fileIdsToPaths.readBytes())
+            ).toList()
+
+            val subtypeEntries = session.executeOperation(
+                toolchain.cri.createCriSubtypeDataDeserializationOperation(subtypes.readBytes())
+            ).toList()
+
+            Triple(lookupEntries, fileIdToPathEntries, subtypeEntries)
         }
     }
 
