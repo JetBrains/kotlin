@@ -12,23 +12,38 @@ import org.junit.Assert
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
 
-fun KtDiagnosticFactoryToRendererMap.verifyMessages(objectWithErrors: Any) {
+fun verifyDiagnostics(vararg rendererToContainerMap: Pair<KtDiagnosticFactoryToRendererMap, KtDiagnosticsContainer>) {
     val errors = mutableListOf<String>()
-    for (property in objectWithErrors::class.memberProperties) {
-        when (val factory = property.getter.call(objectWithErrors)) {
+    val existingDiagnosticFactories = mutableMapOf<String, AbstractKtDiagnosticFactory>()
+    for ((renderer, container) in rendererToContainerMap) {
+        renderer.verifyMessages(container, errors, existingDiagnosticFactories)
+    }
+    if (errors.isNotEmpty()) {
+        Assert.fail(
+            errors.joinToString(
+                "\n\n",
+                postfix = "\n\nSee https://youtrack.jetbrains.com/articles/KT-A-610 for the style guide.\n\n"
+            )
+        )
+    }
+}
+
+private fun KtDiagnosticFactoryToRendererMap.verifyMessages(
+    container: KtDiagnosticsContainer,
+    errors: MutableList<String>,
+    existingDiagnosticFactories: MutableMap<String, AbstractKtDiagnosticFactory>
+) {
+    for (property in container::class.memberProperties) {
+        when (val factory = property.getter.call(container)) {
             is AbstractKtDiagnosticFactory -> {
-                errors += verifyMessageForFactory(factory, property)
+                errors += verifyMessageForFactory(factory, property, existingDiagnosticFactories)
             }
             is KtDiagnosticFactoryForDeprecation<*> -> {
-                errors += verifyMessageForFactory(factory.warningFactory, property)
-                errors += verifyMessageForFactory(factory.errorFactory, property)
+                errors += verifyMessageForFactory(factory.warningFactory, property, existingDiagnosticFactories)
+                errors += verifyMessageForFactory(factory.errorFactory, property, existingDiagnosticFactories)
             }
             else -> {}
         }
-    }
-
-    if (errors.isNotEmpty()) {
-        Assert.fail(errors.joinToString("\n\n", postfix = "\n\nSee https://youtrack.jetbrains.com/articles/KT-A-610 for the style guide.\n\n"))
     }
 }
 
@@ -43,11 +58,22 @@ private val lastCharExclusions = listOf(
     FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR.name,
 )
 
-fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKtDiagnosticFactory, property: KProperty<*>): List<String> {
+fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(
+    factory: AbstractKtDiagnosticFactory,
+    property: KProperty<*>,
+    existingDiagnosticFactories: MutableMap<String, AbstractKtDiagnosticFactory>,
+): List<String> {
     return buildList {
         val renderer = get(factory) ?: run {
             add("No default diagnostic renderer is provided for ${property.name}")
             return@buildList
+        }
+
+        val existingDiagnosticFactory = existingDiagnosticFactories[factory.name]
+        if (existingDiagnosticFactory != null) {
+            add("The diagnostic ${factory.name} is declared both in ${existingDiagnosticFactory.rendererFactory::class.simpleName} and ${factory.rendererFactory::class.simpleName}")
+        } else {
+            existingDiagnosticFactories[factory.name] = factory
         }
 
         val message = renderer.message

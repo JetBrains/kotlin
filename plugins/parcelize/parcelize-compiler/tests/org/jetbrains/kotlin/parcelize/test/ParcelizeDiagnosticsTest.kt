@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.parcelize.test
 
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtDefaultErrorMessagesParcelize
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize
-import org.jetbrains.kotlin.test.utils.verifyMessages
+import org.jetbrains.kotlin.test.utils.verifyDiagnostics
 import org.junit.jupiter.api.Test
 
-class ParcelizeDefaultMessagesTest {
+class ParcelizeDiagnosticsTest {
     @Test
-    fun ensureAllMessagesPresent() {
-        KtDefaultErrorMessagesParcelize.MAP.verifyMessages(KtErrorsParcelize)
+    fun verify() {
+        verifyDiagnostics(KtDefaultErrorMessagesParcelize.MAP to KtErrorsParcelize)
     }
 }

@@ -21,19 +21,21 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrorsDefaultMessages
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrorsDefaultMessages
-import org.jetbrains.kotlin.test.utils.verifyMessages
+import org.jetbrains.kotlin.test.utils.verifyDiagnostics
 import org.junit.Test
 
-class DefaultMessagesTest {
+class DefaultDiagnosticsTest {
     @Test
-    fun ensureAllMessagesPresent() {
-        FirErrorsDefaultMessages.MAP.verifyMessages(FirErrors)
-        FirJvmErrorsDefaultMessages.MAP.verifyMessages(FirJvmErrors)
-        FirJsErrorsDefaultMessages.MAP.verifyMessages(FirJsErrors)
-        FirNativeErrorsDefaultMessages.MAP.verifyMessages(FirNativeErrors)
-        FirWasmErrorsDefaultMessages.MAP.verifyMessages(FirWasmErrors)
-        FirWebCommonErrorsDefaultMessages.MAP.verifyMessages(FirWebCommonErrors)
-        FirSyntaxErrorsDefaultMessages.MAP.verifyMessages(FirSyntaxErrors)
-        KtDiagnosticMessagesCli.MAP.verifyMessages(CliDiagnostics)
+    fun verify() {
+        verifyDiagnostics(
+            FirErrorsDefaultMessages.MAP to FirErrors,
+            FirJvmErrorsDefaultMessages.MAP to FirJvmErrors,
+            FirJsErrorsDefaultMessages.MAP to FirJsErrors,
+            FirNativeErrorsDefaultMessages.MAP to FirNativeErrors,
+            FirWasmErrorsDefaultMessages.MAP to FirWasmErrors,
+            FirWebCommonErrorsDefaultMessages.MAP to FirWebCommonErrors,
+            FirSyntaxErrorsDefaultMessages.MAP to FirSyntaxErrors,
+            KtDiagnosticMessagesCli.MAP to CliDiagnostics
+        )
     }
 }
