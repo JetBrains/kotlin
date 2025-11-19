@@ -1202,8 +1202,9 @@ class BodyGenerator(
             }
 
             in wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub -> {
-                val arity = wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub.indexOfFirst { it == function.symbol } + 2
-                val suspendFunctionClassType = function.parameters[0].type
+                val intrinsicIndex = wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub.indexOfFirst { it == function.symbol }
+                val arity = intrinsicIndex + 2
+                val suspendFunctionClassType = function.parameters[intrinsicIndex].type
                 val suspendFunctionInvoke = suspendFunctionClassType.classOrFail.functions.singleOrNull {
                     it.owner.name.asString() == "invoke"
                 } ?: error("No `invoke` function for suspend function type\n${suspendFunctionClassType.dumpKotlinLike()}")

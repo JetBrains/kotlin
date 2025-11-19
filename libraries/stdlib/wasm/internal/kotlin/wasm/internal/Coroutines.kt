@@ -137,15 +137,15 @@ internal fun <R, T> startCoroutineUninterceptedOrReturn1Impl(
     receiver: R,
     completion: Continuation<T>
 ): Any? {
-    return startCoroutineUninterceptedOrReturnIntrinsic1Stub(f, receiver, completion)
+    return startCoroutineUninterceptedOrReturnIntrinsic1Stub(receiver, f, completion)
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
 internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1Stub(
-    f: (suspend R.() -> T),
     receiver: R,
+    f: (suspend R.() -> T),
     completion: Continuation<T>
 ): Any? {
     implementedAsIntrinsic
@@ -158,16 +158,16 @@ internal fun <R, P, T> startCoroutineUninterceptedOrReturn2Impl(
     param: P,
     completion: Continuation<T>
 ): Any? {
-    return startCoroutineUninterceptedOrReturnIntrinsic2Stub(f, receiver, param, completion)
+    return startCoroutineUninterceptedOrReturnIntrinsic2Stub(receiver, param, f, completion)
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
 internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2Stub(
-    f: (suspend R.(P) -> T),
     receiver: R,
     param: P,
+    f: (suspend R.(P) -> T),
     completion: Continuation<T>
 ): Any? {
     implementedAsIntrinsic
