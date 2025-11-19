@@ -192,7 +192,7 @@ internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): Externa
     // We deliberately avoid usage of `takeIf` here as type erase on the inlining stage leads to infinite recursion
     if (isNullish(x)) null else x
 
-internal fun jsToKotlinStringAdapter(x: JsString) = String(x, jsLength(x))
+internal fun jsToKotlinStringAdapter(x: JsString) = String(x)
 
 
 private fun getJsEmptyString(): JsString =

@@ -1,5 +1,6 @@
 /*
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package kotlin.wasm.internal
 
@@ -12,12 +13,12 @@ internal expect fun itoa64(inputValue: Long): String
 internal expect fun utoa64(inputValue: ULong): String
 
 private enum class CharCodes(val code: Int) {
-    //  PERCENT(0x25),
+//  PERCENT(0x25),
     PLUS(0x2B),
     MINUS(0x2D),
     DOT(0x2E),
     _0(0x30),
-    //  _1(0x31),
+//  _1(0x31),
 //  _2(0x32),
 //  _3(0x33),
 //  _4(0x34),

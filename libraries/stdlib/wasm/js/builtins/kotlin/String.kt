@@ -15,11 +15,13 @@ import kotlin.wasm.internal.*
  */
 
 public actual class String internal @WasmPrimitiveConstructor constructor(
-    internal val internalStr: JsString,
-    @kotlin.internal.IntrinsicConstEvaluation
-    public actual override val length: Int,
+    internal val internalStr: JsString
 ) : Comparable<String>, CharSequence {
     public actual companion object {}
+
+    @kotlin.internal.IntrinsicConstEvaluation
+    public actual override val length: Int
+        get() = jsLength(internalStr)
 
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
@@ -29,7 +31,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun plus(other: Any?): String {
         val right = other.toString()
-        return String(jsConcat(this.internalStr, right.internalStr).unsafeCast(), this.length + right.length)
+        return String(jsConcat(this.internalStr, right.internalStr).unsafeCast())
     }
 
     /**
@@ -48,7 +50,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 
     public actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
         checkStringBounds(startIndex, endIndex, length)
-        return String(jsSubstring(this.internalStr, startIndex, endIndex).unsafeCast(), endIndex - startIndex)
+        return String(jsSubstring(this.internalStr, startIndex, endIndex).unsafeCast())
     }
 
     private fun checkStringBounds(startIndex: Int, endIndex: Int, length: Int) {
@@ -107,7 +109,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 
 internal actual fun WasmCharArray.createString(): String {
     val size = this.len()
-    return String(jsFromCharCodeArray(this, 0, size).unsafeCast(), size)
+    return String(jsFromCharCodeArray(this, 0, size).unsafeCast())
 }
 
 @Suppress("RETURN_VALUE_NOT_USED")

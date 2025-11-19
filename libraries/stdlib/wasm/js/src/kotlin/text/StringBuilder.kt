@@ -223,7 +223,7 @@ public actual class StringBuilder private constructor(
      * Characters are appended in order, starting at the index 0.
      */
     @IgnorableReturnValue
-    public actual fun append(value: CharArray): StringBuilder = append(String(jsFromCharCodeArray(value.storage, 0, value.size).unsafeCast(), value.size))
+    public actual fun append(value: CharArray): StringBuilder = append(String(jsFromCharCodeArray(value.storage, 0, value.size).unsafeCast()))
 
     /**
      * Appends the specified string [value] to this string builder and returns this instance.
@@ -484,7 +484,7 @@ public actual class StringBuilder private constructor(
      */
     public actual fun substring(startIndex: Int, endIndex: Int): String {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, _length)
-        return String(jsSubstring(jsString, startIndex, endIndex).unsafeCast(), endIndex - startIndex)
+        return String(jsSubstring(jsString, startIndex, endIndex).unsafeCast())
     }
 
     /**
@@ -506,7 +506,7 @@ public actual class StringBuilder private constructor(
      */
     public actual fun trimToSize() {}
 
-    override fun toString(): String = String(jsString, _length)
+    override fun toString(): String = String(jsString)
 
     /**
      * Sets the character at the specified [index] to the specified [value].
