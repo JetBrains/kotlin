@@ -918,6 +918,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("invisibleAnnotationVsVisibleInterface.kt")
+      public void testInvisibleAnnotationVsVisibleInterface() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotations/invisibleAnnotationVsVisibleInterface.kt");
+      }
+
+      @Test
       @TestMetadata("kindaCompilerRequiredNestedAnnotation.kt")
       public void testKindaCompilerRequiredNestedAnnotation() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/kindaCompilerRequiredNestedAnnotation.kt");

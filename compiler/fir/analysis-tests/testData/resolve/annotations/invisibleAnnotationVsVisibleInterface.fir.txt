@@ -1,0 +1,50 @@
+Module: a
+FILE: module_a_invisibleAnnotationVsVisibleInterface.kt
+    public abstract interface TargetTypeAA : R|kotlin/Any| {
+    }
+    public abstract interface TargetTypeBA : R|kotlin/Any| {
+    }
+    public final object OuterTypeA : R|kotlin/Any| {
+        private constructor(): R|OuterTypeA| {
+            super<R|kotlin/Any|>()
+        }
+
+        internal final annotation class TargetTypeAA : R|kotlin/Annotation| {
+            public constructor(): R|OuterTypeA.TargetTypeAA| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    internal final object OuterTypeB : R|kotlin/Any| {
+        private constructor(): R|OuterTypeB| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final annotation class TargetTypeBA : R|kotlin/Annotation| {
+            public constructor(): R|OuterTypeB.TargetTypeBA| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+Module: b
+FILE: module_b_invisibleAnnotationVsVisibleInterface.kt
+    public abstract interface FooAnnotationUser : R|kotlin/Any| {
+        @<ERROR TYPE REF: HIDDEN: OuterTypeA.TargetTypeAA is invisible>() public abstract fun annotationUserAAOuter(): R|kotlin/Unit|
+
+        @R|TargetTypeAA|() public abstract fun annotationUserAAInner(): R|kotlin/Unit|
+
+        @<ERROR TYPE REF: HIDDEN: OuterTypeB.TargetTypeBA is invisible>() public abstract fun annotationUserBAOuter(): R|kotlin/Unit|
+
+        @R|TargetTypeBA|() public abstract fun annotationUserBAInner(): R|kotlin/Unit|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        @<ERROR TYPE REF: HIDDEN: OuterTypeA.TargetTypeAA is invisible>() lval a: R|kotlin/Int| = Int(1)
+        @R|TargetTypeAA|() lval b: R|kotlin/Int| = Int(1)
+        @<ERROR TYPE REF: HIDDEN: OuterTypeB.TargetTypeBA is invisible>() lval c: R|kotlin/Int| = Int(1)
+        @R|TargetTypeBA|() lval d: R|kotlin/Int| = Int(1)
+    }
