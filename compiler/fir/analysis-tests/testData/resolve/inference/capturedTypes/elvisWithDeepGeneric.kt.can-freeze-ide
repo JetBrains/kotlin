@@ -1,0 +1,25 @@
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ChangedIntersectionWithRecursiveCapturedType
+// FILE: test.kt
+interface AbstractField<out Field : AbstractField<Field>>
+
+interface AbstractElement<
+    Element : AbstractElement<Element, Field>,
+    Field : AbstractField<Field>
+>
+
+typealias Monster = AbstractElement<
+    out AbstractElement<
+      out AbstractElement<
+          *,
+          out AbstractField<AbstractField<*>>,
+      >,
+      *,
+    >,
+    *,
+>
+
+fun elvis(x: Monster?, y: Monster?) = x ?: y
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, nullableType, out, outProjection,
+starProjection, typeAliasDeclaration, typeConstraint, typeParameter */

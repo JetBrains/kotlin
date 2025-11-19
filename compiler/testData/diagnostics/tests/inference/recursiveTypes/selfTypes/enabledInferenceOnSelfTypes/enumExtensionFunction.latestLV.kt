@@ -12,7 +12,7 @@ fun <G : Enum<G>> enumTest(a: Enum<G>) {
 }
 
 fun enumStarTest(a: Enum<*>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)")!>a.foo()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*) & kotlin.Enum<CapturedType(*)>")!>a.foo()<!>
     a.bar()
 }
 

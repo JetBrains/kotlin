@@ -6631,6 +6631,18 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("elvisWithDeepGeneric.kt.can-freeze-ide")
+        public void testElvisWithDeepGeneric() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypes/elvisWithDeepGeneric.kt.can-freeze-ide");
+        }
+
+        @Test
+        @TestMetadata("elvisWithDeepGeneric2.kt.can-freeze-ide")
+        public void testElvisWithDeepGeneric2() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypes/elvisWithDeepGeneric2.kt.can-freeze-ide");
+        }
+
+        @Test
         @TestMetadata("hugeMixedCapturedType.kt")
         public void testHugeMixedCapturedType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypes/hugeMixedCapturedType.kt");

@@ -486,6 +486,7 @@ enum class LanguageFeature(
     ForbidOverriddenDefaultParametersInInline(KOTLIN_2_4, enabledInProgressiveMode = true, issue = "KT-49722"),
     ForbidRootIdePackageInCli(KOTLIN_2_4, enabledInProgressiveMode = true, issue = "KT-81357"),
     ReportOptInUsageOnCompanionObjectAccesses(KOTLIN_2_4, enabledInProgressiveMode = true, issue = "KT-82524"),
+    ChangedIntersectionWithRecursiveCapturedType(KOTLIN_2_4, issue = "KT-65059"),
 
     // 2.5
 

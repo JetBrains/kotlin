@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-59012
+// LATEST_LV_DIFFERENCE
 
 fun <G : Enum<G>, T : G> Enum<G>.foo(): T = TODO()
 fun <G : Enum<G>, T : G> Enum<G>.bar(vararg args: T): Unit = TODO()

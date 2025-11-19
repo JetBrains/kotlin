@@ -440,22 +440,15 @@ object AbstractTypeChecker {
             1 -> return isSubtypeForSameConstructor(supertypesWithSameConstructor.first().asArgumentList(), superType)
 
             else -> { // at least 2 supertypes with same constructors. Such case is rare
-                val newArguments = ArgumentList(superConstructor.parametersCount())
-                var anyNonOutParameter = false
-                for (index in 0 until superConstructor.parametersCount()) {
-                    anyNonOutParameter = anyNonOutParameter || superConstructor.getParameter(index).getVariance() != TypeVariance.OUT
-                    if (anyNonOutParameter) continue
-                    val allProjections = supertypesWithSameConstructor.map {
-                        it.getArgumentOrNull(index)?.takeIf { it.getVariance() == TypeVariance.INV }?.getType()
-                            ?: error("Incorrect type: $it, subType: $subType, superType: $superType")
-                    }
-
-                    // todo discuss
-                    val intersection = c.intersectTypes(allProjections).asTypeArgument()
-                    newArguments.add(intersection)
+                if (isSubtypeForSameConstructorWithIntersectedTypeArguments(
+                        subType,
+                        superType,
+                        superConstructor,
+                        supertypesWithSameConstructor
+                    )
+                ) {
+                    return true
                 }
-
-                if (!anyNonOutParameter && isSubtypeForSameConstructor(newArguments, superType)) return true
 
                 return state.runForkingPoint {
                     for (subTypeArguments in supertypesWithSameConstructor) {
@@ -465,6 +458,32 @@ object AbstractTypeChecker {
             }
         }
     }
+
+    // TODO(KT-82633) try to get rid of it.
+    context(c: TypeSystemContext, state: TypeCheckerState)
+    private fun isSubtypeForSameConstructorWithIntersectedTypeArguments(
+        subType: RigidTypeMarker,
+        superType: RigidTypeMarker,
+        superConstructor: TypeConstructorMarker,
+        supertypesWithSameConstructor: Collection<RigidTypeMarker>,
+    ): Boolean {
+        val newArguments = ArgumentList(superConstructor.parametersCount())
+
+        for (index in 0 until superConstructor.parametersCount()) {
+            if (superConstructor.getParameter(index).getVariance() != TypeVariance.OUT) return false
+
+            val allProjections = supertypesWithSameConstructor.map { it ->
+                it.getArgumentOrNull(index)?.takeIf { argument -> argument.getVariance() == TypeVariance.INV }?.getType()
+                    ?: error("Incorrect type: $it, subType: $subType, superType: $superType")
+            }
+
+            val intersection = c.intersectTypes(allProjections).asTypeArgument()
+            newArguments.add(intersection)
+        }
+
+        return isSubtypeForSameConstructor(newArguments, superType)
+    }
+
 
     context(context: TypeSystemContext)
     private fun isTypeVariableAgainstStarProjectionForSelfType(
