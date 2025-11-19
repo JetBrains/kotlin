@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package kotlin.test
 
-import kotlin.math.abs
 import kotlin.js.*
 
 // Using 'globalThis.arguments' because 'arguments' can refer to current JS function arguments
