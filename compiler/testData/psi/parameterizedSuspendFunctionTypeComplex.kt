@@ -7,3 +7,6 @@ val explicitInt: MySuspendAlias<Int>
 
 val explicitAny: MySuspendAlias<Any?>
     get() = null!!
+
+val explicitStar: MySuspendAlias<*>
+    get() = null!!

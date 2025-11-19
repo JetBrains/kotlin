@@ -33,6 +33,22 @@ FILE[kind=File[packageFqName=test]]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
+  PROPERTY[fqName=test.explicitStar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=explicitStar]
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        abbreviatedType: test.MySuspendAlias<STAR>
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Any]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+      MODIFIER_LIST[public final]
+      VALUE_PARAMETER_LIST
   TYPEALIAS[classId=test/MySuspendAlias, fqName=test.MySuspendAlias, isTopLevel=true, name=MySuspendAlias]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
