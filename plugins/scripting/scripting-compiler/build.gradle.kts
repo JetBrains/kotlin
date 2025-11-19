@@ -19,6 +19,7 @@ dependencies {
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:fir:raw-fir:raw-fir.common"))
     compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
     compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":core:descriptors.runtime"))
