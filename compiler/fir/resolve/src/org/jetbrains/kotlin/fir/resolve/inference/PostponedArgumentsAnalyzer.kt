@@ -8,23 +8,35 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.lookupTracker
+import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
+import org.jetbrains.kotlin.fir.resolve.companionObjectIfDefinedOperatorOf
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
+import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
+import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
+import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
+import org.jetbrains.kotlin.fir.resolve.runCollectionLiteralResolution
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.UnstableSystemMergeMode
+import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
 
 data class ReturnArgumentsAnalysisResult(
@@ -243,17 +255,17 @@ class PostponedArgumentsAnalyzer(
         )
     }
 
-    private fun analyzeLambdaAndGetReturnArgumentsAndSubstitutor(
+    fun analyzeLambda(
         c: PostponedArgumentsAnalyzerContext,
         lambda: ConeResolvedLambdaAtom,
         candidate: Candidate,
         forOverloadByLambdaReturnType: Boolean,
         withPCLASession: Boolean,
         allowFixationToOtherTypeVariables: Boolean = false,
-    ): Pair<ReturnArgumentsAnalysisResult, ((ConeKotlinType) -> ConeKotlinType)?> {
+    ): ReturnArgumentsAnalysisResult {
         // TODO: replace with `require(!lambda.analyzed)` when KT-54767 will be fixed
         if (lambda.analyzed) {
-            return ReturnArgumentsAnalysisResult(lambda.returnStatements, additionalConstraints = null) to null
+            return ReturnArgumentsAnalysisResult(lambda.returnStatements, additionalConstraints = null)
         }
 
         val inferenceSession = resolutionContext.bodyResolveContext.inferenceSession
@@ -297,7 +309,7 @@ class PostponedArgumentsAnalyzer(
             else -> null
         }
 
-        return lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
+        val results = lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
             lambda,
             receiver,
             contextParameters,
@@ -306,51 +318,13 @@ class PostponedArgumentsAnalyzer(
             candidate,
             withPCLASession,
             forOverloadByLambdaReturnType,
-        ) to ::substitute
-    }
-
-    fun analyzeLambdaAndGetReturnArguments(
-        c: PostponedArgumentsAnalyzerContext,
-        lambda: ConeResolvedLambdaAtom,
-        candidate: Candidate,
-        forOverloadByLambdaReturnType: Boolean,
-        withPCLASession: Boolean,
-        allowFixationToOtherTypeVariables: Boolean = false,
-    ): ReturnArgumentsAnalysisResult {
-        return analyzeLambdaAndGetReturnArgumentsAndSubstitutor(
-            c,
-            lambda,
-            candidate,
-            forOverloadByLambdaReturnType,
-            withPCLASession,
-            allowFixationToOtherTypeVariables
-        ).first
-    }
-
-    fun analyzeLambda(
-        c: PostponedArgumentsAnalyzerContext,
-        lambda: ConeResolvedLambdaAtom,
-        candidate: Candidate,
-        forOverloadByLambdaReturnType: Boolean,
-        withPCLASession: Boolean,
-        allowFixationToOtherTypeVariables: Boolean = false,
-    ): ReturnArgumentsAnalysisResult {
-        val (results, substitutor) = analyzeLambdaAndGetReturnArgumentsAndSubstitutor(
-            c,
-            lambda,
-            candidate,
-            forOverloadByLambdaReturnType,
-            withPCLASession,
-            allowFixationToOtherTypeVariables
         )
-        if (substitutor == null) return results
-
         applyResultsOfAnalyzedLambdaToCandidateSystem(
             c,
             lambda,
             candidate,
             results,
-            substitutor,
+            ::substitute
         )
         return results
     }
