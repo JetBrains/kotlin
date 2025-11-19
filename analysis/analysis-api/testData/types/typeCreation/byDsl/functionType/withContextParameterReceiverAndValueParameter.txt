@@ -3,6 +3,38 @@ KaFunctionType:
   abbreviation: null
   annotations: []
   classId: kotlin/Function3
+  contextParameters: [
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: <no name provided>
+      origin: SOURCE_MEMBER_GENERATED
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        abbreviation: null
+        annotations: []
+        classId: kotlin/Any
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: Any
+            symbol: KaNamedClassSymbol(kotlin/Any)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/Any)
+        typeArguments: []
+        isMarkedNullable: true
+        isNullable: true
+        hasFlexibleNullability: false
+      visibility: LOCAL
+  ]
   contextReceivers: [
     KaContextReceiver:
       label: null
@@ -22,6 +54,7 @@ KaFunctionType:
         isNullable: true
         hasFlexibleNullability: false
   ]
+  hasContextParameters: true
   hasContextReceivers: true
   hasReceiver: true
   isReflectType: false

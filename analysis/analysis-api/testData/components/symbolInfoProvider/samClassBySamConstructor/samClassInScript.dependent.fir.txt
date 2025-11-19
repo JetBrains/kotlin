@@ -55,7 +55,9 @@ CONSTRUCTOR:
         abbreviation: null
         annotations: []
         classId: kotlin/Function1
+        contextParameters: []
         contextReceivers: []
+        hasContextParameters: false
         hasContextReceivers: false
         hasReceiver: false
         isReflectType: false

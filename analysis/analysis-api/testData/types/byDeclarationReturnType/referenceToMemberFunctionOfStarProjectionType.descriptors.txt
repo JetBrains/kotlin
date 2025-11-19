@@ -2,8 +2,11 @@ KaFunctionType:
   abbreviation: null
   annotations: []
   classId: kotlin/reflect/KFunction2
+  contextParameters: Could not render due to java.lang.AssertionError: Not a function type: KFunction2<A<*>, [@kotlin.ParameterName] Nothing, Unit>
+
   contextReceivers: Could not render due to java.lang.AssertionError: Not a function type: KFunction2<A<*>, [@kotlin.ParameterName] Nothing, Unit>
 
+  hasContextParameters: false
   hasContextReceivers: false
   hasReceiver: false
   isReflectType: true

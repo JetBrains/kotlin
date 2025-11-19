@@ -4,6 +4,43 @@ KaFunctionType:
   abbreviation: null
   annotations: []
   classId: kotlin/Function1
+  contextParameters: [
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: <no name provided>
+      origin: SOURCE_MEMBER_GENERATED
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        abbreviation: null
+        annotations: []
+        name: T
+        symbol: KaTypeParameterSymbol:
+          annotations: []
+          compilerVisibility: Local
+          isActual: false
+          isExpect: false
+          isReified: false
+          location: LOCAL
+          modality: FINAL
+          name: T
+          origin: SOURCE
+          upperBounds: []
+          variance: INVARIANT
+          visibility: LOCAL
+        isMarkedNullable: false
+        isNullable: true
+        hasFlexibleNullability: false
+      visibility: LOCAL
+  ]
   contextReceivers: [
     KaContextReceiver:
       label: null
@@ -28,6 +65,7 @@ KaFunctionType:
         isNullable: true
         hasFlexibleNullability: false
   ]
+  hasContextParameters: true
   hasContextReceivers: true
   hasReceiver: false
   isReflectType: false

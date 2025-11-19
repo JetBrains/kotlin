@@ -3,7 +3,9 @@ KaFunctionType:
   abbreviation: null
   annotations: []
   classId: kotlin/reflect/KSuspendFunction0
+  contextParameters: []
   contextReceivers: []
+  hasContextParameters: false
   hasContextReceivers: false
   hasReceiver: false
   isReflectType: true

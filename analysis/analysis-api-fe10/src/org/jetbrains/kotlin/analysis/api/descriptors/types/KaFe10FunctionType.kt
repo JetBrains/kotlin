@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.types
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10AnonymousContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKaClassSymbol
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseFunctionValu
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
@@ -66,6 +68,9 @@ internal class KaFe10FunctionType(
         get() = withValidityAssertion { descriptor.arity }
 
     override val hasContextReceivers: Boolean
+        get() = withValidityAssertion { hasContextParameters }
+
+    override val hasContextParameters: Boolean
         get() = withValidityAssertion { fe10Type.contextFunctionTypeParamsCount() > 0 }
 
     @KaExperimentalApi
@@ -77,6 +82,16 @@ internal class KaFe10FunctionType(
                     receiverType.toKtType(analysisContext),
                     label = null,
                     analysisContext.token,
+                )
+            }
+        }
+
+    override val contextParameters: List<KaContextParameterSymbol>
+        get() = withValidityAssertion {
+            fe10Type.getContextReceiverTypesFromFunctionType().map { receiverType ->
+                KaFe10AnonymousContextParameterSymbol(
+                    type = receiverType,
+                    analysisContext = analysisContext
                 )
             }
         }

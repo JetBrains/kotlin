@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
@@ -342,6 +343,18 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
      */
     @KaExperimentalApi
     public abstract val hasContextReceivers: Boolean
+
+    /**
+     * Whether this function type has context parameters.
+     */
+    @KaExperimentalApi
+    public abstract val hasContextParameters: Boolean
+
+    /**
+     * A list of [KaContextParameterSymbol]s directly declared in the symbol.
+     */
+    @KaExperimentalApi
+    public abstract val contextParameters: List<KaContextParameterSymbol>
 
     @KaExperimentalApi
     @KaK1Unsupported
