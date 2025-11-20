@@ -6,13 +6,51 @@ import hair.utils.*
 
 // TODO Throw with handler -> Goto
 
-class NormalizationImpl(val session: Session, builder: NodeBuilder) : Normalization {
+class NormalizationImpl(val session: Session, nodeBuilder: NodeBuilder, argsUpdater: ArgsUpdater) : Normalization {
 
-    override fun normalize(node: Node): Node = node.accept(normalizer)
+    override fun normalize(node: Node): Node {
+        if (node.args.any { it == null }) return node
+        return node.accept(normalizer)
+    }
 
-    val normalizer: NodeVisitor<Node> = context(builder) {
+    val normalizer: NodeVisitor<Node> = context(nodeBuilder, argsUpdater) {
         object : NodeVisitor<Node>() {
             override fun visitNode(node: Node): Node = node
+
+            override fun visitBlockEntry(node: BlockEntry): Node {
+                if (node == session.entry) return node
+                if (node.preds.isEmpty) return session.unreachable
+                val singlePred = node.preds.singleOrNull()
+                if (singlePred is Unreachable) return singlePred
+                if (singlePred is Goto) {
+                    val replacement = singlePred.control
+                    singlePred.control = session.unreachable
+                    return replacement
+                }
+                return super.visitBlockEntry(node)
+            }
+
+            override fun visitControlled(node: Controlled): Node {
+                if (node.control is Unreachable) return node.control
+                return super.visitControlled(node)
+            }
+
+            override fun visitIfProjection(node: IfProjection): Node {
+                // FIXME cant use owner here
+                if (node.args[0] is Unreachable) return session.unreachable
+                return super.visitIfProjection(node)
+            }
+
+            override fun visitGoto(node: Goto): Node {
+                (node.control as? BlockEntry)?.let {
+                    val singlePred = it.preds.singleOrNull()
+                    if (singlePred != null) {
+                        it.preds[0] = session.unreachable
+                        return singlePred
+                    }
+                }
+                return super.visitGoto(node)
+            }
 
             // Arithmetic
             private fun tryFoldConstant(node: BinaryOp, op: (Int, Int) -> Int): ConstI? { // FIXME Int -> Number?

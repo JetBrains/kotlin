@@ -40,6 +40,20 @@ sealed interface BlockExit : ControlFlow {
 }
 
 
+class Unreachable internal constructor(form: Form, ) : NodeBase(form, listOf()), Controlling, BlockExit {
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitUnreachable(this)
+    companion object {
+        internal fun form(session: Session) = SimpleControlFlowForm(session, "Unreachable")
+    }
+}
+
+
 class BlockEntry internal constructor(form: Form, vararg preds: BlockExit?) : NodeBase(form, listOf(*preds)), Controlling {
     val preds: VarArgsList<BlockExit>
         get() = VarArgsList(args, 0, BlockExit::class)
@@ -50,7 +64,6 @@ class BlockEntry internal constructor(form: Form, vararg preds: BlockExit?) : No
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitBlockEntry(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleControlFlowForm(session, "BlockEntry")
     }
@@ -117,7 +130,6 @@ class Return internal constructor(form: Form, control: Controlling?, result: Nod
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitReturn(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleControlFlowForm(session, "Return")
     }
@@ -133,28 +145,9 @@ class Goto internal constructor(form: Form, control: Controlling?) : BlockEnd(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitGoto(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleControlFlowForm(session, "Goto")
     }
-}
-
-
-sealed class IfProjection(form: Form, args: List<Node?>) : NodeBase(form, args), Projection, BlockExit {
-    override val owner: If
-        get() = args[0] as If
-    override val ownerOrNull: If?
-        get() = args.getOrNull(0)?.let { it as If }
-    context(_: ArgsUpdater)
-     var owner: If
-        get() = args[0] as If
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var ownerOrNull: If?
-        get() = args.getOrNull(0)?.let { it as If }
-        set(value) { args[0] = value }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitIfProjection(this)
 }
 
 
@@ -179,39 +172,56 @@ class If internal constructor(form: Form, control: Controlling?, cond: Node?) : 
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitIf(this)
-    class True internal constructor(form: Form, owner: If?) : IfProjection(form, listOf(owner)) {
-        
-        
-        override fun paramName(index: Int): String = when (index) {
-            0 -> "owner"
-            else -> error("Unexpected arg index: $index")
-        }
-        
-        override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitIfTrue(this)
-        
-        companion object {
-            internal fun form(session: Session) = SimpleControlFlowForm(session, "If.True")
-        }
-    }
-    val trueExit = True(session.ifTrueForm, this).register()
-    class False internal constructor(form: Form, owner: If?) : IfProjection(form, listOf(owner)) {
-        
-        
-        override fun paramName(index: Int): String = when (index) {
-            0 -> "owner"
-            else -> error("Unexpected arg index: $index")
-        }
-        
-        override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitIfFalse(this)
-        
-        companion object {
-            internal fun form(session: Session) = SimpleControlFlowForm(session, "If.False")
-        }
-    }
-    val falseExit = False(session.ifFalseForm, this).register()
-    
     companion object {
         internal fun form(session: Session) = SimpleControlFlowForm(session, "If")
+    }
+}
+
+
+sealed class IfProjection(form: Form, args: List<Node?>) : NodeBase(form, args), Projection, BlockExit {
+    override val owner: If
+        get() = args[0] as If
+    override val ownerOrNull: If?
+        get() = args.getOrNull(0)?.let { it as If }
+    context(_: ArgsUpdater)
+     var owner: If
+        get() = args[0] as If
+        set(value) { args[0] = value }
+    context(_: ArgsUpdater)
+     var ownerOrNull: If?
+        get() = args.getOrNull(0)?.let { it as If }
+        set(value) { args[0] = value }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitIfProjection(this)
+}
+
+
+class TrueExit internal constructor(form: Form, owner: If?) : IfProjection(form, listOf(owner)) {
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "owner"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitTrueExit(this)
+    companion object {
+        internal fun form(session: Session) = SimpleControlFlowForm(session, "TrueExit")
+    }
+}
+
+
+class FalseExit internal constructor(form: Form, owner: If?) : IfProjection(form, listOf(owner)) {
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "owner"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitFalseExit(this)
+    companion object {
+        internal fun form(session: Session) = SimpleControlFlowForm(session, "FalseExit")
     }
 }
 
@@ -237,7 +247,6 @@ class Throw internal constructor(form: Form, control: Controlling?, exception: N
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitThrow(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleControlFlowForm(session, "Throw")
     }
@@ -264,7 +273,6 @@ class Unwind internal constructor(form: Form, thrower: Throwing?) : NodeBase(for
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitUnwind(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleControlFlowForm(session, "Unwind")
     }

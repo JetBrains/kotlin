@@ -74,6 +74,7 @@ fun performGCM(session: Session): GCMResult {
     val early = mutableMapOf<Node, BlockEntry>()
     // TODO generalize pinned nodes
     for (n in session.allNodes<ControlFlow>()) {
+        if (n is Unreachable) continue
         early[n] = n.block
     }
     for (n in session.allNodes<Phi>()) {
@@ -102,6 +103,7 @@ fun performGCM(session: Session): GCMResult {
     }
     val late = mutableMapOf<Node, BlockEntry?>()
     for (n in session.allNodes<ControlFlow>()) {
+        if (n is Unreachable) continue
         late[n] = n.block
     }
     for (n in session.allNodes<Phi>()) {
@@ -134,7 +136,7 @@ fun performGCM(session: Session): GCMResult {
     //    We choose the block that is in the shallowest loop nest possible, and then is as control dependent as possible
 
     // FIXME kill dead nodes earlier?
-    val bestBlock = session.allNodes().filter { it is ControlFlow || it.uses.isNotEmpty() }.associateWith {
+    val bestBlock = session.allNodes().filter { it !is Unreachable }.filter { it is ControlFlow || it.uses.isNotEmpty() }.associateWith {
         // TODO move out of loops etc.
         late[it] ?: early[it]!!
     }
@@ -149,7 +151,7 @@ fun GCMResult.linearize(block: BlockEntry): List<Node> {
     // TODO optimize
     val graph = object : DiGraph<Node> {
         override fun preds(n: Node): Sequence<Node> {
-            return n.args.asSequence().filterNotNull().filter { block(it) == block }
+            return n.args.asSequence().filterNotNull().filter { it !is Unreachable && block(it) == block }
         }
 
         override fun succs(n: Node): Sequence<Node> {
