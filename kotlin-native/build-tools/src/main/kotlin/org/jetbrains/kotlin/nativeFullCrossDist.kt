@@ -55,41 +55,38 @@ fun Project.setupMergeCrossBundleTask(): TaskProvider<Task>? {
 //            excludes = listOf("*/licenses/**")
 //    )
 
-    val unpackDarwinDist = setupTaskToUnpackDistToCurrentDist(
-            distName = "Darwin",
-            source = tarTree(darwinDistFile),
-            dependency = checkPreconditions,
-            includes = getDarwinTargets().map { "*/klib/platform/${it.name}/**" }
-    )
+    val unpackDarwinDist = getDarwinOnlyTargets().map {
+        setupTaskToUnpackDistToCurrentDist(
+                distName = "Darwin",
+                dependency = checkPreconditions,
+                target = it,
+        )
+    }
 
     return tasks.register("mergeCrossBundle") {
-        dependsOn(unpackDarwinDist)
+        dependsOn(*unpackDarwinDist.toTypedArray())
     }
 }
 
 private fun Project.setupTaskToUnpackDistToCurrentDist(
         distName: String,
-        source: FileTree,
         dependency: TaskProvider<*>,
-        includes: Collection<String>? = null,
-        excludes: Collection<String>? = null,
-): TaskProvider<Copy> = tasks.register<Copy>("unpack${distName}Dist") {
-    from(source) {
-        if (includes != null) include(includes)
-        if (excludes != null) exclude(excludes)
-    }
-    into(nativeDistribution.map { it.root })
+        target: KonanTarget
+): TaskProvider<Copy> = tasks.register<Copy>("unpack${distName}Dist_$target") {
+    from(fileTree(darwinDistFileUnpacked!!.resolve("klib").resolve("platform").resolve(target.toString())))
+    into(nativeDistribution.map { it.root.dir("klib/platform/$target") })
     dependsOn(dependency)
+    dependsOn(":kotlin-native:platformLibs:unpackCacheForLibsTask")
 
     // this incantation makes it so that we will have something like build/unpackedDonorDarwinDist/<contents of dist>
     // rather than build/unpackedDonorDarwinDist/kotlin-native-macos-aarch65-2.0.255-SNAPSHOT/<contents of dist>
-    eachFile { relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray<String?>()) }
+    //eachFile { relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray<String?>()) }
     includeEmptyDirs = false
 }
 
 // Assume that all Macs have the same enabled targets, and that Darwin dist is exactly a superset of any other dist
 // TODO(KT-67686) Expose proper API here
-fun getDarwinTargets(): Set<KonanTarget> {
+fun getDarwinOnlyTargets(): Set<KonanTarget> {
     val enabledByHost = HostManager().enabledByHost
     val enabledOnMacosX64 = enabledByHost[KonanTarget.MACOS_X64]!!.toSet()
     val enabledOnMacosArm64 = enabledByHost[KonanTarget.MACOS_ARM64]!!.toSet()
@@ -103,7 +100,7 @@ fun getDarwinTargets(): Set<KonanTarget> {
     }
 
     val enabledOnThisHost = enabledByHost[HostManager.host]!!.toSet()
-    return enabledOnMacosX64// subtract enabledOnThisHost
+    return enabledOnMacosX64 subtract enabledOnThisHost
 }
 
 val Project.pathToDarwinDistProperty: String?
@@ -115,6 +112,8 @@ val Project.darwinDistFile: File
     get() = rootProject.rootDir.resolve(File(pathToDarwinDistProperty!!))
 //private val Project.hostDistFile: File
 //    get() = rootProject.rootDir.resolve(File(pathToHostDistProperty!!))
+private val Project.darwinDistFileUnpacked: File?
+    get() = if (pathToDarwinDistProperty != null) darwinDistFile.resolveSibling(darwinDistFile.name + ".unpacked") else null
 
 private fun requireCrossDistEnabled(pathToDarwinDistProperty: String?, pathToHostDistProperty: String?) {
     fun checkDist(propertyName: String, propertyValue: String?) {

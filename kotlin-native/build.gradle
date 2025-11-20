@@ -462,6 +462,8 @@ tasks.register("bundlePrebuilt", (PlatformInfo.isWindows()) ? Zip : Tar) {
         dependsOn("crossDistPlatformLibs")
 //    else
 //        dependsOn(mergeCrossBundleTask)
+    if (mergeCrossBundleTask != null)
+        dependsOn(mergeCrossBundleTask)
 
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
