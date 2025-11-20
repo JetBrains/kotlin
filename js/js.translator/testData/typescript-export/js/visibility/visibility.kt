@@ -37,7 +37,13 @@ public class publicClass
 public external interface publicInterface
 
 @JsExport
-open class Class {
+abstract class AbstractClassWithProtected {
+    protected abstract fun protectedAbstractFun(): Int
+    protected abstract val protectedAbstractVal: Int
+}
+
+@JsExport
+open class Class: AbstractClassWithProtected() {
     internal val internalVal = 10
     internal fun internalFun() = 10
     internal class internalClass
@@ -64,13 +70,20 @@ open class Class {
     @JsName("publicFun")  // TODO: Should work without JsName
     public fun publicFun() = 10
     public class publicClass
+
+    override fun protectedAbstractFun(): Int = 10
+    override val protectedAbstractVal: Int
+        get() = 10
 }
 
 @JsExport
-class FinalClass protected constructor() {
+class FinalClass protected constructor(): AbstractClassWithProtected() {
 
     @JsName("fromNumber")
     protected constructor(n: Int) : this()
+
+    @JsName("fromString")
+    constructor(s: String) : this()
 
     protected val protectedVal = 10
     protected fun protectedFun() = 10
@@ -79,6 +92,10 @@ class FinalClass protected constructor() {
     protected companion object {
         val companionObjectProp = 10
     }
+
+    override fun protectedAbstractFun(): Int = 10
+    override val protectedAbstractVal: Int
+        get() = 10
 }
 
 @JsExport

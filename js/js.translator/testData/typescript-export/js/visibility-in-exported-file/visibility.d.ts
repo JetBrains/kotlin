@@ -14,12 +14,25 @@ declare namespace JS_TESTS {
             const constructor: abstract new () => publicClass;
         }
     }
-    class Class {
+    abstract class AbstractClassWithProtected {
+        constructor();
+        protected abstract protectedAbstractFun(): number;
+        protected abstract get protectedAbstractVal(): number;
+    }
+    namespace AbstractClassWithProtected {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => AbstractClassWithProtected;
+        }
+    }
+    class Class extends AbstractClassWithProtected.$metadata$.constructor {
         constructor();
         protected get protectedVal(): number;
         protected protectedFun(): number;
         get publicVal(): number;
         publicFun(): number;
+        protected protectedAbstractFun(): number;
+        protected get protectedAbstractVal(): number;
     }
     namespace Class {
         /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -77,8 +90,11 @@ declare namespace JS_TESTS {
             }
         }
     }
-    class FinalClass {
+    class FinalClass extends AbstractClassWithProtected.$metadata$.constructor {
         private constructor();
+        static fromString(s: string): FinalClass;
+        protected protectedAbstractFun(): number;
+        protected get protectedAbstractVal(): number;
     }
     namespace FinalClass {
         /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

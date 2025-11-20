@@ -12,9 +12,15 @@
 
 package foo
 
+
+abstract class AbstractClassWithProtected {
+    protected abstract fun protectedAbstractFun(): Int
+    protected abstract val protectedAbstractVal: Int
+}
+
 // See KT-47376, KT-39364
 
-sealed class TestSealed(val name: String) {
+sealed class TestSealed(val name: String) : AbstractClassWithProtected() {
     class AA : TestSealed("AA") {
         fun bar(): String = "bar"
     }
@@ -32,4 +38,8 @@ sealed class TestSealed(val name: String) {
     protected companion object {
         val companionObjectProp = 10
     }
+
+    override fun protectedAbstractFun(): Int = 10
+    override val protectedAbstractVal: Int
+        get() = 10
 }

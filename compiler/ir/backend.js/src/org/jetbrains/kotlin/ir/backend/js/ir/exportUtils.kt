@@ -141,20 +141,6 @@ private fun shouldDeclarationBeExported(
         return false
     }
 
-    val parentModality = declaration.parentClassOrNull?.modality
-    if (declaration is IrDeclarationWithVisibility
-        && !(declaration is IrConstructor && declaration.isPrimary)
-        && declaration.visibility == DescriptorVisibilities.PROTECTED
-        && (parentModality == Modality.FINAL || parentModality == Modality.SEALED)
-    ) {
-        // Protected members inside final classes are effectively private.
-        // Protected members inside sealed classes are effectively module-private.
-        // The only exception is the primary constructor: we will set its visibility to private during
-        // TypeScript export model generation, otherwise, if no (private) primary constructor is exported, there will be
-        // a default constructor, which we don't want.
-        return false
-    }
-
     if (context.additionalExportedDeclarationNames.contains(declaration.fqNameWhenAvailable))
         return true
 
@@ -169,6 +155,20 @@ private fun shouldDeclarationBeExported(
                     || source.isAllowedFakeOverriddenDeclaration(context)
                     || source.isOverriddenExported(context)
         }
+    }
+
+    val parentModality = declaration.parentClassOrNull?.modality
+    if (declaration is IrDeclarationWithVisibility
+        && !(declaration is IrConstructor && declaration.isPrimary)
+        && declaration.visibility == DescriptorVisibilities.PROTECTED
+        && (parentModality == Modality.FINAL || parentModality == Modality.SEALED)
+    ) {
+        // Protected members inside final classes are effectively private.
+        // Protected members inside sealed classes are effectively module-private.
+        // The only exception is the primary constructor: we will set its visibility to private during
+        // TypeScript export model generation, otherwise, if no (private) primary constructor is exported, there will be
+        // a default constructor, which we don't want.
+        return false
     }
 
     if (declaration.isExplicitlyExported())

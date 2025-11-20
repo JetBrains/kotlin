@@ -5,7 +5,15 @@ function box(): string {
         JS_TESTS.publicVal,
         JS_TESTS.publicFun(),
         new JS_TESTS.Class().publicVal,
-        new JS_TESTS.Class().publicFun()
+        new JS_TESTS.Class().publicFun(),
+        //@ts-ignore
+        new JS_TESTS.Class().protectedAbstractFun(),
+        //@ts-ignore
+        new JS_TESTS.Class().protectedAbstractVal,
+        //@ts-ignore
+        JS_TESTS.FinalClass.fromString("").protectedAbstractFun(),
+        //@ts-ignore
+        JS_TESTS.FinalClass.fromString("").protectedAbstractVal,
     ];
 
     if (!tens.every(value => value === 10))
