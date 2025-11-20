@@ -50,9 +50,11 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
     }
 
     private inner class AnnotationsAdder : IrVisitorVoid() {
-        val annotationClass = context.referenceClass(annotationToAddId)?.takeIf { it.owner.isAnnotationClass }
-        val simpleAnnotationClass = context.referenceClass(simpleAnnotationId)?.takeIf { it.owner.isAnnotationClass }
-        val arrayAnnotationClass = context.referenceClass(arrayAnnotationId)?.takeIf { it.owner.isAnnotationClass }
+        val finder = context.finderForBuiltins()
+
+        val annotationClass = finder.findClass(annotationToAddId)?.takeIf { it.owner.isAnnotationClass }
+        val simpleAnnotationClass = finder.findClass(simpleAnnotationId)?.takeIf { it.owner.isAnnotationClass }
+        val arrayAnnotationClass = finder.findClass(arrayAnnotationId)?.takeIf { it.owner.isAnnotationClass }
 
         override fun visitElement(element: IrElement, data: Nothing?) {}
 

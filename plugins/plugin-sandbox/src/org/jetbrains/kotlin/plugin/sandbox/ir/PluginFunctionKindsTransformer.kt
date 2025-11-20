@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.plugin.sandbox.ir
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -108,8 +106,13 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrVis
     private val inlineableClassId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), FqName("MyInlineable"), false)
     private val notInlineableClassId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), FqName("MyNotInlineable"), false)
 
-    private val inlineableSymbol = pluginContext.referenceClass(inlineableClassId)!!
-    private val notInlineableSymbol = pluginContext.referenceClass(notInlineableClassId)!!
+    private val finder = pluginContext.finderForBuiltins()
+
+    private val inlineableSymbol: IrClassSymbol
+        get() = finder.findClass(inlineableClassId)!!
+
+    private val notInlineableSymbol: IrClassSymbol
+        get() = finder.findClass(notInlineableClassId)!!
 
     private fun IrFunction.mark(inlineable: Boolean) {
         if (!hasAnnotation(inlineableClassId)) {
@@ -177,7 +180,7 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrVis
             val builtinClassId = FunctionTypeKind.Function.run {
                 ClassId(packageFqName, Name.identifier("$classNamePrefix$number"))
             }
-            return pluginContext.referenceClass(builtinClassId)
+            return finder.findClass(builtinClassId)
         }
         return null
     }
