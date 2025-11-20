@@ -21,9 +21,6 @@ fun main(args: Array<String>) {
             testClass<AbstractKlibDumpParserTest> {
                 model("content")
             }
-            testClass<AbstractKlibDumpParserTest> {
-                model("content")
-            }
         }
     }
 }
