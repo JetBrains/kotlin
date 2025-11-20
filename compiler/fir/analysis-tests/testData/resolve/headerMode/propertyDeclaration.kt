@@ -37,4 +37,8 @@ val k = fun(foo: String): String {
     return "foo: $foo"
 }
 val l = fun(foo: String): String { return "Foo: $foo" }
+inline val m: String
+    get() = "M"
+val n: String
+    inline get() = "N"
 /* GENERATED_FIR_TAGS: propertyDeclaration, stringLiteral */
