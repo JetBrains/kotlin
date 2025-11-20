@@ -38,32 +38,32 @@ import java.io.File
  */
 fun Project.setupMergeCrossBundleTask(): TaskProvider<Task>? {
     val pathToDarwinDistProperty = pathToDarwinDistProperty
-    val pathToHostDistProperty = pathToHostDistProperty
-    if (pathToDarwinDistProperty == null || pathToHostDistProperty == null) return null
+//    val pathToHostDistProperty = pathToHostDistProperty
+    if (pathToDarwinDistProperty == null) return null
 
     val checkPreconditions = tasks.register("checkCrossDistPreconditions") {
-        doLast { requireCrossDistEnabled(pathToDarwinDistProperty, pathToHostDistProperty) }
+        doLast { requireCrossDistEnabled(pathToDarwinDistProperty, null) }
     }
 
     // Host dist is unpacked straight to kotlin-native/dist
-    val unpackHostDist = setupTaskToUnpackDistToCurrentDist(
-            distName = "Host",
-            source = if (PlatformInfo.isWindows()) zipTree(hostDistFile) else tarTree(hostDistFile),
-            dependency = checkPreconditions,
-            // Licenses are configured separately in bundlePrebuilt/bundleRegular tasks, which will depend
-            // on mergeCrossBundle (look for 'configurePackingLicensesToBundle' in kotlin-native/build.gradle)
-            excludes = listOf("*/licenses/**")
-    )
+//    val unpackHostDist = setupTaskToUnpackDistToCurrentDist(
+//            distName = "Host",
+//            source = if (PlatformInfo.isWindows()) zipTree(hostDistFile) else tarTree(hostDistFile),
+//            dependency = checkPreconditions,
+//            // Licenses are configured separately in bundlePrebuilt/bundleRegular tasks, which will depend
+//            // on mergeCrossBundle (look for 'configurePackingLicensesToBundle' in kotlin-native/build.gradle)
+//            excludes = listOf("*/licenses/**")
+//    )
 
     val unpackDarwinDist = setupTaskToUnpackDistToCurrentDist(
             distName = "Darwin",
             source = tarTree(darwinDistFile),
             dependency = checkPreconditions,
-            includes = getDarwinOnlyTargets().map { "*/klib/platform/${it.name}/**" }
+            includes = getDarwinTargets().map { "*/klib/platform/${it.name}/**" }
     )
 
     return tasks.register("mergeCrossBundle") {
-        dependsOn(unpackHostDist, unpackDarwinDist)
+        dependsOn(unpackDarwinDist)
     }
 }
 
@@ -89,7 +89,7 @@ private fun Project.setupTaskToUnpackDistToCurrentDist(
 
 // Assume that all Macs have the same enabled targets, and that Darwin dist is exactly a superset of any other dist
 // TODO(KT-67686) Expose proper API here
-fun getDarwinOnlyTargets(): Set<KonanTarget> {
+fun getDarwinTargets(): Set<KonanTarget> {
     val enabledByHost = HostManager().enabledByHost
     val enabledOnMacosX64 = enabledByHost[KonanTarget.MACOS_X64]!!.toSet()
     val enabledOnMacosArm64 = enabledByHost[KonanTarget.MACOS_ARM64]!!.toSet()
@@ -103,18 +103,18 @@ fun getDarwinOnlyTargets(): Set<KonanTarget> {
     }
 
     val enabledOnThisHost = enabledByHost[HostManager.host]!!.toSet()
-    return enabledOnMacosX64 subtract enabledOnThisHost
+    return enabledOnMacosX64// subtract enabledOnThisHost
 }
 
 private val Project.pathToDarwinDistProperty: String?
     get() = kotlinBuildProperties.getOrNull(PATH_TO_DARWIN_DIST_PROPERTY) as? String
-private val Project.pathToHostDistProperty: String?
-    get() = kotlinBuildProperties.getOrNull(PATH_TO_HOST_DIST_PROPERTY) as? String
+//private val Project.pathToHostDistProperty: String?
+//    get() = kotlinBuildProperties.getOrNull(PATH_TO_HOST_DIST_PROPERTY) as? String
 
 private val Project.darwinDistFile: File
     get() = rootProject.rootDir.resolve(File(pathToDarwinDistProperty!!))
-private val Project.hostDistFile: File
-    get() = rootProject.rootDir.resolve(File(pathToHostDistProperty!!))
+//private val Project.hostDistFile: File
+//    get() = rootProject.rootDir.resolve(File(pathToHostDistProperty!!))
 
 private fun requireCrossDistEnabled(pathToDarwinDistProperty: String?, pathToHostDistProperty: String?) {
     fun checkDist(propertyName: String, propertyValue: String?) {
@@ -129,8 +129,8 @@ private fun requireCrossDistEnabled(pathToDarwinDistProperty: String?, pathToHos
     }
 
     checkDist(PATH_TO_DARWIN_DIST_PROPERTY, pathToDarwinDistProperty)
-    checkDist(PATH_TO_HOST_DIST_PROPERTY, pathToHostDistProperty)
+//    checkDist(PATH_TO_HOST_DIST_PROPERTY, pathToHostDistProperty)
 }
 
 const val PATH_TO_DARWIN_DIST_PROPERTY = "kotlin.native.pathToDarwinDist"
-const val PATH_TO_HOST_DIST_PROPERTY = "kotlin.native.pathToHostDist"
+//const val PATH_TO_HOST_DIST_PROPERTY = "kotlin.native.pathToHostDist"

@@ -508,14 +508,14 @@ tasks.named("bundlePrebuilt").configure {
 }
 
 configure([bundleRegular, bundlePrebuilt]) {
-    if (mergeCrossBundleTask == null) {
+//    if (mergeCrossBundleTask == null) {
         dependsOn("crossDist")
         dependsOn("crossDistStdlibCache")
         dependsOn("distSources")
         dependsOn("distDef")
-    } else {
-        dependsOn(mergeCrossBundleTask)
-    }
+//    } else {
+//        dependsOn(mergeCrossBundleTask)
+//    }
 
     // Bundle tasks read the entire contents of the Native distribution. Make sure this happens after invalid stale caches are removed
     mustRunAfter("distInvalidateStaleCaches")
