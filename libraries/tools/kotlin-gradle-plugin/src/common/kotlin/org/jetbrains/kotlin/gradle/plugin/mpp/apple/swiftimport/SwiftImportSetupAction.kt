@@ -1657,6 +1657,7 @@ private fun linkerScriptHack(): String = """
             output = None
             syslibroot = None
             dependency_info = None
+            install_name = None
     
             for (index, arg) in enumerate(sys.argv[1:]):
                 if arg == '-platform_version':
@@ -1672,6 +1673,8 @@ private fun linkerScriptHack(): String = """
                     syslibroot = sys.argv[index + 2]
                 if arg == '-dependency_info':
                     dependency_info = sys.argv[index + 2]
+                if arg == '-install_name' or arg == '-dylib_install_name':
+                    install_name = sys.argv[index + 2]
             if filelist_index is None:
                 raise 'No filelist'
     
@@ -1696,6 +1699,7 @@ private fun linkerScriptHack(): String = """
                 "-platform_version", *platform_version,
                 "-syslibroot", syslibroot,
                 "-dependency_info", dependency_info,
+                "-install_name", install_name,
                 "-lSystem",
                 "-export_dynamic",
                 "-o", output,
