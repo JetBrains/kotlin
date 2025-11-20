@@ -140,7 +140,8 @@ class FirCallResolver(
                                 type.render(),
                                 param.toConeType().typeConstructor(
                                     session.typeContext
-                                )
+                                ),
+                                param.isReified,
                             )
                         )
                     }

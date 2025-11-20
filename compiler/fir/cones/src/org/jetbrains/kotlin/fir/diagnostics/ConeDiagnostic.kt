@@ -25,4 +25,4 @@ class ConeUnreportedDuplicateDiagnostic(val original: ConeDiagnostic) : ConeDiag
     override val reason: String get() = original.reason
 }
 
-class ConeMyDiagnostic(override val reason: String, val typeConstructor: TypeConstructorMarker) : ConeDiagnostic
+class ConeMyDiagnostic(override val reason: String, val typeConstructor: TypeConstructorMarker, val isReified: Boolean) : ConeDiagnostic

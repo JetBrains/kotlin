@@ -49,6 +49,7 @@ class IEReporter(
 data class IEData(
     val type: String? = null,
     val call: String? = null,
+    val isReified: Boolean,
 )
 
 object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
@@ -69,7 +70,8 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
                 report(
                     IEData(
                         type = it.reason,
-                        call = expression.toResolvedCallableSymbol()?.name.toString()
+                        call = expression.toResolvedCallableSymbol()?.name.toString(),
+                        isReified = it.isReified,
                     )
                 )
             }
