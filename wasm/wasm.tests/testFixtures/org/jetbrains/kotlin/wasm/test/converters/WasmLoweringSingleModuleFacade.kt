@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
+import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileWasmLoweredFragmentsForSingleModule
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -99,7 +100,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val moduleResolutionMap = getModuleResolutionMap(currentSetup)
         val outputName = "index".takeIf { WasmEnvironmentConfigurator.isMainModule(module, testServices) }
 
-        val compilerResult = compileWasmLoweredFragmentsForSingleModule(
+        val wasmIrToCompile = compileWasmLoweredFragmentsForSingleModule(
             configuration = configuration,
             loweredIrFragments = allModules,
             backendContext = backendContext,
@@ -114,9 +115,11 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             generateDwarf = generateDwarf,
         )
 
+        val compileResult = linkAndCompileWasmIrToBinary(wasmIrToCompile)
+
         return BinaryArtifacts.Wasm(
-            compilerResult,
-            compilerResult,
+            compileResult,
+            compileResult,
             null,
         )
     }

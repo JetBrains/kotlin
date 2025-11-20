@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.config.artifactConfiguration
 import org.jetbrains.kotlin.js.config.outputDir
 import java.io.File
 
-object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifact>("JsBackendPipelinePhase") {
+object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifact, JsBackendPipelineArtifact>("JsBackendPipelinePhase") {
     override val configFiles: EnvironmentConfigFiles
         get() = EnvironmentConfigFiles.JS_CONFIG_FILES
 
@@ -90,6 +90,11 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         ) ?: return null
         return JsBackendPipelineArtifact(outputs, configuration.outputDir!!, configuration)
     }
+
+    override fun compileIntermediate(
+        intermediateResult: JsBackendPipelineArtifact,
+        configuration: CompilerConfiguration,
+    ): JsBackendPipelineArtifact = intermediateResult
 
     /**
      * This method is shared between K2 phased pipeline and [org.jetbrains.kotlin.cli.js.K2JsCompilerImpl.compileNoIC] for K1 CLI

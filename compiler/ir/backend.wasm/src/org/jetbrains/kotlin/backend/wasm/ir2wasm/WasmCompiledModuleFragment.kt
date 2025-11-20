@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
+import org.jetbrains.kotlin.backend.wasm.MultimoduleCompileOptions
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.*
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
@@ -86,11 +87,9 @@ class WasmCompiledFileFragment(
     val nonConstantFieldInitializers: MutableList<IdSignature> = mutableListOf(),
 ) : IrICProgramFragment()
 
-class WasmCompiledModuleFragment(
-    private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
-    private val generateTrapsInsteadOfExceptions: Boolean,
-    private val isWasmJsTarget: Boolean
-) {
+enum class ExceptionTagType { WASM_TAG, JS_TAG, TRAP }
+
+class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>) {
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
     private val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
@@ -268,7 +267,10 @@ class WasmCompiledModuleFragment(
         )
     }
 
-    fun linkWasmCompiledFragments(stdlibModuleNameForImport: String?, initializeUnit: Boolean): WasmModule {
+    fun linkWasmCompiledFragments(
+        multimoduleOptions: MultimoduleCompileOptions?,
+        exceptionTagType: ExceptionTagType
+    ): WasmModule {
         // TODO: Implement optimal ir linkage KT-71040
         bindUnboundSymbols()
         val canonicalFunctionTypes = bindUnboundFunctionTypes()
@@ -282,7 +284,7 @@ class WasmCompiledModuleFragment(
         val exports = mutableListOf<WasmExport<*>>()
         wasmCompiledFileFragments.flatMapTo(exports) { it.exports }
 
-        val memories = createAndExportMemory(exports, stdlibModuleNameForImport)
+        val memories = createAndExportMemory(exports, multimoduleOptions?.stdlibModuleNameForImport)
         val (importedMemories, definedMemories) = memories.partition { it.importPair != null }
 
         val additionalTypes = mutableListOf<WasmTypeDeclaration>()
@@ -302,13 +304,13 @@ class WasmCompiledModuleFragment(
             stringEntities = stringEntities,
             additionalTypes = additionalTypes,
             stringPoolSize = stringPoolSize,
-            initializeUnit = initializeUnit,
+            initializeUnit = multimoduleOptions?.initializeUnit ?: true,
             wasmElements = elements,
             exports = exports,
             globals = globals
         )
 
-        val tags = getTags()
+        val tags = getTags(exceptionTagType)
         require(tags.size <= 1) { "Having more than 1 tag is not supported" }
 
         val (importedTags, definedTags) = tags.partition { it.importPair != null }
@@ -381,31 +383,31 @@ class WasmCompiledModuleFragment(
         return syntheticTypes
     }
 
-    private fun getTags(): List<WasmTag> {
-        if (generateTrapsInsteadOfExceptions) return emptyList()
+    private fun getTags(exceptionTagType: ExceptionTagType): List<WasmTag> {
+        val exceptionTag = when (exceptionTagType) {
+            ExceptionTagType.TRAP -> null
+            ExceptionTagType.JS_TAG -> {
+                val jsExceptionTagFuncType = WasmFunctionType(
+                    parameterTypes = listOf(WasmExternRef),
+                    resultTypes = emptyList()
+                )
+                WasmTag(jsExceptionTagFuncType, WasmImportDescriptor("intrinsics", WasmSymbol("tag")))
+            }
+            ExceptionTagType.WASM_TAG -> {
+                val throwableDeclaration = tryFindBuiltInType { it.throwable }
+                    ?: compilationException("kotlin.Throwable is not found in fragments", null)
 
-        val tag = if (isWasmJsTarget) {
-            val jsExceptionTagFuncType = WasmFunctionType(
-                parameterTypes = listOf(WasmExternRef),
-                resultTypes = emptyList()
-            )
+                val tagFuncType = WasmRefNullType(WasmHeapType.Type(WasmSymbol(throwableDeclaration)))
 
-            WasmTag(jsExceptionTagFuncType, WasmImportDescriptor("intrinsics", WasmSymbol("tag")))
-        } else {
-            val throwableDeclaration = tryFindBuiltInType { it.throwable }
-                ?: compilationException("kotlin.Throwable is not found in fragments", null)
+                val throwableTagFuncType = WasmFunctionType(
+                    parameterTypes = listOf(tagFuncType),
+                    resultTypes = emptyList()
+                )
 
-            val tagFuncType = WasmRefNullType(WasmHeapType.Type(WasmSymbol(throwableDeclaration)))
-
-            val throwableTagFuncType = WasmFunctionType(
-                parameterTypes = listOf(tagFuncType),
-                resultTypes = emptyList()
-            )
-
-            WasmTag(throwableTagFuncType)
+                WasmTag(throwableTagFuncType)
+            }
         }
-
-        return listOf(tag)
+        return listOfNotNull(exceptionTag)
     }
 
     private fun getTypes(

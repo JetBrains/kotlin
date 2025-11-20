@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.wasm.test.converters
 
+import org.jetbrains.kotlin.backend.wasm.DebuggerCompileOptions
+import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
-import org.jetbrains.kotlin.backend.wasm.compileWasm
+import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
@@ -100,18 +102,25 @@ class WasmLoweringFacade(
         )
         val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
 
-        val compilerResult = compileWasm(
+        val debuggerOptions = DebuggerCompileOptions(
+            emitNameSection = true,
+            generateSourceMaps = generateSourceMaps,
+            generateDwarf = generateDwarf,
+            useDebuggerCustomFormatters = useDebuggerCustomFormatters,
+        )
+
+        val parameters = WasmIrModuleConfiguration(
             wasmCompiledFileFragments = wasmCompiledFileFragments,
             moduleName = allModules.last().descriptor.name.asString(),
             configuration = configuration,
             typeScriptFragment = typeScriptFragment,
             baseFileName = baseFileName,
-            emitNameSection = true,
             generateWat = generateWat,
-            generateSourceMaps = generateSourceMaps,
-            generateDwarf = generateDwarf,
-            useDebuggerCustomFormatters = useDebuggerCustomFormatters
+            debuggerOptions = debuggerOptions,
+            multimoduleOptions = null,
         )
+
+        val compilerResult = linkAndCompileWasmIrToBinary(parameters)
 
         val dceDumpNameCache = DceDumpNameCache()
         eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
@@ -129,18 +138,18 @@ class WasmLoweringFacade(
         )
         val wasmCompiledFileFragmentsDce = allModules.map { codeGeneratorDce.generateModuleAsSingleFileFragment(it) }
 
-        val compilerResultWithDCE = compileWasm(
+        val dceParameters = WasmIrModuleConfiguration(
             wasmCompiledFileFragments = wasmCompiledFileFragmentsDce,
             moduleName = allModules.last().descriptor.name.asString(),
             configuration = configuration,
             typeScriptFragment = typeScriptFragment,
             baseFileName = baseFileName,
-            emitNameSection = true,
             generateWat = generateWat,
-            generateSourceMaps = generateSourceMaps,
-            generateDwarf = generateDwarf,
-            useDebuggerCustomFormatters = useDebuggerCustomFormatters
+            debuggerOptions = debuggerOptions,
+            multimoduleOptions = null,
         )
+
+        val compilerResultWithDCE = linkAndCompileWasmIrToBinary(dceParameters)
 
         return BinaryArtifacts.Wasm(
             compilerResult,

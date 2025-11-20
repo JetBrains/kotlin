@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import java.io.File
 import java.net.URLEncoder
 
 fun getAllReferencedDeclarations(
@@ -65,40 +64,48 @@ private val IrModuleFragment.outputFileName
         .replace(">", "_")
         .let { URLEncoder.encode(it, "UTF-8").replace("%", "%25") })
 
-object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact>("WasmBackendPipelinePhase") {
+object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, WasmIrModuleConfiguration>("WasmBackendPipelinePhase") {
     override val configFiles: EnvironmentConfigFiles
         get() = EnvironmentConfigFiles.WASM_CONFIG_FILES
+
+    override fun compileIntermediate(
+        intermediateResult: WasmIrModuleConfiguration,
+        configuration: CompilerConfiguration,
+    ): WasmBackendPipelineArtifact = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
+        val compileResult = linkAndCompileWasmIrToBinary(intermediateResult)
+        val outputDir = configuration.outputDir!!
+        writeCompilationResult(
+            result = compileResult,
+            dir = outputDir,
+            fileNameBase = intermediateResult.baseFileName,
+        )
+        WasmBackendPipelineArtifact(compileResult, outputDir, configuration)
+    }
 
     override fun compileIncrementally(
         icCaches: IcCachesArtifacts,
         configuration: CompilerConfiguration,
-    ): WasmBackendPipelineArtifact? {
-        val outputDir = configuration.outputDir!!
-        val result = compileIncrementally(
-            icCaches = icCaches,
-            configuration = configuration,
-            moduleName = configuration.moduleName!!,
-            outputDir = outputDir,
-            outputName = configuration.outputName!!,
-            preserveIcOrder = configuration.preserveIcOrder,
-            wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
-            wasmGenerateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
-            generateDwarf = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF)
-        )
-        return WasmBackendPipelineArtifact(result, outputDir, configuration)
-    }
+    ): WasmIrModuleConfiguration = compileIncrementally(
+        icCaches = icCaches,
+        configuration = configuration,
+        moduleName = configuration.moduleName!!,
+        outputName = configuration.outputName!!,
+        preserveIcOrder = configuration.preserveIcOrder,
+        wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
+        wasmGenerateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
+        generateDwarf = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF)
+    )
 
     internal fun compileIncrementally(
         icCaches: IcCachesArtifacts,
         configuration: CompilerConfiguration,
         moduleName: String,
-        outputDir: File,
         outputName: String,
         preserveIcOrder: Boolean,
         wasmDebug: Boolean,
         wasmGenerateWat: Boolean,
         generateDwarf: Boolean
-    ): WasmCompilerResult {
+    ): WasmIrModuleConfiguration {
         val wasmArtifacts = icCaches.artifacts
             .filterIsInstance<WasmModuleArtifact>()
             .flatMap { it.fileArtifacts }
@@ -107,64 +114,55 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
 
         val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
 
-        val res = compileWasm(
+        val debuggerOptions = DebuggerCompileOptions(
+            emitNameSection = wasmDebug,
+            generateDwarf = generateDwarf,
+            generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP),
+            useDebuggerCustomFormatters = useDebuggerCustomFormatters,
+        )
+
+        return WasmIrModuleConfiguration(
             wasmCompiledFileFragments = wasmArtifacts,
             moduleName = moduleName,
             configuration = configuration,
             typeScriptFragment = null,
             baseFileName = outputName,
-            emitNameSection = wasmDebug,
             generateWat = wasmGenerateWat,
-            generateDwarf = generateDwarf,
-            generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP),
-            useDebuggerCustomFormatters = useDebuggerCustomFormatters
+            debuggerOptions = debuggerOptions,
+            multimoduleOptions = null,
         )
-
-        writeCompilationResult(
-            result = res,
-            dir = outputDir,
-            fileNameBase = outputName
-        )
-        return res
     }
 
     override fun compileNonIncrementally(
         configuration: CompilerConfiguration,
         module: ModulesStructure,
         mainCallArguments: List<String>?,
-    ): WasmBackendPipelineArtifact? {
-        val outputDir = configuration.outputDir!!
-        val result = compileNonIncrementally(
-            configuration,
-            module,
-            configuration.outputName!!,
-            outputDir,
-            propertyLazyInitialization = configuration.propertyLazyInitialization,
-            dce = configuration.dce,
-            configuration[WasmConfigurationKeys.DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE],
-            generateDwarf = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF),
-            wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
-        )
-        return WasmBackendPipelineArtifact(result, outputDir, configuration)
-    }
+    ): WasmIrModuleConfiguration = compileNonIncrementally(
+        configuration = configuration,
+        module = module,
+        outputName = configuration.outputName!!,
+        propertyLazyInitialization = configuration.propertyLazyInitialization,
+        dce = configuration.dce,
+        dceDumpDeclarationIrSizesToFile = configuration[WasmConfigurationKeys.DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE],
+        generateDwarf = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF),
+        wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
+    )
 
     internal fun compileNonIncrementally(
         configuration: CompilerConfiguration,
         module: ModulesStructure,
         outputName: String,
-        outputDir: File,
         propertyLazyInitialization: Boolean,
         dce: Boolean,
         dceDumpDeclarationIrSizesToFile: String?,
         wasmDebug: Boolean,
         generateDwarf: Boolean
-    ): WasmCompilerResult {
+    ): WasmIrModuleConfiguration {
         return if (!configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)) {
-            compileWholeProgramMode(
+            compileWholeProgramModeToWasmIr(
                 configuration = configuration,
                 module = module,
                 outputName = outputName,
-                outputDir = outputDir,
                 propertyLazyInitialization = propertyLazyInitialization,
                 dce = dce,
                 dceDumpDeclarationIrSizesToFile = dceDumpDeclarationIrSizesToFile,
@@ -172,27 +170,25 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 generateDwarf = generateDwarf,
             )
         } else {
-            compileSingleModule(
+            compileSingleModuleToWasmIr(
                 configuration = configuration,
                 module = module,
-                outputDir = outputDir,
                 wasmDebug = wasmDebug,
                 generateDwarf = generateDwarf,
             )
         }
     }
 
-    internal fun compileWholeProgramMode(
+    internal fun compileWholeProgramModeToWasmIr(
         configuration: CompilerConfiguration,
         module: ModulesStructure,
         outputName: String,
-        outputDir: File,
         propertyLazyInitialization: Boolean,
         dce: Boolean,
         dceDumpDeclarationIrSizesToFile: String?,
         wasmDebug: Boolean,
         generateDwarf: Boolean
-    ): WasmCompilerResult {
+    ): WasmIrModuleConfiguration {
         val performanceManager = configuration.perfManager
         performanceManager?.let {
             @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
@@ -242,26 +238,23 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             )
             val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
 
-            val res = compileWasm(
+            val debuggerOptions = DebuggerCompileOptions(
+                emitNameSection = wasmDebug,
+                generateDwarf = generateDwarf,
+                generateSourceMaps = generateSourceMaps,
+                useDebuggerCustomFormatters = useDebuggerCustomFormatters,
+            )
+
+            return WasmIrModuleConfiguration(
                 wasmCompiledFileFragments = wasmCompiledFileFragments,
                 moduleName = allModules.last().descriptor.name.asString(),
                 configuration = configuration,
                 typeScriptFragment = typeScriptFragment,
                 baseFileName = outputName,
-                emitNameSection = wasmDebug,
                 generateWat = generateWat,
-                generateDwarf = generateDwarf,
-                generateSourceMaps = generateSourceMaps,
-                useDebuggerCustomFormatters = useDebuggerCustomFormatters
+                debuggerOptions = debuggerOptions,
+                multimoduleOptions = null,
             )
-
-            writeCompilationResult(
-                result = res,
-                dir = outputDir,
-                fileNameBase = outputName
-            )
-
-            return res
         }
     }
 
@@ -277,13 +270,12 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         return parsedResolutionMap
     }
 
-    private fun compileSingleModule(
+    private fun compileSingleModuleToWasmIr(
         configuration: CompilerConfiguration,
         module: ModulesStructure,
-        outputDir: File,
         wasmDebug: Boolean,
         generateDwarf: Boolean,
-    ): WasmCompilerResult {
+    ): WasmIrModuleConfiguration {
 
         val dependencyResolutionMap = parseDependencyResolutionMap(configuration)
 
@@ -310,9 +302,8 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             disableCrossFileOptimisations = true,
         )
 
-        performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
-
-            val compilationResult = compileWasmLoweredFragmentsForSingleModule(
+        return performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
+            compileWasmLoweredFragmentsForSingleModule(
                 configuration = configuration,
                 loweredIrFragments = allModules,
                 backendContext = backendContext,
@@ -325,14 +316,6 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 generateSourceMaps = generateSourceMaps,
                 generateDwarf = generateDwarf,
             )
-
-            writeCompilationResult(
-                result = compilationResult,
-                dir = outputDir,
-                fileNameBase = allModules.last().outputFileName,
-            )
-
-            return compilationResult
         }
     }
 }
@@ -350,7 +333,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
     generateDwarf: Boolean,
     outputFileNameBase: String? = null,
     dependencyResolutionMap: Map<String, String>,
-): WasmCompilerResult {
+): WasmIrModuleConfiguration {
     val mainModuleFragment = backendContext.irModuleFragment
     val moduleName = mainModuleFragment.name.asString()
 
@@ -403,19 +386,27 @@ fun compileWasmLoweredFragmentsForSingleModule(
         configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS) &&
                 stdlibModuleNameForImport == null
 
-    return compileWasm(
+    val debuggerOptions = DebuggerCompileOptions(
+        emitNameSection = wasmDebug,
+        generateSourceMaps = generateSourceMaps,
+        generateDwarf = generateDwarf,
+        useDebuggerCustomFormatters = useDebuggerCustomFormatters,
+    )
+
+    val multimoduleOptions = MultimoduleCompileOptions(
+        stdlibModuleNameForImport = stdlibModuleNameForImport,
+        dependencyModules = dependencyImports,
+        initializeUnit = stdlibIsMainModule,
+    )
+
+    return WasmIrModuleConfiguration(
         wasmCompiledFileFragments = wasmCompiledFileFragments,
         moduleName = moduleName,
         configuration = configuration,
         typeScriptFragment = typeScriptFragment,
         baseFileName = outputFileNameBase ?: mainModuleFragment.outputFileName,
-        emitNameSection = wasmDebug,
         generateWat = generateWat,
-        generateSourceMaps = generateSourceMaps,
-        generateDwarf = generateDwarf,
-        useDebuggerCustomFormatters = useDebuggerCustomFormatters,
-        stdlibModuleNameForImport = stdlibModuleNameForImport,
-        dependencyModules = dependencyImports,
-        initializeUnit = stdlibIsMainModule,
+        debuggerOptions = debuggerOptions,
+        multimoduleOptions = multimoduleOptions,
     )
 }

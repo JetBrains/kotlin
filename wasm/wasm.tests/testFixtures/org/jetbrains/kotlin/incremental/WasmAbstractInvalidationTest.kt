@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.incremental
 
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.wasm.compileWasm
+import org.jetbrains.kotlin.backend.wasm.DebuggerCompileOptions
+import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
+import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextForTesting
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
@@ -124,20 +126,27 @@ abstract class WasmAbstractInvalidationTest(
 
             verifyCacheUpdateStats(stepId, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
 
-            val res = compileWasm(
+            val debuggerOptions = DebuggerCompileOptions(
+                emitNameSection = false,
+                generateSourceMaps = false,
+                useDebuggerCustomFormatters = false,
+                generateDwarf = false,
+            )
+
+            val parameters = WasmIrModuleConfiguration(
                 wasmCompiledFileFragments = fileFragments,
                 moduleName = mainModuleInfo.moduleName,
                 configuration = configuration,
                 typeScriptFragment = null,
                 baseFileName = mainModuleInfo.moduleName,
-                emitNameSection = false,
-                generateSourceMaps = false,
                 generateWat = false,
-                useDebuggerCustomFormatters = false,
-                generateDwarf = false
+                debuggerOptions = debuggerOptions,
+                multimoduleOptions = null,
             )
 
-            writeCompilationResult(res, buildDir, mainModuleInfo.moduleName)
+            val compilationResult = linkAndCompileWasmIrToBinary(parameters)
+
+            writeCompilationResult(compilationResult, buildDir, mainModuleInfo.moduleName)
 
             WasmVM.NodeJs.run(
                 "./test.mjs",

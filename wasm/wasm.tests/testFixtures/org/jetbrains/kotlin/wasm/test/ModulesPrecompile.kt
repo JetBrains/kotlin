@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.wasm.test
 
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
+import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -114,11 +116,19 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
             this.includes = includes
         }
 
-        WasmBackendPipelinePhase.compileNonIncrementally(
+        val parametersForCompile = WasmBackendPipelinePhase.compileNonIncrementally(
             configuration = configuration,
             module = module,
             mainCallArguments = null
-        ) ?: error("Fail to precompile $includes")
+        )
+
+        val compileResult = linkAndCompileWasmIrToBinary(parametersForCompile)
+
+        writeCompilationResult(
+            result = compileResult,
+            dir = outputDir,
+            fileNameBase = outputName,
+        )
 
         if (debugMode >= DebugMode.DEBUG) {
             println(" ------ Wat  file://${outputDir.canonicalPath}/$outputName.wat")
