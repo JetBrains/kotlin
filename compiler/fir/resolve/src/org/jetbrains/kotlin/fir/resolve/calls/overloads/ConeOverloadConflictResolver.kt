@@ -427,33 +427,6 @@ class ConeOverloadConflictResolver(
             val specificClassId = specific.lowerBoundIfFlexible().classId ?: return false
             val generalClassId = general.upperBoundIfFlexible().classId ?: return false
 
-            // any signed >= any unsigned
-
-            if (specificClassId.isSignedIntegerType && generalClassId.isUnsigned) {
-                return true
-            }
-
-            // int >= long, int >= short, short >= byte
-
-            if (specificClassId == Int) {
-                return generalClassId == Long || generalClassId == Short || generalClassId == Byte
-            } else if (specificClassId == Short && generalClassId == Byte) {
-                return true
-            }
-
-            // uint >= ulong, uint >= ushort, ushort >= ubyte
-
-            if (specificClassId == UInt) {
-                return generalClassId == ULong || generalClassId == UShort || generalClassId == UByte
-            } else if (specificClassId == UShort && generalClassId == UByte) {
-                return true
-            }
-
-            // double >= float
-            if (specificClassId == Double && generalClassId == Float) {
-                return true
-            }
-
             if (discriminateSuspend &&
                 specificClassId.functionTypeKind(inferenceComponents.session) == FunctionTypeKind.Function &&
                 generalClassId.functionTypeKind(inferenceComponents.session) == FunctionTypeKind.SuspendFunction
@@ -629,8 +602,59 @@ class ConeOverloadConflictResolver(
     }
 
     private fun createEmptyConstraintSystem(): SimpleConstraintSystem {
-        return ConeSimpleConstraintSystemImpl(inferenceComponents.createConstraintSystem(), inferenceComponents.session)
+        return ConeSimpleConstraintSystemImpl(
+            inferenceComponents.createConstraintSystem(::customSubtypingForNumerics),
+            inferenceComponents.session
+        )
     }
+
+    private fun customSubtypingForNumerics(subtype: KotlinTypeMarker, supertype: KotlinTypeMarker): Boolean? {
+        requireOrDescribe(subtype is ConeKotlinType, subtype)
+        requireOrDescribe(supertype is ConeKotlinType, supertype)
+
+        val specificClassId = subtype.lowerBoundIfFlexible().classId ?: return null
+        val generalClassId = supertype.upperBoundIfFlexible().classId ?: return null
+
+        // any signed >= any unsigned
+
+        if (specificClassId.isSignedIntegerType && generalClassId.isUnsigned) {
+            return true
+        }
+
+        // int >= long, int >= short, short >= byte
+
+        if (specificClassId == Int) {
+            if (generalClassId == Long || generalClassId == Short || generalClassId == Byte) return true
+        } else if (specificClassId == Short && generalClassId == Byte) {
+            return true
+        }
+
+        // uint >= ulong, uint >= ushort, ushort >= ubyte
+
+        if (specificClassId == UInt) {
+            if (generalClassId == ULong || generalClassId == UShort || generalClassId == UByte) return true
+        } else if (specificClassId == UShort && generalClassId == UByte) {
+            return true
+        }
+
+        // double >= float
+        if (specificClassId == Double && generalClassId == Float) {
+            return true
+        }
+        return null
+    }
+
+    private val ClassId.isUnsigned: Boolean get() = this in StandardClassIds.unsignedTypes
+
+    private val useCorrectSignedCheck: Boolean =
+        inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSpecificityCheckForSignedAndUnsigned)
+
+    private val ClassId.isSignedIntegerType: Boolean
+        get() = if (useCorrectSignedCheck) {
+            this in StandardClassIds.signedIntegerTypes
+        } else {
+            !isUnsigned
+        }
 }
 
 class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val session: FirSession) : SimpleConstraintSystem {

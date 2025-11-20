@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerC
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -25,6 +22,7 @@ class NewConstraintSystemImpl(
     private val constraintInjector: ConstraintInjector,
     val typeSystemContext: TypeSystemInferenceExtensionContext,
     private val languageVersionSettings: LanguageVersionSettings,
+    private val customSubtypeCallback: ((KotlinTypeMarker, KotlinTypeMarker) -> Boolean?)? = null,
 ) : ConstraintSystemCompletionContext(),
     TypeSystemInferenceExtensionContext by typeSystemContext,
     NewConstraintSystem,
@@ -534,6 +532,20 @@ class NewConstraintSystemImpl(
             checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
             return storage.notFixedTypeVariables
         }
+
+    override fun newTypeCheckerState(
+        errorTypesEqualToAnything: Boolean,
+        stubTypesEqualToAnything: Boolean,
+        dnnTypesEqualToFlexible: Boolean,
+        customSubtypeCallback: ((KotlinTypeMarker, KotlinTypeMarker) -> Boolean?)?,
+    ): TypeCheckerState {
+        return typeSystemContext.newTypeCheckerState(
+            errorTypesEqualToAnything,
+            stubTypesEqualToAnything,
+            dnnTypesEqualToFlexible,
+            customSubtypeCallback ?: this.customSubtypeCallback
+        )
+    }
 
     /**
      * @see org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.typeVariableDependencies

@@ -169,6 +169,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean,
+        customSubtypeCallback: ((KotlinTypeMarker, KotlinTypeMarker) -> Boolean?)?,
     ): TypeCheckerState = TypeCheckerState(
         errorTypesEqualToAnything,
         stubTypesEqualToAnything,
@@ -176,7 +177,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         allowedTypeVariable = true,
         typeSystemContext = this,
         kotlinTypePreparator = ConeTypePreparator(session),
-        kotlinTypeRefiner = AbstractTypeRefiner.Default
+        kotlinTypeRefiner = AbstractTypeRefiner.Default,
+        customSubtypeCallback,
     )
 
     override fun KotlinTypeMarker.canHaveUndefinedNullability(): Boolean {

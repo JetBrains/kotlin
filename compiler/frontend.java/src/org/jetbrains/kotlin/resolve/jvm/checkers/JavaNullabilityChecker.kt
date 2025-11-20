@@ -169,7 +169,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
         @OptIn(ClassicTypeCheckerStateInternals::class)
         val typeState: TypeCheckerState = object : ClassicTypeCheckerState(isErrorTypeEqualsToAnything = true) {
             private var expectsTypeArgument = false
-            override fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
+            override fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? {
 
                 if (isNullableTypeAgainstNotNullTypeParameter(subType as KotlinType, superType as KotlinType)) {
                     // data flow value is only checked for top-level types
@@ -182,7 +182,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
                 if (!expectsTypeArgument) {
                     expectsTypeArgument = true
                 }
-                return true
+                return null
             }
         }
 
