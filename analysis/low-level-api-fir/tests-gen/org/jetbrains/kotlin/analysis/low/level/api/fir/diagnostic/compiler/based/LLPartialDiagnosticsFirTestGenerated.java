@@ -1486,6 +1486,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("overloadsWithNumericTypes.kt")
+      public void testOverloadsWithNumericTypes() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/overloadsWithNumericTypes.kt");
+      }
+
+      @Test
       @TestMetadata("referenceToNestedClass.kt")
       public void testReferenceToNestedClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/referenceToNestedClass.kt");
