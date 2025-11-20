@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 
 // FILE: some.kt
@@ -21,9 +21,9 @@ enum class E {
 }
 
 fun test() {
-    <!DEPRECATION_ERROR!>Some<!>
-    Some.<!UNRESOLVED_REFERENCE!>foo<!>()
-    Some::<!UNRESOLVED_REFERENCE!>foo<!>
+    Some
+    Some.foo()
+    Some::foo
     Some::class
 }
 

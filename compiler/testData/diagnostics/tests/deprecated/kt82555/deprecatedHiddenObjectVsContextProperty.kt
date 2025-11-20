@@ -20,7 +20,7 @@ val <!REDECLARATION!>TopLevel<!> get() = 42
 
 fun test() {
     with("") {
-        Obj.<!DEPRECATION_ERROR!>Nested<!>
+        Obj.Nested
         TopLevel
     }
 }

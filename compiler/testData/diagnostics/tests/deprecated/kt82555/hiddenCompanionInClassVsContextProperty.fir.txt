@@ -46,7 +46,7 @@ FILE: hiddenCompanionInClassVsContextProperty.kt
         R|kotlin/with|<R|kotlin/String|, R|Outer.Nested.NestedMost|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|Outer.Nested.NestedMost| <inline=Inline, kind=EXACTLY_ONCE>  {
             lval ref: R|kotlin/reflect/KFunction1<Outer.Nested, kotlin/String>| = Q|Outer.Nested|::R|SubstitutionOverride</Outer.Nested.toString: R|kotlin/String|>|
             lval classRef: R|kotlin/reflect/KClass<Outer.Nested>| = <getClass>(Q|Outer.Nested|)
-            Q|Outer.Nested|
+            context(this@R|special/anonymous|) Q|Outer|.R|/Outer.Nested|
             Q|Outer.Nested|.R|/Outer.Nested.valueOf*s|(String(ENTRY))
             Q|Outer.Nested|.R|/Outer.Nested.ENTRY|
             ^ Q|Outer.Nested.NestedMost|

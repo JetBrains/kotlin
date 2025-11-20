@@ -23,7 +23,7 @@ fun test() {
     with("") {
         val ref = Outer.Nested::toString // must resolve to class
         val classRef = Outer.Nested::class // must resolve to class
-        Outer.<!DEPRECATION_ERROR!>Nested<!> // must resolve to property
+        Outer.Nested // must resolve to property
         Outer.Nested.valueOf("ENTRY") // must resolve to class
         Outer.Nested.ENTRY // must resolve to class
         Outer.Nested.NestedMost // must resolve to class

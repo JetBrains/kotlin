@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 class C {
     companion object {
@@ -11,12 +11,12 @@ class C {
 
 annotation class Anno(val x: Int)
 
-@Anno(<!ARGUMENT_TYPE_MISMATCH!>C.<!DEPRECATION_ERROR!>A<!><!>)
+@Anno(C.A)
 fun test() {
-    C.<!DEPRECATION_ERROR!>A<!>
-    C.<!DEPRECATION_ERROR!>A<!>.<!UNRESOLVED_REFERENCE!>toLong<!>()
-    C.<!DEPRECATION_ERROR!>A<!>::<!UNRESOLVED_REFERENCE!>toLong<!>
-    C.<!DEPRECATION_ERROR!>A<!>::class
+    C.A
+    C.A.toLong()
+    C.A::toLong
+    C.A::class
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, companionObject, const,

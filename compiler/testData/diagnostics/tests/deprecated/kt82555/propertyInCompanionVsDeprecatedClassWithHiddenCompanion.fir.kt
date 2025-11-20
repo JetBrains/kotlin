@@ -13,9 +13,9 @@ class C {
 
 annotation class Anno(val x: Int)
 
-@Anno(<!ARGUMENT_TYPE_MISMATCH!>C.<!DEPRECATION_ERROR!>A<!><!>)
+@Anno(C.A)
 fun test() {
-    C.<!DEPRECATION_ERROR!>A<!>
+    C.A
     C.A::class
 
     // K2: both are unresolved without companion object (hence, should be unresolved with hidden companion)

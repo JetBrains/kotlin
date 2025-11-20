@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 //  ^ K1 is ignored
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82555
 // LANGUAGE: +NestedTypeAliases
 
@@ -12,7 +12,7 @@ class Outer {
 
     typealias Obj = C
 
-    val obj = <!DEPRECATION_ERROR!>Obj<!>
+    val obj = Obj
 }
 
 object Obj

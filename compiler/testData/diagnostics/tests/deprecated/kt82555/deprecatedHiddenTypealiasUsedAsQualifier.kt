@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //  ^ ignored in K1
 // LANGUAGE: +NestedTypeAliases
@@ -10,7 +10,7 @@ class C {
     @Deprecated("", level = DeprecationLevel.HIDDEN)
     typealias Obj = Impl
 
-    val obj = <!DEPRECATION_ERROR!>Obj<!>
+    val obj = Obj
 }
 
 object Obj

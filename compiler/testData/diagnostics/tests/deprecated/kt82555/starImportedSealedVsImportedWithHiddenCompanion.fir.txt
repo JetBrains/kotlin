@@ -32,7 +32,7 @@ FILE: main.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|some/Some|
+        Q|E.Some|
         Q|some/Some|.<Unresolved name: foo>#()
         Q|some/Some|::<Unresolved reference: foo>#
         <getClass>(Q|some/Some|)

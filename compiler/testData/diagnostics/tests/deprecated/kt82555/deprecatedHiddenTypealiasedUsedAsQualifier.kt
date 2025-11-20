@@ -10,7 +10,7 @@ object Impl
 class C {
     typealias Obj = <!DEPRECATION_ERROR!>Impl<!>
 
-    val obj = <!DEPRECATION_ERROR!>Obj<!>
+    val obj = Obj
 }
 
 object Obj
