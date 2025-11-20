@@ -77,16 +77,3 @@ fun createKonanLibrary(
 
     return KonanLibraryImpl(libraryFile, nonNullZipFileSystemAccessor, targeted)
 }
-
-fun createKonanLibraryComponents(
-    libraryFile: File,
-    target: KonanTarget? = null,
-    isDefault: Boolean = true,
-    zipFileSystemAccessor: ZipFileSystemAccessor? = null,
-) : List<KotlinLibrary> {
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null)
-    val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
-    return base.componentList.map {
-        createKonanLibrary(libraryFile, it, target, isDefault, zipFileSystemAccessor)
-    }
-}

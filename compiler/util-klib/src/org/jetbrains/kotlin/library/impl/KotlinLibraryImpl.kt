@@ -96,15 +96,3 @@ fun createKotlinLibrary(
 
     return KotlinLibraryImpl(libraryFile, nonNullZipFileSystemAccessor, base)
 }
-
-fun createKotlinLibraryComponents(
-    libraryFile: File,
-    isDefault: Boolean = true,
-    zipAccessor: ZipFileSystemAccessor? = null,
-): List<KotlinLibrary> {
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null, zipAccessor)
-    val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
-    return base.componentList.map {
-        createKotlinLibrary(libraryFile, it, isDefault, zipAccessor = zipAccessor)
-    }
-}

@@ -3,7 +3,8 @@ package org.jetbrains.kotlin.library
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.SearchPathResolver.LookupResult
 import org.jetbrains.kotlin.library.SearchPathResolver.SearchRoot
-import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
+import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
+import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -99,13 +100,13 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     open val distPlatformHead: File? = null
     private val currentDirHead: File? get() = if (!skipCurrentDir) File.userDir else null
 
-    abstract fun libraryComponentBuilder(file: File, isDefault: Boolean): List<L>
+    abstract fun loadLibrary(file: File, isDefault: Boolean): L
 
     private val directLibraryUniqueNames: Map</* Unique Name*/ String, File> by lazy {
         HashMap<String, File>().apply {
             for (directLib in directLibs) {
                 val absolutePath = SearchRoot.lookUpByAbsolutePath(File(directLib)) ?: continue
-                val uniqueName = libraryComponentBuilder(absolutePath, false).singleOrNull()?.uniqueName ?: continue
+                val uniqueName = loadLibrary(absolutePath, false).uniqueName
                 this[uniqueName] = absolutePath
             }
         }
@@ -175,7 +176,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
             val givenPath = unresolved.path
             try {
                 resolutionSequence(givenPath)
-                    .flatMap { libraryComponentBuilder(it, isDefaultLink).asSequence() }
+                    .map { loadLibrary(it, isDefaultLink) }
                     .map { it.takeIf { libraryMatch(it, unresolved) } }
                     .filterNotNull()
                     .firstOrNull()
@@ -323,7 +324,11 @@ class SingleKlibComponentResolver(
     logger,
     knownIrProviders = knownIrProviders
 ) {
-    override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)
+    override fun loadLibrary(file: File, isDefault: Boolean) = createKotlinLibrary(
+        libraryFile = file,
+        component = KLIB_DEFAULT_COMPONENT_NAME,
+        isDefault = isDefault
+    )
 }
 
 /**

@@ -2,10 +2,11 @@ package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.library.impl.createKonanLibraryComponents
+import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
@@ -43,8 +44,13 @@ class KonanLibraryProperResolver(
     logger = logger,
     knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
 ), SearchPathResolverWithTarget<KotlinLibrary> {
-    override fun libraryComponentBuilder(file: File, isDefault: Boolean) =
-        createKonanLibraryComponents(file, target, isDefault, zipFileSystemAccessor)
+    override fun loadLibrary(file: File, isDefault: Boolean) = createKonanLibrary(
+        libraryFilePossiblyDenormalized = file,
+        component = KLIB_DEFAULT_COMPONENT_NAME,
+        target = target,
+        isDefault = isDefault,
+        zipFileSystemAccessor = zipFileSystemAccessor
+    )
 
     override val distPlatformHead: File?
         get() = distributionKlib?.File()?.child("platform")?.child(target.visibleName)
