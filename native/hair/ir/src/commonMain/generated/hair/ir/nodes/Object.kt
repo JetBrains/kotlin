@@ -25,7 +25,6 @@ class New internal constructor(form: Form, control: Controlling?) : BlockBody(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitNew(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "New")
     }
@@ -143,7 +142,6 @@ class ReadFieldPinned internal constructor(form: Form, control: Controlling?, ob
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitReadFieldPinned(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "ReadFieldPinned")
     }
@@ -164,7 +162,6 @@ class ReadGlobalPinned internal constructor(form: Form, control: Controlling?) :
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitReadGlobalPinned(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "ReadGlobalPinned")
     }
@@ -198,7 +195,6 @@ class WriteField internal constructor(form: Form, control: Controlling?, obj: No
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitWriteField(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "WriteField")
     }
@@ -231,7 +227,6 @@ class WriteGlobal internal constructor(form: Form, control: Controlling?, value:
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitWriteGlobal(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "WriteGlobal")
     }
@@ -270,7 +265,6 @@ class IsInstanceOf internal constructor(form: Form, obj: Node?) : TypeCheck(form
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitIsInstanceOf(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "IsInstanceOf")
     }
@@ -291,7 +285,6 @@ class CheckCast internal constructor(form: Form, obj: Node?) : TypeCheck(form, l
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitCheckCast(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "CheckCast")
     }

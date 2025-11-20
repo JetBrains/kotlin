@@ -6,6 +6,7 @@ import hair.ir.nodes.Add
 import hair.ir.nodes.ConstI
 import hair.ir.nodes.Node
 import hair.ir.nodes.Return
+import hair.ir.nodes.Throw
 import hair.ir.nodes.Use
 import hair.sym.HairType
 import hair.sym.HairType.*
@@ -57,7 +58,7 @@ class NormalizationTest : IrTest {
         lateinit var expected: Node
 
         buildInitialIR {
-            use = Use(Add(INT)(ConstI(a), Param(0)))
+            use = Use(Add(INT)(ConstI(a), Param(0))) as Use
             expected = ConstI(a + b)
             Return(expected)
         }
@@ -74,7 +75,7 @@ class NormalizationTest : IrTest {
         val value = 42
 
         buildInitialIR {
-            val thr = Throw(ConstI(value))
+            val thr = Throw(ConstI(value)) as Throw
             val unwind = Unwind(thr)
             BlockEntry(unwind)
             val catch = Catch(unwind)

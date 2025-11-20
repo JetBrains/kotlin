@@ -25,7 +25,6 @@ class ReadVar internal constructor(form: Form, control: Controlling?) : VarOp(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitReadVar(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "ReadVar")
     }
@@ -58,7 +57,6 @@ class AssignVar internal constructor(form: Form, control: Controlling?, assigned
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAssignVar(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "AssignVar")
     }
@@ -93,7 +91,6 @@ class Phi internal constructor(form: Form, block: BlockEntry?, vararg joinedValu
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitPhi(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Phi")
     }
@@ -128,7 +125,6 @@ class PhiPlaceholder internal constructor(form: Form, block: BlockEntry?, vararg
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitPhiPlaceholder(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "PhiPlaceholder")
     }
@@ -148,7 +144,6 @@ class Param internal constructor(form: Form) : NodeBase(form, listOf()) {
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitParam(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Param")
     }
@@ -175,7 +170,6 @@ class Catch internal constructor(form: Form, unwind: Node?) : NodeBase(form, lis
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitCatch(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleValueForm(session, "Catch")
     }
