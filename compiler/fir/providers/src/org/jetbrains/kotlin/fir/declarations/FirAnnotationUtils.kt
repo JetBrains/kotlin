@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -197,7 +196,7 @@ data class EnumValueArgumentInfo(val enumClassId: ClassId?, val enumEntryName: N
 fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
     return when (this) {
         is FirPropertyAccessExpression -> {
-            if (isResolved) {
+            if (hasResolvedType) {
                 val entrySymbol = calleeReference.toResolvedEnumEntrySymbol() ?: return null
                 EnumValueArgumentInfo(entrySymbol.callableId.classId!!, entrySymbol.callableId.callableName)
             } else {

@@ -86,7 +86,7 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                 null -> null
                 is FirAnonymousFunctionExpression -> ConeResolutionAtomWithPostponedChild(expression)
                 is FirCallableReferenceAccess -> when {
-                    expression.isResolved -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
+                    expression.hasResolvedType -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
                     else -> ConeResolutionAtomWithPostponedChild(expression)
                 }
                 is FirPropertyAccessExpression if expression.shouldBeResolvedInContextSensitiveMode() -> {
@@ -127,7 +127,7 @@ class ConeSimpleLeafResolutionAtom(override val expression: FirExpression, allow
             checkWithAttachment(
                 allowUnresolvedExpression ||
                         expression.unwrapArgument() is FirFakeArgumentForCallableReference ||
-                        expression.isResolved,
+                        expression.hasResolvedType,
                 { "ConeResolvedAtom should be created only for resolved expressions" }
             ) {
                 withFirEntry("expression", expression)

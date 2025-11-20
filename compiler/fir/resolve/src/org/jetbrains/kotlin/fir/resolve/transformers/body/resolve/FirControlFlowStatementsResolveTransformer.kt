@@ -51,7 +51,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     // ------------------------------- When expressions -------------------------------
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: ResolutionMode): FirStatement {
-        if (whenExpression.calleeReference is FirResolvedNamedReference && whenExpression.isResolved) {
+        if (whenExpression.calleeReference is FirResolvedNamedReference && whenExpression.hasResolvedType) {
             return whenExpression
         }
         whenExpression.annotations.forEach { it.accept(this, data) }
@@ -140,7 +140,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     // ------------------------------- Try/catch expressions -------------------------------
 
     override fun transformTryExpression(tryExpression: FirTryExpression, data: ResolutionMode): FirStatement {
-        if (tryExpression.calleeReference is FirResolvedNamedReference && tryExpression.isResolved) {
+        if (tryExpression.calleeReference is FirResolvedNamedReference && tryExpression.hasResolvedType) {
             return tryExpression
         }
 

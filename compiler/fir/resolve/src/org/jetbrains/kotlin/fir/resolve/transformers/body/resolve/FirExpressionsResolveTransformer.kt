@@ -86,7 +86,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     override fun transformExpression(expression: FirExpression, data: ResolutionMode): FirStatement {
-        if (!expression.isResolved && expression !is FirWrappedExpression) {
+        if (!expression.hasResolvedType && expression !is FirWrappedExpression) {
             expression.resultType = ConeErrorType(
                 ConeSimpleDiagnostic(
                     "Type calculating for ${expression::class} is not supported",
@@ -114,7 +114,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         isUsedAsReceiver: Boolean,
         isUsedAsGetClassReceiver: Boolean,
     ): FirExpression {
-        if (qualifiedAccessExpression.isResolved && qualifiedAccessExpression.calleeReference !is FirSimpleNamedReference) {
+        if (qualifiedAccessExpression.hasResolvedType && qualifiedAccessExpression.calleeReference !is FirSimpleNamedReference) {
             return qualifiedAccessExpression
         }
 
@@ -189,7 +189,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
             is FirResolvedNamedReference,
             is FirErrorNamedReference -> {
-                if (!qualifiedAccessExpression.isResolved) {
+                if (!qualifiedAccessExpression.hasResolvedType) {
                     storeTypeFromCallee(qualifiedAccessExpression, isLhsOfAssignment = false)
                 }
                 qualifiedAccessExpression
@@ -210,7 +210,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
 
                 fun FirExpression.alsoRecordLookup() = also {
-                    if (transformedCallee.isResolved) {
+                    if (transformedCallee.hasResolvedType) {
                         session.lookupTracker?.recordTypeResolveAsLookup(
                             transformedCallee.resolvedType, callee.source, components.file.source
                         )
@@ -541,7 +541,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val calleeReference = functionCall.calleeReference
             if (
                 (calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference) &&
-                !functionCall.isResolved
+                !functionCall.hasResolvedType
             ) {
                 storeTypeFromCallee(functionCall, isLhsOfAssignment = false)
             }
@@ -1234,7 +1234,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         //   fun <K> checkNotNull(arg: K?): K
         // ...in order to get the not-nullable type of the argument.
 
-        if (checkNotNullCall.calleeReference is FirResolvedNamedReference && checkNotNullCall.isResolved) {
+        if (checkNotNullCall.calleeReference is FirResolvedNamedReference && checkNotNullCall.hasResolvedType) {
             return checkNotNullCall
         }
 
@@ -2060,7 +2060,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode,
     ): FirStatement {
         anonymousObjectExpression.transformAnonymousObject(transformer, data)
-        if (!anonymousObjectExpression.isResolved) {
+        if (!anonymousObjectExpression.hasResolvedType) {
             anonymousObjectExpression.resultType = anonymousObjectExpression.anonymousObject.defaultType()
         }
         dataFlowAnalyzer.exitAnonymousObjectExpression(anonymousObjectExpression)

@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.isResolved
+import org.jetbrains.kotlin.fir.types.hasResolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi
@@ -1036,7 +1036,7 @@ private val FirFunction.isCertainlyResolved: Boolean
         }
 
         val body = this.body ?: return false // Not completely sure
-        return body !is FirLazyBlock && body.isResolved
+        return body !is FirLazyBlock && body.hasResolvedType
     }
 
 private val FirVariable.initializerGetterIfUnresolved: KProperty1<FirVariable, FirExpression?>?

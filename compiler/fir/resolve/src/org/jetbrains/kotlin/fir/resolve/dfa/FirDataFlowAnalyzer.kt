@@ -1313,7 +1313,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitLiteralExpression(literalExpression: FirLiteralExpression) {
-        if (literalExpression.isResolved) return
+        if (literalExpression.hasResolvedType) return
         graphBuilder.exitLiteralExpression(literalExpression).mergeIncomingFlow()
     }
 

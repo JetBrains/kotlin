@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -45,6 +46,10 @@ val FirTypeRef.coneTypeOrNull: ConeKotlinType?
 val FirResolvedTypeRef.coneTypeOrNull: ConeKotlinType?
     get() = coneTypeSafe()
 
+/**
+ * @return resolved type of [this] expression. In case the expression is not yet resolved,
+ * an exception [KotlinIllegalArgumentExceptionWithAttachments] is thrown.
+ */
 @OptIn(UnresolvedExpressionTypeAccess::class)
 val FirExpression.resolvedType: ConeKotlinType
     get() = coneTypeOrNull
@@ -52,8 +57,13 @@ val FirExpression.resolvedType: ConeKotlinType
             withFirEntry("expression", this@resolvedType)
         }
 
+/**
+ * @return true if [this] expression has an already resolved type. This means that [resolvedType]
+ * can be used safely (without a threat to get an exception),
+ * but DOESN'T mean that children expressions of this one also have resolved types.
+ */
 @OptIn(UnresolvedExpressionTypeAccess::class)
-val FirExpression.isResolved: Boolean get() = coneTypeOrNull != null
+val FirExpression.hasResolvedType: Boolean get() = coneTypeOrNull != null
 
 @RequiresOptIn(
     "This type check never expands type aliases. Use with care (probably Ok for expression & constructor types). " +

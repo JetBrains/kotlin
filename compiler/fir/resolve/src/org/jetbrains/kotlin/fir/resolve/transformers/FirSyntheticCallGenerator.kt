@@ -441,7 +441,7 @@ class FirSyntheticCallGenerator(
             // If the callable reference cannot be resolved with the expected type, let's try to resolve it with any type and report
             // something like INITIALIZER_TYPE_MISMATCH or NONE_APPLICABLE instead of UNRESOLVED_REFERENCE.
 
-            check(callableReferenceAccess.calleeReference is FirSimpleNamedReference && !callableReferenceAccess.isResolved) {
+            check(callableReferenceAccess.calleeReference is FirSimpleNamedReference && !callableReferenceAccess.hasResolvedType) {
                 "Expected FirCallableReferenceAccess to be unresolved."
             }
 

@@ -1641,9 +1641,9 @@ open class FirDeclarationsResolveTransformer(
     private val FirVariable.initializerResolved: Boolean
         get() {
             val initializer = initializer ?: return false
-            return initializer.isResolved && initializer !is FirErrorExpression
+            return initializer.hasResolvedType && initializer !is FirErrorExpression
         }
 
     private val FirFunction.bodyResolved: Boolean
-        get() = body?.isResolved == true
+        get() = body?.hasResolvedType == true
 }

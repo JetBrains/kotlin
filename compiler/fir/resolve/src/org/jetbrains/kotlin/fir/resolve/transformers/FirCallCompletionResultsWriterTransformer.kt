@@ -376,7 +376,7 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     private fun transformArrayLiteralInAnnotation(arrayLiteral: FirCollectionLiteral, data: ExpectedArgumentType?): FirStatement {
-        if (arrayLiteral.isResolved) return arrayLiteral
+        if (arrayLiteral.hasResolvedType) return arrayLiteral
         val expectedArrayType = data?.getExpectedType(arrayLiteral)
         val expectedArrayElementType = expectedArrayType?.arrayElementType()
         arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType(data.argumentReplacements))
