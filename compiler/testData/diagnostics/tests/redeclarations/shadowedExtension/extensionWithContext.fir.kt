@@ -11,7 +11,7 @@ interface Foo {
 fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(i: Int) = i
 
 context(c: String)
-fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(i: Int) = i
+<!CONTEXTUAL_OVERLOAD_SHADOWED!>fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(i: Int)<!> = i
 
 context(c: String)
 fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>bar<!>(i: Int) = i

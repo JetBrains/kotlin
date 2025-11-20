@@ -34,11 +34,6 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
         a: FirCallableSymbol<*>,
         b: FirCallableSymbol<*>,
     ): ContextParameterShadowing {
-        // Fast-path when either symbol has no context parameters.
-        if (a.contextParameterSymbols.none() || b.contextParameterSymbols.none()) {
-            return if (isConflicting(a, b)) ContextParameterShadowing.BothWays else ContextParameterShadowing.None
-        }
-
         val sigA = createSignature(a, ignoreContextParameters = true)
         val sigB = createSignature(b, ignoreContextParameters = true)
 

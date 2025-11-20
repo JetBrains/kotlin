@@ -30,7 +30,7 @@ actual class Test1 {
     actual fun foo() {}
 
     context(a: Int)
-    fun foo() {}
+    <!CONTEXTUAL_OVERLOAD_SHADOWED!>fun foo()<!> {}
 }
 
 actual class Test2 {
@@ -44,7 +44,7 @@ actual class Test3 {
     actual val a: String = ""
 
     context(a: Int)
-    val a: String
+    <!CONTEXTUAL_OVERLOAD_SHADOWED!>val a: String<!>
         get() = ""
 }
 

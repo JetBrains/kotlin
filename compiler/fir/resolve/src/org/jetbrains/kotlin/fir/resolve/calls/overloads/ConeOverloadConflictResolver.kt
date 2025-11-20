@@ -393,9 +393,7 @@ class ConeOverloadConflictResolver(
             }
         }
 
-        if (contextParametersEnabled) {
-            if (call1.hasContext != call2.hasContext) return call1.hasContext
-        } else {
+        if (!contextParametersEnabled) {
             if (call1.contextReceiverCount > call2.contextReceiverCount) return true
             if (call1.contextReceiverCount < call2.contextReceiverCount) return false
         }
@@ -566,9 +564,7 @@ class ConeOverloadConflictResolver(
                 }
                 if (call.argumentMappingInitialized) {
                     call.argumentMapping.mapNotNullTo(this) { (argument, parameter) ->
-                        runIf(parameter.valueParameterKind == FirValueParameterKind.Regular) {
-                            parameter.toTypeWithConversion(argument, session, call)
-                        }
+                        parameter.toTypeWithConversion(argument, session, call)
                     }
                 }
             }

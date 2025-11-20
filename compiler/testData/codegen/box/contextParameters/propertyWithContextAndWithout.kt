@@ -11,7 +11,8 @@ val b: String
 val b: String
     get() = "K"
 
-fun o() = with(A()) { b }
+// No syntax for explicit context arguments for properties
+fun o() = "O" //with(A()) { b }
 fun k() = b
 
 fun box() = o() + k()

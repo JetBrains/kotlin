@@ -69,9 +69,6 @@ operator fun Extension.contains(other: Dispatch): Boolean = false
 context(_: Context)
 operator fun Extension.minus(other: Extension): Argument = Extension(n + other.n)
 
-context(_: Context)
-operator fun Extension.contains(other: Dispatch): Boolean = false
-
 val dispatch = Dispatch(1)
 val extension = Extension(1)
 val context = Context(1)
@@ -135,6 +132,9 @@ fun test10() = expectThrowableMessage {
 }
 
 fun test11() = expectThrowableMessage {
+    context(_: Context)
+    operator fun Extension.contains(other: Dispatch): Boolean = false
+
     with(context) {
         assert(dispatch in extension)
     }
@@ -207,6 +207,9 @@ fun test22() = expectThrowableMessage {
 }
 
 fun test23() = expectThrowableMessage {
+    context(_: Context)
+    operator fun Extension.contains(other: Dispatch): Boolean = false
+
     with(context) {
         assert(extension.contains(dispatch))
     }

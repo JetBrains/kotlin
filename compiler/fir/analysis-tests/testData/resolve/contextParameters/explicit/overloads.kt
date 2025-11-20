@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters +ExplicitContextArguments
 
 context(_: Boolean, a: String)
@@ -8,8 +8,8 @@ context(_: Boolean)
 fun foo(a: CharSequence) = true
 
 fun test() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(true) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(a = "")
+    with(true) {
+        foo(a = "")
     }
 }
 

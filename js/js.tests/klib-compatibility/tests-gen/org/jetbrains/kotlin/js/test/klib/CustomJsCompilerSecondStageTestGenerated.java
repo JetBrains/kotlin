@@ -46874,12 +46874,6 @@ public class CustomJsCompilerSecondStageTestGenerated extends AbstractCustomJsCo
         public void testOverrideWithExplicitBackingField() {
           runTest("compiler/testData/codegen/box/properties/backingField/overrideWithExplicitBackingField.kt");
         }
-
-        @Test
-        @TestMetadata("propertyWithBackingFieldAndWithContext.kt")
-        public void testPropertyWithBackingFieldAndWithContext() {
-          runTest("compiler/testData/codegen/box/properties/backingField/propertyWithBackingFieldAndWithContext.kt");
-        }
       }
 
       @Nested
