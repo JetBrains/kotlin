@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
+import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.tsexport.TypeScriptExportConfig
 import org.jetbrains.kotlin.js.tsexport.TypeScriptModuleConfig
 import org.jetbrains.kotlin.js.tsexport.runTypeScriptExport
-import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
-import org.jetbrains.kotlin.library.impl.createKotlinLibrary
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.io.File
 import kotlin.io.path.Path
-import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 class AnalysisApiBasedDtsGeneratorFacade(
     private val testServices: TestServices,
@@ -74,7 +73,9 @@ class AnalysisApiBasedDtsGeneratorFacade(
     }
 
     private fun createInputModule(libraryPath: String): KlibInputModule<TypeScriptModuleConfig> {
-        val library = createKotlinLibrary(KonanFile(libraryPath), KLIB_DEFAULT_COMPONENT_NAME)
+        val result = KlibLoader { libraryPaths(libraryPath) }.load()
+        result.reportLoadingProblemsIfAny { _, message -> testServices.assertions.fail { message } }
+        val library = result.librariesStdlibFirst[0]
         return KlibInputModule(library.uniqueName, Path(libraryPath), TypeScriptModuleConfig(outputName = library.jsOutputName))
     }
 
