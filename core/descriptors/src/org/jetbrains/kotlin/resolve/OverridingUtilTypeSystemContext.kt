@@ -30,6 +30,7 @@ class OverridingUtilTypeSystemContext(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean,
+        customSubtypeCallback: ((KotlinTypeMarker, KotlinTypeMarker) -> Boolean?)?,
     ): TypeCheckerState {
         if (customSubtype == null) {
             return createClassicTypeCheckerState(
@@ -50,10 +51,10 @@ class OverridingUtilTypeSystemContext(
             kotlinTypePreparator,
             kotlinTypeRefiner,
         ) {
-            override fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
+            override fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? {
                 require(subType is KotlinType)
                 require(superType is KotlinType)
-                return customSubtype.invoke(subType, superType)
+                return customSubtype.invoke(subType, superType).takeIf { !it }
             }
         }
     }
