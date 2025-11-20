@@ -246,7 +246,7 @@ internal fun IrPluginContext.referencePackageFunction(
     name: String,
     predicate: (IrFunctionSymbol) -> Boolean = { true }
 ): IrSimpleFunctionSymbol = try {
-    referenceFunctions(CallableId(FqName(packageName), Name.identifier(name))).single(predicate)
+    finderForBuiltins().findFunctions(CallableId(FqName(packageName), Name.identifier(name))).single(predicate)
 } catch (e: RuntimeException) {
     error("Exception while looking for the function `$name` in package `$packageName`: ${e.message}")
 }
@@ -254,7 +254,7 @@ internal fun IrPluginContext.referencePackageFunction(
 internal fun IrPluginContext.referenceFunction(classSymbol: IrClassSymbol, functionName: String): IrSimpleFunctionSymbol {
     val functionId = CallableId(FqName("$KOTLIN.${classSymbol.owner.name}"), Name.identifier(functionName))
     return try {
-        referenceFunctions(functionId).single()
+        finderForBuiltins().findFunctions(functionId).single()
     } catch (e: RuntimeException) {
         error("Exception while looking for the function `$functionId`: ${e.message}")
     }
@@ -262,7 +262,7 @@ internal fun IrPluginContext.referenceFunction(classSymbol: IrClassSymbol, funct
 
 private fun IrPluginContext.referenceArrayClass(irType: IrSimpleType): IrClassSymbol {
     val jsArrayName = irType.getArrayClassClassId()
-    return referenceClass(jsArrayName) ?: error("Array class $jsArrayName was not found in the context")
+    return finderForBuiltins().findClass(jsArrayName) ?: error("Array class $jsArrayName was not found in the context")
 }
 
 internal fun IrPluginContext.getArrayConstructorSymbol(
@@ -271,7 +271,7 @@ internal fun IrPluginContext.getArrayConstructorSymbol(
 ): IrConstructorSymbol {
     val jsArrayName = irType.getArrayClassClassId()
     return try {
-        referenceConstructors(jsArrayName).single(predicate)
+        finderForBuiltins().findConstructors(jsArrayName).single(predicate)
     } catch (_: RuntimeException) {
         error("Array constructor $jsArrayName matching the predicate was not found in the context")
     }

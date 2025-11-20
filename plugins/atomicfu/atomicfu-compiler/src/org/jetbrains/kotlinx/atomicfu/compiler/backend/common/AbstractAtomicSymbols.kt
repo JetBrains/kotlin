@@ -53,7 +53,7 @@ abstract class AbstractAtomicSymbols(
     )
 
     val arrayOfNulls by lazy {
-        context.referenceFunctions(CallableId(FqName("kotlin"), Name.identifier("arrayOfNulls"))).first()
+        context.finderForBuiltins().findFunctions(CallableId(FqName("kotlin"), Name.identifier("arrayOfNulls"))).first()
     }
 
     private val ATOMIC_ARRAY_TYPES: Set<IrClassSymbol> by lazy {
