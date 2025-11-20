@@ -1,7 +1,3 @@
-/*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
 // WITH_STDLIB
 // WITH_REFLECT
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: 2.2.0
