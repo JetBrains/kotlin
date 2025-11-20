@@ -464,7 +464,7 @@ fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
         } else null
     }.toSet()
 
-    val hasCopyPhaseReferencingSyntheticProject = objects.entries.any { (id, pbxObject) ->
+    val hasCopyPhaseReferencingSyntheticProject = objects.entries.any { (_, pbxObject) ->
         @Suppress("UNCHECKED_CAST")
         pbxObject as Map<String, Any>
         val type = pbxObject.property<String>("isa")
