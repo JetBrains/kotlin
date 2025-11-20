@@ -472,27 +472,6 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
     ) {
         fun TestGroup.TestClass.modelInit() {
             model(
-                "diagnostics/testsWithJsStdLib",
-                excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
-                pattern = KT_OR_KTS,
-            )
-        }
-
-        testClass<AbstractLLJsDiagnosticsTest>(suiteTestClassName = "LLJsDiagnosticsFe10TestGenerated") {
-            modelInit()
-        }
-
-        testClass<AbstractLLReversedJsDiagnosticsTest>(suiteTestClassName = "LLReversedJsDiagnosticsFe10TestGenerated") {
-            modelInit()
-        }
-    }
-
-    testGroup(
-        "analysis/low-level-api-fir/tests-gen",
-        "compiler/testData",
-    ) {
-        fun TestGroup.TestClass.modelInit() {
-            model(
                 "diagnostics/tests",
                 excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 pattern = KT_OR_KTS,
@@ -517,24 +496,41 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             modelInit()
         }
 
-        testClass<AbstractLLBlackBoxTest> {
-            model(
-                "codegen/box",
-                excludeDirs = listOf(
-                    "script", // script is excluded until KT-60127 is implemented
-                    "multiplatform/k1",
+        run {
+            fun TestGroup.TestClass.jsDiagnosticsInit() {
+                model(
+                    "diagnostics/testsWithJsStdLib",
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                    pattern = KT_OR_KTS,
                 )
-            )
+            }
+
+            testClass<AbstractLLJsDiagnosticsTest>(suiteTestClassName = "LLJsDiagnosticsFe10TestGenerated") {
+                jsDiagnosticsInit()
+            }
+
+            testClass<AbstractLLReversedJsDiagnosticsTest>(suiteTestClassName = "LLReversedJsDiagnosticsFe10TestGenerated") {
+                jsDiagnosticsInit()
+            }
         }
 
-        testClass<AbstractLLReversedBlackBoxTest> {
-            model(
-                "codegen/box",
-                excludeDirs = listOf(
-                    "script", // script is excluded until KT-60127 is implemented
-                    "multiplatform/k1",
+        run {
+            fun TestGroup.TestClass.blackBoxTestsInit() {
+                model(
+                    "codegen/box",
+                    excludeDirs = listOf(
+                        "multiplatform/k1",
+                    )
                 )
-            )
+            }
+
+            testClass<AbstractLLBlackBoxTest> {
+                blackBoxTestsInit()
+            }
+
+            testClass<AbstractLLReversedBlackBoxTest> {
+                blackBoxTestsInit()
+            }
         }
 
         testClass<AbstractLLBlackBoxTest>(suiteTestClassName = "LLBlackBoxModernJdkTestGenerated") {

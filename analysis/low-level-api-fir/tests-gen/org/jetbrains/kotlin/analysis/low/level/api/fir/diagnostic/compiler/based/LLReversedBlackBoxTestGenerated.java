@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxTest {
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "script", "multiplatform/k1");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "multiplatform/k1");
   }
 
   @Nested
@@ -60303,6 +60303,70 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     @TestMetadata("propertyDeclaration.kt")
     public void testPropertyDeclaration() {
       runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/propertyDeclaration.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/script")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Script {
+    @Test
+    public void testAllFilesPresentInScript() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/script"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classReference.kt")
+    public void testClassReference() {
+      runTest("compiler/testData/codegen/box/script/classReference.kt");
+    }
+
+    @Test
+    @TestMetadata("localCaptureTests.kt")
+    public void testLocalCaptureTests() {
+      runTest("compiler/testData/codegen/box/script/localCaptureTests.kt");
+    }
+
+    @Test
+    @TestMetadata("localCaptureTestsK2.kt")
+    public void testLocalCaptureTestsK2() {
+      runTest("compiler/testData/codegen/box/script/localCaptureTestsK2.kt");
+    }
+
+    @Test
+    @TestMetadata("outOuOrderDecls.kt")
+    public void testOutOuOrderDecls() {
+      runTest("compiler/testData/codegen/box/script/outOuOrderDecls.kt");
+    }
+
+    @Test
+    @TestMetadata("scripInstance.kt")
+    public void testScripInstance() {
+      runTest("compiler/testData/codegen/box/script/scripInstance.kt");
+    }
+
+    @Test
+    @TestMetadata("scriptNestedClassInstance.kt")
+    public void testScriptNestedClassInstance() {
+      runTest("compiler/testData/codegen/box/script/scriptNestedClassInstance.kt");
+    }
+
+    @Test
+    @TestMetadata("scriptNestedClassInstanceK2.kt")
+    public void testScriptNestedClassInstanceK2() {
+      runTest("compiler/testData/codegen/box/script/scriptNestedClassInstanceK2.kt");
+    }
+
+    @Test
+    @TestMetadata("scriptPropFromAnotherModuleK2.kt")
+    public void testScriptPropFromAnotherModuleK2() {
+      runTest("compiler/testData/codegen/box/script/scriptPropFromAnotherModuleK2.kt");
+    }
+
+    @Test
+    @TestMetadata("syntheticJavaPropertyInScript.kt")
+    public void testSyntheticJavaPropertyInScript() {
+      runTest("compiler/testData/codegen/box/script/syntheticJavaPropertyInScript.kt");
     }
   }
 
