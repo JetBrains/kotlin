@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.commonizer.cli.errorAndExitJvmProcess
 import org.jetbrains.kotlin.commonizer.konan.NativeLibrary
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
 
@@ -21,11 +21,10 @@ internal class DefaultNativeLibraryLoader(
 ) : NativeLibraryLoader {
     override fun invoke(file: File): NativeLibrary {
         try {
-            val library = resolveSingleFileKlib(
-                libraryFile = org.jetbrains.kotlin.konan.file.File(file.path),
-                logger = logger,
-                strategy = ToolingSingleFileKlibResolveStrategy
-            )
+            val klibLoaderResult = KlibLoader { libraryPaths(file) }.load()
+            klibLoaderResult.reportLoadingProblemsIfAny { _, message -> logger.errorAndExitJvmProcess(message) }
+
+            val library = klibLoaderResult.librariesStdlibFirst.single()
 
             if (library.versions.metadataVersion == null)
                 logger.errorAndExitJvmProcess("Library does not have metadata version specified in manifest: $file")
