@@ -37,7 +37,7 @@ private val compilePlatformLibsSemaphore = gradle.sharedServices.registerIfAbsen
 }
 
 private val cachePlatformLibsSemaphore = gradle.sharedServices.registerIfAbsent("cachePlatformLibsSemaphore", CachePlatformLibsSemaphore::class.java) {
-    if (kotlinBuildProperties.limitPlatformLibsCacheBuildingConcurrency) {
+    if (kotlinBuildProperties.limitPlatformLibsCacheBuildingConcurrency && false) {
         maxParallelUsages.set(1)
     }
 }
