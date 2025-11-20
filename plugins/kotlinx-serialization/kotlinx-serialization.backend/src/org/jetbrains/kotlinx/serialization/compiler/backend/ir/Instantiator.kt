@@ -37,7 +37,7 @@ internal class Instantiator(
     val rootSerializableClass: IrClass? = null,
     val genericGetter: ((Int, IrType) -> IrExpression)? = null,
 ) {
-    val nullableSerClass = compilerContext.referenceProperties(SerialEntityNames.wrapIntoNullableCallableId).single()
+    val nullableSerClass = compilerContext.finderForBuiltins().findProperties(SerialEntityNames.wrapIntoNullableCallableId).single()
 
     val hasEnumFactories =
         compilerContext.enumSerializerFactoryFunc != null && compilerContext.annotatedEnumSerializerFactoryFunc != null
@@ -367,7 +367,7 @@ internal class Instantiator(
                                 }
                                 else -> {
                                     serializerInstance(
-                                        compilerContext.referenceClass(polymorphicSerializerId),
+                                        compilerContext.finderForBuiltins().findClass(polymorphicSerializerId),
                                         (genericType.classifierOrNull as IrTypeParameterSymbol).owner.representativeUpperBound
                                     )!!
                                 }

@@ -6,14 +6,15 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irInt
+import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -123,7 +124,7 @@ class SerializableCompanionIrGenerator(
             return
         }
 
-        val annotationClass = compilerContext.referenceClass(SerializationAnnotations.namedCompanionClassId) ?: return
+        val annotationClass = compilerContext.finderForBuiltins().findClass(SerializationAnnotations.namedCompanionClassId) ?: return
         val annotationCall = irClass.createAnnotationCallWithoutArgs(annotationClass)
         compilerContext.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(irClass, annotationCall)
     }
@@ -133,7 +134,7 @@ class SerializableCompanionIrGenerator(
             return
         }
 
-        val annotationMarkerClass = compilerContext.referenceClass(
+        val annotationMarkerClass = compilerContext.finderForBuiltins().findClass(
             ClassId(
                 SerializationPackages.packageFqName,
                 Name.identifier(SerialEntityNames.ANNOTATION_MARKER_CLASS)

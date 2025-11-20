@@ -263,7 +263,10 @@ interface IrBuilderWithPluginContext {
 
     fun IrBuilderWithScope.irBinOp(name: Name, lhs: IrExpression, rhs: IrExpression): IrExpression {
         val classFqName = (lhs.type as IrSimpleType).classOrNull!!.owner.fqNameWhenAvailable!!
-        val symbol = compilerContext.referenceFunctions(CallableId(ClassId.topLevel(classFqName), name)).single()
+        val symbol = compilerContext
+            .finderForSource((scope.scopeOwnerSymbol.owner as IrDeclaration).file)
+            .findFunctions(CallableId(ClassId.topLevel(classFqName), name))
+            .single()
         return irInvoke(symbol, lhs, rhs)
     }
 
@@ -456,7 +459,7 @@ interface IrBuilderWithPluginContext {
             val wrapperFqName =
                 KotlinBuiltIns.getPrimitiveType(classType.classOrNull!!.descriptor)?.let(JvmPrimitiveType::get)?.wrapperFqName
             if (wrapperFqName != null) {
-                val wrapperClass = compilerContext.referenceClass(ClassId.topLevel(wrapperFqName))
+                val wrapperClass = compilerContext.finderForBuiltins().findClass(ClassId.topLevel(wrapperFqName))
                     ?: error("Primitive wrapper class for $classType not found: $wrapperFqName")
                 return createClassReference(wrapperClass.defaultType, irBuilder.startOffset, irBuilder.endOffset)
             }

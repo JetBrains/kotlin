@@ -42,11 +42,12 @@ class SerializableIrGenerator(
 
     protected val properties = serializablePropertiesForIrBackend(irClass)
 
-    private val serialDescriptorClass = compilerContext.referenceClass(
+    private val serialDescriptorClass = compilerContext.finderForBuiltins().findClass(
         SerializationRuntimeClassIds.descriptorClassId
     )!!.owner
 
-    private val serialDescriptorImplClass = compilerContext.referenceClass(
+
+    private val serialDescriptorImplClass = compilerContext.finderForBuiltins().findClass(
         ClassId(
             SerializationPackages.internalPackageFqName,
             Name.identifier(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS_IMPL)

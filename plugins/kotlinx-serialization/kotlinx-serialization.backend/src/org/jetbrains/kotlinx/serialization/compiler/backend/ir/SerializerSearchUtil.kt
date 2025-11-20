@@ -17,10 +17,6 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SpecialBuiltins
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
@@ -117,7 +113,6 @@ fun analyzeSpecialSerializers(
         context.referenceClassId(polymorphicSerializerId)
     else -> null
 }
-
 
 fun findTypeSerializer(context: SerializationBaseContext, type: IrType, useTypeAnnotations: Boolean = true): IrClassSymbol? {
     if (useTypeAnnotations) type.overriddenSerializer?.let { return it }

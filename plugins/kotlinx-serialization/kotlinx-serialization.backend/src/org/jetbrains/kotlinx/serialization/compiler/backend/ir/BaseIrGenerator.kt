@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.irGetObject
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -26,7 +25,9 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -44,14 +45,14 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         error("Your serialization runtime$runtimeVerStr is lower than minimal supported version (1.3.0). Please update your runtime.")
     }
 
-    private val throwMissedFieldExceptionFunc = compilerContext.referenceFunctions(
+    private val throwMissedFieldExceptionFunc = compilerContext.finderForBuiltins().findFunctions(
         CallableId(
             SerializationPackages.internalPackageFqName,
             SerialEntityNames.SINGLE_MASK_FIELD_MISSING_FUNC_NAME
         )
     ).singleOrNull() ?: runtimeTooLowError()
 
-    private val throwMissedFieldExceptionArrayFunc = compilerContext.referenceFunctions(
+    private val throwMissedFieldExceptionArrayFunc = compilerContext.finderForBuiltins().findFunctions(
         CallableId(
             SerializationPackages.internalPackageFqName,
             SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_NAME
@@ -332,7 +333,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         property: IrSerializableProperty,
         cachedSerializer: IrExpression?
     ): IrExpression? {
-        val nullableSerClass = compilerContext.referenceProperties(SerialEntityNames.wrapIntoNullableCallableId).single()
+        val nullableSerClass = compilerContext.finderForBuiltins().findProperties(SerialEntityNames.wrapIntoNullableCallableId).single()
 
         val serializerExpression = if (cachedSerializer != null) {
             cachedSerializer
@@ -384,7 +385,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         type: IrType,
         variance: Variance = Variance.INVARIANT
     ): IrType {
-        val kSerClass = compilerContext.referenceClass(ClassId(SerializationPackages.packageFqName, SerialEntityNames.KSERIALIZER_NAME))
+        val kSerClass = compilerContext.finderForBuiltins().findClass(ClassId(SerializationPackages.packageFqName, SerialEntityNames.KSERIALIZER_NAME))
             ?: error("Couldn't find class ${SerialEntityNames.KSERIALIZER_NAME}")
         return IrSimpleTypeImpl(
             kSerClass, hasQuestionMark = false, arguments = listOf(
