@@ -167,6 +167,13 @@ class FirCallResolver(
         val forwardedDiagnostics: List<ResolutionDiagnostic>,
     )
 
+    /**
+     * See [CandidateApplicability.isSuccess].
+     */
+    @ApplicabilityDetail
+    private val ResolutionResult.isSuccess: Boolean
+        get() = applicability.isSuccess
+
     /** WARNING: This function is public for the analysis API and should only be used there. */
     fun collectAllCandidates(
         qualifiedAccess: FirQualifiedAccessExpression,
@@ -335,7 +342,7 @@ class FirCallResolver(
         // Even if it's not receiver, it makes sense to continue qualifier if resolution is unsuccessful
         // just to try to resolve to package/class and then report meaningful error at FirStandaloneQualifierChecker
         @OptIn(ApplicabilityDetail::class)
-        if (isUsedAsReceiver || !basicResult.applicability.isSuccess) {
+        if (isUsedAsReceiver || !basicResult.isSuccess) {
             val explicitReceiver = qualifiedAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier
             val diagnosticFromTypeArguments = if (explicitReceiver != null && explicitReceiver.typeArguments.isNotEmpty()) {
                 ConeTypeArgumentsForOuterClass(explicitReceiver.source!!)
@@ -348,7 +355,7 @@ class FirCallResolver(
                     session,
                     components
                 )
-                ?.takeIf { it.applicability == CandidateApplicability.RESOLVED || !basicResult.applicability.isSuccess }
+                ?.takeIf { it.applicability == CandidateApplicability.RESOLVED || !basicResult.isSuccess }
                 ?.let {
                     explicitReceiver.unsetResolvedToCompanionIf(true)
                     return it.qualifier
@@ -371,11 +378,11 @@ class FirCallResolver(
             //     A.B // should be resolved to A.B
             // }
             @OptIn(ApplicabilityDetail::class)
-            if (!result.applicability.isSuccess || (isUsedAsReceiver && result.candidates.all { it.symbol is FirClassLikeSymbol })) {
+            if (!result.isSuccess || (isUsedAsReceiver && result.candidates.all { it.symbol is FirClassLikeSymbol })) {
                 components.resolveRootPartOfQualifier(
                     callee, qualifiedAccess, nonFatalDiagnosticFromExpression, isUsedAsReceiver
                 )
-                    ?.takeIf { it.applicability == CandidateApplicability.RESOLVED || !result.applicability.isSuccess }
+                    ?.takeIf { it.applicability == CandidateApplicability.RESOLVED || !result.isSuccess }
                     ?.let { return it.qualifier }
             }
         }
