@@ -42,3 +42,11 @@ FILE: propertyDeclaration.kt
         public get(): R|(kotlin/String) -> kotlin/String|
     public final val l: R|(kotlin/String) -> kotlin/String|
         public get(): R|(kotlin/String) -> kotlin/String|
+    public final val m: R|kotlin/String|
+        public inline get(): R|kotlin/String| {
+            ^ String(M)
+        }
+    public final val n: R|kotlin/String|
+        public inline get(): R|kotlin/String| {
+            ^ String(N)
+        }

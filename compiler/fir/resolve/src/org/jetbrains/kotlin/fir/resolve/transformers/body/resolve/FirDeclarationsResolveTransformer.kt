@@ -728,8 +728,8 @@ open class FirDeclarationsResolveTransformer(
             session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
             !this.isLocal && !this.isInline
         ) {
-            getter?.replaceBody(newBody = null)
-            setter?.replaceBody(newBody = null)
+            if (getter?.isInline == false) getter?.replaceBody(newBody = null)
+            if (setter?.isInline == false) setter?.replaceBody(newBody = null)
         }
     }
 
