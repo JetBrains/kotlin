@@ -519,7 +519,7 @@ class AndroidSymbols(
         functionName: String,
     ): IrSimpleFunctionSymbol {
         val callableId = CallableId(kotlinxCollectionsImmutable, Name.identifier(functionName))
-        return pluginContext.referenceFunctions(callableId)
+        return pluginContext.finderForBuiltins().findFunctions(callableId)
             .firstOrNull { it.owner.parameters.singleOrNull()?.type?.classFqName == receiver }
             ?: error("Function from kotlinx.collections.immutable is not found on classpath: $callableId")
     }
