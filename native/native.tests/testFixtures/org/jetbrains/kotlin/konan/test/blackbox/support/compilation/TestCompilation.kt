@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
-import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -842,10 +842,8 @@ class StaticCacheCompilation(
         )
 
         if (makePerFileCache) {
-            val isCInterop = createKotlinLibraryComponents(
-                org.jetbrains.kotlin.konan.file.File(dependencies.libraryToCache.path)
-            )[0].isCInteropLibrary()
-            if (!isCInterop) // Making per-file cache is not allowed for cinterop klibs.
+            val klib = KlibLoader { libraryPaths(dependencies.libraryToCache.path) }.load().librariesStdlibFirst[0]
+            if (!klib.isCInteropLibrary()) // Making per-file cache is not allowed for cinterop klibs.
                 add("-Xmake-per-file-cache")
         }
 
