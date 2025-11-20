@@ -15,8 +15,11 @@ fun box(): String {
     assertEquals("B", ab[1].name)
     assertEquals(KVariance.INVARIANT, ab[1].variance)
 
-    // TODO: currently fails with "AssertionError: Expected <A>, actual <A>"
-    // assertEquals(ab[0], ctor.parameters[0].type.classifier)
+    if (System.getProperty("kotlin.reflect.jvm.useK1Implementation")?.toBoolean() != true) {
+        // In the K1 implementation, it fails with "AssertionError: Expected <A>, actual <A>" because the constructor does not get its own
+        // copies of class type parameters.
+        assertEquals(ab[0], ctor.parameters[0].type.classifier)
+    }
 
     assertEquals(ab[1], ctor.parameters[1].type.classifier)
 

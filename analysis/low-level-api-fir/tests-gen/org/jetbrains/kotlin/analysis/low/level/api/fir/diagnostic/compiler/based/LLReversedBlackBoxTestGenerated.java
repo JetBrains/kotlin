@@ -54701,6 +54701,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("javaParameters.kt")
+      public void testJavaParameters() {
+        runTest("compiler/testData/codegen/box/reflection/annotations/javaParameters.kt");
+      }
+
+      @Test
       @TestMetadata("localClassLiteral.kt")
       public void testLocalClassLiteral() {
         runTest("compiler/testData/codegen/box/reflection/annotations/localClassLiteral.kt");
@@ -55657,9 +55663,9 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
-      @TestMetadata("emptyVarArg.kt")
-      public void testEmptyVarArg() {
-        runTest("compiler/testData/codegen/box/reflection/callBy/emptyVarArg.kt");
+      @TestMetadata("emptyVararg.kt")
+      public void testEmptyVararg() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/emptyVararg.kt");
       }
 
       @Test
@@ -55714,6 +55720,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("innerConstructorWithDefaultParam.kt")
       public void testInnerConstructorWithDefaultParam() {
         runTest("compiler/testData/codegen/box/reflection/callBy/innerConstructorWithDefaultParam.kt");
+      }
+
+      @Test
+      @TestMetadata("javaConstructorWithVararg.kt")
+      public void testJavaConstructorWithVararg() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/javaConstructorWithVararg.kt");
       }
 
       @Test
@@ -55804,6 +55816,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("primitiveDefaultValues.kt")
       public void testPrimitiveDefaultValues() {
         runTest("compiler/testData/codegen/box/reflection/callBy/primitiveDefaultValues.kt");
+      }
+
+      @Test
+      @TestMetadata("privateJavaConstructor.kt")
+      public void testPrivateJavaConstructor() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/privateJavaConstructor.kt");
       }
 
       @Test
@@ -56393,6 +56411,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("javaClass.kt")
+      public void testJavaClass() {
+        runTest("compiler/testData/codegen/box/reflection/constructors/javaClass.kt");
+      }
+
+      @Test
       @TestMetadata("primaryConstructor.kt")
       public void testPrimaryConstructor() {
         runTest("compiler/testData/codegen/box/reflection/constructors/primaryConstructor.kt");
@@ -56439,9 +56463,15 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
-      @TestMetadata("callByWithEmptyVarArg.kt")
-      public void testCallByWithEmptyVarArg() {
-        runTest("compiler/testData/codegen/box/reflection/createAnnotation/callByWithEmptyVarArg.kt");
+      @TestMetadata("callByWithEmptyVararg.kt")
+      public void testCallByWithEmptyVararg() {
+        runTest("compiler/testData/codegen/box/reflection/createAnnotation/callByWithEmptyVararg.kt");
+      }
+
+      @Test
+      @TestMetadata("callByWithEmptyVarargJava.kt")
+      public void testCallByWithEmptyVarargJava() {
+        runTest("compiler/testData/codegen/box/reflection/createAnnotation/callByWithEmptyVarargJava.kt");
       }
 
       @Test
@@ -56478,6 +56508,18 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("floatingPointParameters.kt")
       public void testFloatingPointParameters() {
         runTest("compiler/testData/codegen/box/reflection/createAnnotation/floatingPointParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("javaAnnotationConstructor.kt")
+      public void testJavaAnnotationConstructor() {
+        runTest("compiler/testData/codegen/box/reflection/createAnnotation/javaAnnotationConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("javaAnnotationConstructorTypes.kt")
+      public void testJavaAnnotationConstructorTypes() {
+        runTest("compiler/testData/codegen/box/reflection/createAnnotation/javaAnnotationConstructorTypes.kt");
       }
 
       @Test

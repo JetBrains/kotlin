@@ -47,6 +47,7 @@ import java.io.Serializable
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.KotlinGenericDeclaration
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.metadata.*
@@ -196,19 +197,28 @@ internal class KClassImpl<T : Any>(
         @Suppress("UNCHECKED_CAST")
         val constructors: Collection<KFunction<T>> by ReflectProperties.lazySoft {
             if (classKind == ClassKind.INTERFACE || classKind == ClassKind.OBJECT || classKind == ClassKind.COMPANION_OBJECT ||
-                classKind == ClassKind.ENUM_ENTRY
+                classKind == ClassKind.ENUM_ENTRY || jClass.isSynthetic
             ) {
                 return@lazySoft emptyList()
             }
 
-            if (useK1Implementation || kmClass == null) {
+            if (useK1Implementation) {
                 constructorDescriptors.map { descriptor ->
                     DescriptorKFunction(this@KClassImpl, descriptor) as KFunction<T>
                 }
-            } else {
+            } else if (jClass.isAnnotationPresent(Metadata::class.java)) {
+                // In case of a Kotlin synthetic class, there's no KmClass, and there should not be any constructors.
                 constructorsMetadata.map { kmConstructor ->
                     createUnboundConstructor(kmConstructor, this@KClassImpl) as KFunction<T>
                 }
+            } else if (!jClass.isAnnotation) {
+                jClass.declaredConstructors.mapNotNull { javaConstructor ->
+                    JavaKConstructor(this@KClassImpl, javaConstructor, CallableReference.NO_RECEIVER) as KFunction<T>
+                }
+            } else {
+                // Annotation classes do not have a constructor, and Java classes have do not have Kotlin metadata, so we need to create
+                // constructors for Java annotation classes manually.
+                listOf(JavaAnnotationConstructor(this@KClassImpl) as KFunction<T>)
             }
         }
 
