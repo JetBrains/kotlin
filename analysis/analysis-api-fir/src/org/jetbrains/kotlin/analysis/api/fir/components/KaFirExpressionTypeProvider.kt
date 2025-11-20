@@ -272,7 +272,7 @@ internal class KaFirExpressionTypeProvider(
                 ?: getExpectedTypeOfInfixFunctionParameter(unwrapped)
                 ?: getExpectedTypeByVariableAssignment(unwrapped)
                 ?: getExpectedTypeByPropertyDeclaration(unwrapped)
-                ?: getExpectedTypeByFunctionExpressionBody(unwrapped)
+                ?: getExpectedTypeByCallableExpressionBody(unwrapped)
                 ?: getExpectedTypeOfLastStatementInBlock(unwrapped)
                 ?: getExpectedTypeByIfExpression(unwrapped)
                 ?: getExpectedTypeOfWhenEntryExpression(unwrapped)
@@ -411,17 +411,28 @@ internal class KaFirExpressionTypeProvider(
         return property.returnType.nonErrorTypeOrNull()
     }
 
-    private fun getExpectedTypeByFunctionExpressionBody(expression: PsiElement): KaType? {
-        // Given: `fun f(): T = expression`
+    private fun getExpectedTypeByCallableExpressionBody(expression: PsiElement): KaType? {
+        // Given: `fun f(): T = expression` or `val prop: T get() = expression`
         // Expected type of `expression` is `T`
-        val function = expression.unwrapQualified<KtFunction> { function, expr -> function.bodyExpression == expr } ?: return null
-        if (function.bodyBlockExpression != null) {
+        val declaration = expression.unwrapQualified<KtDeclarationWithBody> { declaration, expr ->
+            (declaration is KtFunction || (declaration as? KtPropertyAccessor)?.isGetter == true) &&
+                    declaration.bodyExpression == expr
+        } ?: return null
+
+        if (declaration.bodyBlockExpression != null) {
             // Given `fun f(...): R { blockExpression }`, `{ blockExpression }` is mapped to the enclosing anonymous function,
             // which may raise an exception if we attempt to retrieve, e.g., callable declaration from it.
             return null
         }
-        if (function.typeReference == null) return null
-        return function.returnType.nonErrorTypeOrNull()
+
+        val hasExplicitReturnType = when (declaration) {
+            is KtFunction -> declaration.typeReference != null
+            is KtPropertyAccessor -> declaration.typeReference != null || declaration.property.typeReference != null
+            else -> return null
+        }
+
+        if (!hasExplicitReturnType) return null
+        return (declaration as KtDeclarationWithReturnType).returnType.nonErrorTypeOrNull()
     }
 
     private fun getExpectedTypeOfLastStatementInBlock(expression: PsiElement): KaType? {
