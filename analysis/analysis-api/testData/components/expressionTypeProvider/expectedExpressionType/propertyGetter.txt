@@ -1,0 +1,5 @@
+expression: somePrefix
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: kotlin/Boolean

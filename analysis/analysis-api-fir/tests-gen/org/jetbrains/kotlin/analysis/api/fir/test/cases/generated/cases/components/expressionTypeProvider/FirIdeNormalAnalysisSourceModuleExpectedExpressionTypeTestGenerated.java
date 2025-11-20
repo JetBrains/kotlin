@@ -382,6 +382,30 @@ public class FirIdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerated
   }
 
   @Test
+  @TestMetadata("propertyGetter.kt")
+  public void testPropertyGetter() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyGetterExpressionBody.kt")
+  public void testPropertyGetterExpressionBody() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyGetterExpressionBody.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyGetterExpressionBodyGetterExpectedType.kt")
+  public void testPropertyGetterExpressionBodyGetterExpectedType() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyGetterExpressionBodyGetterExpectedType.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyGetterExpressionBodyNoExpectedType.kt")
+  public void testPropertyGetterExpressionBodyNoExpectedType() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyGetterExpressionBodyNoExpectedType.kt");
+  }
+
+  @Test
   @TestMetadata("returnFromFunction.kt")
   public void testReturnFromFunction() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/returnFromFunction.kt");

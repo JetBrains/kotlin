@@ -1,0 +1,2 @@
+expression: somePrefix
+expected type: null
