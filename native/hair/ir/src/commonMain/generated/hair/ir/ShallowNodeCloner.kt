@@ -12,17 +12,19 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitUse(node: Use): Use = context(nodeBuilder, NoControlFlowBuilder) { Use(null, null) } as Use
 
+    override fun visitUnreachable(node: Unreachable): Unreachable = context(nodeBuilder, NoControlFlowBuilder) { Unreachable() }
+
     override fun visitBlockEntry(node: BlockEntry): BlockEntry = context(nodeBuilder, NoControlFlowBuilder) { BlockEntry(*Array(node.preds.size) { null }) } as BlockEntry
 
     override fun visitReturn(node: Return): Return = context(nodeBuilder, NoControlFlowBuilder) { Return(null, null) } as Return
 
     override fun visitGoto(node: Goto): Goto = context(nodeBuilder, NoControlFlowBuilder) { Goto(null) } as Goto
 
-    override fun visitIfTrue(node: If.True): If.True = context(nodeBuilder, NoControlFlowBuilder) { IfTrue(null) } as If.True
-
-    override fun visitIfFalse(node: If.False): If.False = context(nodeBuilder, NoControlFlowBuilder) { IfFalse(null) } as If.False
-
     override fun visitIf(node: If): If = context(nodeBuilder, NoControlFlowBuilder) { If(null, null) } as If
+
+    override fun visitTrueExit(node: TrueExit): TrueExit = context(nodeBuilder, NoControlFlowBuilder) { TrueExit(null) } as TrueExit
+
+    override fun visitFalseExit(node: FalseExit): FalseExit = context(nodeBuilder, NoControlFlowBuilder) { FalseExit(null) } as FalseExit
 
     override fun visitThrow(node: Throw): Throw = context(nodeBuilder, NoControlFlowBuilder) { Throw(null, null) } as Throw
 

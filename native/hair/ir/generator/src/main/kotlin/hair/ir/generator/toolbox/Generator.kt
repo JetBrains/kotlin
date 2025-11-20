@@ -62,6 +62,7 @@ class Generator(private val generationPath: File) {
                     }
                     blankLine()
                     member("val entry by lazy { ${ControlFlow.blockEntry.name}(${formNameInSession(ControlFlow.blockEntry)}).register() }")
+                    member("val unreachable by lazy { ${ControlFlow.unreachable.name}(${formNameInSession(ControlFlow.unreachable)}).register() }")
                 }
             )
         })
@@ -129,7 +130,13 @@ class Generator(private val generationPath: File) {
                 val formBuilderName = builderName(node)
                 val formArgs = node.allFormParams().map { it.name }
 
-                val resultNodeType = if (isNormalizable(node)) nodeInterface else refName(node)
+                val normalizedType = when {
+                    //node.producesControl() && node.producesException() -> refName(ControlFlow.blockBodyWithException)
+                    node.producesControl() -> refName(ControlFlow.controlling)
+                    node.transfersControl() -> refName(ControlFlow.blockExit)
+                    else -> nodeInterface
+                }
+                val resultNodeType = if (isNormalizable(node)) normalizedType else refName(node)
 
                 // Form builder
                 if (formKind != FormKind.SIMPLE) {
@@ -173,8 +180,10 @@ class Generator(private val generationPath: File) {
                     node(listOf(formArg) + nodeArgs)
 
                 fun normalizeAndRegister(builder: () -> String) =
-                    if (isNormalizable(node)) "$nodeBuilder.normalize(${builder()}).let { if (!it.registered) nodeBuilder.register(it) else it }"
-                    else "$nodeBuilder.register(${builder()})"
+                    if (isNormalizable(node)) {
+                        val cast = if (normalizedType == nodeInterface) "" else " as $normalizedType"
+                        "($nodeBuilder.normalize(${builder()})$cast).let { if (!it.registered) nodeBuilder.register(it) else it }"
+                    } else "$nodeBuilder.register(${builder()})"
 
 
                 fun appendCtrl(builder: () -> String): String = when {
@@ -392,7 +401,6 @@ class Generator(private val generationPath: File) {
             appendIndented("    ", renderOwnParams(node))
             appendIndented("    ", renderArgsProperty(node))
             appendIndented("    ", renderAcceptFun(node))
-            appendIndented("    ", renderProjections(node))
             appendLine("    companion object {")
             appendLine("        internal fun form(session: $session) = $form(session, \"${refName(node)}\")")
             appendLine("    }")
@@ -414,7 +422,6 @@ class Generator(private val generationPath: File) {
             appendIndented("    ", renderOwnParams(node))
             appendIndented("    ", renderArgsProperty(node))
             appendIndented("    ", renderAcceptFun(node))
-            appendIndented("    ", renderProjections(node))
             appendLine("    companion object {")
             appendLine("        internal fun metaForm(session: $session) = MetaForm(session, \"${refName(node)}\")")
             appendLine("    }")
@@ -431,15 +438,6 @@ class Generator(private val generationPath: File) {
         //val nodeArgs = listOf("this") + renderArgsList(node)
         //appendLine("    operator fun invoke(${renderNodeParamsForFun(node)}) = ${node.name}(${nodeArgs.joinToString()}).register()")
         appendLine("}")
-    }
-
-    private fun renderProjections(node: Node): String = buildString {
-        for ((projectionField, projectionNode) in node.nestedProjections) {
-            append(renderElement(projectionNode))
-            require(FormKind.of(projectionNode) == FormKind.SIMPLE)
-            // FIXME requires builder: appendLine("val $projectionField = ${builderName(projectionNode)}(this)")
-            appendLine("val $projectionField = ${projectionNode.name}(session.${formNameInSession(projectionNode)}, this).register()")
-        }
     }
 
     private fun renderAcceptFun(elem: Element) =

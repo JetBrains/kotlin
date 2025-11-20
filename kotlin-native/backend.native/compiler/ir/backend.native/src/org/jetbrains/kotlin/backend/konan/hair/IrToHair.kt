@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.common.*
 import hair.compilation.*
 import hair.ir.*
 import hair.ir.nodes.*
-import hair.sym.ArithmeticType
 import hair.sym.ArithmeticType.*
 import hair.sym.CmpOp
 import hair.sym.HairType
@@ -89,6 +88,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                 funCompilations[container] = generateHair(container)
                 context.log { "# Successfully generated HaIR for ${container.computeFullName()}" }
             } catch (e: Throwable) {
+                println("# Failed with $e")
                 context.reportWarning("Failed to generate HaIR for ${container.computeFullName()}: $e\n${e.stackTraceToString()}", container.fileOrNull, container)
             }
         }
@@ -260,15 +260,15 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                                 val exit = if (controlBuilder.lastControl != null) Goto() else null
                                 value to exit
                             } else {
-                                val if_ = If(it.condition.accept(this, Unit))
+                                val (trueExit, falseExit) = IfExits(it.condition.accept(this, Unit))
 
-                                BlockEntry(if_.trueExit).ensuring { controlBuilder.lastControl == it }
+                                BlockEntry(trueExit).ensuring { controlBuilder.lastControl == it }
                                 val trueValue = it.result.accept(this, Unit)
-                                val trueExit = if (controlBuilder.lastControl != null) Goto() else null
+                                val trueGoto = if (controlBuilder.lastControl != null) Goto() else null
 
-                                BlockEntry(if_.falseExit).ensuring { controlBuilder.lastControl == it }
+                                BlockEntry(falseExit).ensuring { controlBuilder.lastControl == it }
 
-                                trueValue to trueExit
+                                trueValue to trueGoto
                             }
                         } + listOf(NoValue() to (if (exhaustive) null else Goto()))
 
@@ -276,28 +276,28 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
                         val result = if (exits.isNotEmpty()) {
                             require(exits.size == values.size)
-                            val merge = BlockEntry(*exits.toTypedArray())
+                            val merge = BlockEntry(*exits.toTypedArray()) as BlockEntry
                             Phi(expression.type.asHairType())(merge, *values.toTypedArray())
                         } else NoValue()
 
                         return result
                     }
 
-                    val loopBreaks = mutableMapOf<IrLoop, MutableList<Goto>>()
-                    val loopContinues = mutableMapOf<IrLoop, MutableList<Goto>>()
+                    val loopBreaks = mutableMapOf<IrLoop, MutableList<BlockExit>>()
+                    val loopContinues = mutableMapOf<IrLoop, MutableList<BlockExit>>()
 
                     override fun visitWhileLoop(loop: IrWhileLoop, data: Unit): Node {
-                        val condBlock = BlockEntry(Goto(), null)
+                        val condBlock = BlockEntry(Goto(), null) as BlockEntry
                         val cond = loop.condition.accept(this, Unit)
-                        val if_ = If(cond)
+                        val (trueExit, falseExit) = IfExits(cond)
 
-                        BlockEntry(if_.trueExit)
+                        BlockEntry(trueExit)
                         loop.body?.accept(this, Unit)
-                        val trueExit = Goto()
-                        condBlock.preds[1] = trueExit // FIXME sha t if no exit?
+                        val trueGoto = Goto()
+                        condBlock.preds[1] = trueGoto // FIXME sha t if no exit?
 
                         val breakExits = loopBreaks[loop] ?: mutableListOf()
-                        BlockEntry(if_.falseExit, *breakExits.toTypedArray())
+                        BlockEntry(falseExit, *breakExits.toTypedArray())
 
                         val continueExits = loopContinues[loop] ?: mutableListOf()
                         if (continueExits.isNotEmpty()) {
@@ -310,19 +310,18 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
                     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Unit): Node {
                         val goto = Goto()
-                        val entryBlock = BlockEntry(goto, null)
+                        val entryBlock = BlockEntry(goto, null) as BlockEntry
 
                         loop.body?.accept(this, Unit)
 
                         val cond = loop.condition.accept(this, Unit)
-                        val if_ = If(cond)
+                        val (trueExit, falseExit) = IfExits(cond)
 
-                        BlockEntry(if_.trueExit)
-                        val trueExit = Goto() // FIXME shat if no exit?
-                        entryBlock.preds[1] = trueExit
+                        BlockEntry(trueExit)
+                        entryBlock.preds[1] = Goto() // FIXME what if no exit
 
                         val breakExits = loopBreaks[loop] ?: mutableListOf()
-                        val exitBlock = BlockEntry(if_.falseExit, *breakExits.toTypedArray())
+                        val exitBlock = BlockEntry(falseExit, *breakExits.toTypedArray())
 
                         val continueExits = loopContinues[loop] ?: mutableListOf()
                         if (continueExits.isNotEmpty()) {
@@ -347,7 +346,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         return NoValue()
                     }
 
-                    val returns = mutableMapOf<IrReturnableBlockSymbol, MutableList<Pair<Goto, Node>>>()
+                    val returns = mutableMapOf<IrReturnableBlockSymbol, MutableList<Pair<BlockExit, Node>>>()
 
                     override fun visitReturn(expression: IrReturn, data: Unit): Node {
                         val value = expression.value.accept(this, Unit)
@@ -368,7 +367,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         val mainExit = if (controlBuilder.lastControl != null) Goto() else null
                         val (exits, results) = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).filter { it.first != null }.unzip()
                         require(exits.all { it != null })
-                        val exitBlock = BlockEntry(*exits.toTypedArray())
+                        val exitBlock = BlockEntry(*exits.toTypedArray()) as BlockEntry
                         return Phi(expression.type.asHairType())(exitBlock, *results.toTypedArray())
                     }
 

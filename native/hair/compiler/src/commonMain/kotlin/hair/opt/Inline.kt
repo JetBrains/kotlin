@@ -27,7 +27,7 @@ fun Compilation.inline(call: InvokeStatic) {
                 Goto(control) to value
             }.unzip()
 
-            val resultBlock = BlockEntry(*returns.toTypedArray())
+            val resultBlock = BlockEntry(*returns.toTypedArray()) as BlockEntry // FIXME cast
             call.next.control = resultBlock
             call.replaceValueUsesAndKill(Phi(call.function.resultHairType)(resultBlock, *returnedValues.toTypedArray()))
         }

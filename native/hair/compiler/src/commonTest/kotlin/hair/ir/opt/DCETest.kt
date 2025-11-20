@@ -39,6 +39,6 @@ class DCETest : IrTest {
                 Use(ConstI(37))
             })
         }
-        printGraphvizNoGCM()
+        printGraphviz()
     }
 }

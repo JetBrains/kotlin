@@ -24,7 +24,6 @@ class ConstI internal constructor(form: Form) : NodeBase(form, listOf()), ConstA
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstI(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "ConstI")
     }
@@ -44,7 +43,6 @@ class ConstL internal constructor(form: Form) : NodeBase(form, listOf()), ConstA
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstL(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "ConstL")
     }
@@ -64,7 +62,6 @@ class ConstF internal constructor(form: Form) : NodeBase(form, listOf()), ConstA
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstF(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "ConstF")
     }
@@ -84,7 +81,6 @@ class ConstD internal constructor(form: Form) : NodeBase(form, listOf()), ConstA
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstD(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "ConstD")
     }
@@ -99,7 +95,6 @@ class True internal constructor(form: Form, ) : NodeBase(form, listOf()), ConstA
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitTrue(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleValueForm(session, "True")
     }
@@ -114,7 +109,6 @@ class False internal constructor(form: Form, ) : NodeBase(form, listOf()), Const
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitFalse(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleValueForm(session, "False")
     }
@@ -129,7 +123,6 @@ class Null internal constructor(form: Form, ) : NodeBase(form, listOf()), ConstA
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitNull(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleValueForm(session, "Null")
     }
@@ -181,7 +174,6 @@ class Add internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAdd(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Add")
     }
@@ -203,7 +195,6 @@ class Sub internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitSub(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Sub")
     }
@@ -225,7 +216,6 @@ class Mul internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitMul(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Mul")
     }
@@ -247,7 +237,6 @@ class Div internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitDiv(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Div")
     }
@@ -269,7 +258,6 @@ class Rem internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitRem(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Rem")
     }
@@ -291,7 +279,6 @@ class And internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAnd(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "And")
     }
@@ -313,7 +300,6 @@ class Or internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(for
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitOr(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Or")
     }
@@ -335,7 +321,6 @@ class Xor internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitXor(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Xor")
     }
@@ -357,7 +342,6 @@ class Shl internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitShl(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Shl")
     }
@@ -379,7 +363,6 @@ class Shr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitShr(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Shr")
     }
@@ -401,7 +384,6 @@ class Ushr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(f
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitUshr(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Ushr")
     }
@@ -424,7 +406,6 @@ class Cmp internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitCmp(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Cmp")
     }
