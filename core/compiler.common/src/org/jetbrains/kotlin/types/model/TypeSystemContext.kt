@@ -120,6 +120,7 @@ interface TypeCheckerProviderContext {
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean = false,
+        customSubtypeCallback: ((KotlinTypeMarker, KotlinTypeMarker) -> Boolean?)? = null,
     ): TypeCheckerState
 }
 

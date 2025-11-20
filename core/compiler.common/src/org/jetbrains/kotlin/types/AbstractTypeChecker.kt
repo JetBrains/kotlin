@@ -37,7 +37,8 @@ open class TypeCheckerState(
     val allowedTypeVariable: Boolean,
     val typeSystemContext: TypeSystemContext,
     val kotlinTypePreparator: AbstractTypePreparator,
-    val kotlinTypeRefiner: AbstractTypeRefiner
+    val kotlinTypeRefiner: AbstractTypeRefiner,
+    private val customSubtypeCallback: ((KotlinTypeMarker, KotlinTypeMarker) -> Boolean?)? = null,
 ) {
     @OptIn(TypeRefinement::class)
     fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
@@ -48,7 +49,8 @@ open class TypeCheckerState(
         return kotlinTypePreparator.prepareType(type)
     }
 
-    open fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean = true
+    open fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? =
+        customSubtypeCallback?.invoke(subType, superType)
 
     protected var argumentsDepth = 0
 
@@ -271,7 +273,7 @@ object AbstractTypeChecker {
     ): Boolean {
         if (subType === superType) return true
 
-        if (!state.customIsSubtypeOf(subType, superType)) return false
+        state.customIsSubtypeOf(subType, superType)?.let { return it }
 
         return with(state) {
             with(state.typeSystemContext) {
