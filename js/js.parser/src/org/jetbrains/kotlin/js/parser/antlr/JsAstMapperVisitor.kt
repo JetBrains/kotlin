@@ -1080,20 +1080,23 @@ internal class JsAstMapperVisitor(
             return binaryLiteral.text.toBinaryLiteral().applyLocation(ctx)
         }
 
-        ctx.OctalIntegerLiteral()?.let {
-            val value = it.text.removePrefix("0")
-
+        ctx.OctalIntegerLiteral()?.let { octalLiteral ->
             // In a non-strict mode invalid old octal literals, such are containing 8 and 9 (like 0888 or 0999)
             // are treated like decimal literals (888 and 999 correspondingly).
             // To embrace compatibility, we emit a warning here like the old GWT parser did.
-            value.forEach { digit ->
+            octalLiteral.text.forEach { digit ->
                 if (digit !in '0'..'7') {
-                    reportWarning("illegal octal value '$value'; interpreting it as a decimal value", it.startPosition, it.stopPosition)
-                    return value.toDecimalLiteral().applyLocation(ctx)
+                    val decimalPart = octalLiteral.text.removePrefix("0")
+                    reportWarning(
+                        "illegal octal value '$decimalPart'; interpreting it as a decimal value",
+                        octalLiteral.startPosition,
+                        octalLiteral.stopPosition
+                    )
+                    return decimalPart.toDecimalLiteral().applyLocation(ctx)
                 }
             }
 
-            return value.toOctalLiteral().applyLocation(ctx)
+            return octalLiteral.text.toOctalLiteral().applyLocation(ctx)
         }
 
         ctx.OctalIntegerLiteral2()?.let { newOctalLiteral ->
