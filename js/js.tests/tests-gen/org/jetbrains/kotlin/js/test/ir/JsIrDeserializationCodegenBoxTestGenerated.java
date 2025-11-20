@@ -53454,6 +53454,12 @@ public class JsIrDeserializationCodegenBoxTestGenerated extends AbstractJsIrDese
         }
 
         @Test
+        @TestMetadata("javaConstructorWithVararg.kt")
+        public void testJavaConstructorWithVararg() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/javaConstructorWithVararg.kt");
+        }
+
+        @Test
         @TestMetadata("jvmStaticInCompanionObject.kt")
         public void testJvmStaticInCompanionObject() {
           runTest("compiler/testData/codegen/box/reflection/callBy/jvmStaticInCompanionObject.kt");
@@ -53541,6 +53547,12 @@ public class JsIrDeserializationCodegenBoxTestGenerated extends AbstractJsIrDese
         @TestMetadata("primitiveDefaultValues.kt")
         public void testPrimitiveDefaultValues() {
           runTest("compiler/testData/codegen/box/reflection/callBy/primitiveDefaultValues.kt");
+        }
+
+        @Test
+        @TestMetadata("privateJavaConstructor.kt")
+        public void testPrivateJavaConstructor() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/privateJavaConstructor.kt");
         }
 
         @Test
@@ -54115,6 +54127,12 @@ public class JsIrDeserializationCodegenBoxTestGenerated extends AbstractJsIrDese
         @TestMetadata("enumEntry.kt")
         public void testEnumEntry() {
           runTest("compiler/testData/codegen/box/reflection/constructors/enumEntry.kt");
+        }
+
+        @Test
+        @TestMetadata("javaClass.kt")
+        public void testJavaClass() {
+          runTest("compiler/testData/codegen/box/reflection/constructors/javaClass.kt");
         }
 
         @Test

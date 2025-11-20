@@ -12,6 +12,7 @@ import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.getMutableCollectionKClass
+import kotlin.reflect.jvm.javaConstructor
 import kotlin.reflect.jvm.jvmErasure
 
 internal fun Type.toKType(
@@ -69,11 +70,14 @@ internal fun Type.toKType(
     return when (nullability) {
         TypeNullability.NOT_NULL -> withMutableFlexibility
         TypeNullability.NULLABLE -> withMutableFlexibility.makeNullableAsSpecified(nullable = true)
-        else -> FlexibleKType.create(
-            lowerBound = withMutableFlexibility.lowerBoundIfFlexible() ?: withMutableFlexibility,
-            upperBound = (withMutableFlexibility.upperBoundIfFlexible() ?: withMutableFlexibility).makeNullableAsSpecified(nullable = true),
-            isRawType = false,
-        ) { this }
+        TypeNullability.FLEXIBLE ->
+            if (this is Class<*> && isPrimitive) base
+            else FlexibleKType.create(
+                lowerBound = withMutableFlexibility.lowerBoundIfFlexible() ?: withMutableFlexibility,
+                upperBound = (withMutableFlexibility.upperBoundIfFlexible()
+                    ?: withMutableFlexibility).makeNullableAsSpecified(nullable = true),
+                isRawType = false,
+            ) { this }
     }
 }
 
@@ -148,12 +152,14 @@ private fun Type.toKTypeProjection(knownTypeParameters: Map<TypeVariable<*>, KTy
 }
 
 private val TypeVariable<*>.kotlinContainer: KTypeParameterOwnerImpl
-    get() {
-        val container = genericDeclaration
-        // TODO (KT-80384): support type parameters of Java callables in new implementation
-        if (container !is Class<*>)
-            throw KotlinReflectionInternalError("Non-class container of a type parameter is not supported: $container ($this)")
-        return container.kotlin as KClassImpl<*>
+    get() = when (val container = genericDeclaration) {
+        is Class<*> -> container.kotlin as KClassImpl<*>
+        is Constructor<*> -> {
+            val constructedClass = container.declaringClass.kotlin as KClassImpl<*>
+            constructedClass.constructors.singleOrNull { it.javaConstructor == container } as JavaKConstructor?
+                ?: throw KotlinReflectionInternalError("Constructor $container is not found in $constructedClass")
+        }
+        else -> throw KotlinReflectionInternalError("Unsupported container of a type parameter: $container ($this)")
     }
 
 // The map `knownTypeParameters` is needed because when we're computing upper bounds of type parameters for a Java class, there's a moment
@@ -182,3 +188,11 @@ private fun SimpleKType.toFlexibleArrayElementVarianceType(javaType: Type): Flex
         isRawType = false,
         computeJavaType = { javaType },
     ) as FlexibleKType
+
+
+internal fun Int.computeVisibilityForJavaModifiers(): KVisibility? = when {
+    Modifier.isPublic(this) -> KVisibility.PUBLIC
+    Modifier.isPrivate(this) -> KVisibility.PRIVATE
+    // Java's protected also allows access in the same package, so it's not the same as Kotlin's protected.
+    else -> null
+}

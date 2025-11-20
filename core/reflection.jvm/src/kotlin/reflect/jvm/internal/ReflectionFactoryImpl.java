@@ -18,6 +18,7 @@ import kotlin.reflect.jvm.internal.types.TypeOfImplKt;
 import kotlin.text.MatchResult;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,6 +79,9 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                 if (container instanceof KClassImpl && container.getJClass().getAnnotation(Metadata.class) != null) {
                     KmConstructor kmConstructor = container.findConstructorMetadata(signature);
                     return new KotlinKConstructor(container, signature, f.getBoundReceiver(), kmConstructor);
+                } else {
+                    Constructor<?> constructor = container.findJavaConstructor(signature);
+                    return new JavaKConstructor(container, constructor, f.getBoundReceiver());
                 }
             }
             else if (container instanceof KPackageImpl) {

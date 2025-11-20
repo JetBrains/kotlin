@@ -52886,6 +52886,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("annotationsOnJavaParameters.kt")
+        public void testAnnotationsOnJavaParameters() {
+          runTest("compiler/testData/codegen/box/reflection/annotations/annotationsOnJavaParameters.kt");
+        }
+
+        @Test
         @TestMetadata("classLiteralWithVoidDefault.kt")
         public void testClassLiteralWithVoidDefault() {
           runTest("compiler/testData/codegen/box/reflection/annotations/classLiteralWithVoidDefault.kt");
@@ -53854,9 +53860,9 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Test
-        @TestMetadata("emptyVarArg.kt")
-        public void testEmptyVarArg() {
-          runTest("compiler/testData/codegen/box/reflection/callBy/emptyVarArg.kt");
+        @TestMetadata("emptyVararg.kt")
+        public void testEmptyVararg() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/emptyVararg.kt");
         }
 
         @Test
@@ -53905,6 +53911,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @TestMetadata("inlineClassMembers.kt")
         public void testInlineClassMembers() {
           runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassMembers.kt");
+        }
+
+        @Test
+        @TestMetadata("javaConstructorWithVararg.kt")
+        public void testJavaConstructorWithVararg() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/javaConstructorWithVararg.kt");
         }
 
         @Test
@@ -53995,6 +54007,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @TestMetadata("primitiveDefaultValues.kt")
         public void testPrimitiveDefaultValues() {
           runTest("compiler/testData/codegen/box/reflection/callBy/primitiveDefaultValues.kt");
+        }
+
+        @Test
+        @TestMetadata("privateJavaConstructor.kt")
+        public void testPrivateJavaConstructor() {
+          runTest("compiler/testData/codegen/box/reflection/callBy/privateJavaConstructor.kt");
         }
 
         @Test
@@ -54572,6 +54590,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("javaClass.kt")
+        public void testJavaClass() {
+          runTest("compiler/testData/codegen/box/reflection/constructors/javaClass.kt");
+        }
+
+        @Test
         @TestMetadata("primaryConstructor.kt")
         public void testPrimaryConstructor() {
           runTest("compiler/testData/codegen/box/reflection/constructors/primaryConstructor.kt");
@@ -54618,9 +54642,15 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Test
-        @TestMetadata("callByWithEmptyVarArg.kt")
-        public void testCallByWithEmptyVarArg() {
-          runTest("compiler/testData/codegen/box/reflection/createAnnotation/callByWithEmptyVarArg.kt");
+        @TestMetadata("callByWithEmptyVararg.kt")
+        public void testCallByWithEmptyVararg() {
+          runTest("compiler/testData/codegen/box/reflection/createAnnotation/callByWithEmptyVararg.kt");
+        }
+
+        @Test
+        @TestMetadata("callByWithEmptyVarargJava.kt")
+        public void testCallByWithEmptyVarargJava() {
+          runTest("compiler/testData/codegen/box/reflection/createAnnotation/callByWithEmptyVarargJava.kt");
         }
 
         @Test
@@ -54657,6 +54687,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @TestMetadata("floatingPointParameters.kt")
         public void testFloatingPointParameters() {
           runTest("compiler/testData/codegen/box/reflection/createAnnotation/floatingPointParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("javaAnnotationConstructor.kt")
+        public void testJavaAnnotationConstructor() {
+          runTest("compiler/testData/codegen/box/reflection/createAnnotation/javaAnnotationConstructor.kt");
         }
 
         @Test
