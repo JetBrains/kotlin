@@ -471,6 +471,7 @@ private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(): TaskProv
         val execOps = project.serviceOf<ExecOperations>()
         val gradleProjectPath = project.path
         val rootProjectDir = rootProject.projectDir
+        task.dependsOn(swiftPMDependencies)
         task.onlyIf { swiftPMDependencies.get().any { it.value.dependencies.isNotEmpty() } || hasDirectlyDeclaredSwiftPMDependencies.get() }
         task.doFirst {
             if (!envProjectPath.isPresent && !xcodeProjectPathForKmpIJPlugin.isPresent) {
