@@ -26,6 +26,9 @@ class VariableReadinessCalculator(
     enum class TypeVariableFixationReadinessQuality {
         // *** Strong de-prioritizers (normally, these are `true`, and they de-prioritize by being `false`) ***
         ALLOWED,
+
+        // A proper constraint is a constraint that does not depend on other not-yet-fixed type variables, like T <: S or T <: Type<S>.
+        // In PCLA case, a not-yet-fixed type variable in the argument position still gives us a proper constraint.
         HAS_PROPER_CONSTRAINTS,
         HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY,
 
@@ -41,7 +44,10 @@ class VariableReadinessCalculator(
         // *** The following block constitutes what "ready for fixation" used to mean in the old fixation code ***
         HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT,
         HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES,
-        HAS_PROPER_NON_TRIVIAL_CONSTRAINTS, // A proper trivial constraint from arguments, except for `Nothing(?) <: T`
+
+        // A proper trivial constraint from arguments, except for `T >: Nothing(?)`
+        // It does however include `T = Nothing(?)` and `T <: Nothing(?)`
+        HAS_PROPER_NON_TRIVIAL_CONSTRAINTS,
         HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE,
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
 
@@ -54,12 +60,20 @@ class VariableReadinessCalculator(
 
         // *** "ready for fixation" kinds ***
         // Prefer `LOWER` `T :> SomeRegularType` to `UPPER` `T <: SomeRegularType` for KT-41934.
+        // Prefer `LOWER` constraint also to `EQUALS` `T = SomeRegularType` because of the test
+        // FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated.testJavaFunctionParamNullability.
+        // TODO: KT-82574 (consider preferring EQUALS constraints)
         HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT,
 
         // *** The following block constitutes what "with complex dependency" used to mean in the old fixation code ***
         // Prioritizers needed for KT-67335 (the `greater.kt` case with ILTs).
-        HAS_PROPER_NON_ILT_CONSTRAINT, // There's a constraint to types like `Long`, `Int`, etc.
-        HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT, // There's a constraint `T = ...` which doesn't depend on others.
+        // ILT type = Integer literal type = yet unknown choice from Byte/Short/Int/Long (at least two of them)
+        // Any proper constraint can be here which isn't bound to ILT type
+        HAS_PROPER_NON_ILT_CONSTRAINT,
+
+        // Any proper constraint `T = ...` can be here which isn't bound to ILT type
+        // When this one is true, HAS_PROPER_NON_ILT_CONSTRAINT is also true
+        HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT,
         ;
 
         val mask by lazy { 1 shl (entries.lastIndex - ordinal) }
