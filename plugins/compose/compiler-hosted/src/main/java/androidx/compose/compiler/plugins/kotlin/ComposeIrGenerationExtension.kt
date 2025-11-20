@@ -24,7 +24,6 @@ import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFr
 import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.lower.VersionOverloadsLowering
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -230,7 +229,7 @@ class ComposeIrGenerationExtension(
     }
 
     private val IrPluginContext.keyMetaAnnotation: IrClass?
-        get() = referenceClass(ComposeClassIds.FunctionKeyMeta)?.owner
+        get() = finderForBuiltins().findClass(ComposeClassIds.FunctionKeyMeta)?.owner
 
     private fun IrClass?.hasRuntimeRetention(): Boolean {
         return this?.getAnnotationRetention()?.let { it == KotlinRetention.RUNTIME } ?: true

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
@@ -59,7 +58,7 @@ class ComposableLambdaAnnotator(context: IrPluginContext) : IrVisitorVoid() {
         super.visitFunctionReference(expression)
     }
 
-    private val composableSymbol = context.referenceClass(ComposeClassIds.Composable)!!
+    private val composableSymbol = context.finderForBuiltins().findClass(ComposeClassIds.Composable)!!
 
     private fun IrFunction.mark() {
         if (!hasComposableAnnotation()) {

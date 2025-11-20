@@ -589,7 +589,7 @@ class ComposableFunctionBodyTransformer(
         context.languageVersionSettings.languageVersion.usesK2 &&
                 context.platform.isJvm() &&
                 targetRuntimeVersion.supportsFeature(ComposeRuntimeFeature.SourceInfoParameterNames) {
-                    context.referenceClass(ComposeClassIds.SourceInformation) != null
+                    context.finderForBuiltins().findClass(ComposeClassIds.SourceInformation) != null
                 }
 
 

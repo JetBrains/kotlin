@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -78,12 +77,14 @@ abstract class AbstractComposeLowering(
 ) : IrElementTransformerVoid(), ModuleLoweringPass {
     protected val builtIns = context.irBuiltIns
 
+    private val finderForBuiltins = context.finderForBuiltins()
+
     protected val composerIrClass =
-        context.referenceClass(ComposeClassIds.Composer)?.owner
+        finderForBuiltins.findClass(ComposeClassIds.Composer)?.owner
             ?: error("Cannot find the Composer class in the classpath")
 
     protected val composableIrClass =
-        context.referenceClass(ComposeClassIds.Composable)?.owner
+        finderForBuiltins.findClass(ComposeClassIds.Composable)?.owner
             ?: error("Cannot find the Composable annotation class in the classpath")
 
     fun getTopLevelClass(classId: ClassId): IrClassSymbol {
@@ -92,7 +93,7 @@ abstract class AbstractComposeLowering(
     }
 
     fun getTopLevelClassOrNull(classId: ClassId): IrClassSymbol? {
-        return context.referenceClass(classId)
+        return finderForBuiltins.findClass(classId)
     }
 
     fun getTopLevelFunction(callableId: CallableId): IrSimpleFunctionSymbol {
@@ -101,15 +102,15 @@ abstract class AbstractComposeLowering(
     }
 
     fun getTopLevelFunctionOrNull(callableId: CallableId): IrSimpleFunctionSymbol? {
-        return context.referenceFunctions(callableId).firstOrNull()
+        return finderForBuiltins.findFunctions(callableId).firstOrNull()
     }
 
     fun getTopLevelFunctions(callableId: CallableId): List<IrSimpleFunctionSymbol> {
-        return context.referenceFunctions(callableId).toList()
+        return finderForBuiltins.findFunctions(callableId).toList()
     }
 
     fun getTopLevelPropertyGetter(callableId: CallableId): IrFunctionSymbol {
-        val propertySymbol = context.referenceProperties(callableId).firstOrNull()
+        val propertySymbol = finderForBuiltins.findProperties(callableId).firstOrNull()
             ?: error("Property was not found ${callableId.asSingleFqName()}")
         return propertySymbol.owner.getter!!.symbol
     }
@@ -366,7 +367,7 @@ abstract class AbstractComposeLowering(
     }
 
     protected fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol {
-        return context.referenceFunctions(CallableId(this.classOrFail.owner.classId!!, name))
+        return finderForBuiltins.findFunctions(CallableId(this.classOrFail.owner.classId!!, name))
             .single {
                 it.owner.hasShape(
                     dispatchReceiver = true,
@@ -813,7 +814,7 @@ abstract class AbstractComposeLowering(
     )
 
     private fun IrClass.getMetadataStabilityGetterFun(): IrSimpleFunctionSymbol? {
-        val suitableFunctions = context.referenceFunctions(CallableId(this.packageFqName!!, uniqueStabilityGetterName()))
+        val suitableFunctions = finderForBuiltins.findFunctions(CallableId(this.packageFqName!!, uniqueStabilityGetterName()))
         return suitableFunctions.firstOrNull()
     }
 
