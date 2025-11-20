@@ -72,9 +72,9 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
 
             module1.replaceFileWithVersion("main.kt", "add-argument")
             module1.replaceFileWithVersion("apkg/AClass.java", "add-argument")
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "main.kt", "bpkg/BClass.kt")
-                assertOutputs(module, "bpkg/MainKt.class", "bpkg/BClass.class")
+            module1.compile {
+                assertCompiledSources("main.kt", "bpkg/BClass.kt")
+                assertOutputs("bpkg/MainKt.class", "bpkg/BClass.class")
                 if (strategyConfig.first::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
                     val count = if (useTrackedModules) {
                         1
@@ -104,14 +104,14 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
             module1.createPredefinedFile("secret.kt", "new-file")
             module1.replaceFileWithVersion("bar.kt", "add-default-argument")
             module1.deleteFile("baz.kt")
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "secret.kt", "bar.kt")
+            module1.compile {
+                assertCompiledSources("secret.kt", "bar.kt")
                 // SecretKt is added, BazKt is removed
-                assertOutputs(module, "SecretKt.class", "Bar.class", "FooKt.class")
+                assertOutputs("SecretKt.class", "Bar.class", "FooKt.class")
             }
-            module2.compile { module, scenarioModule ->
-                assertCompiledSources(module, "b.kt")
-                assertNoOutputSetChanges(module, scenarioModule)
+            module2.compile {
+                assertCompiledSources( "b.kt")
+                assertNoOutputSetChanges()
             }
         }
     }

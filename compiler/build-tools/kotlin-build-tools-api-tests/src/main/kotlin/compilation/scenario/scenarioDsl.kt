@@ -65,7 +65,7 @@ internal abstract class BaseScenarioModule(
 
     override fun compile(
         forceOutput: LogLevel?,
-        assertions: CompilationOutcome.(Module, ScenarioModule) -> Unit,
+        assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit,
     ) {
         module.compileIncrementally(
             getSourcesChanges(),
@@ -73,7 +73,7 @@ internal abstract class BaseScenarioModule(
             forceOutput,
             icOptionsConfigAction = icOptionsConfigAction,
             assertions = {
-                assertions(this, module, this@BaseScenarioModule)
+                assertions(this)
             })
     }
 
@@ -122,9 +122,9 @@ internal class ExternallyTrackedScenarioModuleImpl(
 
     override fun getSourcesChanges() = sourcesChanges
 
-    override fun compile(forceOutput: LogLevel?, assertions: CompilationOutcome.(Module, ScenarioModule) -> Unit) {
-        super.compile(forceOutput) { module, scenarioModule ->
-            assertions(module, scenarioModule)
+    override fun compile(forceOutput: LogLevel?, assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit) {
+        super.compile(forceOutput) {
+            assertions()
 
             if (actualResult == CompilationResult.COMPILATION_SUCCESS) {
                 sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())

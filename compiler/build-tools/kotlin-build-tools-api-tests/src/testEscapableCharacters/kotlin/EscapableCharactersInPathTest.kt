@@ -23,9 +23,9 @@ class EscapableCharactersInPathTest : BaseCompilationTest() {
 
             module1.createPredefinedFile("secret.kt", "new-file")
 
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "secret.kt")
-                assertAddedOutputs(module, scenarioModule, "SecretKt.class")
+            module1.compile {
+                assertCompiledSources("secret.kt")
+                assertAddedOutputs("SecretKt.class")
             }
         }
     }
@@ -39,7 +39,7 @@ class EscapableCharactersInPathTest : BaseCompilationTest() {
 
             module1.replaceFileWithVersion("a.kt", "change-return-type")
 
-            module1.compile { module, scenarioModule ->
+            module1.compile {
                 expectFailWithError(".*/b.kt:6:18 Return type mismatch: expected 'Int', actual 'String'.".toRegex())
             }
         }

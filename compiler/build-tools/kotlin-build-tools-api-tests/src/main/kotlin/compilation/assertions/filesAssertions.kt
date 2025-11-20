@@ -17,15 +17,18 @@ import kotlin.io.path.walk
 /**
  * Equivalent to [assertNoCompiledSources] with an empty array/set
  */
-fun CompilationOutcome.assertNoCompiledSources(module: Module) {
-    assertCompiledSources(module)
+context(module: Module)
+fun CompilationOutcome.assertNoCompiledSources() {
+    assertCompiledSources()
 }
 
-fun CompilationOutcome.assertCompiledSources(module: Module, vararg expectedCompiledSources: String) {
-    assertCompiledSources(module, expectedCompiledSources.toSet())
+context(module: Module)
+fun CompilationOutcome.assertCompiledSources(vararg expectedCompiledSources: String) {
+    assertCompiledSources(expectedCompiledSources.toSet())
 }
 
-fun CompilationOutcome.assertCompiledSources(module: Module, expectedCompiledSources: Set<String>) {
+context(module: Module)
+fun CompilationOutcome.assertCompiledSources(expectedCompiledSources: Set<String>) {
     requireLogLevel(LogLevel.DEBUG)
     val actualCompiledSources = logLines.getValue(LogLevel.DEBUG)
         .filter { it.startsWith("compile iteration") }
@@ -47,11 +50,13 @@ fun CompilationOutcome.assertCompiledSources(module: Module, expectedCompiledSou
     }
 }
 
-fun CompilationOutcome.assertOutputs(module: Module, vararg expectedOutputs: String) {
-    assertOutputs(module, expectedOutputs.toSet())
+context(module: Module)
+fun CompilationOutcome.assertOutputs(vararg expectedOutputs: String) {
+    assertOutputs(expectedOutputs.toSet())
 }
 
-fun CompilationOutcome.assertOutputs(module: Module, expectedOutputs: Set<String>) {
+context(module: Module)
+fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>) {
     val filesLeft = expectedOutputs.map { module.outputDirectory.resolve(it).relativeTo(module.outputDirectory) }
         .toMutableSet()
         .apply {
