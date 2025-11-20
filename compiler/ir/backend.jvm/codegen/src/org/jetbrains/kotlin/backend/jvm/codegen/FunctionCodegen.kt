@@ -92,7 +92,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 }
             }
             annotationCodegen.genAnnotations(irFunction)
-            val generateNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE == 0 && flags and Opcodes.ACC_SYNTHETIC == 0
+            val generateNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE == 0 && flags and Opcodes.ACC_SYNTHETIC == 0 &&
+                    irFunction.origin != IrDeclarationOrigin.BRIDGE && irFunction.origin != IrDeclarationOrigin.BRIDGE_SPECIAL
             if (!AsmUtil.isPrimitive(signature.asmMethod.returnType) && generateNullabilityAnnotations) {
                 annotationCodegen.generateNullabilityAnnotation(irFunction)
             }
@@ -349,8 +350,6 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
                 IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
                 IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER,
-                IrDeclarationOrigin.BRIDGE,
-                IrDeclarationOrigin.BRIDGE_SPECIAL,
                 JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB,
                 JvmLoweredDeclarationOrigin.TO_ARRAY,
                 IrDeclarationOrigin.IR_BUILTINS_STUB,

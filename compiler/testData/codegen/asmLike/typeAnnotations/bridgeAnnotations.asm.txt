@@ -1,0 +1,89 @@
+public abstract interface Anno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+Ljava/lang/Object;LI<Ljava/lang/Integer;>;
+public final class C : java/lang/Object, I {
+    public void <init>()
+
+    public java.lang.String foo(int a, int b)
+      @LAnno;([])
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+      @LTypeAnno;([]) : METHOD_RETURN, null
+      @LTypeAnno;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @LParamAnno;([]) // parameter 1
+
+    public java.lang.Object foo(java.lang.Object p1, java.lang.Object p2)
+      @LAnno;([])
+      @LTypeAnno;([]) : METHOD_RETURN, null
+      @LTypeAnno;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @LParamAnno;([]) // parameter 1
+}
+
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface I : java/lang/Object {
+    (TT;TT;)Ljava/lang/Object;
+    public java.lang.Object foo(java.lang.Object p1, java.lang.Object p2)
+      @LOldAnno;([])
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @LOldTypeAnno;([]) : METHOD_RETURN, null
+      @LOldTypeAnno;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @LOldParamAnno;([]) // parameter 0
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 1
+}
+
+public abstract class MyCharSequence : java/lang/Object, java/lang/CharSequence {
+    public void <init>()
+
+    public final char charAt(int index)
+      @LAnno;([])
+      @LTypeAnno;([]) : METHOD_RETURN, null
+      @LTypeAnno;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @LParamAnno;([]) // parameter 0
+
+    public char get(int index)
+      @LAnno;([])
+      @LTypeAnno;([]) : METHOD_RETURN, null
+      @LTypeAnno;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @LParamAnno;([]) // parameter 0
+
+    public int getLength()
+      @LPropertyGetterAnno;([])
+      @LTypeAnno;([]) : METHOD_RETURN, null
+
+    public static void getLength$annotations()
+      @LPropertyAnno;([])
+
+    public final int length()
+      @LPropertyGetterAnno;([])
+      @LTypeAnno;([]) : METHOD_RETURN, null
+}
+
+public abstract interface OldAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface OldParamAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface OldTypeAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface ParamAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface PropertyAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface PropertyGetterAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface TypeAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}

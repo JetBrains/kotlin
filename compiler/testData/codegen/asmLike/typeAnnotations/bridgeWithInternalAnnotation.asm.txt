@@ -1,0 +1,26 @@
+Module: lib
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface lib/A : java/lang/Object {
+    (TT;)V
+    public abstract void foo(java.lang.Object p0)
+}
+
+public class lib/B : java/lang/Object {
+    public void <init>()
+
+    public final void foo(java.lang.String t)
+      @Llib/InternalTargetAnno;([])
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+public abstract interface lib/InternalTargetAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+Module: main
+Llib/B;Llib/A<Ljava/lang/String;>;
+public final class main/J : lib/B, lib/A {
+    public void <init>()
+
+    public void foo(java.lang.Object t)
+      @Llib/InternalTargetAnno;([])
+}

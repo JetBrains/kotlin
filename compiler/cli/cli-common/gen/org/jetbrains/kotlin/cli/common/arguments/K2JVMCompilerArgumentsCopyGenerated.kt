@@ -32,6 +32,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.expectBuiltinsAsPartOfStdlib = from.expectBuiltinsAsPartOfStdlib
     to.expression = from.expression
     to.friendPaths = from.friendPaths?.copyOf()
+    to.ignoredAnnotationsForBridges = from.ignoredAnnotationsForBridges?.copyOf()
     to.includeRuntime = from.includeRuntime
     to.indyAllowAnnotatedLambdas = from.indyAllowAnnotatedLambdas
     to.inheritMultifileParts = from.inheritMultifileParts

@@ -225,6 +225,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_GENERATE_STRICT_METADATA_VERSION", KotlinReleaseVersion(1, 3, 0))
 
     /**
+     * Do not copy these annotations to the bridge methods from their targets.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_IGNORED_ANNOTATIONS_FOR_BRIDGES: JvmCompilerArgument<Array<String>?> =
+        JvmCompilerArgument("X_IGNORED_ANNOTATIONS_FOR_BRIDGES", KotlinReleaseVersion(2, 3, 20))
+
+    /**
      * Allow using 'invokedynamic' for lambda expressions with annotations
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

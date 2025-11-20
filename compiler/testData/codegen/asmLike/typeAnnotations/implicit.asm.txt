@@ -12,6 +12,8 @@ final class foo/Kotlin$foo5$lambda$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/fu
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public java.lang.Object invoke()
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 }
 
 Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/String;>;
@@ -28,6 +30,8 @@ final class foo/Kotlin$foo6$indyLambda$1 : kotlin/jvm/internal/Lambda, kotlin/jv
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public java.lang.Object invoke()
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 }
 
 public final class foo/Kotlin : java/lang/Object {

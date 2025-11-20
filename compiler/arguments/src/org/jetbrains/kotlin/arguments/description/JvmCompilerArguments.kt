@@ -962,4 +962,15 @@ The default value is 'inline'.""".asReleaseDependent()
             introducedVersion = KotlinReleaseVersion.v2_2_20
         )
     }
+
+    compilerArgument {
+        name = "Xignored-annotations-for-bridges"
+        description = "Do not copy these annotations to the bridge methods from their targets.".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        valueDescription = "<fq.name>|*".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_20,
+        )
+    }
 }
