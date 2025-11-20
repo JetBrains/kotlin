@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.hasResolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -120,7 +121,7 @@ open class FirDeclarationsResolveTransformer(
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
-        if (implicitTypeOnly || enumEntry.initializerResolved) return enumEntry
+        if (implicitTypeOnly) return enumEntry
         return context.withEnumEntry(enumEntry) {
             (enumEntry.transformChildren(this, data) as FirEnumEntry)
         }
@@ -301,7 +302,6 @@ open class FirDeclarationsResolveTransformer(
     override fun transformField(field: FirField, data: ResolutionMode): FirField = whileAnalysing(session, field) {
         val returnTypeRef = field.returnTypeRef
         if (implicitTypeOnly) return field
-        if (field.initializerResolved) return field
 
         dataFlowAnalyzer.enterField(field)
         return withFullBodyResolve {
@@ -1637,12 +1637,6 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-
-    private val FirVariable.initializerResolved: Boolean
-        get() {
-            val initializer = initializer ?: return false
-            return initializer.hasResolvedType && initializer !is FirErrorExpression
-        }
 
     private val FirFunction.bodyResolved: Boolean
         get() = body?.hasResolvedType == true
