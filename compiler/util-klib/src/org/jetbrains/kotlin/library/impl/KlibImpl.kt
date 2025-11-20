@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.library.impl
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
+import org.jetbrains.kotlin.library.KlibAttributes
 import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
@@ -41,6 +42,8 @@ internal class KlibImpl(
     override val versions: KotlinLibraryVersioning = manifestProperties.readKonanLibraryVersioning()
 
     override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>) = components.getComponent(kind)
+
+    override val attributes = KlibAttributes()
 
     override val isDefault get() = false
     override val libraryName get() = location.path

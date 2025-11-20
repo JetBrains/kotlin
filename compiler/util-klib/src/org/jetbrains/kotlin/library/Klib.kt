@@ -33,6 +33,11 @@ interface Klib {
     val location: KlibFile
 
     /**
+     * Read/write attributes associated with the current instance of [Klib].
+     */
+    val attributes: KlibAttributes
+
+    /**
      * Get a specific [KlibComponent] by its [kind]. Return `null` if the component is not found.
      */
     fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>): KC?

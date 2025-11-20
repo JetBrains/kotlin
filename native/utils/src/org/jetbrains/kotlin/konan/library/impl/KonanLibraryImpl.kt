@@ -59,8 +59,9 @@ class KonanLibraryImpl(
     )
 
     override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>) = components.getComponent(kind)
-}
 
+    override val attributes = KlibAttributes()
+}
 
 fun createKonanLibrary(
     libraryFilePossiblyDenormalized: File,

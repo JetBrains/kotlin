@@ -67,6 +67,8 @@ class KotlinLibraryImpl(
 
     override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>) = components.getComponent(kind)
 
+    override val attributes = KlibAttributes()
+
     override fun toString(): String = buildString {
         append("name ")
         append(base.libraryName)
