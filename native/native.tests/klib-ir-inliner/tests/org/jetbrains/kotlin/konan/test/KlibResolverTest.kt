@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertContainsElements
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
@@ -39,7 +40,6 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.Isolated
 import java.io.File
-import org.jetbrains.kotlin.konan.file.File as KFile
 
 /**
  * This test class needs to set up a custom working directory in the JVM process. This is necessary to trigger
@@ -744,7 +744,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             return libraryFile
         }
 
-        private fun File.readLibrary(): KotlinLibrary = resolveSingleFileKlib(KFile(absolutePath))
+        private fun File.readLibrary(): KotlinLibrary = KlibLoader { libraryPaths(this@readLibrary) }.load().librariesStdlibFirst.single()
 
         private val KotlinLibrary.dependencies: Set<String>
             get() = manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).toSet()
