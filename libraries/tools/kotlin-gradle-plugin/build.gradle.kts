@@ -169,7 +169,7 @@ dependencies {
         isTransitive = false
     }
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-    commonCompileOnly(libs.develocity.gradlePlugin)
+    commonCompileOnly("com.gradle:develocity-gradle-plugin:3.19.2")
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
     commonCompileOnly("com.github.gundy:semver4j:0.16.4:nodeps") {
         exclude(group = "*")
