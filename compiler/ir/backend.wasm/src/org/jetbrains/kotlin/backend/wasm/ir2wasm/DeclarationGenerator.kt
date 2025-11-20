@@ -395,8 +395,24 @@ class DeclarationGenerator(
                 ""
             }
         val simpleName = klass.name.asString()
-        val packageNameStringLiteralId = wasmFileCodegenContext.referenceStringLiteralId(qualifier)
-        val simpleNameStringLiteralId = wasmFileCodegenContext.referenceStringLiteralId(simpleName)
+        val packageNameStringLiteralId: WasmSymbol<Int>
+        val simpleNameStringLiteralId: WasmSymbol<Int>
+        val packageNameGlobalReference: WasmSymbol<WasmGlobal>?
+        val simpleNameGlobalReference: WasmSymbol<WasmGlobal>?
+
+        if (backendContext.isWasmJsTarget) {
+            val packageNameReferenceAndId = wasmFileCodegenContext.referenceGlobalString(qualifier)
+            packageNameGlobalReference = packageNameReferenceAndId.first
+            packageNameStringLiteralId = packageNameReferenceAndId.second
+            val simpleNameReferenceAndId = wasmFileCodegenContext.referenceGlobalString(simpleName)
+            simpleNameGlobalReference = simpleNameReferenceAndId.first
+            simpleNameStringLiteralId = simpleNameReferenceAndId.second
+        } else {
+            packageNameStringLiteralId = wasmFileCodegenContext.referenceStringLiteralId(qualifier)
+            simpleNameStringLiteralId = wasmFileCodegenContext.referenceStringLiteralId(simpleName)
+            packageNameGlobalReference = null
+            simpleNameGlobalReference = null
+        }
 
         val location = SourceLocation.NoLocation("Create instance of rtti struct")
         val initRttiGlobal = buildWasmExpression {
@@ -417,7 +433,9 @@ class DeclarationGenerator(
             buildConstI32(isAnonymousFlag or isLocalFlag, location)
 
             val qualifierStringLoaderRef =
-                if (qualifier.fitsLatin1)
+                if (backendContext.isWasmJsTarget)
+                    wasmFileCodegenContext.wasmStringsElements.createStringLiteralJsString
+                else if (qualifier.fitsLatin1)
                     wasmFileCodegenContext.wasmStringsElements.createStringLiteralLatin1
                 else
                     wasmFileCodegenContext.wasmStringsElements.createStringLiteralUtf16
@@ -429,7 +447,9 @@ class DeclarationGenerator(
             )
 
             val simpleNameStringLoaderRef =
-                if (simpleName.fitsLatin1)
+                if (backendContext.isWasmJsTarget)
+                    wasmFileCodegenContext.wasmStringsElements.createStringLiteralJsString
+                else if (simpleName.fitsLatin1)
                     wasmFileCodegenContext.wasmStringsElements.createStringLiteralLatin1
                 else
                     wasmFileCodegenContext.wasmStringsElements.createStringLiteralUtf16
@@ -439,6 +459,11 @@ class DeclarationGenerator(
                 location,
                 WasmImmediate.FuncIdx(simpleNameStringLoaderRef),
             )
+
+            if (backendContext.isWasmJsTarget) {
+                buildGetGlobal(packageNameGlobalReference!!, location)
+                buildGetGlobal(simpleNameGlobalReference!!, location)
+            }
 
             buildStructNew(wasmFileCodegenContext.rttiType, location)
         }

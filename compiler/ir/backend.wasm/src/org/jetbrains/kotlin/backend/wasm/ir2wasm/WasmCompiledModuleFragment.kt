@@ -257,6 +257,7 @@ class WasmCompiledModuleFragment(
         val wasmCharArrayDeclaration: WasmTypeDeclaration,
         val wasmStringArrayType: WasmArrayDeclaration,
         val stringLiteralFunctionType: WasmFunctionType,
+        val stringLiteralJsFunctionType: WasmFunctionType,
     )
 
     fun getStringLiteralWasmEntities(
@@ -280,6 +281,13 @@ class WasmCompiledModuleFragment(
             syntheticTypes.add(newStringLiteralFunctionType)
         }
 
+        val newStringLiteralJsFunctionType =
+            WasmFunctionType(listOf(WasmI32, WasmRefType(WasmHeapType.Simple.Extern)), listOf(kotlinStringType))
+        val stringLiteralJsFunctionType = canonicalFunctionTypes[newStringLiteralJsFunctionType] ?: newStringLiteralJsFunctionType
+        if (stringLiteralJsFunctionType === newStringLiteralJsFunctionType) {
+            syntheticTypes.add(newStringLiteralJsFunctionType)
+        }
+
         return StringLiteralWasmEntities(
             createStringFunction = createStringFunction,
             kotlinStringType = kotlinStringType,
@@ -287,6 +295,7 @@ class WasmCompiledModuleFragment(
             wasmCharArrayDeclaration = wasmCharArrayDeclaration,
             wasmStringArrayType = wasmStringArrayDeclaration,
             stringLiteralFunctionType = stringLiteralFunctionType,
+            stringLiteralJsFunctionType = stringLiteralJsFunctionType,
         )
     }
 
@@ -487,21 +496,37 @@ class WasmCompiledModuleFragment(
         val wasmLongArray = WasmArrayDeclaration("LongArray", WasmStructFieldDeclaration("Long", WasmI64, false))
         syntheticTypes.add(wasmLongArray)
 
-        val stringLiteralFunctionRef = WasmRefNullType(WasmHeapType.Type(WasmSymbol(stringEntities.stringLiteralFunctionType)))
+        val stringLiteralFunctionRef = WasmRefNullType(
+            WasmHeapType.Type(
+                WasmSymbol(
+                    if (isWasmJsTarget)
+                        stringEntities.stringLiteralJsFunctionType
+                    else
+                        stringEntities.stringLiteralFunctionType
+                )
+            )
+        )
 
         val rttiTypeDeclarationSymbol = WasmSymbol<WasmStructDeclaration>()
+        val fieldsList = mutableListOf(
+            WasmStructFieldDeclaration("implementedIFaceIds", WasmRefNullType(WasmHeapType.Type(WasmSymbol(wasmLongArray))), false),
+            WasmStructFieldDeclaration("superClassRtti", WasmRefNullType(WasmHeapType.Type(rttiTypeDeclarationSymbol)), false),
+            WasmStructFieldDeclaration("packageNamePoolId", WasmI32, false),
+            WasmStructFieldDeclaration("simpleNamePoolId", WasmI32, false),
+            WasmStructFieldDeclaration("klassId", WasmI64, false),
+            WasmStructFieldDeclaration("typeInfoFlag", WasmI32, false),
+            WasmStructFieldDeclaration("qualifierStringLoader", stringLiteralFunctionRef, false),
+            WasmStructFieldDeclaration("simpleNameStringLoader", stringLiteralFunctionRef, false),
+        )
+        if (isWasmJsTarget) {
+            fieldsList += mutableListOf(
+                WasmStructFieldDeclaration("packageNameGlobal", WasmRefType(WasmHeapType.Simple.Extern), false),
+                WasmStructFieldDeclaration("simpleNameGlobal", WasmRefType(WasmHeapType.Simple.Extern), false),
+            )
+        }
         val rttiTypeDeclaration = WasmStructDeclaration(
             name = "RTTI",
-            fields = listOf(
-                WasmStructFieldDeclaration("implementedIFaceIds", WasmRefNullType(WasmHeapType.Type(WasmSymbol(wasmLongArray))), false),
-                WasmStructFieldDeclaration("superClassRtti", WasmRefNullType(WasmHeapType.Type(rttiTypeDeclarationSymbol)), false),
-                WasmStructFieldDeclaration("packageNamePoolId", WasmI32, false),
-                WasmStructFieldDeclaration("simpleNamePoolId", WasmI32, false),
-                WasmStructFieldDeclaration("klassId", WasmI64, false),
-                WasmStructFieldDeclaration("typeInfoFlag", WasmI32, false),
-                WasmStructFieldDeclaration("qualifierStringLoader", stringLiteralFunctionRef, false),
-                WasmStructFieldDeclaration("simpleNameStringLoader", stringLiteralFunctionRef, false),
-            ),
+            fields = fieldsList,
             superType = null,
             isFinal = true
         )
@@ -903,7 +928,7 @@ class WasmCompiledModuleFragment(
                                 buildGetLocal(iterator, serviceCodeLocation)
                                 buildInstr(WasmOp.ARRAY_GET_U, serviceCodeLocation, WasmImmediate.GcType(byteArray))
 
-                            buildInstr(WasmOp.ARRAY_SET, serviceCodeLocation, WasmImmediate.GcType(stringEntities.wasmCharArrayDeclaration))
+                                buildInstr(WasmOp.ARRAY_SET, serviceCodeLocation, WasmImmediate.GcType(stringEntities.wasmCharArrayDeclaration))
 
                                 buildGetLocal(iterator, serviceCodeLocation)
                                 buildConstI32(1, serviceCodeLocation)

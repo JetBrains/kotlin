@@ -998,12 +998,24 @@ class BodyGenerator(
                 val fieldId =
                     if (function.symbol == wasmSymbols.wasmGetQualifierImpl) RTTI_QUALIFIED_NAME_GETTER_FIELD_ID else RTTI_SIMPLE_NAME_GETTER_FIELD_ID
 
+                val createStringLiteralType: WasmSymbolReadOnly<WasmTypeDeclaration>
+                if (backendContext.isWasmJsTarget) {
+                    val globalId =
+                        if (function.symbol == wasmSymbols.wasmGetQualifierImpl) RTTI_QUALIFIED_NAME_GLOBAL_FIELD_ID else RTTI_SIMPLE_NAME_GLOBAL_FIELD_ID
+                    body.buildStructGet(wasmFileCodegenContext.rttiType, globalId, location)
+                    body.buildGetLocal(functionContext.referenceLocal(0), location)
+                    body.buildRefCastStatic(wasmFileCodegenContext.rttiType, location)
+
+                    createStringLiteralType = wasmFileCodegenContext.wasmStringsElements.createStringLiteralJsStringType
+                } else {
+                    createStringLiteralType = wasmFileCodegenContext.wasmStringsElements.createStringLiteralType
+                }
                 body.buildStructGet(wasmFileCodegenContext.rttiType, fieldId, location)
 
                 body.buildInstr(
                     op = WasmOp.CALL_REF,
                     location = location,
-                    WasmImmediate.TypeIdx(wasmFileCodegenContext.wasmStringsElements.createStringLiteralType),
+                    WasmImmediate.TypeIdx(createStringLiteralType),
                 )
             }
 
@@ -1614,6 +1626,8 @@ class BodyGenerator(
         const val RTTI_SUPER_CLASS_FIELD_ID = 1
         const val RTTI_QUALIFIED_NAME_GETTER_FIELD_ID = 6
         const val RTTI_SIMPLE_NAME_GETTER_FIELD_ID = 7
+        const val RTTI_QUALIFIED_NAME_GLOBAL_FIELD_ID = 8
+        const val RTTI_SIMPLE_NAME_GLOBAL_FIELD_ID = 9
         private const val CLASS_ASSOCIATED_OBJECT_GETTER_WRAPPER_FIELD_ID = 0
         private val exceptionTagId = WasmSymbol(0)
         private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx(0)
