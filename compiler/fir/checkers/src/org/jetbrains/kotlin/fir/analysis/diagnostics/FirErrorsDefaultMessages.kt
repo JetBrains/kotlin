@@ -815,6 +815,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CALLABLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_INFIX_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_OPERATOR_CALL
@@ -3139,6 +3140,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NOT_RENDERED,
             NOT_RENDERED,
             NOT_RENDERED,
+        )
+        map.put(
+            UNSAFE_CALLABLE_REFERENCE,
+            "Bound callable reference cannot be created on nullable receiver of type ''{0}''.",
+            RENDER_TYPE,
         )
         map.put(
             ITERATOR_ON_NULLABLE,

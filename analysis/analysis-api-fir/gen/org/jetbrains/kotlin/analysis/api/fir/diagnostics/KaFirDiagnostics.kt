@@ -3687,6 +3687,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val argumentExpression: KtExpression?
     }
 
+    interface UnsafeCallableReference : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UnsafeCallableReference::class
+        val receiverType: KaType
+    }
+
     interface IteratorOnNullable : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = IteratorOnNullable::class
     }

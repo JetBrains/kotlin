@@ -5256,6 +5256,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.UNSAFE_CALLABLE_REFERENCE) { firDiagnostic ->
+        UnsafeCallableReferenceImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ITERATOR_ON_NULLABLE) { firDiagnostic ->
         IteratorOnNullableImpl(
             firDiagnostic as KtPsiDiagnostic,

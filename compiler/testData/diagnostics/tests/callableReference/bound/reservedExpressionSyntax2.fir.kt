@@ -5,6 +5,6 @@ package test
 fun nullableFun(): Int? = null
 fun Int.foo() {}
 
-val test1 = <!SAFE_CALLABLE_REFERENCE_CALL!>nullableFun()?::<!UNSAFE_CALL!>foo<!><!>
+val test1 = <!SAFE_CALLABLE_REFERENCE_CALL!>nullableFun()?::<!UNSAFE_CALLABLE_REFERENCE!>foo<!><!>
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, nullableType, propertyDeclaration */

@@ -1822,6 +1822,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("operator")
             parameter<FirExpression?>("argumentExpression")
         }
+        val UNSAFE_CALLABLE_REFERENCE by error<PsiElement>(PositioningStrategy.DOT_BY_QUALIFIED) {
+            parameter<ConeKotlinType>("receiverType")
+        }
         val ITERATOR_ON_NULLABLE by error<KtExpression>()
         val COMPONENT_FUNCTION_ON_NULLABLE by error<KtExpression> {
             parameter<Name>("componentFunctionName")

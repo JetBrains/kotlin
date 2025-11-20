@@ -712,10 +712,17 @@ private fun inapplicableNullableReceiver(
             )
         }
     }
-    return if (source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference) {
-        FirErrors.UNSAFE_CALL.createOn(source, rootCause.actualType, receiverExpression, session)
-    } else {
-        FirErrors.UNSAFE_CALL.createOn(qualifiedAccessSource ?: source, rootCause.actualType, receiverExpression, session)
+
+    return when {
+        candidate.callInfo.callSite is FirCallableReferenceAccess -> {
+            FirErrors.UNSAFE_CALLABLE_REFERENCE.createOn(qualifiedAccessSource ?: source, rootCause.actualType, session)
+        }
+        source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference -> {
+            FirErrors.UNSAFE_CALL.createOn(source, rootCause.actualType, receiverExpression, session)
+        }
+        else -> {
+            FirErrors.UNSAFE_CALL.createOn(qualifiedAccessSource ?: source, rootCause.actualType, receiverExpression, session)
+        }
     }
 }
 

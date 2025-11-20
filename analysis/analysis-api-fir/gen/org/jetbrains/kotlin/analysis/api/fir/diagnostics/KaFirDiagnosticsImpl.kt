@@ -4419,6 +4419,12 @@ internal class UnsafeOperatorCallImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.UnsafeOperatorCall
 
+internal class UnsafeCallableReferenceImpl(
+    override val receiverType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsafeCallableReference
+
 internal class IteratorOnNullableImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

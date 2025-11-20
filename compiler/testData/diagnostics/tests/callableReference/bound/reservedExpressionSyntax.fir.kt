@@ -20,9 +20,9 @@ class Test {
 
     fun <T> List<T>.testCallable1(): () -> Unit = a::foo
     fun <T> List<T>.testCallable1a(): () -> Unit = <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>a<!><T>::foo
-    fun <T> List<T>.testCallable2(): () -> Unit = <!SAFE_CALLABLE_REFERENCE_CALL!>b?::<!UNSAFE_CALL!>foo<!><!>
-    fun <T> List<T>.testCallable3(): () -> Unit = <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><T, Any>::<!UNSAFE_CALL!>foo<!>
-    fun <T> List<T>.testCallable4(): () -> Unit = <!SAFE_CALLABLE_REFERENCE_CALL!><!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><T>?::<!UNSAFE_CALL!>foo<!><!>
+    fun <T> List<T>.testCallable2(): () -> Unit = <!SAFE_CALLABLE_REFERENCE_CALL!>b?::<!UNSAFE_CALLABLE_REFERENCE!>foo<!><!>
+    fun <T> List<T>.testCallable3(): () -> Unit = <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><T, Any>::<!UNSAFE_CALLABLE_REFERENCE!>foo<!>
+    fun <T> List<T>.testCallable4(): () -> Unit = <!SAFE_CALLABLE_REFERENCE_CALL!><!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><T>?::<!UNSAFE_CALLABLE_REFERENCE!>foo<!><!>
 
     fun <T> List<T>.testClassLiteral1() = a::class
     fun <T> List<T>.testClassLiteral1a() = <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>a<!><T>::class
