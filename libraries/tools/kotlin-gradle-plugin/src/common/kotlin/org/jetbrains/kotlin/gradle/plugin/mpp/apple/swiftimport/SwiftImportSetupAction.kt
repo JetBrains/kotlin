@@ -1323,7 +1323,7 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
         val projectJson = Gson().fromJson(
             output.toString(), Map::class.java
         ) as Map<String, Any>
-        if (isLinkageProductReferencedInPBXObjects(projectJson)) {
+        if (linkageProductsReferencedInPBXObjects(projectJson).isNotEmpty()) {
             println("Product already referenced, nothing to do")
             return
         }
@@ -1578,19 +1578,20 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : DefaultTask() {
 
 }
 
-fun isLinkageProductReferencedInPBXObjects(projectJson: Map<String, Any>): Boolean {
+fun linkageProductsReferencedInPBXObjects(projectJson: Map<String, Any>): Set<String> {
     val objects = projectJson.property<Map<String, Any>>("objects")
     // FIXME: Check if the product is correctly integrated into the build phase
-    val hasSyntheticImportProjectReference = objects.values.any { pbxObject ->
+    return objects.entries.mapNotNull { (id, pbxObject) ->
         @Suppress("UNCHECKED_CAST")
         pbxObject as Map<String, Any>
         val type = pbxObject.property<String>("isa")
         if (type == "XCSwiftPackageProductDependency") {
             val packageProductName = pbxObject.property<String>("productName")
-            packageProductName == SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
-        } else false
-    }
-    return hasSyntheticImportProjectReference
+            if (packageProductName == SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) {
+                id
+            } else null
+        } else null
+    }.toSet()
 }
 
 @Suppress("UNCHECKED_CAST")
