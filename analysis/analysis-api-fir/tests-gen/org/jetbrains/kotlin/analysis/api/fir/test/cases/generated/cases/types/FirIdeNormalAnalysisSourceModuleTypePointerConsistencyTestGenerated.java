@@ -124,6 +124,42 @@ public class FirIdeNormalAnalysisSourceModuleTypePointerConsistencyTestGenerated
   }
 
   @Test
+  @TestMetadata("contextParameter.kt")
+  public void testContextParameter() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/contextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParameterGeneric.kt")
+  public void testContextParameterGeneric() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/contextParameterGeneric.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParameterNestedType.kt")
+  public void testContextParameterNestedType() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/contextParameterNestedType.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParameterWithError.kt")
+  public void testContextParameterWithError() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/contextParameterWithError.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParameterWithGeneric.kt")
+  public void testContextParameterWithGeneric() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/contextParameterWithGeneric.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/contextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("definitelyNotNullType.kt")
   public void testDefinitelyNotNullType() {
     runTest("analysis/analysis-api/testData/types/typePointers/consistency/definitelyNotNullType.kt");

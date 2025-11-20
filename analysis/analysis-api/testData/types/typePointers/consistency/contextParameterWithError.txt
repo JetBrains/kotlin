@@ -1,0 +1,117 @@
+Restored type is the same as the original one
+
+KaFunctionType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Function1
+  contextReceivers: [
+    KaContextReceiver:
+      label: null
+      type: KaClassErrorType:
+        abbreviation: null
+        annotations: []
+        candidateSymbols: []
+        errorMessage: Symbol not found for Foo
+        presentableText: Foo
+        qualifiers: [
+          KaUnresolvedClassTypeQualifier:
+            name: Foo
+            typeArguments: []
+        ]
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
+  ]
+  hasContextReceivers: true
+  hasReceiver: false
+  isReflectType: false
+  isSuspend: false
+  parameterTypes: []
+  parameters: []
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Function1
+      symbol: KaNamedClassSymbol(kotlin/Function1)
+      typeArguments: [
+        KaClassErrorType:
+          abbreviation: null
+          annotations: []
+          candidateSymbols: []
+          errorMessage: Symbol not found for Foo
+          presentableText: Foo
+          qualifiers: [
+            KaUnresolvedClassTypeQualifier:
+              name: Foo
+              typeArguments: []
+          ]
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Unit
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Unit
+              symbol: KaNamedClassSymbol(kotlin/Unit)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Unit
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Unit
+        symbol: KaNamedClassSymbol(kotlin/Unit)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Unit)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  symbol: KaNamedClassSymbol(kotlin/Function1)
+  typeArguments: [
+    KaClassErrorType:
+      abbreviation: null
+      annotations: []
+      candidateSymbols: []
+      errorMessage: Symbol not found for Foo
+      presentableText: Foo
+      qualifiers: [
+        KaUnresolvedClassTypeQualifier:
+          name: Foo
+          typeArguments: []
+      ]
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Unit
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Unit
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Unit)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
