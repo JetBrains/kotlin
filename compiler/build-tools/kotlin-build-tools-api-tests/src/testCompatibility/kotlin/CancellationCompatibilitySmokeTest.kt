@@ -28,11 +28,16 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.nio.file.NoSuchFileException
+import java.nio.file.Path
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.thread
-import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.pathString
 import kotlin.io.path.walk
 
@@ -66,13 +71,15 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
         val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, "Beta1")
         val daemonPolicy = kotlinToolchains.createDaemonExecutionPolicy()
         assumeTrue(hasCancellationSupport)
+
+        val daemonRunPath: Path = createTempDirectory("test-daemon-files")
+        daemonPolicy[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = listOf(
+            "Dkotlin.daemon.wait.before.compilation.for.tests=true"
+        )
+        daemonPolicy[ExecutionPolicy.WithDaemon.DAEMON_RUN_DIR_PATH] = daemonRunPath
+        daemonPolicy[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 0
+
         project(kotlinToolchains, daemonPolicy) {
-            val daemonRunPath = projectDirectory.resolve("daemon-files").createDirectories()
-            daemonPolicy[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = listOf(
-                "Dkotlin.daemon.wait.before.compilation.for.tests=true"
-            )
-            daemonPolicy[ExecutionPolicy.WithDaemon.DAEMON_RUN_DIR_PATH] = daemonRunPath
-            daemonPolicy[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 100
             val module1 = module("jvm-module-1") as JvmModule
             val operationWasCancelled = AtomicBoolean(false)
             with(module1) {
@@ -95,11 +102,32 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
                     }
                 }
                 compilationOperation.cancel()
-                daemonRunPath.resolve("daemon-test-start").createFile()
+                daemonRunPath.resolve("daemon-test-start").createFile().toFile().deleteOnExit()
                 thread.join()
                 assertTrue { operationWasCancelled.load() }
             }
         }
+        attemptCleanupDaemon(daemonRunPath)
+    }
+
+    private fun attemptCleanupDaemon(daemonRunPath: Path) {
+        daemonRunPath.resolve("daemon-test-start").deleteIfExists()
+        var tries = 10
+        do {
+            val deleted = try {
+                daemonRunPath.listDirectoryEntries("*.run").forEach { it.deleteIfExists() }
+                daemonRunPath.deleteExisting()
+                true
+            } catch (_: NoSuchFileException) {
+                true
+            } catch (_: Exception) {
+                false
+            }
+            if (deleted) {
+                break
+            }
+            Thread.sleep(150)
+        } while (tries-- > 0)
     }
 
     @DisplayName("Incremental compilation test with cancellation")
