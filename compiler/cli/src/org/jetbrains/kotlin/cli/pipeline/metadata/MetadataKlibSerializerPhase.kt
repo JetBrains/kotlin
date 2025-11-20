@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 
 object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataInMemorySerializationArtifact>(
     name = "MetadataKlibInMemorySerializerPhase",
@@ -27,7 +28,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
 ) {
     override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataInMemorySerializationArtifact {
         val (firResult, configuration, _, _) = input
-        val metadataVersion = input.metadataVersion
+        val metadataVersion = configuration.klibMetadataVersionOrDefault()
         val fragments = mutableMapOf<String, MutableList<ByteArray>>()
 
         val analysisResult = firResult.outputs

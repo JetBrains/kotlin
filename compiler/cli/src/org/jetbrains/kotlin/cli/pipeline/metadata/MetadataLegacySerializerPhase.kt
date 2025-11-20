@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.File
@@ -48,7 +49,7 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
     override fun serialize(
         analysisResult: List<SingleModuleFrontendOutput>,
         destDir: File,
-        metadataVersion: BuiltInsBinaryVersion,
+        metadataVersion: BinaryVersion,
     ): OutputInfo {
         val (session, scopeSession, firFiles) = analysisResult.single()
         val contentPerPackage = collectPackagesContent(firFiles)
@@ -95,8 +96,8 @@ object MetadataBuiltinsSerializerPhase : MetadataLegacySerializerPhaseBase(name 
     override fun serialize(
         analysisResult: List<SingleModuleFrontendOutput>,
         destDir: File,
-        metadataVersion: BuiltInsBinaryVersion,
-    ): OutputInfo? {
+        metadataVersion: BinaryVersion,
+    ): OutputInfo {
         val (session, scopeSession, firFiles) = analysisResult.single()
         destDir.deleteRecursively()
         if (!destDir.mkdirs()) {
@@ -133,7 +134,7 @@ abstract class MetadataLegacySerializerPhaseBase(
 ) {
     final override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact {
         val (firResult, configuration, _, _) = input
-        val metadataVersion = input.metadataVersion as? BuiltInsBinaryVersion ?: BuiltInsBinaryVersion.INSTANCE
+        val metadataVersion = configuration.klibMetadataVersionOrDefault()
         val destDir = configuration.metadataDestinationDirectory!!
         val outputInfo = serialize(firResult.outputs, destDir, metadataVersion)
         return MetadataSerializationArtifact(
@@ -146,7 +147,7 @@ abstract class MetadataLegacySerializerPhaseBase(
     protected abstract fun serialize(
         analysisResult: List<SingleModuleFrontendOutput>,
         destDir: File,
-        metadataVersion: BuiltInsBinaryVersion,
+        metadataVersion: BinaryVersion,
     ): OutputInfo?
 
     protected data class PackageContent(
