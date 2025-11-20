@@ -929,8 +929,8 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter, srcToDst
     }
 }
 
-fun IrAnnotationContainer.copyAnnotations(): List<IrConstructorCall> =
-    annotations.memoryOptimizedMap {
+fun IrAnnotationContainer.copyAnnotations(filter: ((IrConstructorCall) -> Boolean)? = null): List<IrConstructorCall> =
+    (if (filter == null) annotations else annotations.filter(filter)).memoryOptimizedMap {
         it.transform(DeepCopyIrTreeWithSymbols(SymbolRemapper.EMPTY), null) as IrConstructorCall
     }
 

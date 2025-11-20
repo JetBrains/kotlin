@@ -131,6 +131,8 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS)
 
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
+
+    put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, arguments.ignoredAnnotationsForBridges?.toList().orEmpty())
 }
 
 private fun isCompatibleJvmTargetAndRelease(jvmTarget: String, release: String): Boolean {

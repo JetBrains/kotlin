@@ -158,6 +158,9 @@ object JVMConfigurationKeys {
     @JvmField
     val WHEN_GENERATION_SCHEME = CompilerConfigurationKey.create<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions")
 
+    @JvmField
+    val IGNORED_ANNOTATIONS_FOR_BRIDGES = CompilerConfigurationKey.create<List<String>>("Annotations fqNames that shall be skipped while copying the annotations from the target to the bridge functions")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -347,4 +350,8 @@ var CompilerConfiguration.expressionToEvaluate: String?
 var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
     get() = get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME)
     set(value) { put(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
+    get() = getList(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES)
+    set(value) { put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, value) }
 

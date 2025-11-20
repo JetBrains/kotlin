@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.DISABLE_OPTIMIZATION
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENABLE_DEBUG_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENHANCED_COROUTINES_DEBUGGING
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.IGNORED_ANNOTATIONS_FOR_BRIDGES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LAMBDAS
@@ -100,7 +101,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
         fun extractJdkKind(registeredDirectives: RegisteredDirectives): TestJdkKind {
             val fullJdkEnabled = JvmEnvironmentConfigurationDirectives.FULL_JDK in registeredDirectives
-            val jdkKinds = registeredDirectives[JvmEnvironmentConfigurationDirectives.JDK_KIND]
+            val jdkKinds = registeredDirectives[JDK_KIND]
 
             if (fullJdkEnabled) {
                 if (jdkKinds.isNotEmpty()) {
@@ -261,6 +262,10 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
         if (ENABLE_FOREIGN_ANNOTATIONS in module.directives) {
             configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, module)
+        }
+
+        if (IGNORED_ANNOTATIONS_FOR_BRIDGES in module.directives) {
+            configuration.put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, module.directives[IGNORED_ANNOTATIONS_FOR_BRIDGES])
         }
 
         setupK2CliConfiguration(module, configuration)

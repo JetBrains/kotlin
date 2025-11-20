@@ -79,7 +79,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             generateParameterNames(irFunction, methodVisitor, context.config)
         }
 
-        if (irFunction.isWithAnnotations) {
+        val useEnhancedBridges = context.config.languageVersionSettings.supportsFeature(LanguageFeature.JvmEnhancedBridges)
+        if (irFunction.isWithAnnotations(useEnhancedBridges)) {
             val annotationCodegen = object : AnnotationCodegen(classCodegen) {
                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotation(descr, visible)
@@ -92,7 +93,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 }
             }
             annotationCodegen.genAnnotations(irFunction)
-            val generateNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE == 0 && flags and Opcodes.ACC_SYNTHETIC == 0
+            val generateNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE == 0 && flags and Opcodes.ACC_SYNTHETIC == 0 &&
+                    irFunction.origin != IrDeclarationOrigin.BRIDGE && irFunction.origin != IrDeclarationOrigin.BRIDGE_SPECIAL
             if (!AsmUtil.isPrimitive(signature.asmMethod.returnType) && generateNullabilityAnnotations) {
                 annotationCodegen.generateNullabilityAnnotation(irFunction)
             }
@@ -349,17 +351,16 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
                 IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
                 IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER,
-                IrDeclarationOrigin.BRIDGE,
-                IrDeclarationOrigin.BRIDGE_SPECIAL,
                 JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB,
                 JvmLoweredDeclarationOrigin.TO_ARRAY,
                 IrDeclarationOrigin.IR_BUILTINS_STUB,
                 IrDeclarationOrigin.PROPERTY_DELEGATE,
             )
 
-        private val IrFunction.isWithAnnotations: Boolean
-            get() = when (origin) {
+        private fun IrFunction.isWithAnnotations(useEnhancedBridges: Boolean): Boolean =
+            when (origin) {
                 in methodOriginsWithoutAnnotations -> false
+                IrDeclarationOrigin.BRIDGE, IrDeclarationOrigin.BRIDGE_SPECIAL -> useEnhancedBridges
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> name.asString() == "<get-entries>"
                 else -> true
             }

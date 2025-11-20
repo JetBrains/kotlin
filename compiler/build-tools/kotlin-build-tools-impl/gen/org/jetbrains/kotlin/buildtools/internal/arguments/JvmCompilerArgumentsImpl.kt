@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_FRIEND_PATHS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_GENERATE_STRICT_METADATA_VERSION
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_IGNORED_ANNOTATIONS_FOR_BRIDGES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_INDY_ALLOW_ANNOTATED_LAMBDAS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_IR_DO_NOT_CLEAR_BINDING_CONTEXT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_IR_INLINER
@@ -165,6 +166,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (X_ENHANCED_COROUTINES_DEBUGGING in this) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING)}
     if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS)}
     if (X_GENERATE_STRICT_METADATA_VERSION in this) { arguments.strictMetadataVersionSemantics = get(X_GENERATE_STRICT_METADATA_VERSION)}
+    if (X_IGNORED_ANNOTATIONS_FOR_BRIDGES in this) { arguments.ignoredAnnotationsForBridges = get(X_IGNORED_ANNOTATIONS_FOR_BRIDGES)}
     if (X_INDY_ALLOW_ANNOTATED_LAMBDAS in this) { arguments.indyAllowAnnotatedLambdas = get(X_INDY_ALLOW_ANNOTATED_LAMBDAS)}
     if (X_IR_DO_NOT_CLEAR_BINDING_CONTEXT in this) { arguments.doNotClearBindingContext = get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT)}
     try { if (X_IR_INLINER in this) { arguments.setUsingReflection("enableIrInliner", get(X_IR_INLINER))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IR_INLINER. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
@@ -250,6 +252,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     try { this[X_ENHANCED_COROUTINES_DEBUGGING] = arguments.enhancedCoroutinesDebugging } catch (_: NoSuchMethodError) {  }
     try { this[X_FRIEND_PATHS] = arguments.friendPaths } catch (_: NoSuchMethodError) {  }
     try { this[X_GENERATE_STRICT_METADATA_VERSION] = arguments.strictMetadataVersionSemantics } catch (_: NoSuchMethodError) {  }
+    try { this[X_IGNORED_ANNOTATIONS_FOR_BRIDGES] = arguments.ignoredAnnotationsForBridges } catch (_: NoSuchMethodError) {  }
     try { this[X_INDY_ALLOW_ANNOTATED_LAMBDAS] = arguments.indyAllowAnnotatedLambdas } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DO_NOT_CLEAR_BINDING_CONTEXT] = arguments.doNotClearBindingContext } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_INLINER] = arguments.getUsingReflection("enableIrInliner") } catch (_: NoSuchMethodError) {  }
@@ -383,6 +386,9 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
 
     public val X_GENERATE_STRICT_METADATA_VERSION: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_GENERATE_STRICT_METADATA_VERSION")
+
+    public val X_IGNORED_ANNOTATIONS_FOR_BRIDGES: JvmCompilerArgument<Array<String>?> =
+        JvmCompilerArgument("X_IGNORED_ANNOTATIONS_FOR_BRIDGES")
 
     public val X_INDY_ALLOW_ANNOTATED_LAMBDAS: JvmCompilerArgument<Boolean?> =
         JvmCompilerArgument("X_INDY_ALLOW_ANNOTATED_LAMBDAS")

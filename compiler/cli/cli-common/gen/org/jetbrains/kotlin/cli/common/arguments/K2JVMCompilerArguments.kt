@@ -216,6 +216,17 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         }
 
     @Argument(
+        value = "-Xignored-annotations-for-bridges",
+        valueDescription = "<fq.name>|*",
+        description = "Do not copy these annotations to the bridge methods from their targets.",
+    )
+    var ignoredAnnotationsForBridges: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xindy-allow-annotated-lambdas",
         description = "Allow using 'invokedynamic' for lambda expressions with annotations",
     )
