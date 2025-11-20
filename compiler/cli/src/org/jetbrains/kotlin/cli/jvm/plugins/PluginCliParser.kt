@@ -241,7 +241,16 @@ object PluginCliParser {
         val compilerPluginRegistrars = ServiceLoaderLite.loadImplementations(CompilerPluginRegistrar::class.java, classLoader)
 
         val registrarsById = compilerPluginRegistrars
-            .filter { it.pluginId.isNotEmpty() }
+            .filter {
+                try {
+                    it.pluginId.isNotEmpty()
+                } catch (e: LinkageError) {
+                    throw PluginProcessingError(
+                        message = "Plugin ${it::class.qualifiedName} is incompatible with the current version of the compiler.",
+                        cause = e
+                    )
+                }
+            }
             .associateBy { it.pluginId }
 
         val dependenciesById = orderConstraints
@@ -295,4 +304,6 @@ object PluginCliParser {
             }
         }
     }
+
+    class PluginProcessingError(message: String, cause: Throwable?) : Error(message, cause)
 }
