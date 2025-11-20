@@ -51,7 +51,7 @@ class BaseKotlinLibraryImpl(
     }
 }
 
-class KotlinLibraryImpl(
+private class KotlinLibraryImpl(
     override val location: File,
     zipFileSystemAccessor: ZipFileSystemAccessor,
     val base: BaseKotlinLibraryImpl,
