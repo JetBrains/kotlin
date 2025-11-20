@@ -334,6 +334,12 @@ public class Fe10IdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("overridePropertyNoExplicitType.kt")
+  public void testOverridePropertyNoExplicitType() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/overridePropertyNoExplicitType.kt");
+  }
+
+  @Test
   @TestMetadata("parameterDefaultValue.kt")
   public void testParameterDefaultValue() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/parameterDefaultValue.kt");
