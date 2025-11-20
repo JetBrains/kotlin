@@ -28,11 +28,11 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
-            module1.compile { module ->
-                assertOutputs(module, "FooKt.class", "Bar.class", "BazKt.class")
+            module1.compile {
+                assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
             }
-            module2.compile { module ->
-                assertOutputs(module, "AKt.class", "BKt.class")
+            module2.compile {
+                assertOutputs("AKt.class", "BKt.class")
             }
         }
     }
@@ -44,8 +44,8 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
         project(strategyConfig) {
             val module1 = module("kotlin-java-mixed")
 
-            module1.compile { module ->
-                assertOutputs(module, "bpkg/MainKt.class", "bpkg/BClass.class")
+            module1.compile {
+                assertOutputs("bpkg/MainKt.class", "bpkg/BClass.class")
                 if (strategyConfig.first::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
                     assertLogContainsSubstringExactlyTimes(LogLevel.DEBUG, "AClass.java", 1) // no duplication of java sources
                 }
@@ -66,8 +66,8 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
                 val exception = assertThrows<IllegalStateException> { module1.compile {} }
                 assert(exception.message?.contains("Compiler parameter not recognized: X_USE_K2_KAPT") == true) { "Expected exception message to contain 'Compiler parameter not recognized: X_USE_K2_KAPT'" }
             } else {
-                module1.compile { module ->
-                    assertOutputs(module, "FooKt.class", "Bar.class", "BazKt.class")
+                module1.compile {
+                    assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
                 }
             }
         }
@@ -86,8 +86,8 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
                 val exception = assertThrows<IllegalStateException> { module1.compile {} }
                 assert(exception.message?.contains("Compiler parameter not recognized: X_ANNOTATIONS_IN_METADATA") == true) { "Expected exception message to contain 'Compiler parameter not recognized: X_ANNOTATIONS_IN_METADATA'" }
             } else {
-                module1.compile { module ->
-                    assertOutputs(module, "FooKt.class", "Bar.class", "BazKt.class")
+                module1.compile {
+                    assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
                 }
             }
         }

@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.ScenarioMo
  */
 
 fun ScenarioModule.compile(expectedDirtySet: Set<String>) {
-    compile { module, scenarioModule ->
-        assertCompiledSources(module, expectedDirtySet)
+    compile {
+        assertCompiledSources(expectedDirtySet)
     }
 }
 

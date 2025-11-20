@@ -43,18 +43,18 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
                 """.trimIndent()
             )
 
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "foobar.kt")
-                assertAddedOutputs(module, scenarioModule, "FoobarKt.class") // specify only the difference
+            module1.compile {
+                assertCompiledSources("foobar.kt")
+                assertAddedOutputs("FoobarKt.class") // specify only the difference
             }
 
             module1.deleteFile(
                 "foobar.kt",
             )
 
-            module1.compile { module, scenarioModule ->
-                assertNoCompiledSources(module)
-                assertRemovedOutputs(module, scenarioModule, "FoobarKt.class") // specify only the difference
+            module1.compile {
+                assertNoCompiledSources()
+                assertRemovedOutputs("FoobarKt.class") // specify only the difference
             }
         }
     }

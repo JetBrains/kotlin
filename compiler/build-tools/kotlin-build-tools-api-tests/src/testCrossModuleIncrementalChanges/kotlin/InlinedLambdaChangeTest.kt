@@ -144,7 +144,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
                 dependencies = listOf(lib),
             )
             lib.replaceFileWithVersion("inlinedLocalClass.kt", "addNamedClass")
-            lib.compile { module, scenarioModule ->
+            lib.compile {
                 expectFail()
                 assertLogContainsPatterns(LogLevel.ERROR, ".*Local classes are not yet supported in inline functions.*".toRegex())
             }

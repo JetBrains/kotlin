@@ -6,7 +6,6 @@
 import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.ScenarioModule
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
@@ -29,15 +28,15 @@ class ClassicMultiprojectFirRunnerIncrementalTest : BaseCompilationTest() {
 
             changeMethodSignatureInLib(lib)
 
-            lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, setOf(
+            lib.compile {
+                assertCompiledSources(setOf(
                     "src/main/kotlin/bar/A.kt",
                     "src/main/kotlin/bar/B.kt",
                     "src/main/kotlin/bar/barUseA.kt",
                 ))
             }
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, setOf(
+            app.compile {
+                assertCompiledSources(setOf(
                     "src/main/kotlin/foo/AA.kt",
                     "src/main/kotlin/foo/AAA.kt",
                     "src/main/kotlin/foo/BB.kt",

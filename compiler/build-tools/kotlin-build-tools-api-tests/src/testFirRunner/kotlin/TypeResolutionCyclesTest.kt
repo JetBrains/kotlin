@@ -40,8 +40,8 @@ class TypeResolutionCyclesTest : BaseCompilationTest() {
                 """.trimIndent()
             )
 
-            module.compile { module, scenarioModule ->
-                assertCompiledSources(module, "File1.kt", "File2.kt")
+            module.compile {
+                assertCompiledSources("File1.kt", "File2.kt")
             }
 
             module.changeFile("File2.kt") { contents ->
@@ -51,8 +51,8 @@ class TypeResolutionCyclesTest : BaseCompilationTest() {
                 """.trimIndent()
             }
 
-            module.compile { module, scenarioModule ->
-                assertCompiledSources(module, "File1.kt", "File2.kt")
+            module.compile {
+                assertCompiledSources("File1.kt", "File2.kt")
             }
         }
     }

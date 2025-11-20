@@ -53,7 +53,7 @@ interface Module : Dependency {
         strategyConfig: ExecutionPolicy = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
         compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
-        assertions: CompilationOutcome.(Module) -> Unit = {},
+        assertions: context(Module) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 
     fun compileIncrementally(
@@ -63,7 +63,7 @@ interface Module : Dependency {
         forceNonIncrementalCompilation: Boolean = false,
         compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
         icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationOptions) -> Unit = {},
-        assertions: CompilationOutcome.(module: Module) -> Unit = {},
+        assertions: context(Module) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 
     /**
