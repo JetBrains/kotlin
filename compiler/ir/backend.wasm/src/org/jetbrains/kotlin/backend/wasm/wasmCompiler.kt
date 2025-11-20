@@ -415,6 +415,14 @@ $wasmTagInitialization
 
 // Placed here to give access to it from externals (js_code)
 let wasmExports;
+let require;
+
+if (typeof process !== 'undefined' && process.release.name === 'node') {
+    const module = await import(/* webpackIgnore: true */'node:module');
+    const importMeta = import.meta;
+    require = module.default.createRequire(importMeta.url);
+}
+
 export function setWasmExports(exports) {
     wasmExports = exports;
 }
@@ -553,7 +561,6 @@ import { importObject, setWasmExports$commonStdlibExports } from './${baseFileNa
 $staticImports
 
 let wasmInstance;
-let require;
 
 const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
 const isDeno = !isNodeJs && (typeof Deno !== 'undefined')
@@ -575,7 +582,7 @@ try {
   if (isNodeJs) {
     const module = await import(/* webpackIgnore: true */'node:module');
     const importMeta = import.meta;
-    require = module.default.createRequire(importMeta.url);
+    const require = module.default.createRequire(importMeta.url);
     const fs = require('fs');
     const url = require('url');
     const filepath = import.meta.resolve(wasmFilePath);
