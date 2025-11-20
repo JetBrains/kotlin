@@ -6,12 +6,23 @@
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.InvalidUserDataException
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute.WASM_BINARY
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform.Companion.ARTIFACT_TYPE
+import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
+import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 
 internal open class KotlinJsIrLinkConfig(
     private val binary: JsIrBinary,
@@ -49,6 +60,66 @@ internal open class KotlinJsIrLinkConfig(
             task.compilerOptions.moduleName.set(compilation.outputModuleName)
 
             task._outputFileProperty.convention(binary.mainFile.map { it.asFile })
+
+            WasmBinaryAttribute.setupTransform(task.project)
+
+            project.dependencies.registerTransformForArtifactType(
+                WasmBinaryTransform::class.java,
+                fromArtifactType = "jar",
+                toArtifactType = WASM_BINARY,
+            ) { transform ->
+                transform.from.attributes.attribute(WasmBinaryAttribute.attribute, WASM_BINARY)
+                transform.to.attributes.attribute(
+                    WasmBinaryAttribute.attribute,
+                    WasmBinaryAttribute.KLIB
+                )
+            }
+
+            task.project.dependencies.registerTransformForArtifactType(
+                WasmBinaryTransform::class.java,
+                fromArtifactType = WasmBinaryAttribute.KLIB,
+                toArtifactType = WasmBinaryAttribute.WASM_BINARY,
+            ) {
+                it.parameters {
+                    it.currentJvmJdkToolsJar.set(
+                        task.defaultKotlinJavaToolchain
+                            .flatMap { it.currentJvmJdkToolsJar }
+                    )
+                    it.defaultCompilerClasspath.setFrom(task.defaultCompilerClasspath)
+                    it.kotlinPluginVersion.set(
+                        getKotlinPluginVersion(task.logger)
+                    )
+                    it.pathProvider.set(
+                        task.path
+                    )
+                    it.projectRootFile.set(
+                        project.projectDir
+                    )
+                    val projectName = project.name
+                    it.clientIsAliveFlagFile.set(
+                        GradleCompilerRunner.getOrCreateClientFlagFile(task.logger, projectName)
+
+                    )
+                    val projectSessionsDir = project.kotlinSessionsDir
+                    it.sessionFlagFile.set(
+                        GradleCompilerRunner.getOrCreateSessionFlagFile(task.logger, projectSessionsDir)
+
+                    )
+                    it.buildDir.set(project.layout.buildDirectory.asFile)
+
+                    it.libraryFilterCacheService.set(task.libraryFilterCacheService)
+
+                    val compilerOptions = task.compilerOptions
+                    it.compilerOptions.set(
+                        project.provider {
+                            val args = K2JSCompilerArguments()
+                            KotlinCommonCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
+                            args
+                        }
+                    )
+                    it.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
+                }
+            }
         }
     }
 

@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.gradle.targets.native.SetupEmbedAndSignAppleFramewor
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeToolchainProjectSetupAction
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryPreparationSetupAction
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.RegisterIsAllGradleProjectsEvaluatedListener
 
@@ -153,6 +154,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinCreateNativeCInteropTasksSideEffect)
         register(project, KotlinCreateCompilationArchivesTask)
         register(project, KotlinJvmCompilationWireJavaSourcesSideEffect)
+        register(project, WasmBinaryPreparationSetupAction)
     }
 
     KotlinTargetArtifact.extensionPoint.apply {
