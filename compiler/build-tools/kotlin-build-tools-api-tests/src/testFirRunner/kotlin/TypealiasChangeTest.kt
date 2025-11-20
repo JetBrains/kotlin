@@ -51,15 +51,15 @@ class TypealiasChangeTest : BaseCompilationTest() {
                 """.trimIndent()
             )
 
-            module.compile { module, scenarioModule ->
-                assertCompiledSources(module, "Foo.kt", "FooImpl.kt", "types.kt")
+            module.compile {
+                assertCompiledSources("Foo.kt", "FooImpl.kt", "types.kt")
             }
 
             module.changeFile("types.kt") { contents -> contents.replace("String", "Int") }
             module.changeFile("FooImpl.kt") { contents -> contents.replace("\"0\"", "0") }
 
-            module.compile { module, scenarioModule ->
-                assertCompiledSources(module, "Foo.kt", "FooImpl.kt", "types.kt")
+            module.compile {
+                assertCompiledSources("Foo.kt", "FooImpl.kt", "types.kt")
             }
         }
     }

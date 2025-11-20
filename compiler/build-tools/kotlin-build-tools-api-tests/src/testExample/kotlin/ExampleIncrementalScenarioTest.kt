@@ -43,18 +43,18 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
                 """.trimIndent()
             )
 
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "foobar.kt")
-                assertAddedOutputs(module, scenarioModule, "FoobarKt.class") // specify only the difference
+            module1.compile {
+                assertCompiledSources("foobar.kt")
+                assertAddedOutputs("FoobarKt.class") // specify only the difference
             }
 
             module1.deleteFile(
                 "foobar.kt",
             )
 
-            module1.compile { module, scenarioModule ->
-                assertNoCompiledSources(module)
-                assertRemovedOutputs(module, scenarioModule, "FoobarKt.class") // specify only the difference
+            module1.compile {
+                assertNoCompiledSources()
+                assertRemovedOutputs("FoobarKt.class") // specify only the difference
             }
         }
     }
@@ -80,18 +80,18 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
                 """.trimIndent()
             )
 
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "foobar.kt")
-                assertAddedOutputs(module, scenarioModule, "FoobarKt.class")
+            module1.compile {
+                assertCompiledSources("foobar.kt")
+                assertAddedOutputs("FoobarKt.class")
             }
 
             module1.deleteFile(
                 "foobar.kt",
             )
 
-            module1.compile { module, scenarioModule ->
-                assertNoCompiledSources(module)
-                assertRemovedOutputs(module, scenarioModule, "FoobarKt.class")
+            module1.compile {
+                assertNoCompiledSources()
+                assertRemovedOutputs("FoobarKt.class")
             }
         }
     }
@@ -115,14 +115,14 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
             )
 
             // you should handle the right order of compilation between modules yourself
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "bar.kt")
-                assertNoOutputSetChanges(module, scenarioModule)
+            module1.compile {
+                assertCompiledSources("bar.kt")
+                assertNoOutputSetChanges()
             }
 
-            module2.compile { module, scenarioModule ->
-                assertCompiledSources(module, "b.kt")
-                assertNoOutputSetChanges(module, scenarioModule)
+            module2.compile {
+                assertCompiledSources("b.kt")
+                assertNoOutputSetChanges()
             }
         }
     }
@@ -137,9 +137,9 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
             // replaces bar.kt with bar.kt.1
             module1.replaceFileWithVersion("bar.kt", "add-default-argument")
 
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "bar.kt")
-                assertNoOutputSetChanges(module, scenarioModule)
+            module1.compile {
+                assertCompiledSources("bar.kt")
+                assertNoOutputSetChanges()
             }
         }
     }
@@ -154,9 +154,9 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
             // creates secret.kt from secret.kt.1
             module1.createPredefinedFile("secret.kt", "new-file")
 
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "secret.kt")
-                assertAddedOutputs(module, scenarioModule, "SecretKt.class")
+            module1.compile {
+                assertCompiledSources("secret.kt")
+                assertAddedOutputs("SecretKt.class")
             }
         }
     }

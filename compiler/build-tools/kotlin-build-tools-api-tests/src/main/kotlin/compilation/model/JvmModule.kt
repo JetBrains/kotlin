@@ -108,7 +108,7 @@ class JvmModule(
         forceNonIncrementalCompilation: Boolean,
         compilationConfigAction: (JvmCompilationOperation) -> Unit,
         icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationOptions) -> Unit,
-        assertions: CompilationOutcome.(Module) -> Unit,
+        assertions: context(Module) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         return compile(strategyConfig, forceOutput, { compilationOperation ->
             val snapshots = dependencies.map {
