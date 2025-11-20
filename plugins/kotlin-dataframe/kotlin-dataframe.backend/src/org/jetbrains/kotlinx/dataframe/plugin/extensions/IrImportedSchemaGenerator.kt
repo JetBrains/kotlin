@@ -50,13 +50,16 @@ class IrImportedSchemaGenerator(
             }
 
             val providerFun = CallableId(schemaReaderId, declaration.name)
-            val provide = context.referenceFunctions(providerFun).firstOrNull()
+
+            // TODO(KT-82631): provide proper use-site file and use referencerForSource
+            val finder = context.finderForBuiltins()
+            val provide = finder.findFunctions(providerFun).firstOrNull()
                 ?: error("Couldn't find a function $providerFun")
 
             val actualSchemaReaderClassId =
                 ClassId(FqName(metadata.format.substringBeforeLast(".")), Name.identifier(metadata.format.substringAfterLast(".")))
 
-            val zeroArg = context.referenceConstructors(actualSchemaReaderClassId).firstOrNull {
+            val zeroArg = finder.findConstructors(actualSchemaReaderClassId).firstOrNull {
                 // empty or all default
                 it.owner.parameters.all { it.defaultValue != null }
             }
@@ -84,7 +87,7 @@ class IrImportedSchemaGenerator(
     }
 
     override fun visitProperty(declaration: IrProperty): IrStatement {
-        val typeOf = context.referenceFunctions(CallableId(FqName("kotlin.reflect"), Name.identifier("typeOf")))
+        val typeOf = context.finderForBuiltins().findFunctions(CallableId(FqName("kotlin.reflect"), Name.identifier("typeOf")))
             .firstOrNull {
                 it.owner.hasShape(
                     dispatchReceiver = false,

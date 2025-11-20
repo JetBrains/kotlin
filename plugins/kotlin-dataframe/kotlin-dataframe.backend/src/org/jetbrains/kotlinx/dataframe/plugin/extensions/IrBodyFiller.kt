@@ -68,7 +68,8 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         }
         val getter = declaration.getter ?: return declaration
 
-        val constructors = context.referenceConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
+        val finder = context.finderForBuiltins()
+        val constructors = finder.findConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
         val jvmName = constructors.single { it.owner.parameters.size == 1 }
         val getterExtensionReceiver = getter.parameters.single { it.kind == IrParameterKind.ExtensionReceiver }
         val marker = ((getterExtensionReceiver.type as IrSimpleType).arguments.single() as IrSimpleType).classOrFail.owner
@@ -85,8 +86,8 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         } ?: false
 
         val get = if (isDataColumn) {
-            context
-                .referenceFunctions(COLUMNS_SCOPE_ID)
+            finder
+                .findFunctions(COLUMNS_SCOPE_ID)
                 .single {
                     it.owner.hasShape(
                         dispatchReceiver = true,
@@ -95,8 +96,8 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
                     )
                 }
         } else {
-            context
-                .referenceFunctions(DATA_ROW_ID)
+            finder
+                .findFunctions(DATA_ROW_ID)
                 .single {
                     it.owner.hasShape(
                         dispatchReceiver = true,
