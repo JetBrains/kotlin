@@ -110,7 +110,7 @@ internal class KotlinpBasedMetadataDumper(
     private fun prepareSignatureComputer(library: KotlinLibrary, moduleMetadata: KlibModuleMetadata): ExternalSignatureComputer? {
         val signatureCollector = SignaturesCollector(signatureRenderer ?: return null)
 
-        val moduleDescriptor = ModuleDescriptorLoader(output).load(library)
+        val moduleDescriptor = ModuleDescriptorLoader(output).load(library) ?: return null
         moduleDescriptor.accept(signatureCollector, Unit)
 
         return ExternalSignatureComputer(moduleMetadata, signatureCollector.signatures::get)

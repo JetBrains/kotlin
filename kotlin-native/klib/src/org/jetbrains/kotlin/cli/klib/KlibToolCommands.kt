@@ -74,18 +74,11 @@ internal sealed class KlibToolCommand(
             null
         }
     }
-
-    /**
-     * Note that [libraryPath] can be either absolute, or relative to the current working directory.
-     * Other options are not supported.
-     */
-    protected fun resolveKlib(libraryPath: String): KotlinLibrary =
-        klibResolver(distributionKlib = null, skipCurrentDir = false, KlibToolLogger(output)).resolve(libraryPath)
 }
 
 internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        val library = resolveKlib(args.libraryPath)
+        val library = loadKlib(args.libraryPath, output) ?: return
         val metadata = library.metadata
 
         val metadataHeader = parseModuleHeader(metadata.moduleHeaderData)
@@ -155,7 +148,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
 internal class DumpIr(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun execute() {
-        val library = resolveKlib(args.libraryPath)
+        val library = loadKlib(args.libraryPath, output) ?: return
 
         if (!checkLibraryHasIr(library)) return
 
@@ -164,7 +157,7 @@ internal class DumpIr(output: KlibToolOutput, args: KlibToolArguments) : KlibToo
             output.logWarning("using a non-default signature version in \"dump-ir\" is not supported yet")
         }
 
-        val module = ModuleDescriptorLoader(output).load(library)
+        val module = ModuleDescriptorLoader(output).load(library) ?: return
 
         val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
         val symbolTable = SymbolTable(idSignaturer, IrFactoryImpl)
@@ -192,7 +185,7 @@ internal class DumpIr(output: KlibToolOutput, args: KlibToolArguments) : KlibToo
 internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun execute() {
-        val library = resolveKlib(args.libraryPath)
+        val library = loadKlib(args.libraryPath, output) ?: return
 
         if (!checkLibraryHasIr(library)) return
 
@@ -207,7 +200,7 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: KlibToolAr
             output.logWarning("using a non-default signature version in \"dump-ir-inlinable-functions\" is not supported yet")
         }
 
-        val module = ModuleDescriptorLoader(output).load(library)
+        val module = ModuleDescriptorLoader(output).load(library) ?: return
 
         val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
         val symbolTable = SymbolTable(idSignaturer, IrFactoryImpl)
@@ -251,7 +244,7 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: KlibToolAr
 internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     @OptIn(ExperimentalLibraryAbiReader::class)
     override fun execute() {
-        val library = resolveKlib(args.libraryPath)
+        val library = loadKlib(args.libraryPath, output) ?: return
 
         if (!checkLibraryHasIr(library)) return
 
@@ -309,7 +302,10 @@ internal class DumpMetadata(output: KlibToolOutput, args: KlibToolArguments) : K
         val idSignatureRenderer: IdSignatureRenderer? = runIf(args.printSignatures) {
             args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
         }
-        KotlinpBasedMetadataDumper(output, idSignatureRenderer).dumpLibrary(resolveKlib(args.libraryPath), args.testMode)
+
+        val library = loadKlib(args.libraryPath, output) ?: return
+
+        KotlinpBasedMetadataDumper(output, idSignatureRenderer).dumpLibrary(library, args.testMode)
     }
 }
 
@@ -319,7 +315,9 @@ internal class DumpMetadataSignatures(output: KlibToolOutput, args: KlibToolArgu
 
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
 
-        val module = ModuleDescriptorLoader(output).load(resolveKlib(args.libraryPath))
+        val library = loadKlib(args.libraryPath, output) ?: return
+
+        val module = ModuleDescriptorLoader(output).load(library) ?: return
 
         DescriptorSignaturesRenderer(output, idSignatureRenderer).render(module)
     }
@@ -327,7 +325,7 @@ internal class DumpMetadataSignatures(output: KlibToolOutput, args: KlibToolArgu
 
 internal class DumpIrSignatures(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        val library = resolveKlib(args.libraryPath)
+        val library = loadKlib(args.libraryPath, output) ?: return
 
         if (!checkLibraryHasIr(library) || !args.signatureVersion.checkSupportedInLibrary(library)) return
 

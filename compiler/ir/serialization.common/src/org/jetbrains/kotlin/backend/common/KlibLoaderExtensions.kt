@@ -80,15 +80,27 @@ fun KlibLoaderResult.reportLoadingProblemsIfAny(
     configuration: CompilerConfiguration,
     allAsErrors: Boolean = false
 ) {
-    if (!hasProblems) return
-
     val messageCollector = configuration.messageCollector
+    reportLoadingProblemsIfAny { severity, message ->
+        messageCollector.report(if (allAsErrors) CompilerMessageSeverity.ERROR else severity, message)
+    }
+}
+
+/**
+ * Report any problems with loading KLIBs stored in [KlibLoaderResult] to the supplied [reporter] lambda.
+ * Returns `true` if there were any problems reported.
+ */
+fun KlibLoaderResult.reportLoadingProblemsIfAny(reporter: (severity: CompilerMessageSeverity, message: String) -> Unit): Boolean {
+    if (problematicLibraries.isEmpty()) return false
+
     problematicLibraries.forEach { problematicLibrary ->
-        messageCollector.report(
-            severity = if (allAsErrors) CompilerMessageSeverity.ERROR else problematicLibrary.problemCase.computeSeverity(),
-            message = problematicLibrary.computeMessageText()
+        reporter(
+            problematicLibrary.problemCase.computeSeverity(),
+            problematicLibrary.computeMessageText()
         )
     }
+
+    return true
 }
 
 private fun ProblemCase.computeSeverity(): CompilerMessageSeverity = when (this) {

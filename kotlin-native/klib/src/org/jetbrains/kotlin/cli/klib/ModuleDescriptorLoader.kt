@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 
-internal class ModuleDescriptorLoader(output: KlibToolOutput) {
+internal class ModuleDescriptorLoader(private val output: KlibToolOutput) {
     private val logger = KlibToolLogger(output)
 
-    fun load(library: KotlinLibrary): ModuleDescriptorImpl {
+    fun load(library: KotlinLibrary): ModuleDescriptorImpl? {
         val storageManager = LockBasedStorageManager("klib")
 
         val module = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
@@ -33,20 +33,14 @@ internal class ModuleDescriptorLoader(output: KlibToolOutput) {
 
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()
         if (!module.isNativeStdlib()) {
-            val resolver = klibResolver(
-                distributionKlib = Distribution(KotlinNativePaths.homePath.absolutePath).klib,
-                skipCurrentDir = true,
-                logger = logger
-            )
-            resolver.defaultLinks(noStdLib = false, noDefaultLibs = true, noEndorsedLibs = true).mapTo(defaultModules) { library ->
-                KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptor(
-                    library,
+            val stdlib = loadKlib(KotlinNativePaths.homePath.resolve("klib/common/stdlib").absolutePath, output) ?: return null
+            defaultModules += KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptor(
+                    stdlib,
                     languageVersionSettings,
                     storageManager,
                     module.builtIns,
                     null
-                )
-            }
+            )
         }
 
         (defaultModules + module).let { allModules ->
