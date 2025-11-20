@@ -34,7 +34,6 @@ class InvokeStatic internal constructor(form: Form, control: Controlling?, varar
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitInvokeStatic(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "InvokeStatic")
     }
@@ -55,7 +54,6 @@ class InvokeVirtual internal constructor(form: Form, control: Controlling?, vara
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitInvokeVirtual(this)
-    
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "InvokeVirtual")
     }

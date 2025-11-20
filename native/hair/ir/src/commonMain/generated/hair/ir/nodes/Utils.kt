@@ -12,7 +12,6 @@ class NoValue internal constructor(form: Form, ) : NodeBase(form, listOf()) {
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitNoValue(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleValueForm(session, "NoValue")
     }
@@ -27,7 +26,6 @@ class UnitValue internal constructor(form: Form, ) : NodeBase(form, listOf()) {
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitUnitValue(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleValueForm(session, "UnitValue")
     }
@@ -55,7 +53,6 @@ class Use internal constructor(form: Form, control: Controlling?, value: Node?) 
     }
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitUse(this)
-    
     companion object {
         internal fun form(session: Session) = SimpleControlFlowForm(session, "Use")
     }

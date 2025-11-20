@@ -1,31 +1,38 @@
 package hair.ir
 
 import hair.ir.nodes.ArgsUpdater
+import hair.ir.nodes.BlockEntry
+import hair.ir.nodes.BlockExit
 import hair.ir.nodes.ControlFlowBuilder
 import hair.ir.nodes.Controlling
 import hair.ir.nodes.Goto
 import hair.ir.nodes.If
-import hair.ir.nodes.New
 import hair.ir.nodes.Node
 import hair.ir.nodes.NodeBuilder
-import hair.ir.nodes.ReadFieldPinned
-import hair.ir.nodes.ReadGlobalPinned
 import hair.ir.nodes.Throwing
-import hair.ir.nodes.Unwind
-import hair.ir.nodes.WriteField
-import hair.ir.nodes.WriteGlobal
+import hair.ir.nodes.Unreachable
 import hair.ir.nodes.set
-import hair.sym.HairType
 import hair.sym.HairType.*
 import hair.sym.Type
 import hair.utils.ensuring
 
 // return void
 context(nodeBuilder: NodeBuilder)
-fun ReturnVoid(control: Controlling?) = Return(control, null)
+fun ReturnVoid(control: Controlling?) = Return(control, UnitValue())
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun ReturnVoid() = Return(null)
+fun ReturnVoid() = Return(UnitValue())
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+fun IfExits(cond: Node): Pair<BlockExit, BlockExit> {
+    val ifNode = If(cond)
+    if (ifNode is Unreachable) return ifNode to ifNode
+    ifNode as If
+    val trueExit = TrueExit(ifNode)
+    val falseExit = FalseExit(ifNode)
+    return trueExit to falseExit
+}
+
 
 // CFG structures
 private typealias BodyBuilder = context(NodeBuilder, ControlFlowBuilder) () -> Unit
@@ -35,20 +42,18 @@ fun branch(
     cond: Node,
     trueInit: BodyBuilder,
     falseInit: BodyBuilder
-): If {
-    val if_ = If(cond)
+) {
+    val (trueExit, falseExit) = IfExits(cond)
 
-    BlockEntry(if_.trueExit).ensuring { controlBuilder.lastControl == it }
+    BlockEntry(trueExit).ensuring { controlBuilder.lastControl == it }
     trueInit()
-    val trueExit = controlBuilder.lastControl?.let { Goto() }
+    val trueGoto = controlBuilder.lastControl?.let { Goto() }
 
-    BlockEntry(if_.falseExit).ensuring { controlBuilder.lastControl == it }
+    BlockEntry(falseExit).ensuring { controlBuilder.lastControl == it }
     falseInit()
-    val falseExit = controlBuilder.lastControl?.let { Goto() }
+    val falseGoto = controlBuilder.lastControl?.let { Goto() }
 
-    BlockEntry(*listOfNotNull(trueExit, falseExit).toTypedArray())
-
-    return if_
+    BlockEntry(*listOfNotNull(trueGoto, falseGoto).toTypedArray())
 }
 
 context(_: NodeBuilder, _: ControlFlowBuilder)
@@ -63,15 +68,15 @@ fun branch(
             body()
             if (controlBuilder.lastControl != null) Goto() else null
         } else {
-            val if_ = If(cond())
+            val (trueExit, falseExit) = IfExits(cond())
 
-            BlockEntry(if_.trueExit).ensuring { controlBuilder.lastControl == it }
+            BlockEntry(trueExit).ensuring { controlBuilder.lastControl == it }
             body()
-            val trueExit = if (controlBuilder.lastControl != null) Goto() else null
+            val trueGoto = if (controlBuilder.lastControl != null) Goto() else null
 
-            BlockEntry(if_.falseExit).ensuring { controlBuilder.lastControl == it }
+            BlockEntry(falseExit).ensuring { controlBuilder.lastControl == it }
 
-            trueExit
+            trueGoto
         }
     }
 
@@ -83,15 +88,14 @@ fun branch(
 // FIXME cond should be a builder
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgsUpdater)
 fun whileLoop(cond: Node, body: BodyBuilder) {
-    val condBlock = BlockEntry(Goto(), null)
-    val if_ = If(cond)
+    val condBlock = BlockEntry(Goto(), null) as BlockEntry
+    val (trueExit, falseExit) = IfExits(cond)
 
-    BlockEntry(if_.trueExit)
+    BlockEntry(trueExit)
     body()
-    val trueExit = Goto()
-    condBlock.preds[1] = trueExit
+    condBlock.preds[1] = Goto()
 
-    BlockEntry(if_.falseExit)
+    BlockEntry(falseExit)
 }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgsUpdater)
@@ -110,12 +114,12 @@ fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<Type.Reference, context(No
     }
     val tryExit = if (controlBuilder.lastControl != null) Goto() else null
 
-    val catchExits = mutableListOf<Goto>()
+    val catchExits = mutableListOf<BlockExit>()
     if (catches.isNotEmpty()) {
         throwers.forEach { require(it.unwind == null) } // FIXME is this true?
         // TODO how do we handle nested try blocks?
         val unwinds = throwers.map { it.unwind ?: Unwind(it) }.toTypedArray()
-        val handlerBlock = BlockEntry(*unwinds)
+        val handlerBlock = BlockEntry(*unwinds) as BlockEntry // FIXME cast?
         val exception = Catch(Phi(EXCEPTION)(handlerBlock, *unwinds))
 
         for ((type, catchBody) in catches) {
@@ -126,14 +130,14 @@ fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<Type.Reference, context(No
                 break
             }
 
-            val ifInstanceOf = If(IsInstanceOf(type)(exception))
+            val (trueExit, falseExit) = IfExits(IsInstanceOf(type)(exception))
 
-            BlockEntry(ifInstanceOf.trueExit)
+            BlockEntry(trueExit)
             catchBody(exception)
 
             controlBuilder.lastControl?.let { catchExits += Goto() }
 
-            BlockEntry(ifInstanceOf.falseExit)
+            BlockEntry(falseExit)
         }
 
         controlBuilder.lastControl?.let { Throw(exception) }

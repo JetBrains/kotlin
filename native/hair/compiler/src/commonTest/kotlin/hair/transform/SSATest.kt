@@ -3,11 +3,14 @@ package hair.transform
 import hair.ir.*
 import hair.ir.Add
 import hair.ir.nodes.AssignVar
+import hair.ir.nodes.InvokeStatic
 import hair.ir.nodes.NodeBuilder
 import hair.test.Var
 import hair.ir.nodes.Phi
 import hair.ir.nodes.ReadVar
+import hair.ir.nodes.Return
 import hair.ir.nodes.Throw
+import hair.ir.nodes.Use
 import hair.sym.HairFunction
 import hair.sym.HairType.*
 import hair.test.Fun
@@ -30,7 +33,7 @@ class SSATest : IrTest {
             }, {
                 AssignVar(v)(v2)
             })
-            val use = Use(ReadVar(v))
+            val use = Use(ReadVar(v)) as Use
 
             ReturnVoid()
 
@@ -115,18 +118,18 @@ class SSATest : IrTest {
             val v1 = ConstI(23)
             AssignVar(v)(v1)
 
-            val call = InvokeStatic(Fun("foo"))()
+            val call = InvokeStatic(Fun("foo"))() as InvokeStatic // FIXME
 
             val v2 = ConstI(42)
             AssignVar(v)(v2)
 
-            val thr = Throw(ConstI(108))
+            val thr = Throw(ConstI(108)) as Throw
 
             val callUnwind = Unwind(call)
             val throwUnwind = Unwind(thr)
 
             BlockEntry(callUnwind, throwUnwind)
-            val ret = Return(ReadVar(v))
+            val ret = Return(ReadVar(v)) as Return
 
             buildSSA { INT }
 
@@ -146,7 +149,7 @@ class SSATest : IrTest {
             val v1 = ConstI(23)
             AssignVar(v)(v1)
 
-            val call = InvokeStatic(Fun("foo"))()
+            val call = InvokeStatic(Fun("foo"))() as InvokeStatic // FIXME
 
             val v2 = ConstI(42)
             AssignVar(v)(v2)
@@ -159,17 +162,17 @@ class SSATest : IrTest {
                     AssignVar(v)(v3)
                 },
                 {
-                    thr = Throw(ConstI(108))
+                    thr = Throw(ConstI(108)) as Throw
                 }
             )
 
-            val retNormal = Return(ReadVar(v))
+            val retNormal = Return(ReadVar(v)) as Return
 
             val callUnwind = Unwind(call)
             val throwUnwind = Unwind(thr)
 
             BlockEntry(callUnwind, throwUnwind)
-            val retHandler = Return(ReadVar(v))
+            val retHandler = Return(ReadVar(v)) as Return
 
             buildSSA { INT }
 

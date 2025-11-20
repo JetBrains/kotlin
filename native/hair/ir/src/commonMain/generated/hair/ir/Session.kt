@@ -12,6 +12,8 @@ class Session: SessionBase() {
 
     internal val useForm = Use.form(this).also { register(it) }
 
+    internal val unreachableForm = Unreachable.form(this).also { register(it) }
+
     internal val blockEntryForm = BlockEntry.form(this).also { register(it) }
 
     internal val returnForm = Return.form(this).also { register(it) }
@@ -20,9 +22,9 @@ class Session: SessionBase() {
 
     internal val ifForm = If.form(this).also { register(it) }
 
-    internal val ifTrueForm = If.True.form(this).also { register(it) }
+    internal val trueExitForm = TrueExit.form(this).also { register(it) }
 
-    internal val ifFalseForm = If.False.form(this).also { register(it) }
+    internal val falseExitForm = FalseExit.form(this).also { register(it) }
 
     internal val throwForm = Throw.form(this).also { register(it) }
 
@@ -103,6 +105,8 @@ class Session: SessionBase() {
     
 
     val entry by lazy { BlockEntry(blockEntryForm).register() }
+
+    val unreachable by lazy { Unreachable(unreachableForm).register() }
 
 }
 
