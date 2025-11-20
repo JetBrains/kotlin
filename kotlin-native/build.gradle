@@ -458,10 +458,10 @@ def mergeCrossBundleTask = NativeFullCrossDistKt.setupMergeCrossBundleTask(proje
 
 tasks.register("bundlePrebuilt", (PlatformInfo.isWindows()) ? Zip : Tar) {
     dependsOn(sbomBundlePrebuiltForPublish)
-    if (mergeCrossBundleTask == null)
+//    if (mergeCrossBundleTask == null)
         dependsOn("crossDistPlatformLibs")
-    else
-        dependsOn(mergeCrossBundleTask)
+//    else
+//        dependsOn(mergeCrossBundleTask)
 
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")

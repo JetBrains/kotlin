@@ -6,10 +6,12 @@
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanInteropTask
 import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.darwinDistFile
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.nativeDistribution.nativeBootstrapDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
+import org.jetbrains.kotlin.pathToDarwinDistProperty
 import org.jetbrains.kotlin.platformLibs.*
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.utils.capitalized
@@ -57,6 +59,18 @@ val updateDefFileTasksPerFamily = if (HostManager.hostIsMac) {
     emptyMap()
 }
 
+val darwinDistFileUnpacked = if (pathToDarwinDistProperty != null) darwinDistFile.resolveSibling(darwinDistFile.name + ".unpacked") else null
+val unpackCacheForLibsTask = if (pathToDarwinDistProperty != null) tasks.register<Copy>("unpackCacheForLibsTask") {
+    from(tarTree(darwinDistFile)) {
+        include("**/klib/platform/**")
+    }
+    into(darwinDistFileUnpacked!!)
+
+    // this incantation makes it so that we will have something like build/unpackedDonorDarwinDist/<contents of dist>
+    // rather than build/unpackedDonorDarwinDist/kotlin-native-macos-aarch65-2.0.255-SNAPSHOT/<contents of dist>
+    eachFile { relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray<String?>()) }
+    includeEmptyDirs = false
+} else null
 
 enabledTargets(platformManager).forEach { target ->
     val targetName = target.visibleName
@@ -68,7 +82,7 @@ enabledTargets(platformManager).forEach { target ->
         val fileNamePrefix = PlatformLibsInfo.namePrefix
         val artifactName = "${fileNamePrefix}${df.name}"
 
-        val libTask = tasks.register(interopTaskName(libName, targetName), KonanInteropTask::class.java) {
+        val libTask = if (pathToDarwinDistProperty == null) tasks.register(interopTaskName(libName, targetName), KonanInteropTask::class.java) {
             group = BasePlugin.BUILD_GROUP
             description = "Build the Kotlin/Native platform library '$libName' for '$target'"
 
@@ -108,6 +122,11 @@ enabledTargets(platformManager).forEach { target ->
 
             usesService(compilePlatformLibsSemaphore)
         }
+        else null
+        val libFromCacheTask = if (pathToDarwinDistProperty != null) tasks.register(interopTaskName(libName, targetName) + "_FromMyCache") {
+            dependsOn(unpackCacheForLibsTask!!)
+            outputs.dir("$darwinDistFileUnpacked/klib/platform/$targetName/$artifactName")
+        } else null
 
         val klibInstallTask = tasks.register(libName, Sync::class.java) {
             // During the execution of the `:kotlin-native:publish` task, the `:kotlin-native:bundleRegular` subtask
@@ -121,7 +140,11 @@ enabledTargets(platformManager).forEach { target ->
             // `bundleRegular` is traversing the directory.
             mustRunAfter(":kotlin-native:bundleRegular")
 
-            from(libTask)
+            if (pathToDarwinDistProperty == null) {
+                from(libTask!!)
+            } else {
+                from(libFromCacheTask!!)
+            }
             into(nativeDistribution.map { it.platformLib(name = artifactName, target = targetName) })
         }
         installTasks.add(klibInstallTask)
@@ -143,7 +166,11 @@ enabledTargets(platformManager).forEach { target ->
                     inputs.dir(tasks.named<Sync>(defFileToLibName(targetName, dep)).map { it.destinationDir })
                 }
 
-                this.klib.fileProvider(libTask.map { it.outputs.files.singleFile })
+                if (pathToDarwinDistProperty == null) {
+                    this.klib.fileProvider(libTask!!.map { it.outputs.files.singleFile })
+                } else {
+                    this.klib.fileProvider(libFromCacheTask!!.map { it.outputs.files.singleFile })
+                }
                 this.target.set(targetName)
                 this.outputDirectory.set(dist.map { it.cache(name = artifactName, target = targetName) })
 

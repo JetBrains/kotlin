@@ -106,12 +106,12 @@ fun getDarwinTargets(): Set<KonanTarget> {
     return enabledOnMacosX64// subtract enabledOnThisHost
 }
 
-private val Project.pathToDarwinDistProperty: String?
+val Project.pathToDarwinDistProperty: String?
     get() = kotlinBuildProperties.getOrNull(PATH_TO_DARWIN_DIST_PROPERTY) as? String
 //private val Project.pathToHostDistProperty: String?
 //    get() = kotlinBuildProperties.getOrNull(PATH_TO_HOST_DIST_PROPERTY) as? String
 
-private val Project.darwinDistFile: File
+val Project.darwinDistFile: File
     get() = rootProject.rootDir.resolve(File(pathToDarwinDistProperty!!))
 //private val Project.hostDistFile: File
 //    get() = rootProject.rootDir.resolve(File(pathToHostDistProperty!!))
