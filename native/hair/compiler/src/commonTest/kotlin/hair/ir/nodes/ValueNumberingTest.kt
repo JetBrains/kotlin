@@ -14,7 +14,7 @@ class ValueNumberingTest : IrTest {
             val c1 = ConstI(0)
             val c2 = ConstI(0)
             assertSame(c1, c2)
-            BlockEntry()
+            ReturnVoid()
         }
     }
 
@@ -29,8 +29,10 @@ class ValueNumberingTest : IrTest {
             val a2 = Add(INT)(p0, p2) as Add
             assertNotSame(a1, a2)
 
-            val u1 = Use(a1)
-            val u2 = Use(a2)
+            val u1 = Use(a1) as Use
+            val u2 = Use(a2) as Use
+
+            ReturnVoid()
 
             modifyIR {
                 a2.rhs = p1

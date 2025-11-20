@@ -25,16 +25,7 @@ fun Session.cloneNodes(originals: Sequence<Node>, replacementProvider: (Node) ->
             replacements[original] = replacement
             replacement
         } else {
-            // TODO common base type for all nested projections
-            if (original is IfProjection) {
-                val ifClone = cloneShallow(original.owner) as If
-                when (original) {
-                    is If.True -> ifClone.trueExit
-                    is If.False -> ifClone.falseExit
-                }
-            } else {
-                original.accept(shallowCloner)
-            }
+            original.accept(shallowCloner)
         }
     }
 

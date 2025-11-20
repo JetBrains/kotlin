@@ -24,7 +24,7 @@ class InlineTest : AbstractInlinerTest {
         lateinit var call: InvokeStatic
         val caller = define(Fun("caller")) {
             // FIXME varargs :c
-            call = InvokeStatic(callee.function)(callArgs = arrayOf(ConstI(42)))
+            call = InvokeStatic(callee.function)(callArgs = arrayOf(ConstI(42))) as InvokeStatic
             Use(call)
             ReturnVoid()
         }
@@ -55,7 +55,7 @@ class InlineTest : AbstractInlinerTest {
         lateinit var call: InvokeStatic
         val caller = define(Fun("caller")) {
             // FIXME varargs :c
-            call = InvokeStatic(callee.function)(callArgs = arrayOf(ConstI(1), ConstI(2), ConstI(3)))
+            call = InvokeStatic(callee.function)(callArgs = arrayOf(ConstI(1), ConstI(2), ConstI(3))) as InvokeStatic
             Use(call)
             ReturnVoid()
         }

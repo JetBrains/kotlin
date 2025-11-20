@@ -70,7 +70,7 @@ internal class HairToBitcode(
                 }
                 // FIXME codegen inserts additional blocks (e.g. around calls)
                 //     so we can't rely on blocks map above to get the llvm's block of a random node
-                val blockEndBlocks = mutableMapOf<BlockEnd, LLVMBasicBlockRef>()
+                val blockExitBlocks = mutableMapOf<BlockExit, LLVMBasicBlockRef>()
                 val nodeValues = mutableMapOf<Node, LLVMValueRef>()
                 val deferredPhies = mutableListOf<Phi>()
 
@@ -113,24 +113,44 @@ internal class HairToBitcode(
                                     null
                                 }
                                 is Goto -> {
-                                    val bb = basicBlock("blockEnd_${node.id}", null)
+                                    val bb = basicBlock("blockExit_${node.id}", null)
                                     br(bb)
-                                    blockEndBlocks[node] = bb
+                                    blockExitBlocks[node] = bb
                                     appendingTo(bb) {
                                         br(blocks[node.next]!!)
                                     }
                                     null
                                 }
                                 is If -> {
-                                    val bb = basicBlock("blockEnd_${node.id}", null)
-                                    br(bb)
-                                    blockEndBlocks[node] = bb
-                                    appendingTo(bb) {
+                                    if (node.trueExit.next == node.falseExit.next) {
+                                        // Hack for the case when true and false targets are the same - llvm does not support this.
+                                        val trueBB = basicBlock("trueExit_${node.id}", null)
+                                        blockExitBlocks[node.trueExit] = trueBB
+                                        val falseBB = basicBlock("falseExit_${node.id}", null)
+                                        blockExitBlocks[node.falseExit] = falseBB
                                         condBr(
                                                 trunc(nodeValues[node.cond]!!, llvm.int1Type),
-                                                blocks[node.trueExit.next]!!,
-                                                blocks[node.falseExit.next]
+                                                trueBB,
+                                                falseBB
                                         )
+                                        appendingTo(trueBB) {
+                                            br(blocks[node.trueExit.next]!!)
+                                        }
+                                        appendingTo(falseBB) {
+                                            br(blocks[node.falseExit.next]!!)
+                                        }
+                                    } else {
+                                        val bb = basicBlock("blockEnd_${node.id}", null)
+                                        br(bb)
+                                        blockExitBlocks[node.trueExit] = bb
+                                        blockExitBlocks[node.falseExit] = bb
+                                        appendingTo(bb) {
+                                            condBr(
+                                                    trunc(nodeValues[node.cond]!!, llvm.int1Type),
+                                                    blocks[node.trueExit.next]!!,
+                                                    blocks[node.falseExit.next]!!
+                                            )
+                                        }
                                     }
                                 }
                                 is IfProjection -> null
@@ -168,6 +188,7 @@ internal class HairToBitcode(
                                     }
                                 }
                                 is UnitValue -> codegen.theUnitInstanceRef.llvm
+                                is Unreachable -> unreachable()
                                 else -> TODO(node.toString())
                             }
                             if (value != null) {
@@ -184,7 +205,7 @@ internal class HairToBitcode(
                     val llvmPhi = nodeValues[phi]!!
 
                     val incoming = phi.inputs.map { (value, blockExit) ->
-                        val inBlock = blockEndBlocks[blockExit.blockEnd]!!
+                        val inBlock = blockExitBlocks[blockExit] ?: error("Node BB for $blockExit")
                         val inValue = nodeValues[value] ?: error("No value generated for input $value of $phi")
                         inBlock to inValue
                     }

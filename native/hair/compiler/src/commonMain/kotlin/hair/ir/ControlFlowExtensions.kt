@@ -11,13 +11,15 @@ val ControlFlow.block: BlockEntry get() = generateSequence(this) { when (it) {
     is Controlled -> it.control
     is Projection -> it.owner
     is Unwind -> it.thrower.block
+    is Unreachable -> error("Should not reach here")
 }}.last() as BlockEntry
 
 val BlockEntry.phies: Sequence<Phi>
     get() = uses.asSequence().filterIsInstance<Phi>()
 
 // FIXME always use the first use slot?
-val Controlling.next: Controlled get() = uses.first { it is Controlled && it.control == this } as Controlled
+val Controlling.nextOrNull: Controlled? get() = uses.firstOrNull { it is Controlled && it.control == this }?.let { it as Controlled }
+val Controlling.next: Controlled get() = nextOrNull!!
 
 val BlockExit.next: BlockEntry get() = uses.filterIsInstance<BlockEntry>().single()
 
@@ -43,14 +45,18 @@ val BlockExit.blockEnd: BlockEnd
         is BlockEnd -> this
         is IfProjection -> owner
         is Unwind -> error("Should not reach here") // FIXME
+        is Unreachable -> error("Should not reach here")
     }
+
+val If.trueExit: TrueExit get() = uses.single { it is TrueExit } as TrueExit
+val If.falseExit: FalseExit get() = uses.single { it is FalseExit } as FalseExit
 
 // TODO cache in block ?
 val BlockEntry.blockEndOrNull: BlockEnd?
     get() = spine.lastOrNull() as? BlockEnd
 
 val BlockEntry.predBlock: Sequence<BlockEntry>
-    get() = preds.asSequence().map { it.block }
+    get() = preds.asSequence().filter { it !is Unreachable }.map { it.block }
 
 val BlockEntry.exits: Sequence<BlockExit>
     get() = spine.flatMap {
@@ -63,7 +69,10 @@ val BlockEntry.exits: Sequence<BlockExit>
     }
 
 val BlockEntry.nextBlocks: Sequence<BlockEntry>
-    get() = exits.map { it.next }
+    get() = run {
+        println("Asking nextBlocks after $this exits: ${exits.toList()} their uses: ${exits.flatMap { it.uses }.toList()}")
+        exits.map { it.next }
+    }
 
 fun Session.cfg(): FlowGraph<BlockEntry> = object : FlowGraph<BlockEntry> {
     override val root = entry

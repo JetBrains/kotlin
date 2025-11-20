@@ -5,34 +5,37 @@
 
 package hair.opt
 
+import hair.graph.dfs
 import hair.ir.*
 import hair.ir.nodes.*
 import hair.ir.spine
 import hair.utils.forEachInWorklist
+import hair.utils.isEmpty
 
 context(_: NodeBuilder, _: ArgsUpdater)
-fun Session.eliminateDead() {
-//    forEachInWorklist(allNodes<BlockEntry>().filter { it != entry && it.preds.isEmpty }) {
-//        // FIXME nulls?
-//        if (it.registered && it.preds.withNulls.filterNotNull().isEmpty()) {
-//            for (exit in it.exits.toList()) {
-//                val next = exit.next
-//                add(next)
-//                for ((index, pred) in next.preds.withIndex()) {
-//                    if (pred == exit) {
-//                        next.preds[index] = null
-//                    }
-//                }
-//            }
-//            for (node in it.spine.toList().reversed()) {
-//                if (node is If) {
-//                    for (proj in node.uses.toList()) {
-//                        proj.deregister()
-//                    }
-//                }
-//                node.replaceValueUsesAndKill(NoValue())
-//            }
-//            it.deregister()
-//        }
-//    }
+fun Session.eliminateDeadBlocks() {
+    val alive = dfs(cfg()).toList()
+    val dead = allNodes<BlockEntry>().filter { it !in alive }.toList()
+    for (block in dead) {
+        if (!block.registered) continue
+        block.nextOrNull?.let {
+            it.control = unreachable
+        }
+        block.replaceValueUsesAndKill(NoValue())
+    }
+}
+
+context(_: ArgsUpdater)
+fun Session.eliminateDeadFoam() {
+    forEachInWorklist(allNodes()) { node ->
+        // FIXME what about cyclic dependencies?
+        // FIXME maybe find common grounds for control flow handling
+        if (node !is ControlFlow && node.uses.isEmpty()) {
+            // FIXME fix this registered/deregistered mess
+            if (node.registered) {
+                addAll(node.args.filterNotNull())
+                node.deregister()
+            }
+        }
+    }
 }

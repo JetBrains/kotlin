@@ -14,6 +14,10 @@ object ControlFlow : ModelDSL() {
     val throwing by nodeInterface(controlFlow)
     val blockExit by nodeInterface(controlFlow)
 
+    val unreachable by node {
+        interfaces(controlling, blockExit)
+    }
+
     val blockEntry by node {
         interfaces(controlling)
         variadicParam("preds", blockExit)
@@ -44,16 +48,17 @@ object ControlFlow : ModelDSL() {
     }
 
     val `if` by node(blockEnd) {
-        val ifNode = this
-        val ifProjection by abstractClass {
-            interfaces(projection)
-            interfaces(blockExit)
-            param("owner", ifNode)
-        }
-        nestedProjection("trueExit", "True", ifProjection)
-        nestedProjection("falseExit", "False", ifProjection)
         param("cond")
     }
+
+    val ifProjection by abstractClass {
+        interfaces(projection)
+        interfaces(blockExit)
+        param("owner", `if`)
+    }
+
+    val TrueExit by node(ifProjection)
+    val FalseExit by node(ifProjection)
 
     val `throw` by node(blockEnd) {
         interfaces(throwing)
