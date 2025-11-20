@@ -321,14 +321,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 invalidateTemporaries()
             }
 
-            override fun visitForIn(x: JsForIn) {
-                handleExpression(x.iterableExpression)
-                invalidateTemporaries()
-                accept(x.body)
-                invalidateTemporaries()
-            }
-
-            override fun visitForOf(x: JsForOf) {
+            override fun visitIterableLoop(x: JsIterableLoop) {
                 handleExpression(x.iterableExpression)
                 invalidateTemporaries()
                 accept(x.body)

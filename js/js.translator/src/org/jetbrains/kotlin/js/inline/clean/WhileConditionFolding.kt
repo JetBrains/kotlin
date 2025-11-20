@@ -232,15 +232,9 @@ class WhileConditionFolding(val body: JsBlock) {
                 level--
             }
 
-            override fun visitForIn(x: JsForIn) {
+            override fun visitIterableLoop(x: JsIterableLoop) {
                 level++
-                super.visitForIn(x)
-                level--
-            }
-
-            override fun visitForOf(x: JsForOf) {
-                level++
-                super.visitForOf(x)
+                super.visitIterableLoop(x)
                 level--
             }
 
