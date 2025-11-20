@@ -103,6 +103,7 @@ class ClassicTypeSystemContextForCS(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean,
+        customSubtypeCallback: ((KotlinTypeMarker, KotlinTypeMarker) -> Boolean?)?,
     ): TypeCheckerState {
         return createClassicTypeCheckerState(
             errorTypesEqualToAnything,
