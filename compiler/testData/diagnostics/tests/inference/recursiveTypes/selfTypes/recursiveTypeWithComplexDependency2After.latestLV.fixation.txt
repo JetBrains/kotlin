@@ -10,8 +10,8 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: kotlin/String
      = kotlin/String (inferred during fixation)
@@ -28,8 +28,8 @@ TypeVariable(Id) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
 ********************************
 CHOSEN for fixation: TypeVariable(Id) --- Readiness(
@@ -44,8 +44,8 @@ CHOSEN for fixation: TypeVariable(Id) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
     FIXED TO: ERROR CLASS: Cannot infer argument for type parameter Id
 ********************************
@@ -61,8 +61,8 @@ CHOSEN for fixation: TypeVariable(Id) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
     FIXED TO: ERROR CLASS: Cannot infer argument for type parameter Id
 ********************************

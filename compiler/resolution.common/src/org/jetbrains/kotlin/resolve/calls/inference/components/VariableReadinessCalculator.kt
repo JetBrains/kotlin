@@ -58,8 +58,8 @@ class VariableReadinessCalculator(
 
         // *** The following block constitutes what "with complex dependency" used to mean in the old fixation code ***
         // Prioritizers needed for KT-67335 (the `greater.kt` case with ILTs).
-        HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT, // There's a constraint `T = ...` which doesn't depend on others.
         HAS_PROPER_NON_ILT_CONSTRAINT, // There's a constraint to types like `Long`, `Int`, etc.
+        HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT, // There's a constraint `T = ...` which doesn't depend on others.
         ;
 
         val mask by lazy { 1 shl (entries.lastIndex - ordinal) }

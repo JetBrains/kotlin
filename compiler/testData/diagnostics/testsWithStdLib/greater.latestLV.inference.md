@@ -29,8 +29,8 @@ Expression#(R|<local>/other|)
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
 
 ### Call 2
@@ -63,8 +63,8 @@ GreaterOp#(this@R|/greater|, R?C|/Expression.Expression|(R|<local>/other|))
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
 2. `TypeVariable(T) == T` _from Fix variable T_
 
@@ -121,8 +121,8 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
     1. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -136,8 +136,8 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-       	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
        )`
 2. `TypeVariable(S) == kotlin/Long` _from Fix variable S_
 3. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: TypeVariable(T)?`
@@ -164,8 +164,8 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
 
 ### Call 4
@@ -221,8 +221,8 @@ R|<local>/countExpr|.greater#(String(0))
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
     1. `TypeVariable(S)` is `Readiness(
        	 true ALLOWED
@@ -236,8 +236,8 @@ R|<local>/countExpr|.greater#(String(0))
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-       	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
        )`
 2. `TypeVariable(T) == kotlin/String` _from Fix variable T_
 3. Combine `TypeVariable(S) & Any <: TypeVariable(T)` with `TypeVariable(T) == kotlin/String`
@@ -259,8 +259,8 @@ R|<local>/countExpr|.greater#(String(0))
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
 7. __InferredEmptyIntersectionWarning__
 8. `TypeVariable(S) == it(kotlin/Long & kotlin/String)` _from Fix variable S_
@@ -326,8 +326,8 @@ R|<local>/countExpr|.greater#<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
     1. `TypeVariable(S)` is `Readiness(
        	 true ALLOWED
@@ -341,8 +341,8 @@ R|<local>/countExpr|.greater#<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
        )`
 2. `TypeVariable(T) == kotlin/String` _from Fix variable T_
 3. Combine `TypeVariable(S) & Any <: TypeVariable(T)` with `TypeVariable(T) == kotlin/String`
@@ -364,8 +364,8 @@ R|<local>/countExpr|.greater#<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
 7. `TypeVariable(S) == kotlin/Nothing` _from Fix variable S_
 8. Combine `TypeVariable(S) == kotlin/Nothing` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
