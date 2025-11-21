@@ -128,7 +128,6 @@ KtValueArgument(356,372): '"property $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -150,7 +149,6 @@ KtValueArgument(385,407): '"type parameter $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -172,7 +170,6 @@ KtValueArgument(419,432): '"bound $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -201,7 +198,6 @@ KtValueArgument(445,465): '"nested bound $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -230,7 +226,6 @@ KtValueArgument(491,507): '"receiver $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -252,7 +247,6 @@ KtValueArgument(515,536): '"receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -281,7 +275,6 @@ KtValueArgument(549,577): '"nested receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -310,7 +303,6 @@ KtValueArgument(607,626): '"return type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -339,7 +331,6 @@ KtValueArgument(645,671): '"nested return type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -368,7 +359,6 @@ KtValueArgument(684,717): '"nested nested return type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -397,7 +387,6 @@ KtValueArgument(736,750): '"getter $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -419,7 +408,6 @@ KtValueArgument(779,793): '"setter $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 
@@ -441,7 +429,6 @@ KtValueArgument(809,833): '"setter parameter $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       position: kotlin.String
 

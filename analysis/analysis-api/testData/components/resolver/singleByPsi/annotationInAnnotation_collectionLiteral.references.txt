@@ -9,6 +9,5 @@ KtValueArgument(131,156): 'Annotation(*["v1", "v2"])'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       value: Annotation

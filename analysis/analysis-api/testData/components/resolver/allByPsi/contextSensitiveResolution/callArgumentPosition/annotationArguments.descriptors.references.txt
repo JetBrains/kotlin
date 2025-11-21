@@ -16,7 +16,6 @@ KtValueArgument(161,162): 'X'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -84,7 +83,6 @@ KtValueArgument(263,270): '*[X, Y]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -146,7 +144,6 @@ KtValueArgument(346,349): '[X]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -181,7 +178,6 @@ KtValueArgument(371,381): 'arrayOf(X)'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -209,7 +205,6 @@ KtValueArgument(379,380): 'X'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -244,7 +239,6 @@ KtValueArgument(447,456): 'MAX_VALUE'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -272,7 +266,6 @@ KtValueArgument(484,491): 'RUNTIME'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 

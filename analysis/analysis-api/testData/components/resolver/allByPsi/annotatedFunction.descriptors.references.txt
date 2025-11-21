@@ -134,7 +134,6 @@ KtValueArgument(265,281): '"function $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -162,7 +161,6 @@ KtValueArgument(294,316): '"type parameter $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -190,7 +188,6 @@ KtValueArgument(328,346): '"bound type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -225,7 +222,6 @@ KtValueArgument(359,384): '"nested bound type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -254,7 +250,6 @@ KtValueArgument(410,426): '"receiver $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -282,7 +277,6 @@ KtValueArgument(434,455): '"receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -317,7 +311,6 @@ KtValueArgument(468,496): '"nested receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -346,7 +339,6 @@ KtValueArgument(509,544): '"nested nested receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -375,7 +367,6 @@ KtValueArgument(567,584): '"parameter $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -403,7 +394,6 @@ KtValueArgument(599,621): '"parameter type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -438,7 +428,6 @@ KtValueArgument(640,669): '"nested parameter type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -467,7 +456,6 @@ KtValueArgument(682,718): '"nested nested parameter type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -496,7 +484,6 @@ KtValueArgument(741,760): '"return type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -531,7 +518,6 @@ KtValueArgument(773,799): '"nested return type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -560,7 +546,6 @@ KtValueArgument(812,845): '"nested nested return type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -602,7 +587,6 @@ KtValueArgument(877,900): '"constraint type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -637,7 +621,6 @@ KtValueArgument(919,949): '"nested constraint type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 

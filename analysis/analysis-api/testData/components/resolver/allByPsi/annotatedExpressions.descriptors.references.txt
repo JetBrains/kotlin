@@ -9,7 +9,6 @@ KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -50,7 +49,6 @@ KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -98,7 +96,6 @@ KtValueArgument(178,189): '0 + integer'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -133,7 +130,6 @@ KtValueArgument(198,205): 'integer'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [value] provided
     symbols:
       Nothing (Unresolved reference)
 

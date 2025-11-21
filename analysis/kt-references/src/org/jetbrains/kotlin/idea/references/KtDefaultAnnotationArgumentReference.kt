@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,7 +36,7 @@ class KtDefaultAnnotationArgumentReference(element: KtValueArgument) : AbstractK
         get() = Resolver
 
     override val resolvesByNames: Collection<Name>
-        get() = listOf(Name.identifier(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME))
+        get() = emptyList()
 
     override fun getRangeInElement() = TextRange.EMPTY_RANGE
 
