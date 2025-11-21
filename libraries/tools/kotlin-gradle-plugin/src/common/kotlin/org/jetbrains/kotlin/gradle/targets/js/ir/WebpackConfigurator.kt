@@ -294,7 +294,8 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
 
         if (delegateTranspilationToExternalTool) {
             with(rules.maybeCreate("swc", KotlinWebpackSwcRule::class.java)) {
-                enabled.set(true)
+                // We shouldn't run SWC if the configured target is the latest compiler supported target
+                enabled.set(esTarget.map { it != ES_2015 })
                 swcConfig.esTarget.set(esTarget)
                 swcConfig.moduleKind.set(moduleKind)
                 swcConfig.sourceMaps.set(compilerOptions.flatMap(KotlinJsCompilerOptions::sourceMap))
