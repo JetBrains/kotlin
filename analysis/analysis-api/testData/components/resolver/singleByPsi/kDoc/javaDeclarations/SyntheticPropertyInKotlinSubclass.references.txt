@@ -3,7 +3,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      resolvesByNamesViolations: 'getProp' !in [prop]
       symbols:
         (in dependency.JavaBase) open fun getProp(): kotlin.String!
 
@@ -12,6 +11,5 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      resolvesByNamesViolations: 'getProp' !in [prop]
       symbols:
         (in dependency.JavaBase) open fun getProp(): kotlin.String!

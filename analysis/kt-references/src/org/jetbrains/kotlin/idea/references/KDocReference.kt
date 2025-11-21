@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 
 abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(element) {
@@ -31,7 +32,11 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
                 return emptyList()
             }
 
-            return listOf(Name.identifier(name))
+            return listOfNotNull(
+                Name.identifier(name),
+                // A property might resolve into a getter function
+                JvmAbi.getterName(name).takeIf { it != name }?.let(Name::identifier),
+            )
         }
 }
 
