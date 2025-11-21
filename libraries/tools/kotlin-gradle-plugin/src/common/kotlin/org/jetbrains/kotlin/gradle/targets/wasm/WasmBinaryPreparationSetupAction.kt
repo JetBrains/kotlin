@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.JarToWasmBinaryRule
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.KlibToWasmBinaryCInteropRule
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform.Companion.ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
@@ -33,13 +33,9 @@ internal val WasmBinaryPreparationSetupAction = KotlinCompilationSideEffect { co
 
     project.dependencies.artifactTypes.maybeCreate(ARTIFACT_TYPE)
 
-    project.dependencies.attributesSchema.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE) {
-        it.compatibilityRules.add(JarToWasmBinaryRule::class.java)
-    }
-
-    project.dependencies.attributesSchema.attribute(CInteropCommonizerArtifactTypeAttribute.attribute) {
-        it.compatibilityRules.add(KlibToWasmBinaryCInteropRule::class.java)
-    }
+//    project.dependencies.attributesSchema.attribute(WasmBinaryAttribute.attribute) {
+//        it.compatibilityRules.add(JarToWasmBinaryRule::class.java)
+//    }
 
     project.configurations.maybeCreateResolvable(compilation.wasmBinaryConfigurationName) {
         description = "Elements of runtime for main."
@@ -47,8 +43,7 @@ internal val WasmBinaryPreparationSetupAction = KotlinCompilationSideEffect { co
         isVisible = false
         KotlinUsages.configureProducerRuntimeUsage(this, target)
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ARTIFACT_TYPE)
-        attributes.attribute(CInteropCommonizerArtifactTypeAttribute.attribute, ARTIFACT_TYPE)
+        attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY)
         val runtimeConfiguration = compilation.internal.configurations.deprecatedRuntimeConfiguration
         extendsFrom(runtime)
         runtimeConfiguration?.let { extendsFrom(it) }

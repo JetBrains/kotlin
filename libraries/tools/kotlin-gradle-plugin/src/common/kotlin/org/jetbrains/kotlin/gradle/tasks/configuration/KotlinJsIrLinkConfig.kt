@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.NoOpWasmBinaryTransform
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute.WASM_BINARY
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform
@@ -63,23 +64,25 @@ internal open class KotlinJsIrLinkConfig(
 
             WasmBinaryAttribute.setupTransform(task.project)
 
-            project.dependencies.registerTransformForArtifactType(
-                WasmBinaryTransform::class.java,
-                fromArtifactType = "jar",
-                toArtifactType = WASM_BINARY,
-            ) { transform ->
-                transform.from.attributes.attribute(WasmBinaryAttribute.attribute, WASM_BINARY)
-                transform.to.attributes.attribute(
+            task.project.dependencies.registerTransform(
+                NoOpWasmBinaryTransform::class.java
+            ) {
+                it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY)
+                it.to.attributes.attribute(
                     WasmBinaryAttribute.attribute,
                     WasmBinaryAttribute.KLIB
                 )
             }
 
-            task.project.dependencies.registerTransformForArtifactType(
+            task.project.dependencies.registerTransform(
                 WasmBinaryTransform::class.java,
-                fromArtifactType = WasmBinaryAttribute.KLIB,
-                toArtifactType = WasmBinaryAttribute.WASM_BINARY,
             ) {
+                it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.KLIB)
+                it.to.attributes.attribute(
+                    WasmBinaryAttribute.attribute,
+                    WasmBinaryAttribute.WASM_BINARY
+                )
+
                 it.parameters {
                     it.currentJvmJdkToolsJar.set(
                         task.defaultKotlinJavaToolchain
