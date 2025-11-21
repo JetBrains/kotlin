@@ -5,19 +5,13 @@
 
 package org.jetbrains.kotlin.buildtools.options.generator
 
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.MemberName
-import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.*
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
-import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.cli.arguments.generator.calculateName
+import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
 import kotlin.reflect.KType
-import kotlin.reflect.typeOf
 
 /**
  * Public facade used by the build-tools options generator. Wraps the single source of truth (arguments DSL)
@@ -71,19 +65,28 @@ sealed class BtaCompilerArgumentValueType(
 ) {
     class SSoTCompilerArgumentValueType(
         val origin: KotlinArgumentValueType<*>
-    ) : BtaCompilerArgumentValueType(isNullable = origin.isNullable.current)
+    ) : BtaCompilerArgumentValueType(isNullable = origin.isNullable.current) {
+        val kType: KType
+            get() = origin::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!
+    }
 
     class CustomArgumentValueType(
-        val type: KType,
-        isNullable: Boolean = false,
-    ) : BtaCompilerArgumentValueType(isNullable = isNullable)
+        val type: TypeName,
+    ) : BtaCompilerArgumentValueType(isNullable = type.isNullable)
 }
 
 object CustomCompilerArguments {
     val compilerPlugins = BtaCompilerArgument.CustomCompilerArgument(
         name = "compiler-plugins",
         description = "List of compiler plugins to load for this compilation.",
-        valueType = BtaCompilerArgumentValueType.CustomArgumentValueType(type = typeOf<List<CompilerPlugin>>(), isNullable = false),
+        valueType = BtaCompilerArgumentValueType.CustomArgumentValueType(
+            type = listTypeNameOf(
+                ClassName(
+                    API_ARGUMENTS_PACKAGE,
+                    "CompilerPlugin"
+                )
+            ),
+        ),
         introducedSinceVersion = KotlinReleaseVersion.v2_3_20,
         deprecatedSinceVersion = null,
         removedSinceVersion = null,

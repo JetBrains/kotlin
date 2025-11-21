@@ -279,6 +279,33 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArgum
 public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$Companion {
 }
 
+public class org/jetbrains/kotlin/buildtools/api/arguments/CompilerPlugin {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Set;)V
+	public final fun getClasspath ()Ljava/util/List;
+	public final fun getOrderingRequirements ()Ljava/util/Set;
+	public final fun getPluginId ()Ljava/lang/String;
+	public final fun getRawArguments ()Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/CompilerPluginOption {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/CompilerPluginPartialOrder {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/arguments/CompilerPluginPartialOrderRelation;Ljava/lang/String;)V
+	public final fun getOtherPluginId ()Ljava/lang/String;
+	public final fun getRelation ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CompilerPluginPartialOrderRelation;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/CompilerPluginPartialOrderRelation : java/lang/Enum {
+	public static final field AFTER Lorg/jetbrains/kotlin/buildtools/api/arguments/CompilerPluginPartialOrderRelation;
+	public static final field BEFORE Lorg/jetbrains/kotlin/buildtools/api/arguments/CompilerPluginPartialOrderRelation;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/CompilerPluginPartialOrderRelation;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/CompilerPluginPartialOrderRelation;
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/arguments/ExperimentalCompilerArgument : java/lang/annotation/Annotation {
 }
 
