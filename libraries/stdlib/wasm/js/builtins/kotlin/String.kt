@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("OPT_IN_USAGE")
+@file:Suppress("OPT_IN_USAGE", "OVERRIDE_BY_INLINE")
 
 package kotlin
 
@@ -19,7 +19,6 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 ) : Comparable<String>, CharSequence {
     public actual companion object {}
 
-    @Suppress("OVERRIDE_BY_INLINE")
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override inline val length: Int
         get() = jsLength(internalStr)
@@ -84,11 +83,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
         if (other === this) return true
         val otherString = other as? String ?: return false
 
-        val thisLength = this.length
-        val otherLength = otherString.length
-        if (thisLength != otherLength) return false
-
-        return jsEquals(this.internalStr, other.internalStr) == 1
+        return jsEquals(this.internalStr, otherString.internalStr) == 1
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
