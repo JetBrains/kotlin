@@ -15,12 +15,13 @@ import kotlin.wasm.internal.*
  */
 
 public actual class String internal @WasmPrimitiveConstructor constructor(
-    internal val internalStr: JsString
+    @PublishedApi internal val internalStr: JsString
 ) : Comparable<String>, CharSequence {
     public actual companion object {}
 
+    @Suppress("OVERRIDE_BY_INLINE")
     @kotlin.internal.IntrinsicConstEvaluation
-    public actual override val length: Int
+    public actual override inline val length: Int
         get() = jsLength(internalStr)
 
     /**

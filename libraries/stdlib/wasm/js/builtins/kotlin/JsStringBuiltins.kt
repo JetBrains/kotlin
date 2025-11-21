@@ -13,6 +13,7 @@ import kotlin.wasm.internal.WasmCharArray
 
 
 @kotlin.internal.IntrinsicConstEvaluation
+@PublishedApi
 @JsBuiltin(
     "js-string",
     "length",
