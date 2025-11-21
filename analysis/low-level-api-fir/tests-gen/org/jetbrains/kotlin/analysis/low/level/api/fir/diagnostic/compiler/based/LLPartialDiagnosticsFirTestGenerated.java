@@ -1663,6 +1663,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("throwableJavaSam.kt")
+        public void testThrowableJavaSam() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/throwableJavaSam.kt");
+        }
+
+        @Test
         @TestMetadata("typeParameterReturnTypeVsList.kt")
         public void testTypeParameterReturnTypeVsList() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/typeParameterReturnTypeVsList.kt");
