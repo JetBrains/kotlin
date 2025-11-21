@@ -211,7 +211,7 @@ open class KtLightClassForDecompiledDeclaration(
     }
 
     override val originKind: LightClassOriginKind = LightClassOriginKind.BINARY
-    override fun getNavigationElement() = kotlinOrigin?.navigationElement ?: file
+    override fun getNavigationElement() = kotlinOrigin?.navigationElement ?: file.declarations.firstOrNull()?.navigationElement ?: file
 
     override fun equals(other: Any?): Boolean {
         return this === other || other is KtLightClassForDecompiledDeclaration &&
