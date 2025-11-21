@@ -84,8 +84,11 @@ fun FirSessionConfigurator.registerWasmCheckers(target: WasmTarget) {
             useCheckers(WasmJsDeclarationCheckers)
             useCheckers(WasmJsExpressionCheckers)
         }
-        WasmTarget.WASI, WasmTarget.SPEC -> {
+        WasmTarget.WASI -> {
             useCheckers(WasmWasiDeclarationCheckers)
+        }
+        WasmTarget.SPEC -> {
+            useCheckers(WasmSpecDeclarationCheckers)
         }
     }
 }

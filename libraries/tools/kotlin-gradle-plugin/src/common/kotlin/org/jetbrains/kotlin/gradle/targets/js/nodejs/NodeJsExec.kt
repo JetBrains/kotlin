@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import javax.inject.Inject
+import kotlin.collections.listOf
 
 @DisableCachingByDefault
 abstract class NodeJsExec
@@ -140,7 +141,7 @@ constructor(
                 it.versions.value(nodeJsRoot.versions)
                     .disallowChanges()
                 it.executable = nodeJsEnvSpec.executable.get()
-                if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                if (compilation.target.wasmTargetType !in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
                     it.workingDir(npmProject.dir)
                     it.dependsOn(
                         nodeJsRoot.npmInstallTaskProvider,

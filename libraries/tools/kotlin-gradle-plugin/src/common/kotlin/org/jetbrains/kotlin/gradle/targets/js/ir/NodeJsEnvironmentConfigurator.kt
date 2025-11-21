@@ -31,11 +31,11 @@ class NodeJsEnvironmentConfigurator(subTarget: KotlinJsIrSubTarget) :
         return NodeJsExec.register(compilation, binaryRunName) {
             group = subTarget.taskGroupName
 
-            if (subTarget.target.wasmTargetType == KotlinWasmTargetType.WASI) {
+            if (subTarget.target.wasmTargetType in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
                 sourceMapStackTraces = false
             }
 
-            val inputFile = if (compilation.target.wasmTargetType == KotlinWasmTargetType.WASI) {
+            val inputFile = if (compilation.target.wasmTargetType in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
                 if (binary is ExecutableWasm && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
                     dependsOn(binary.optimizeTask)
                     binary.mainOptimizedFile

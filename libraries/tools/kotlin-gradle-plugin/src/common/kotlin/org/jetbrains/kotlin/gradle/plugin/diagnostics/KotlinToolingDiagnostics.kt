@@ -826,6 +826,8 @@ internal object KotlinToolingDiagnostics {
 
     object WasmWasiEnvironmentNotChosenExplicitly : JsLikeEnvironmentNotChosenExplicitly("WebAssembly WASI", "wasmWasi")
 
+    object WasmSpecEnvironmentNotChosenExplicitly : JsLikeEnvironmentNotChosenExplicitly("WebAssembly SPEC", "wasmSpec")
+
     object PreHmppDependenciesUsedInBuild : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke(dependencyName: String) = build {
             title("Deprecated Legacy Mode Dependency")

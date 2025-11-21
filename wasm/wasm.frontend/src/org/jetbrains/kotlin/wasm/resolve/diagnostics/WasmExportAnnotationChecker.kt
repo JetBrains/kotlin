@@ -52,3 +52,5 @@ abstract class WasmExportAnnotationChecker(val checkJsInterop: Boolean) : Declar
 object WasmJsExportChecker : WasmExportAnnotationChecker(checkJsInterop = true)
 
 object WasmWasiExportChecker : WasmExportAnnotationChecker(checkJsInterop = false)
+
+object WasmSpecExportChecker : WasmExportAnnotationChecker(checkJsInterop = false)

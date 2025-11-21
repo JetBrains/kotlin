@@ -51,3 +51,10 @@ object WasmWasiDeclarationCheckers : DeclarationCheckers() {
             FirWasmWasiExternalDeclarationChecker,
         )
 }
+
+object WasmSpecDeclarationCheckers : DeclarationCheckers() {
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
+        get() = setOf(
+            FirWasmWasiExternalDeclarationChecker,
+        )
+}

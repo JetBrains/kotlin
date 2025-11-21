@@ -130,5 +130,6 @@ internal val konanTargetNameMapping = mapOf(
     "linux_arm32_hfp" to "linuxArm32Hfp",
     "mingw_x86" to "mingwX86",
     "wasm-wasi" to "wasmWasi",
+    "wasm-spec" to "wasmSpec",
     "wasm-js" to "wasmJs"
 )

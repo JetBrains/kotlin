@@ -27,6 +27,7 @@ object CommonPlatforms {
             defaultJsPlatform.single(),
             WasmPlatforms.wasmJs.single(),
             WasmPlatforms.wasmWasi.single(),
+            WasmPlatforms.wasmSpec.single(),
             unspecifiedNativePlatform.single()
         )
     ), org.jetbrains.kotlin.analyzer.common.CommonPlatform {

@@ -34,6 +34,7 @@ object WasmPlatforms {
 
     val wasmJs = platforms[WasmTarget.JS]!!
     val wasmWasi = platforms[WasmTarget.WASI]!!
+    val wasmSpec = platforms[WasmTarget.SPEC]!!
 
     fun wasmPlatformByTargetVersion(targetVersion: WasmTarget): TargetPlatform =
         platforms[targetVersion]!!
@@ -64,4 +65,8 @@ fun TargetPlatform?.isWasmJs(): Boolean {
 fun TargetPlatform?.isWasmWasi(): Boolean {
     val platform = this?.singleOrNull()
     return platform is WasmPlatformWithTarget && platform.target == WasmTarget.WASI
+}
+fun TargetPlatform?.isWasmSpec(): Boolean {
+    val platform = this?.singleOrNull()
+    return platform is WasmPlatformWithTarget && platform.target == WasmTarget.SPEC
 }

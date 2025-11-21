@@ -60,6 +60,20 @@
           "commonNonJvmMain",
           "commonMain"
         ]
+      },
+      {
+        "name": "wasmSpecApiElements",
+        "sourceSet": [
+          "commonNonJvmMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "wasmSpecRuntimeElements",
+        "sourceSet": [
+          "commonNonJvmMain",
+          "commonMain"
+        ]
       }
     ],
     "sourceSets": [

@@ -26,3 +26,10 @@ object WasmWasiPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     val builtIns: KotlinBuiltIns
         get() = DefaultBuiltIns.Instance
 }
+
+object WasmSpecPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
+    override val platformConfigurator: PlatformConfigurator = WasmSpecPlatformConfigurator
+    override val defaultImportsProvider: DefaultImportsProvider = WasmSpecDefaultImportsProvider
+    val builtIns: KotlinBuiltIns
+        get() = DefaultBuiltIns.Instance
+}

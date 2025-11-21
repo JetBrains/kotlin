@@ -52,6 +52,7 @@ abstract class IdePlatformKind {
                 JsIdePlatformKind,
                 WasmJsIdePlatformKind,
                 WasmWasiIdePlatformKind,
+                WasmSpecIdePlatformKind,
                 CommonIdePlatformKind,
                 NativeIdePlatformKind
             )

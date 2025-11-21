@@ -434,6 +434,53 @@ private val rootVariantsSharedByAllPublications = mutableSetOf(
         ),
         name = "wasmWasiSourcesElements-published",
     ),
+    Variant(
+        attributes = mutableMapOf(
+            "org.gradle.category" to "library",
+            "org.gradle.jvm.environment" to "non-jvm",
+            "org.gradle.usage" to "kotlin-api",
+            "org.jetbrains.kotlin.platform.type" to "wasm",
+            "org.jetbrains.kotlin.wasm.target" to "spec",
+        ),
+        availableAt = ComponentPointer(
+            url = "../../empty-wasm-spec/1.0/empty-wasm-spec-1.0.module",
+        ),
+        files = mutableListOf(
+        ),
+        name = "wasmSpecApiElements-published",
+    ),
+    Variant(
+        attributes = mutableMapOf(
+            "org.gradle.category" to "library",
+            "org.gradle.jvm.environment" to "non-jvm",
+            "org.gradle.usage" to "kotlin-runtime",
+            "org.jetbrains.kotlin.platform.type" to "wasm",
+            "org.jetbrains.kotlin.wasm.target" to "spec",
+        ),
+        availableAt = ComponentPointer(
+            url = "../../empty-wasm-spec/1.0/empty-wasm-spec-1.0.module",
+        ),
+        files = mutableListOf(
+        ),
+        name = "wasmSpecRuntimeElements-published",
+    ),
+    Variant(
+        attributes = mutableMapOf(
+            "org.gradle.category" to "documentation",
+            "org.gradle.dependency.bundling" to "external",
+            "org.gradle.docstype" to "sources",
+            "org.gradle.jvm.environment" to "non-jvm",
+            "org.gradle.usage" to "kotlin-runtime",
+            "org.jetbrains.kotlin.platform.type" to "wasm",
+            "org.jetbrains.kotlin.wasm.target" to "spec",
+        ),
+        availableAt = ComponentPointer(
+            url = "../../empty-wasm-spec/1.0/empty-wasm-spec-1.0.module",
+        ),
+        files = mutableListOf(
+        ),
+        name = "wasmSpecSourcesElements-published",
+    ),
 )
 
 private val standardKmpPublicationMetadataVariants = mutableSetOf(

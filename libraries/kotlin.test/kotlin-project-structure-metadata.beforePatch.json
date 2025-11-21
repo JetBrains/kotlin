@@ -64,6 +64,22 @@
           "commonMain",
           "annotationsCommonMain"
         ]
+      },
+      {
+        "name": "wasmSpecApiElements",
+        "sourceSet": [
+          "assertionsCommonMain",
+          "commonMain",
+          "annotationsCommonMain"
+        ]
+      },
+      {
+        "name": "wasmSpecRuntimeElements",
+        "sourceSet": [
+          "assertionsCommonMain",
+          "commonMain",
+          "annotationsCommonMain"
+        ]
       }
     ],
     "sourceSets": [

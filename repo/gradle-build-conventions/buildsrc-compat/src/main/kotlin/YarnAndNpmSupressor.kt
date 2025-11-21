@@ -15,6 +15,7 @@ private val rootNpmRelatedTasks = setOf("kotlinNpmInstall", "kotlinStoreYarnLock
 private val allowImplicitDependOnNpmForTasks = setOf(
     "kotlinUpgradeYarnLock", "compileTestKotlinJs",
     "compileTestKotlinWasm", "compileTestKotlinWasmJs", "compileTestKotlinWasmWasi",
+//    "compileTestKotlinWasmSpec"
 )
 
 private fun findRootTasks(taskGraph: TaskExecutionGraph): List<Task> {

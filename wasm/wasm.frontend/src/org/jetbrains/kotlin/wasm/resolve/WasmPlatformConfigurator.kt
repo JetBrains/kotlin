@@ -91,3 +91,31 @@ object WasmWasiPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<ExpectedActualDeclarationChecker>()
     }
 }
+
+object WasmSpecPlatformConfigurator : PlatformConfiguratorBase(
+    additionalDeclarationCheckers = listOf(
+        JsRuntimeAnnotationChecker,
+        WasmImportAnnotationChecker,
+        WasmSpecExportChecker,
+        WasmSpecExternalDeclarationChecker,
+    ),
+    additionalCallCheckers = listOf(
+        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true)
+    ),
+) {
+    override fun configureModuleComponents(container: StorageComponentContainer) {
+        container.useImpl<WasmNameClashChecker>()
+        container.useImpl<WasmNameCharsChecker>()
+        container.useImpl<JsReflectionAPICallChecker>()
+        container.useImpl<JsNativeRttiChecker>()
+        container.useImpl<JsReifiedNativeChecker>()
+        container.useInstance(ExtensionFunctionToExternalIsInlinable)
+        container.useInstance(JsQualifierChecker)
+        container.useInstance(WasmDiagnosticSuppressor)
+    }
+
+    override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
+        super.configureModuleDependentCheckers(container)
+        container.useImpl<ExpectedActualDeclarationChecker>()
+    }
+}
