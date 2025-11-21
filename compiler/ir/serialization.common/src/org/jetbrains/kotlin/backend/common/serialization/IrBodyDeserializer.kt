@@ -294,16 +294,28 @@ class IrBodyDeserializer(
         }
     }
 
-    fun deserializeAnnotation(proto: ProtoConstructorCall): IrConstructorCall {
-        // TODO: use real coordinates
-        val startOffset = 0
-        val endOffset = 0
-
+    fun deserializeAnnotation(proto: ProtoConstructorCall): IrAnnotation =
         if (settings.useNullableAnyAsAnnotationConstructorCallType)
-            return deserializeConstructorCall(proto, startOffset, endOffset, builtIns.anyNType)
+            deserializeAnnotation(proto, builtIns.anyNType)
         else {
             val irType = IrAnnotationType()
-            return deserializeConstructorCall(proto, startOffset, endOffset, irType).also { irType.irConstructorCall = it }
+            deserializeAnnotation(proto, irType).also { irType.irConstructorCall = it }
+        }
+
+
+    private fun deserializeAnnotation(proto: ProtoConstructorCall, type: IrType): IrAnnotation {
+        val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
+        // TODO: use real offsets
+        return IrAnnotationImplRaw(
+            0,
+            0,
+            type,
+            symbol,
+            proto.constructorTypeArgumentsCount,
+            deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName },
+            SourceElement.NO_SOURCE,
+        ).also {
+            deserializeMemberAccessCommon(it, proto.memberAccess)
         }
     }
 
