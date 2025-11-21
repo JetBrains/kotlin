@@ -255,7 +255,8 @@ class ConstraintInjector(
     ) : TypeCheckerStateForConstraintSystem(
         c,
         baseState.kotlinTypePreparator,
-        baseState.kotlinTypeRefiner
+        baseState.kotlinTypeRefiner,
+        baseState.customSubtypeCallback,
     ), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
         constructor(c: Context, position: IncorporationConstraintPosition) : this(
             c.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true),

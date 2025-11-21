@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.types.model.*
 abstract class TypeCheckerStateForConstraintSystem(
     val extensionTypeContext: TypeSystemInferenceExtensionContext,
     kotlinTypePreparator: AbstractTypePreparator,
-    kotlinTypeRefiner: AbstractTypeRefiner
+    kotlinTypeRefiner: AbstractTypeRefiner,
+    customSubtypeCallback: ((KotlinTypeMarker, KotlinTypeMarker) -> Boolean?)? = null
 ) : TypeCheckerState(
     isErrorTypeEqualsToAnything = true,
     isStubTypeEqualsToAnything = true,
@@ -22,7 +23,8 @@ abstract class TypeCheckerStateForConstraintSystem(
     allowedTypeVariable = false,
     typeSystemContext = extensionTypeContext,
     kotlinTypePreparator,
-    kotlinTypeRefiner
+    kotlinTypeRefiner,
+    customSubtypeCallback,
 ) {
     abstract val languageVersionSettings: LanguageVersionSettings
 
