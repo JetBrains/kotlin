@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-78832
 // FILE: JavaTransformer.java
 
@@ -26,7 +26,7 @@ fun foo(x: MyProvider<String>) {
     boo(barRes)
 
     val bazRes = baz { x } // resolved to (3) in K2 and to (4) in K1 with +DisableCompatibilityModeForNewInference
-    boo(<!ARGUMENT_TYPE_MISMATCH!>bazRes<!>) // Error only in K2
+    boo(bazRes) // Error only in K2
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funInterface, functionDeclaration, interfaceDeclaration,
