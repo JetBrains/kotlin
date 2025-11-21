@@ -1,7 +1,5 @@
 // KT-79359
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
-// IGNORE_BACKEND: JS_IR_ES6
-// ^ Regression with capturing of outer this in private members
 // WITH_STDLIB
 // WITH_COROUTINES
 

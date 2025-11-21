@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -187,8 +188,10 @@ open class InnerClassesMemberBodyLowering(val context: CommonBackendContext) : B
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
                 val origin = expression.origin
-                val function = (currentFunction?.irElement ?: enclosingFunction) as? IrFunction
-                val enclosingThisReceiver = function?.dispatchReceiverParameter ?: irClass.thisReceiver!!
+                val enclosingFunction = enclosingFunction as? IrFunction
+                val function = currentFunction?.irElement as? IrFunction ?: enclosingFunction
+                val enclosingThisReceiver =
+                    function?.dispatchReceiverParameter ?: enclosingFunction?.dispatchReceiverParameter ?: irClass.thisReceiver!!
 
                 var irThis: IrExpression = IrGetValueImpl(startOffset, endOffset, enclosingThisReceiver.symbol, origin)
                 var innerClass = irClass
