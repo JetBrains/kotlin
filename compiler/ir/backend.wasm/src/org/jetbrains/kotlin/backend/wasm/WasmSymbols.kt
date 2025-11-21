@@ -74,8 +74,7 @@ class WasmSymbols(
     val throwTypeCastWithInfoException = CallableIds.THROW_CCE_WITH_INFO.functionSymbol()
     override val throwIAE = CallableIds.THROW_IAE.functionSymbol()
     val throwNoBranchMatchedException = CallableIds.throwNoBranchMatchedException.functionSymbol()
-    override val throwKotlinNothingValueException: IrSimpleFunctionSymbol
-        get() = TODO()
+    override val throwKotlinNothingValueException = CallableIds.throwKotlinNothingValueException.functionSymbol()
     override val stringBuilder = ClassIds.StringBuilder.classSymbol()
     override val getContinuation = CallableIds.getContinuation.functionSymbol()
     override val returnIfSuspended = CallableIds.returnIfSuspended.functionSymbol()
@@ -409,6 +408,7 @@ private object CallableIds {
     val THROW_CCE_WITH_INFO = "THROW_CCE_WITH_INFO".wasmCallableId
     val THROW_IAE = "THROW_IAE".wasmCallableId
     val throwNoBranchMatchedException = "throwNoBranchMatchedException".wasmCallableId
+    val throwKotlinNothingValueException = "throwKotlinNothingValueException".wasmCallableId
     val getContinuation = "getContinuation".wasmCallableId
     val returnIfSuspended = "returnIfSuspended".wasmCallableId
     val enumValueOfIntrinsic = "enumValueOfIntrinsic".wasmCallableId

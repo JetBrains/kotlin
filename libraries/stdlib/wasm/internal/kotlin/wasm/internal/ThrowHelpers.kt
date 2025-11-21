@@ -53,6 +53,10 @@ internal fun throwNoBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
 
+internal fun throwKotlinNothingValueException(): Nothing {
+    throw KotlinNothingValueException()
+}
+
 internal fun rangeCheck(index: Int, size: Int) {
   if (index < 0 || index >= size) throw IndexOutOfBoundsException()
 }

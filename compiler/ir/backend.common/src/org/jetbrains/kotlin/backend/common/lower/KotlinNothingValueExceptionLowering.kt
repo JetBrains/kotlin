@@ -42,7 +42,7 @@ open class KotlinNothingValueExceptionLowering(
                 // Replace call 'foo' of type 'kotlin.Nothing' with a block:
                 //
                 //  {
-                //      [ call 'foo' with type: 'kotlin.Unit' ]
+                //      [ call 'foo' with type: 'kotlin.Nothing' ]
                 //      call ThrowKotlinNothingValueException(): Nothing
                 //  }: Nothing
                 //

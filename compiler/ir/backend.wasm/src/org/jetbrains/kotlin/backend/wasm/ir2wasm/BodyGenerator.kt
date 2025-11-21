@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -65,7 +66,19 @@ class BodyGenerator(
     internal fun generateExpression(expression: IrExpression) {
         expression.acceptVoid(this)
 
-        if (expression.type.isNothing()) {
+        // Checks if it is safe to assume the statement doesn't return
+        // (e.g. throws an exception or loops infinitely)
+        //
+        // Takes into account cases like `fun <T> foo(): T = Any() as
+        // T`, which could be used as `foo<Nothing>()` and terminate
+        // despite the call type `Nothing`.
+        //
+        // Assumes that only functions with explicit return type
+        // `Nothing` do not return.
+        //
+        // Also see KotlinNothingValueExceptionLowering.kt
+        if (expression.type.isNothing() &&
+                !(expression is IrCall && !expression.symbol.owner.returnType.isNothing())) {
             // TODO Ideally, we should generate unreachable only for specific cases and preferable on declaration site. 
             body.buildUnreachableAfterNothingType()
         }
@@ -74,7 +87,7 @@ class BodyGenerator(
     // Generates code for the given IR element but *never* leaves anything on the stack.
     private fun generateAsStatement(statement: IrExpression) {
         generateExpression(statement)
-        if (statement.type != wasmSymbols.voidType) {
+        if (statement.type != wasmSymbols.voidType && !statement.type.isNothing()) {
             body.buildDrop(SourceLocation.NoLocation("DROP"))
         }
     }

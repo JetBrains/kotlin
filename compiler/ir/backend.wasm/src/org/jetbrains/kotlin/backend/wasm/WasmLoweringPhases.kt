@@ -96,6 +96,11 @@ private val lateinitPhase = makeIrModulePhase(
     name = "LateinitLowering",
 )
 
+private val kotlinNothingValueExceptionPhase = makeIrModulePhase(
+    ::KotlinNothingValueExceptionLowering,
+    name = "KotlinNothingValueException",
+)
+
 private val rangeContainsLoweringPhase = makeIrModulePhase(
     ::RangeContainsLowering,
     name = "RangeContainsLowering",
@@ -679,6 +684,12 @@ fun getWasmLowerings(
         addContinuationToNonLocalSuspendFunctionsLoweringPhase,
         addContinuationToFunctionCallsLoweringPhase,
         generateMainFunctionWrappersPhase,
+
+        // We need to generate nothing value exceptions after suspend
+        // functions have been lowered so that suspend functions
+        // declared to return nothing get a chance to get lowered
+        // without the exception being inserted.
+        kotlinNothingValueExceptionPhase,
 
         invokeOnExportedFunctionExitLowering,
 
