@@ -1651,6 +1651,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("sumOfCase.kt")
+        public void testSumOfCase() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/sumOfCase.kt");
+        }
+
+        @Test
         @TestMetadata("suspendFunctionTypeVsRunnable.kt")
         public void testSuspendFunctionTypeVsRunnable() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/suspendFunctionTypeVsRunnable.kt");
