@@ -9,14 +9,12 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      resolvesByNamesViolations: 'getSomething' !in [something]
       symbols:
         (in JavaClass) open fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      resolvesByNamesViolations: 'setSomething' !in [something]
       symbols:
         (in JavaClass) open fun setSomething(value: kotlin.Int)
 
@@ -31,7 +29,6 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      resolvesByNamesViolations: 'setSomething' !in [something]
       symbols:
         (in JavaClass) open fun setSomething(value: kotlin.Int)
 
@@ -46,6 +43,5 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      resolvesByNamesViolations: 'setSomething' !in [something]
       symbols:
         (in JavaClass) open fun setSomething(value: kotlin.Int)
