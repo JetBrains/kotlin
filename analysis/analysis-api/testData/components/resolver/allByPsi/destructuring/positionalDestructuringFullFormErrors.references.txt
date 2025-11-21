@@ -44,7 +44,6 @@ KtDestructuringDeclarationEntry(230,239): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: declaration) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
@@ -53,7 +52,6 @@ KtDestructuringDeclarationEntry(241,259): 'var second: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component2]
     symbols:
       0: (in <local>: declaration) var second: kotlin.String
       1: (in Tuple) operator fun component2(): kotlin.Int
@@ -76,7 +74,6 @@ KtDestructuringDeclarationEntry(285,299): 'var first: Int'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: declaration) var first: kotlin.Int
       1: (in Tuple) operator fun component1(): kotlin.String
@@ -99,7 +96,6 @@ KtDestructuringDeclarationEntry(324,333): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: declaration) val first: ERROR_TYPE(Unresolved name: component1)
 
@@ -114,7 +110,6 @@ KtDestructuringDeclarationEntry(358,367): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: declaration) val first: ERROR_TYPE(Unresolved name: component1)
 
@@ -152,7 +147,6 @@ KtDestructuringDeclarationEntry(428,437): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: loop.<destruct>) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
@@ -161,7 +155,6 @@ KtDestructuringDeclarationEntry(439,457): 'val second: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component2]
     symbols:
       0: (in <local>: loop.<destruct>) val second: kotlin.String
       1: (in Tuple) operator fun component2(): kotlin.Int
@@ -193,7 +186,6 @@ KtDestructuringDeclarationEntry(479,493): 'val first: Int'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: loop.<destruct>) val first: kotlin.Int
       1: (in Tuple) operator fun component1(): kotlin.String
@@ -223,7 +215,6 @@ KtDestructuringDeclarationEntry(514,531): 'val first: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: loop.<destruct>) val first: kotlin.String
 
@@ -287,7 +278,6 @@ KtDestructuringDeclarationEntry(649,658): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
@@ -296,7 +286,6 @@ KtDestructuringDeclarationEntry(660,678): 'val second: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component2]
     symbols:
       0: (in <local>: lambda.<no name>.<destruct>) val second: kotlin.String
       1: (in Tuple) operator fun component2(): kotlin.Int
@@ -326,7 +315,6 @@ KtDestructuringDeclarationEntry(697,711): 'val first: Int'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.Int
       1: (in Tuple) operator fun component1(): kotlin.String
@@ -356,6 +344,5 @@ KtDestructuringDeclarationEntry(729,738): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: lambda.<no name>.<destruct>) val first: ERROR_TYPE(Unresolved name: component1)

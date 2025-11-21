@@ -2,7 +2,6 @@ KtDestructuringDeclarationEntry(135,136): 'b'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'b' !in [component2]
     symbols:
       0: (in <local>: main) val b: kotlin.Int
       1: (in a) operator fun a.A.component2(): kotlin.Int

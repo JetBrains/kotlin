@@ -23,7 +23,6 @@ KtDestructuringDeclarationEntry(175,180): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: declaration) val first: ERROR(component1() return type)
 
@@ -31,7 +30,6 @@ KtDestructuringDeclarationEntry(182,188): 'second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component2]
     symbols:
       (in <local>: declaration) val second: ERROR(component2() return type)
 
@@ -52,7 +50,6 @@ KtDestructuringDeclarationEntry(218,224): 'second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component1]
     symbols:
       (in <local>: declaration) val second: ERROR(component1() return type)
 
@@ -60,7 +57,6 @@ KtDestructuringDeclarationEntry(226,231): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component2]
     symbols:
       (in <local>: declaration) val first: ERROR(component2() return type)
 
@@ -81,7 +77,6 @@ KtDestructuringDeclarationEntry(261,266): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: declaration) var first: ERROR(component1() return type)
 
@@ -102,7 +97,6 @@ KtDestructuringDeclarationEntry(295,308): 'first: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: declaration) val first: ERROR(component1() return type)
 
@@ -130,7 +124,6 @@ KtDestructuringDeclarationEntry(353,363): 'aa = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'aa' !in [component1]
     symbols:
       (in <local>: declaration) val aa: ERROR(component1() return type)
 
@@ -164,7 +157,6 @@ KtDestructuringDeclarationEntry(392,410): 'aa: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'aa' !in [component1]
     symbols:
       (in <local>: declaration) val aa: ERROR(component1() return type)
 
@@ -205,7 +197,6 @@ KtDestructuringDeclarationEntry(439,448): '_ = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: '<underscore local var>' !in [component1]
     symbols:
       (in <local>: declaration) val `<underscore local var>`: ERROR(component1() return type)
 
@@ -239,7 +230,6 @@ KtDestructuringDeclarationEntry(477,494): '_: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: '<underscore local var>' !in [component1]
     symbols:
       (in <local>: declaration) val `<underscore local var>`: ERROR(component1() return type)
 
@@ -303,7 +293,6 @@ KtDestructuringDeclarationEntry(542,547): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: loop) val first: ERROR(component1() return type)
 
@@ -311,7 +300,6 @@ KtDestructuringDeclarationEntry(549,555): 'second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component2]
     symbols:
       (in <local>: loop) val second: ERROR(component2() return type)
 
@@ -341,7 +329,6 @@ KtDestructuringDeclarationEntry(577,583): 'second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component1]
     symbols:
       (in <local>: loop) val second: ERROR(component1() return type)
 
@@ -349,7 +336,6 @@ KtDestructuringDeclarationEntry(585,590): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component2]
     symbols:
       (in <local>: loop) val first: ERROR(component2() return type)
 
@@ -379,7 +365,6 @@ KtDestructuringDeclarationEntry(612,617): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: loop) val first: ERROR(component1() return type)
 
@@ -409,7 +394,6 @@ KtDestructuringDeclarationEntry(638,651): 'first: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: loop) val first: ERROR(component1() return type)
 
@@ -446,7 +430,6 @@ KtDestructuringDeclarationEntry(689,699): 'aa = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'aa' !in [component1]
     symbols:
       (in <local>: loop) val aa: ERROR(component1() return type)
 
@@ -489,7 +472,6 @@ KtDestructuringDeclarationEntry(720,738): 'aa: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'aa' !in [component1]
     symbols:
       (in <local>: loop) val aa: ERROR(component1() return type)
 
@@ -539,7 +521,6 @@ KtDestructuringDeclarationEntry(759,768): '_ = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: '<underscore local var>' !in [component1]
     symbols:
       (in <local>: loop) val `<underscore local var>`: ERROR(component1() return type)
 
@@ -582,7 +563,6 @@ KtDestructuringDeclarationEntry(789,806): '_: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: '<underscore local var>' !in [component1]
     symbols:
       (in <local>: loop) val `<underscore local var>`: ERROR(component1() return type)
 
@@ -657,7 +637,6 @@ KtDestructuringDeclarationEntry(882,887): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: lambda.<no name>) val first: ERROR(component1() return type)
 
@@ -665,7 +644,6 @@ KtDestructuringDeclarationEntry(889,895): 'second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component2]
     symbols:
       (in <local>: lambda.<no name>) val second: ERROR(component2() return type)
 
@@ -693,7 +671,6 @@ KtDestructuringDeclarationEntry(914,920): 'second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component1]
     symbols:
       (in <local>: lambda.<no name>) val second: ERROR(component1() return type)
 
@@ -701,7 +678,6 @@ KtDestructuringDeclarationEntry(922,927): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component2]
     symbols:
       (in <local>: lambda.<no name>) val first: ERROR(component2() return type)
 
@@ -729,7 +705,6 @@ KtDestructuringDeclarationEntry(946,951): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: lambda.<no name>) val first: ERROR(component1() return type)
 
@@ -757,7 +732,6 @@ KtDestructuringDeclarationEntry(969,982): 'first: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       (in <local>: lambda.<no name>) val first: ERROR(component1() return type)
 
@@ -792,7 +766,6 @@ KtDestructuringDeclarationEntry(1017,1027): 'aa = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'aa' !in [component1]
     symbols:
       (in <local>: lambda.<no name>) val aa: ERROR(component1() return type)
 
@@ -833,7 +806,6 @@ KtDestructuringDeclarationEntry(1045,1063): 'aa: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'aa' !in [component1]
     symbols:
       (in <local>: lambda.<no name>) val aa: ERROR(component1() return type)
 
@@ -881,7 +853,6 @@ KtDestructuringDeclarationEntry(1081,1090): '_ = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: '<underscore local var>' !in [component1]
     symbols:
       (in <local>: lambda.<no name>) val `<underscore local var>`: ERROR(component1() return type)
 
@@ -922,7 +893,6 @@ KtDestructuringDeclarationEntry(1108,1125): '_: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: '<underscore local var>' !in [component1]
     symbols:
       (in <local>: lambda.<no name>) val `<underscore local var>`: ERROR(component1() return type)
 

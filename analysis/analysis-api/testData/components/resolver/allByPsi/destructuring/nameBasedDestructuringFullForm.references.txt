@@ -23,7 +23,6 @@ KtDestructuringDeclarationEntry(132,141): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: declaration) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -32,7 +31,6 @@ KtDestructuringDeclarationEntry(143,153): 'var second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component2]
     symbols:
       0: (in <local>: declaration) var second: kotlin.Int
       1: (in Tuple) val second: kotlin.Int
@@ -48,7 +46,6 @@ KtDestructuringDeclarationEntry(179,188): 'var first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: declaration) var first: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -64,7 +61,6 @@ KtDestructuringDeclarationEntry(213,230): 'val first: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: declaration) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -87,7 +83,7 @@ KtDestructuringDeclarationEntry(255,269): 'val aa = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['aa', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [aa, component1]
     symbols:
       0: (in <local>: declaration) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -110,7 +106,7 @@ KtDestructuringDeclarationEntry(294,316): 'val aa: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['aa', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [aa, component1]
     symbols:
       0: (in <local>: declaration) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -140,7 +136,7 @@ KtDestructuringDeclarationEntry(341,354): 'val _ = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['<unused var>', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [_, component1]
     symbols:
       0: (in <local>: declaration) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -163,7 +159,7 @@ KtDestructuringDeclarationEntry(379,400): 'val _: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['<unused var>', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [_, component1]
     symbols:
       0: (in <local>: declaration) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -216,7 +212,6 @@ KtDestructuringDeclarationEntry(448,457): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: loop.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -225,7 +220,6 @@ KtDestructuringDeclarationEntry(459,469): 'val second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component2]
     symbols:
       0: (in <local>: loop.<destruct>) val second: kotlin.Int
       1: (in Tuple) val second: kotlin.Int
@@ -250,7 +244,6 @@ KtDestructuringDeclarationEntry(491,500): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: loop.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -275,7 +268,6 @@ KtDestructuringDeclarationEntry(521,538): 'val first: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: loop.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -307,7 +299,7 @@ KtDestructuringDeclarationEntry(559,573): 'val aa = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['aa', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [aa, component1]
     symbols:
       0: (in <local>: loop.<destruct>) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -339,7 +331,7 @@ KtDestructuringDeclarationEntry(594,616): 'val aa: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['aa', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [aa, component1]
     symbols:
       0: (in <local>: loop.<destruct>) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -378,7 +370,7 @@ KtDestructuringDeclarationEntry(637,650): 'val _ = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['<unused var>', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [_, component1]
     symbols:
       0: (in <local>: loop.<destruct>) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -410,7 +402,7 @@ KtDestructuringDeclarationEntry(671,692): 'val _: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['<unused var>', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [_, component1]
     symbols:
       0: (in <local>: loop.<destruct>) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -468,7 +460,6 @@ KtDestructuringDeclarationEntry(768,777): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -477,7 +468,6 @@ KtDestructuringDeclarationEntry(779,789): 'val second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'second' !in [component2]
     symbols:
       0: (in <local>: lambda.<no name>.<destruct>) val second: kotlin.Int
       1: (in Tuple) val second: kotlin.Int
@@ -500,7 +490,6 @@ KtDestructuringDeclarationEntry(808,817): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -523,7 +512,6 @@ KtDestructuringDeclarationEntry(835,852): 'val first: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'first' !in [component1]
     symbols:
       0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -553,7 +541,7 @@ KtDestructuringDeclarationEntry(870,884): 'val aa = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['aa', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [aa, component1]
     symbols:
       0: (in <local>: lambda.<no name>.<destruct>) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -583,7 +571,7 @@ KtDestructuringDeclarationEntry(902,924): 'val aa: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['aa', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [aa, component1]
     symbols:
       0: (in <local>: lambda.<no name>.<destruct>) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -620,7 +608,7 @@ KtDestructuringDeclarationEntry(942,955): 'val _ = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['<unused var>', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [_, component1]
     symbols:
       0: (in <local>: lambda.<no name>.<destruct>) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String
@@ -650,7 +638,7 @@ KtDestructuringDeclarationEntry(973,994): 'val _: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: ['<unused var>', 'first'] !in [component1]
+    resolvesByNamesViolations: 'first' !in [_, component1]
     symbols:
       0: (in <local>: lambda.<no name>.<destruct>) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String

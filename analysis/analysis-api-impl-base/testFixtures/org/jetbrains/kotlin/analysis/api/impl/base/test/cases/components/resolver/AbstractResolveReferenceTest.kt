@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfTypeInPreorder
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -190,7 +191,17 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
                 // Skip check for companion object usages since we cannot predict them
                 is KaNamedClassSymbol if (resolvedSymbol.classKind == KaClassKind.COMPANION_OBJECT && isImplicitReferenceToCompanion) -> null
 
-                is KaNamedSymbol -> resolvedSymbol.name.asString()
+                is KaNamedSymbol -> {
+                    val name = resolvedSymbol.name
+                    when (resolvedSymbol) {
+                        // Special handling for unused local variables. It is the case for destructuring declaration entries
+                        is KaLocalVariableSymbol
+                            // <underscore local var> is a special name for K1
+                            if (name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR || name.asString() == "<underscore local var>") -> "_"
+
+                        else -> name.asString()
+                    }
+                }
 
                 // Constructors themselves don't have names, but we might check the containing class name since it is expected
                 // to be inside the provided list

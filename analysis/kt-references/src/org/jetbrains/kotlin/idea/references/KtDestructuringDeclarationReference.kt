@@ -23,6 +23,6 @@ abstract class KtDestructuringDeclarationReference(
         get() {
             val destructuringParent = element.parent as? KtDestructuringDeclaration ?: return emptyList()
             val componentIndex = destructuringParent.entries.indexOf(element) + 1
-            return listOf(Name.identifier("component$componentIndex"))
+            return listOfNotNull(element.nameAsName, Name.identifier("component$componentIndex"))
         }
 }
