@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 
+
 class Fir2IrPluginContext(
     private val c: Fir2IrComponents,
     override val irBuiltIns: IrBuiltIns,
