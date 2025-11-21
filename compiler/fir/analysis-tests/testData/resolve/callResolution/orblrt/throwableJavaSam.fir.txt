@@ -1,0 +1,11 @@
+FILE: main.kt
+    public final fun main(): R|kotlin/Unit| {
+        Q|MyJavaClass|.<Ambiguity: runSomething, [/MyJavaClass.runSomething, /MyJavaClass.runSomething]>#(<L> = runSomething@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+            ^ String()
+        }
+        )
+        Q|MyJavaClass|.<Ambiguity: runSomething2, [/MyJavaClass.runSomething2, /MyJavaClass.runSomething2]>#(<L> = runSomething2@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+            ^ String()
+        }
+        )
+    }
