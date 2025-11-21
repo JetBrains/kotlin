@@ -12365,6 +12365,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("capturedOuterThis.kt")
+    public void testCapturedOuterThis() {
+      runTest("compiler/testData/codegen/box/coroutines/capturedOuterThis.kt");
+    }
+
+    @Test
     @TestMetadata("capturedVarInSuspendLambda.kt")
     public void testCapturedVarInSuspendLambda() {
       runTest("compiler/testData/codegen/box/coroutines/capturedVarInSuspendLambda.kt");
