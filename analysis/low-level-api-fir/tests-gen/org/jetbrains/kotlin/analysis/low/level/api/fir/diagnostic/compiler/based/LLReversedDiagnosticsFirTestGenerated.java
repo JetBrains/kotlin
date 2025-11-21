@@ -1579,6 +1579,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("sumOfCase.kt")
+        public void testSumOfCase() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/sumOfCase.kt");
+        }
+
+        @Test
         @TestMetadata("typeParameterReturnTypeVsList.kt")
         public void testTypeParameterReturnTypeVsList() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/typeParameterReturnTypeVsList.kt");
