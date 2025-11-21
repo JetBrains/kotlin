@@ -18,6 +18,13 @@ public fun generation_ranges_ranges_acceptClosed__TypesOfArguments__Swift_Closed
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("generation_ranges_ranges_acceptNullable__TypesOfArguments__Swift_Optional_Swift_ClosedRange_Swift_Int32____")
+public fun generation_ranges_ranges_acceptNullable__TypesOfArguments__Swift_Optional_Swift_ClosedRange_Swift_Int32____(range_1: kotlin.native.internal.NativePtr, range_2: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __range = if (range_1 == kotlin.native.internal.NativePtr.NULL || range_2 == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(range_1) .. interpretObjCPointer<Int>(range_2)
+    val _result = generation.ranges.ranges.acceptNullable(__range)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("generation_ranges_ranges_bar")
 public fun generation_ranges_ranges_bar(): kotlin.native.internal.NativePtr {
     val _result = generation.ranges.ranges.bar()
@@ -33,6 +40,20 @@ public fun generation_ranges_ranges_baz(): kotlin.native.internal.NativePtr {
 @ExportedBridge("generation_ranges_ranges_foo")
 public fun generation_ranges_ranges_foo(): kotlin.native.internal.NativePtr {
     val _result = generation.ranges.ranges.foo()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("generation_ranges_ranges_mapper__TypesOfArguments__Swift_Array_Swift_ClosedRange_Swift_Int64____")
+public fun generation_ranges_ranges_mapper__TypesOfArguments__Swift_Array_Swift_ClosedRange_Swift_Int64____(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __arg = interpretObjCPointer<kotlin.collections.List<kotlin.ranges.LongRange>>(arg)
+    val _result = generation.ranges.ranges.mapper(__arg)
+    return _result.objcPtr()
+}
+
+@ExportedBridge("generation_ranges_ranges_total__TypesOfArguments__Swift_Array_Swift_ClosedRange_Swift_Int32____")
+public fun generation_ranges_ranges_total__TypesOfArguments__Swift_Array_Swift_ClosedRange_Swift_Int32____(list: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __list = interpretObjCPointer<kotlin.collections.List<kotlin.ranges.IntRange>>(list)
+    val _result = generation.ranges.ranges.total(__list)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

@@ -161,6 +161,12 @@ internal val SirType.isChar: Boolean
  */
 internal interface SwiftToKotlinValueConversion {
     fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
+
+    fun swiftToKotlinComponent(typeNamer: SirTypeNamer, valueExpression: String, index: Int): String =
+        if (index == 1) swiftToKotlin(typeNamer, valueExpression)
+        else error("Transformation to indexed components is supported only for Swift structures")
+
+    fun swiftToKotlinComponentConnector(): String = ""
 }
 
 /**
@@ -611,22 +617,45 @@ internal sealed class Bridge(
     class AsOptionalWrapper(
         val wrappedObject: AnyBridge,
     ) : Bridge(
-        wrappedObject.swiftType.optional(),
-        wrappedObject.typeList.map { AnyBridge.TypePair(it.kotlinType, it.cType.nullable) },
+        swiftType = wrappedObject.swiftType.optional(),
+        typeList = wrappedObject.typeList.map {
+            // We can't use _Nullable on primitive numbers
+            val cType = if (it.kotlinType.isPrimitiveNumber) CType.NSNumber.nullable else it.cType.nullable
+            // If we use NSNumber* in ObjC we have to use NativePtr in Kotlin
+            val kotlinType = if (it.kotlinType.isPrimitiveNumber) KotlinType.KotlinObject else it.kotlinType
+            AnyBridge.TypePair(kotlinType, cType)
+        },
     ) {
+        private val nsNumberBridge by lazy { AsNSNumber((wrappedObject.swiftType as SirNominalType).typeArguments.single()) }
 
         override val inKotlinSources: ValueConversion
             get() = object : ValueConversion {
                 override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                     require(wrappedObject is SwiftToKotlinBridge)
-                    return "if ($valueExpression == kotlin.native.internal.NativePtr.NULL) null else ${
-                        wrappedObject.inKotlinSources.swiftToKotlin(typeNamer, valueExpression)
-                    }"
+                    val condition = if (typeList.size > 1) {
+                        typeList.indices.joinToString(separator = " || ") { index ->
+                            val component = wrappedObject.inKotlinSources.swiftToKotlinComponent(typeNamer, valueExpression, index + 1)
+                            "$component == $NATIVE_NULL"
+                        }
+                    } else {
+                        "$valueExpression == $NATIVE_NULL"
+                    }
+                    val result = typeList.indices.joinToString(
+                        separator = wrappedObject.inKotlinSources.swiftToKotlinComponentConnector()
+                    ) { index ->
+                        val component = wrappedObject.inKotlinSources.swiftToKotlinComponent(typeNamer, valueExpression, index + 1)
+                        if (typeList.size == 1 || typeList[index].cType.unwrapAnnotated() != CType.NSNumber) {
+                            component
+                        } else {
+                            nsNumberBridge.inKotlinSources.swiftToKotlin(typeNamer, component)
+                        }
+                    }
+                    return "if ($condition) null else $result"
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                     require(wrappedObject is KotlinToSwiftBridge)
-                    return "if ($valueExpression == null) kotlin.native.internal.NativePtr.NULL else ${
+                    return "if ($valueExpression == null) $NATIVE_NULL else ${
                         wrappedObject.inKotlinSources.kotlinToSwift(typeNamer, valueExpression)
                     }"
                 }
@@ -639,8 +668,17 @@ internal sealed class Bridge(
                             wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsBlock ||
                             wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
                 )
-                return valueExpression.mapSwift { wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it) } +
-                        " ?? ${wrappedObject.renderNil()}"
+
+                return typeList.indices.joinToString { index ->
+                    valueExpression.mapSwift {
+                        val component = wrappedObject.inSwiftSources.swiftToKotlinComponent(typeNamer, it, index + 1)
+                        if (typeList.size == 1 || typeList[index].cType.unwrapAnnotated() != CType.NSNumber) {
+                            component
+                        } else {
+                            nsNumberBridge.inSwiftSources.swiftToKotlin(typeNamer, component)
+                        }
+                    } + " ?? ${wrappedObject.renderNil()}"
+                }
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
@@ -665,8 +703,11 @@ internal sealed class Bridge(
         }
 
         override fun nativePointerToMultipleObjCBridge(index: Int): SirFunctionBridge {
-            // TODO: support Optional on Range(s) and other tuple-based types properly
             return wrappedObject.nativePointerToMultipleObjCBridge(index)
+        }
+
+        companion object {
+            const val NATIVE_NULL = "kotlin.native.internal.NativePtr.NULL"
         }
     }
 

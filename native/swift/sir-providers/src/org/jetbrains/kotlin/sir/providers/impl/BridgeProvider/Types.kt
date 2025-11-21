@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 internal sealed class CType {
     abstract fun render(name: String): String
 
-    val nullable: CType get() = ((this as? NullabilityAnnotated)?.wrapped ?: this).let { NullabilityAnnotated(it, Nullability.NULLABLE) }
-    val nonnulll: CType get() = ((this as? NullabilityAnnotated)?.wrapped ?: this).let { NullabilityAnnotated(it, Nullability.NONNULL) }
+    val nullable: CType
+        get() = NullabilityAnnotated(unwrapAnnotated(), Nullability.NULLABLE)
+    val nonnulll: CType
+        get() = NullabilityAnnotated(unwrapAnnotated(), Nullability.NONNULL)
+
+    fun unwrapAnnotated(): CType = (this as? NullabilityAnnotated)?.wrapped ?: this
 
     sealed class Predefined(private val repr: String) : CType() {
         override fun render(name: String): String = if (name.isBlank()) repr else "$repr $name"

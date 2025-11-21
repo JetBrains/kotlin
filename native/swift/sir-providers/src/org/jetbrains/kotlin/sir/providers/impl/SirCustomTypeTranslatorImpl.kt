@@ -215,8 +215,17 @@ public class SirCustomTypeTranslatorImpl(
 
         override val inKotlinSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                val operator = if (inclusive) ".." else "..<"
-                return "${valueExpression}_1 $operator ${valueExpression}_2"
+                return listOf(1, 2).joinToString(separator = swiftToKotlinComponentConnector()) { index ->
+                    swiftToKotlinComponent(typeNamer, valueExpression, index)
+                }
+            }
+
+            override fun swiftToKotlinComponent(typeNamer: SirTypeNamer, valueExpression: String, index: Int): String {
+                return "${valueExpression}_$index"
+            }
+
+            override fun swiftToKotlinComponentConnector(): String {
+                return if (inclusive) " .. " else " ..< "
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
@@ -226,6 +235,18 @@ public class SirCustomTypeTranslatorImpl(
         override val inSwiftSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
                 "$valueExpression.lowerBound, $valueExpression.upperBound"
+
+            override fun swiftToKotlinComponent(typeNamer: SirTypeNamer, valueExpression: String, index: Int): String {
+                return when (index) {
+                    1 -> "$valueExpression.lowerBound"
+                    2 -> "$valueExpression.upperBound"
+                    else -> error("Unsupported component index in RangeBridge: $index")
+                }
+            }
+
+            override fun swiftToKotlinComponentConnector(): String {
+                return ", "
+            }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val startBridge = nativePointerToMultipleObjCBridge(0)
