@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.backend.konan.ir.interop
 
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
-import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -155,8 +154,8 @@ internal interface DescriptorToIrTranslationMixin {
 
     private fun IrDeclaration.generateAnnotations() {
         annotations += descriptor.annotations.map {
-            typeTranslator.constantValueGenerator.generateAnnotationConstructorCall(it)
-                ?: error("Could not generate annotations for $it")
+            typeTranslator.constantValueGenerator.generateAnnotationCall(it)
+                    ?: error("Could not generate annotations for $it")
         }
     }
 }

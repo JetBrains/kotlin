@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.name.Name
@@ -138,7 +138,7 @@ abstract class ConstantValueGenerator(
                 }
             }
 
-            is AnnotationValue -> generateAnnotationConstructorCall(constantValue.value, constantKtType)
+            is AnnotationValue -> generateAnnotationCall(constantValue.value, constantKtType)
 
             is KClassValue -> {
                 val classifierKtType = constantValue.getArgumentType(moduleDescriptor)
@@ -165,7 +165,7 @@ abstract class ConstantValueGenerator(
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor, realType: KotlinType? = null): IrConstructorCall? {
+    fun generateAnnotationCall(annotationDescriptor: AnnotationDescriptor, realType: KotlinType? = null): IrAnnotation? {
         val annotationType = realType ?: annotationDescriptor.type
         val annotationClassDescriptor = annotationType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
@@ -182,7 +182,7 @@ abstract class ConstantValueGenerator(
 
         val (startOffset, endOffset) = extractAnnotationOffsets(annotationDescriptor)
 
-        val irCall = IrConstructorCallImplWithShape(
+        val irAnnotation = IrAnnotationImplWithShape(
             startOffset, endOffset,
             annotationType.toIrType(),
             primaryConstructorSymbol,
@@ -203,7 +203,7 @@ abstract class ConstantValueGenerator(
 
         for (i in typeArguments.indices) {
             val typeArgument = typeArguments[i]
-            irCall.typeArguments[i] = typeArgument.type.toIrType()
+            irAnnotation.typeArguments[i] = typeArgument.type.toIrType()
         }
 
         for (valueParameter in substitutedConstructor.valueParameters) {
@@ -212,10 +212,10 @@ abstract class ConstantValueGenerator(
             val adjustedValue = adjustAnnotationArgumentValue(argumentValue, valueParameter)
             val (parameterStartOffset, parameterEndOffset) = extractAnnotationParameterOffsets(annotationDescriptor, valueParameter.name)
             val irArgument = generateAnnotationValueAsExpression(parameterStartOffset, parameterEndOffset, adjustedValue, valueParameter)
-            irCall.arguments[argumentIndex] = irArgument
+            irAnnotation.arguments[argumentIndex] = irArgument
         }
 
-        return irCall
+        return irAnnotation
     }
 
     private fun adjustAnnotationArgumentValue(value: ConstantValue<*>, parameter: ValueParameterDescriptor): ConstantValue<*> {

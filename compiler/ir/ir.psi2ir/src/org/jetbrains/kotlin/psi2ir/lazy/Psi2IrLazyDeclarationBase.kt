@@ -47,6 +47,6 @@ interface Psi2IrLazyDeclarationBase : IrLazyDeclarationBase {
         )
 
     override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(stubGenerator.lock) {
-        descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationConstructorCall).toMutableList()
+        descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationCall).toMutableList()
     }
 }
