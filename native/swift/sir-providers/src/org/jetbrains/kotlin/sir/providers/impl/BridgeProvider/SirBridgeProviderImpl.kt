@@ -263,14 +263,14 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
                     var index = 0
                     bridge.typeList.joinToString { (kotlinType, _) ->
                         index++
-                        "${identifier}_$index: ${kotlinType.repr}"
+                        "${identifier}_$index: $kotlinType"
                     }
                 } else {
-                    val typeRepresentation = bridge.typeList.single().kotlinType.repr
-                    "$identifier: $typeRepresentation"
+                    val type = bridge.typeList.single().kotlinType
+                    "$identifier: $type"
                 }
             }
-        }): ${kotlinReturnType.repr} {"
+        }): $kotlinReturnType {"
     )
     val indent = "    "
 
