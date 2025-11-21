@@ -3,7 +3,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      resolvesByNamesViolations: shouldn't predict, but [super] provided
       symbols:
         (in Base) val `super`: kotlin.Int
 
@@ -20,7 +19,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      resolvesByNamesViolations: shouldn't predict, but [this] provided
       symbols:
         (in Base) val `this`: kotlin.String
 
@@ -37,7 +35,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      resolvesByNamesViolations: shouldn't predict, but [this] provided
       symbols:
         extension receiver with type kotlin.Long
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 
 abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(element) {
@@ -19,5 +20,19 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
 
     override fun getCanonicalText(): String = element.getNameText()
 
-    override val resolvesByNames: Collection<Name> get() = listOf(Name.identifier(element.getNameText()))
+    override val resolvesByNames: Collection<Name>
+        get() {
+            val element = element
+            val name = element.getNameText()
+
+            // Text check is required to distinguish between '`this`'/'`super`' and 'this'/'super' cases
+            if (name in FORBIDDEN_NAMES && element.textMatches(name)) {
+                // According to the KDoc, `this`/`super` cannot be properly expressed in terms of this API
+                return emptyList()
+            }
+
+            return listOf(Name.identifier(name))
+        }
 }
+
+private val FORBIDDEN_NAMES = listOf(KtTokens.THIS_KEYWORD.value, KtTokens.SUPER_KEYWORD.value)
