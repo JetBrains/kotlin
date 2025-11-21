@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.konan.test.handlers.NativeRunner
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.nativeArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
@@ -15,6 +17,8 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Tag
 
@@ -38,11 +42,11 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractKotlinCompilerWi
 //            // which would not pass new improved IR validation rules
 //            ::CustomWebCompilerSecondStageEnvironmentConfigurator,
         )
-
-//        useAdditionalSourceProviders(
-//            ::CoroutineHelpersSourceFilesProvider,
-//            ::AdditionalDiagnosticsSourceFilesProvider,
-//        )
+        useAdditionalSourceProviders(
+            ::NativeLauncherAdditionalSourceProvider,
+            ::CoroutineHelpersSourceFilesProvider,
+            ::AdditionalDiagnosticsSourceFilesProvider,
+        )
 
         facadeStep(::CustomNativeCompilerFirstStageFacade)
 
@@ -56,5 +60,8 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractKotlinCompilerWi
             ::CustomKlibCompilerTestSuppressor,
         )
         facadeStep(::NativeCompilerSecondStageFacade.bind(currentNativeCompilerSettings))
+        nativeArtifactsHandlersStep {
+            useHandlers(::NativeRunner)
+        }
     }
 }

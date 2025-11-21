@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppresso
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Tag
 
@@ -62,6 +64,11 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractKotlinCompilerW
         }
 
         useConfigurators(::CustomNativeCompilerSecondStageEnvironmentConfigurator.bind(customNativeCompilerSettings))
+        useAdditionalSourceProviders(
+            ::NativeLauncherAdditionalSourceProvider,
+            ::CoroutineHelpersSourceFilesProvider,
+            ::AdditionalDiagnosticsSourceFilesProvider,
+        )
         commonConfigurationForNativeFirstStage(
             targetFrontend,
             frontendFacade,

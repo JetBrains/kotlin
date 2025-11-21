@@ -12,17 +12,38 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.ModuleStructureExtractor
 import org.jetbrains.kotlin.test.services.TestServices
+import java.io.ByteArrayOutputStream
 
 class NativeRunner(testServices: TestServices) : NativeBinaryArtifactHandler(testServices) {
-    var executable: BinaryArtifacts.Native? = null
+    private var artifact: BinaryArtifacts.Native? = null
     override fun processModule(module: TestModule, info: BinaryArtifacts.Native) {
         if (module.name == ModuleStructureExtractor.DEFAULT_MODULE_NAME)
-            executable = info
+            artifact = info
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         // TODO KT-82472: Perform a full run with stdout/stderr analysis
-        val executeRequest = ExecuteRequest(executable?.executable?.absolutePath ?: error("Module ${ModuleStructureExtractor.DEFAULT_MODULE_NAME} is expected to run"))
-        HostExecutor().execute(executeRequest)
+        val stdout = ByteArrayOutputStream()
+        val stderr = ByteArrayOutputStream()
+        val executable = artifact?.executable
+        val executableAbsolutePath = executable?.absolutePath ?: error("Module ${ModuleStructureExtractor.DEFAULT_MODULE_NAME} is expected to run")
+        val request = ExecuteRequest(executableAbsolutePath).apply {
+//            this.args.addAll(programArgs.drop(1))
+            this.workingDirectory = executable.parentFile
+//            inputStreamFromTestParameter()?.let {
+//                this.stdin = it
+//            }
+            this.stdout = stdout
+            this.stderr = stderr
+//            this.timeout = testRun.checks.executionTimeoutCheck.timeout
+        }
+        val response = HostExecutor().execute(request)
+
+        val stdoutStr = stdout.toString()
+        if (response.exitCode != 0) {
+            throw AssertionError("Native executable failed with exit code ${response.exitCode}:\nstdout: $stdoutStr\nstderr: $stderr")
+        }
+        if (!stdoutStr.contains("[  PASSED  ] 1 tests."))
+            throw AssertionError("Run failed. stdout: $stdoutStr\nstderr: $stderr")
     }
 }
