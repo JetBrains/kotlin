@@ -23,7 +23,6 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
     testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testFixturesApi(project(":compiler:fir:resolve"))
     testFixturesApi(project(":compiler:fir:providers"))

@@ -37,7 +37,6 @@ dependencies {
     testFixturesImplementation(commonDependency("com.google.code.gson:gson"))
     testImplementation(commonDependency("com.google.code.gson:gson"))
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 
 optInToK1Deprecation()

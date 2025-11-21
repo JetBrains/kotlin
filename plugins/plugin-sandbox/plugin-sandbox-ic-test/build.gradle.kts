@@ -12,8 +12,6 @@ dependencies {
 
     testCompileOnly(intellijCore())
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
     testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
     testRuntimeOnly(commonDependency("org.lz4:lz4-java"))

@@ -18,7 +18,6 @@ dependencies {
 
     api(libs.jsoup)
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(toolsJar())
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)

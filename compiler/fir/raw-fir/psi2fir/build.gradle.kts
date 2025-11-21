@@ -24,8 +24,6 @@ dependencies {
 
     testCompileOnly(kotlinTest("junit"))
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-
     testFixturesCompileOnly(intellijCore())
     testImplementation(intellijCore())
 }
