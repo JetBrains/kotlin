@@ -1,7 +1,5 @@
 // KT-79359
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
-// IGNORE_BACKEND: JS_IR_ES6
-// ^ A regression in the new coroutines implementation via generators
 // WITH_STDLIB
 // WITH_COROUTINES
 
