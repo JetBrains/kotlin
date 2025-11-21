@@ -46,7 +46,7 @@ sealed class BtaCompilerArgument(
         introducedSinceVersion: KotlinReleaseVersion,
         deprecatedSinceVersion: KotlinReleaseVersion?,
         removedSinceVersion: KotlinReleaseVersion?,
-        val generateConverters: (theClass: MemberName, argument: BtaCompilerArgument, name: String, wasIntroducedRecently: Boolean, wasRemoved: Boolean, toCompilerConverterFun: FunSpec.Builder, generateCompatLayer: Boolean) -> Unit,
+        val applier: MemberName,
     ) : BtaCompilerArgument(
         name = name,
         description = description,
@@ -90,36 +90,6 @@ object CustomCompilerArguments {
         introducedSinceVersion = KotlinReleaseVersion.v2_3_20,
         deprecatedSinceVersion = null,
         removedSinceVersion = null,
-        generateConverters = { theClass: MemberName, argument: BtaCompilerArgument, name: String, wasIntroducedRecently: Boolean, wasRemoved: Boolean, toCompilerConverterFun: FunSpec.Builder, generateCompatLayer: Boolean ->
-            val relation = ClassName(API_ARGUMENTS_PACKAGE, "CompilerPluginPartialOrderRelation")
-            val absolutePathString = MemberName("kotlin.io.path", "absolutePathString")
-
-            CodeBlock.builder().apply {
-                beginControlFlow("if (%M in this)", theClass)
-                add("val compilerPlugins = get(%M)\n", theClass)
-                add(
-                    "arguments.pluginClasspaths = compilerPlugins.flatMap { it.classpath }.map { it.%M() }.toTypedArray()\n",
-                    absolutePathString,
-                )
-                add(
-                    $$"arguments.pluginOptions = compilerPlugins.flatMap { plugin -> plugin.rawArguments.map { option -> \"plugin:${plugin.pluginId}:${option.key}=${option.value}\" } }.toTypedArray()\n"
-                )
-                add(
-                    $$"arguments.pluginOrderConstraints = compilerPlugins.flatMap { plugin -> plugin.orderingRequirements.map { order -> when (order.relation) { %T.BEFORE -> \"${plugin.pluginId}<${order.otherPluginId}\"; %T.AFTER -> \"${order.otherPluginId}>${plugin.pluginId}\" } } }.toTypedArray()\n",
-                    relation,
-                    relation,
-                )
-                endControlFlow()
-            }.build().also { block ->
-                toCompilerConverterFun.addSafeSetStatement(
-                    wasIntroducedRecently,
-                    wasRemoved,
-                    name,
-                    argument,
-                    block,
-                    generateCompatLayer,
-                )
-            }
-        },
+        applier = MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "apply"),
     )
 }

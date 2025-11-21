@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
-import kotlin.reflect.KType
 import kotlin.reflect.full.isSubclassOf
 
 internal class BtaImplGenerator(
@@ -179,13 +178,10 @@ internal class BtaImplGenerator(
                     generateCustomRepresentation(
                         implClassName,
                         name,
-                        argumentTypeParameter,
                         argument,
                         wasRemoved,
                         toCompilerConverterFun,
-                        wasIntroducedRecently,
-                        applyCompilerArgumentsFun,
-                        argumentTypeParameter
+                        wasIntroducedRecently
                     )
                 }
             }
@@ -195,24 +191,26 @@ internal class BtaImplGenerator(
     private fun generateCustomRepresentation(
         implClassName: String,
         name: String,
-        type: TypeName,
         argument: BtaCompilerArgument.CustomCompilerArgument,
         wasRemoved: Boolean,
         toCompilerConverterFun: FunSpec.Builder,
         wasIntroducedRecently: Boolean,
-        applyCompilerArgumentsFun: FunSpec.Builder,
-        argumentTypeParameter: TypeName,
     ) {
-        val theClass = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
-        argument.generateConverters(
-            theClass,
-            argument,
-            name,
-            wasIntroducedRecently,
-            wasRemoved,
-            toCompilerConverterFun,
-            generateCompatLayer,
-        )
+        val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
+        CodeBlock.builder().apply {
+            add("if (%M in this) { ", member)
+            add("arguments.%M(get(%M))", argument.applier, member)
+            add("}")
+        }.build().also { setStatement ->
+            toCompilerConverterFun.addSafeSetStatement(
+                wasIntroducedRecently,
+                wasRemoved,
+                name,
+                argument,
+                setStatement,
+                generateCompatLayer,
+            )
+        }
     }
 
     /**
