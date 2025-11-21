@@ -2,6 +2,5 @@ KtOperationReferenceExpression(135,137): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'set' !in [plusAssign, plus]
     symbols:
       (in MyMap) operator fun set(k: K, v: V)

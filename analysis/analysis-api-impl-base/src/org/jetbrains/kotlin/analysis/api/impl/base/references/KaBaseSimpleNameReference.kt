@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @KaImplementationDetail
@@ -44,9 +45,10 @@ abstract class KaBaseSimpleNameReference(expression: KtSimpleNameExpression) : K
 private fun operatorNames(expression: KtOperationReferenceExpression): Collection<Name>? = buildList {
     val tokenType = expression.operationSignTokenType ?: return null
 
+    val parent = expression.parent
     val name = OperatorConventions.getNameForOperationSymbol(
-        tokenType, expression.parent is KtUnaryExpression, expression.parent is KtBinaryExpression
-    ) ?: (expression.parent as? KtBinaryExpression)?.let {
+        tokenType, parent is KtUnaryExpression, parent is KtBinaryExpression
+    ) ?: (parent as? KtBinaryExpression)?.let {
         runIf(it.operationToken == KtTokens.EQ && isAssignmentResolved(expression.project, it)) { ASSIGN_METHOD }
     }
 
@@ -57,6 +59,11 @@ private fun operatorNames(expression: KtOperationReferenceExpression): Collectio
             val counterpartName = OperatorConventions.getNameForOperationSymbol(counterpart, false, true)!!
             add(counterpartName)
         }
+    }
+
+    val isArrayAssignment = parent is KtBinaryExpression && parent.left is KtArrayAccessExpression && tokenType in KtTokens.ALL_ASSIGNMENTS
+    if (isArrayAssignment) {
+        add(OperatorNameConventions.SET)
     }
 }
 
