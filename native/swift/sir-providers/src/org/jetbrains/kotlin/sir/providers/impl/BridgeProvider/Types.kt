@@ -69,24 +69,24 @@ internal sealed class CType {
     }
 }
 
-internal enum class KotlinType(val repr: String) {
+internal enum class KotlinType(val representation: String, val isPrimitiveNumber: Boolean = false) {
     Unit("Unit"),
 
     Boolean("Boolean"),
-    Char("Char"),
+    Char("Char", isPrimitiveNumber = true),
 
-    Byte("Byte"),
-    Short("Short"),
-    Int("Int"),
-    Long("Long"),
+    Byte("Byte", isPrimitiveNumber = true),
+    Short("Short", isPrimitiveNumber = true),
+    Int("Int", isPrimitiveNumber = true),
+    Long("Long", isPrimitiveNumber = true),
 
-    UByte("UByte"),
-    UShort("UShort"),
-    UInt("UInt"),
-    ULong("ULong"),
+    UByte("UByte", isPrimitiveNumber = true),
+    UShort("UShort", isPrimitiveNumber = true),
+    UInt("UInt", isPrimitiveNumber = true),
+    ULong("ULong", isPrimitiveNumber = true),
 
-    Float("Float"),
-    Double("Double"),
+    Float("Float", isPrimitiveNumber = true),
+    Double("Double", isPrimitiveNumber = true),
 
     KotlinObject("kotlin.native.internal.NativePtr"),
 
@@ -96,6 +96,11 @@ internal enum class KotlinType(val repr: String) {
     ObjCObjectUnretained("kotlin.native.internal.NativePtr"),
 
     String("String"),
+    ;
+
+    override fun toString(): String = representation
+
+    fun decapitalized(): String = representation.replaceFirstChar(kotlin.Char::lowercase)
 }
 
 internal val KotlinType.defaultValue: String

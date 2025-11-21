@@ -250,12 +250,12 @@ public class SirCustomTypeTranslatorImpl(
                     val propertyNameCapitalized = propertyName.replaceFirstChar(Char::uppercase)
                     val kotlinRangeTypeName = kotlinRangeClassId.shortClassName.asString()
                     val kotlinRangeNameDecapitalized = kotlinRangeTypeName.replaceFirstChar(Char::lowercase)
-                    val kotlinRangeElementNameDecapitalized = pairedParameterKotlinType.repr.replaceFirstChar(Char::lowercase)
+                    val kotlinRangeElementNameDecapitalized = pairedParameterKotlinType.decapitalized()
                     val cRangeElementName = pairedParameterCType.render("")
                     val name = "kotlin_ranges_${kotlinRangeNameDecapitalized}_get${propertyNameCapitalized}_$kotlinRangeElementNameDecapitalized"
                     val kotlinRangeTypeDescription = when (kotlinRangeClassId) {
                         StandardClassIds.IntRange, StandardClassIds.LongRange -> kotlinRangeTypeName
-                        else -> "$kotlinRangeTypeName<${pairedParameterKotlinType.repr}>"
+                        else -> "$kotlinRangeTypeName<$pairedParameterKotlinType>"
                     }
 
                     return SirFunctionBridge(
@@ -263,7 +263,7 @@ public class SirCustomTypeTranslatorImpl(
                         KotlinFunctionBridge(
                             lines = listOf(
                                 "@${exportAnnotationFqName.substringAfterLast('.')}(\"$name\")",
-                                "fun $name(nativePtr: kotlin.native.internal.NativePtr): ${pairedParameterKotlinType.repr} {",
+                                "fun $name(nativePtr: kotlin.native.internal.NativePtr): $pairedParameterKotlinType {",
                                 "    val $kotlinRangeNameDecapitalized = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as $kotlinRangeTypeDescription",
                                 "    return $kotlinRangeNameDecapitalized.$propertyName",
                                 "}",

@@ -733,7 +733,7 @@ internal sealed class Bridge(
         )
     ) {
         private val kotlinFunctionTypeRendered =
-            "(${parameters.joinToString { it.typeList.single().kotlinType.repr }})->${returnType.typeList.single().kotlinType.repr}"
+            "(${parameters.map { it.typeList.single().kotlinType }.joinToString()})->${returnType.typeList.single().kotlinType}"
 
         companion object {
             context(session: SirSession)
