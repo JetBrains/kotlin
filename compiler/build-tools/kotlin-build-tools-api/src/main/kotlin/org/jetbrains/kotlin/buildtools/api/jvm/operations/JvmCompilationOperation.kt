@@ -86,7 +86,7 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
          *
          * icConfig[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = true
          *
-         * compilation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = icConfig
+         * compilation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = icConfig.build()
          * ```
          *
          * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
