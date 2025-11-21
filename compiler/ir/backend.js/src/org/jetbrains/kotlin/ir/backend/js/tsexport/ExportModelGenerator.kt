@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private const val magicPropertyName = "__doNotUseOrImplementIt"
@@ -83,6 +84,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             is Exportability.Allowed -> {
                 val parent = function.parent
                 val realOverrideTarget = function.realOverrideTargetOrNull
+                val isStatic = function.isStaticMethod
                 ExportedFunction(
                     realOverrideTarget
                         ?.getJsSymbolForOverriddenDeclaration()
@@ -91,11 +93,15 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     returnType = specializedType ?: exportType(function.returnType, function),
                     typeParameters = function.typeParameters.memoryOptimizedMap { exportTypeParameter(it, function) },
                     isMember = parent is IrClass,
-                    isStatic = function.isStaticMethod,
+                    isStatic = isStatic,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
                     isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
                     parameters = function.nonDispatchParameters
                         .filter { it.shouldBeExported() }
+                        .butIf(isStatic && function.parentClassOrNull?.isInner == true) {
+                            // Remove $outer argument from secondary constructors of inner classes
+                            it.drop(1)
+                        }
                         .memoryOptimizedMap {
                             exportParameter(
                                 it,
@@ -107,9 +113,20 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         }
     }
 
-    private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
+    private fun exportConstructor(constructor: IrConstructor, isReadOnlyPropertyForInnerClass: Boolean): ExportedConstructor? {
         if (!constructor.isPrimary) return null
-        val visibility = constructor.exportedVisibility
+        val constructedClass = constructor.constructedClass
+        val visibility = when {
+            constructedClass.isInner && !isReadOnlyPropertyForInnerClass -> when (constructedClass.modality) {
+                // Inner classes should be constructed as `new outerClassValue.Inner()`
+                // in JavaScript instead of `new OuterClass.Inner(outerClassValue)`.
+                // The only time when you might actually want to call the real inner class
+                // constructor is when you're inheriting from it.
+                Modality.SEALED, Modality.FINAL -> ExportedVisibility.PRIVATE
+                Modality.ABSTRACT, Modality.OPEN -> ExportedVisibility.PROTECTED
+            }
+            else -> constructor.exportedVisibility
+        }
         val parameters = if (visibility == ExportedVisibility.PRIVATE) {
             // There is no point in generating private constructor parameters, since you can't call this constructor,
             // and it leaks implementation details.
@@ -237,8 +254,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             members = members,
             nestedClasses = nestedClasses,
             originalClassId = klass.classId,
-            innerClassReference = runIf(klass.isInner) { klass.typeScriptInnerClassReference() },
-            isFinal = klass.modality == Modality.FINAL,
         )
     }
 
@@ -326,13 +341,21 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     members.addIfNotNull(exportFunction(candidate)?.withAttributesFor(candidate))
 
                 is IrConstructor ->
-                    members.addIfNotNull(exportConstructor(candidate)?.withAttributesFor(candidate))
+                    members.addIfNotNull(
+                        exportConstructor(
+                            candidate,
+                            isReadOnlyPropertyForInnerClass = false
+                        )?.withAttributesFor(candidate)
+                    )
 
                 is IrProperty ->
                     members.addIfNotNull(exportProperty(candidate)?.withAttributesFor(candidate))
 
                 is IrClass -> {
                     if (klass.isInterface && !candidate.isCompanion) continue
+                    if (candidate.isInner) {
+                        members.add(candidate.toReadOnlyPropertyForInnerClass().withAttributesFor(candidate))
+                    }
                     val ec = exportClass(candidate)?.withAttributesFor(candidate)
                     if (ec is ExportedClass) {
                         nestedClasses.add(ec)
@@ -366,6 +389,37 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             specialMembers + members,
             nestedClasses
         )
+    }
+
+    private fun IrClass.toReadOnlyPropertyForInnerClass(): ExportedProperty {
+        val innerClassReference = typeScriptInnerClassReference()
+        val allPublicConstructors = constructors
+            .mapNotNull { exportConstructor(it, isReadOnlyPropertyForInnerClass = true) }
+            .filterNot { it.isProtected }
+            .map {
+                ExportedConstructSignature(
+                    parameters = it.parameters.drop(1),
+                    returnType = ExportedType.TypeParameter(innerClassReference),
+                )
+            }
+            .toList()
+
+        val type = ExportedType.IntersectionType(
+            ExportedType.InlineInterfaceType(allPublicConstructors),
+            ExportedType.TypeOf(
+                ExportedType.ClassType(
+                    innerClassReference,
+                    emptyList(),
+                    isObject = false,
+                    isExternal,
+                    classId,
+                )
+            )
+        )
+
+        val name = getExportedIdentifier()
+
+        return ExportedProperty(name = name, type = type, mutable = false, isMember = true)
     }
 
     private fun IrClass.shouldNotBeImplemented(): Boolean {
@@ -472,8 +526,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 members = members,
                 nestedClasses = nestedClasses,
                 originalClassId = klass.classId,
-                innerClassReference = runIf(klass.isInner) { klass.typeScriptInnerClassReference() },
-                isFinal = klass.modality == Modality.FINAL,
             )
         }
     }

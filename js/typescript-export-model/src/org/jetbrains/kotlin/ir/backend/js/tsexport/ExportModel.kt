@@ -98,9 +98,7 @@ public data class ExportedRegularClass(
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
     override val originalClassId: ClassId?,
-    val innerClassReference: String? = null,
     override val isExternal: Boolean,
-    val isFinal: Boolean = false,
 ) : ExportedClass() {
     override val isCompanion: Boolean
         get() = false

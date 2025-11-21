@@ -310,27 +310,15 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     }
 
     private fun ExportedRegularClass.generateTypeScriptString(indent: String, prefix: String): String {
-        val isInner = innerClassReference != null
         val keyword = if (isInterface) "interface" else "class"
         val superInterfacesKeyword = if (isInterface) "extends" else "implements"
 
         val superClassClause = superClasses.toExtendsClause(indent)
         val superInterfacesClause = superInterfaces.toImplementsClause(superInterfacesKeyword, indent)
 
-        val (membersForNamespace, membersForClassItself) = members.partition { isInterface && it is ExportedFunction && it.isStatic }
+        val (membersForNamespace, classMembers) = members.partition { isInterface && it is ExportedFunction && it.isStatic }
         val namespaceMembers = membersForNamespace.map { (it as ExportedFunction).copy(isMember = false) }
-        val classMembers = membersForClassItself.map {
-            if (isInner && it is ExportedFunction && it.isStatic) {
-                // Remove $outer argument from secondary constructors of inner classes
-                it.copy(parameters = it.parameters.drop(1))
-            } else {
-                it
-            }
-        }
-
-        val (innerClasses, nonInnerClasses) = nestedClasses.partition { it is ExportedRegularClass && it.innerClassReference != null }
-        val innerClassesProperties = innerClasses.map { (it as ExportedRegularClass).toReadonlyProperty() }
-        val membersString = (classMembers + innerClassesProperties)
+        val membersString = classMembers
             .joinToString("") { it.toTypeScript("$indent    ") + "\n" }
 
         // If there are no exported constructors, add a private constructor to disable default one
@@ -369,7 +357,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             generateMetadataNamespace(listOf(constructorProperty))
         })
 
-        val realNestedDeclarations = metadataNamespace + namespaceMembers + nonInnerClasses + innerClasses.map { it.withProtectedConstructorsForInnerClass() }
+        val realNestedDeclarations = metadataNamespace + namespaceMembers + nestedClasses
 
         val klassExport =
             "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}${
@@ -426,44 +414,6 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
 
             else -> ""
         }
-    }
-
-    private fun ExportedClass.withProtectedConstructorsForInnerClass(): ExportedRegularClass {
-        return (this as ExportedRegularClass).copy(members = members.map {
-            if (it !is ExportedConstructor) return@map it
-            val visibility = if (isFinal) ExportedVisibility.PRIVATE else ExportedVisibility.PROTECTED
-            val parameters = if (visibility == ExportedVisibility.PRIVATE) emptyList() else it.parameters
-            it.copy(parameters = parameters, visibility = visibility)
-        })
-    }
-
-    private fun ExportedRegularClass.toReadonlyProperty(): ExportedProperty {
-        val innerClassReference = innerClassReference ?: error("Can't create readonly property for non-inner class")
-        val allPublicConstructors = members.asSequence()
-            .filterIsInstance<ExportedConstructor>()
-            .filterNot { it.isProtected }
-            .map {
-                ExportedConstructSignature(
-                    parameters = it.parameters.drop(1),
-                    returnType = ExportedType.TypeParameter(innerClassReference),
-                )
-            }
-            .toList()
-
-        val type = ExportedType.IntersectionType(
-            ExportedType.InlineInterfaceType(allPublicConstructors),
-            ExportedType.TypeOf(
-                ExportedType.ClassType(
-                    innerClassReference,
-                    emptyList(),
-                    isObject = false,
-                    isExternal,
-                    originalClassId,
-                )
-            )
-        )
-
-        return ExportedProperty(name = name, type = type, mutable = false, isMember = true)
     }
 
     private fun List<ExportedParameter>.generateTypeScriptString(indent: String): String {
