@@ -157,6 +157,9 @@ private fun createTranslationResult(
     // Assume that parts of the KotlinRuntimeSupport and KotlinRuntime module are used.
     // It might not be the case, but precise tracking seems like an overkill at the moment.
     sirModule.updateImport(SirImport(config.runtimeSupportModuleName))
+    if (config.enableCoroutinesSupport) {
+        sirModule.updateImport(SirImport(config.coroutineSupportModuleName))
+    }
     sirModule.updateImport(SirImport(config.runtimeModuleName))
 
     // Conflicts may have arisen from the package flattening process

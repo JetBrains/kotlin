@@ -19,9 +19,11 @@ import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.translation.TranslationResult
 import org.jetbrains.kotlin.swiftexport.standalone.translation.translateCrossReferencingModulesTransitively
 import org.jetbrains.kotlin.swiftexport.standalone.translation.translateModulePublicApi
-import org.jetbrains.kotlin.swiftexport.standalone.utils.logConfigIssues
+import org.jetbrains.kotlin.swiftexport.standalone.utils.patchConfigAndLogIssues
+import org.jetbrains.kotlin.swiftexport.standalone.writer.BridgeSources
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtFile
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtPath
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.printer.SirPrinter
 import java.io.Serializable
 import java.nio.file.Path
@@ -128,7 +130,7 @@ public fun runSwiftExport(
     modules: Set<InputModule>,
     config: SwiftExportConfig,
 ): Result<Set<SwiftExportModule>> = runCatching {
-    logConfigIssues(modules, config.logger)
+    val config = patchConfigAndLogIssues(modules, config)
     val allModules = translateModules(modules, config)
     val packagesModule = writeKotlinPackagesModule(
         sirModule = allModules.createModuleForPackages(config),
@@ -138,7 +140,14 @@ public fun runSwiftExport(
         config = config,
         outputPath = config.outputPath.parent / config.runtimeSupportModuleName / "${config.runtimeSupportModuleName}.swift",
     )
-    return@runCatching setOf(packagesModule, runtimeSupportModule) + allModules.map { it.writeModule(config) }
+    val coroutineSupportModule = writeCoroutineSupportModule(
+        config = config,
+        outputPath = config.outputPath.parent / config.coroutineSupportModuleName / "${config.coroutineSupportModuleName}.swift",
+    )
+
+    val predefinedModules = setOfNotNull(packagesModule, runtimeSupportModule, coroutineSupportModule)
+
+    return@runCatching predefinedModules + allModules.map { it.writeModule(config) }
 }
 
 private fun translateModules(
@@ -192,17 +201,61 @@ private fun writeKotlinPackagesModule(
 private fun writeRuntimeSupportModule(
     config: SwiftExportConfig,
     outputPath: Path,
-): SwiftExportModule.SwiftOnly {
+): SwiftExportModule.BridgesToKotlin = writeSupportModule(
+    name = config.runtimeSupportModuleName,
+    config = config,
+    outputPath = outputPath
+)
 
-    val runtimeSupportContent = config.javaClass.getResource("/swift/KotlinRuntimeSupport.swift")?.readText()
-        ?: error("Can't find runtime support module")
+private fun writeCoroutineSupportModule(
+    config: SwiftExportConfig,
+    outputPath: Path,
+): SwiftExportModule.BridgesToKotlin? = config.enableCoroutinesSupport.ifTrue {
+    writeSupportModule(
+        name = config.coroutineSupportModuleName,
+        config = config,
+        outputPath = outputPath
+    )
+}
+
+private fun writeSupportModule(
+    name: String,
+    config: SwiftExportConfig,
+    outputPath: Path,
+): SwiftExportModule.BridgesToKotlin {
+    require(name.isNotBlank() && name.first().isLetter() && name.all { it.isLetterOrDigit() }) { "Invalid module name $name" }
+
+    val runtimeSupportContent = config.javaClass.getResource("/swift/$name.swift")?.readText()
+        ?: error("Can not find runtime support swift source")
+
+    val kotlinBridgeContent = config.javaClass.getResource("/swift/$name.kt")?.readText()
+        ?: error("Can not find runtime support kotlin source")
+
+    val cHeaderBridgeContent = config.javaClass.getResource("/swift/$name.h")?.readText()
+        ?: error("Can not find runtime support c header")
+
+    val modulePath = outputPath.parent / name
+    val outputFiles = SwiftExportFiles(
+        swiftApi = (modulePath / "$name.swift"),
+        kotlinBridges = (modulePath / "$name.kt"),
+        cHeaderBridges = (modulePath / "$name.h")
+    )
+
     // arrayOf() used as workaround to target method from older kotlin-stlib due to https://github.com/gradle/gradle/issues/34442
-    dumpTextAtFile(sequenceOf(*arrayOf(runtimeSupportContent)), outputPath.toFile())
+    dumpTextAtPath(
+        sequenceOf(*arrayOf(runtimeSupportContent)),
+        BridgeSources(
+            sequenceOf(*arrayOf(kotlinBridgeContent)),
+            sequenceOf(*arrayOf(cHeaderBridgeContent)),
+        ),
+        outputFiles
+    )
 
-    return SwiftExportModule.SwiftOnly(
-        swiftApi = outputPath,
-        name = config.runtimeSupportModuleName,
-        kind = SwiftExportModule.SwiftOnly.Kind.KotlinRuntimeSupport,
+    return SwiftExportModule.BridgesToKotlin(
+        name = name,
+        dependencies = emptyList(), // or add dependencies if needed
+        bridgeName = "${name}Bridge", // or another bridge name
+        files = outputFiles
     )
 }
 

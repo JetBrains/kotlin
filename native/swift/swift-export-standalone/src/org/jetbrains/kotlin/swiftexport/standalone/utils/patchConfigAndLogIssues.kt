@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.swiftexport.standalone.utils
 
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportLogger
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 
-internal fun logConfigIssues(modules: Set<InputModule>, logger: SwiftExportLogger) {
+internal fun patchConfigAndLogIssues(modules: Set<InputModule>, config: SwiftExportConfig): SwiftExportConfig {
+    val logger = config.logger
+
     modules.forEach { module ->
         val config = module.config
         if (config.bridgeModuleName == SwiftModuleConfig.DEFAULT_BRIDGE_MODULE_NAME) {
@@ -25,4 +28,20 @@ internal fun logConfigIssues(modules: Set<InputModule>, logger: SwiftExportLogge
             )
         }
     }
+
+    val enableCoroutineSupport = config.enableCoroutinesSupport && modules.any { it.name == "KotlinxCoroutinesCore" }.also {
+        if (!it) {
+            logger.report(
+                SwiftExportLogger.Severity.Warning,
+                """
+                Coroutine support is enabled, but no `kotlinx-coroutines-core` module was found in path.
+                Please add kotlinx-coutines as a dependency to your project, or disable coroutines support to silence this warning.
+                """.trimIndent().replace("\n", " ")
+            )
+        }
+    }
+
+    return config.copy(
+        enableCoroutinesSupport = enableCoroutineSupport
+    )
 }

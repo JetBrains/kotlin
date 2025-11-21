@@ -1,4 +1,5 @@
 @_implementationOnly import KotlinBridges_main
+import KotlinCoroutineSupport
 import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinxCoroutinesCore

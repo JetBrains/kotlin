@@ -31,6 +31,7 @@ public data class SwiftExportConfig(
 ) {
     val moduleForPackagesName: String = "ExportedKotlinPackages"
     val runtimeSupportModuleName: String = "KotlinRuntimeSupport"
+    val coroutineSupportModuleName: String = "KotlinCoroutineSupport"
     val runtimeModuleName: String = "KotlinRuntime"
 
     val stdlibInputModule: InputModule by lazy { createInputModuleForStdlib(distribution) }

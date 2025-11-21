@@ -1,5 +1,6 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_main
+import KotlinCoroutineSupport
 import KotlinRuntime
 import KotlinRuntimeSupport
 
