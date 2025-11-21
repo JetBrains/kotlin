@@ -46,8 +46,9 @@ abstract class KaBaseSimpleNameReference(expression: KtSimpleNameExpression) : K
                     }
                 }
 
-                // According to the KDoc, `this`/`super` references cannot be properly expressed in terms of this API
+                // According to the KDoc, labels and `this`/`super` references cannot be properly expressed in terms of this API
                 is KtNameReferenceExpression if (element.parent is KtInstanceExpressionWithLabel) -> return emptyList()
+                is KtLabelReferenceExpression -> return emptyList()
             }
 
             return listOf(element.getReferencedNameAsName())

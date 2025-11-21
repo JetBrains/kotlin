@@ -63,7 +63,6 @@ KtLabelReferenceExpression(103,111): '@MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [MyClass] provided
     symbols:
       (in one) class MyClass
 
@@ -145,7 +144,6 @@ KtLabelReferenceExpression(248,259): '@InnerOuter'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [InnerOuter] provided
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -180,7 +178,6 @@ KtLabelReferenceExpression(282,290): '@MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [MyClass] provided
     symbols:
       (in one) class MyClass
 
@@ -262,7 +259,6 @@ KtLabelReferenceExpression(456,468): '@InnerNested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [InnerNested] provided
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -297,7 +293,6 @@ KtLabelReferenceExpression(495,506): '@InnerOuter'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [InnerOuter] provided
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -332,7 +327,6 @@ KtLabelReferenceExpression(533,541): '@MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [MyClass] provided
     symbols:
       (in one) class MyClass
 
@@ -360,7 +354,6 @@ KtLabelReferenceExpression(573,578): 'anon@'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [anon] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -436,7 +429,6 @@ KtLabelReferenceExpression(686,691): '@anon'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [anon] provided
     symbols:
       (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.MyClass.`<no name provided>`(s: kotlin.String)
 
@@ -471,7 +463,6 @@ KtLabelReferenceExpression(722,734): '@InnerNested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [InnerNested] provided
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -506,7 +497,6 @@ KtLabelReferenceExpression(765,776): '@InnerOuter'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [InnerOuter] provided
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -541,7 +531,6 @@ KtLabelReferenceExpression(807,815): '@MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [MyClass] provided
     symbols:
       (in one) class MyClass
 
@@ -643,7 +632,6 @@ KtLabelReferenceExpression(952,959): '@myWith'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [myWith] provided
     symbols:
       (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.InnerOuter.MyClass.InnerNested.(t: one.InnerOuter.MyClass.InnerNested): kotlin.Unit
 
@@ -678,7 +666,6 @@ KtLabelReferenceExpression(990,1002): '@InnerNested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [InnerNested] provided
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -713,7 +700,6 @@ KtLabelReferenceExpression(1033,1044): '@InnerOuter'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [InnerOuter] provided
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -748,7 +734,6 @@ KtLabelReferenceExpression(1075,1083): '@MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [MyClass] provided
     symbols:
       (in one) class MyClass
 
@@ -796,7 +781,6 @@ KtLabelReferenceExpression(1132,1138): 'label@'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [label] provided
     symbols:
       Nothing (Unresolved reference)
 
@@ -811,7 +795,6 @@ KtLabelReferenceExpression(1164,1170): '@label'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [label] provided
     symbols:
       (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.InnerOuter.MyClass.InnerNested.(it: one.InnerOuter.MyClass.InnerNested): kotlin.Unit
 

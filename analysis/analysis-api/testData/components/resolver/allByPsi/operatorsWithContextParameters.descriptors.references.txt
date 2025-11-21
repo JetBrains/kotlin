@@ -247,7 +247,6 @@ KtLabelReferenceExpression(757,773): '@SimpleOperators'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [SimpleOperators] provided
     symbols:
       (in ROOT) class SimpleOperators
 

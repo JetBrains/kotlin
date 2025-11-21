@@ -2,6 +2,5 @@ KtLabelReferenceExpression(67,69): '@b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [b] provided
     symbols:
       Nothing (Unresolved reference)

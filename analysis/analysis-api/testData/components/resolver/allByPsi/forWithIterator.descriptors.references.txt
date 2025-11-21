@@ -51,7 +51,6 @@ KtLabelReferenceExpression(151,160): '@iterator'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [iterator] provided
     symbols:
       (in f) operator fun f.IntProgression.iterator(): kotlin.collections.Iterator<kotlin.Int>
 
@@ -99,7 +98,6 @@ KtLabelReferenceExpression(211,220): '@iterator'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [iterator] provided
     symbols:
       (in f) operator fun f.IntProgression.iterator(): kotlin.collections.Iterator<kotlin.Int>
 
