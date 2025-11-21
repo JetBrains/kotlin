@@ -61,7 +61,6 @@ class StdlibVersionAlignmentTest : SourceSetDependenciesResolution() {
                         when (wasmTargetType!!) {
                             KotlinWasmTargetType.JS -> setOf(stdlibWasmJs)
                             KotlinWasmTargetType.WASI -> setOf(stdlibWasmWasi)
-                            KotlinWasmTargetType.SPEC -> setOf(stdlibWasmWasi)
                         }
                     }
                     else -> emptySet()

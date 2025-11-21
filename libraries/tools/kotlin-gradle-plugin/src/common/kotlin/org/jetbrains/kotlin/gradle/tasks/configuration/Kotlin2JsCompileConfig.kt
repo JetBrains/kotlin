@@ -87,11 +87,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
         if (compilation.platformType == KotlinPlatformType.wasm) {
             add(WASM_BACKEND)
             val wasmTargetType = (compilation.origin as KotlinJsIrCompilation).target.wasmTargetType!!
-            val targetValue = when (wasmTargetType) {
-                KotlinWasmTargetType.WASI -> "wasm-wasi"
-                KotlinWasmTargetType.SPEC -> "wasm-spec"
-                KotlinWasmTargetType.JS -> "wasm-js"
-            }
+            val targetValue = if (wasmTargetType == KotlinWasmTargetType.WASI) "wasm-wasi" else "wasm-js"
             add("$WASM_TARGET=$targetValue")
         }
     }

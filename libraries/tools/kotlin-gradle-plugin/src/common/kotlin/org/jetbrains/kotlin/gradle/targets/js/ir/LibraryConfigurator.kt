@@ -38,12 +38,12 @@ class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                 ) {
                     val destinationDir = binary.distribution.outputDirectory
 
-                    if (subTarget is KotlinJsIrNpmBasedSubTarget && target.wasmTargetType !in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
+                    if (subTarget is KotlinJsIrNpmBasedSubTarget && target.wasmTargetType != KotlinWasmTargetType.WASI) {
                         val npmProject = compilation.npmProject
                         it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
                     }
 
-                    if (target.wasmTargetType !in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
+                    if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
                         it.from(binary.linkSyncTask)
                     } else {
                         it.from(binary.linkTask)

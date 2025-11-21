@@ -29,7 +29,6 @@ internal object TargetHierarchy {
         Node("js"),
         Node("wasmJs"),
         Node("wasmWasi"),
-        Node("wasmSpec"),
         Node(
             "native",
             Node(

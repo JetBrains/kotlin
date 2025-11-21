@@ -56,7 +56,6 @@ class KotlinRootNpmResolver internal constructor(
         //TODO[Ilya Goncharov, Igor Iakovlev] Hack for Mixed mode of legacy and IR tooling and Wasm
         var containsWasmJs = false
         var containsWasmWasi = false
-        var containsWasmSpec = false
         var containsIrJs = false
         val errorMessage = "Cannot resolve project dependency $src -> $target." +
                 "Dependency to project with multiple js/wasm compilations is not supported yet."
@@ -77,16 +76,12 @@ class KotlinRootNpmResolver internal constructor(
                     check(!containsWasmWasi) { errorMessage }
                     containsWasmWasi = true
                 }
-                if (jsTarget.wasmTargetType == KotlinWasmTargetType.SPEC) {
-                    check(!containsWasmSpec) { errorMessage }
-                    containsWasmSpec = true
-                }
             } else {
                 check(!containsIrJs) { errorMessage }
                 containsIrJs = true
             }
         }
-        check(containsWasmJs || containsWasmWasi || containsIrJs || containsWasmSpec) { errorMessage }
+        check(containsWasmJs || containsWasmWasi || containsIrJs) { errorMessage }
 
         return mainCompilations
     }

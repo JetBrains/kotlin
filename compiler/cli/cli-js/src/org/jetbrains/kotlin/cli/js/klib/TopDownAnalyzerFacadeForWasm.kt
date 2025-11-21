@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmJsPlatformAnalyzerServices
-import org.jetbrains.kotlin.wasm.resolve.WasmSpecPlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
 abstract class TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForWeb() {
@@ -41,8 +40,7 @@ abstract class TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForWe
     companion object {
         @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
         fun facadeFor(target: WasmTarget?): TopDownAnalyzerFacadeForWasm = when (target) {
-            WasmTarget.WASI -> TopDownAnalyzerFacadeForWasmWasi
-            WasmTarget.SPEC -> TopDownAnalyzerFacadeForWasmSpec
+            WasmTarget.WASI, WasmTarget.SPEC -> TopDownAnalyzerFacadeForWasmWasi
             else -> TopDownAnalyzerFacadeForWasmJs
         }
     }
@@ -58,10 +56,4 @@ object TopDownAnalyzerFacadeForWasmWasi : TopDownAnalyzerFacadeForWasm() {
     override val platform: TargetPlatform = WasmPlatforms.wasmWasi
 
     override val analyzerServices: PlatformDependentAnalyzerServices = WasmWasiPlatformAnalyzerServices
-}
-
-object TopDownAnalyzerFacadeForWasmSpec : TopDownAnalyzerFacadeForWasm() {
-    override val platform: TargetPlatform = WasmPlatforms.wasmSpec
-
-    override val analyzerServices: PlatformDependentAnalyzerServices = WasmSpecPlatformAnalyzerServices
 }

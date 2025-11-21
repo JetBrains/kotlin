@@ -166,8 +166,7 @@ fun <F> prepareWasmSessions(
 ): List<SessionWithSources<F>> {
     val platform = when (configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
         WasmTarget.JS -> WasmPlatforms.wasmJs
-        WasmTarget.WASI -> WasmPlatforms.wasmWasi
-        WasmTarget.SPEC -> WasmPlatforms.wasmSpec
+        WasmTarget.WASI, WasmTarget.SPEC -> WasmPlatforms.wasmWasi
     }
     return prepareKlibSessions(
         FirWasmSessionFactory, platform, files, configuration, rootModuleName, resolvedLibraries, libraryList, extensionRegistrars,

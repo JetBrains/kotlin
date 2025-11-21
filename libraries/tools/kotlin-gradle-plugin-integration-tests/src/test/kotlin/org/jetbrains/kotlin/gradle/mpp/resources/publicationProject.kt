@@ -91,7 +91,6 @@ fun GradleProjectBuildScriptInjectionContext.configureStandardResourcesProducerT
         iosSimulatorArm64()
         wasmJs()
         wasmWasi()
-        wasmSpec()
         js()
     }
 

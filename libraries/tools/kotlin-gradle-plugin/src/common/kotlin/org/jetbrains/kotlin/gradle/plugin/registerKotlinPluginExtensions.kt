@@ -170,7 +170,6 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, JsEnvironmentChecker)
         register(project, WasmJsEnvironmentChecker)
         register(project, WasmWasiEnvironmentChecker)
-        register(project, WasmSpecEnvironmentChecker)
         register(project, PreHmppDependenciesUsageChecker)
         register(project, ExperimentalTryNextUsageChecker)
         register(project, KotlinSourceSetTreeDependsOnMismatchChecker)

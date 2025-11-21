@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.platform.wasm
 enum class WasmTarget(val alias: String) {
     JS("wasm-js"),
     WASI("wasm-wasi"),
-    SPEC("wasm-spec");
+    SPEC("wasm-wasi");
 
     companion object {
         fun fromName(name: String): WasmTarget? = WasmTarget.entries.firstOrNull { it.alias == name }

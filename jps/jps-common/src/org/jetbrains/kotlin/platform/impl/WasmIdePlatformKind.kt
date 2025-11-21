@@ -43,7 +43,7 @@ abstract class WasmIdePlatformKind : IdePlatformKind() {
 
 object WasmJsIdePlatformKind : WasmIdePlatformKind() {
     override fun supportsTargetPlatform(platform: TargetPlatform): Boolean =
-        platform.isWasmJs() || (!platform.isWasmWasi() && !platform.isWasmSpec() && platform.isWasm())
+        platform.isWasmJs() || (!platform.isWasmWasi() && platform.isWasm())
 
     override val defaultPlatform get() = WasmPlatforms.wasmJs
 
@@ -80,26 +80,6 @@ object WasmWasiIdePlatformKind : WasmIdePlatformKind() {
     override val argumentsClass get() = K2JSCompilerArguments::class.java
 
     override val name get() = "WebAssembly WASI"
-}
-
-object WasmSpecIdePlatformKind : WasmIdePlatformKind() {
-    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform.isWasmSpec()
-
-    override val defaultPlatform get() = WasmPlatforms.wasmSpec
-
-    @Deprecated(
-        message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
-        level = DeprecationLevel.ERROR
-    )
-    override fun getDefaultPlatform(): IdePlatform<*, *> = WasmIdePlatformKind.Platform
-
-    override fun createArguments(): CommonCompilerArguments {
-        return K2JSCompilerArguments()
-    }
-
-    override val argumentsClass get() = K2JSCompilerArguments::class.java
-
-    override val name get() = "WebAssembly SPEC"
 }
 
 val IdePlatformKind?.isWasmJs

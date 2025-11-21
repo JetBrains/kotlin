@@ -528,15 +528,6 @@ publishing {
             variant("wasmWasiRuntimeElements")
             variant("wasmWasiSourcesElements")
         }
-        val wasmSpec = module("wasmSpecModule") {
-            mavenPublication {
-                artifactId = "$artifactBaseName-wasm-spec"
-                configureKotlinPomAttributes(project, "Kotlin Test library for experimental WebAssembly SPEC platform", packaging = "klib")
-            }
-            variant("wasmSpecApiElements")
-            variant("wasmSpecRuntimeElements")
-            variant("wasmSpecSourcesElements")
-        }
 
         module("testCommonModule") {
             mavenPublication {
@@ -556,7 +547,7 @@ publishing {
         }
 
         // Makes all variants from accompanying artifacts visible through `available-at`
-        rootModule.include(js, *frameworkModules.toTypedArray(), wasmJs, wasmWasi, wasmSpec)
+        rootModule.include(js, *frameworkModules.toTypedArray(), wasmJs, wasmWasi)
     }
 
     publications {

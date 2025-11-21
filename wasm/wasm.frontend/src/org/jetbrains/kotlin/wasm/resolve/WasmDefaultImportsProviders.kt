@@ -19,7 +19,3 @@ object WasmJsDefaultImportsProvider : DefaultImportsProvider() {
 object WasmWasiDefaultImportsProvider : DefaultImportsProvider() {
     override val platformSpecificDefaultImports: List<ImportPath> = listOf(ImportPath.fromString("kotlin.wasm.*"))
 }
-
-object WasmSpecDefaultImportsProvider : DefaultImportsProvider() {
-    override val platformSpecificDefaultImports: List<ImportPath> = listOf(ImportPath.fromString("kotlin.wasm.*"))
-}

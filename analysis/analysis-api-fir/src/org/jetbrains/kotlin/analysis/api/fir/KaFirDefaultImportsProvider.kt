@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.resolve.konan.platform.NativeDefaultImportsProvider
 import org.jetbrains.kotlin.wasm.resolve.WasmJsDefaultImportsProvider
-import org.jetbrains.kotlin.wasm.resolve.WasmSpecDefaultImportsProvider
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiDefaultImportsProvider
 
 // K1 implementation is in IDE: `org.jetbrains.kotlin.base.fe10.analysis.KaFe10DefaultImportsProvider`
@@ -30,8 +29,7 @@ internal class KaFirDefaultImportsProvider : KaBaseDefaultImportsProvider() {
         targetPlatform.all { it is NativePlatform } -> NativeDefaultImportsProvider
         targetPlatform.all { it is WasmPlatform } -> when (targetPlatform.getWasmTarget()) {
             WasmTarget.JS -> WasmJsDefaultImportsProvider
-            WasmTarget.WASI -> WasmWasiDefaultImportsProvider
-            WasmTarget.SPEC -> WasmSpecDefaultImportsProvider
+            WasmTarget.WASI, WasmTarget.SPEC -> WasmWasiDefaultImportsProvider
         }
         else -> CommonDefaultImportsProvider
     }

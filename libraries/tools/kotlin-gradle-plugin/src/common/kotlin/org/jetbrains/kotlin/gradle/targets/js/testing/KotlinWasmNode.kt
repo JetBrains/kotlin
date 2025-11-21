@@ -47,7 +47,7 @@ internal class KotlinWasmNode(
     private val projectLayout = kotlinJsTest.project.layout
 
     override val workingDir: Provider<Directory> =
-        if (compilation.target.wasmTargetType !in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
+        if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
             compilation.npmProject.dir
         } else {
             projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })

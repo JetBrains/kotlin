@@ -311,10 +311,6 @@ kotlin {
     wasmWasi {
         commonWasmTargetConfiguration()
     }
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmSpec {
-        commonWasmTargetConfiguration()
-    }
 
     if (kotlinBuildProperties.isInIdeaSync) {
         val hostOs = System.getProperty("os.name")
@@ -557,22 +553,6 @@ kotlin {
                 srcDir("wasm/wasi/test")
             }
         }
-        val wasmSpecMain by getting {
-            dependsOn(wasmCommonMain)
-            kotlin {
-                srcDir("wasm/wasi/builtins")
-                srcDir("wasm/wasi/src")
-            }
-            languageSettings {
-                optIn("kotlin.wasm.unsafe.UnsafeWasmMemoryApi")
-            }
-        }
-        val wasmSpecTest by getting {
-            dependsOn(wasmCommonTest)
-            kotlin {
-                srcDir("wasm/wasi/test")
-            }
-        }
 
         if (kotlinBuildProperties.isInIdeaSync) {
             val nativeKotlinTestCommon by creating {
@@ -782,10 +762,6 @@ tasks {
         manifestAttributes(manifest, "Main")
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-wasi"))
     }
-    val wasmSpecJar by existing(Jar::class) {
-        manifestAttributes(manifest, "Main")
-        manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-spec"))
-    }
 
     artifacts {
         val distJsJar = configurations.create("distJsJar")
@@ -825,7 +801,7 @@ tasks {
         check.configure { dependsOn(jvmLongRunningTest) }
     }
 
-    listOf("Js", "Wasi", "Spec").forEach { wasmTarget ->
+    listOf("Js", "Wasi").forEach { wasmTarget ->
         named("compileTestKotlinWasm$wasmTarget", AbstractKotlinCompile::class) {
             // TODO: fix all warnings, enable -Werror
             compilerOptions.suppressWarnings = true
@@ -986,18 +962,9 @@ publishing {
             variant("wasmWasiRuntimeElements")
             variant("wasmWasiSourcesElements")
         }
-        val wasmSpec = module("wasmSpecModule") {
-            mavenPublication {
-                artifactId = "$artifactBaseName-wasm-spec"
-                configureKotlinPomAttributes(project, "Kotlin Standard Library for experimental WebAssembly SPEC platform", packaging = "klib")
-            }
-            variant("wasmSpecApiElements")
-            variant("wasmSpecRuntimeElements")
-            variant("wasmSpecSourcesElements")
-        }
 
         // Makes all variants from accompanying artifacts visible through `available-at`
-        rootModule.include(js, wasmJs, wasmWasi, wasmSpec)
+        rootModule.include(js, wasmJs, wasmWasi)
     }
 
     publications {
@@ -1008,10 +975,8 @@ publishing {
 
         val wasmJsModule by existing(MavenPublication::class)
         val wasmWasiModule by existing(MavenPublication::class)
-        val wasmSpecModule by existing(MavenPublication::class)
         configureSbom("Wasm-Js", "kotlin-stdlib-wasm-js", setOf("wasmJsRuntimeClasspath"), wasmJsModule)
         configureSbom("Wasm-Wasi", "kotlin-stdlib-wasm-wasi", setOf("wasmWasiRuntimeClasspath"), wasmWasiModule)
-        configureSbom("Wasm-Spec", "kotlin-stdlib-wasm-spec", setOf("wasmSpecRuntimeClasspath"), wasmSpecModule)
     }
 }
 
