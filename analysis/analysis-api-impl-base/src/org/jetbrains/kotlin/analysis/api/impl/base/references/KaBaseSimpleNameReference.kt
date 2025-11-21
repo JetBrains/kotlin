@@ -24,45 +24,50 @@ abstract class KaBaseSimpleNameReference(expression: KtSimpleNameExpression) : K
     override val resolvesByNames: Collection<Name>
         get() {
             val element = element
-            when (element) {
-                is KtOperationReferenceExpression -> {
-                    val tokenType = element.operationSignTokenType
-                    if (tokenType != null) {
-                        val name = OperatorConventions.getNameForOperationSymbol(
-                            tokenType, element.parent is KtUnaryExpression, element.parent is KtBinaryExpression
-                        )
-                            ?: (expression.parent as? KtBinaryExpression)?.let {
-                                runIf(it.operationToken == KtTokens.EQ && isAssignmentResolved(element.project, it)) { ASSIGN_METHOD }
-                            }
-                            ?: return emptyList()
-
-                        val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[tokenType]
-                        return if (counterpart != null) {
-                            val counterpartName = OperatorConventions.getNameForOperationSymbol(counterpart, false, true)!!
-                            listOf(name, counterpartName)
-                        } else {
-                            listOf(name)
-                        }
-                    }
-                }
+            val specialNames = when (element) {
+                is KtOperationReferenceExpression -> operatorNames(element)
 
                 // According to the KDoc, labels and `this`/`super` references cannot be properly expressed in terms of this API
-                is KtNameReferenceExpression if (element.parent is KtInstanceExpressionWithLabel) -> return emptyList()
-                is KtLabelReferenceExpression -> return emptyList()
+                is KtNameReferenceExpression if (element.parent is KtInstanceExpressionWithLabel) -> emptyList()
+                is KtLabelReferenceExpression -> emptyList()
+                else -> null
+            }
+
+            if (specialNames != null) {
+                return specialNames
             }
 
             return listOf(element.getReferencedNameAsName())
         }
+}
 
-    private fun isAssignmentResolved(project: Project, binaryExpression: KtBinaryExpression): Boolean {
-        val sourceModule = KotlinProjectStructureProvider.getModule(project, binaryExpression, useSiteModule = null)
-        if (sourceModule !is KaSourceModule) {
-            return false
-        }
+private fun operatorNames(expression: KtOperationReferenceExpression): Collection<Name>? = buildList {
+    val tokenType = expression.operationSignTokenType ?: return null
 
-        val reference = binaryExpression.operationReference.reference ?: return false
-        val compilerPluginsProvider = KotlinCompilerPluginsProvider.getInstance(project) ?: return false
-        return compilerPluginsProvider.isPluginOfTypeRegistered(sourceModule, CompilerPluginType.ASSIGNMENT)
-                && (reference.resolve() as? KtNamedFunction)?.nameAsName == ASSIGN_METHOD
+    val name = OperatorConventions.getNameForOperationSymbol(
+        tokenType, expression.parent is KtUnaryExpression, expression.parent is KtBinaryExpression
+    ) ?: (expression.parent as? KtBinaryExpression)?.let {
+        runIf(it.operationToken == KtTokens.EQ && isAssignmentResolved(expression.project, it)) { ASSIGN_METHOD }
     }
+
+    if (name != null) {
+        add(name)
+        val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[tokenType]
+        if (counterpart != null) {
+            val counterpartName = OperatorConventions.getNameForOperationSymbol(counterpart, false, true)!!
+            add(counterpartName)
+        }
+    }
+}
+
+private fun isAssignmentResolved(project: Project, binaryExpression: KtBinaryExpression): Boolean {
+    val sourceModule = KotlinProjectStructureProvider.getModule(project, binaryExpression, useSiteModule = null)
+    if (sourceModule !is KaSourceModule) {
+        return false
+    }
+
+    val reference = binaryExpression.operationReference.reference ?: return false
+    val compilerPluginsProvider = KotlinCompilerPluginsProvider.getInstance(project) ?: return false
+    return compilerPluginsProvider.isPluginOfTypeRegistered(sourceModule, CompilerPluginType.ASSIGNMENT)
+            && (reference.resolve() as? KtNamedFunction)?.nameAsName == ASSIGN_METHOD
 }
