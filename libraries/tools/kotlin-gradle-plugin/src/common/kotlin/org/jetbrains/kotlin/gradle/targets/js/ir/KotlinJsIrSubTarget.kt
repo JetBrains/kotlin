@@ -123,7 +123,7 @@ abstract class KotlinJsIrSubTarget(
                 KotlinJsBinaryMode.DEVELOPMENT
             ).single()
 
-            val inputFileProperty = if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            val inputFileProperty = if (target.wasmTargetType !in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
                 testJs.dependsOn(binary.linkSyncTask)
                 binary.mainFileSyncPath
             } else {

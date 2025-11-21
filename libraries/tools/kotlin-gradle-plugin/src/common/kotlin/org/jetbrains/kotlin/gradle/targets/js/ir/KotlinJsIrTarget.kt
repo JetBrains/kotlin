@@ -157,7 +157,7 @@ constructor(
             .all { testCompilation ->
                 val testBinaries = testCompilation.binaries.executableIrInternal(testCompilation)
 
-                if (wasmTargetType != KotlinWasmTargetType.WASI) {
+                if (wasmTargetType !in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
                     testBinaries.forEach { binary ->
                         binary.linkSyncTask.configure { task ->
                             mainCompilation.all {
@@ -240,7 +240,7 @@ constructor(
 
     //node.js
     private val nodejsLazyDelegate = lazy {
-        if (wasmTargetType != KotlinWasmTargetType.WASI) {
+        if (wasmTargetType !in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
             commonLazy
         } else {
             WasmNodeJsPlugin.apply(project)

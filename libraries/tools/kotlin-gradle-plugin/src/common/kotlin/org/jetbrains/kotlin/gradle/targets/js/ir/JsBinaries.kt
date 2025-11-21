@@ -70,7 +70,7 @@ sealed class JsIrBinary(
 
     @Suppress("PropertyName")
     protected val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =
-        if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
+        if (target.wasmTargetType in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
             null
         } else {
             project.registerTask<DefaultIncrementalSyncTask>(
@@ -97,8 +97,8 @@ sealed class JsIrBinary(
     // Wasi target doesn't have sync task
     // need to extract wasm related binaries
     val linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>
-        get() = if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
-            throw IllegalStateException("Wasi target has no sync task")
+        get() = if (target.wasmTargetType in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
+            throw IllegalStateException("Wasi and Spec target has no sync task")
         } else {
             _linkSyncTask!!
         }
@@ -114,7 +114,7 @@ sealed class JsIrBinary(
     }
 
     val mainFileSyncPath: Provider<RegularFile> =
-        if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
+        if (target.wasmTargetType in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
             project.objects.fileProperty()
         } else {
             project.objects.fileProperty().fileProvider(
@@ -217,7 +217,7 @@ internal fun TaskProvider<BinaryenExec>.configureOptimizeTask(binary: WasmBinary
     val compilation = binary.compilation
 
     if (compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-        if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
+        if (target.wasmTargetType in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
             val project = target.project
             project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(this)
         }
