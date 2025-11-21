@@ -1,0 +1,23 @@
+<caret_1>:
+  KDocName(121,126): 'super'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(136,143): '`super`'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(153,157): 'this'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(167,173): '`this`'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(230,234): 'this'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(244,250): '`this`'
+    NO_CANDIDATES

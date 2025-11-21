@@ -1,0 +1,51 @@
+<caret_1>:
+  KDocName(121,126): 'super'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      resolvesByNamesViolations: shouldn't predict, but [super] provided
+      symbols:
+        (in Base) val `super`: kotlin.Int
+
+<caret_2>:
+  KDocName(136,143): '`super`'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in Base) val `super`: kotlin.Int
+
+<caret_3>:
+  KDocName(153,157): 'this'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      resolvesByNamesViolations: shouldn't predict, but [this] provided
+      symbols:
+        (in Base) val `this`: kotlin.String
+
+<caret_4>:
+  KDocName(167,173): '`this`'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in Base) val `this`: kotlin.String
+
+<caret_5>:
+  KDocName(230,234): 'this'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      resolvesByNamesViolations: shouldn't predict, but [this] provided
+      symbols:
+        extension receiver with type kotlin.Long
+
+<caret_6>:
+  KDocName(244,250): '`this`'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      resolvesByNamesViolations: '<receiver>' !in [this]
+      symbols:
+        extension receiver with type kotlin.Long

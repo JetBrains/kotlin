@@ -4403,6 +4403,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
       }
 
       @Test
+      @TestMetadata("thisAndSuperQualifier.kt")
+      public void testThisAndSuperQualifier() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/thisQualifier/thisAndSuperQualifier.kt");
+      }
+
+      @Test
       @TestMetadata("thisQualifierOnClass.kt")
       public void testThisQualifierOnClass() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/thisQualifier/thisQualifierOnClass.kt");
