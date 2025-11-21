@@ -38,7 +38,7 @@ open class TypeCheckerState(
     val typeSystemContext: TypeSystemContext,
     val kotlinTypePreparator: AbstractTypePreparator,
     val kotlinTypeRefiner: AbstractTypeRefiner,
-    private val customSubtypeCallback: ((KotlinTypeMarker, KotlinTypeMarker) -> Boolean?)? = null,
+    val customSubtypeCallback: ((KotlinTypeMarker, KotlinTypeMarker) -> Boolean?)? = null,
 ) {
     @OptIn(TypeRefinement::class)
     fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
