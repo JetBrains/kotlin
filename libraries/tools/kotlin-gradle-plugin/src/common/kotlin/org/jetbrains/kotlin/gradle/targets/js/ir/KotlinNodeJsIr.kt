@@ -65,7 +65,7 @@ internal constructor(
             test.dependsOn(project.nodeJsSetupTaskProvider)
         }
 
-        if (target.wasmTargetType !in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
+        if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
             test.dependsOn(
                 nodeJsRoot.npmInstallTaskProvider,
             )

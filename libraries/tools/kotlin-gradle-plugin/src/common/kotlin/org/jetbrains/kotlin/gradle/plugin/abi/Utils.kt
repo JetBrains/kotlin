@@ -35,7 +35,6 @@ internal fun KotlinTarget.toKlibTarget(): KlibTarget {
         KotlinPlatformType.wasm -> when ((this as KotlinJsIrTarget).wasmTargetType) {
             KotlinWasmTargetType.WASI -> "wasmWasi"
             KotlinWasmTargetType.JS -> "wasmJs"
-            KotlinWasmTargetType.SPEC -> "wasmSpec"
             else -> throw IllegalStateException("Unreachable")
         }
         else -> throw IllegalArgumentException("Unsupported platform type: $platformType")

@@ -31,7 +31,7 @@ abstract class JsEnvironmentConfigurator<RunTask : Task>(protected val subTarget
             .getIrBinaries(KotlinJsBinaryMode.PRODUCTION)
             .withType<Executable>()
             .configureEach{ productionExecutable ->
-                val assembleTask = if (subTarget.target.wasmTargetType in listOf(KotlinWasmTargetType.WASI, KotlinWasmTargetType.SPEC)) {
+                val assembleTask = if (subTarget.target.wasmTargetType == KotlinWasmTargetType.WASI) {
                     (productionExecutable as WasmBinary).optimizeTask
                 } else {
                     productionExecutable.linkSyncTask
