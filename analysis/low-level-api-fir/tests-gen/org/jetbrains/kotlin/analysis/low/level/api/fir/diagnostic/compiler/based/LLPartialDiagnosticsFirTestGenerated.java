@@ -1420,6 +1420,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("doNotPreferJavaSams.kt")
+      public void testDoNotPreferJavaSams() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/doNotPreferJavaSams.kt");
+      }
+
+      @Test
       @TestMetadata("errorCandidates.kt")
       public void testErrorCandidates() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/errorCandidates.kt");
