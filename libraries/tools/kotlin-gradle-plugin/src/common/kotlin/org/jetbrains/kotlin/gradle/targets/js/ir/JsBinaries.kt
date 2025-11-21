@@ -83,6 +83,8 @@ sealed class JsIrBinary(
 
                 task.duplicatesStrategy = DuplicatesStrategy.WARN
 
+                task.from.from(project.tasks.named(compilation.processResourcesTaskName))
+
                 val conf = project.configurations.named(compilation.wasmBinaryConfigurationName)
 
                 task.from.from(conf)

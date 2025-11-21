@@ -153,3 +153,9 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
         const val ARTIFACT_TYPE = "wasm-binary"
     }
 }
+
+abstract class NoOpWasmBinaryTransform : TransformAction<TransformParameters.None> {
+
+    override fun transform(p0: TransformOutputs) {
+    }
+}
