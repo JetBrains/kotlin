@@ -58,7 +58,7 @@ registerKotlinSourceForVersionRange(
 generatedSourcesTask(
     taskName = "generateKotlinVersionConstant",
     generatorProject = ":gradle:generators:native-cache-kotlin-version",
-    generatorRoot = "gradle/generators/native-cache-kotlin-version/src",
+    generatorRoot = "libraries/tools/gradle/generators/native-cache-kotlin-version/src",
     generatorMainClass = "org.jetbrains.kotlin.gradle.generators.native.cache.version.MainKt",
     argsProvider = { generationRoot ->
         listOf(
