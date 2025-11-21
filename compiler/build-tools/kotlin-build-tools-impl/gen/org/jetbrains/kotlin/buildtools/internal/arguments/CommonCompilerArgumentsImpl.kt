@@ -17,7 +17,6 @@ import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
-import kotlin.io.path.absolutePathString
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.API_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.COMPILER_PLUGINS
@@ -118,7 +117,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
-import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
@@ -257,13 +255,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if (OPT_IN in this) { arguments.optIn = get(OPT_IN)}
     if (PROGRESSIVE in this) { arguments.progressiveMode = get(PROGRESSIVE)}
     if (SCRIPT in this) { arguments.script = get(SCRIPT)}
-    if (COMPILER_PLUGINS in this) {
-          val compilerPlugins = get(COMPILER_PLUGINS)
-          arguments.pluginClasspaths = compilerPlugins.flatMap { it.classpath }.map { it.absolutePathString() }.toTypedArray()
-          arguments.pluginOptions = compilerPlugins.flatMap { plugin -> plugin.rawArguments.map { option -> "plugin:${plugin.pluginId}:${option.key}=${option.value}" } }.toTypedArray()
-          arguments.pluginOrderConstraints = compilerPlugins.flatMap { plugin -> plugin.orderingRequirements.map { order -> when (order.relation) { CompilerPluginPartialOrderRelation.BEFORE -> "${plugin.pluginId}<${order.otherPluginId}"; CompilerPluginPartialOrderRelation.AFTER -> "${order.otherPluginId}>${plugin.pluginId}" } } }.toTypedArray()
-        }
-
+    if (COMPILER_PLUGINS in this) { get(COMPILER_PLUGINS).apply(arguments)}
     return arguments
   }
 

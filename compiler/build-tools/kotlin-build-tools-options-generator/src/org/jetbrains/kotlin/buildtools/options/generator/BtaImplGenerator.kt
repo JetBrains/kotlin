@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
-import kotlin.reflect.KType
 import kotlin.reflect.full.isSubclassOf
 
 internal class BtaImplGenerator(
@@ -142,20 +141,23 @@ internal class BtaImplGenerator(
             val wasIntroducedRecently = (argument.introducedSinceVersion > getOldestSupportedVersion(kotlinVersion))
 
             // generate impl mirror of arguments
-            val type = when (argument.valueType) {
-                is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> argument.valueType.origin::class
-                    .supertypes.single { it.classifier == KotlinArgumentValueType::class }
-                    .arguments.first().type!!
+            val argumentTypeParameter = when (argument.valueType) {
+                is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
+                    val type = argument.valueType.origin::class
+                        .supertypes.single { it.classifier == KotlinArgumentValueType::class }
+                        .arguments.first().type!!
+                    when (val classifier = type.classifier) {
+                        is KClass<*> if classifier.isSubclassOf(Enum::class) && classifier in enumNameAccessors -> {
+                            ClassName("$API_ARGUMENTS_PACKAGE.enums", classifier.simpleName!!)
+                        }
+                        else -> {
+                            type.asTypeName()
+                        }
+                    }
+                }
                 is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type
-            }
-            val argumentTypeParameter = when (val classifier = type.classifier) {
-                is KClass<*> if classifier.isSubclassOf(Enum::class) && classifier in enumNameAccessors -> {
-                    ClassName("$API_ARGUMENTS_PACKAGE.enums", classifier.simpleName!!)
-                }
-                else -> {
-                    type.asTypeName()
-                }
             }.copy(nullable = argument.valueType.isNullable)
+
             property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
                 initializer("%T(%S)", argumentTypeName, name)
             }
@@ -164,7 +166,7 @@ internal class BtaImplGenerator(
                     generateAutomaticArgumentsPropagators(
                         implClassName,
                         name,
-                        type,
+                        argumentTypeParameter,
                         argument,
                         wasRemoved,
                         argument.effectiveCompilerName,
@@ -178,7 +180,7 @@ internal class BtaImplGenerator(
                     generateCustomRepresentation(
                         implClassName,
                         name,
-                        type,
+                        argumentTypeParameter,
                         argument,
                         wasRemoved,
                         toCompilerConverterFun,
@@ -194,7 +196,7 @@ internal class BtaImplGenerator(
     private fun generateCustomRepresentation(
         implClassName: String,
         name: String,
-        type: KType,
+        type: TypeName,
         argument: BtaCompilerArgument.CustomCompilerArgument,
         wasRemoved: Boolean,
         toCompilerConverterFun: FunSpec.Builder,
@@ -202,16 +204,21 @@ internal class BtaImplGenerator(
         applyCompilerArgumentsFun: FunSpec.Builder,
         argumentTypeParameter: TypeName,
     ) {
-        val theClass = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
-        argument.generateConverters(
-            theClass,
-            argument,
-            name,
-            wasIntroducedRecently,
-            wasRemoved,
-            toCompilerConverterFun,
-            generateCompatLayer,
-        )
+        val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
+        CodeBlock.builder().apply {
+            add("if (%M in this) { ", member)
+            add("get(%M).%M(arguments)", member, argument.applier)
+            add("}")
+        }.build().also { setStatement ->
+            toCompilerConverterFun.addSafeSetStatement(
+                wasIntroducedRecently,
+                wasRemoved,
+                name,
+                argument,
+                setStatement,
+                generateCompatLayer,
+            )
+        }
     }
 
     /**
@@ -220,7 +227,7 @@ internal class BtaImplGenerator(
     private fun generateAutomaticArgumentsPropagators(
         implClassName: String,
         name: String,
-        type: KType,
+        type: TypeName,
         argument: BtaCompilerArgument.SSoTCompilerArgument,
         wasRemoved: Boolean,
         effectiveCompilerName: String,
@@ -238,7 +245,9 @@ internal class BtaImplGenerator(
                 add("get(%M)", member)
                 add(
                     when {
-                        type.classifier in enumNameAccessors -> maybeGetNullabilitySign(argument) + ".stringValue"
+                        (type as? ClassName)?.simpleName in enumNameAccessors.map { it.key.simpleName } -> maybeGetNullabilitySign(
+                            argument
+                        ) + ".stringValue"
                         argument.valueType.origin is IntType -> maybeGetNullabilitySign(argument) + ".toString()"
                         else -> ""
                     }
@@ -275,7 +284,7 @@ internal class BtaImplGenerator(
             }
 
             when {
-                type.classifier in enumNameAccessors -> {
+                (type as? ClassName)?.simpleName in enumNameAccessors.map { it.key.simpleName } -> {
                     add(maybeGetNullabilitySign(argument))
                     add(
                         $$".let { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",

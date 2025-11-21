@@ -5,19 +5,13 @@
 
 package org.jetbrains.kotlin.buildtools.options.generator
 
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.MemberName
-import com.squareup.kotlinpoet.TypeSpec
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
-import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.cli.arguments.generator.calculateName
-import kotlin.reflect.KType
-import kotlin.reflect.typeOf
+import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
 
 /**
  * Public facade used by the build-tools options generator. Wraps the single source of truth (arguments DSL)
@@ -52,7 +46,7 @@ sealed class BtaCompilerArgument(
         introducedSinceVersion: KotlinReleaseVersion,
         deprecatedSinceVersion: KotlinReleaseVersion?,
         removedSinceVersion: KotlinReleaseVersion?,
-        val generateConverters: (theClass: MemberName, argument: BtaCompilerArgument, name: String, wasIntroducedRecently: Boolean, wasRemoved: Boolean, toCompilerConverterFun: FunSpec.Builder, generateCompatLayer: Boolean) -> Unit,
+        val applier: MemberName,
     ) : BtaCompilerArgument(
         name = name,
         description = description,
@@ -70,53 +64,29 @@ sealed class BtaCompilerArgumentValueType(
     val isNullable: Boolean = false,
 ) {
     class SSoTCompilerArgumentValueType(
-        val origin: KotlinArgumentValueType<*>
+        val origin: KotlinArgumentValueType<*>,
     ) : BtaCompilerArgumentValueType(isNullable = origin.isNullable.current)
 
     class CustomArgumentValueType(
-        val type: KType,
-        isNullable: Boolean = false,
-    ) : BtaCompilerArgumentValueType(isNullable = isNullable)
+        val type: TypeName,
+    ) : BtaCompilerArgumentValueType(isNullable = type.isNullable)
 }
 
 object CustomCompilerArguments {
     val compilerPlugins = BtaCompilerArgument.CustomCompilerArgument(
         name = "compiler-plugins",
         description = "List of compiler plugins to load for this compilation.",
-        valueType = BtaCompilerArgumentValueType.CustomArgumentValueType(type = typeOf<List<CompilerPlugin>>(), isNullable = false),
+        valueType = BtaCompilerArgumentValueType.CustomArgumentValueType(
+            type = listTypeNameOf(
+                ClassName(
+                    API_ARGUMENTS_PACKAGE,
+                    "CompilerPlugin"
+                )
+            )
+        ),
         introducedSinceVersion = KotlinReleaseVersion.v2_3_20,
         deprecatedSinceVersion = null,
         removedSinceVersion = null,
-        generateConverters = { theClass: MemberName, argument: BtaCompilerArgument, name: String, wasIntroducedRecently: Boolean, wasRemoved: Boolean, toCompilerConverterFun: FunSpec.Builder, generateCompatLayer: Boolean ->
-            val relation = ClassName(API_ARGUMENTS_PACKAGE, "CompilerPluginPartialOrderRelation")
-            val absolutePathString = MemberName("kotlin.io.path", "absolutePathString")
-
-            CodeBlock.builder().apply {
-                beginControlFlow("if (%M in this)", theClass)
-                add("val compilerPlugins = get(%M)\n", theClass)
-                add(
-                    "arguments.pluginClasspaths = compilerPlugins.flatMap { it.classpath }.map { it.%M() }.toTypedArray()\n",
-                    absolutePathString,
-                )
-                add(
-                    $$"arguments.pluginOptions = compilerPlugins.flatMap { plugin -> plugin.rawArguments.map { option -> \"plugin:${plugin.pluginId}:${option.key}=${option.value}\" } }.toTypedArray()\n"
-                )
-                add(
-                    $$"arguments.pluginOrderConstraints = compilerPlugins.flatMap { plugin -> plugin.orderingRequirements.map { order -> when (order.relation) { %T.BEFORE -> \"${plugin.pluginId}<${order.otherPluginId}\"; %T.AFTER -> \"${order.otherPluginId}>${plugin.pluginId}\" } } }.toTypedArray()\n",
-                    relation,
-                    relation,
-                )
-                endControlFlow()
-            }.build().also { block ->
-                toCompilerConverterFun.addSafeSetStatement(
-                    wasIntroducedRecently,
-                    wasRemoved,
-                    name,
-                    argument,
-                    block,
-                    generateCompatLayer,
-                )
-            }
-        },
+        applier = MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "apply"),
     )
 }

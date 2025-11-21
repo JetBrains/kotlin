@@ -25,4 +25,3 @@ public open class CompilerPlugin(
     public val rawArguments: List<CompilerPluginOption>,
     public val orderingRequirements: Set<CompilerPluginPartialOrder>,
 )
-

@@ -107,22 +107,24 @@ internal class BtaApiGenerator(
                 argument.deprecatedSinceVersion?.takeIf { it <= kotlinVersion }
 
             // There's no need to generate any classes for custom representations as they're expected to already be there
-            val (argumentType, shouldGenerateArgumentType) = when (argument.valueType) {
-                is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> argument.valueType.origin::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!! to true
-                is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type to false
-            }
-
-            val argumentTypeParameter =
-                argumentType.let {
-                    when (val type = it.classifier) {
-                        is KClass<*> if shouldGenerateArgumentType && type.isSubclassOf(Enum::class) && type in enumNameAccessors -> {
-                            generatedEnumType(type)
-                        }
-                        else -> {
-                            it.asTypeName()
+            val argumentTypeParameter = when (argument.valueType) {
+                is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
+                    val argumentType =
+                        argument.valueType.origin::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!
+                    argumentType.let {
+                        when (val type = it.classifier) {
+                            is KClass<*> if type.isSubclassOf(Enum::class) && type in enumNameAccessors -> {
+                                generatedEnumType(type)
+                            }
+                            else -> {
+                                it.asTypeName()
+                            }
                         }
                     }
-                }.copy(nullable = argument.valueType.isNullable)
+                }
+                is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type
+            }.copy(nullable = argument.valueType.isNullable)
+
             property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
                 annotation<JvmField>()
                 // KT-28979 Need a way to escape /* in kdoc comments
