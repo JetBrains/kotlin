@@ -9,6 +9,16 @@ plugins {
     id("project-tests-convention")
 }
 
+val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
+val assignmentCompilerPlugin = configurations.dependencyScope("assignmentCompilerPlugin")
+
+val noArgCompilerPluginResolvable = configurations.resolvable("noArgCompilerPluginResolvable") {
+    extendsFrom(noArgCompilerPlugin.get())
+}
+val assignmentCompilerPluginResolvable = configurations.resolvable("assignmentCompilerPluginResolvable") {
+    extendsFrom(assignmentCompilerPlugin.get())
+}
+
 dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
@@ -19,6 +29,8 @@ dependencies {
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
     compileOnly(libs.junit.jupiter.params)
+    noArgCompilerPlugin(project(":kotlin-noarg-compiler-plugin.embeddable"))
+    assignmentCompilerPlugin(project(":kotlin-assignment-compiler-plugin.embeddable"))
 }
 
 kotlin {
@@ -77,6 +89,7 @@ val businessLogicTestSuits = setOf(
     "testCrossModuleIncrementalChanges",
     "testFirRunner",
     "testCriToolchain",
+    "testCompilerPlugins",
 )
 
 testing {
@@ -183,6 +196,15 @@ testing {
         named<JvmTestSuite>("testEscapableCharacters") {
             configurations.named(sources.runtimeClasspathConfigurationName) {
                 testSymlinkTransformation.resolveAgainstSymlinkedArtifacts(this)
+            }
+        }
+
+        named<JvmTestSuite>("testCompilerPlugins") {
+            targets.all {
+                testTask.configure {
+                    addClasspathProperty(noArgCompilerPluginResolvable.get(), "NOARG_COMPILER_PLUGIN")
+                    addClasspathProperty(assignmentCompilerPluginResolvable.get(), "ASSIGNMENT_COMPILER_PLUGIN")
+                }
             }
         }
     }
