@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.TypeVariableReplacement
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.removeTypeVariableTypes
-import org.jetbrains.kotlin.fir.resolve.calls.stages.shouldHaveLowPriorityDueToSAM
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -102,8 +101,6 @@ class ConeOverloadConflictResolver(
         // noCompatibilityMode == true in K2 by default
         val noCompatibilityMode = with(transformerComponents) { disableCompatibilityModeForNewInference() }
         val discriminationFlags = DiscriminationFlags(
-            // (in compatibility mode the next two are already filtered on tower resolver level)
-            lowPrioritySAMs = noCompatibilityMode,
             adaptationsInPostponedAtoms = noCompatibilityMode,
             generics = discriminateGenerics,
             abstracts = discriminateAbstracts,
@@ -190,7 +187,6 @@ class ConeOverloadConflictResolver(
     }
 
     private data class DiscriminationFlags(
-        val lowPrioritySAMs: Boolean,
         val adaptationsInPostponedAtoms: Boolean,
         val generics: Boolean,
         val abstracts: Boolean,
@@ -203,14 +199,6 @@ class ConeOverloadConflictResolver(
         candidates: Set<Candidate>,
         discriminationFlags: DiscriminationFlags,
     ): Set<Candidate> {
-        if (discriminationFlags.lowPrioritySAMs) {
-            filterCandidatesByDiscriminationFlag(
-                candidates,
-                { !it.shouldHaveLowPriorityDueToSAM(transformerComponents) },
-                { discriminationFlags.copy(lowPrioritySAMs = false) },
-            )?.let { return it }
-        }
-
         if (discriminationFlags.adaptationsInPostponedAtoms) {
             filterCandidatesByDiscriminationFlag(
                 candidates,

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // ISSUE: KT-48323
 
@@ -15,10 +15,10 @@ fun interface Tom {
 fun foo(m: Tom) = 1
 fun foo(j: Jerry) = "2"
 fun test() {
-    val result = foo { i ->
+    val result = <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { i ->
         val j = i + 1
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: foo, [/foo, /foo]")!>result<!>
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, funInterface, functionDeclaration, integerLiteral, interfaceDeclaration,
