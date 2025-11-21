@@ -559,18 +559,33 @@ class CallAndReferenceGenerator(
                     val constructor = firSymbol.unwrapCallRepresentative().fir as FirConstructor
                     val totalTypeParametersCount = constructor.typeParameters.size
                     val constructorTypeParametersCount = constructor.typeParameters.count { it is FirTypeParameter }
-                    IrConstructorCallImplWithShape(
-                        startOffset,
-                        endOffset,
-                        irType,
-                        irSymbol,
-                        typeArgumentsCount = totalTypeParametersCount,
-                        valueArgumentsCount = firSymbol.valueParametersSize(),
-                        contextParameterCount = constructor.contextParameters.size,
-                        constructorTypeArgumentsCount = constructorTypeParametersCount,
-                        hasDispatchReceiver = firSymbol.dispatchReceiverType != null,
-                        hasExtensionReceiver = firSymbol.isExtension,
-                    )
+                    if (firSymbol.isAnnotationConstructor(session)) {
+                        IrAnnotationImplWithShape(
+                            startOffset,
+                            endOffset,
+                            irType,
+                            irSymbol,
+                            typeArgumentsCount = totalTypeParametersCount,
+                            valueArgumentsCount = firSymbol.valueParametersSize(),
+                            contextParameterCount = constructor.contextParameters.size,
+                            constructorTypeArgumentsCount = constructorTypeParametersCount,
+                            hasDispatchReceiver = firSymbol.dispatchReceiverType != null,
+                            hasExtensionReceiver = firSymbol.isExtension,
+                        )
+                    } else {
+                        IrConstructorCallImplWithShape(
+                            startOffset,
+                            endOffset,
+                            irType,
+                            irSymbol,
+                            typeArgumentsCount = totalTypeParametersCount,
+                            valueArgumentsCount = firSymbol.valueParametersSize(),
+                            contextParameterCount = constructor.contextParameters.size,
+                            constructorTypeArgumentsCount = constructorTypeParametersCount,
+                            hasDispatchReceiver = firSymbol.dispatchReceiverType != null,
+                            hasExtensionReceiver = firSymbol.isExtension,
+                        )
+                    }
                 }
                 is IrSimpleFunctionSymbol -> {
                     val callOrigin = calleeReference.statementOrigin()
