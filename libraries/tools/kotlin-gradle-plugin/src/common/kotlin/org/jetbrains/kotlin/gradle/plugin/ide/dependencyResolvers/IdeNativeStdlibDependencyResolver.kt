@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
+import org.jetbrains.kotlin.gradle.utils.loadSingleKlib
 
 internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
@@ -28,13 +26,9 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
         val stdlibFile = konanDistribution.stdlib
 
         val klibExtra = try {
-            val kotlinLibrary = resolveSingleFileKlib(
-                libraryFile = File(stdlibFile.absolutePath),
-                strategy = ToolingSingleFileKlibResolveStrategy
-            )
-
-            KlibExtra(kotlinLibrary)
-        } catch (error: Throwable) {
+            val kotlinLibrary = sourceSet.project.loadSingleKlib(stdlibFile, reportProblemsAtInfoLevel = true)
+            kotlinLibrary?.let(::KlibExtra)
+        } catch (_: Throwable) {
             null
         }
 

@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.Project
+import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
-import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.gradle.utils.loadSingleKlib
 import org.jetbrains.kotlin.library.*
 
 internal fun Project.resolveCInteropDependencies(
@@ -34,15 +35,7 @@ private fun Project.createCinteropLibraryDependency(
         )
     }
 
-    val library = try {
-        resolveSingleFileKlib(
-            libraryFile = File(libraryFile.absolutePath),
-            strategy = ToolingSingleFileKlibResolveStrategy
-        )
-    } catch (error: Throwable) {
-        importLogger.error("Failed to resolve library ${libraryFile.path}", error)
-        return null
-    }
+    val library = loadSingleKlib(libraryFile, importLogger.logger) ?: return null
 
     val (group, module) = cinteropGroupAndModule(library)
     val libraryTargets = library.commonizerNativeTargets ?: library.nativeTargets

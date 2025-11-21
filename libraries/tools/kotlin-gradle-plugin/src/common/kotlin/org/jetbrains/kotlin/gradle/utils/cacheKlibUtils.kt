@@ -7,21 +7,20 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.library.uniqueName
+import org.slf4j.Logger
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
-import org.jetbrains.kotlin.util.Logger as KLogger
 
 internal fun getCacheDirectory(
     rootCacheDirectory: File,
     dependency: ResolvedDependencyResult,
     artifact: ResolvedArtifactResult?,
     resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
-    partialLinkageMode: String
+    partialLinkageMode: String,
+    logger: Logger,
 ): File {
     val moduleCacheDirectory = File(rootCacheDirectory, dependency.selected.moduleVersion?.name ?: "undefined")
     val versionCacheDirectory = File(moduleCacheDirectory, dependency.selected.moduleVersion?.version ?: "undefined")
@@ -33,7 +32,7 @@ internal fun getCacheDirectory(
                 null
         }
         ?.let {
-            resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(it.absolutePath))
+            loadSingleKlib(it, logger, reportProblemsAtInfoLevel = true)
         }
         ?.uniqueName
 
@@ -75,7 +74,8 @@ internal fun getDependenciesCacheDirectories(
     dependency: ResolvedDependencyResult,
     resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
     considerArtifact: Boolean,
-    partialLinkageMode: String
+    partialLinkageMode: String,
+    logger: Logger,
 ): List<File>? {
     return getAllDependencies(dependency)
         .flatMap { childDependency ->
@@ -86,7 +86,8 @@ internal fun getDependenciesCacheDirectories(
                         dependency = childDependency,
                         artifact = if (considerArtifact) it else null,
                         resolvedConfiguration = resolvedConfiguration,
-                        partialLinkageMode = partialLinkageMode
+                        partialLinkageMode = partialLinkageMode,
+                        logger = logger,
                     )
                     if (!cacheDirectory.exists()) return null
                     cacheDirectory
@@ -111,15 +112,6 @@ internal fun getAllDependencies(dependency: ResolvedDependencyResult): Set<Resol
 
     dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().forEach { traverseAllDependencies(it) }
     return allDependencies
-}
-
-internal class GradleLoggerAdapter(private val gradleLogger: Logger) : KLogger {
-    override fun log(message: String) = gradleLogger.info(message)
-    override fun warning(message: String) = gradleLogger.warn(message)
-    override fun error(message: String) = gradleLogger.error(message)
-
-    @Deprecated(KLogger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(KLogger.FATAL_REPLACEMENT))
-    override fun fatal(message: String): Nothing = kotlin.error(message) // WARNING: This would crash Gradle daemon!
 }
 
 private fun libraryFilter(artifact: ResolvedArtifactResult): Boolean = artifact.file.absolutePath.endsWith(".klib")

@@ -64,7 +64,6 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCInteropRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
-import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
@@ -78,7 +77,6 @@ import java.io.File
 import java.nio.file.Files
 import java.security.MessageDigest
 import javax.inject.Inject
-import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.utils.ResolvedDependencies as KResolvedDependencies
 import org.jetbrains.kotlin.utils.ResolvedDependenciesSupport as KResolvedDependenciesSupport
 import org.jetbrains.kotlin.utils.ResolvedDependency as KResolvedDependency
@@ -813,11 +811,6 @@ internal class CacheBuilder(
 
     private val logger = Logging.getLogger(this::class.java)
 
-    private val nativeSingleFileResolveStrategy: SingleFileKlibResolveStrategy
-        get() = CompilerSingleFileKlibResolveAllowingIrProvidersStrategy(
-            listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
-        )
-
     private val konanTarget: KonanTarget
         get() = settings.konanTarget
 
@@ -850,7 +843,8 @@ internal class CacheBuilder(
         dependency = dependency,
         artifact = null,
         resolvedConfiguration = resolvedConfiguration,
-        partialLinkageMode = partialLinkageMode
+        partialLinkageMode = partialLinkageMode,
+        logger = logger,
     )
 
     private fun needCache(libraryPath: String) =
@@ -879,20 +873,15 @@ internal class CacheBuilder(
             dependency = dependency,
             considerArtifact = false,
             resolvedConfiguration = this,
-            partialLinkageMode = partialLinkageMode
+            partialLinkageMode = partialLinkageMode,
+            logger = logger,
         ) ?: return
 
         val cacheDirectory = getCacheDirectory(this, dependency)
         cacheDirectory.mkdirs()
 
         val artifactsLibraries = artifactsToAddToCache
-            .map {
-                resolveSingleFileKlib(
-                    KFile(it.file.absolutePath),
-                    logger = GradleLoggerAdapter(logger),
-                    strategy = nativeSingleFileResolveStrategy
-                )
-            }
+            .mapNotNull { loadSingleKlib(it.file, logger) }
             .associateBy { it.uniqueName }
 
         // Top sort artifacts.
@@ -975,11 +964,8 @@ internal class CacheBuilder(
         val platformLib = platformLibs[platformLibName] ?: error("$platformLibName is not found in platform libs")
         if (File(rootCacheDirectory, platformLibName.cachedName).listFilesOrEmpty().isNotEmpty())
             return
-        val unresolvedDependencies = resolveSingleFileKlib(
-            KFile(platformLib.absolutePath),
-            logger = GradleLoggerAdapter(logger),
-            strategy = nativeSingleFileResolveStrategy
-        ).unresolvedDependencies
+        val unresolvedDependencies = loadSingleKlib(platformLib, logger)
+            ?.unresolvedDependencies.orEmpty()
         for (dependency in unresolvedDependencies)
             ensureCompilerProvidedLibPrecached(dependency.path, platformLibs, visitedLibs)
         logger.info("Compiling $platformLibName (${visitedLibs.size}/${platformLibs.size}) to cache")

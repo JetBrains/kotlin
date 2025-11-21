@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
 import org.jetbrains.kotlin.gradle.targets.native.internal.fakeCommonizedNativeDistributionKlibs
+import org.jetbrains.kotlin.gradle.utils.loadSingleKlib
 import org.jetbrains.kotlin.library.*
 import java.io.File
 
@@ -24,17 +25,9 @@ internal fun resolveNativeDistributionLibraryForIde(
     library: File,
     target: CommonizerTarget,
     kotlinNativeVersion: String,
-    logger: Logger? = null
+    logger: Logger
 ): IdeaKotlinResolvedBinaryDependency? {
-    val resolvedLibrary = try {
-        resolveSingleFileKlib(
-            libraryFile = org.jetbrains.kotlin.konan.file.File(library.absolutePath),
-            strategy = ToolingSingleFileKlibResolveStrategy
-        )
-    } catch (error: Throwable) {
-        logger?.error("Failed to resolve library ${library.path}", error)
-        return null
-    }
+    val resolvedLibrary = loadSingleKlib(library, logger) ?: return null
 
     val isFakeNativeDistributionDependency = library.name == fakeCommonizedNativeDistributionKlibs
     val module = if (!isFakeNativeDistributionDependency) {
