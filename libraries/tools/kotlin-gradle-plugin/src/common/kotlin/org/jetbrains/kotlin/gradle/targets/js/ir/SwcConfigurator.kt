@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
 import org.gradle.api.file.DuplicatesStrategy
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.swc.KotlinTranspileWithSwc
@@ -103,10 +104,16 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
             task.dependsOn(linkTask)
         }
 
-        linkSyncTask.configure { task ->
-            task.from.from(swcTask.flatMap { it.outputDirectory })
-            task.duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        }
+        // We shouldn't run SWC if the configured target is the latest compiler supported target
+        linkTask
+            .flatMap { it.compilerOptions.target }
+            .map {
+                if (it == ES_2015) return@map
+                linkSyncTask.configure { task ->
+                    task.from.from(swcTask.flatMap { it.outputDirectory })
+                    task.duplicatesStrategy = DuplicatesStrategy.INCLUDE
+                }
+            }
     }
 
     override fun configureBuild(body: Action<KotlinTranspileWithSwc>) {
