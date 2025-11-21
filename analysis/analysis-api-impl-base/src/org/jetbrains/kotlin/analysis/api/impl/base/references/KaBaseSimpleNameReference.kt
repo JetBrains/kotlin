@@ -61,8 +61,13 @@ private fun operatorNames(expression: KtOperationReferenceExpression): Collectio
         }
     }
 
-    val isArrayAssignment = parent is KtBinaryExpression && parent.left is KtArrayAccessExpression && tokenType in KtTokens.ALL_ASSIGNMENTS
-    if (isArrayAssignment) {
+    val isArrayModification = when (parent) {
+        is KtBinaryExpression if parent.left is KtArrayAccessExpression && tokenType in KtTokens.ALL_ASSIGNMENTS -> true
+        is KtUnaryExpression if parent.baseExpression is KtArrayAccessExpression && tokenType in KtTokens.INCREMENT_AND_DECREMENT -> true
+        else -> false
+    }
+
+    if (isArrayModification) {
         add(OperatorNameConventions.SET)
     }
 }
