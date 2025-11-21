@@ -358,7 +358,7 @@ class ComposerParamTransformer(
     }
 
     private fun createComposableAnnotation() =
-        IrConstructorCallImpl(
+        IrAnnotationImpl(
             startOffset = SYNTHETIC_OFFSET,
             endOffset = SYNTHETIC_OFFSET,
             type = composableIrClass.defaultType,
@@ -548,11 +548,11 @@ class ComposerParamTransformer(
         return newInvoke
     }
 
-    private fun jvmNameAnnotation(name: String): IrConstructorCall {
+    private fun jvmNameAnnotation(name: String): IrAnnotation {
         val jvmName = getTopLevelClass(JvmStandardClassIds.Annotations.JvmName)
         val ctor = jvmName.constructors.first { it.owner.isPrimary }
         val type = jvmName.createType(false, emptyList())
-        return IrConstructorCallImpl(
+        return IrAnnotationImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             type = type,
