@@ -23,7 +23,6 @@ KtNameReferenceExpression(27,31): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) fun kotlin.Int.foo(a: kotlin.Int): kotlin.Int
 
@@ -79,7 +78,6 @@ KtNameReferenceExpression(71,75): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) fun kotlin.Int?.bar(b: kotlin.Int): kotlin.Int
 

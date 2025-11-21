@@ -9,7 +9,6 @@ KtNameReferenceExpression(55,59): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in r) class MyClass
 
@@ -17,7 +16,6 @@ KtNameReferenceExpression(78,82): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in r) class MyClass
 

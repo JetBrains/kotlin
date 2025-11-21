@@ -601,7 +601,6 @@ KtNameReferenceExpression(1479,1483): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in foo) class Test
 

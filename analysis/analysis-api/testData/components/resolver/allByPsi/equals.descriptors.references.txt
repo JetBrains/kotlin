@@ -16,7 +16,6 @@ KtNameReferenceExpression(79,84): 'super'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [super] provided
     symbols:
       (in kotlin) open class Any
 
@@ -78,7 +77,6 @@ KtNameReferenceExpression(217,222): 'super'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [super] provided
     symbols:
       (in ROOT) open class Another
 

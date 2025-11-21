@@ -36,7 +36,6 @@ KtNameReferenceExpression(130,134): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) class Base
 
@@ -111,7 +110,6 @@ KtNameReferenceExpression(243,247): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) class Base
 

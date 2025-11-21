@@ -86,7 +86,6 @@ KtNameReferenceExpression(245,250): 'super'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [super] provided
     symbols:
       (in r) abstract class BaseClass
 

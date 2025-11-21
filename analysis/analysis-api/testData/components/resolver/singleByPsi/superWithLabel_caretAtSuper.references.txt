@@ -2,6 +2,5 @@ KtNameReferenceExpression(71,76): 'super'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [super] provided
     symbols:
       (in ROOT) interface A

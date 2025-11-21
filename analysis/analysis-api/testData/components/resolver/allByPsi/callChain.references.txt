@@ -23,7 +23,6 @@ KtNameReferenceExpression(27,31): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type kotlin.Int
 
@@ -73,7 +72,6 @@ KtNameReferenceExpression(71,75): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type kotlin.Int?
 

@@ -23,7 +23,6 @@ KtNameReferenceExpression(51,55): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type Test
 
@@ -73,7 +72,6 @@ KtNameReferenceExpression(143,147): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type Test
 
@@ -123,7 +121,6 @@ KtNameReferenceExpression(234,238): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type Test
 
@@ -173,7 +170,6 @@ KtNameReferenceExpression(325,329): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type Test
 
@@ -223,7 +219,6 @@ KtNameReferenceExpression(416,420): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type Test
 

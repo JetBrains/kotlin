@@ -23,7 +23,6 @@ KtNameReferenceExpression(80,84): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one) class MyClass
 
@@ -45,7 +44,6 @@ KtNameReferenceExpression(99,103): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one) class MyClass
 
@@ -89,7 +87,6 @@ KtNameReferenceExpression(221,225): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -111,7 +108,6 @@ KtNameReferenceExpression(244,248): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -141,7 +137,6 @@ KtNameReferenceExpression(278,282): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one) class MyClass
 
@@ -185,7 +180,6 @@ KtNameReferenceExpression(425,429): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -207,7 +201,6 @@ KtNameReferenceExpression(452,456): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -237,7 +230,6 @@ KtNameReferenceExpression(491,495): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -267,7 +259,6 @@ KtNameReferenceExpression(529,533): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one) class MyClass
 
@@ -333,7 +324,6 @@ KtNameReferenceExpression(651,655): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type one.MyClass
 
@@ -355,7 +345,6 @@ KtNameReferenceExpression(682,686): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type one.MyClass
 
@@ -385,7 +374,6 @@ KtNameReferenceExpression(718,722): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -415,7 +403,6 @@ KtNameReferenceExpression(761,765): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -445,7 +432,6 @@ KtNameReferenceExpression(803,807): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one) class MyClass
 
@@ -503,7 +489,6 @@ KtNameReferenceExpression(917,921): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type one.MyClass.InnerOuter.InnerNested
 
@@ -525,7 +510,6 @@ KtNameReferenceExpression(948,952): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type one.MyClass.InnerOuter.InnerNested
 
@@ -555,7 +539,6 @@ KtNameReferenceExpression(986,990): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -585,7 +568,6 @@ KtNameReferenceExpression(1029,1033): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -615,7 +597,6 @@ KtNameReferenceExpression(1071,1075): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in one) class MyClass
 
@@ -667,7 +648,6 @@ KtNameReferenceExpression(1160,1164): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type one.MyClass.InnerOuter.InnerNested
 
@@ -739,6 +719,5 @@ KtNameReferenceExpression(1277,1281): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type T

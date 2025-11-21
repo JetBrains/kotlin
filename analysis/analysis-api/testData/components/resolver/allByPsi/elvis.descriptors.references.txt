@@ -49,7 +49,6 @@ KtNameReferenceExpression(93,97): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) class MyClass
 

@@ -44,7 +44,6 @@ KtNameReferenceExpression(147,151): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in f) operator fun f.IntProgression.iterator(): kotlin.collections.Iterator<kotlin.Int>
 
@@ -93,7 +92,6 @@ KtNameReferenceExpression(207,211): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in f) operator fun f.IntProgression.iterator(): kotlin.collections.Iterator<kotlin.Int>
 

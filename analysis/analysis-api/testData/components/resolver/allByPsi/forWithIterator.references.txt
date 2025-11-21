@@ -44,7 +44,6 @@ KtNameReferenceExpression(147,151): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type f.IntProgression
 
@@ -81,7 +80,6 @@ KtNameReferenceExpression(207,211): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       extension receiver with type f.IntProgression
 

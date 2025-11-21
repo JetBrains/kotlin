@@ -142,7 +142,6 @@ KtNameReferenceExpression(337,341): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) operator fun A.inc(): A
 
@@ -241,7 +240,6 @@ KtNameReferenceExpression(753,757): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in ROOT) class SimpleOperators
 
@@ -337,7 +335,6 @@ KtNameReferenceExpression(877,881): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: shouldn't predict, but [this] provided
     symbols:
       (in <local>: usage) fun A.(): SimpleOperators
 
