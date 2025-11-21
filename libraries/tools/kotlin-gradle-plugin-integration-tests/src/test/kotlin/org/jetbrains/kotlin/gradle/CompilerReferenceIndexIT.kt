@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
@@ -21,9 +20,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback
-import org.junit.jupiter.api.extension.RegisterExtension
-import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -32,12 +28,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalBuildToolsApi::class)
-@JvmGradlePluginTests
 @DisplayName("Gradle / Compiler Reference Index")
-class CompilerReferenceIndexIT : KGPBaseTest() {
-
-    private val kotlinDaemonRunFilesDir: Path
-        get() = kgpTestInfraWorkingDirectory.resolve("kotlin-daemon-run-files")
+class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
         runViaBuildToolsApi = true,
@@ -50,7 +42,6 @@ class CompilerReferenceIndexIT : KGPBaseTest() {
 
     private val defaultDaemonBuildOptions: BuildOptions = defaultBuildOptions.copy(
         compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON,
-        customKotlinDaemonRunFilesDirectory = kotlinDaemonRunFilesDir.toFile(),
     )
 
     private fun project(
@@ -213,12 +204,5 @@ class CompilerReferenceIndexIT : KGPBaseTest() {
 
             Triple(lookupEntries, fileIdToPathEntries, subtypeEntries)
         }
-    }
-
-    @Suppress("unused")
-    @RegisterExtension
-    private val afterTestExecutionCallback: AfterTestExecutionCallback = AfterTestExecutionCallback {
-        ConnectorServices.reset()
-        awaitKotlinDaemonTermination(kotlinDaemonRunFilesDir)
     }
 }
