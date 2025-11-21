@@ -180,6 +180,7 @@ library {
       public constructor(@test/AnnoConstructorParameter i: kotlin/Int)
 
       // signature: test/Foo.immutableProp|{}immutableProp[0]
+      @delegate:test/AnnoDelegatedField
       public final /* delegated */ val immutableProp: kotlin/Int
         // signature: test/Foo.immutableProp.<get-immutableProp>|<get-immutableProp>(){}[0]
         public final /* non-default */ get
@@ -194,6 +195,7 @@ library {
 
       // signature: test/Foo.prop|{}prop[0]
       @test/AnnoProperty
+      @field:test/AnnoBackingField
       public final var prop: kotlin/Int
         // signature: test/Foo.prop.<get-prop>|<get-prop>(){}[0]
         @test/AnnoGetter
@@ -214,6 +216,7 @@ library {
 
       // signature: test/extfun|extfun@test.Foo(kotlin.Int){}[0]
       @test/AnnoFunction
+      @receiver:test/AnnoFunctionExtensionReceiver
       public final fun test/Foo.extfun(@test/AnnoFunctionParam x: kotlin/Int): kotlin/Unit
 
       // signature: test/f|f(test.B<kotlin.Int>){0§<kotlin.Any?>}[0]

@@ -15,10 +15,12 @@ library {
 
       // signature: test/A.foo|foo@kotlin.Int(kotlin.Int){}[0]
       @test/Ann
+      @receiver:test/Ann
       public final fun kotlin/Int.foo(@test/Ann arg: kotlin/Int): kotlin/Int
 
       // signature: test/A.bar|@kotlin.Int{}bar[0]
       @test/Ann
+      @receiver:test/Ann
       public final val kotlin/Int.bar: kotlin/Int
         // signature: test/A.bar.<get-bar>|<get-bar>@kotlin.Int(){}[0]
         public final /* non-default */ get
@@ -35,10 +37,12 @@ library {
 
       // signature: test/foo|foo@kotlin.Int(kotlin.Int){}[0]
       @test/Ann
+      @receiver:test/Ann
       public final fun kotlin/Int.foo(@test/Ann arg: kotlin/Int): kotlin/Int
 
       // signature: test/bar|@kotlin.Int{}bar[0]
       @test/Ann
+      @receiver:test/Ann
       public final val kotlin/Int.bar: kotlin/Int
         // signature: test/bar.<get-bar>|<get-bar>@kotlin.Int(){}[0]
         public final /* non-default */ get
