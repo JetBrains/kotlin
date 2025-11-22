@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import kotlin.io.path.absolutePathString
 
 internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<CompilerPlugin>) {
-    pluginClasspaths = (pluginClasspaths ?: emptyArray()) + plugins.flatMap { it.classpath }.map { it.absolutePathString() }.toTypedArray()
+    val filteredPlugins = plugins.filter { it.pluginId != RAW_PLUGIN_ID }
+    pluginClasspaths = (pluginClasspaths ?: emptyArray()) + filteredPlugins.flatMap { it.classpath }.map { it.absolutePathString() }.toTypedArray()
     pluginOptions = (pluginOptions
-        ?: emptyArray()) + plugins.flatMap { plugin -> plugin.rawArguments.map { option -> "plugin:${plugin.pluginId}:${option.key}=${option.value}" } }
+        ?: emptyArray()) + filteredPlugins.flatMap { plugin -> plugin.rawArguments.map { option -> "plugin:${plugin.pluginId}:${option.key}=${option.value}" } }
         .toTypedArray()
-    pluginOrderConstraints = (pluginOrderConstraints ?: emptyArray()) + plugins.flatMap { plugin ->
+    pluginOrderConstraints = (pluginOrderConstraints ?: emptyArray()) + filteredPlugins.flatMap { plugin ->
         plugin.orderingRequirements.map { order ->
             when (order.relation) {
                 CompilerPluginPartialOrderRelation.BEFORE -> "${plugin.pluginId}<${order.otherPluginId}"; CompilerPluginPartialOrderRelation.AFTER -> "${order.otherPluginId}>${plugin.pluginId}"
@@ -24,22 +25,24 @@ internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<Compiler
     }.toTypedArray()
 }
 
-internal const val UMBRELLA_PLUGIN_ID = "___RAW_PLUGINS_APPLIED___"
+internal const val RAW_PLUGIN_ID = "___RAW_PLUGINS_APPLIED___"
 
 internal fun applyCompilerPlugins(
     currentValue: List<CompilerPlugin>?,
-    @Suppress("unused") // we are not parsing it into the structured form for simplicity
     compilerArgs: CommonCompilerArguments,
 ): List<CompilerPlugin> {
-    val umbrellaPluginDeclaration = CompilerPlugin(
-        pluginId = UMBRELLA_PLUGIN_ID,
-        classpath = emptyList(),
-        rawArguments = emptyList(),
-        orderingRequirements = emptySet(),
-    )
-    return if (currentValue == null) {
-        listOf(umbrellaPluginDeclaration)
+    val normalizedCurrentValue = currentValue ?: emptyList()
+    val rawValue = if (compilerArgs.pluginClasspaths == null && compilerArgs.pluginConfigurations == null) {
+        emptyList()
     } else {
-        currentValue + umbrellaPluginDeclaration
+        listOf(
+            CompilerPlugin(
+                pluginId = RAW_PLUGIN_ID,
+                classpath = emptyList(),
+                rawArguments = emptyList(),
+                orderingRequirements = emptySet(),
+            )
+        )
     }
+    return normalizedCurrentValue + rawValue
 }
