@@ -713,6 +713,8 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
         srcDir(project(":kotlin-native:Interop:Runtime").file("src/native/kotlin"))
         srcDir(project.file("src/main/kotlin"))
     }
+
+    dependsOn(":prepare:build.version:writeStdlibVersion")
 }
 
 val nativeStdlib by tasks.registering(Sync::class) {
