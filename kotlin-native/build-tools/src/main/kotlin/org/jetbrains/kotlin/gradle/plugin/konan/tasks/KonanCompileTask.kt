@@ -62,7 +62,7 @@ open class KotlinSourceDirectorySet @Inject constructor(
         val base = layout.projectDirectory
         files.map {
             it.asFile.toRelativeString(base.asFile)
-        }
+        }.sorted()
     }
 
     /**
@@ -75,8 +75,8 @@ open class KotlinSourceDirectorySet @Inject constructor(
     }
 
     @get:Internal("handled by sources")
-    internal val files: Set<File>
-        get() = sources.files
+    internal val files: List<File>
+        get() = sources.files.sorted()
 }
 
 /**
