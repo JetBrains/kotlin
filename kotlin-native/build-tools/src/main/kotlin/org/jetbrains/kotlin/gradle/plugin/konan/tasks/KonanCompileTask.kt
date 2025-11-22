@@ -71,7 +71,7 @@ open class KotlinSourceDirectorySet @Inject constructor(
     fun srcDir(dir: Any) {
         sources.from(layout.files(dir).asFileTree.matching {
             include("**/*.kt")
-        })
+        }.sorted())
     }
 
     @get:Internal("handled by sources")
