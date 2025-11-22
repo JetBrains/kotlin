@@ -214,10 +214,8 @@ public class SirCustomTypeTranslatorImpl(
             get() = typeList.first().cType
 
         override val inKotlinSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                return listOf(1, 2).joinToString(separator = swiftToKotlinComponentConnector()) { index ->
-                    swiftToKotlinComponent(typeNamer, valueExpression, index)
-                }
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult {
+                return ConversionResult.BinaryOp(valueExpression.parameterX(1), if (inclusive) " .. " else " ..< ", valueExpression.parameterX(2))
             }
 
             override fun swiftToKotlinComponent(typeNamer: SirTypeNamer, valueExpression: String, index: Int): String {
@@ -233,8 +231,8 @@ public class SirCustomTypeTranslatorImpl(
         }
 
         override val inSwiftSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "$valueExpression.lowerBound, $valueExpression.upperBound"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult =
+                ConversionResult.BinaryOp(valueExpression.property("lowerBound"), ", ", valueExpression.property("upperBound"))
 
             override fun swiftToKotlinComponent(typeNamer: SirTypeNamer, valueExpression: String, index: Int): String {
                 return when (index) {

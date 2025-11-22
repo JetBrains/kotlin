@@ -160,14 +160,46 @@ internal val SirType.isChar: Boolean
  * Generate value conversions from Swift to Kotlin.
  */
 internal interface SwiftToKotlinValueConversion {
-    fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
+    fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult = valueExpression.direct()
 
     fun swiftToKotlinComponent(typeNamer: SirTypeNamer, valueExpression: String, index: Int): String =
-        if (index == 1) swiftToKotlin(typeNamer, valueExpression)
-        else error("Transformation to indexed components is supported only for Swift structures")
+        error("Transformation to indexed components is supported only for Swift structures")
 
     fun swiftToKotlinComponentConnector(): String = ""
 }
+
+internal sealed class ConversionResult {
+    class Direct(val expression: String) : ConversionResult() {
+        override fun toString(): String = expression
+    }
+
+    class ExternalRcRef(val argument: ConversionResult) : ConversionResult() {
+        override fun toString(): String = "$argument.__externalRCRef()"
+    }
+
+    class BinaryOp(val left: ConversionResult, val operator: String, val right: ConversionResult) : ConversionResult() {
+        override fun toString(): String = "$left$operator$right"
+
+        fun replace(operator: String = this.operator, transform: (ConversionResult) -> ConversionResult) =
+            BinaryOp(transform(left), operator, transform(right))
+    }
+
+    object Unit : ConversionResult() {
+        override fun toString(): String = "Unit"
+    }
+
+    object Null : ConversionResult() {
+        override fun toString(): String = "null"
+    }
+}
+
+private fun String.direct() = ConversionResult.Direct(this)
+
+internal fun String.parameterX(index: Int) = ConversionResult.Direct("${this}_$index")
+
+internal fun String.property(name: String) = ConversionResult.Direct("$this.$name")
+
+private fun String.externalRcRef() = ConversionResult.ExternalRcRef(direct())
 
 /**
  * Generate value conversions from Kotlin to Swift.
@@ -182,13 +214,13 @@ internal interface KotlinToSwiftValueConversion {
 internal interface ValueConversion : SwiftToKotlinValueConversion, KotlinToSwiftValueConversion
 
 internal object IdentityValueConversion : ValueConversion {
-    override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
+    override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult = valueExpression.direct()
     override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
 }
 
-private fun String.mapSwift(temporalName: String = "it", transform: (String) -> String): String {
+private fun String.mapSwift(temporalName: ConversionResult = "it".direct(), transform: (ConversionResult) -> ConversionResult): ConversionResult {
     val adapter = transform(temporalName).takeIf { it != temporalName }
-    return this + (adapter?.let { ".map { $temporalName in $it }" } ?: "")
+    return (this + (adapter?.let { ".map { $temporalName in $it }" } ?: "")).direct()
 }
 
 internal sealed interface AnyBridge {
@@ -281,7 +313,7 @@ internal sealed class Bridge(
 
     object AsVoid : WithSingleType(SirNominalType(SirSwiftModule.void), KotlinType.Unit, CType.Void) {
         override val inKotlinSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String = "Unit"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = ConversionResult.Unit
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
         }
@@ -295,11 +327,11 @@ internal sealed class Bridge(
         CType.Int32
     ) {
         override val inKotlinSources = object : SwiftToKotlinValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult = valueExpression.direct()
         }
 
         override val inSwiftSources = object : SwiftToKotlinValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String = "{ $valueExpression; return 0 }()"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult = "{ $valueExpression; return 0 }()".direct()
         }
     }
 
@@ -327,14 +359,14 @@ internal sealed class Bridge(
                         swiftType,
                         SirTypeNamer.KotlinNameType.PARAMETRIZED
                     )
-                }"
+                }".direct()
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
         }
 
         override val inSwiftSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression.externalRcRef()
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val swiftFqName = typeNamer.swiftFqName(swiftType)
@@ -366,7 +398,7 @@ internal sealed class Bridge(
     object AsAnyBridgeable : WithSingleType(KotlinRuntimeSupportModule.kotlinBridgeableType, KotlinType.KotlinObject, CType.Object) {
         override val inKotlinSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as kotlin.Any"
+                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as kotlin.Any".direct()
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
@@ -376,9 +408,7 @@ internal sealed class Bridge(
             override fun swiftToKotlin(
                 typeNamer: SirTypeNamer,
                 valueExpression: String,
-            ): String {
-                return "$valueExpression.__externalRCRef()"
-            }
+            ) = valueExpression.externalRcRef()
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createProtocolWrapper(externalRCRef: $valueExpression) as! ${typeNamer.swiftFqName(swiftType)}"
@@ -406,14 +436,14 @@ internal sealed class Bridge(
                         swiftType,
                         SirTypeNamer.KotlinNameType.PARAMETRIZED
                     )
-                }"
+                }".direct()
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
         }
 
         override val inSwiftSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression.externalRcRef()
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createProtocolWrapper(externalRCRef: $valueExpression) as! ${typeNamer.swiftFqName(swiftType)}"
@@ -424,7 +454,7 @@ internal sealed class Bridge(
         override val inKotlinSources = object : ValueConversion {
             // nulls are handled by AsOptionalWrapper, so safe to cast from nullable to non-nullable
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression)!!"
+                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression)!!".direct()
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
@@ -438,8 +468,8 @@ internal sealed class Bridge(
         cType: CType,
     ) : WithSingleType(swiftType, KotlinType.ObjCObjectUnretained, cType) {
         override val inKotlinSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "interpretObjCPointer<${typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}>($valueExpression)"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "interpretObjCPointer<${typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}>($valueExpression)".direct()
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "$valueExpression.objcPtr()"
@@ -454,9 +484,8 @@ internal sealed class Bridge(
     ) : AsObjCBridged(swiftType, CType.id) {
 
         override val inSwiftSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                return "$valueExpression as! NSObject? ?? NSNull()"
-            }
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "$valueExpression as! NSObject? ?? NSNull()".direct()
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
         }
@@ -471,8 +500,8 @@ internal sealed class Bridge(
                 // promotes `UInt16` (which `UTF16.CodeUnit` is) to the closest fitting signed integer storage (C int).
                 // -[NSNumber toKotlin] then produces Int box when crossing bridge,
                 // which doesn't pass strict cast checks near interpretObjCPointer
-                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                    "interpretObjCPointer<Int>($valueExpression).toChar()"
+                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                    "interpretObjCPointer<Int>($valueExpression).toChar()".direct()
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                     "$valueExpression.objcPtr()"
@@ -483,8 +512,8 @@ internal sealed class Bridge(
 
 
         override val inSwiftSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "NSNumber(value: $valueExpression)"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "NSNumber(value: $valueExpression)".direct()
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 require(swiftType is SirNominalType)
@@ -536,7 +565,7 @@ internal sealed class Bridge(
         cType: CType,
     ) : AsObjCBridged(swiftType, cType) {
         abstract inner class InSwiftSources : ValueConversion {
-            abstract override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String
+            abstract override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 return "$valueExpression as! ${typeNamer.swiftFqName(swiftType)}"
@@ -546,22 +575,22 @@ internal sealed class Bridge(
 
     open class AsNSArray(swiftType: SirNominalType, elementBridge: WithSingleType) : AsNSCollection(swiftType, CType.NSArray(elementBridge.cType)) {
         override val inSwiftSources = object : InSwiftSources() {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                return valueExpression.mapSwift { elementBridge.inSwiftSources.swiftToKotlin(typeNamer, it) }
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult {
+                return valueExpression.mapSwift { elementBridge.inSwiftSources.swiftToKotlin(typeNamer, it.toString()) }
             }
         }
     }
 
     class AsNSArrayForVariadic(swiftType: SirNominalType, elementBridge: WithSingleType) : AsNSArray(swiftType, elementBridge) {
         override val inKotlinSources: ValueConversion = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult {
                 val arrayKind = typeNamer.kotlinPrimitiveFqNameIfAny(swiftType.typeArguments.single()) ?: "Typed"
                 return "interpretObjCPointer<${
                     typeNamer.kotlinFqName(
                         swiftType,
                         SirTypeNamer.KotlinNameType.PARAMETRIZED
                     )
-                }>($valueExpression).to${arrayKind}Array()"
+                }>($valueExpression).to${arrayKind}Array()".direct()
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
@@ -571,9 +600,9 @@ internal sealed class Bridge(
 
     class AsNSSet(swiftType: SirNominalType, elementBridge: WithSingleType) : AsNSCollection(swiftType, CType.NSSet(elementBridge.cType)) {
         override val inSwiftSources = object : InSwiftSources() {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                val transformedElements = valueExpression.mapSwift { elementBridge.inSwiftSources.swiftToKotlin(typeNamer, it) }
-                return if (transformedElements == valueExpression) valueExpression else "Set($transformedElements)"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult {
+                val transformedElements = valueExpression.mapSwift { elementBridge.inSwiftSources.swiftToKotlin(typeNamer, it.toString()) }
+                return if (transformedElements.toString() == valueExpression) valueExpression.direct() else "Set($transformedElements)".direct()
             }
         }
     }
@@ -582,17 +611,17 @@ internal sealed class Bridge(
         AsNSCollection(swiftType, CType.NSDictionary(keyBridge.cType, valueBridge.cType)) {
 
         override val inSwiftSources = object : InSwiftSources() {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult {
                 val keyAdapter = keyBridge.inSwiftSources.swiftToKotlin(typeNamer, "key")
                 val valueAdapter = valueBridge.inSwiftSources.swiftToKotlin(typeNamer, "value")
-                return if (keyAdapter == "key" && valueAdapter == "value") {
+                return if (keyAdapter.toString() == "key" && valueAdapter.toString() == "value") {
                     valueExpression
                 } else {
                     "Dictionary(uniqueKeysWithValues: $valueExpression.map { key, value in (" +
                             "${keyBridge.inSwiftSources.swiftToKotlin(typeNamer, "key")}, " +
                             "${valueBridge.inSwiftSources.swiftToKotlin(typeNamer, "value")} " +
                             ")})"
-                }
+                }.direct()
             }
         }
     }
@@ -603,7 +632,7 @@ internal sealed class Bridge(
         CType.Void
     ) {
         override val inKotlinSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "null"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = ConversionResult.Null
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = "Unit"
         }
 
@@ -630,27 +659,21 @@ internal sealed class Bridge(
 
         override val inKotlinSources: ValueConversion
             get() = object : ValueConversion {
-                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult {
                     require(wrappedObject is SwiftToKotlinBridge)
-                    val condition = if (typeList.size > 1) {
-                        typeList.indices.joinToString(separator = " || ") { index ->
-                            val component = wrappedObject.inKotlinSources.swiftToKotlinComponent(typeNamer, valueExpression, index + 1)
-                            "$component == $NATIVE_NULL"
-                        }
+                    val wrappedResult = wrappedObject.inKotlinSources.swiftToKotlin(typeNamer, valueExpression)
+                    val condition = if (typeList.size > 1 && wrappedResult is ConversionResult.BinaryOp) {
+                        wrappedResult.replace(operator = " || ") { ConversionResult.BinaryOp(it, "==", NATIVE_NULL.direct()) }
                     } else {
-                        "$valueExpression == $NATIVE_NULL"
+                        ConversionResult.BinaryOp(valueExpression.direct(), "==", NATIVE_NULL.direct())
                     }
-                    val result = typeList.indices.joinToString(
-                        separator = wrappedObject.inKotlinSources.swiftToKotlinComponentConnector()
-                    ) { index ->
-                        val component = wrappedObject.inKotlinSources.swiftToKotlinComponent(typeNamer, valueExpression, index + 1)
-                        if (typeList.size == 1 || typeList[index].cType.unwrapAnnotated() != CType.NSNumber) {
-                            component
-                        } else {
-                            nsNumberBridge.inKotlinSources.swiftToKotlin(typeNamer, component)
-                        }
+                    val result = if (wrappedResult is ConversionResult.BinaryOp) {
+                        wrappedResult.replace { nsNumberBridge.inKotlinSources.swiftToKotlin(typeNamer, it.toString()) }
+                    } else {
+                        wrappedResult
                     }
-                    return "if ($condition) null else $result"
+
+                    return "if ($condition) null else $result".direct()
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
@@ -662,29 +685,32 @@ internal sealed class Bridge(
             }
 
         override val inSwiftSources: ValueConversion = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult {
                 require(
                     wrappedObject is AsObjCBridged || wrappedObject is AsObject ||
                             wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsBlock ||
                             wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
                 )
 
-                return typeList.indices.joinToString { index ->
-                    valueExpression.mapSwift {
-                        val component = wrappedObject.inSwiftSources.swiftToKotlinComponent(typeNamer, it, index + 1)
-                        if (typeList.size == 1 || typeList[index].cType.unwrapAnnotated() != CType.NSNumber) {
-                            component
+                val wrappedResult = wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, valueExpression)
+                return wrappedResult.replace(operator = ", ") {
+                    val left = valueExpression.mapSwift {
+                        if (it is ConversionResult.BinaryOp) {
+                            it
                         } else {
-                            nsNumberBridge.inSwiftSources.swiftToKotlin(typeNamer, component)
+                            nsNumberBridge.inSwiftSources.swiftToKotlin(typeNamer, it.toString())
                         }
-                    } + " ?? ${wrappedObject.renderNil()}"
+                    }
+                    ConversionResult.BinaryOp(left, " ?? ", wrappedObject.renderNil().direct())
                 }
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 return when (wrappedObject) {
                     is AsObjCBridged ->
-                        valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
+                        valueExpression.mapSwift {
+                            wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it.toString()).direct()
+                        }.toString()
                     is AsObject, is AsExistential, is AsAnyBridgeable, is SirCustomTypeTranslatorImpl.RangeBridge ->
                         "{ switch $valueExpression { case ${wrappedObject.renderNil()}: .none; case let res: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
@@ -752,7 +778,7 @@ internal sealed class Bridge(
 
         override val inKotlinSources: SwiftToKotlinValueConversion
             get() = object : ValueConversion {
-                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult {
                     val argsInClosure = parameters
                         .mapIndexed { idx, el -> "arg${idx}" to el }.takeIf { it.isNotEmpty() }
                     val defineArgs = argsInClosure
@@ -776,12 +802,12 @@ internal sealed class Bridge(
                     |        val _result = kotlinFun($callArgs)
                     |        ${returnType.inKotlinSources.swiftToKotlin(typeNamer, "_result")} 
                     |    }
-                    |}""".replaceIndentByMargin("    ")
+                    |}""".replaceIndentByMargin("    ").direct()
                 }
             }
 
         override val inSwiftSources = object : SwiftToKotlinValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult {
                 val argsInClosure = parameters
                     .mapIndexed { idx, el -> "arg${idx}" to el }.takeIf { it.isNotEmpty() }
                 val defineArgs = argsInClosure
@@ -795,7 +821,7 @@ internal sealed class Bridge(
                 return """{
                 |    let originalBlock = $valueExpression
                 |    return {$defineArgs ${"return ${returnType.inSwiftSources.swiftToKotlin(typeNamer, "originalBlock($callArgs)")}"} }
-                |}()""".trimMargin()
+                |}()""".trimMargin().direct()
             }
         }
     }
@@ -806,8 +832,8 @@ internal sealed class Bridge(
 
         override val inSwiftSources: ValueConversion
             get() = object : ValueConversion {
-                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                    return "&$valueExpression"
+                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): ConversionResult {
+                    return "&$valueExpression".direct()
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
