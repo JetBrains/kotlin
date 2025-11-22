@@ -24,7 +24,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
     }
 
     /**
-     * We have no way to check the plugin ordering with the default compiler plugins as they do not have intersecting logic by a smoke test.
+     * We have no way to check the plugin ordering by a smoke test with the default compiler plugins as they do not have intersecting logic.
      * So, we test this just by ensuring the proper arguments are configured for the compiler.
      */
     @Test
