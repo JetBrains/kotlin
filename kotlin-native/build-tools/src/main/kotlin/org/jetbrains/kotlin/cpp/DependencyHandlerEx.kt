@@ -13,32 +13,34 @@ import org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin
 /**
  * Depend on [CompileToBitcodePlugin]'s module named [moduleName] defined in [dependency].
  */
-fun DependencyHandler.module(dependency: ProjectDependency, moduleName: String): ProjectDependency = dependency.copy().apply {
+fun DependencyHandler.module(dependency: ProjectDependency, group: String, path: String, moduleName: String): ProjectDependency = dependency.copy().apply {
     capabilities {
-        requireCapability(CppConsumerPlugin.moduleCapability(dependencyProject, moduleName))
+        requireCapability("$group:$path-$moduleName:$version")
     }
 }
 
 /**
  * Depend on [CompileToBitcodePlugin]'s module (testFixtures part) named [moduleName] defined in [dependency].
  */
-fun DependencyHandler.moduleTestFixtures(dependency: ProjectDependency, moduleName: String): ProjectDependency = dependency.copy().apply {
+fun DependencyHandler.moduleTestFixtures(dependency: ProjectDependency, group: String, path: String, moduleName: String): ProjectDependency = dependency.copy().apply {
     capabilities {
-        requireCapability(CppConsumerPlugin.moduleTestFixturesCapability(dependencyProject, moduleName))
+        requireCapability("$group:$path-$moduleName-test-fixtures:$version")
     }
 }
 
 /**
  * Depend on [CompileToBitcodePlugin]'s module (test part) named [moduleName] defined in [dependency].
  */
-fun DependencyHandler.moduleTest(dependency: ProjectDependency, moduleName: String): ProjectDependency = dependency.copy().apply {
+fun DependencyHandler.moduleTest(dependency: ProjectDependency, group: String, path: String, moduleName: String): ProjectDependency = dependency.copy().apply {
     capabilities {
-        requireCapability(CppConsumerPlugin.moduleTestCapability(dependencyProject, moduleName))
+        requireCapability("$group:$path-$moduleName-test:$version")
     }
 }
 
 // TODO: Remove when .gradle is gone from K/N build.
 fun DependencyHandler.module(project: Project, moduleName: String): ProjectDependency = module(
         dependency = this.project(mapOf("path" to project.path)) as ProjectDependency,
+        project.group.toString(),
+        project.name,
         moduleName
 )

@@ -27,10 +27,7 @@ class CppConsumerPlugin : Plugin<Project> {
     }
 
     companion object {
-        internal fun moduleCapability(project: Project, moduleName: String) = "${project.group}:${project.name}-${moduleName}:${project.version}"
         internal fun testFixturesCapability(project: Project) = "${project.group}:${project.name}-test-fixtures:${project.version}"
-        internal fun moduleTestFixturesCapability(project: Project, moduleName: String) = "${project.group}:${project.name}-${moduleName}-test-fixtures:${project.version}"
         internal fun testCapability(project: Project) = "${project.group}:${project.name}-test:${project.version}"
-        internal fun moduleTestCapability(project: Project, moduleName: String) = "${project.group}:${project.name}-${moduleName}-test:${project.version}"
     }
 }
