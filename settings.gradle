@@ -4,7 +4,7 @@ pluginManagement {
 
     repositories {
         maven {
-            url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
+            url = "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
             content {
                 includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
                 includeGroupByRegex("com.intellij.platform.*")
@@ -12,7 +12,7 @@ pluginManagement {
             }
         }
         maven {
-            url "https://redirector.kotlinlang.org/maven/kotlin-dependencies"
+            url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies"
             content {
                 includeGroup("org.jetbrains.kotlin")
                 includeGroup("org.spdx")
@@ -21,13 +21,13 @@ pluginManagement {
             }
         }
         google {
-            url "https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2"
+            url = "https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2"
             content {
                 includeGroup("com.android.tools")
             }
         }
         mavenCentral {
-            url "https://cache-redirector.jetbrains.com/maven-central"
+            url = "https://cache-redirector.jetbrains.com/maven-central"
         }
         gradlePluginPortal()
     }
