@@ -143,9 +143,7 @@ internal class BtaImplGenerator(
             // generate impl mirror of arguments
             val argumentTypeParameter = when (argument.valueType) {
                 is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
-                    val type = argument.valueType.origin::class
-                        .supertypes.single { it.classifier == KotlinArgumentValueType::class }
-                        .arguments.first().type!!
+                    val type = argument.valueType.kType
                     when (val classifier = type.classifier) {
                         is KClass<*> if classifier.isSubclassOf(Enum::class) && classifier in enumNameAccessors -> {
                             ClassName("$API_ARGUMENTS_PACKAGE.enums", classifier.simpleName!!)

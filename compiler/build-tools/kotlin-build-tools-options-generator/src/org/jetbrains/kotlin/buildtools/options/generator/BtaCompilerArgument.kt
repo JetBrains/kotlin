@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.cli.arguments.generator.calculateName
 import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
+import kotlin.reflect.KType
 
 /**
  * Public facade used by the build-tools options generator. Wraps the single source of truth (arguments DSL)
@@ -66,7 +67,10 @@ sealed class BtaCompilerArgumentValueType(
 ) {
     class SSoTCompilerArgumentValueType(
         val origin: KotlinArgumentValueType<*>
-    ) : BtaCompilerArgumentValueType(isNullable = origin.isNullable.current)
+    ) : BtaCompilerArgumentValueType(isNullable = origin.isNullable.current) {
+        val kType: KType
+            get() = origin::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!
+    }
 
     class CustomArgumentValueType(
         val type: TypeName,

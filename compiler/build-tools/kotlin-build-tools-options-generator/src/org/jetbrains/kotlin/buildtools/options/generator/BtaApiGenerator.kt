@@ -109,8 +109,7 @@ internal class BtaApiGenerator(
             // There's no need to generate any classes for custom representations as they're expected to already be there
             val argumentTypeParameter = when (argument.valueType) {
                 is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
-                    val argumentType =
-                        argument.valueType.origin::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!
+                    val argumentType = argument.valueType.kType
                     argumentType.let {
                         when (val type = it.classifier) {
                             is KClass<*> if type.isSubclassOf(Enum::class) && type in enumNameAccessors -> {
