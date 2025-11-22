@@ -70,4 +70,37 @@ class CompilerPluginsCustomArgumentConfigurationTest {
         val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
         assertEquals(emptyList<String>(), stringArgumentsDump)
     }
+
+    @Test
+    fun testRawArgumentsMarkerPluginDefault() {
+        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
+        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        operation.compilerArguments.applyArgumentStrings(listOf("-Xplugin=1.jar"))
+        assertEquals(
+            listOf("___RAW_PLUGINS_APPLIED___"),
+            operation.compilerArguments[COMPILER_PLUGINS].map { it.pluginId }
+        )
+    }
+
+    @Test
+    fun testRawArgumentsMarkerPluginModern() {
+        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
+        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        operation.compilerArguments.applyArgumentStrings(listOf("-Xcompiler-plugin=1.jar"))
+        assertEquals(
+            listOf("___RAW_PLUGINS_APPLIED___"),
+            operation.compilerArguments[COMPILER_PLUGINS].map { it.pluginId }
+        )
+    }
+
+    @Test
+    fun testNoRawArgumentsMarkerPlugin() {
+        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
+        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        operation.compilerArguments.applyArgumentStrings(listOf())
+        assertEquals(
+            emptyList<CompilerPlugin>(),
+            operation.compilerArguments[COMPILER_PLUGINS]
+        )
+    }
 }
