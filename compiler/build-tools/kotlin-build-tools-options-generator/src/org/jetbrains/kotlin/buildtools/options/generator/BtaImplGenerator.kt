@@ -183,7 +183,8 @@ internal class BtaImplGenerator(
                         argument,
                         wasRemoved,
                         toCompilerConverterFun,
-                        wasIntroducedRecently
+                        applyCompilerArgumentsFun,
+                        wasIntroducedRecently,
                     )
                 }
             }
@@ -196,6 +197,7 @@ internal class BtaImplGenerator(
         argument: BtaCompilerArgument.CustomCompilerArgument,
         wasRemoved: Boolean,
         toCompilerConverterFun: FunSpec.Builder,
+        applyCompilerArgumentsFun: FunSpec.Builder,
         wasIntroducedRecently: Boolean,
     ) {
         val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
@@ -213,6 +215,10 @@ internal class BtaImplGenerator(
                 generateCompatLayer,
             )
         }
+
+        applyCompilerArgumentsFun.addSafeMethodAccessStatement(CodeBlock.builder().apply {
+            add("this[%M] = %M(this[%M], arguments)", member, argument.applier, member)
+        }.build(), failOnNoSuchMethod = false)
     }
 
     /**
