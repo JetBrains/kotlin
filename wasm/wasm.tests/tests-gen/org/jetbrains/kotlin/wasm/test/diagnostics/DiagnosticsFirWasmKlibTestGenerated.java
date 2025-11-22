@@ -73,6 +73,18 @@ public class DiagnosticsFirWasmKlibTestGenerated extends AbstractDiagnosticsFirW
     }
 
     @Test
+    @TestMetadata("inlineOverrideDefaultError.kt")
+    public void testInlineOverrideDefaultError() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/inlineOverrideDefaultError.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineOverrideDefaultWarning.kt")
+    public void testInlineOverrideDefaultWarning() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/inlineOverrideDefaultWarning.kt");
+    }
+
+    @Test
     @TestMetadata("localInlineFunctionCycle.kt")
     public void testLocalInlineFunctionCycle() {
       runTest("compiler/testData/diagnostics/testsWithAnyBackend/localInlineFunctionCycle.kt");
