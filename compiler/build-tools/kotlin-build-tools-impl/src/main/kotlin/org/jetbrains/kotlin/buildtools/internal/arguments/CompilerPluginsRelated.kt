@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderR
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import kotlin.io.path.absolutePathString
 
-internal fun CommonCompilerArguments.apply(plugins: List<CompilerPlugin>) {
-    pluginClasspaths = plugins.flatMap { it.classpath }.map { it.absolutePathString() }.toTypedArray()
-    pluginOptions =
-        plugins.flatMap { plugin -> plugin.rawArguments.map { option -> "plugin:${plugin.pluginId}:${option.key}=${option.value}" } }.toTypedArray()
-    pluginOrderConstraints = plugins.flatMap { plugin ->
+internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<CompilerPlugin>) {
+    val filteredPlugins = plugins.filter { it.pluginId != RAW_PLUGIN_ID }
+    pluginClasspaths = (pluginClasspaths ?: emptyArray()) + filteredPlugins.flatMap { it.classpath }.map { it.absolutePathString() }.toTypedArray()
+    pluginOptions = (pluginOptions
+        ?: emptyArray()) + filteredPlugins.flatMap { plugin -> plugin.rawArguments.map { option -> "plugin:${plugin.pluginId}:${option.key}=${option.value}" } }
+        .toTypedArray()
+    pluginOrderConstraints = (pluginOrderConstraints ?: emptyArray()) + filteredPlugins.flatMap { plugin ->
         plugin.orderingRequirements.map { order ->
             when (order.relation) {
                 CompilerPluginPartialOrderRelation.BEFORE -> "${plugin.pluginId}>${order.otherPluginId}"
@@ -24,4 +26,26 @@ internal fun CommonCompilerArguments.apply(plugins: List<CompilerPlugin>) {
     }
         .toSet() // avoid duplicates
         .toTypedArray()
+}
+
+internal const val RAW_PLUGIN_ID = "___RAW_PLUGINS_APPLIED___"
+
+internal fun applyCompilerPlugins(
+    currentValue: List<CompilerPlugin>?,
+    compilerArgs: CommonCompilerArguments,
+): List<CompilerPlugin> {
+    val normalizedCurrentValue = currentValue ?: emptyList()
+    val rawValue = if (compilerArgs.pluginClasspaths == null && compilerArgs.pluginConfigurations == null) {
+        emptyList()
+    } else {
+        listOf(
+            CompilerPlugin(
+                pluginId = RAW_PLUGIN_ID,
+                classpath = emptyList(),
+                rawArguments = emptyList(),
+                orderingRequirements = emptySet(),
+            )
+        )
+    }
+    return normalizedCurrentValue + rawValue
 }

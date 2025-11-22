@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.options.generator
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
@@ -90,6 +92,6 @@ object CustomCompilerArguments {
         introducedSinceVersion = KotlinReleaseVersion.v2_3_20,
         deprecatedSinceVersion = null,
         removedSinceVersion = null,
-        applier = MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "apply"),
+        applier = MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "applyCompilerPlugins"),
     )
 }
