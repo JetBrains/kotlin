@@ -147,7 +147,7 @@ open class ClangFrontend @Inject constructor(
         files.map {
             val relativePath = it.asFile.toRelativeString(base.asFile)
             WorkUnit(relativePath, out.file(relativePath.replaceAfterLast(".", "bc")))
-        }
+        }.sortedBy { it.inputPathRelativeToWorkingDir }
     }
 
     @get:Nested
