@@ -76,17 +76,21 @@ class VariableReadinessCalculator(
         HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT,
         ;
 
-        val mask by lazy { 1 shl (entries.lastIndex - ordinal) }
+        init {
+            check(ordinal < (Int.SIZE_BITS - 2))
+        }
+
+        val mask: Int = 1 shl ((Int.SIZE_BITS - 2) - ordinal)
     }
 
     class TypeVariableFixationReadiness : Comparable<TypeVariableFixationReadiness> {
         private var bitMask: Int = 0
 
-        operator fun get(index: TypeVariableFixationReadinessQuality) = bitMask and index.mask != 0
+        operator fun get(index: TypeVariableFixationReadinessQuality): Boolean = (bitMask and index.mask) != 0
 
         operator fun set(index: TypeVariableFixationReadinessQuality, value: Boolean) {
-            val numerical = if (value) 1 else 0
-            bitMask = (bitMask or index.mask) - index.mask * (1 - numerical)
+            val conditionalMask = if (value) index.mask else 0
+            bitMask = (bitMask and index.mask.inv()) or conditionalMask
         }
 
         override fun compareTo(other: TypeVariableFixationReadiness): Int = bitMask - other.bitMask
