@@ -15,17 +15,11 @@ declare namespace JS_TESTS {
             };
             get OpenInnerWithProtectedConstructor(): {
             };
-            get AbstractInnerWithProtectedConstructor(): {
-            };
             get SubclassOfAbstractInnerClass(): {
                 new(a: string): TestInner.SubclassOfAbstractInnerClass;
             };
             get SubclassOfOpenInnerClass(): {
                 new(a: string): TestInner.SubclassOfOpenInnerClass;
-            };
-            get AbstractInnerWithSecondaryConstructor(): {
-                new(a: string): TestInner.AbstractInnerWithSecondaryConstructor;
-                fromNumber(a: number): foo.TestInner.AbstractInnerWithSecondaryConstructor;
             };
         }
         namespace TestInner {

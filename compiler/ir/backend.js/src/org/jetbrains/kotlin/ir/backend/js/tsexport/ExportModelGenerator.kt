@@ -363,7 +363,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
                 is IrClass -> {
                     if (klass.isInterface && !candidate.isCompanion) return@forEachExportedMember
-                    if (candidate.isInner) {
+                    if (candidate.isInner && (candidate.modality == Modality.OPEN || candidate.modality == Modality.FINAL)) {
                         members.add(candidate.toFactoryPropertyForInnerClass().withAttributesFor(candidate))
                     }
                     val ec = exportClass(candidate)?.withAttributesFor(candidate)
