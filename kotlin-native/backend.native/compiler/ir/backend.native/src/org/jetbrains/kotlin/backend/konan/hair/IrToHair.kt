@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.types.isChar
 import org.jetbrains.kotlin.ir.types.isDoubleOrFloatWithoutNullability
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.render
@@ -387,6 +388,31 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             IrTypeOperator.SAM_CONVERSION -> TODO()
                             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> TODO()
                             IrTypeOperator.REINTERPRET_CAST -> TODO()
+                        }
+                    }
+
+                    override fun visitGetField(expression: IrGetField, data: Unit): Node {
+                        val field = expression.symbol.owner
+                        if (field.hasAnnotation(KonanFqNames.volatile)) TODO("Volatile field access")
+                        return if (field.isStatic) {
+                            // FIXME global vs field?
+                            ReadGlobalPinned(HairGlobalImpl(field))
+                        } else {
+                            val obj = expression.receiver!!.accept(this, Unit)
+                            ReadFieldPinned(HairFieldImpl(field))(obj)
+                        }
+                    }
+
+                    override fun visitSetField(expression: IrSetField, data: Unit): Node {
+                        val field = expression.symbol.owner
+                        if (field.hasAnnotation(KonanFqNames.volatile)) TODO("Volatile field access")
+                        val value = expression.value.accept(this, Unit)
+                        return if (field.isStatic) {
+                            // FIXME global vs field?
+                            WriteGlobal(HairGlobalImpl(field))(value)
+                        } else {
+                            val obj = expression.receiver!!.accept(this, Unit)
+                            WriteField(HairFieldImpl(field))(obj, value)
                         }
                     }
                 }, Unit)
