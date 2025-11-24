@@ -44877,6 +44877,12 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
       }
 
       @Test
+      @TestMetadata("smartCastOnNullableDoubleIdentityEquals.kt")
+      public void testSmartCastOnNullableDoubleIdentityEquals() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/smartCastOnNullableDoubleIdentityEquals.kt");
+      }
+
+      @Test
       @TestMetadata("stringEqualsHashCodeToString.kt")
       public void testStringEqualsHashCodeToString() {
         runTest("compiler/testData/codegen/box/primitiveTypes/stringEqualsHashCodeToString.kt");
