@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
+import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ConeLambdaWithTypeVariableAsExpectedTypeAtom
@@ -56,6 +57,7 @@ class NewOverloadByLambdaReturnTypeResolver(
 
         if (!lambdas.values.same { it.parameterTypes.size }) return null
         if (!lambdas.values.all { it.expectedType?.isSomeFunctionType(session) == true }) return null
+        if (candidates.any { (it.symbol.fir as? FirContractDescriptionOwner)?.contractDescription != null }) return null
 
         val originalCalleeReference = call.calleeReference
         try {
