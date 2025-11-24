@@ -204,7 +204,7 @@ class ConeOverloadConflictResolver(
         if (discriminationFlags.adaptationsInPostponedAtoms) {
             filterCandidatesByDiscriminationFlag(
                 candidates,
-                { !it.hasPostponedAtomWithAdaptation() },
+                { !it.hasPostponedCallableReferenceWithAdaptation() },
                 { discriminationFlags.copy(adaptationsInPostponedAtoms = false) },
             )?.let { return it }
         }
@@ -303,7 +303,7 @@ class ConeOverloadConflictResolver(
         }
     }
 
-    private fun Candidate.hasPostponedAtomWithAdaptation(): Boolean {
+    private fun Candidate.hasPostponedCallableReferenceWithAdaptation(): Boolean {
         return postponedAtoms.any {
             it is ConeResolvedCallableReferenceAtom &&
                     (it.resultingReference as? FirNamedReferenceWithCandidate)?.candidate?.callableReferenceAdaptation != null
