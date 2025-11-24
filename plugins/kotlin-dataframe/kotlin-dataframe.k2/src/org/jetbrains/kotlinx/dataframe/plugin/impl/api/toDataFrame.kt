@@ -158,8 +158,6 @@ class Exclude1 : AbstractInterpreter<Unit>() {
     }
 }
 
-@Suppress("INVISIBLE_MEMBER")
-
 @OptIn(SymbolInternals::class)
 internal fun KotlinTypeFacade.toDataFrame(
     maxDepth: Int,
@@ -174,6 +172,10 @@ internal fun KotlinTypeFacade.toDataFrame(
         traverseConfiguration.preserveProperties.mapNotNullTo(mutableSetOf()) { it.calleeReference.toResolvedPropertySymbol() }
 
     fun convert(classLike: ConeKotlinType, depth: Int, makeNullable: Boolean): List<SimpleCol> {
+        if (!classLike.canBeUnfolded(session)) {
+            return listOf(simpleColumnOf("value", classLike))
+        }
+
         val symbol = classLike.toRegularClassSymbol() ?: return emptyList()
         val scope = symbol.unsubstitutedScope(session, ScopeSession(), false, FirResolvePhase.STATUS)
         val declarations = if (symbol.fir is FirJavaClass) {
@@ -236,7 +238,11 @@ internal fun KotlinTypeFacade.toDataFrame(
 
                 val keepSubtree =
                     depth >= maxDepth && !fieldKind.shouldBeConvertedToColumnGroup && !fieldKind.shouldBeConvertedToFrameColumn
-                if (keepSubtree || returnType.isValueType(session) || returnType.classId in preserveClasses || it in preserveProperties) {
+                val shouldCreateValueCol = keepSubtree
+                        || returnType.classId in preserveClasses
+                        || it in preserveProperties
+                        || (!returnType.canBeUnfolded(session) && !fieldKind.shouldBeConvertedToColumnGroup && !fieldKind.shouldBeConvertedToFrameColumn)
+                if (shouldCreateValueCol) {
                     SimpleDataColumn(
                         name,
                         ColumnType(
@@ -275,12 +281,6 @@ internal fun KotlinTypeFacade.toDataFrame(
                     SimpleColumnGroup(name, convert(returnType, depth + 1, returnType.isMarkedNullable || makeNullable))
                 }
             }
-    }
-
-    arg.type?.let { type ->
-        if (!type.canBeUnfolded(session)) {
-            return PluginDataFrameSchema(listOf(simpleColumnOf("value", type)))
-        }
     }
 
     return when {

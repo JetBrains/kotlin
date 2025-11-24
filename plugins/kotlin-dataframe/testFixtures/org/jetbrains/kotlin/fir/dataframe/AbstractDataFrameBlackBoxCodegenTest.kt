@@ -45,8 +45,6 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
 
     // TODO re-enable once toDataFrame {} is updated in the compiler plugin
     private val ignoredTests = setOf(
-        "plugins/kotlin-dataframe/testData/box/emptyColumnGroup.kt",
-        "plugins/kotlin-dataframe/testData/box/emptyFrameColumn.kt",
         "plugins/kotlin-dataframe/testData/box/toDataFrame_dsl.kt",
     )
 

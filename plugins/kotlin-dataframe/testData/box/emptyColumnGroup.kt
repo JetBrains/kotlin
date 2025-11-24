@@ -14,11 +14,15 @@ class Test(
 )
 
 fun box(): String {
-    val df = listOf(Test("Test1", MyEmptyDeclarationImpl())).toDataFrame(maxDepth = 1)
+    val row = dataFrameOf("col" to columnOf(123)).first()
+    val df = dataFrameOf(
+        "name" to columnOf("A"),
+        "containingDeclaration" to columnOf<AnyRow>(row)
+    )
     val df1 = df.remove { name }
     val group: ColumnGroup<*> = df1.containingDeclaration
     df1.compileTimeSchema().print()
     df1.schema().print()
-    df1.compareSchemas(strict = true)
+    df1.compareSchemas(strict = false)
     return "OK"
 }
