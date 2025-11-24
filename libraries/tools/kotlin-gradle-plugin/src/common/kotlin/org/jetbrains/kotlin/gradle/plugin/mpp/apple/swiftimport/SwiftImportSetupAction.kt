@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -111,17 +112,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         } else {
             SyntheticProductType.INFERRED
         }
-    }
-
-    val swiftPMDependenciesMetadata = project.registerTask<SerializeSwiftPMDependenciesMetadata>(
-        SerializeSwiftPMDependenciesMetadata.TASK_NAME,
-    ) {
-        it.configureWithExtension(swiftPMImportExtension)
-    }
-    project.configurations.createConsumable("swiftPMDependenciesMetadataElements") {
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(SWIFTPM_DEPENDENCIES_METADATA_USAGE))
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        outgoing.artifact(swiftPMDependenciesMetadata)
     }
 
     val transitiveSwiftPMDependenciesMap = swiftPMDependenciesMetadataClasspath()
@@ -359,6 +349,16 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             }
 
             syntheticImportTasks.forEach { it.configure { it.directlyImportedSpmModules.add(swiftPMDependency) } }
+            val swiftPMDependenciesMetadata = project.locateOrRegisterTask<SerializeSwiftPMDependenciesMetadata>(
+                SerializeSwiftPMDependenciesMetadata.TASK_NAME,
+            ) {
+                it.configureWithExtension(swiftPMImportExtension)
+            }
+            project.configurations.maybeCreateConsumable("swiftPMDependenciesMetadataElements") {
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(SWIFTPM_DEPENDENCIES_METADATA_USAGE))
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                outgoing.artifact(swiftPMDependenciesMetadata)
+            }
             swiftPMDependenciesMetadata.configure { it.importedSpmModules.add(swiftPMDependency) }
 
             defFilesAndLdDumpGenerationTask.configure {
