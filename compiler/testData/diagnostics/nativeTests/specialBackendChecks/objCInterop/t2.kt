@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_PLATFORM_LIBS
 import platform.darwin.*
 import platform.Foundation.*
