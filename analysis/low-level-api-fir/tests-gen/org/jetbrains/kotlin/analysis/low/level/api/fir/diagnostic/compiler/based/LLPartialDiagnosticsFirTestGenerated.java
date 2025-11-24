@@ -1585,6 +1585,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("candidatesWithContracts.kt")
+        public void testCandidatesWithContracts() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/candidatesWithContracts.kt");
+        }
+
+        @Test
         @TestMetadata("dataFrameCase.kt")
         public void testDataFrameCase() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/dataFrameCase.kt");
