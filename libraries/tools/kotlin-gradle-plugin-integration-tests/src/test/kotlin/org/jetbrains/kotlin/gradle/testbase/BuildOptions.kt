@@ -168,7 +168,6 @@ data class BuildOptions(
         val restrictedDistribution: Boolean? = null,
         val useXcodeMessageStyle: Boolean? = null,
         val version: String? = System.getProperty("kotlinNativeVersion"),
-        val cacheOrchestration: String? = null,
         val incremental: Boolean? = null,
         val enableKlibsCrossCompilation: Boolean? = null,
     )
@@ -376,9 +375,6 @@ data class BuildOptions(
         }
         nativeOptions.version?.let {
             arguments.add("-Pkotlin.native.version=${it}")
-        }
-        nativeOptions.cacheOrchestration?.let {
-            arguments.add("-Pkotlin.native.cacheOrchestration=${it}")
         }
         nativeOptions.incremental?.let {
             arguments.add("-Pkotlin.incremental.native=${it}")
