@@ -5,16 +5,22 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
-import kotlin.reflect.*
+import kotlin.reflect.KParameter
+import kotlin.reflect.KType
+import kotlin.reflect.KTypeParameter
+import kotlin.reflect.KVisibility
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 
-internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
+internal abstract class DescriptorKCallable<out R> : ReflectKCallableImpl<R>() {
     abstract val descriptor: CallableMemberDescriptor
 
     protected abstract fun computeReturnType(): DescriptorKType
@@ -115,8 +121,4 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
 
     override val isAbstract: Boolean
         get() = descriptor.modality == Modality.ABSTRACT
-
-    private val _absentArguments = ReflectProperties.lazySoft(::computeAbsentArguments)
-
-    override fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
 }
