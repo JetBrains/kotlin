@@ -31,6 +31,11 @@ public class IncrementalK2JvmWithPluginCompilerRunnerTestGenerated extends Abstr
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/addMethodToGeneratedClass/");
   }
 
+  @TestMetadata("addMethodToGeneratedClassByAnnotatingNestedClass")
+  public void testAddMethodToGeneratedClassByAnnotatingNestedClass() {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/addMethodToGeneratedClassByAnnotatingNestedClass/");
+  }
+
   @TestMetadata("addMethodToGeneratedSupertype")
   public void testAddMethodToGeneratedSupertype() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/addMethodToGeneratedSupertype/");
@@ -45,9 +50,24 @@ public class IncrementalK2JvmWithPluginCompilerRunnerTestGenerated extends Abstr
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
+  @TestMetadata("changeMethodOfGeneratedClass")
+  public void testChangeMethodOfGeneratedClass() {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/changeMethodOfGeneratedClass/");
+  }
+
   @TestMetadata("generateNewTopLevelFunction")
   public void testGenerateNewTopLevelFunction() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/generateNewTopLevelFunction/");
+  }
+
+  @TestMetadata("recompileAfterDependencyFailure")
+  public void testRecompileAfterDependencyFailure() {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/recompileAfterDependencyFailure/");
+  }
+
+  @TestMetadata("recompileOnAnnotationParameterChange")
+  public void testRecompileOnAnnotationParameterChange() {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/recompileOnAnnotationParameterChange/");
   }
 
   @TestMetadata("referenceFunctionFromIrPlugin")
@@ -58,5 +78,10 @@ public class IncrementalK2JvmWithPluginCompilerRunnerTestGenerated extends Abstr
   @TestMetadata("removeLookupToDeclaration")
   public void testRemoveLookupToDeclaration() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/removeLookupToDeclaration/");
+  }
+
+  @TestMetadata("removeMethodFromGeneratedClass")
+  public void testRemoveMethodFromGeneratedClass() {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/removeMethodFromGeneratedClass/");
   }
 }
