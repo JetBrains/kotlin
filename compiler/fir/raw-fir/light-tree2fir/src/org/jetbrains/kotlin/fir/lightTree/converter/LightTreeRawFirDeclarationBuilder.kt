@@ -1431,8 +1431,11 @@ class LightTreeRawFirDeclarationBuilder(
                     BACKING_FIELD -> fieldDeclaration = it
                     else -> if (it.isExpression()) {
                         context.calleeNamesForLambda += null
-                        propertyInitializer = withForcedLocalContext(!isReturnType || modifiers?.isConst() == true) {
-                            expressionConverter.getAsFirExpression(it, "Should have initializer")
+                        val keepBodyInHeaderMode = !isReturnType || modifiers?.isConst() == true
+                        propertyInitializer = runIf(isLocal || !headerMode || keepBodyInHeaderMode) {
+                            withForcedLocalContext(keepBodyInHeaderMode) {
+                                expressionConverter.getAsFirExpression(it, "Should have initializer")
+                            }
                         }
                         context.calleeNamesForLambda.removeLast()
                     }
