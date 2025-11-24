@@ -43767,6 +43767,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("aliasToExpectGeneric.kt")
+        public void testAliasToExpectGeneric() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/aliasToExpectGeneric.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInHmpp() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
@@ -43775,6 +43781,72 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         @TestMetadata("arrayDeque.kt")
         public void testArrayDeque() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/arrayDeque.kt");
+        }
+
+        @Test
+        @TestMetadata("arrayDequeExtension.kt")
+        public void testArrayDequeExtension() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/arrayDequeExtension.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultImplsMultiInheritance.kt")
+        public void testDefaultImplsMultiInheritance() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/defaultImplsMultiInheritance.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultImplsMultiInheritanceConflict.kt")
+        public void testDefaultImplsMultiInheritanceConflict() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/defaultImplsMultiInheritanceConflict.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultImplsMultiInheritanceConflictDefaults.kt")
+        public void testDefaultImplsMultiInheritanceConflictDefaults() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/defaultImplsMultiInheritanceConflictDefaults.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultImplsMultiInheritanceConflictDefaultsJava.kt")
+        public void testDefaultImplsMultiInheritanceConflictDefaultsJava() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/defaultImplsMultiInheritanceConflictDefaultsJava.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultImplsMultiInheritanceExplicitOverrideJava.kt")
+        public void testDefaultImplsMultiInheritanceExplicitOverrideJava() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/defaultImplsMultiInheritanceExplicitOverrideJava.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultImplsMultiInheritanceJava.kt")
+        public void testDefaultImplsMultiInheritanceJava() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/defaultImplsMultiInheritanceJava.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultImplsMultiInheritanceJavaKotlinDefaults.kt")
+        public void testDefaultImplsMultiInheritanceJavaKotlinDefaults() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/defaultImplsMultiInheritanceJavaKotlinDefaults.kt");
+        }
+
+        @Test
+        @TestMetadata("deprecationActual3-3.kt")
+        public void testDeprecationActual3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/deprecationActual3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("deprecationActual4-4.kt")
+        public void testDeprecationActual4_4() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/deprecationActual4-4.kt");
+        }
+
+        @Test
+        @TestMetadata("deprecationActualTypealias2-2.kt")
+        public void testDeprecationActualTypealias2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/deprecationActualTypealias2-2.kt");
         }
 
         @Test
@@ -43802,9 +43874,9 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
-        @TestMetadata("expectActualChain3-3-error.kt")
-        public void testExpectActualChain3_3_error() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-3-error.kt");
+        @TestMetadata("expectActualChain3-3-1.kt")
+        public void testExpectActualChain3_3_1() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-3-1.kt");
         }
 
         @Test
@@ -43820,6 +43892,96 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("expectActualChainExtra3-3.kt")
+        public void testExpectActualChainExtra3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChainExtra3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualExtensions2-3.kt")
+        public void testExpectActualExtensions2_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualExtensions2-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualExtensions3-3.kt")
+        public void testExpectActualExtensions3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualExtensions3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualGeneric2-2.kt")
+        public void testExpectActualGeneric2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualGeneric2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualGeneric3-3.kt")
+        public void testExpectActualGeneric3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualGeneric3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualGenericTwoLibs.kt")
+        public void testExpectActualGenericTwoLibs() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualGenericTwoLibs.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualInheritance2-2.kt")
+        public void testExpectActualInheritance2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualInheritance2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualInheritance3-3.kt")
+        public void testExpectActualInheritance3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualInheritance3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualInheritanceTwoLibs.kt")
+        public void testExpectActualInheritanceTwoLibs() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualInheritanceTwoLibs.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualInline2-2.kt")
+        public void testExpectActualInline2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualInline2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualInline3-3.kt")
+        public void testExpectActualInline3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualInline3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualInlineTwoLibs.kt")
+        public void testExpectActualInlineTwoLibs() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualInlineTwoLibs.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualOverload2-2.kt")
+        public void testExpectActualOverload2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualOverload2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualOverload3-3.kt")
+        public void testExpectActualOverload3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualOverload3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualOverloadTwoLibs.kt")
+        public void testExpectActualOverloadTwoLibs() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualOverloadTwoLibs.kt");
+        }
+
+        @Test
         @TestMetadata("expectOfActualTypeAliasNotReferenced.kt")
         public void testExpectOfActualTypeAliasNotReferenced() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectOfActualTypeAliasNotReferenced.kt");
@@ -43829,6 +43991,30 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         @TestMetadata("expectRefinement.kt")
         public void testExpectRefinement() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectRefinement.kt");
+        }
+
+        @Test
+        @TestMetadata("expectRefinement3-3.kt")
+        public void testExpectRefinement3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectRefinement3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectRefinement4-4.kt")
+        public void testExpectRefinement4_4() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectRefinement4-4.kt");
+        }
+
+        @Test
+        @TestMetadata("expectRefinementLibVsApp.kt")
+        public void testExpectRefinementLibVsApp() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectRefinementLibVsApp.kt");
+        }
+
+        @Test
+        @TestMetadata("expectRefinementPlatformExtraMembers.kt")
+        public void testExpectRefinementPlatformExtraMembers() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectRefinementPlatformExtraMembers.kt");
         }
 
         @Test
@@ -43847,6 +44033,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         @TestMetadata("friendDependency.kt")
         public void testFriendDependency() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/friendDependency.kt");
+        }
+
+        @Test
+        @TestMetadata("genericTypealiasSameNameTwoLibs.kt")
+        public void testGenericTypealiasSameNameTwoLibs() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/genericTypealiasSameNameTwoLibs.kt");
         }
 
         @Test
@@ -43904,6 +44096,18 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("javaPropertyTypealias3-3.kt")
+        public void testJavaPropertyTypealias3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/javaPropertyTypealias3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("javaPropertyTypealiasTwoLibs3-3.kt")
+        public void testJavaPropertyTypealiasTwoLibs3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/javaPropertyTypealiasTwoLibs3-3.kt");
+        }
+
+        @Test
         @TestMetadata("mutlipleExpectsForOneActual.kt")
         public void testMutlipleExpectsForOneActual() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/mutlipleExpectsForOneActual.kt");
@@ -43913,6 +44117,36 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         @TestMetadata("openExpectedActual2-2.kt")
         public void testOpenExpectedActual2_2() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/openExpectedActual2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("optInActual2-2.kt")
+        public void testOptInActual2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/optInActual2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadAlias3-3.kt")
+        public void testOverloadAlias3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/overloadAlias3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadAliasTwoLibs.kt")
+        public void testOverloadAliasTwoLibs() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/overloadAliasTwoLibs.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyAlias3-3.kt")
+        public void testPropertyAlias3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/propertyAlias3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyAliasTwoLibs.kt")
+        public void testPropertyAliasTwoLibs() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/propertyAliasTwoLibs.kt");
         }
 
         @Test
@@ -43940,9 +44174,87 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
-        @TestMetadata("typealiasActualizationJavaSimple2-2.kt")
-        public void testTypealiasActualizationJavaSimple2_2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualizationJavaSimple2-2.kt");
+        @TestMetadata("typealiasActualizationJava2-2.kt")
+        public void testTypealiasActualizationJava2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualizationJava2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasActualizationJava2-3.kt")
+        public void testTypealiasActualizationJava2_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualizationJava2-3.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasActualizationJava3-3.kt")
+        public void testTypealiasActualizationJava3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualizationJava3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasActualizationJava3-3-1.kt")
+        public void testTypealiasActualizationJava3_3_1() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualizationJava3-3-1.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasActualizationJavaAliasChainList3-3.kt")
+        public void testTypealiasActualizationJavaAliasChainList3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualizationJavaAliasChainList3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasActualizationJavaGeneric2-2.kt")
+        public void testTypealiasActualizationJavaGeneric2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualizationJavaGeneric2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasActualizationPartialTypeArgumentDequeStringJava2-2.kt")
+        public void testTypealiasActualizationPartialTypeArgumentDequeStringJava2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualizationPartialTypeArgumentDequeStringJava2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasNameClash.kt")
+        public void testTypealiasNameClash() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasNameClash.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasNameClash2-2.kt")
+        public void testTypealiasNameClash2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasNameClash2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasNameClash2-3.kt")
+        public void testTypealiasNameClash2_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasNameClash2-3.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasNameClash3-3.kt")
+        public void testTypealiasNameClash3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasNameClash3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasReturnType.kt")
+        public void testTypealiasReturnType() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasReturnTypeIntersectionBound.kt")
+        public void testTypealiasReturnTypeIntersectionBound() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasReturnTypeIntersectionBound.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasSameNameTwoLibs.kt")
+        public void testTypealiasSameNameTwoLibs() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasSameNameTwoLibs.kt");
         }
       }
 
