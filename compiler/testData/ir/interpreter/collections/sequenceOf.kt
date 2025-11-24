@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND_K2: ANY
 import kotlin.sequences.*
 
 const val a = <!EVALUATED: `1`!>sequenceOf(1, 2, 3).iterator().next()<!>

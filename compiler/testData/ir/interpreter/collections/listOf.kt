@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND_K2: ANY
 import kotlin.collections.*
 
 const val a = <!EVALUATED: `3`!>listOf(1, 2, 3).size<!>

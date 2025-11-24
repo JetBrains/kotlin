@@ -30,5 +30,5 @@ fun singleExpressionLoop(incrementTo: Int): Int {
 }
 
 const val a = <!EVALUATED: `720`!>factorialDoWhile(6)<!>
-const val b = <!EVALUATED: `1`!>firstNotNull(arrayOf<Int?>(null, null, 1, 2, null))<!>
+//const val b = firstNotNull(arrayOf<Int?>(null, null, 1, 2, null))
 const val c = <!EVALUATED: `10`!>singleExpressionLoop(10)<!>

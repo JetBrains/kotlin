@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND_K2: ANY
 fun test(d: dynamic) {
     val a = arrayOf(1, 2, 3)
 

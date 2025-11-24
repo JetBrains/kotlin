@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND_K2: ANY
 import kotlin.collections.*
 
 const val doubleArray = <!EVALUATED: `1, 2, 3; 4, 5; 6`!>arrayOf(

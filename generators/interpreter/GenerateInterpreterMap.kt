@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.generators.interpreter
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.IntrinsicConstEvaluation
 import org.jetbrains.kotlin.utils.Printer
 import kotlin.reflect.full.memberFunctions
 
@@ -223,9 +221,8 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
     val builtIns = DefaultBuiltIns.Instance
     val operationMap = mutableListOf<Operation>()
     val allPrimitiveTypes = PrimitiveType.values().map { builtIns.getBuiltInClassByFqName(it.typeFqName) }
-    val arrays = PrimitiveType.values().map { builtIns.getPrimitiveArrayClassDescriptor(it) } + builtIns.array
     val additionalBuiltIns = listOf(
-        builtIns.string, builtIns.any, builtIns.charSequence, builtIns.number, builtIns.comparable, builtIns.throwable
+        builtIns.string, builtIns.any, builtIns.charSequence, builtIns.number, builtIns.comparable
     )
 
     fun CallableDescriptor.isFakeOverride(classDescriptor: ClassDescriptor): Boolean {
@@ -234,13 +231,13 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
         return !isPrimitive && isFakeOverridden
     }
 
-    val excludedBinaryOperations = listOf("rangeUntil").map { Name.identifier(it) }
+    val excludedOperations = listOf("hashCode", "rangeTo", "rangeUntil")
 
-    for (classDescriptor in allPrimitiveTypes + additionalBuiltIns + arrays) {
+    for (classDescriptor in allPrimitiveTypes + additionalBuiltIns) {
         val compileTimeFunctions = classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()
             .filterIsInstance<CallableDescriptor>()
             .filter { !it.isFakeOverride(classDescriptor) && it.valueParameters.size + 1 == argumentsCount }
-            .filter { it.name !in excludedBinaryOperations }
+            .filter { it.name.asString() !in excludedOperations }
 
         for (function in compileTimeFunctions) {
             val parameterTypes = listOf(classDescriptor.defaultType.constructor.toString()) +
@@ -250,7 +247,7 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
     }
 
     val unsignedClasses = listOf(UInt::class, ULong::class, UByte::class, UShort::class)
-    val excludedUnsignedOperations = listOf("dec", "hashCode", "inc", "rangeTo", "rangeUntil")
+    val excludedUnsignedOperations = listOf("dec", "inc") + excludedOperations
     for (unsignedClass in unsignedClasses) {
         unsignedClass.memberFunctions
             .filter { it.parameters.size == argumentsCount }

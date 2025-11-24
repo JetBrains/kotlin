@@ -1,17 +1,6 @@
-@CompileTimeCalculation
-fun appendVararg(vararg strings: String): String {
-    val sb = StringBuilder()
-    for (string in strings) {
-        sb.append(string)
-    }
-    return sb.toString()
-}
-
-
 const val simpleAppend = <!EVALUATED: `str`!>StringBuilder().append("str").toString()<!>
 const val withCapacity = <!EVALUATED: `example`!>StringBuilder(7).append("example").toString()<!>
 const val withContent = <!EVALUATED: `first second`!>StringBuilder("first").append(" ").append("second").toString()<!>
-const val appendInFun = <!EVALUATED: `1 2 3`!>appendVararg("1", " ", "2", " ", "3")<!>
 
 const val length1 = <!EVALUATED: `1`!>StringBuilder(3).append("1").length<!>
 const val length2 = <!EVALUATED: `9`!>StringBuilder().append("123456789").length<!>

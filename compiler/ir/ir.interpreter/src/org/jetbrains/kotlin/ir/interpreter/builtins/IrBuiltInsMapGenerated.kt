@@ -14,18 +14,6 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 
 internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
     when (name) {
-        "hashCode" -> when (type) {
-            "kotlin.Boolean" -> return (a as Boolean).hashCode()
-            "kotlin.Char" -> return (a as Char).hashCode()
-            "kotlin.Byte" -> return (a as Byte).hashCode()
-            "kotlin.Short" -> return (a as Short).hashCode()
-            "kotlin.Int" -> return (a as Int).hashCode()
-            "kotlin.Float" -> return (a as Float).hashCode()
-            "kotlin.Long" -> return (a as Long).hashCode()
-            "kotlin.Double" -> return (a as Double).hashCode()
-            "kotlin.String" -> return (a as String).hashCode()
-            "kotlin.Any" -> return (a as Any).hashCode()
-        }
         "not" -> when (type) {
             "kotlin.Boolean" -> return (a as Boolean).not()
         }
@@ -186,34 +174,6 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
         "length" -> when (type) {
             "kotlin.String" -> return (a as String).length
             "kotlin.CharSequence" -> return (a as CharSequence).length
-        }
-        "cause" -> when (type) {
-            "kotlin.Throwable" -> return (a as Throwable).cause
-        }
-        "message" -> when (type) {
-            "kotlin.Throwable" -> return (a as Throwable).message
-        }
-        "size" -> when (type) {
-            "kotlin.BooleanArray" -> return (a as BooleanArray).size
-            "kotlin.CharArray" -> return (a as CharArray).size
-            "kotlin.ByteArray" -> return (a as ByteArray).size
-            "kotlin.ShortArray" -> return (a as ShortArray).size
-            "kotlin.IntArray" -> return (a as IntArray).size
-            "kotlin.FloatArray" -> return (a as FloatArray).size
-            "kotlin.LongArray" -> return (a as LongArray).size
-            "kotlin.DoubleArray" -> return (a as DoubleArray).size
-            "kotlin.Array" -> return (a as Array<Any?>).size
-        }
-        "iterator" -> when (type) {
-            "kotlin.BooleanArray" -> return (a as BooleanArray).iterator()
-            "kotlin.CharArray" -> return (a as CharArray).iterator()
-            "kotlin.ByteArray" -> return (a as ByteArray).iterator()
-            "kotlin.ShortArray" -> return (a as ShortArray).iterator()
-            "kotlin.IntArray" -> return (a as IntArray).iterator()
-            "kotlin.FloatArray" -> return (a as FloatArray).iterator()
-            "kotlin.LongArray" -> return (a as LongArray).iterator()
-            "kotlin.DoubleArray" -> return (a as DoubleArray).iterator()
-            "kotlin.Array" -> return (a as Array<Any?>).iterator()
         }
         "toUByte" -> when (type) {
             "kotlin.Byte" -> return (a as Byte).toUByte()
@@ -546,33 +506,6 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
             }
             "kotlin.String" -> if (typeB == "kotlin.Any?") return (a as String).plus(b)
         }
-        "rangeTo" -> when (typeA) {
-            "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char).rangeTo(b as Char)
-            "kotlin.Byte" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Byte).rangeTo(b as Byte)
-                "kotlin.Short" -> return (a as Byte).rangeTo(b as Short)
-                "kotlin.Int" -> return (a as Byte).rangeTo(b as Int)
-                "kotlin.Long" -> return (a as Byte).rangeTo(b as Long)
-            }
-            "kotlin.Short" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Short).rangeTo(b as Byte)
-                "kotlin.Short" -> return (a as Short).rangeTo(b as Short)
-                "kotlin.Int" -> return (a as Short).rangeTo(b as Int)
-                "kotlin.Long" -> return (a as Short).rangeTo(b as Long)
-            }
-            "kotlin.Int" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Int).rangeTo(b as Byte)
-                "kotlin.Short" -> return (a as Int).rangeTo(b as Short)
-                "kotlin.Int" -> return (a as Int).rangeTo(b as Int)
-                "kotlin.Long" -> return (a as Int).rangeTo(b as Long)
-            }
-            "kotlin.Long" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Long).rangeTo(b as Byte)
-                "kotlin.Short" -> return (a as Long).rangeTo(b as Short)
-                "kotlin.Int" -> return (a as Long).rangeTo(b as Int)
-                "kotlin.Long" -> return (a as Long).rangeTo(b as Long)
-            }
-        }
         "div" -> when (typeA) {
             "kotlin.Byte" -> when (typeB) {
                 "kotlin.Byte" -> return (a as Byte).div(b as Byte)
@@ -812,15 +745,6 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
             "kotlin.Long" -> if (typeB == "kotlin.Int") return (a as Long).ushr(b as Int)
         }
         "get" -> when (typeA) {
-            "kotlin.BooleanArray" -> if (typeB == "kotlin.Int") return (a as BooleanArray).get(b as Int)
-            "kotlin.CharArray" -> if (typeB == "kotlin.Int") return (a as CharArray).get(b as Int)
-            "kotlin.ByteArray" -> if (typeB == "kotlin.Int") return (a as ByteArray).get(b as Int)
-            "kotlin.ShortArray" -> if (typeB == "kotlin.Int") return (a as ShortArray).get(b as Int)
-            "kotlin.IntArray" -> if (typeB == "kotlin.Int") return (a as IntArray).get(b as Int)
-            "kotlin.FloatArray" -> if (typeB == "kotlin.Int") return (a as FloatArray).get(b as Int)
-            "kotlin.LongArray" -> if (typeB == "kotlin.Int") return (a as LongArray).get(b as Int)
-            "kotlin.DoubleArray" -> if (typeB == "kotlin.Int") return (a as DoubleArray).get(b as Int)
-            "kotlin.Array" -> if (typeB == "kotlin.Int") return (a as Array<Any?>).get(b as Int)
             "kotlin.String" -> if (typeB == "kotlin.Int") return (a as String).get(b as Int)
             "kotlin.CharSequence" -> if (typeB == "kotlin.Int") return (a as CharSequence).get(b as Int)
         }
@@ -993,17 +917,6 @@ internal fun interpretTernaryFunction(name: String, typeA: String, typeB: String
         "subSequence" -> when (typeA) {
             "kotlin.String" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Int") return (a as String).subSequence(b as Int, c as Int)
             "kotlin.CharSequence" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Int") return (a as CharSequence).subSequence(b as Int, c as Int)
-        }
-        "set" -> when (typeA) {
-            "kotlin.BooleanArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Boolean") return (a as BooleanArray).set(b as Int, c as Boolean)
-            "kotlin.CharArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Char") return (a as CharArray).set(b as Int, c as Char)
-            "kotlin.ByteArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Byte") return (a as ByteArray).set(b as Int, c as Byte)
-            "kotlin.ShortArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Short") return (a as ShortArray).set(b as Int, c as Short)
-            "kotlin.IntArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Int") return (a as IntArray).set(b as Int, c as Int)
-            "kotlin.FloatArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Float") return (a as FloatArray).set(b as Int, c as Float)
-            "kotlin.LongArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Long") return (a as LongArray).set(b as Int, c as Long)
-            "kotlin.DoubleArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Double") return (a as DoubleArray).set(b as Int, c as Double)
-            "kotlin.Array" -> if (typeB == "kotlin.Int" && typeC == "T") return (a as Array<Any?>).set(b as Int, c)
         }
     }
     throw InterpreterMethodNotFoundError("Unknown function: $name($typeA, $typeB, $typeC)")

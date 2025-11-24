@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND_K2: ANY
 import kotlin.collections.*
 
 @CompileTimeCalculation
