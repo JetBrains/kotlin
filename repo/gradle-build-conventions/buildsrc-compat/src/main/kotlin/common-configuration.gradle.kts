@@ -385,6 +385,7 @@ fun Project.configureTests() {
             ":tools:binary-compatibility-validator",
             ":tools:ide-plugin-dependencies-validator",
             ":benchmarks",
+            ":native:hair:compiler",
             ":test-instrumenter"
         )
         val projectPath = project.path

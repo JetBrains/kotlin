@@ -82,17 +82,21 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitNew(node: New): New = context(nodeBuilder, NoControlFlowBuilder) { New(node.objectType)(null) } as New
 
-    override fun visitReadFieldPinned(node: ReadFieldPinned): ReadFieldPinned = context(nodeBuilder, NoControlFlowBuilder) { ReadFieldPinned(node.field)(null, null) } as ReadFieldPinned
-
-    override fun visitReadGlobalPinned(node: ReadGlobalPinned): ReadGlobalPinned = context(nodeBuilder, NoControlFlowBuilder) { ReadGlobalPinned(node.field)(null) } as ReadGlobalPinned
-
-    override fun visitWriteField(node: WriteField): WriteField = context(nodeBuilder, NoControlFlowBuilder) { WriteField(node.field)(null, null, null) } as WriteField
-
-    override fun visitWriteGlobal(node: WriteGlobal): WriteGlobal = context(nodeBuilder, NoControlFlowBuilder) { WriteGlobal(node.field)(null, null) } as WriteGlobal
-
     override fun visitIsInstanceOf(node: IsInstanceOf): IsInstanceOf = context(nodeBuilder, NoControlFlowBuilder) { IsInstanceOf(node.targetType)(null) } as IsInstanceOf
 
     override fun visitCheckCast(node: CheckCast): CheckCast = context(nodeBuilder, NoControlFlowBuilder) { CheckCast(node.targetType)(null) } as CheckCast
+
+    override fun visitLoad(node: Load): Load = context(nodeBuilder, NoControlFlowBuilder) { Load(node.type)(null) } as Load
+
+    override fun visitStore(node: Store): Store = context(nodeBuilder, NoControlFlowBuilder) { Store(node.type)(null) } as Store
+
+    override fun visitLoadField(node: LoadField): LoadField = context(nodeBuilder, NoControlFlowBuilder) { LoadField(node.field)(null) } as LoadField
+
+    override fun visitStoreField(node: StoreField): StoreField = context(nodeBuilder, NoControlFlowBuilder) { StoreField(node.field)(null, null) } as StoreField
+
+    override fun visitLoadGlobal(node: LoadGlobal): LoadGlobal = context(nodeBuilder, NoControlFlowBuilder) { LoadGlobal(node.field) }
+
+    override fun visitStoreGlobal(node: StoreGlobal): StoreGlobal = context(nodeBuilder, NoControlFlowBuilder) { StoreGlobal(node.field)(null) } as StoreGlobal
 
     override fun visitInvokeStatic(node: InvokeStatic): InvokeStatic = context(nodeBuilder, NoControlFlowBuilder) { InvokeStatic(node.function)(null, *Array(node.callArgs.size) { null }) } as InvokeStatic
 
