@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -23,6 +25,8 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
+import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
+import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -42,6 +46,9 @@ abstract class AbstractDiagnosticsWasmKlibTestBase(
             targetPlatform = this@AbstractDiagnosticsWasmKlibTestBase.targetPlatform
             dependencyKind = DependencyKind.Source
             targetBackend = TargetBackend.WASM
+        }
+        defaultDirectives {
+            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
         }
 
         configureFirParser(parser)
@@ -69,6 +76,7 @@ abstract class AbstractDiagnosticsWasmKlibTestBase(
                 ::FirCfgConsistencyHandler,
                 ::FirResolvedTypesVerifier,
                 ::FirScopeDumpHandler,
+                ::NoFirCompilationErrorsHandler,
             )
         }
 
@@ -92,6 +100,9 @@ abstract class AbstractDiagnosticsWasmKlibTestBase(
         klibArtifactsHandlersStep {
             useHandlers(::KlibBackendDiagnosticsHandler)
         }
+        useAfterAnalysisCheckers(
+            ::PhasedPipelineChecker.bind(TestPhase.FRONTEND),
+        )
     }
 }
 
