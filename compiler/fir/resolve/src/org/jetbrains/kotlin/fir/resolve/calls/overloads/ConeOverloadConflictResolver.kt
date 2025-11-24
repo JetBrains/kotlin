@@ -107,6 +107,7 @@ class ConeOverloadConflictResolver(
             SAMs = true,
             suspendConversions = true,
             byUnwrappedSmartCastOrigin = true,
+            unitCoercionInLambdas = true,
         )
 
         val newOverloadByLambdaReturnTypeResolver = NewOverloadByLambdaReturnTypeResolver(components = transformerComponents)
@@ -193,6 +194,7 @@ class ConeOverloadConflictResolver(
         val SAMs: Boolean,
         val suspendConversions: Boolean,
         val byUnwrappedSmartCastOrigin: Boolean,
+        val unitCoercionInLambdas: Boolean,
     )
 
     private fun chooseMaximallySpecificCandidates(
@@ -205,6 +207,14 @@ class ConeOverloadConflictResolver(
                 { !it.hasPostponedAtomWithAdaptation() },
                 { discriminationFlags.copy(adaptationsInPostponedAtoms = false) },
             )?.let { return it }
+        }
+
+        if (discriminationFlags.unitCoercionInLambdas) {
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { !it.usesCoercionToUnitInLambda },
+                { discriminationFlags.copy(unitCoercionInLambdas = false) },
+            )?.takeIf { it.size == 1 }?.let { return it }
         }
 
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }

@@ -38,7 +38,7 @@ public class MyJavaClass {
 
 // FILE: main.kt
 fun main() {
-    MyJavaClass.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething<!> { "" }
+    MyJavaClass.runSomething { "" }
     MyJavaClass.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { "" }
 }
 
