@@ -221,6 +221,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("noPackageAnnotations.kt")
+  public void testNoPackageAnnotations() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/noPackageAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("noPackageAnnotationsFromLibrary.kt")
+  public void testNoPackageAnnotationsFromLibrary() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/noPackageAnnotationsFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("overrideProtectedClassReturnFromLibrary.kt")
   public void testOverrideProtectedClassReturnFromLibrary() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/overrideProtectedClassReturnFromLibrary.kt");
