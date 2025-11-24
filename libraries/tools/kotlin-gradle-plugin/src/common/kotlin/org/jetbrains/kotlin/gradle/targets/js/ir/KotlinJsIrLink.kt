@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.utils.toPathsArray
+import java.io.File
 import javax.inject.Inject
 
 /**
@@ -135,12 +138,21 @@ abstract class KotlinJsIrLink @Inject constructor(
                 args.debuggerCustomFormatters = true
             }
         }
+
+        context.pluginClasspath { args ->
+            args.pluginClasspaths = emptyArray()
+        }
+
+        context.primitive { args ->
+            args.pluginOptions = emptyArray<String>()
+        }
     }
 
     private val isWasmPlatform: Boolean =
         target == KotlinPlatformType.wasm
 
     override fun processArgsBeforeCompile(args: K2JSCompilerArguments) {
+        args.libraries = listOfNotNull(args.libraries, args.includes).joinToString(File.pathSeparator)
         if (!isWasmPlatform) {
             buildFusService.orNull?.reportFusMetrics {
                 CompileKotlinJsIrLinkMetrics.collectMetrics(args, incrementalJsIr, it)

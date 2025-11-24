@@ -107,7 +107,18 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
 
         args.freeArgs += parameters.enhancedFreeCompilerArgs.get()
 
-        println("TRANSFORMING")
+        args.debuggerCustomFormatters = true
+        args.main = "call"
+        args.irProduceJs = true
+        args.sourceMap = true
+        args.sourceMapEmbedSources = "never"
+        args.target = "es5"
+        args.irModuleName = null
+
+        args.freeArgs = args.freeArgs.filterNot { it.startsWith("-Xir-module-name=") }
+
+        println("TRANSFORMING ")
+        println(ArgumentUtils.convertArgumentsToStringList(args))
 
         val workArgs = GradleKotlinCompilerWorkArguments(
             projectFiles = ProjectFilesForCompilation(
