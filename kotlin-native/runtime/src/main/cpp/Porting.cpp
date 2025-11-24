@@ -18,6 +18,11 @@
 #ifdef KONAN_ANDROID
 #include <android/log.h>
 #endif
+
+#ifdef KONAN_IOS
+#include <mach-o/dyld.h>
+#endif
+
 #include <cstdio>
 #include <cstdlib>
 #include <stdarg.h>
@@ -170,8 +175,10 @@ void consoleFlush() {
   ::fflush(stderr);
 }
 
+#ifndef KONAN_IOS
 pthread_key_t terminationKey;
 pthread_once_t terminationKeyOnceControl = PTHREAD_ONCE_INIT;
+#endif
 
 typedef void (*destructor_t)(void*);
 
@@ -209,7 +216,10 @@ static void onThreadExitInit() {
   // Other libc are not affected, as usually == 0 pthread key is impossible.
   pthread_key_create(&dummyKey, nullptr);
 #endif
+
+#ifndef KONAN_IOS
   pthread_key_create(&terminationKey, onThreadExitCallback);
+#endif
 }
 
 void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
@@ -220,7 +230,11 @@ void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
   destructorRecord->destructorParameter = destructorParameter;
   destructorRecord->next =
       reinterpret_cast<DestructorRecord*>(pthread_getspecific(terminationKey));
+#ifdef KONAN_IOS
+  _tlv_atexit(onThreadExitCallback, destructorRecord);
+#else
   pthread_setspecific(terminationKey, destructorRecord);
+#endif
 }
 
 #if KONAN_LINUX
