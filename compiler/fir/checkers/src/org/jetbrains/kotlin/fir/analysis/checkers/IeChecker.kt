@@ -94,7 +94,7 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
                 }
                 (symbol.fir as? FirFunction)?.let { function ->
                     function.valueParameters.forEachIndexed { index, argument ->
-                        val samUsed = expression.argumentList.arguments[index] is FirSamConversionExpression
+                        val samUsed = expression.argumentList.arguments.getOrNull(index) is FirSamConversionExpression
                         val regClass = argument.returnTypeRef.firClassLike(context.session) as? FirRegularClass
                         val abstractMethod = abstractMethod(regClass)
                         if (samUsed && abstractMethod != null) {
