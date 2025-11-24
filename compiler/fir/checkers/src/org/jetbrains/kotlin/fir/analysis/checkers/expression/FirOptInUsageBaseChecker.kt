@@ -322,28 +322,27 @@ object FirOptInUsageBaseChecker {
             ?: false
         for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, fromSupertype)) {
-                val (diagnostic, messageProvider, verb) = when {
-                    fromSupertype && severity == Experimentality.Severity.WARNING -> Triple(
+                val (diagnostic, messageProvider, verb) = when (severity) {
+                    Experimentality.Severity.WARNING if fromSupertype -> Triple(
                         FirErrors.OPT_IN_TO_INHERITANCE,
                         OptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable),
                         "should"
                     )
-                    severity == Experimentality.Severity.WARNING -> Triple(
+                    Experimentality.Severity.WARNING -> Triple(
                         FirErrors.OPT_IN_USAGE,
                         OptInUsagesDiagnosticMessageProvider,
                         "should"
                     )
-                    fromSupertype && severity == Experimentality.Severity.ERROR -> Triple(
+                    Experimentality.Severity.ERROR if fromSupertype -> Triple(
                         FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
                         OptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable),
                         "must"
                     )
-                    severity == Experimentality.Severity.ERROR -> Triple(
+                    Experimentality.Severity.ERROR -> Triple(
                         FirErrors.OPT_IN_USAGE_ERROR,
                         OptInUsagesDiagnosticMessageProvider,
                         "must"
                     )
-                    else -> error("Unexpected $severity type")
                 }
 
                 val reportedMessage =
