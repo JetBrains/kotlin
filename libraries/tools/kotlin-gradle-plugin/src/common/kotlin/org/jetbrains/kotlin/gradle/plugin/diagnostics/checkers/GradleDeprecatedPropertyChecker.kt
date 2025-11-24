@@ -42,6 +42,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty("${KotlinJsCompilerType.jsCompilerProperty}.nowarn"),
         DeprecatedProperty("kotlin.mpp.androidGradlePluginCompatibility.nowarn"), // Since 2.1.0
         DeprecatedProperty("kotlin.experimental.swift-export.enabled"),
+        DeprecatedProperty("kotlin.native.cacheOrchestration"), // Since 2.3.20
         NativeCacheDeprecatedProperty(), // Since 2.3.20
         NativeCacheDeprecatedProperty(KonanTarget.IOS_ARM64.presetName), // Since 2.3.20
         NativeCacheDeprecatedProperty(KonanTarget.IOS_SIMULATOR_ARM64.presetName), // Since 2.3.20

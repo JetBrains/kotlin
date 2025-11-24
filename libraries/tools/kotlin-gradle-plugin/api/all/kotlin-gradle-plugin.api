@@ -317,18 +317,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/NativeCacheKind$Companion {
 	public final fun byCompilerArgument (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/NativeCacheKind;
 }
 
-public final class org/jetbrains/kotlin/gradle/dsl/NativeCacheOrchestration : java/lang/Enum {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/NativeCacheOrchestration$Companion;
-	public static final field Compiler Lorg/jetbrains/kotlin/gradle/dsl/NativeCacheOrchestration;
-	public static final field Gradle Lorg/jetbrains/kotlin/gradle/dsl/NativeCacheOrchestration;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/NativeCacheOrchestration;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/NativeCacheOrchestration;
-}
-
-public final class org/jetbrains/kotlin/gradle/dsl/NativeCacheOrchestration$Companion {
-	public final fun byCompilerArgument (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/NativeCacheOrchestration;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/execution/KotlinAggregateExecutionSource : org/jetbrains/kotlin/gradle/plugin/KotlinExecution$ExecutionSource {
 	public abstract fun getExecutionSources ()Ljava/lang/Iterable;
 }
