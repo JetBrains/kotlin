@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 
 import com.intellij.openapi.project.Project
@@ -22,7 +24,9 @@ class CliScriptConfigurationsProvider(
     getScriptDefinitionProvider: () -> ScriptDefinitionProvider
 ) : ScriptConfigurationsProvider(project) {
     private val cacheLock = ReentrantReadWriteLock()
+
     private val cache = hashMapOf<String, ScriptCompilationConfigurationResult?>()
+
     private val knownVirtualFileSources = mutableMapOf<String, VirtualFileScriptSource>()
     private val scriptDefinitionProvider by lazy(LazyThreadSafetyMode.NONE) {
         getScriptDefinitionProvider()

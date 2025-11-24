@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAcce
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.*
@@ -351,7 +350,8 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
     context: SharedScriptCompilationContext,
     mainSource: SourceCode,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    getScriptCompilationConfiguration: (SourceCode) -> ScriptCompilationConfigurationResult?
+    @Suppress("DEPRECATION")
+    getScriptCompilationConfiguration: (SourceCode) -> org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult?
 ): Pair<List<SourceCode>, List<ScriptsCompilationDependencies.SourceDependencies>> {
     val sourceFiles = arrayListOf(mainSource)
     val (classpath, newSources, sourceDependencies) =
@@ -371,7 +371,8 @@ private fun CompilerConfiguration.updateWithRefinedConfigurations(
     context: SharedScriptCompilationContext,
     sourceFiles: List<SourceCode>,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    getScriptCompilationConfiguration: (SourceCode) -> ScriptCompilationConfigurationResult?
+    @Suppress("DEPRECATION")
+    getScriptCompilationConfiguration: (SourceCode) -> org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult?
 ) {
     val updatedCompilerOptions = sourceFiles.flatMapTo(mutableListOf()) {
         getScriptCompilationConfiguration(it)?.valueOrNull()?.configuration?.get(

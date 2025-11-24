@@ -99,6 +99,7 @@ fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
     else -> null
 }
 
+@Deprecated("Use APIs that return ScriptCompilationConfiguration or ResultWithDiagnostics<ScriptCompilationConfiguration> instead")
 class ScriptCompilationConfigurationWrapper(
     val script: SourceCode,
     val configuration: ScriptCompilationConfiguration?,
@@ -130,6 +131,7 @@ class ScriptCompilationConfigurationWrapper(
     override fun hashCode(): Int = script.hashCode()
 }
 
+@Deprecated("Use APIs that return ScriptCompilationConfiguration or ResultWithDiagnostics<ScriptCompilationConfiguration> instead")
 typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCompilationConfigurationWrapper>
 
 val ScriptCompilationConfigurationKeys.resolvedImportScripts by PropertiesCollection.key<List<SourceCode>>(isTransient = true)
@@ -144,7 +146,6 @@ fun refineScriptCompilationConfiguration(
     return refineScriptCompilationConfiguration(script, definition, project, providedConfiguration, null)
 }
 
-@Suppress("DEPRECATION")
 fun refineScriptCompilationConfiguration(
     script: SourceCode,
     definition: ScriptDefinition,

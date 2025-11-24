@@ -286,6 +286,7 @@ class JvmIdeServicesTest : TestCase() {
             compilerOptions("-Xallow-unstable-dependencies")
             defaultImports(DependsOn::class)
             refineConfiguration {
+                @Suppress("DEPRECATION")
                 onAnnotations(DependsOn::class, handler = { configureMavenDepsOnAnnotations(it, resolver) })
             }
         }
