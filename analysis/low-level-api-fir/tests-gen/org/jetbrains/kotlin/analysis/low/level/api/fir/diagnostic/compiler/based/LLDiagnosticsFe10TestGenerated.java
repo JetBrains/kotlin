@@ -7663,6 +7663,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("kCallableName_after.kt")
+        public void testKCallableName_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/kCallableName_after.kt");
+        }
+
+        @Test
+        @TestMetadata("kCallableName_before.kt")
+        public void testKCallableName_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/kCallableName_before.kt");
+        }
+
+        @Test
         @TestMetadata("localVal.kt")
         public void testLocalVal() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/localVal.kt");

@@ -5,26 +5,31 @@ fun <T> T.id() = this
 
 class A(val OK: Int, val somePropertyWithLongName: String) {
     fun foo() {}
+    fun A() {}
     suspend fun bar() {}
 }
 val topLevelProp = 1
+fun Int.baz() {}
 
-const val propertyName1 = A::OK.<!EVALUATED{IR}("OK")!>name<!>
-const val propertyName2 = A::somePropertyWithLongName.<!EVALUATED{IR}("somePropertyWithLongName")!>name<!>
-const val methodName = A::foo.<!EVALUATED{IR}("foo")!>name<!>
-const val suspendMethodName = A::bar.<!EVALUATED{IR}("bar")!>name<!>
-const val className = ::A.<!EVALUATED{IR}("<init>")!>name<!>
-const val topLevelPropName = ::topLevelProp.<!EVALUATED{IR}("topLevelProp")!>name<!>
-const val nameInComplexExpression = <!EVALUATED{IR}("OK!")!>A::OK.name + "!"<!>
+const val propertyName1 = A::OK.<!EVALUATED("OK")!>name<!>
+const val propertyName2 = A::somePropertyWithLongName.<!EVALUATED("somePropertyWithLongName")!>name<!>
+const val methodName1 = A::foo.<!EVALUATED("foo")!>name<!>
+const val methodName2 = A::A.<!EVALUATED("A")!>name<!>
+const val extensionFunName = 42::baz.<!EVALUATED("baz")!>name<!>
+const val suspendMethodName = A::bar.<!EVALUATED("bar")!>name<!>
+const val className = ::A.<!EVALUATED("<init>")!>name<!>
+const val topLevelPropName = ::topLevelProp.<!EVALUATED("topLevelProp")!>name<!>
+const val nameInComplexExpression = <!EVALUATED("OK!")!>A::OK.name + "!"<!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {
-    if (propertyName1.id() != "OK") return "Fail 1"
-    if (propertyName2.id() != "somePropertyWithLongName") return "Fail 2"
-    if (methodName.id() != "foo") return "Fail 3"
-    if (suspendMethodName.id() != "bar") return "Fail 3.2"
-    if (className.id() != "<init>") return "Fail 4"
-    if (topLevelPropName.id() != "topLevelProp") return "Fail 5"
-    if (nameInComplexExpression.id() != "OK!") return "Fail 5"
+    if (propertyName1.id() != "OK") return "Fail propertyName1"
+    if (propertyName2.id() != "somePropertyWithLongName") return "Fail propertyName2"
+    if (methodName1.id() != "foo") return "Fail methodName1"
+    if (methodName2.id() != "A") return "Fail methodName2"
+    if (suspendMethodName.id() != "bar") return "Fail suspendMethondName"
+    if (className.id() != "<init>") return "Fail className"
+    if (topLevelPropName.id() != "topLevelProp") return "Fail topLevelPropName"
+    if (nameInComplexExpression.id() != "OK!") return "Fail nameInComplexExpression"
     return "OK"
 }
