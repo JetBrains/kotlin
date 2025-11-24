@@ -1,0 +1,108 @@
+KtFile: 'explicitContextArgumentErrorExpression.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,31): 'context(s: String)'
+  null
+
+KtDeclarationModifierList(0,18): 'context(s: String)'
+  null
+
+KtContextReceiverList(0,18): 'context(s: String)'
+  null
+
+KtParameter(8,17): 's: String'
+  null
+
+KtTypeReference(11,17): 'String'
+  null
+
+KtUserType(11,17): 'String'
+  null
+
+KtNameReferenceExpression(11,17): 'String'
+  null
+
+KtParameterList(26,28): '()'
+  null
+
+KtBlockExpression(29,31): '{}'
+  null
+
+KtNamedFunction(33,60): 'fun bar() {'
+  null
+
+KtParameterList(40,42): '()'
+  null
+
+KtBlockExpression(43,60): '{'
+  null
+
+KtCallExpression(49,58): 'foo(s = )'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(49,52): 'foo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(52,58): '(s = )'
+  null
+
+KtValueArgument(53,56): 's ='
+  null
+
+KtValueArgumentName(53,54): 's'
+  null
+
+KtNameReferenceExpression(53,54): 's'
+  null

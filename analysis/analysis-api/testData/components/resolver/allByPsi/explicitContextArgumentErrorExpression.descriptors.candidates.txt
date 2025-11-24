@@ -1,0 +1,96 @@
+KtFile: 'explicitContextArgumentErrorExpression.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtNamedFunction(0,31): 'context(s: String)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(0,18): 'context(s: String)'
+  NO_CANDIDATES
+
+KtContextReceiverList(0,18): 'context(s: String)'
+  NO_CANDIDATES
+
+KtParameter(8,17): 's: String'
+  NO_CANDIDATES
+
+KtTypeReference(11,17): 'String'
+  NO_CANDIDATES
+
+KtUserType(11,17): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(11,17): 'String'
+  NO_CANDIDATES
+
+KtParameterList(26,28): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(29,31): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(33,60): 'fun bar() {'
+  NO_CANDIDATES
+
+KtParameterList(40,42): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(43,60): '{'
+  NO_CANDIDATES
+
+KtCallExpression(49,58): 'foo(s = )'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(49,52): 'foo'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
+    isInBestCandidates = true
+
+KtValueArgumentList(52,58): '(s = )'
+  NO_CANDIDATES
+
+KtValueArgument(53,56): 's ='
+  NO_CANDIDATES
+
+KtValueArgumentName(53,54): 's'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(53,54): 's'
+  NO_CANDIDATES

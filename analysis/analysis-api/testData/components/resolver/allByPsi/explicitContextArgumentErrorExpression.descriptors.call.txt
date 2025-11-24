@@ -1,0 +1,98 @@
+KtFile: 'explicitContextArgumentErrorExpression.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,31): 'context(s: String)'
+  null
+
+KtDeclarationModifierList(0,18): 'context(s: String)'
+  null
+
+KtContextReceiverList(0,18): 'context(s: String)'
+  null
+
+KtParameter(8,17): 's: String'
+  null
+
+KtTypeReference(11,17): 'String'
+  null
+
+KtUserType(11,17): 'String'
+  null
+
+KtNameReferenceExpression(11,17): 'String'
+  null
+
+KtParameterList(26,28): '()'
+  null
+
+KtBlockExpression(29,31): '{}'
+  null
+
+KtNamedFunction(33,60): 'fun bar() {'
+  null
+
+KtParameterList(40,42): '()'
+  null
+
+KtBlockExpression(43,60): '{'
+  null
+
+KtCallExpression(49,58): 'foo(s = )'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        argumentMapping = {}
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /foo(): kotlin.Unit
+            valueParameters = []
+            contextParameters = []
+            callableId = /foo
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
+
+KtNameReferenceExpression(49,52): 'foo'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        argumentMapping = {}
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /foo(): kotlin.Unit
+            valueParameters = []
+            contextParameters = []
+            callableId = /foo
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
+
+KtValueArgumentList(52,58): '(s = )'
+  null
+
+KtValueArgument(53,56): 's ='
+  null
+
+KtValueArgumentName(53,54): 's'
+  null
+
+KtNameReferenceExpression(53,54): 's'
+  null
