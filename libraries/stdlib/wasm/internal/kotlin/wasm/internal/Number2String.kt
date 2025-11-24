@@ -4,6 +4,14 @@
  */
 package kotlin.wasm.internal
 
+internal expect fun itoa32(inputValue: Int): String
+
+internal expect fun utoa32(inputValue: UInt): String
+
+internal expect fun itoa64(inputValue: Long): String
+
+internal expect fun utoa64(inputValue: ULong): String
+
 // Based on the AssemblyScript implementation [https://github.com/AssemblyScript/assemblyscript/blob/1e0466ef94fa5cacd0984e4f31a0087de51538a8/std/assembly/util/number.ts]
 
 private enum class CharCodes(val code: Int) {
@@ -39,68 +47,14 @@ private enum class CharCodes(val code: Int) {
 //  z(0x7A)
 }
 
-private fun digitToChar(input: Int): Char {
+internal fun digitToChar(input: Int): Char {
     assert(input in 0..9)
     return (CharCodes._0.code + input).toChar()
 }
 
-internal fun itoa32(inputValue: Int): String {
-    if (inputValue == 0) return "0"
-
-    val isNegative = inputValue < 0
-    val absValue = if (isNegative) -inputValue else inputValue
-    val absValueString = utoa32(absValue.toUInt())
-
-    return if (isNegative) "-$absValueString" else absValueString
-}
-
-internal fun utoa32(inputValue: UInt): String {
-    if (inputValue == 0U) return "0"
-
-    val decimals = decimalCount32(inputValue)
-    val buf = WasmCharArray(decimals)
-
-    utoaDecSimple(buf, inputValue, decimals)
-
-    return buf.createString()
-}
-
-private fun utoaDecSimple(buffer: WasmCharArray, numInput: UInt, offsetInput: Int) {
-    assert(numInput != 0U)
-    assert(buffer.len() > 0)
-    assert(offsetInput > 0 && offsetInput <= buffer.len())
-
-    var num = numInput
-    var offset = offsetInput
-    do {
-        val t = num / 10U
-        val r = num % 10U
-        num = t
-        offset--
-        buffer.set(offset, digitToChar(r.toInt()))
-    } while (num > 0U)
-}
-
-private fun utoaDecSimple64(buffer: WasmCharArray, numInput: ULong, offsetInput: Int) {
-    assert(numInput != 0UL)
-    assert(buffer.len() > 0)
-    assert(offsetInput > 0 && offsetInput <= buffer.len())
-
-    var num = numInput
-    var offset = offsetInput
-    do {
-        val t = num / 10U
-        val r = num % 10U
-        num = t
-        offset--
-        buffer.set(offset, digitToChar(r.toInt()))
-    } while (num > 0U)
-}
-
-
 private fun Boolean.toULong() = toInt().toULong()
 
-private fun decimalCount32(value: UInt): Int {
+internal fun decimalCount32(value: UInt): Int {
     if (value < 100000u) {
         if (value < 100u) {
             return 1 + (value >= 10u).toInt()
@@ -114,27 +68,6 @@ private fun decimalCount32(value: UInt): Int {
             return 8 + (value >= 1000000000u).toInt() + (value >= 100000000u).toInt()
         }
     }
-}
-
-internal fun itoa64(inputValue: Long): String {
-    if (inputValue in Int.MIN_VALUE..Int.MAX_VALUE)
-        return itoa32(inputValue.toInt())
-
-    val isNegative = inputValue < 0
-    val absValue = if (isNegative) -inputValue else inputValue
-    val absValueString = utoa64(absValue.toULong())
-
-    return if (isNegative) "-$absValueString" else absValueString
-}
-
-internal fun utoa64(inputValue: ULong): String {
-    if (inputValue <= UInt.MAX_VALUE) return utoa32(inputValue.toUInt())
-    val decimals = decimalCount64High(inputValue)
-    val buf = WasmCharArray(decimals)
-
-    utoaDecSimple64(buf, inputValue, decimals)
-
-    return buf.createString()
 }
 
 // Count number of decimals for u64 values
