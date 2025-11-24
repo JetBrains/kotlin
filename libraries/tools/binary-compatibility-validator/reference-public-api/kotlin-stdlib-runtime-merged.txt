@@ -5156,7 +5156,6 @@ public abstract interface class kotlin/reflect/KMutableProperty$Setter : kotlin/
 }
 
 public abstract interface class kotlin/reflect/KMutableProperty0 : kotlin/reflect/KMutableProperty, kotlin/reflect/KProperty0 {
-	public synthetic fun getSetter ()Lkotlin/reflect/KMutableProperty$Setter;
 	public abstract fun getSetter ()Lkotlin/reflect/KMutableProperty0$Setter;
 	public abstract fun set (Ljava/lang/Object;)V
 }
@@ -5165,7 +5164,6 @@ public abstract interface class kotlin/reflect/KMutableProperty0$Setter : kotlin
 }
 
 public abstract interface class kotlin/reflect/KMutableProperty1 : kotlin/reflect/KMutableProperty, kotlin/reflect/KProperty1 {
-	public synthetic fun getSetter ()Lkotlin/reflect/KMutableProperty$Setter;
 	public abstract fun getSetter ()Lkotlin/reflect/KMutableProperty1$Setter;
 	public abstract fun set (Ljava/lang/Object;Ljava/lang/Object;)V
 }
@@ -5174,7 +5172,6 @@ public abstract interface class kotlin/reflect/KMutableProperty1$Setter : kotlin
 }
 
 public abstract interface class kotlin/reflect/KMutableProperty2 : kotlin/reflect/KMutableProperty, kotlin/reflect/KProperty2 {
-	public synthetic fun getSetter ()Lkotlin/reflect/KMutableProperty$Setter;
 	public abstract fun getSetter ()Lkotlin/reflect/KMutableProperty2$Setter;
 	public abstract fun set (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
 }
@@ -5217,7 +5214,6 @@ public abstract interface class kotlin/reflect/KProperty$Getter : kotlin/reflect
 public abstract interface class kotlin/reflect/KProperty0 : kotlin/jvm/functions/Function0, kotlin/reflect/KProperty {
 	public abstract fun get ()Ljava/lang/Object;
 	public abstract fun getDelegate ()Ljava/lang/Object;
-	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public abstract fun getGetter ()Lkotlin/reflect/KProperty0$Getter;
 }
 
@@ -5227,7 +5223,6 @@ public abstract interface class kotlin/reflect/KProperty0$Getter : kotlin/jvm/fu
 public abstract interface class kotlin/reflect/KProperty1 : kotlin/jvm/functions/Function1, kotlin/reflect/KProperty {
 	public abstract fun get (Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun getDelegate (Ljava/lang/Object;)Ljava/lang/Object;
-	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public abstract fun getGetter ()Lkotlin/reflect/KProperty1$Getter;
 }
 
@@ -5237,7 +5232,6 @@ public abstract interface class kotlin/reflect/KProperty1$Getter : kotlin/jvm/fu
 public abstract interface class kotlin/reflect/KProperty2 : kotlin/jvm/functions/Function2, kotlin/reflect/KProperty {
 	public abstract fun get (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun getDelegate (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public abstract fun getGetter ()Lkotlin/reflect/KProperty2$Getter;
 }
 
@@ -6267,15 +6261,12 @@ public final class kotlin/time/ClocksKt {
 }
 
 public abstract interface class kotlin/time/ComparableTimeMark : java/lang/Comparable, kotlin/time/TimeMark {
-	public synthetic fun compareTo (Ljava/lang/Object;)I
 	public abstract fun compareTo (Lkotlin/time/ComparableTimeMark;)I
 	public abstract fun equals (Ljava/lang/Object;)Z
 	public abstract fun hashCode ()I
 	public abstract fun minus-LRDsOJo (J)Lkotlin/time/ComparableTimeMark;
-	public synthetic fun minus-LRDsOJo (J)Lkotlin/time/TimeMark;
 	public abstract fun minus-UwyO8pc (Lkotlin/time/ComparableTimeMark;)J
 	public abstract fun plus-LRDsOJo (J)Lkotlin/time/ComparableTimeMark;
-	public synthetic fun plus-LRDsOJo (J)Lkotlin/time/TimeMark;
 }
 
 public final class kotlin/time/ComparableTimeMark$DefaultImpls {
@@ -6479,7 +6470,6 @@ public final class kotlin/time/TimeSource$Monotonic$ValueTimeMark : kotlin/time/
 
 public abstract interface class kotlin/time/TimeSource$WithComparableMarks : kotlin/time/TimeSource {
 	public abstract fun markNow ()Lkotlin/time/ComparableTimeMark;
-	public synthetic fun markNow ()Lkotlin/time/TimeMark;
 }
 
 public final class kotlin/time/TimedValue {
