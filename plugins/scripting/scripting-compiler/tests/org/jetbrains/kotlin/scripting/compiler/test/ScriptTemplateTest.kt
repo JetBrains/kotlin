@@ -324,7 +324,10 @@ class ScriptTemplateTest {
         val messageCollector = MessageCollectorImpl()
         compileScript("fib.kts", ScriptWithThrowingResolver::class, null, messageCollector = messageCollector)
 
-        messageCollector.assertHasMessage("Exception from resolver", desiredSeverity = CompilerMessageSeverity.ERROR)
+        messageCollector.assertHasMessage(
+            "Failed to resolve dependencies. resolver=ThrowingResolver() of type=ThrowingResolver",
+            desiredSeverity = CompilerMessageSeverity.ERROR
+        )
     }
 
     @Test
@@ -574,6 +577,10 @@ class DefaultArgsConstructorResolver(val c: Int = 0) : TestKotlinScriptDependenc
 class ThrowingResolver : DependenciesResolver {
     override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
         throw IllegalStateException("Exception from resolver")
+    }
+
+    override fun toString(): String {
+        return "ThrowingResolver()"
     }
 }
 

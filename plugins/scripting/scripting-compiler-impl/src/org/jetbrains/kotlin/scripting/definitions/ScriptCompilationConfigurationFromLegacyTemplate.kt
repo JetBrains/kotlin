@@ -20,6 +20,7 @@ import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -147,20 +148,30 @@ private fun refineWithResolver(
     val environment = context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.let {
         it[ScriptingHostConfiguration.getEnvironment]?.invoke()
     }.orEmpty()
-    val resolveResult = dependencyResolver.resolve(ScriptContentsFromRefinementContext(context), environment)
 
-    val reports = resolveResult.reports.map {
-        ScriptDiagnostic(
-            ScriptDiagnostic.unspecifiedError,
-            it.message,
-            mapLegacyDiagnosticSeverity(it.severity),
-            context.script.locationId,
-            mapLegacyScriptPosition(it.position)
+    val (resolvedDeps, diagnostics) = runCatching {
+        val result = dependencyResolver.resolve(ScriptContentsFromRefinementContext(context), environment)
+        result.dependencies to result.reports.map { report ->
+            ScriptDiagnostic(
+                ScriptDiagnostic.unspecifiedError,
+                report.message,
+                mapLegacyDiagnosticSeverity(report.severity),
+                context.script.locationId,
+                mapLegacyScriptPosition(report.position)
+            )
+        }
+    }.getOrElse {
+        ScriptDependencies() to listOf(
+            ScriptDiagnostic(
+                code = ScriptDiagnostic.unspecifiedError,
+                message = "Failed to resolve dependencies. resolver=$dependencyResolver of type=${dependencyResolver::class.simpleName}",
+                sourcePath = context.script.locationId,
+                exception = it
+            )
         )
     }
-    val resolvedDeps = (resolveResult as? DependenciesResolver.ResolveResult.Success)?.dependencies
 
-    return if (resolvedDeps == null) ResultWithDiagnostics.Failure(reports)
+    return if (resolvedDeps == null) ResultWithDiagnostics.Failure(diagnostics)
     else ScriptCompilationConfiguration(context.compilationConfiguration) {
         if (resolvedDeps.classpath.isNotEmpty()) {
             dependencies.append(JvmDependency(resolvedDeps.classpath))
@@ -175,7 +186,7 @@ private fun refineWithResolver(
                 dependenciesSources.append(JvmDependency(resolvedDeps.sources))
             }
         }
-    }.asSuccess(reports)
+    }.asSuccess(diagnostics)
 }
 
 fun resolverFromAnnotation(template: KClass<out Any>): DependenciesResolver {
