@@ -380,6 +380,12 @@ public class LightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("inlineOverrideDefaultWarningWithInlinedFunInKlib.kt")
+    public void testInlineOverrideDefaultWarningWithInlinedFunInKlib() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/inlineOverrideDefaultWarningWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("localInlineFunctionCycle.kt")
     public void testLocalInlineFunctionCycle() {
       runTest("compiler/testData/diagnostics/testsWithAnyBackend/localInlineFunctionCycle.kt");

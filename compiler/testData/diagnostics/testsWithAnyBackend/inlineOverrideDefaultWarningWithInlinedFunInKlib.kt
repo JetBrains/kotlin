@@ -1,6 +1,7 @@
 // ISSUE: KT-82017
-// RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
+// !!! SPLIT!
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // LANGUAGE: -ForbidOverriddenDefaultParametersInInline
 // FIR_IDENTICAL
