@@ -400,6 +400,7 @@ fun Project.configureTests() {
             ":tools:binary-compatibility-validator",
             ":tools:ide-plugin-dependencies-validator",
             ":benchmarks",
+            ":native:hair:compiler",
         )
         val projectPath = project.path
         val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check")

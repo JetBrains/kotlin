@@ -24,11 +24,6 @@ val Phi.inputs: Map<Node, BlockExit> get() = joinedValues.withIndex().associate 
     value to block.preds[idx]
 }
 
-val Node.unproxy: Node get() = when (this) {
-    is ValueProxy -> this.origin.unproxy
-    else -> this
-}
-
 fun Node.unproject() = when (this) {
     is Projection -> owner
     else -> this

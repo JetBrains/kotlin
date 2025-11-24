@@ -76,6 +76,7 @@ private fun Node.updateArg(index: Int, oldValue: Node?, newValue: Node?, update:
 
     argsUpdater.onArgUpdate(this, index, oldValue, newValue)
 
+    // FIXME the node can be normalised already in the onArgUpdate !!!!! :C
     val replacement = form.ensureUniqueAfterArgsUpdate(this, oldArgs)
     if (replacement != this) {
         // FIXME what about control here?
