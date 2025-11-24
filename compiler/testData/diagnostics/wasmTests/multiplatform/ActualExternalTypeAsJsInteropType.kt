@@ -1,3 +1,4 @@
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: commonwasm
 // FILE: commonwasm.kt
 

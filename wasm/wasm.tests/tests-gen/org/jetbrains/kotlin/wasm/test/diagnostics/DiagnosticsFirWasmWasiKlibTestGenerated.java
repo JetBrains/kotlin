@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/wasmWasiTests")
 @TestDataPath("$PROJECT_ROOT")
-public class DiagnosticsFirWasmWasiTestGenerated extends AbstractDiagnosticsFirWasmWasiTest {
+public class DiagnosticsFirWasmWasiKlibTestGenerated extends AbstractDiagnosticsFirWasmWasiKlibTest {
   @Test
   public void testAllFilesPresentInWasmWasiTests() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmWasiTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);

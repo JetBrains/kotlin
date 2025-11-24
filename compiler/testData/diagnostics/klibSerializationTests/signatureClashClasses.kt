@@ -3,8 +3,8 @@
 // DIAGNOSTICS: -ERROR_SUPPRESSION
 // RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 // RUN_PIPELINE_TILL: BACKEND
-// IGNORE_BACKEND: JS_IR, NATIVE
-// ^ KT-65680: Class redeclaration leads to BackendException during IR fake override builder
+
+
 
 // MODULE: lib
 package com.example.klib.serialization.diagnostics
@@ -17,15 +17,15 @@ package com.example.klib.serialization.diagnostics
 
 class SeparateModules
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR, CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("PACKAGE_OR_CLASSIFIER_REDECLARATION") class SeparateFiles<!>
+<!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("CLASSIFIER_REDECLARATION") class SeparateFiles<!>
 
 // FILE: main.kt
 package com.example.klib.serialization.diagnostics
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR, CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("PACKAGE_OR_CLASSIFIER_REDECLARATION") class SeparateFiles<!>
+<!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("CLASSIFIER_REDECLARATION") class SeparateFiles<!>
 
 class ConstructorsClash {
-    <!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN)
-    constructor(s: Int)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN)
+    <!CONFLICTING_KLIB_SIGNATURES_ERROR!>constructor(s: Int)<!>
     <!CONFLICTING_KLIB_SIGNATURES_ERROR!>constructor(s: Int)<!>
 }
