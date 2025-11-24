@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-81866
 // DIAGNOSTICS: -UNCHECKED_CAST
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
@@ -8,12 +8,12 @@ import kotlin.coroutines.*
 fun test() {
     withFoo {
         this as Foo<Int>
-        <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>useIntFoo<!>()
+        useIntFoo()
     }
 
     withBar {
         if (this is Baz) {
-            <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>useBaz<!>()
+            useBaz()
         }
     }
 }
