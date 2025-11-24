@@ -281,3 +281,17 @@ internal val IrConstructor.exportedVisibility: ExportedVisibility
         Modality.FINAL if visibility == DescriptorVisibilities.PROTECTED -> ExportedVisibility.PRIVATE
         else -> visibility.toExportedVisibility()
     }
+
+internal fun IrClass.forEachExportedMember(
+    context: JsIrBackendContext,
+    action: (candidate: IrDeclarationWithName, declaration: IrDeclaration) -> Unit,
+) {
+    val isImplicitlyExportedClass = isJsImplicitExport()
+    for (declaration in declarations) {
+        val candidate = getExportCandidate(declaration) ?: continue
+        if (isImplicitlyExportedClass && candidate !is IrClass) continue
+        if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context, declaration)) continue
+        if (candidate.isFakeOverride && isInterface) continue
+        action(candidate, declaration)
+    }
+}

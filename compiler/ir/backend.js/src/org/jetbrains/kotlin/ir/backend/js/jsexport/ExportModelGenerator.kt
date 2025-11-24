@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.tsexport.Exportability
 import org.jetbrains.kotlin.ir.backend.js.utils.couldBeConvertedToExplicitExport
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExportDefault
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsImplicitExport
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -187,25 +186,19 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         val members = mutableListOf<ExportedDeclaration>()
         val specialMembers = mutableListOf<ExportedDeclaration>()
         val nestedClasses = mutableListOf<ExportedClass>()
-        val isImplicitlyExportedClass = klass.isJsImplicitExport()
 
-        for (declaration in klass.declarations) {
-            val candidate = getExportCandidate(declaration) ?: continue
-            if (isImplicitlyExportedClass && candidate !is IrClass) continue
-            if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context, declaration)) continue
-            if (candidate.isFakeOverride && klass.isInterface) continue
-
+        klass.forEachExportedMember(context) { candidate, declaration ->
             val processingResult = specialProcessing(candidate)
             if (processingResult != null) {
                 specialMembers.add(processingResult)
-                continue
+                return@forEachExportedMember
             }
 
             when (candidate) {
                 is IrSimpleFunction ->
                     members.addIfNotNull(exportFunction(candidate))
 
-                is IrConstructor -> continue
+                is IrConstructor -> return@forEachExportedMember
 
                 is IrProperty ->
                     members.addIfNotNull(exportProperty(candidate))

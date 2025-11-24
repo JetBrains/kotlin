@@ -322,18 +322,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         val members = mutableListOf<ExportedDeclaration>()
         val specialMembers = mutableListOf<ExportedDeclaration>()
         val nestedClasses = mutableListOf<ExportedClass>()
-        val isImplicitlyExportedClass = klass.isJsImplicitExport()
 
-        for (declaration in klass.declarations) {
-            val candidate = getExportCandidate(declaration) ?: continue
-            if (isImplicitlyExportedClass && candidate !is IrClass) continue
-            if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context, declaration)) continue
-            if (candidate.isFakeOverride && klass.isInterface) continue
-
+        klass.forEachExportedMember(context) { candidate, declaration ->
             val processingResult = specialProcessing(candidate)
             if (processingResult != null) {
                 specialMembers.add(processingResult)
-                continue
+                return@forEachExportedMember
             }
 
             when (candidate) {
@@ -352,7 +346,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     members.addIfNotNull(exportProperty(candidate)?.withAttributesFor(candidate))
 
                 is IrClass -> {
-                    if (klass.isInterface && !candidate.isCompanion) continue
+                    if (klass.isInterface && !candidate.isCompanion) return@forEachExportedMember
                     if (candidate.isInner) {
                         members.add(candidate.toReadOnlyPropertyForInnerClass().withAttributesFor(candidate))
                     }
