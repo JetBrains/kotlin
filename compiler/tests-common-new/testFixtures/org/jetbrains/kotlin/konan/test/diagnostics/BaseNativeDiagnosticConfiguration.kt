@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.diagnostics
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -70,6 +71,7 @@ fun TestConfigurationBuilder.baseFirNativeDiagnosticTestConfiguration() {
             ::FirCfgConsistencyHandler,
             ::FirResolvedTypesVerifier,
             ::FirScopeDumpHandler,
+            ::NoFirCompilationErrorsHandler,
         )
     }
 }
