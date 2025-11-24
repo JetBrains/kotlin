@@ -113,11 +113,11 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         }
     }
 
-    private fun exportConstructor(constructor: IrConstructor, isReadOnlyPropertyForInnerClass: Boolean): ExportedConstructor? {
+    private fun exportConstructor(constructor: IrConstructor, isFactoryPropertyForInnerClass: Boolean): ExportedConstructor? {
         if (!constructor.isPrimary) return null
         val constructedClass = constructor.constructedClass
         val visibility = when {
-            constructedClass.isInner && !isReadOnlyPropertyForInnerClass -> when (constructedClass.modality) {
+            constructedClass.isInner && !isFactoryPropertyForInnerClass -> when (constructedClass.modality) {
                 // Inner classes should be constructed as `new outerClassValue.Inner()`
                 // in JavaScript instead of `new OuterClass.Inner(outerClassValue)`.
                 // The only time when you might actually want to call the real inner class
@@ -338,7 +338,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     members.addIfNotNull(
                         exportConstructor(
                             candidate,
-                            isReadOnlyPropertyForInnerClass = false
+                            isFactoryPropertyForInnerClass = false
                         )?.withAttributesFor(candidate)
                     )
 
@@ -348,7 +348,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 is IrClass -> {
                     if (klass.isInterface && !candidate.isCompanion) return@forEachExportedMember
                     if (candidate.isInner) {
-                        members.add(candidate.toReadOnlyPropertyForInnerClass().withAttributesFor(candidate))
+                        members.add(candidate.toFactoryPropertyForInnerClass().withAttributesFor(candidate))
                     }
                     val ec = exportClass(candidate)?.withAttributesFor(candidate)
                     if (ec is ExportedClass) {
@@ -385,10 +385,13 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         )
     }
 
-    private fun IrClass.toReadOnlyPropertyForInnerClass(): ExportedProperty {
+    /**
+     * Generates a property in the outer class that can be used to construct an instance of an inner class using Kotlin-like syntax.
+     */
+    private fun IrClass.toFactoryPropertyForInnerClass(): ExportedProperty {
         val innerClassReference = typeScriptInnerClassReference()
         val allPublicConstructors = constructors
-            .mapNotNull { exportConstructor(it, isReadOnlyPropertyForInnerClass = true) }
+            .mapNotNull { exportConstructor(it, isFactoryPropertyForInnerClass = true) }
             .filterNot { it.isProtected }
             .map {
                 ExportedConstructSignature(
