@@ -74,6 +74,15 @@ fun main(args: Array<String>) {
                 model("wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
+            testClass<AbstractDiagnosticsWasmKlibWithInlinedFunInKlibTest> {
+                model(
+                    relativeRootPath = "testsWithAnyBackend",
+                    pattern = "^([^_](.+))\\.kt$",
+                    //excludedPattern = excludedFirTestdataPattern, //    val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
+                )
+
+            }
+
             testClass<AbstractDiagnosticsWasmJsWithIrInlinerTestBase> {
                 model("irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }

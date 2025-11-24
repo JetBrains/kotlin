@@ -111,3 +111,19 @@ abstract class AbstractDiagnosticsFirWasmKlibTest : AbstractDiagnosticsWasmKlibT
     WasmPlatforms.wasmJs,
     WasmTarget.JS,
 )
+
+abstract class AbstractDiagnosticsWasmKlibWithInlinedFunInKlibTest : AbstractDiagnosticsWasmKlibTestBase(
+    FirParser.Psi,
+    WasmPlatforms.wasmJs,
+    WasmTarget.JS,
+) {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        super.configure(this)
+        defaultDirectives {
+            LANGUAGE with listOf(
+                "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+            )
+        }
+    }
+}
