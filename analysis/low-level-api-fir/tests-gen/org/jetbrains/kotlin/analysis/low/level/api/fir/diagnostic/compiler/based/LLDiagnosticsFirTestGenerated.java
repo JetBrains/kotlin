@@ -3357,6 +3357,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("intVsLongWithContext.kt")
+        public void testIntVsLongWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/specificity/intVsLongWithContext.kt");
+        }
+
+        @Test
         @TestMetadata("newSpecificity.kt")
         public void testNewSpecificity() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/specificity/newSpecificity.kt");
