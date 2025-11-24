@@ -9,28 +9,23 @@ import hair.utils.Worklist
 import hair.utils.forEachInWorklist
 import hair.utils.isEmpty
 
-@Suppress("UNNECESSARY_LATEINIT")
-class NodeBuilderImpl(override val session: Session) : NodeBuilder {
-    lateinit var normalization: Normalization
-    val argsUpdater = object : ArgsUpdater {
-        override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
-            if (newValue != null && newValue != oldValue) {
-                val replacement = normalization.normalize(node)
-                if (replacement != node) {
-                    // FIXME introduce common tool
-                    (node as? Controlling)?.nextOrNull?.let {
-                        it.control = replacement as Controlling
-                    }
-                    node.replaceValueUsesAndKill(replacement)
+class NodeBuilderImpl(override val session: Session) : NodeBuilder, ArgsUpdater {
+    val normalization = NormalizationImpl(session, this, this)
+    override fun normalize(node: Node): Node = normalization.normalize(node)
+    override fun <N : Node> register(node: N): N = node.register()
+    override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
+        if (newValue != null && newValue != oldValue) {
+            val replacement = normalization.normalize(node)
+            // node can die during normalisation
+            if (replacement != node && node.registered) {
+                // FIXME introduce common tool
+                (node as? Controlling)?.nextOrNull?.let {
+                    it.control = replacement as Controlling
                 }
+                node.replaceValueUsesAndKill(replacement)
             }
         }
     }
-    init {
-        normalization = NormalizationImpl(session, this, argsUpdater)
-    }
-    override fun normalize(node: Node): Node = normalization.normalize(node)
-    override fun <N : Node> register(node: N): N = node.register()
 }
 
 // FIXME private?
@@ -53,7 +48,7 @@ class ArgUpdatesWatcher : ArgsUpdater {
 fun <T> Session.buildInitialIR(
     builderAction: context(NodeBuilder, ArgsUpdater, ControlFlowBuilder) () -> T
 ): T {
-    return context(nodeBuilder, nodeBuilder.argsUpdater, ControlFlowBuilder(entry)) {
+    return context(nodeBuilder, ControlFlowBuilder(entry)) {
         builderAction().also {
             eliminateDeadBlocks()
             eliminateDeadFoam()
@@ -66,7 +61,7 @@ fun <T> Session.modifyIR(
     builderAction: context(NodeBuilder, ArgsUpdater, NoControlFlowBuilder) () -> T
 ): T {
     //val argsWatcher = ArgUpdatesWatcher()
-    val result = context(nodeBuilder, nodeBuilder.argsUpdater, NoControlFlowBuilder) {
+    val result = context(nodeBuilder, NoControlFlowBuilder) {
         val result = builderAction()
 
         eliminateDeadBlocks()
@@ -91,7 +86,7 @@ fun <T> Session.modifyControlFlow(
     at: Controlling,
     builderAction: context(NodeBuilder, ArgsUpdater, ControlFlowBuilder) () -> T
 ): T {
-    return context(nodeBuilder, nodeBuilder.argsUpdater, ControlFlowBuilder(at)) {
+    return context(nodeBuilder,  ControlFlowBuilder(at)) {
         builderAction()
     }
 }
@@ -110,7 +105,9 @@ fun BlockBody.removeFromControl() {
 //        arg.removeUse(this)
 //        //updateArg(arg, null) {} // FIXME find a better way
 //    }
-    next.control = control
+    val prev = control
+    controlOrNull = null
+    next.control = prev
     //eraseControl()
     require(uses.isEmpty())
     //require(registered)

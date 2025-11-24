@@ -12,6 +12,7 @@ fun main(args: Array<String>) {
     generator.generate(DataFlow)
     generator.generate(Arithmetics)
     generator.generate(Object)
+    generator.generate(Memory)
     generator.generate(Calls)
 
     generator.generateSession()

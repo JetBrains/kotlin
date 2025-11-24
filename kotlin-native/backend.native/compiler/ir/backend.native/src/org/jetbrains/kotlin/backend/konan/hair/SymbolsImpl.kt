@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan.hair
 
+import hair.sym.Field
+import hair.sym.Global
 import hair.sym.HairFunction
 import hair.sym.HairType
 import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
 import org.jetbrains.kotlin.backend.konan.computePrimitiveBinaryTypeOrNull
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -31,4 +34,17 @@ internal data class HairFunctionImpl(val irFunction: IrSimpleFunction) : HairFun
     override fun toString() = irFunction.name.toString()
     override val resultHairType: HairType
         get() = irFunction.returnType.asHairType()
+}
+
+internal data class HairFieldImpl(val irField: IrField) : Field {
+    override val owner = TODO()
+    override fun toString() = irField.name.toString()
+    override val type: HairType
+        get() = irField.type.asHairType()
+}
+
+internal data class HairGlobalImpl(val irField: IrField) : Global {
+    override fun toString() = irField.name.toString()
+    override val type: HairType
+        get() = irField.type.asHairType()
 }

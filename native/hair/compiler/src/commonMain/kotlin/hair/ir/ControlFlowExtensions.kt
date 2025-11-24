@@ -69,10 +69,7 @@ val BlockEntry.exits: Sequence<BlockExit>
     }
 
 val BlockEntry.nextBlocks: Sequence<BlockEntry>
-    get() = run {
-        println("Asking nextBlocks after $this exits: ${exits.toList()} their uses: ${exits.flatMap { it.uses }.toList()}")
-        exits.map { it.next }
-    }
+    get() = exits.map { it.next }
 
 fun Session.cfg(): FlowGraph<BlockEntry> = object : FlowGraph<BlockEntry> {
     override val root = entry
