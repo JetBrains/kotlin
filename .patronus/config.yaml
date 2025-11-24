@@ -1,0 +1,9 @@
+version: "1.0"
+checks:
+  - configurationId: "Kotlin_BuildPlayground_Canopus_SafeMergeAggregate"
+    name: "Safe Merge Aggregate"
+    attempts: 2
+    moveRetryToTop: true
+    executeOnChanges: [
+      "*"
+    ]
