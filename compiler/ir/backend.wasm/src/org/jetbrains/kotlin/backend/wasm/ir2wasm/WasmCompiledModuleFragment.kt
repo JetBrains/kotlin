@@ -742,7 +742,6 @@ class WasmCompiledModuleFragment(
         additionalTypes.add(byteArray)
 
         val poolIdLocal = WasmLocal(0, "poolId", WasmI32, true)
-
         val startAddress = WasmLocal(1, "startAddress", WasmI32, false)
         val length = WasmLocal(2, "length", WasmI32, false)
         val addressAndLength = WasmLocal(3, "addressAndLength", WasmI64, false)
@@ -751,7 +750,7 @@ class WasmCompiledModuleFragment(
         val stringLiteralFunction = WasmFunction.Defined(
             name = "_stringLiteral${if (isLatin1) "Latin1" else "Utf16"}",
             type = WasmSymbol(stringEntities.stringLiteralFunctionType),
-            locals = mutableListOf(startAddress, length, addressAndLength, temporary)
+            locals = mutableListOf(poolIdLocal, startAddress, length, addressAndLength, temporary)
         )
         with(WasmExpressionBuilder(stringLiteralFunction.instructions)) {
             buildBlock("cache_check", stringEntities.kotlinStringType) { blockResult ->
