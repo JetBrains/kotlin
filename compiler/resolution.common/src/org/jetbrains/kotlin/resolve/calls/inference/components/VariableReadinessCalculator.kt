@@ -109,6 +109,8 @@ class VariableReadinessCalculator(
         // except for being reversed: so that higher-priority ones come first.
 
         readiness[Q.ALLOWED] = !forbidden
+        if (forbidden) return readiness
+
         readiness[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints() || areAllProperConstraintsSelfTypeBased
         readiness[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)
 
