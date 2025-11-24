@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.JarToWasmBinaryRule
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform.Companion.ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
