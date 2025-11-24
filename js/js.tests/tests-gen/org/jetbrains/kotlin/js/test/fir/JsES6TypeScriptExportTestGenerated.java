@@ -385,6 +385,40 @@ public class JsES6TypeScriptExportTestGenerated extends AbstractJsES6TypeScriptE
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/inner-classes-generic")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
+  public class Inner_classes_generic {
+    @Test
+    public void testAllFilesPresentInInner_classes_generic() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/inner-classes-generic"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("inner-class-generic.kt")
+    public void testInner_class_generic() {
+      runTest("js/js.translator/testData/typescript-export/js/inner-classes-generic/inner-class-generic.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/inner-classes-generic-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
+  public class Inner_classes_generic_in_exported_file {
+    @Test
+    public void testAllFilesPresentInInner_classes_generic_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/inner-classes-generic-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("inner-class-generic.kt")
+    public void testInner_class_generic() {
+      runTest("js/js.translator/testData/typescript-export/js/inner-classes-generic-in-exported-file/inner-class-generic.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/inner-classes-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("es6")
