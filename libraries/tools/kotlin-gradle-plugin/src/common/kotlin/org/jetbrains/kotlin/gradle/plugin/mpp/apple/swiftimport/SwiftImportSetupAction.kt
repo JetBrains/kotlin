@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import java.security.MessageDigest
@@ -95,6 +96,7 @@ internal fun Project.swiftPMDependenciesExtension(): SwiftImportExtension {
 internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     val kotlinExtension = project.multiplatformExtension
     val swiftPMImportExtension = swiftPMDependenciesExtension()
+    val isMacOSHost = HostManager.hostIsMac
 
     inheritSwiftPMDependenciesFromAppleCompilationDependencies()
 
@@ -170,6 +172,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     val computeLocalPackageDependencyInputFiles = project.locateOrRegisterTask<ComputeLocalPackageDependencyInputFiles>(
         ComputeLocalPackageDependencyInputFiles.TASK_NAME,
     ) {
+        it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.localPackages.addAll(
             transitiveLocalSwiftPMDependencies.map {
                 it.map { it.path }
@@ -199,6 +202,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     val fetchSyntheticImportProjectPackages = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
         FetchSyntheticImportProjectPackages.TASK_NAME,
     ) {
+        it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { hasSwiftPMDependencies.get() }
         it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
         it.localPackageManifests.from(
@@ -245,6 +249,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 targetSdk,
             )
         ) {
+            it.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
             // FIXME: Remove this and fix input/outputs
             it.dependsOn(fetchSyntheticImportProjectPackages)
             it.dependsOn(computeLocalPackageDependencyInputFiles)
