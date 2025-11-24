@@ -25,12 +25,9 @@ import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.launch
@@ -60,7 +57,7 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -354,26 +351,16 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 val swiftPMImportCinterop = mainCompilationCinterops.create(cinteropName)
                 tasks.configureEach {
                     if (it.name == swiftPMImportCinterop.interopProcessingTaskName) {
-                        it.onlyIf {
-                            hasSwiftPMDependencies.get()
-                        }
+                        it.onlyIf { hasSwiftPMDependencies.get() }
                     }
                 }
                 swiftPMImportCinterop.definitionFile.set(defFile)
             }
 
             syntheticImportTasks.forEach { it.configure { it.directlyImportedSpmModules.add(swiftPMDependency) } }
-            val swiftPMDependenciesMetadata = project.locateOrRegisterTask<SerializeSwiftPMDependenciesMetadata>(
-                SerializeSwiftPMDependenciesMetadata.TASK_NAME,
-            ) {
-                it.configureWithExtension(swiftPMImportExtension)
-            }
-            project.configurations.maybeCreateConsumable("swiftPMDependenciesMetadataElements") {
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(SWIFTPM_DEPENDENCIES_METADATA_USAGE))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                outgoing.artifact(swiftPMDependenciesMetadata)
-            }
-            swiftPMDependenciesMetadata.configure { it.importedSpmModules.add(swiftPMDependency) }
+
+            val swiftPMDependenciesMetadataTask = swiftPMDependenciesMetadataTask(swiftPMImportExtension)
+            swiftPMDependenciesMetadataTask.configure { it.importedSpmModules.add(swiftPMDependency) }
 
             defFilesAndLdDumpGenerationTask.configure {
                 val swiftPMPlatform = target.konanTarget.swiftPMPlatform()
@@ -389,6 +376,24 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             }
         }
     }
+}
+
+private fun Project.swiftPMDependenciesMetadataTask(
+    swiftPMImportExtension: SwiftImportExtension,
+): TaskProvider<SerializeSwiftPMDependenciesMetadata> {
+    val existingTask = project.locateTask<SerializeSwiftPMDependenciesMetadata>(SerializeSwiftPMDependenciesMetadata.TASK_NAME)
+    if (existingTask != null) return existingTask
+
+    val swiftPMDependenciesMetadata = project.locateOrRegisterTask<SerializeSwiftPMDependenciesMetadata>(
+        SerializeSwiftPMDependenciesMetadata.TASK_NAME,
+    ) {
+        it.configureWithExtension(swiftPMImportExtension)
+    }
+    val swiftPMDependenciesMetadataApiElements = registerSwiftPMDependenciesMetadataApiElements(swiftPMDependenciesMetadata)
+    project.multiplatformExtension.publishing.adhocSoftwareComponent.addVariantsFromConfiguration(
+        swiftPMDependenciesMetadataApiElements
+    ) {}
+    return swiftPMDependenciesMetadata
 }
 
 private fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (this) {
@@ -1651,12 +1656,22 @@ private fun Project.inheritSwiftPMDependenciesFromAppleCompilationDependencies()
 }
 
 private fun Project.swiftPMDependenciesMetadataConfiguration(): Configuration {
-    val configurationName = "swiftPMDependenciesMetadataClasspath"
-    return project.configurations.maybeCreateResolvable(configurationName) {
+    return project.configurations.maybeCreateResolvable("swiftPMDependenciesMetadataClasspath") {
         // 1. Select metadataApiElements graph
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KOTLIN_METADATA))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+    }
+}
+
+private fun Project.registerSwiftPMDependenciesMetadataApiElements(swiftPMDependenciesMetadata: TaskProvider<SerializeSwiftPMDependenciesMetadata>): Configuration {
+    return project.configurations.createConsumable("swiftPMDependenciesMetadataElements") {
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(SWIFTPM_DEPENDENCIES_METADATA_USAGE))
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        outgoing.artifact(swiftPMDependenciesMetadata) {
+            it.classifier = "swiftpm-metadata"
+            it.extension = "javaobject"
+        }
     }
 }
 
