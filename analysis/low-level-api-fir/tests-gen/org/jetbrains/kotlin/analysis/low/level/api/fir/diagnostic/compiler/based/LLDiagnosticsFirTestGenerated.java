@@ -11270,6 +11270,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public void testRegion() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/restrictSuspension/region.kt");
       }
+
+      @Test
+      @TestMetadata("smartcastReceiver.kt")
+      public void testSmartcastReceiver() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/restrictSuspension/smartcastReceiver.kt");
+      }
     }
 
     @Nested
