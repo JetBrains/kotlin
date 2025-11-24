@@ -17,34 +17,75 @@ private const val ARGUMENT_VALUE = "value"
 private const val ENABLES_CLASS = "org.jetbrains.kotlin.cli.common.arguments.Enables"
 private const val DISABLES_CLASS = "org.jetbrains.kotlin.cli.common.arguments.Disables"
 private const val FEATURE = "feature"
+private const val IF_VALUE_IS = "ifValueIs"
 
-private fun ClassLoader.loadAnnotationClassWithMethod(fqName: String, methodName: String): Pair<Class<out Annotation>, Method> {
-    @Suppress("UNCHECKED_CAST")
-    val klass = loadClass(fqName) as Class<out Annotation>
-    val method = klass.methods.find { it.name == methodName } ?: error("No `$methodName` in `@$fqName`")
+private fun ClassLoader.loadArgumentAnnotationInfo(): Pair<Class<out Annotation>, Method> {
+    val klass = loadAnnotationClass(ARGUMENT_CLASS)
+    val method = klass.getMethod(ARGUMENT_VALUE)
     return klass to method
 }
 
-private fun Field.getAnnotationNamedAs(annotationClass: Class<out Annotation>): Annotation? {
-    return getAnnotationsNamedAs(annotationClass).firstOrNull()
+private data class AnnotationAndMethods(
+    val annotationClass: Class<out Annotation>,
+    val featureMethod: Method,
+    val ifValueIsMethod: Method,
+)
+
+private fun ClassLoader.loadEnablesOrDisablesAnnotationInfo(fqName: String): AnnotationAndMethods {
+    val klass = loadAnnotationClass(fqName)
+    val featureMethod = klass.getMethod(FEATURE)
+    val ifValueIsMethod = klass.getMethod(IF_VALUE_IS)
+    return AnnotationAndMethods(klass, featureMethod, ifValueIsMethod)
 }
 
-private fun Field.getAnnotationsNamedAs(annotationClass: Class<out Annotation>): Array<out Annotation> {
-    return getAnnotationsByType(annotationClass)
+private fun ClassLoader.loadAnnotationClass(fqName: String): Class<out Annotation> {
+    @Suppress("UNCHECKED_CAST")
+    return loadClass(fqName) as Class<out Annotation>
+}
+
+private data class FeatureAndValue(val feature: LanguageFeature, val value: String)
+
+private fun Field.getFeaturesAndValues(triple: AnnotationAndMethods): List<FeatureAndValue> {
+    val (annotationClass, featureMethod, ifValueIsMethod) = triple
+    return getAnnotationsByType(annotationClass).map {
+        FeatureAndValue(
+            feature = featureMethod(it) as LanguageFeature,
+            value = ifValueIsMethod(it) as String
+        )
+    }
 }
 
 fun buildRuntimeFeatureToFlagMap(classLoader: ClassLoader): Map<LanguageFeature, String> {
     val compilerArgumentsClass = classLoader.loadClass(COMPILER_ARGUMENTS_CLASS)
 
-    val (argumentClass, getValueFromArgument) = classLoader.loadAnnotationClassWithMethod(ARGUMENT_CLASS, ARGUMENT_VALUE)
-    val (enablesClass, getFeatureFromEnables) = classLoader.loadAnnotationClassWithMethod(ENABLES_CLASS, FEATURE)
-    val (disablesClass, getFeatureFromDisables) = classLoader.loadAnnotationClassWithMethod(DISABLES_CLASS, FEATURE)
+    val (argumentClass, getValueFromArgument) = classLoader.loadArgumentAnnotationInfo()
+    val enables = classLoader.loadEnablesOrDisablesAnnotationInfo(ENABLES_CLASS)
+    val disables = classLoader.loadEnablesOrDisablesAnnotationInfo(DISABLES_CLASS)
 
-    return compilerArgumentsClass.declaredFields.flatMap { field ->
-        val name = field.getAnnotationNamedAs(argumentClass)?.let { getValueFromArgument(it) as? String }
-            ?: return@flatMap emptyList()
-        val features = field.getAnnotationsNamedAs(enablesClass).map { getFeatureFromEnables(it) as LanguageFeature } +
-                field.getAnnotationsNamedAs(disablesClass).map { getFeatureFromDisables(it) as LanguageFeature }
-        features.map { it to name }
-    }.toMap()
+    data class ArgumentAndValue(val argument: String, val value: String)
+
+    return compilerArgumentsClass.declaredFields
+        .flatMap { field ->
+            val name = field.getAnnotationsByType(argumentClass).firstOrNull()?.let { getValueFromArgument(it) as? String }
+                ?: return@flatMap emptyList()
+            val features = field.getFeaturesAndValues(enables) + field.getFeaturesAndValues(disables)
+            features.map { it to name }
+        }
+        .groupBy(keySelector = { it.first.feature }, valueTransform = { ArgumentAndValue(argument = it.second, value = it.first.value) })
+        .mapValues { (_, values) ->
+            val argument = values.first().argument
+            if (values.any { it.value.isNotEmpty() }) {
+                buildString {
+                    append(argument)
+                    append('=')
+                    if (values.size == 1) {
+                        append(values.first().value)
+                    } else {
+                        values.joinTo(buffer = this, separator = "|", prefix = "{", postfix = "}") { it.value }
+                    }
+                }
+            } else {
+                argument
+            }
+        }
 }

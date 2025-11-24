@@ -1,7 +1,7 @@
-compiler/testData/cli/jvm/nameBasedDestructuringWithoutCompilerArgument.kt:2:6: error: the feature "name based destructuring" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xname-based-destructuring', but note that no stability guarantees are provided.
+compiler/testData/cli/jvm/nameBasedDestructuringWithoutCompilerArgument.kt:2:6: error: the feature "name based destructuring" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xname-based-destructuring={only-syntax|name-mismatch|complete}', but note that no stability guarantees are provided.
     (val first, val second) = 1 to 2
      ^^^
-compiler/testData/cli/jvm/nameBasedDestructuringWithoutCompilerArgument.kt:2:17: error: the feature "name based destructuring" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xname-based-destructuring', but note that no stability guarantees are provided.
+compiler/testData/cli/jvm/nameBasedDestructuringWithoutCompilerArgument.kt:2:17: error: the feature "name based destructuring" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xname-based-destructuring={only-syntax|name-mismatch|complete}', but note that no stability guarantees are provided.
     (val first, val second) = 1 to 2
                 ^^^
 COMPILATION_ERROR
