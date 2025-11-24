@@ -413,13 +413,10 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
 // the result is called 'view', just to be consistent with old backend.
 private fun IrSimpleFunction.suspendFunctionViewOrStub(context: JvmBackendContext): IrSimpleFunction {
     if (!isSuspend) return this
-    // If superinterface is in another file, the bridges will already have continuation parameters,
+    // If superinterface is in another file, the bridge to default method will already have continuation parameter,
     // so skip it. See KT-47549.
-    if ((origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE) &&
+    if (origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE &&
         overriddenSymbols.singleOrNull()?.owner?.parameters?.lastOrNull()?.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
-    ) return this
-    if ((origin == IrDeclarationOrigin.BRIDGE) &&
-        parameters.lastOrNull()?.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
     ) return this
     // We need to use suspend function originals here, since if we use 'this' here,
     // turing FlowCollector into 'fun interface' leads to AbstractMethodError. See KT-49294.
