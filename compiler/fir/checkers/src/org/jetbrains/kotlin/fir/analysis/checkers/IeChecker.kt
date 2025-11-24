@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFun
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirSamConversionExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
+import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.firClassLike
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.types.renderReadable
+import org.jetbrains.kotlin.fir.types.resolvedType
 import kotlin.reflect.full.memberProperties
 
 class IEReporter(
@@ -68,6 +71,7 @@ class IEReporter(
 
 data class IEData(
     val type: String? = null,
+    val boundType: String? = null,
     val call: String? = null,
     val isReified: Boolean? = null,
     val oneLevelRedundant: Boolean? = null,
@@ -81,7 +85,7 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall) {
         val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
         val symbol = expression.toResolvedCallableSymbol() ?: return
-        val usedParameters by lazy {
+        val usedParameters =
             buildSet {
                 symbol.fir.returnTypeRef.coneType.forEachType { type ->
                     if (type is ConeTypeParameterType) {
@@ -89,10 +93,11 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
                     }
                 }
                 (symbol.fir as? FirFunction)?.let { function ->
-                    function.valueParameters.forEach { argument ->
+                    function.valueParameters.forEachIndexed { index, argument ->
+                        val samUsed = expression.argumentList.arguments[index] is FirSamConversionExpression
                         val regClass = argument.returnTypeRef.firClassLike(context.session) as? FirRegularClass
                         val abstractMethod = abstractMethod(regClass)
-                        if (abstractMethod != null) {
+                        if (samUsed && abstractMethod != null) {
                             regClass!!
                             val isUsed = regClass.typeParameters.map { tp ->
                                 abstractMethod.fir.returnTypeRef.coneType.forEachType {
@@ -130,12 +135,12 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
                     }
                 }
             }
-        }
+
         expression.typeArguments.indices.forEach { index ->
             if (!expression.typeArguments[index].isExplicit) return@forEach
             val type = (expression.typeArguments[index] as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@forEach
             val param = symbol.typeParameterSymbols[index]
-            val originalParam = symbol.originalForSubstitutionOverride?.typeParameterSymbols?.getOrNull(index)
+            val originalParam = symbol.originalOrSelf().typeParameterSymbols.getOrNull(index)
 
             val singleBound = if (param.resolvedBounds.size == 1) param.resolvedBounds.first().coneType else null
             val originalSingleBound = if (originalParam?.resolvedBounds?.size == 1) originalParam.resolvedBounds.first().coneType else null
@@ -146,6 +151,7 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
             report(
                 IEData(
                     type = type.renderReadable(),
+                    boundType = singleBound?.renderReadable(),
                     call = symbol.callableIdAsString(),
                     isReified = param.isReified,
                     oneLevelRedundant = oneLevelRedundant,
@@ -159,7 +165,6 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext)
     fun abstractMethod(funInterface: FirRegularClass?): FirNamedFunctionSymbol? {
         if (funInterface == null) return null
-        if (!funInterface.isFun) return null
 
         val scope = funInterface.unsubstitutedScope()
 
