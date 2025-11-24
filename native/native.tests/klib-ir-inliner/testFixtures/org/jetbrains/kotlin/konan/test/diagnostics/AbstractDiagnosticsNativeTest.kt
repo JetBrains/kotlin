@@ -40,7 +40,8 @@ import org.junit.jupiter.api.Assumptions
 import java.io.File
 
 abstract class AbstractDiagnosticsNativeTestBase(
-    private val parser: FirParser
+    private val parser: FirParser,
+    private val latestPhaseInPipeline: TestPhase,
 ) : AbstractKotlinCompilerTest() {
 
     val targetFrontend: FrontendKind<FirOutputArtifact>
@@ -55,7 +56,13 @@ abstract class AbstractDiagnosticsNativeTestBase(
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
             dependencyKind = DependencyKind.Source
         }
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        defaultDirectives {
+            LATEST_PHASE_IN_PIPELINE with latestPhaseInPipeline
+        }
+        useAfterAnalysisCheckers(
+            ::BlackBoxCodegenSuppressor,
+            ::PhasedPipelineChecker.bind(latestPhaseInPipeline),
+        )
         baseNativeDiagnosticTestConfiguration(frontend)
 
         configureFirParser(parser)
@@ -87,19 +94,13 @@ abstract class AbstractDiagnosticsNativeTestBase(
     }
 }
 
-abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) : AbstractDiagnosticsNativeTestBase(parser) {
+abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) : AbstractDiagnosticsNativeTestBase(parser, TestPhase.BACKEND) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
 
         globalDefaults {
             targetBackend = TargetBackend.NATIVE
         }
-        defaultDirectives {
-            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
-        }
-        useAfterAnalysisCheckers(
-            ::PhasedPipelineChecker.bind(TestPhase.FRONTEND),
-        )
 
         useAdditionalService(::LibraryProvider)
 
@@ -126,8 +127,8 @@ abstract class AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase 
     }
 }
 
-abstract class AbstractPsiNativeDiagnosticsTest : AbstractDiagnosticsNativeTestBase(FirParser.Psi)
-abstract class AbstractLightTreeNativeDiagnosticsTest : AbstractDiagnosticsNativeTestBase(FirParser.LightTree)
+abstract class AbstractPsiNativeDiagnosticsTest : AbstractDiagnosticsNativeTestBase(FirParser.Psi, TestPhase.FRONTEND)
+abstract class AbstractLightTreeNativeDiagnosticsTest : AbstractDiagnosticsNativeTestBase(FirParser.LightTree, TestPhase.FRONTEND)
 
 abstract class AbstractPsiNativeDiagnosticsWithBackendTestBase : AbstractNativeDiagnosticsWithBackendTestBase(FirParser.Psi)
 abstract class AbstractLightTreeNativeDiagnosticsWithBackendTestBase : AbstractNativeDiagnosticsWithBackendTestBase(FirParser.LightTree)
