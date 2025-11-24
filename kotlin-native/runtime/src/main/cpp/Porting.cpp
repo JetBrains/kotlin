@@ -18,6 +18,11 @@
 #ifdef KONAN_ANDROID
 #include <android/log.h>
 #endif
+
+#ifdef KONAN_IOS
+#include <mach-o/dyld.h>
+#endif
+
 #include <cstdio>
 #include <cstdlib>
 #include <stdarg.h>
@@ -170,6 +175,9 @@ void consoleFlush() {
   ::fflush(stderr);
 }
 
+#ifdef KONAN_IOS
+THREAD_LOCAL_VARIABLE bool isOnThreadExitSet = false;
+#else
 pthread_key_t terminationKey;
 pthread_once_t terminationKeyOnceControl = PTHREAD_ONCE_INIT;
 
@@ -180,7 +188,13 @@ struct DestructorRecord {
   destructor_t destructor;
   void* destructorParameter;
 };
+#endif
 
+#ifdef KONAN_IOS
+static void onThreadExitCallback(void* value) {
+  isOnThreadExitSet = false;
+}
+#else
 static void onThreadExitCallback(void* value) {
   DestructorRecord* record = reinterpret_cast<DestructorRecord*>(value);
   pthread_setspecific(terminationKey, nullptr);
@@ -191,14 +205,21 @@ static void onThreadExitCallback(void* value) {
     record = next;
   }
 }
+#endif
 
 NO_EXTERNAL_CALLS_CHECK bool isOnThreadExitNotSetOrAlreadyStarted() {
-    return terminationKey != 0 && pthread_getspecific(terminationKey) == nullptr;
+#ifdef KONAN_IOS
+  return !isOnThreadExitSet;
+#else
+  return terminationKey != 0 && pthread_getspecific(terminationKey) == nullptr;
+#endif
 }
 
 #if KONAN_LINUX
 static pthread_key_t dummyKey;
 #endif
+
+#ifndef KONAN_IOS
 static void onThreadExitInit() {
 #if KONAN_LINUX
   // Due to glibc bug we have to create first key as dummy, to avoid
@@ -211,8 +232,16 @@ static void onThreadExitInit() {
 #endif
   pthread_key_create(&terminationKey, onThreadExitCallback);
 }
+#endif
 
 void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
+#ifdef KONAN_IOS
+  if (!isOnThreadExitSet) {
+    isOnThreadExitSet = true;
+    _tlv_atexit(onThreadExitCallback, nullptr);
+  }
+  _tlv_atexit(destructor, destructorParameter);
+#else
   // We cannot use pthread_cleanup_push() as it is lexical scope bound.
   pthread_once(&terminationKeyOnceControl, onThreadExitInit);
   DestructorRecord* destructorRecord = (DestructorRecord*)std::calloc(1, sizeof(DestructorRecord));
@@ -221,6 +250,7 @@ void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
   destructorRecord->next =
       reinterpret_cast<DestructorRecord*>(pthread_getspecific(terminationKey));
   pthread_setspecific(terminationKey, destructorRecord);
+#endif
 }
 
 #if KONAN_LINUX
