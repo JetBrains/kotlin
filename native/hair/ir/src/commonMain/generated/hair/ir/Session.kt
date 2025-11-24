@@ -86,17 +86,21 @@ class Session: SessionBase() {
 
     internal val newMetaForm = New.metaForm(this)
 
-    internal val readFieldPinnedMetaForm = ReadFieldPinned.metaForm(this)
-
-    internal val readGlobalPinnedMetaForm = ReadGlobalPinned.metaForm(this)
-
-    internal val writeFieldMetaForm = WriteField.metaForm(this)
-
-    internal val writeGlobalMetaForm = WriteGlobal.metaForm(this)
-
     internal val isInstanceOfMetaForm = IsInstanceOf.metaForm(this)
 
     internal val checkCastMetaForm = CheckCast.metaForm(this)
+
+    internal val loadMetaForm = Load.metaForm(this)
+
+    internal val storeMetaForm = Store.metaForm(this)
+
+    internal val loadFieldMetaForm = LoadField.metaForm(this)
+
+    internal val storeFieldMetaForm = StoreField.metaForm(this)
+
+    internal val loadGlobalMetaForm = LoadGlobal.metaForm(this)
+
+    internal val storeGlobalMetaForm = StoreGlobal.metaForm(this)
 
     internal val invokeStaticMetaForm = InvokeStatic.metaForm(this)
 

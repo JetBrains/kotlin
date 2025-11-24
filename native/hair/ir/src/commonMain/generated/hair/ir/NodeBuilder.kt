@@ -249,48 +249,6 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun New.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
-fun ReadFieldPinned(field: Field): ReadFieldPinned.Form = ReadFieldPinned.Form(nodeBuilder.session.readFieldPinnedMetaForm, field).ensureFormUniq()
-
-context(nodeBuilder: NodeBuilder)
-operator fun ReadFieldPinned.Form.invoke(control: Controlling?, obj: Node?): Controlling = (nodeBuilder.normalize(ReadFieldPinned(this@invoke, control, obj)) as Controlling).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun ReadFieldPinned.Form.invoke(obj: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj) }
-
-context(nodeBuilder: NodeBuilder)
-private fun ReadGlobalPinnedForm(field: Global): ReadGlobalPinned.Form = ReadGlobalPinned.Form(nodeBuilder.session.readGlobalPinnedMetaForm, field).ensureFormUniq()
-
-context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
-fun ReadGlobalPinned(field: Global): ReadGlobalPinned.Form = ReadGlobalPinnedForm(field)
-
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun ReadGlobalPinned(field: Global): Controlling = ReadGlobalPinnedForm(field)()
-
-context(nodeBuilder: NodeBuilder)
-operator fun ReadGlobalPinned.Form.invoke(control: Controlling?): Controlling = (nodeBuilder.normalize(ReadGlobalPinned(this@invoke, control)) as Controlling).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun ReadGlobalPinned.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
-
-context(nodeBuilder: NodeBuilder)
-fun WriteField(field: Field): WriteField.Form = WriteField.Form(nodeBuilder.session.writeFieldMetaForm, field).ensureFormUniq()
-
-context(nodeBuilder: NodeBuilder)
-operator fun WriteField.Form.invoke(control: Controlling?, obj: Node?, value: Node?): Controlling = (nodeBuilder.normalize(WriteField(this@invoke, control, obj, value)) as Controlling).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun WriteField.Form.invoke(obj: Node?, value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj, value) }
-
-context(nodeBuilder: NodeBuilder)
-fun WriteGlobal(field: Global): WriteGlobal.Form = WriteGlobal.Form(nodeBuilder.session.writeGlobalMetaForm, field).ensureFormUniq()
-
-context(nodeBuilder: NodeBuilder)
-operator fun WriteGlobal.Form.invoke(control: Controlling?, value: Node?): Controlling = (nodeBuilder.normalize(WriteGlobal(this@invoke, control, value)) as Controlling).let { if (!it.registered) nodeBuilder.register(it) else it }
-
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun WriteGlobal.Form.invoke(value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, value) }
-
-context(nodeBuilder: NodeBuilder)
 fun IsInstanceOf(targetType: Reference): IsInstanceOf.Form = IsInstanceOf.Form(nodeBuilder.session.isInstanceOfMetaForm, targetType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
@@ -301,6 +259,45 @@ fun CheckCast(targetType: Reference): CheckCast.Form = CheckCast.Form(nodeBuilde
 
 context(nodeBuilder: NodeBuilder)
 operator fun CheckCast.Form.invoke(obj: Node?): Node = (nodeBuilder.normalize(CheckCast(this@invoke, obj))).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Load(type: HairType): Load.Form = Load.Form(nodeBuilder.session.loadMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Load.Form.invoke(location: Node?): Node = (nodeBuilder.normalize(Load(this@invoke, location))).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun Store(type: HairType): Store.Form = Store.Form(nodeBuilder.session.storeMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Store.Form.invoke(location: Node?): Node = (nodeBuilder.normalize(Store(this@invoke, location))).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun LoadField(field: Field): LoadField.Form = LoadField.Form(nodeBuilder.session.loadFieldMetaForm, field).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun LoadField.Form.invoke(obj: Node?): Node = (nodeBuilder.normalize(LoadField(this@invoke, obj))).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+fun StoreField(field: Field): StoreField.Form = StoreField.Form(nodeBuilder.session.storeFieldMetaForm, field).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun StoreField.Form.invoke(obj: Node?, value: Node?): Node = (nodeBuilder.normalize(StoreField(this@invoke, obj, value))).let { if (!it.registered) nodeBuilder.register(it) else it }
+
+context(nodeBuilder: NodeBuilder)
+private fun LoadGlobalForm(field: Global): LoadGlobal.Form = LoadGlobal.Form(nodeBuilder.session.loadGlobalMetaForm, field).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun LoadGlobal.Form.invoke(): LoadGlobal = nodeBuilder.register(LoadGlobal(this@invoke))
+
+context(nodeBuilder: NodeBuilder)
+fun LoadGlobal(field: Global): LoadGlobal = LoadGlobalForm(field)()
+
+context(nodeBuilder: NodeBuilder)
+fun StoreGlobal(field: Global): StoreGlobal.Form = StoreGlobal.Form(nodeBuilder.session.storeGlobalMetaForm, field).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun StoreGlobal.Form.invoke(value: Node?): Node = (nodeBuilder.normalize(StoreGlobal(this@invoke, value))).let { if (!it.registered) nodeBuilder.register(it) else it }
 
 context(nodeBuilder: NodeBuilder)
 fun InvokeStatic(function: HairFunction): InvokeStatic.Form = InvokeStatic.Form(nodeBuilder.session.invokeStaticMetaForm, function).ensureFormUniq()

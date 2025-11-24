@@ -2,7 +2,6 @@ package hair.opt
 
 import hair.ir.*
 import hair.ir.nodes.*
-import hair.utils.*
 
 // TODO Throw with handler -> Goto
 
@@ -43,10 +42,10 @@ class NormalizationImpl(val session: Session, nodeBuilder: NodeBuilder, argsUpda
 
             override fun visitGoto(node: Goto): Node {
                 (node.control as? BlockEntry)?.let {
-                    val singlePred = it.preds.singleOrNull()
-                    if (singlePred != null) {
+                    val prevGoto = it.preds.singleOrNull() as? Goto
+                    if (prevGoto != null) {
                         it.preds[0] = session.unreachable
-                        return singlePred
+                        return prevGoto
                     }
                 }
                 return super.visitGoto(node)
