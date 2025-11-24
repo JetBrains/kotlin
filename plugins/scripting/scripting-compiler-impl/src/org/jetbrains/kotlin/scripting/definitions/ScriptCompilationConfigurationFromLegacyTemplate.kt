@@ -91,6 +91,7 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
         asyncDependenciesResolver(dependencyResolver is AsyncDependenciesResolver || dependencyResolver is ApiChangeDependencyResolverWrapper)
         if (dependencyResolver != DependenciesResolver.NoDependencies) {
             refineConfiguration {
+                @Suppress("DEPRECATION")
                 onAnnotations(dependencyResolver.acceptedAnnotations.map(::KotlinType)) { context ->
                     refineWithResolver(dependencyResolver, context)
                 }

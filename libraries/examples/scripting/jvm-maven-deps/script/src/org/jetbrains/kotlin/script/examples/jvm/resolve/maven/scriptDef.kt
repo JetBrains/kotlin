@@ -30,6 +30,7 @@ object ScriptWithMavenDepsConfiguration : ScriptCompilationConfiguration(
             )
         }
         refineConfiguration {
+            @Suppress("DEPRECATION")
             onAnnotations(DependsOn::class, Repository::class, handler = ::configureMavenDepsOnAnnotations)
         }
     }
