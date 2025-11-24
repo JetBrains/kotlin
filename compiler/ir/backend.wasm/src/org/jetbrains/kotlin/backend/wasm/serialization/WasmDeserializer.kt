@@ -274,8 +274,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 ImmediateTags.CATCH -> deserializeImmediateCatch()
                 ImmediateTags.CONST_F32 -> WasmImmediate.ConstF32(b.readUInt32())
                 ImmediateTags.CONST_F64 -> WasmImmediate.ConstF64(b.readUInt64())
-                ImmediateTags.CONST_I32 -> WasmImmediate.ConstI32(b.readUInt32().toInt())
-                ImmediateTags.CONST_I64 -> WasmImmediate.ConstI64(b.readUInt64().toLong())
+                ImmediateTags.CONST_I32 -> WasmImmediate.ConstI32(deserializeInt())
+                ImmediateTags.CONST_I64 -> WasmImmediate.ConstI64(deserializeLong())
                 ImmediateTags.CONST_STRING -> WasmImmediate.ConstString(deserializeString())
                 ImmediateTags.CONST_U8 -> WasmImmediate.ConstU8(b.readUByte())
                 ImmediateTags.DATA_INDEX -> WasmImmediate.DataIdx(deserializeSymbol(::deserializeInt))
@@ -466,8 +466,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         withFlags { flags ->
             val packageFqName = deserializeString()
             val declarationFqName = deserializeString()
-            val id = if (flags.consume()) null else b.readUInt64().toLong()
-            val mask = b.readUInt64().toLong()
+            val id = if (flags.consume()) null else deserializeLong()
+            val mask = deserializeLong()
             val description = if (flags.consume()) null else deserializeString()
             IdSignature.CommonSignature(packageFqName, declarationFqName, id, mask, description)
         }
@@ -481,27 +481,27 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeFileLocalSignature(): IdSignature.FileLocalSignature =
         withFlags { flags ->
             val container = deserializeIdSignature()
-            val id = b.readUInt64().toLong()
+            val id = deserializeLong()
             IdSignature.FileLocalSignature(container, id)
         }
 
     private fun deserializeLocalSignature(): IdSignature.LocalSignature =
         withFlags { flags ->
             val localFqn = deserializeString()
-            val hashSig = if (flags.consume()) null else b.readUInt64().toLong()
+            val hashSig = if (flags.consume()) null else deserializeLong()
             IdSignature.LocalSignature(localFqn, hashSig)
         }
 
     private fun deserializeLoweredDeclarationSignature(): IdSignature.LoweredDeclarationSignature {
         val original = deserializeIdSignature()
-        val stage = b.readUInt32().toInt()
-        val index = b.readUInt32().toInt()
+        val stage = deserializeInt()
+        val index = deserializeInt()
         return IdSignature.LoweredDeclarationSignature(original, stage, index)
     }
 
     private fun deserializeScopeLocalDeclaration(): IdSignature.ScopeLocalDeclaration =
         withFlags { flags ->
-            val id = b.readUInt32().toInt()
+            val id = deserializeInt()
             IdSignature.ScopeLocalDeclaration(id)
         }
 
@@ -540,7 +540,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     }
 
     private fun deserializeConstantDataIntegerArray(): ConstantDataIntegerArray {
-        val value = deserializeList { b.readUInt64().toLong() }
+        val value = deserializeList { deserializeLong() }
         val integerSize = deserializeInt()
         return ConstantDataIntegerArray(value, integerSize)
     }
@@ -560,11 +560,11 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         return deserializeReference {
             withFlags {
                 if (it.consume()) {
-                    val length = b.readUInt32().toInt()
+                    val length = deserializeInt()
                     val bytes = b.readBytes(length)
                     String(bytes)
                 } else {
-                    val lengthBytes = b.readUInt32().toInt()
+                    val lengthBytes = deserializeInt()
                     val bytes = b.readBytes(lengthBytes)
                     val length = lengthBytes / Char.SIZE_BYTES
                     val charArray = CharArray(length)
@@ -745,7 +745,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         deserializeReference {
             withFlags { flags ->
                 // Deserializes the common part of WasmNamedModuleField.
-                val id = if (flags.consume()) null else b.readUInt32().toInt()
+                val id = if (flags.consume()) null else deserializeInt()
                 val name = if (flags.consume()) "" else deserializeString()
                 deserializeFunc(name, flags).apply { this.id = id }
             }
