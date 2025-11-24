@@ -50,8 +50,8 @@ internal class LLFirJavaAnnotationProvider(
             for (directory in directories) {
                 val file = directory.findFile(PsiPackage.PACKAGE_INFO_FILE)
                 val packageStatement = (file as? PsiJavaFile)?.packageStatement ?: continue
-
-                for (psiAnnotation in packageStatement.annotationList.annotations) {
+                val psiAnnotations = packageStatement.annotationList?.annotations ?: continue
+                for (psiAnnotation in psiAnnotations) {
                     val psiSource = javaElementSourceFactory.createPsiSource(psiAnnotation)
                     val javaAnnotation = JavaAnnotationImpl(psiSource)
                     add(javaAnnotation)
