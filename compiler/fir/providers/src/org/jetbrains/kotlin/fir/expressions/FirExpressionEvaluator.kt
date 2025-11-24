@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -252,6 +253,13 @@ object FirExpressionEvaluator {
                                 return when (val result = receiver.result) {
                                     is FirPropertyAccessExpression -> {
                                         val name = result.calleeReference.name.asString()
+                                        name.adjustTypeAndConvertToLiteral(propertyAccessExpression)
+                                    }
+                                    is FirResolvedCallableReference -> {
+                                        val name = when (result.resolvedSymbol) {
+                                            is FirConstructorSymbol -> "<init>"
+                                            else -> result.name.asString()
+                                        }
                                         name.adjustTypeAndConvertToLiteral(propertyAccessExpression)
                                     }
                                     else -> evaluateWithSourceCopy(propertySymbol.fir.initializer)
