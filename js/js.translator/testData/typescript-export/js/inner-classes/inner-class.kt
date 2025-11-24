@@ -44,4 +44,9 @@ class TestInner(val a: String) {
     }
 
     inner class SubclassOfOpenInnerClass(a: String): OpenInnerWithProtectedConstructor(a)
+
+    abstract inner class AbstractInnerWithSecondaryConstructor(val a: String) {
+        @JsName("fromNumber")
+        constructor(a: Int) : this(a.toString())
+    }
 }

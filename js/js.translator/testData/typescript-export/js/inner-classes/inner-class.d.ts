@@ -23,6 +23,10 @@ declare namespace JS_TESTS {
             get SubclassOfOpenInnerClass(): {
                 new(a: string): TestInner.SubclassOfOpenInnerClass;
             };
+            get AbstractInnerWithSecondaryConstructor(): {
+                new(a: string): TestInner.AbstractInnerWithSecondaryConstructor;
+                fromNumber(a: number): foo.TestInner.AbstractInnerWithSecondaryConstructor;
+            };
         }
         namespace TestInner {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -104,6 +108,16 @@ declare namespace JS_TESTS {
                 /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
                 namespace $metadata$ {
                     const constructor: abstract new () => SubclassOfOpenInnerClass;
+                }
+            }
+            abstract class AbstractInnerWithSecondaryConstructor {
+                protected constructor($outer: foo.TestInner, a: string);
+                get a(): string;
+            }
+            namespace AbstractInnerWithSecondaryConstructor {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => AbstractInnerWithSecondaryConstructor;
                 }
             }
         }
