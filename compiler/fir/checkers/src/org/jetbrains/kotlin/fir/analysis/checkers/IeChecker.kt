@@ -12,18 +12,35 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFun
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.firClassLike
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.equalTypes
 import org.jetbrains.kotlin.fir.types.forEachType
+import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
+import org.jetbrains.kotlin.fir.types.renderReadable
 import kotlin.reflect.full.memberProperties
 
 class IEReporter(
@@ -54,7 +71,6 @@ data class IEData(
     val call: String? = null,
     val isReified: Boolean? = null,
     val oneLevelRedundant: Boolean? = null,
-    val oneLevelRedundantIncludingLambdas: Boolean? = null,
     val upperBound: Boolean? = null,
     val upperBoundedByTp: Boolean? = null,
 )
@@ -65,45 +81,97 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall) {
         val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
         val symbol = expression.toResolvedCallableSymbol() ?: return
-        val usedParameters = buildSet {
-            symbol.fir.returnTypeRef.coneType.forEachType { type ->
-                if (type is ConeTypeParameterType) {
-                    add(type.lookupTag.typeParameterSymbol)
+        val usedParameters by lazy {
+            buildSet {
+                symbol.fir.returnTypeRef.coneType.forEachType { type ->
+                    if (type is ConeTypeParameterType) {
+                        add(type.lookupTag.typeParameterSymbol)
+                    }
                 }
-            }
-        }
-        val usedInLambdas = buildSet {
-            (symbol.fir as? FirFunction)?.let { function ->
-                function.valueParameters.lastOrNull()?.let { lastParam ->
-                    if (lastParam.returnTypeRef.coneType.isSomeFunctionType(context.session)) {
-                        lastParam.returnTypeRef.coneType.forEachType { type ->
-                            if (type is ConeTypeParameterType) {
-                                add(type.lookupTag.typeParameterSymbol)
+                (symbol.fir as? FirFunction)?.let { function ->
+                    function.valueParameters.forEach { argument ->
+                        val regClass = argument.returnTypeRef.firClassLike(context.session) as? FirRegularClass
+                        val abstractMethod = abstractMethod(regClass)
+                        if (abstractMethod != null) {
+                            regClass!!
+                            val isUsed = regClass.typeParameters.map { tp ->
+                                abstractMethod.fir.returnTypeRef.coneType.forEachType {
+                                    if (it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol == tp.symbol) {
+                                        return@map true
+                                    }
+                                }
+                                abstractMethod.fir.valueParameters.forEach { arg ->
+                                    arg.returnTypeRef.coneType.forEachType {
+                                        if (it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol == tp.symbol) {
+                                            return@map true
+                                        }
+                                    }
+                                }
+                                false
+                            }
+                            argument.returnTypeRef.coneType.typeArguments.forEachIndexed { index, typeProjection ->
+                                if (isUsed[index]) {
+                                    if (typeProjection is ConeKotlinTypeProjection) {
+                                        typeProjection.type.forEachType {
+                                            if (it is ConeTypeParameterType) {
+                                                add(it.lookupTag.typeParameterSymbol)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            argument.returnTypeRef.coneType.forEachType { type ->
+                                if (type is ConeTypeParameterType) {
+                                    add(type.lookupTag.typeParameterSymbol)
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        symbol.typeParameterSymbols.zip(expression.typeArguments).forEach { (param, type) ->
-            if (!type.isExplicit) return@forEach
-            val bound = if (param.resolvedBounds.size == 1) param.resolvedBounds.first().coneType else null
-            if (type !is FirTypeProjectionWithVariance) return@forEach
-            val upperBound = bound?.equalTypes(type.typeRef.coneType, context.session) ?: false
-            val upperBoundedByTp = bound is ConeTypeParameterType
+        expression.typeArguments.indices.forEach { index ->
+            if (!expression.typeArguments[index].isExplicit) return@forEach
+            val type = (expression.typeArguments[index] as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@forEach
+            val param = symbol.typeParameterSymbols[index]
+            val originalParam = symbol.originalForSubstitutionOverride?.typeParameterSymbols?.getOrNull(index)
+
+            val singleBound = if (param.resolvedBounds.size == 1) param.resolvedBounds.first().coneType else null
+            val originalSingleBound = if (originalParam?.resolvedBounds?.size == 1) originalParam.resolvedBounds.first().coneType else null
+
+            val upperBound = singleBound?.equalTypes(type, context.session) ?: false
+            val upperBoundedByTp = originalSingleBound is ConeTypeParameterType
             val oneLevelRedundant = param !in usedParameters
-            val oneLevelRedundantIncludingLambdas = param !in usedInLambdas && param !in usedParameters
             report(
                 IEData(
-                    type = type.render(),
-                    call = symbol.name.toString(),
+                    type = type.renderReadable(),
+                    call = symbol.callableIdAsString(),
                     isReified = param.isReified,
                     oneLevelRedundant = oneLevelRedundant,
-                    oneLevelRedundantIncludingLambdas = oneLevelRedundantIncludingLambdas,
                     upperBound = upperBound,
                     upperBoundedByTp = upperBoundedByTp,
                 )
             )
         }
+    }
+
+    context(context: CheckerContext)
+    fun abstractMethod(funInterface: FirRegularClass?): FirNamedFunctionSymbol? {
+        if (funInterface == null) return null
+        if (!funInterface.isFun) return null
+
+        val scope = funInterface.unsubstitutedScope()
+
+        for (name in scope.getCallableNames()) {
+            val functions = scope.getFunctions(name)
+
+            for (function in functions) {
+                if (function.isAbstract) {
+                    return function
+                }
+            }
+        }
+        return null
     }
 }
