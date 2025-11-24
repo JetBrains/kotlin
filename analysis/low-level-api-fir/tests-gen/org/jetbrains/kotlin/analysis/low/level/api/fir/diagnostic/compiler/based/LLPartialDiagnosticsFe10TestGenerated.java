@@ -13633,6 +13633,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("nestedWithSinceKotlinCompanionVsTopLevel.kt")
+        public void testNestedWithSinceKotlinCompanionVsTopLevel() {
+          runTest("compiler/testData/diagnostics/tests/deprecated/kt82555/nestedWithSinceKotlinCompanionVsTopLevel.kt");
+        }
+
+        @Test
         @TestMetadata("propertyInCompanionVsDeprecatedClassWithHiddenCompanion.kt")
         public void testPropertyInCompanionVsDeprecatedClassWithHiddenCompanion() {
           runTest("compiler/testData/diagnostics/tests/deprecated/kt82555/propertyInCompanionVsDeprecatedClassWithHiddenCompanion.kt");
@@ -13648,6 +13654,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         @TestMetadata("resolveToDeprecatedHiddenCompanion.kt")
         public void testResolveToDeprecatedHiddenCompanion() {
           runTest("compiler/testData/diagnostics/tests/deprecated/kt82555/resolveToDeprecatedHiddenCompanion.kt");
+        }
+
+        @Test
+        @TestMetadata("resolveToSinceKotlinHiddenCompanion.kt")
+        public void testResolveToSinceKotlinHiddenCompanion() {
+          runTest("compiler/testData/diagnostics/tests/deprecated/kt82555/resolveToSinceKotlinHiddenCompanion.kt");
+        }
+
+        @Test
+        @TestMetadata("sinceKotlinNestedVsTopLevel.kt")
+        public void testSinceKotlinNestedVsTopLevel() {
+          runTest("compiler/testData/diagnostics/tests/deprecated/kt82555/sinceKotlinNestedVsTopLevel.kt");
         }
 
         @Test
