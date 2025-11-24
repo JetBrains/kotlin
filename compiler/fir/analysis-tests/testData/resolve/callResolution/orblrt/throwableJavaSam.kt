@@ -46,7 +46,7 @@ public interface Application {
 fun myUnitFun() {}
 
 fun main(app: Application) {
-    app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething<!> { "" }
+    app.runSomething { "" }
     app.runSomething { myUnitFun() }
     app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { "" }
     app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { myUnitFun() }

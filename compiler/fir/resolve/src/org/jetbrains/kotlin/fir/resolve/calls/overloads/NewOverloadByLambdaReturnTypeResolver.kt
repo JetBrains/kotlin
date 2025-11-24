@@ -124,13 +124,9 @@ class NewOverloadByLambdaReturnTypeResolver(
 
             val errorCandidates = mutableSetOf<Candidate>()
             val successfulCandidates = mutableSetOf<Candidate>()
-            val notUsingUnitCoercion = mutableSetOf<Candidate>()
 
             for (candidate in candidates) {
                 if (candidate.isSuccessful) {
-                    if (!candidate.usesCoercionToUnitInLambda) {
-                        notUsingUnitCoercion += candidate
-                    }
                     successfulCandidates += candidate
                 } else {
                     // TODO: Use for reporting RETURN_TYPE_MISMATCH to avoid test data changes
@@ -140,7 +136,6 @@ class NewOverloadByLambdaReturnTypeResolver(
                 }
             }
             return when {
-                notUsingUnitCoercion.isNotEmpty() -> notUsingUnitCoercion
                 successfulCandidates.isNotEmpty() -> successfulCandidates
                 else -> errorCandidates
             }
