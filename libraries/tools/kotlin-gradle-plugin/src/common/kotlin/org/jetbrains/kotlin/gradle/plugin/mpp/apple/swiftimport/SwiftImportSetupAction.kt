@@ -27,12 +27,17 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_METADATA
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
@@ -44,7 +49,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSynthetic
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Platform
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.property
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.testTaskName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
@@ -88,6 +95,8 @@ internal fun Project.swiftPMDependenciesExtension(): SwiftImportExtension {
 internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     val kotlinExtension = project.multiplatformExtension
     val swiftPMImportExtension = swiftPMDependenciesExtension()
+
+    inheritSwiftPMDependenciesFromAppleCompilationDependencies()
 
     val productTypeProvider = provider {
         val hasDynamicFrameworks = kotlinExtension.targets.filterIsInstance<KotlinNativeTarget>().any { target ->
@@ -1612,17 +1621,37 @@ private fun swiftPMDependencies(swiftPmDependenciesMetadataClasspath: ArtifactVi
         }
 }
 
+private fun Project.inheritSwiftPMDependenciesFromAppleCompilationDependencies() {
+    project.launch {
+        val sourceSets = multiplatformExtension.awaitSourceSets()
+        val appleCompilations = sourceSets.mapNotNull {
+            val compilation = it.internal.compilations.singleOrNull() ?: return@mapNotNull null
+            if (compilation is KotlinNativeCompilation && compilation.konanTarget.family.isAppleFamily) {
+                return@mapNotNull compilation
+            }
+            if (compilation is KotlinSharedNativeCompilation && compilation.konanTargets.all { it.family.isAppleFamily }) {
+                return@mapNotNull compilation
+            }
+            null
+        }
+        val swiftPMDependenciesMetadata = swiftPMDependenciesMetadataConfiguration()
+        appleCompilations.map {
+            configurations.getByName(
+                it.compilation.internal.compileDependencyConfigurationName
+            )
+        }.forEach {
+            swiftPMDependenciesMetadata.extendsFrom(it)
+        }
+    }
+}
+
 private fun Project.swiftPMDependenciesMetadataConfiguration(): Configuration {
     val configurationName = "swiftPMDependenciesMetadataClasspath"
-    val implementationDependencies = configurations.getByName(multiplatformExtension.sourceSets.commonMain.get().implementationConfigurationName)
-    val apiDependencies = configurations.getByName(multiplatformExtension.sourceSets.commonMain.get().apiConfigurationName)
     return project.configurations.maybeCreateResolvable(configurationName) {
         // 1. Select metadataApiElements graph
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KOTLIN_METADATA))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-        extendsFrom(implementationDependencies)
-        extendsFrom(apiDependencies)
     }
 }
 
