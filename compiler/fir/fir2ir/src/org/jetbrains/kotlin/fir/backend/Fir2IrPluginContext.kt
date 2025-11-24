@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.backend.common.extensions.DeclarationFinder
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
@@ -89,127 +90,114 @@ class Fir2IrPluginContext(
         get() = c.annotationsFromPluginRegistrar
 
     private val lookupsWithoutSpecificFile = mutableSetOf<FqName>()
+    private val finderForBuiltins = Finder(fromFile = null)
 
-    @IrPluginContext.LookupWithoutUseSiteFile
-    override fun referenceClass(classId: ClassId): IrClassSymbol? {
-        return referenceClassImpl(classId, fromFile = null)
+    override fun finderForBuiltins(): DeclarationFinder {
+        return finderForBuiltins
     }
 
-    override fun referenceClass(classId: ClassId, fromFile: IrFile): IrClassSymbol? {
-        return referenceClassImpl(classId, fromFile)
+    override fun finderForSource(fromFile: IrFile): DeclarationFinder {
+        return Finder(fromFile)
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun referenceClassImpl(classId: ClassId, fromFile: IrFile?): IrClassSymbol? {
-        var classIdToSearch = classId
-        while (true) {
-            recordLookup(classIdToSearch.asSingleFqName(), fromFile)
-            val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classIdToSearch) ?: return null
-            when (firSymbol) {
-                is FirRegularClassSymbol -> return c.classifierStorage.getIrClassSymbol(firSymbol)
-                is FirTypeAliasSymbol -> {
-                    classIdToSearch = firSymbol.resolvedExpandedTypeRef.coneType.classId ?: return null
+    private inner class Finder(val fromFile: IrFile?) : DeclarationFinder {
+        override fun findClass(classId: ClassId): IrClassSymbol? {
+            var classIdToSearch = classId
+            while (true) {
+                recordLookup(classIdToSearch.asSingleFqName(), fromFile)
+                val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classIdToSearch) ?: return null
+                when (firSymbol) {
+                    is FirRegularClassSymbol -> return c.classifierStorage.getIrClassSymbol(firSymbol)
+                    is FirTypeAliasSymbol -> {
+                        classIdToSearch = firSymbol.resolvedExpandedTypeRef.coneType.classId ?: return null
+                    }
+                    is FirAnonymousObjectSymbol -> shouldNotBeCalled()
                 }
+            }
+        }
+
+        override fun findClassifier(classId: ClassId): IrSymbol? {
+            recordLookup(classId.asSingleFqName(), fromFile)
+            val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
+            return when (firSymbol) {
+                is FirRegularClassSymbol -> c.classifierStorage.getIrClassSymbol(firSymbol)
+                is FirTypeAliasSymbol -> c.classifierStorage.getIrTypeAliasSymbol(firSymbol)
                 is FirAnonymousObjectSymbol -> shouldNotBeCalled()
             }
         }
+
+        override fun findConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
+            recordLookup(classId.asSingleFqName(), fromFile)
+            return referenceCallableSymbols(
+                classId,
+                getCallablesFromScope = { getDeclaredConstructors() },
+                getCallablesFromProvider = { shouldNotBeCalled() },
+                Fir2IrDeclarationStorage::getIrConstructorSymbol,
+            )
+        }
+
+        override fun findFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol> {
+            recordLookup(callableId.asSingleFqName(), fromFile)
+            return referenceCallableSymbols(
+                callableId.classId,
+                getCallablesFromScope = { getFunctions(callableId.callableName) },
+                getCallablesFromProvider = { getTopLevelFunctionSymbols(callableId.packageName, callableId.callableName) },
+                Fir2IrDeclarationStorage::getIrFunctionSymbol
+            )
+        }
+
+        override fun findProperties(callableId: CallableId): Collection<IrPropertySymbol> {
+            recordLookup(callableId.asSingleFqName(), fromFile)
+            return referenceCallableSymbols(
+                callableId.classId,
+                getCallablesFromScope = { getProperties(callableId.callableName).filterIsInstance<FirPropertySymbol>() },
+                getCallablesFromProvider = { getTopLevelPropertySymbols(callableId.packageName, callableId.callableName) },
+                Fir2IrDeclarationStorage::getIrPropertySymbol
+            )
+        }
+
+        private inline fun <F : FirCallableSymbol<*>, S : IrSymbol, reified R : S> referenceCallableSymbols(
+            classId: ClassId?,
+            getCallablesFromScope: FirTypeScope.() -> Collection<F>,
+            getCallablesFromProvider: FirSymbolProvider.() -> Collection<F>,
+            irExtractor: Fir2IrDeclarationStorage.(F) -> S?,
+        ): Collection<R> {
+            val callables = if (classId != null) {
+                val expandedClass = symbolProvider.getClassLikeSymbolByClassId(classId)
+                    ?.fullyExpandedClass(c.session)
+                    ?: return emptyList()
+                with(c) { expandedClass.unsubstitutedScope().getCallablesFromScope() }
+            } else {
+                symbolProvider.getCallablesFromProvider()
+            }
+
+            return callables.mapNotNull { c.declarationStorage.irExtractor(it) }.filterIsInstance<R>()
+        }
     }
 
-    @IrPluginContext.LookupWithoutUseSiteFile
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
+    override fun referenceClass(classId: ClassId): IrClassSymbol? {
+        return finderForBuiltins().findClass(classId)
+    }
+
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
     override fun referenceClassifier(classId: ClassId): IrSymbol? {
-        return referenceClassifierImpl(classId, fromFile = null)
+        return finderForBuiltins().findClassifier(classId)
     }
 
-    override fun referenceClassifier(classId: ClassId, fromFile: IrFile): IrSymbol? {
-        return referenceClassifierImpl(classId, fromFile)
-    }
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun referenceClassifierImpl(classId: ClassId, fromFile: IrFile?): IrSymbol? {
-        recordLookup(classId.asSingleFqName(), fromFile)
-        val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
-        return when (firSymbol) {
-            is FirRegularClassSymbol -> c.classifierStorage.getIrClassSymbol(firSymbol)
-            is FirTypeAliasSymbol -> c.classifierStorage.getIrTypeAliasSymbol(firSymbol)
-            is FirAnonymousObjectSymbol -> shouldNotBeCalled()
-        }
-    }
-
-    @IrPluginContext.LookupWithoutUseSiteFile
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
-        return referenceConstructorsImpl(classId, fromFile = null)
+        return finderForBuiltins().findConstructors(classId)
     }
 
-    override fun referenceConstructors(classId: ClassId, fromFile: IrFile): Collection<IrConstructorSymbol> {
-        return referenceConstructorsImpl(classId, fromFile)
-    }
-
-    @IrPluginContext.LookupWithoutUseSiteFile
-    private fun referenceConstructorsImpl(classId: ClassId, fromFile: IrFile?): Collection<IrConstructorSymbol> {
-        recordLookup(classId.asSingleFqName(), fromFile)
-        return referenceCallableSymbols(
-            classId,
-            getCallablesFromScope = { getDeclaredConstructors() },
-            getCallablesFromProvider = { shouldNotBeCalled() },
-            Fir2IrDeclarationStorage::getIrConstructorSymbol
-        )
-    }
-
-    @IrPluginContext.LookupWithoutUseSiteFile
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
     override fun referenceFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol> {
-        return referenceFunctionsImpl(callableId, fromFile = null)
+        return finderForBuiltins().findFunctions(callableId)
     }
 
-    override fun referenceFunctions(callableId: CallableId, fromFile: IrFile): Collection<IrSimpleFunctionSymbol> {
-        return referenceFunctionsImpl(callableId, fromFile)
-    }
-
-    private fun referenceFunctionsImpl(callableId: CallableId, fromFile: IrFile?): Collection<IrSimpleFunctionSymbol> {
-        recordLookup(callableId.asSingleFqName(), fromFile)
-        return referenceCallableSymbols(
-            callableId.classId,
-            getCallablesFromScope = { getFunctions(callableId.callableName) },
-            getCallablesFromProvider = { getTopLevelFunctionSymbols(callableId.packageName, callableId.callableName) },
-            Fir2IrDeclarationStorage::getIrFunctionSymbol
-        )
-    }
-
-    @IrPluginContext.LookupWithoutUseSiteFile
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
     override fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol> {
-        return referencePropertiesImpl(callableId, fromFile = null)
-    }
-
-    override fun referenceProperties(callableId: CallableId, fromFile: IrFile): Collection<IrPropertySymbol> {
-        return referencePropertiesImpl(callableId, fromFile)
-    }
-
-    private fun referencePropertiesImpl(callableId: CallableId, fromFile: IrFile?): Collection<IrPropertySymbol> {
-        recordLookup(callableId.asSingleFqName(), fromFile)
-        return referenceCallableSymbols(
-            callableId.classId,
-            getCallablesFromScope = { getProperties(callableId.callableName).filterIsInstance<FirPropertySymbol>() },
-            getCallablesFromProvider = { getTopLevelPropertySymbols(callableId.packageName, callableId.callableName) },
-            Fir2IrDeclarationStorage::getIrPropertySymbol
-        )
-    }
-
-    private inline fun <F : FirCallableSymbol<*>, S : IrSymbol, reified R : S> referenceCallableSymbols(
-        classId: ClassId?,
-        getCallablesFromScope: FirTypeScope.() -> Collection<F>,
-        getCallablesFromProvider: FirSymbolProvider.() -> Collection<F>,
-        irExtractor: Fir2IrDeclarationStorage.(F) -> S?,
-    ): Collection<R> {
-        val callables = if (classId != null) {
-            val expandedClass = symbolProvider.getClassLikeSymbolByClassId(classId)
-                ?.fullyExpandedClass(c.session)
-                ?: return emptyList()
-            with(c) { expandedClass.unsubstitutedScope().getCallablesFromScope() }
-        } else {
-            symbolProvider.getCallablesFromProvider()
-        }
-
-        return callables.mapNotNull { c.declarationStorage.irExtractor(it) }.filterIsInstance<R>()
+        return finderForBuiltins().findProperties(callableId)
     }
 
     override fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile) {

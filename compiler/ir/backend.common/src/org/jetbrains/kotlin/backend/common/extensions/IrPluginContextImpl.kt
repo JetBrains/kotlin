@@ -108,24 +108,34 @@ open class IrPluginContextImpl(
         return symbols
     }
 
-    override fun referenceClass(classId: ClassId, fromFile: IrFile): IrClassSymbol? {
-        return referenceClass(classId)
+    private inner class Finder : DeclarationFinder {
+        override fun findClass(classId: ClassId): IrClassSymbol? {
+            return this@IrPluginContextImpl.referenceClass(classId)
+        }
+
+        override fun findClassifier(classId: ClassId): IrSymbol? {
+            return this@IrPluginContextImpl.referenceClassifier(classId)
+        }
+
+        override fun findConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
+            return this@IrPluginContextImpl.referenceConstructors(classId)
+        }
+
+        override fun findFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol> {
+            return this@IrPluginContextImpl.referenceFunctions(callableId)
+        }
+
+        override fun findProperties(callableId: CallableId): Collection<IrPropertySymbol> {
+            return this@IrPluginContextImpl.referenceProperties(callableId)
+        }
     }
 
-    override fun referenceConstructors(classId: ClassId, fromFile: IrFile): Collection<IrConstructorSymbol> {
-        return referenceConstructors(classId)
+    override fun finderForBuiltins(): DeclarationFinder {
+        return Finder()
     }
 
-    override fun referenceFunctions(callableId: CallableId, fromFile: IrFile): Collection<IrSimpleFunctionSymbol> {
-        return referenceFunctions(callableId)
-    }
-
-    override fun referenceProperties(callableId: CallableId, fromFile: IrFile): Collection<IrPropertySymbol> {
-        return referenceProperties(callableId)
-    }
-
-    override fun referenceClassifier(classId: ClassId, fromFile: IrFile): IrSymbol? {
-        return referenceClassifier(classId)
+    override fun finderForSource(fromFile: IrFile): DeclarationFinder {
+        return Finder()
     }
 
     @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
@@ -179,7 +189,7 @@ open class IrPluginContextImpl(
         }
     }
 
-    @IrPluginContext.LookupWithoutUseSiteFile
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
         val fqName = classId.asSingleFqName()
@@ -192,7 +202,7 @@ open class IrPluginContextImpl(
         }
     }
 
-    @IrPluginContext.LookupWithoutUseSiteFile
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceClassifier(classId: ClassId): IrSymbol? {
         val fqName = classId.asSingleFqName()
@@ -205,17 +215,17 @@ open class IrPluginContextImpl(
         }
     }
 
-    @IrPluginContext.LookupWithoutUseSiteFile
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
         return referenceConstructors(classId.asSingleFqName())
     }
 
-    @IrPluginContext.LookupWithoutUseSiteFile
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
     override fun referenceFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol> {
         return referenceFunctions(callableId.asSingleFqName())
     }
 
-    @IrPluginContext.LookupWithoutUseSiteFile
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
     override fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol> {
         return referenceProperties(callableId.asSingleFqName())
     }

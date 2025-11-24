@@ -182,7 +182,7 @@ class IrTextDumpHandler(
         ) {
             // irBuiltIns.symbolFinder sometimes returns unbound symbols in JVM K1 tests.
             // Use IrPluginContext for this instead, it works okay.
-            return (this as IrBackendInput.JvmIrBackendInput).backendInput.pluginContext?.referenceClass(classId)?.owner
+            return (this as IrBackendInput.JvmIrBackendInput).backendInput.pluginContext?.finderForBuiltins()?.findClass(classId)?.owner
                 ?: assertions.fail { "Can't find a class in external dependencies: $externalClassId" }
         }
 
