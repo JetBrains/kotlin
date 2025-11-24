@@ -11,6 +11,8 @@ function box(): string {
     const inner = new outer.Inner("World")
     const innerFromNumber = outer.Inner.fromNumber(1654)
     const secondInner = new inner.SecondLayerInner("!")
+    const subclassOfAbstractInner = new outer.SubclassOfAbstractInnerClass("42")
+    const subclassOfOpenInner = new outer.SubclassOfOpenInnerClass("24")
 
     assert(outer instanceof TestInner)
     assert(inner instanceof TestInner.Inner)
@@ -25,6 +27,12 @@ function box(): string {
 
     assert(secondInner.a == "!")
     assert(secondInner.concat == "Hello World!")
+
+    assert(subclassOfAbstractInner.a == "42")
+    assert(subclassOfAbstractInner.concat == "Hello 42")
+
+    assert(subclassOfOpenInner.a == "24")
+    assert(subclassOfOpenInner.concat == "Hello 24")
 
     return "OK";
 }

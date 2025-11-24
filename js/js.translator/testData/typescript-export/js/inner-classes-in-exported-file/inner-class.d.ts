@@ -13,6 +13,14 @@ declare namespace JS_TESTS {
             } & typeof TestInner.OpenInnerWithPublicConstructor;
             get OpenInnerWithProtectedConstructor(): {
             } & typeof TestInner.OpenInnerWithProtectedConstructor;
+            get AbstractInnerWithProtectedConstructor(): {
+            } & typeof TestInner.AbstractInnerWithProtectedConstructor;
+            get SubclassOfAbstractInnerClass(): {
+                new(a: string): TestInner.SubclassOfAbstractInnerClass;
+            } & typeof TestInner.SubclassOfAbstractInnerClass;
+            get SubclassOfOpenInnerClass(): {
+                new(a: string): TestInner.SubclassOfOpenInnerClass;
+            } & typeof TestInner.SubclassOfOpenInnerClass;
         }
         namespace TestInner {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -67,6 +75,36 @@ declare namespace JS_TESTS {
                 /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
                 namespace $metadata$ {
                     const constructor: abstract new () => OpenInnerWithProtectedConstructor;
+                }
+            }
+            abstract class AbstractInnerWithProtectedConstructor {
+                protected constructor($outer: foo.TestInner, a: string);
+                get a(): string;
+                abstract get concat(): string;
+            }
+            namespace AbstractInnerWithProtectedConstructor {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => AbstractInnerWithProtectedConstructor;
+                }
+            }
+            class SubclassOfAbstractInnerClass extends foo.TestInner.AbstractInnerWithProtectedConstructor.$metadata$.constructor {
+                private constructor();
+                get concat(): string;
+            }
+            namespace SubclassOfAbstractInnerClass {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => SubclassOfAbstractInnerClass;
+                }
+            }
+            class SubclassOfOpenInnerClass extends foo.TestInner.OpenInnerWithProtectedConstructor.$metadata$.constructor {
+                private constructor();
+            }
+            namespace SubclassOfOpenInnerClass {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => SubclassOfOpenInnerClass;
                 }
             }
         }

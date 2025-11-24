@@ -39,4 +39,14 @@ class TestInner(val a: String) {
 
         val concat: String = this@TestInner.a + this.a
     }
+
+    abstract inner class AbstractInnerWithProtectedConstructor protected constructor(val a: String) {
+        abstract val concat: String
+    }
+
+    inner class SubclassOfAbstractInnerClass(a: String) : AbstractInnerWithProtectedConstructor(a) {
+        override val concat: String = this@TestInner.a + this.a
+    }
+
+    inner class SubclassOfOpenInnerClass(a: String): OpenInnerWithProtectedConstructor(a)
 }
