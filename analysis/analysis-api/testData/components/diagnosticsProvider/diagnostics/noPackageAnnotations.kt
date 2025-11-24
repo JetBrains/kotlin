@@ -1,5 +1,4 @@
 // ISSUE: KT-82618
-// IGNORE_FIR
 // MODULE: lib
 
 // FILE: org/jspecify/annotations/NullMarked.java
