@@ -361,6 +361,7 @@ external public actual fun round(x: Double): Double
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Double]
+ * @sample samples.math.MathSamples.Doubles.abs
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_abs")
@@ -374,6 +375,8 @@ external public actual fun abs(x: Double): Double
  *
  * Special case:
  *   - `sign(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.signFun
  */
 @SinceKotlin("1.2")
 public actual fun sign(x: Double): Double = when {
@@ -470,6 +473,7 @@ external public fun Double.IEEErem(divisor: Double): Double
  *   - `NaN.absoluteValue` is `NaN`
  *
  * @see abs actual function
+ * @sample samples.math.MathSamples.Doubles.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Double.absoluteValue: Double
@@ -483,6 +487,8 @@ public actual val Double.absoluteValue: Double
  *
  * Special case:
  *   - `NaN.sign` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.sign
  */
 @SinceKotlin("1.2")
 public actual val Double.sign: Double
@@ -492,6 +498,8 @@ public actual val Double.sign: Double
  * Returns this value with the sign bit same as of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
+ *
+ * @sample samples.math.MathSamples.Doubles.withSignDouble
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_Double_withSign")
@@ -499,6 +507,8 @@ external public actual fun Double.withSign(sign: Double): Double
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * @sample samples.math.MathSamples.Doubles.withSignInt
  */
 @SinceKotlin("1.2")
 public actual fun Double.withSign(sign: Int): Double = withSign(sign.toDouble())
@@ -951,6 +961,7 @@ external public actual fun round(x: Float): Float
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Float]
+ * @sample samples.math.MathSamples.Floats.abs
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_absf")
@@ -964,6 +975,8 @@ external public actual fun abs(x: Float): Float
  *
  * Special case:
  *   - `sign(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.signFun
  */
 @SinceKotlin("1.2")
 public actual fun sign(x: Float): Float = when {
@@ -1061,6 +1074,7 @@ external public fun Float.IEEErem(divisor: Float): Float
  *   - `NaN.absoluteValue` is `NaN`
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Floats.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Float.absoluteValue: Float
@@ -1074,6 +1088,8 @@ public actual val Float.absoluteValue: Float
  *
  * Special case:
  *   - `NaN.sign` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.sign
  */
 @SinceKotlin("1.2")
 public actual val Float.sign: Float
@@ -1083,12 +1099,17 @@ public actual val Float.sign: Float
  * Returns this value with the sign bit same as of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
+ *
+ * @sample samples.math.MathSamples.Floats.withSignFloat
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_Float_withSign")
 external public actual fun Float.withSign(sign: Float): Float
+
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * @sample samples.math.MathSamples.Floats.withSignInt
  */
 @SinceKotlin("1.2")
 public actual fun Float.withSign(sign: Int): Float = withSign(sign.toFloat())
@@ -1195,6 +1216,7 @@ public actual fun Float.roundToLong(): Long = when {
  *   - `abs(Int.MIN_VALUE)` is `Int.MIN_VALUE` due to an overflow
  *
  * @see absoluteValue extension property for [Int]
+ * @sample samples.math.MathSamples.Ints.abs
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_absi")
@@ -1219,6 +1241,7 @@ public actual fun max(a: Int, b: Int): Int = if (a > b) a else b
  *   - `Int.MIN_VALUE.absoluteValue` is `Int.MIN_VALUE` due to an overflow
  *
  * @see abs actual function
+ * @sample samples.math.MathSamples.Ints.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Int.absoluteValue: Int
@@ -1229,6 +1252,8 @@ public actual val Int.absoluteValue: Int
  *   - `-1` if the value is negative,
  *   - `0` if the value is zero,
  *   - `1` if the value is positive
+ *
+ * @sample samples.math.MathSamples.Ints.sign
  */
 @SinceKotlin("1.2")
 public actual val Int.sign: Int
@@ -1247,6 +1272,7 @@ public actual val Int.sign: Int
  *   - `abs(Long.MIN_VALUE)` is `Long.MIN_VALUE` due to an overflow
  *
  * @see absoluteValue extension property for [Long]
+ * @sample samples.math.MathSamples.Longs.abs
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_absl")
@@ -1271,6 +1297,7 @@ public actual fun max(a: Long, b: Long): Long = if (a > b) a else b
  *   - `Long.MIN_VALUE.absoluteValue` is `Long.MIN_VALUE` due to an overflow
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Longs.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Long.absoluteValue: Long
@@ -1281,6 +1308,8 @@ public actual val Long.absoluteValue: Long
  *   - `-1` if the value is negative,
  *   - `0` if the value is zero,
  *   - `1` if the value is positive
+ *
+ * @sample samples.math.MathSamples.Longs.sign
  */
 @SinceKotlin("1.2")
 public actual val Long.sign: Int

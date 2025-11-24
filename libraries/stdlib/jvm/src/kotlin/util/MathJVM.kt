@@ -447,6 +447,7 @@ public actual inline fun round(x: Double): Double = nativeMath.rint(x)
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Double]
+ * @sample samples.math.MathSamples.Doubles.abs
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -460,6 +461,8 @@ public actual inline fun abs(x: Double): Double = nativeMath.abs(x)
  *
  * Special case:
  *   - `sign(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.signFun
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -551,6 +554,7 @@ public inline fun Double.IEEErem(divisor: Double): Double = nativeMath.IEEEremai
  *   - `NaN.absoluteValue` is `NaN`
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Doubles.absoluteValue
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -564,6 +568,8 @@ public actual inline val Double.absoluteValue: Double get() = nativeMath.abs(thi
  *
  * Special case:
  *   - `NaN.sign` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.sign
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -573,6 +579,8 @@ public actual inline val Double.sign: Double get() = nativeMath.signum(this)
  * Returns this value with the sign bit same as of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
+ *
+ * @sample samples.math.MathSamples.Doubles.withSignDouble
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -580,6 +588,8 @@ public actual inline fun Double.withSign(sign: Double): Double = nativeMath.copy
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * @sample samples.math.MathSamples.Doubles.withSignInt
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1017,6 +1027,7 @@ public actual inline fun round(x: Float): Float = nativeMath.rint(x.toDouble()).
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Float]
+ * @sample samples.math.MathSamples.Floats.abs
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1030,6 +1041,8 @@ public actual inline fun abs(x: Float): Float = nativeMath.abs(x)
  *
  * Special case:
  *   - `sign(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.signFun
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1120,6 +1133,7 @@ public inline fun Float.IEEErem(divisor: Float): Float = nativeMath.IEEEremainde
  *   - `NaN.absoluteValue` is `NaN`
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Floats.absoluteValue
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1133,6 +1147,8 @@ public actual inline val Float.absoluteValue: Float get() = nativeMath.abs(this)
  *
  * Special case:
  *   - `NaN.sign` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.sign
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1142,6 +1158,8 @@ public actual inline val Float.sign: Float get() = nativeMath.signum(this)
  * Returns this value with the sign bit same as of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
+ *
+ * @sample samples.math.MathSamples.Floats.withSignFloat
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1149,6 +1167,8 @@ public actual inline fun Float.withSign(sign: Float): Float = nativeMath.copySig
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * @sample samples.math.MathSamples.Floats.withSignInt
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1236,6 +1256,8 @@ public actual fun Float.roundToLong(): Long = toDouble().roundToLong()
  *   - `abs(Int.MIN_VALUE)` is `Int.MIN_VALUE` due to an overflow
  *
  * @see absoluteValue extension property for [Int]
+ *
+ * @sample samples.math.MathSamples.Ints.abs
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1262,6 +1284,7 @@ public actual inline fun max(a: Int, b: Int): Int = nativeMath.max(a, b)
  *   - `Int.MIN_VALUE.absoluteValue` is `Int.MIN_VALUE` due to an overflow
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Ints.absoluteValue
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1272,6 +1295,8 @@ public actual inline val Int.absoluteValue: Int get() = nativeMath.abs(this)
  *   - `-1` if the value is negative,
  *   - `0` if the value is zero,
  *   - `1` if the value is positive
+ *
+ * @sample samples.math.MathSamples.Ints.sign
  */
 @SinceKotlin("1.2")
 public actual val Int.sign: Int get() = Integer.signum(this)
@@ -1285,6 +1310,7 @@ public actual val Int.sign: Int get() = Integer.signum(this)
  *   - `abs(Long.MIN_VALUE)` is `Long.MIN_VALUE` due to an overflow
  *
  * @see absoluteValue extension property for [Long]
+ * @sample samples.math.MathSamples.Longs.abs
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1311,6 +1337,7 @@ public actual inline fun max(a: Long, b: Long): Long = nativeMath.max(a, b)
  *   - `Long.MIN_VALUE.absoluteValue` is `Long.MIN_VALUE` due to an overflow
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Longs.absoluteValue
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1321,6 +1348,8 @@ public actual inline val Long.absoluteValue: Long get() = nativeMath.abs(this)
  *   - `-1` if the value is negative,
  *   - `0` if the value is zero,
  *   - `1` if the value is positive
+ *
+ * @sample samples.math.MathSamples.Longs.sign
  */
 @SinceKotlin("1.2")
 public actual val Long.sign: Int get() = java.lang.Long.signum(this)

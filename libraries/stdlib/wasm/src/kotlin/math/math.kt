@@ -334,6 +334,7 @@ public actual fun round(x: Double): Double = kotlin.math.fdlibm.rint(x)
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Double]
+ * @sample samples.math.MathSamples.Doubles.abs
  */
 @SinceKotlin("1.2")
 public actual fun abs(x: Double): Double = kotlin.wasm.internal.wasm_f64_abs(x)
@@ -346,6 +347,8 @@ public actual fun abs(x: Double): Double = kotlin.wasm.internal.wasm_f64_abs(x)
  *
  * Special case:
  *   - `sign(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.signFun
  */
 @SinceKotlin("1.2")
 public actual fun sign(x: Double): Double = when {
@@ -416,6 +419,7 @@ public actual fun Double.pow(n: Int): Double = kotlin.math.fdlibm.__ieee754_pow(
  *   - `NaN.absoluteValue` is `NaN`
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Doubles.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Double.absoluteValue: Double get() = kotlin.wasm.internal.wasm_f64_abs(this)
@@ -428,6 +432,8 @@ public actual val Double.absoluteValue: Double get() = kotlin.wasm.internal.wasm
  *
  * Special case:
  *   - `NaN.sign` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.sign
  */
 @SinceKotlin("1.2")
 public actual val Double.sign: Double get() = sign(this)
@@ -436,12 +442,16 @@ public actual val Double.sign: Double get() = sign(this)
  * Returns this value with the sign bit same as of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
+ *
+ * @sample samples.math.MathSamples.Doubles.withSignDouble
  */
 @SinceKotlin("1.2")
 public actual fun Double.withSign(sign: Double): Double = kotlin.wasm.internal.wasm_f64_copysign(this, sign)
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * @sample samples.math.MathSamples.Doubles.withSignInt
  */
 @SinceKotlin("1.2")
 public actual fun Double.withSign(sign: Int): Double = kotlin.wasm.internal.wasm_f64_copysign(this, sign.toDouble())
@@ -864,6 +874,7 @@ public actual fun round(x: Float): Float = round(x.toDouble()).toFloat()
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Float]
+ * @sample samples.math.MathSamples.Floats.abs
  */
 @SinceKotlin("1.2")
 public actual fun abs(x: Float): Float = kotlin.wasm.internal.wasm_f32_abs(x)
@@ -876,6 +887,8 @@ public actual fun abs(x: Float): Float = kotlin.wasm.internal.wasm_f32_abs(x)
  *
  * Special case:
  *   - `sign(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.signFun
  */
 @SinceKotlin("1.2")
 public actual fun sign(x: Float): Float = when {
@@ -948,6 +961,7 @@ public actual fun Float.pow(n: Int): Float = kotlin.math.fdlibm.__ieee754_pow(th
  *   - `NaN.absoluteValue` is `NaN`
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Floats.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Float.absoluteValue: Float get() = kotlin.wasm.internal.wasm_f32_abs(this)
@@ -960,6 +974,8 @@ public actual val Float.absoluteValue: Float get() = kotlin.wasm.internal.wasm_f
  *
  * Special case:
  *   - `NaN.sign` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.sign
  */
 @SinceKotlin("1.2")
 public actual val Float.sign: Float get() = sign(this)
@@ -968,12 +984,16 @@ public actual val Float.sign: Float get() = sign(this)
  * Returns this value with the sign bit same as of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
+ *
+ * @sample samples.math.MathSamples.Floats.withSignFloat
  */
 @SinceKotlin("1.2")
 public actual fun Float.withSign(sign: Float): Float = kotlin.wasm.internal.wasm_f32_copysign(this, sign)
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * @sample samples.math.MathSamples.Floats.withSignInt
  */
 @SinceKotlin("1.2")
 public actual fun Float.withSign(sign: Int): Float = kotlin.wasm.internal.wasm_f32_copysign(this, sign.toFloat())
@@ -1029,6 +1049,7 @@ public actual fun Float.roundToLong(): Long = when {
  *   - `abs(Int.MIN_VALUE)` is `Int.MIN_VALUE` due to an overflow
  *
  * @see absoluteValue extension property for [Int]
+ * @sample samples.math.MathSamples.Ints.abs
  */
 @SinceKotlin("1.2")
 public actual fun abs(n: Int): Int = if (n < 0) -n else n
@@ -1052,6 +1073,7 @@ public actual fun max(a: Int, b: Int): Int = if (a > b) a else b
  *   - `Int.MIN_VALUE.absoluteValue` is `Int.MIN_VALUE` due to an overflow
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Ints.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Int.absoluteValue: Int get() = abs(this)
@@ -1061,6 +1083,8 @@ public actual val Int.absoluteValue: Int get() = abs(this)
  *   - `-1` if the value is negative,
  *   - `0` if the value is zero,
  *   - `1` if the value is positive
+ *
+ * @sample samples.math.MathSamples.Ints.sign
  */
 @SinceKotlin("1.2")
 public actual val Int.sign: Int get() = (this shr (Int.SIZE_BITS - 1)) or (-this ushr (Int.SIZE_BITS - 1))
@@ -1072,6 +1096,7 @@ public actual val Int.sign: Int get() = (this shr (Int.SIZE_BITS - 1)) or (-this
  *   - `abs(Long.MIN_VALUE)` is `Long.MIN_VALUE` due to an overflow
  *
  * @see absoluteValue extension property for [Long]
+ * @sample samples.math.MathSamples.Longs.abs
  */
 @SinceKotlin("1.2")
 public actual fun abs(n: Long): Long = if (n < 0) -n else n
@@ -1095,6 +1120,7 @@ public actual fun max(a: Long, b: Long): Long = if (a >= b) a else b
  *   - `Long.MIN_VALUE.absoluteValue` is `Long.MIN_VALUE` due to an overflow
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Longs.absoluteValue
  */
 @SinceKotlin("1.2")
 public actual val Long.absoluteValue: Long get() = abs(this)
@@ -1104,6 +1130,8 @@ public actual val Long.absoluteValue: Long get() = abs(this)
  *   - `-1` if the value is negative,
  *   - `0` if the value is zero,
  *   - `1` if the value is positive
+ *
+ * @sample samples.math.MathSamples.Longs.sign
  */
 @SinceKotlin("1.2")
 public actual val Long.sign: Int get() = ((this shr (Long.SIZE_BITS - 1)) or (-this ushr (Long.SIZE_BITS - 1))).toInt()

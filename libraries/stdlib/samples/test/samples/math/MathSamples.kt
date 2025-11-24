@@ -133,7 +133,7 @@ class MathSamples {
             assertPrints(sign(-0.0), "-0.0")
         }
 
-        @Test
+        @Sample
         fun naturalLogarithm() {
             assertPrints(ln(E), "1.0")
             assertPrints(ln(1.0), "0.0")
@@ -146,7 +146,7 @@ class MathSamples {
             assertPrints(ln(Double.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logBase2() {
             assertPrints(log2(2.0), "1.0")
             assertPrints(log2(1.0), "0.0")
@@ -159,7 +159,7 @@ class MathSamples {
             assertPrints(log2(Double.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logBase10() {
             assertPrints(log10(10.0), "1.0")
             assertPrints(log10(1.0), "0.0")
@@ -172,7 +172,7 @@ class MathSamples {
             assertPrints(log10(Double.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logarithm() {
             assertPrints(log(64.0, 4.0), "3.0")
             assertPrints(log(100.0, 10.0), "2.0")
@@ -187,7 +187,7 @@ class MathSamples {
             assertPrints(log(0.0, 0.5), "Infinity")
         }
 
-        @Test
+        @Sample
         fun naturalLogarithmPlusOne() {
             // ln1p has better precision for arguments close to zero
             assertTrue(ln1p(1e-20) > 0.0)
@@ -200,6 +200,42 @@ class MathSamples {
             assertPrints(ln1p(-2.0), "NaN")
             assertPrints(ln1p(-1.0), "-Infinity")
             assertPrints(ln1p(Double.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun abs() {
+            assertPrints(abs(3.14), "3.14")
+            assertPrints(abs(-3.14), "3.14")
+            assertPrints(abs(-0.0), "0.0")
+            assertPrints(abs(Double.NEGATIVE_INFINITY), "Infinity")
+            assertPrints(abs(Double.NaN), "NaN")
+        }
+
+        @Sample
+        fun absoluteValue() {
+            assertPrints(3.14.absoluteValue, "3.14")
+            assertPrints((-3.14).absoluteValue, "3.14")
+            assertPrints((-0.0).absoluteValue, "0.0")
+            assertPrints(Double.NEGATIVE_INFINITY.absoluteValue, "Infinity")
+            assertPrints(Double.NaN.absoluteValue, "NaN")
+        }
+
+        @Sample
+        fun withSignDouble() {
+            assertPrints(3.14.withSign(3.14), "3.14")
+            assertPrints(3.14.withSign(-3.14), "-3.14")
+            assertPrints((-3.14).withSign(-3.14), "-3.14")
+            assertPrints((-3.14).withSign(0.0), "3.14")
+            assertPrints(Double.NaN.withSign(-1.0), "NaN")
+        }
+
+        @Sample
+        fun withSignInt() {
+            assertPrints(3.14.withSign(100), "3.14")
+            assertPrints(3.14.withSign(-100), "-3.14")
+            assertPrints((-3.14).withSign(-100), "-3.14")
+            assertPrints((-3.14).withSign(0), "3.14")
+            assertPrints(Double.NaN.withSign(-1), "NaN")
         }
     }
 
@@ -325,7 +361,7 @@ class MathSamples {
             assertPrints(sign(-0.0f), "-0.0")
         }
 
-        @Test
+        @Sample
         fun naturalLogarithm() {
             assertTrue(abs(ln(E.toFloat()) - 1.0f) < 1e7f)
             assertPrints(ln(1.0f), "0.0")
@@ -338,7 +374,7 @@ class MathSamples {
             assertPrints(ln(Float.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logBase2() {
             assertPrints(log2(2.0f), "1.0")
             assertPrints(log2(1.0f), "0.0")
@@ -351,7 +387,7 @@ class MathSamples {
             assertPrints(log2(Float.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logBase10() {
             assertPrints(log10(10.0f), "1.0")
             assertPrints(log10(1.0f), "0.0")
@@ -364,7 +400,7 @@ class MathSamples {
             assertPrints(log10(Float.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logarithm() {
             assertPrints(log(9.0f, 3.0f), "2.0")
             assertPrints(log(1000.0f, 10.0f), "3.0")
@@ -379,7 +415,7 @@ class MathSamples {
             assertPrints(log(0.0f, 0.5f), "Infinity")
         }
 
-        @Test
+        @Sample
         fun naturalLogarithmPlusOne() {
             // ln1p has better precision for arguments close to zero
             assertTrue(ln1p(1e-20f) > 0.0f)
@@ -392,6 +428,96 @@ class MathSamples {
             assertPrints(ln1p(-2.0f), "NaN")
             assertPrints(ln1p(-1.0f), "-Infinity")
             assertPrints(ln1p(Float.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun abs() {
+            assertPrints(abs(3.14f), "3.14")
+            assertPrints(abs(-3.14f), "3.14")
+            assertPrints(abs(-0.0f), "0.0")
+            assertPrints(abs(Float.NEGATIVE_INFINITY), "Infinity")
+            assertPrints(abs(Float.NaN), "NaN")
+        }
+
+        @Sample
+        fun absoluteValue() {
+            assertPrints(3.14f.absoluteValue, "3.14")
+            assertPrints((-3.14f).absoluteValue, "3.14")
+            assertPrints((-0.0f).absoluteValue, "0.0")
+            assertPrints(Float.NEGATIVE_INFINITY.absoluteValue, "Infinity")
+            assertPrints(Float.NaN.absoluteValue, "NaN")
+        }
+
+        @Sample
+        fun withSignFloat() {
+            assertPrints(3.14f.withSign(3.14f), "3.14")
+            assertPrints(3.14f.withSign(-3.14f), "-3.14")
+            assertPrints((-3.14f).withSign(-3.14f), "-3.14")
+            assertPrints((-3.14f).withSign(0.0f), "3.14")
+            assertPrints(Float.NaN.withSign(-1.0f), "NaN")
+        }
+
+        @Sample
+        fun withSignInt() {
+            assertPrints(3.14f.withSign(100), "3.14")
+            assertPrints(3.14f.withSign(-100), "-3.14")
+            assertPrints((-3.14f).withSign(-100), "-3.14")
+            assertPrints((-3.14f).withSign(0), "3.14")
+            assertPrints(Float.NaN.withSign(-1), "NaN")
+        }
+    }
+
+    class Longs {
+        @Sample
+        fun abs() {
+            assertPrints(abs(42L), "42")
+            assertPrints(abs(-42L), "42")
+            // Special case: can't get the absolute value due to an overflow
+            assertTrue(abs(Long.MIN_VALUE) == Long.MIN_VALUE)
+        }
+
+        @Sample
+        fun absoluteValue() {
+            assertPrints(42L.absoluteValue, "42")
+            assertPrints((-42L).absoluteValue, "42")
+            // Special case: can't get the absolute value due to an overflow
+            assertTrue(Long.MIN_VALUE.absoluteValue == Long.MIN_VALUE)
+        }
+
+        @Sample
+        fun sign() {
+            assertPrints(0L.sign, "0")
+            assertPrints(9000L.sign, "1")
+            assertPrints((-9000L).sign, "-1")
+            assertPrints(Long.MAX_VALUE.sign, "1")
+            assertPrints(Long.MIN_VALUE.sign, "-1")
+        }
+    }
+
+    class Ints {
+        @Sample
+        fun abs() {
+            assertPrints(abs(42), "42")
+            assertPrints(abs(-42), "42")
+            // Special case: can't get the absolute value due to an overflow
+            assertTrue(abs(Int.MIN_VALUE) == Int.MIN_VALUE)
+        }
+
+        @Sample
+        fun absoluteValue() {
+            assertPrints(42.absoluteValue, "42")
+            assertPrints((-42).absoluteValue, "42")
+            // Special case: can't get the absolute value due to an overflow
+            assertTrue(Int.MIN_VALUE.absoluteValue == Int.MIN_VALUE)
+        }
+
+        @Sample
+        fun sign() {
+            assertPrints(0.sign, "0")
+            assertPrints(9000.sign, "1")
+            assertPrints((-9000).sign, "-1")
+            assertPrints(Int.MAX_VALUE.sign, "1")
+            assertPrints(Int.MIN_VALUE.sign, "-1")
         }
     }
 }

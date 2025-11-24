@@ -343,6 +343,7 @@ public expect fun round(x: Double): Double
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Double]
+ * @sample samples.math.MathSamples.Doubles.abs
  */
 @SinceKotlin("1.2")
 public expect fun abs(x: Double): Double
@@ -425,6 +426,7 @@ public expect fun Double.pow(n: Int): Double
  *   - `NaN.absoluteValue` is `NaN`
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Doubles.absoluteValue
  */
 @SinceKotlin("1.2")
 public expect val Double.absoluteValue: Double
@@ -448,12 +450,16 @@ public expect val Double.sign: Double
  * Returns this value with the sign bit same as of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
+ *
+ * @sample samples.math.MathSamples.Doubles.withSignDouble
  */
 @SinceKotlin("1.2")
 public expect fun Double.withSign(sign: Double): Double
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * @sample samples.math.MathSamples.Doubles.withSignInt
  */
 @SinceKotlin("1.2")
 public expect fun Double.withSign(sign: Int): Double
@@ -850,6 +856,7 @@ public expect fun round(x: Float): Float
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Float]
+ * @sample samples.math.MathSamples.Floats.absoluteValue
  */
 @SinceKotlin("1.2")
 public expect fun abs(x: Float): Float
@@ -935,6 +942,7 @@ public expect fun Float.pow(n: Int): Float
  *   - `NaN.absoluteValue` is `NaN`
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Floats.absoluteValue
  */
 @SinceKotlin("1.2")
 public expect val Float.absoluteValue: Float
@@ -958,12 +966,16 @@ public expect val Float.sign: Float
  * Returns this value with the sign bit same as of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
+ *
+ * @sample samples.math.MathSamples.Floats.withSignFloat
  */
 @SinceKotlin("1.2")
 public expect fun Float.withSign(sign: Float): Float
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * @sample samples.math.MathSamples.Floats.withSignInt
  */
 @SinceKotlin("1.2")
 public expect fun Float.withSign(sign: Int): Float
@@ -1010,6 +1022,7 @@ public expect fun Float.roundToLong(): Long
  *   - `abs(Int.MIN_VALUE)` is `Int.MIN_VALUE` due to an overflow
  *
  * @see absoluteValue extension property for [Int]
+ * @sample samples.math.MathSamples.Ints.abs
  */
 @SinceKotlin("1.2")
 public expect fun abs(n: Int): Int
@@ -1033,6 +1046,7 @@ public expect fun max(a: Int, b: Int): Int
  *   - `Int.MIN_VALUE.absoluteValue` is `Int.MIN_VALUE` due to an overflow
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Ints.absoluteValue
  */
 @SinceKotlin("1.2")
 public expect val Int.absoluteValue: Int
@@ -1042,6 +1056,8 @@ public expect val Int.absoluteValue: Int
  *   - `-1` if the value is negative,
  *   - `0` if the value is zero,
  *   - `1` if the value is positive
+ *
+ * @sample samples.math.MathSamples.Ints.sign
  */
 @SinceKotlin("1.2")
 public expect val Int.sign: Int
@@ -1055,6 +1071,7 @@ public expect val Int.sign: Int
  *   - `abs(Long.MIN_VALUE)` is `Long.MIN_VALUE` due to an overflow
  *
  * @see absoluteValue extension property for [Long]
+ * @sample samples.math.MathSamples.Longs.abs
  */
 @SinceKotlin("1.2")
 public expect fun abs(n: Long): Long
@@ -1078,6 +1095,7 @@ public expect fun max(a: Long, b: Long): Long
  *   - `Long.MIN_VALUE.absoluteValue` is `Long.MIN_VALUE` due to an overflow
  *
  * @see abs function
+ * @sample samples.math.MathSamples.Longs.absoluteValue
  */
 @SinceKotlin("1.2")
 public expect val Long.absoluteValue: Long
@@ -1087,6 +1105,8 @@ public expect val Long.absoluteValue: Long
  *   - `-1` if the value is negative,
  *   - `0` if the value is zero,
  *   - `1` if the value is positive
+ *
+ * @sample samples.math.MathSamples.Longs.sign
  */
 @SinceKotlin("1.2")
 public expect val Long.sign: Int
