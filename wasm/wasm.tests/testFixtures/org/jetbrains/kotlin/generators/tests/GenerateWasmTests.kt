@@ -78,7 +78,6 @@ fun main(args: Array<String>) {
                 model(
                     relativeRootPath = "testsWithAnyBackend",
                     pattern = "^([^_](.+))\\.kt$",
-                    //excludedPattern = excludedFirTestdataPattern, //    val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
                 )
 
             }
