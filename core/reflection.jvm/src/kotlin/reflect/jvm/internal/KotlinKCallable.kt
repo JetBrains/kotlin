@@ -10,7 +10,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.ThrowingCaller
 
-internal abstract class KotlinKCallable<out R> : ReflectKCallable<R> {
+internal abstract class KotlinKCallable<out R> : ReflectKCallableImpl<R>() {
     abstract val modality: Modality
     abstract override val rawBoundReceiver: Any?
 
@@ -33,10 +33,6 @@ internal abstract class KotlinKCallable<out R> : ReflectKCallable<R> {
         }
 
     abstract override val annotations: List<Annotation>
-
-    private val _absentArguments = ReflectProperties.lazySoft(::computeAbsentArguments)
-
-    override fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
 
     override val caller: Caller<*>
         get() {
