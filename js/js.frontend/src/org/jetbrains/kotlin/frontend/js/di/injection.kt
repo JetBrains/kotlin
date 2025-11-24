@@ -58,6 +58,7 @@ fun createContainerForJS(
     println("8")
     println("9")
     println("10")
+    println("11")
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs", analyzerServices) {
         configureModule(
             moduleContext,
