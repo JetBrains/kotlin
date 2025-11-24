@@ -77,7 +77,11 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 
 
-    private fun exportFunction(function: IrSimpleFunction, specializedType: ExportedType? = null): ExportedDeclaration? {
+    private fun exportFunction(
+        function: IrSimpleFunction,
+        specializedType: ExportedType? = null,
+        isFactoryPropertyForInnerClass: Boolean = false,
+    ): ExportedDeclaration? {
         return when (val exportability = function.exportability(context)) {
             is Exportability.NotNeeded, is Exportability.Implicit -> null
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
@@ -85,6 +89,11 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 val parent = function.parent
                 val realOverrideTarget = function.realOverrideTargetOrNull
                 val isStatic = function.isStaticMethod
+                val isInnerClassMember = parent is IrClass && parent.isInner
+                if (isStatic && isInnerClassMember && !isFactoryPropertyForInnerClass) {
+                    // Static members of inner classes should only be generated in the corresponding factory property of the outer class
+                    return null
+                }
                 ExportedFunction(
                     realOverrideTarget
                         ?.getJsSymbolForOverriddenDeclaration()
@@ -93,12 +102,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     returnType = specializedType ?: exportType(function.returnType, function),
                     typeParameters = function.typeParameters.memoryOptimizedMap { exportTypeParameter(it, function) },
                     isMember = parent is IrClass,
-                    isStatic = isStatic,
+                    isStatic = isStatic && !isFactoryPropertyForInnerClass,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
                     isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
                     parameters = function.nonDispatchParameters
                         .filter { it.shouldBeExported() }
-                        .butIf(isStatic && function.parentClassOrNull?.isInner == true) {
+                        .butIf(isStatic && isInnerClassMember) {
                             // Remove $outer argument from secondary constructors of inner classes
                             it.drop(1)
                         }
@@ -160,7 +169,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     private val IrValueParameter.hasDefaultValue: Boolean
         get() = origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
 
-    private fun exportProperty(property: IrProperty): ExportedDeclaration? {
+    private fun exportProperty(property: IrProperty, isFactoryPropertyForInnerClass: Boolean = false): ExportedDeclaration? {
         for (accessor in listOfNotNull(property.getter, property.setter)) {
             // Frontend will report an error on an attempt to export an extension property.
             // Just to be safe, filter out such properties here as well.
@@ -171,17 +180,24 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             }
         }
 
-        return exportPropertyUnsafely(property)
+        return exportPropertyUnsafely(property, isFactoryPropertyForInnerClass = isFactoryPropertyForInnerClass)
     }
 
     private fun exportPropertyUnsafely(
         property: IrProperty,
-        specializeType: ExportedType? = null
-    ): ExportedDeclaration {
+        specializeType: ExportedType? = null,
+        isFactoryPropertyForInnerClass: Boolean = false,
+    ): ExportedDeclaration? {
         val parentClass = property.parent as? IrClass
         val isOptional = property.isEffectivelyExternal() &&
                 property.parent is IrClass &&
                 property.getter?.returnType?.isNullable() == true
+
+        val isStatic = property.isStaticProperty
+        if (isStatic && property.parentClassOrNull?.isInner == true && !isFactoryPropertyForInnerClass) {
+            // Static members of inner classes should only be generated in the corresponding factory property of the outer class
+            return null
+        }
 
         return ExportedProperty(
             name = property.getExportedIdentifier(),
@@ -193,7 +209,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             isField = parentClass?.isInterface == true,
             isObjectGetter = property.getter?.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION,
             isOptional = isOptional,
-            isStatic = (property.getter ?: property.setter)?.isStaticMethodOfClass == true,
+            isStatic = isStatic && !isFactoryPropertyForInnerClass,
         )
     }
 
@@ -390,33 +406,38 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
      */
     private fun IrClass.toFactoryPropertyForInnerClass(): ExportedProperty {
         val innerClassReference = typeScriptInnerClassReference()
-        val allPublicConstructors = constructors
-            .mapNotNull { exportConstructor(it, isFactoryPropertyForInnerClass = true) }
-            .filterNot { it.isProtected }
-            .map {
-                ExportedConstructSignature(
-                    parameters = it.parameters.drop(1),
-                    returnType = ExportedType.TypeParameter(innerClassReference),
-                )
-            }
-            .toList()
+        val typeMembers: List<ExportedDeclaration> = buildList {
+            forEachExportedMember(context) { candidate, _ ->
+                val exported = when (candidate) {
+                    is IrConstructor -> {
+                        exportConstructor(candidate, isFactoryPropertyForInnerClass = true)
+                            ?.let {
+                                ExportedConstructSignature(
+                                    parameters = it.parameters.drop(1),
+                                    returnType = ExportedType.TypeParameter(innerClassReference),
+                                    isProtected = it.isProtected,
+                                )
+                            }
+                    }
+                    is IrSimpleFunction if candidate.isStaticMethod -> exportFunction(candidate, isFactoryPropertyForInnerClass = true)
+                    is IrProperty if candidate.isStaticProperty -> exportProperty(candidate, isFactoryPropertyForInnerClass = true)
+                    else -> null
+                }?.withAttributesFor(candidate)
 
-        val type = ExportedType.IntersectionType(
-            ExportedType.InlineInterfaceType(allPublicConstructors),
-            ExportedType.TypeOf(
-                ExportedType.ClassType(
-                    innerClassReference,
-                    emptyList(),
-                    isObject = false,
-                    isExternal,
-                    classId,
-                )
-            )
-        )
+                if (exported != null && !exported.isProtected) {
+                    add(exported)
+                }
+            }
+        }
 
         val name = getExportedIdentifier()
 
-        return ExportedProperty(name = name, type = type, mutable = false, isMember = true)
+        return ExportedProperty(
+            name = name,
+            type = ExportedType.InlineInterfaceType(typeMembers),
+            mutable = false,
+            isMember = true,
+        )
     }
 
     private fun IrClass.shouldNotBeImplemented(): Boolean {
@@ -765,6 +786,9 @@ private val IrClassifierSymbol.isInterface
 private val IrFunction.isStaticMethod: Boolean
     get() = isEs6ConstructorReplacement || isStaticMethodOfClass
 
+private val IrProperty.isStaticProperty: Boolean
+    get() = (getter ?: setter)?.isStaticMethodOfClass == true
+
 private fun IrDeclaration.isExportedImplicitlyOrExplicitly(context: JsIrBackendContext): Boolean {
     val candidate = getExportCandidate(this) ?: return false
     return shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context, this)
@@ -785,4 +809,3 @@ private fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclara
 
     return this
 }
-

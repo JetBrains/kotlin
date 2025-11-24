@@ -71,7 +71,7 @@ declare namespace JS_TESTS {
             constructor();
             get I(): {
                 new(i: bigint): D.I;
-            } & typeof D.I;
+            };
         }
         namespace D {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.name.ClassId
 
 public sealed class ExportedDeclaration {
     public val attributes: MutableSet<ExportedAttribute> = mutableSetOf()
+    public open val isProtected: Boolean
+        get() = false
 }
 
 public sealed class ExportedAttribute {
@@ -42,20 +44,21 @@ public data class ExportedFunction(
     val isMember: Boolean = false,
     val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
-    val isProtected: Boolean,
+    override val isProtected: Boolean,
 ) : ExportedDeclaration()
 
 public data class ExportedConstructor(
     val parameters: List<ExportedParameter>,
     val visibility: ExportedVisibility
 ) : ExportedDeclaration() {
-    val isProtected: Boolean
+    override val isProtected: Boolean
         get() = visibility == ExportedVisibility.PROTECTED
 }
 
 public data class ExportedConstructSignature(
     val parameters: List<ExportedParameter>,
     val returnType: ExportedType,
+    override val isProtected: Boolean,
 ) : ExportedDeclaration()
 
 public data class ExportedProperty(
@@ -65,7 +68,7 @@ public data class ExportedProperty(
     val isMember: Boolean = false,
     val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
-    val isProtected: Boolean = false,
+    override val isProtected: Boolean = false,
     val isField: Boolean = false,
     val isObjectGetter: Boolean = false,
     val isOptional: Boolean = false,

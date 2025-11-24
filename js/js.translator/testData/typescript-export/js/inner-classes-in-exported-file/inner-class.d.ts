@@ -7,20 +7,22 @@ declare namespace JS_TESTS {
             get a(): string;
             get Inner(): {
                 new(a: string): TestInner.Inner;
-            } & typeof TestInner.Inner;
+                fromNumber(a: number): foo.TestInner.Inner;
+            };
             get OpenInnerWithPublicConstructor(): {
                 new(a: string): TestInner.OpenInnerWithPublicConstructor;
-            } & typeof TestInner.OpenInnerWithPublicConstructor;
+                fromNumber(a: number): foo.TestInner.OpenInnerWithPublicConstructor;
+            };
             get OpenInnerWithProtectedConstructor(): {
-            } & typeof TestInner.OpenInnerWithProtectedConstructor;
+            };
             get AbstractInnerWithProtectedConstructor(): {
-            } & typeof TestInner.AbstractInnerWithProtectedConstructor;
+            };
             get SubclassOfAbstractInnerClass(): {
                 new(a: string): TestInner.SubclassOfAbstractInnerClass;
-            } & typeof TestInner.SubclassOfAbstractInnerClass;
+            };
             get SubclassOfOpenInnerClass(): {
                 new(a: string): TestInner.SubclassOfOpenInnerClass;
-            } & typeof TestInner.SubclassOfOpenInnerClass;
+            };
         }
         namespace TestInner {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -31,10 +33,9 @@ declare namespace JS_TESTS {
                 private constructor();
                 get a(): string;
                 get concat(): string;
-                static fromNumber(a: number): foo.TestInner.Inner;
                 get SecondLayerInner(): {
                     new(a: string): TestInner.Inner.SecondLayerInner;
-                } & typeof TestInner.Inner.SecondLayerInner;
+                };
             }
             namespace Inner {
                 /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -56,7 +57,6 @@ declare namespace JS_TESTS {
             class OpenInnerWithPublicConstructor {
                 protected constructor($outer: foo.TestInner, a: string);
                 get a(): string;
-                static fromNumber(a: number): foo.TestInner.OpenInnerWithPublicConstructor;
                 get concat(): string;
             }
             namespace OpenInnerWithPublicConstructor {
@@ -68,7 +68,6 @@ declare namespace JS_TESTS {
             class OpenInnerWithProtectedConstructor {
                 protected constructor($outer: foo.TestInner, a: string);
                 get a(): string;
-                protected static fromNumber(a: number): foo.TestInner.OpenInnerWithProtectedConstructor;
                 get concat(): string;
             }
             namespace OpenInnerWithProtectedConstructor {

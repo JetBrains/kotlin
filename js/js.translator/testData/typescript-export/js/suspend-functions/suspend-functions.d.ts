@@ -37,7 +37,7 @@ declare namespace JS_TESTS {
             constructor();
             get Inner(): {
                 new(): WithSuspendFunInsideInnerClass.Inner;
-            } & typeof WithSuspendFunInsideInnerClass.Inner;
+            };
         }
         namespace WithSuspendFunInsideInnerClass {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
