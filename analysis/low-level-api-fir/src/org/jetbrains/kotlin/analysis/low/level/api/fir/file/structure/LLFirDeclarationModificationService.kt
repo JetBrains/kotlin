@@ -322,6 +322,30 @@ private sealed class ChangeType {
     object OutOfBlock : ChangeType()
     object Invisible : ChangeType()
 
+    /**
+     * In-block modification is a source code modification that doesn't affect the state of other non-local declarations.
+     *
+     * #### Example 1
+     *
+     * ```
+     * val x: Int = 10<caret>
+     * val z = x
+     * ```
+     *
+     * If we change `10` to `"str"`, it would not change the type of `z`, so it is an **in-block-modification**.
+     *
+     * #### Example 2
+     *
+     * ```
+     * val x = 10<caret>
+     * val z = x
+     * ```
+     *
+     * If we change the initializer of `x` to `"str"`, as in the first example,
+     * the return type of `x` will become `String` instead of the initial `Int`.
+     * This will change the return type of `z` as it does not have an explicit type.
+     * So, it is an **out-of-block modification**.
+     */
     class InBlock(val blockOwner: KtAnnotated, val project: Project) : ChangeType() {
         val ktModule: KaModule by lazy(LazyThreadSafetyMode.NONE) {
             KotlinProjectStructureProvider.getModule(project, blockOwner, useSiteModule = null)
