@@ -473,6 +473,18 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
     }
 
     compilerArgument {
+        name = "Xenable-suspend-function-exporting"
+        compilerName = "allowExportingSuspendFunctions"
+        description = "Enable exporting suspend functions to JavaScript/TypeScript.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(Enables(LanguageFeature.JsAllowExportingSuspendFunctions))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xfake-override-validator"
         description = "Enable the IR fake override validator.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

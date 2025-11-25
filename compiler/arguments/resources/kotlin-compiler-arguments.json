@@ -7382,6 +7382,37 @@
                                                 }
                                             },
                                             {
+                                                "name": "Xenable-suspend-function-exporting",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Enable exporting suspend functions to JavaScript/TypeScript.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.3.0",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
                                                 "name": "Xes-arrow-functions",
                                                 "shortName": null,
                                                 "deprecatedName": null,
