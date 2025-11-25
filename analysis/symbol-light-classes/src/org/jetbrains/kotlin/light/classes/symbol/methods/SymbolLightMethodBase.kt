@@ -13,6 +13,7 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
@@ -116,7 +117,7 @@ internal abstract class SymbolLightMethodBase(
         symbol.getJvmNameFromAnnotation()?.let { return it }
 
         if (containingClass is KtLightClassForFacade) return defaultName
-        val sourceModule = ktModule as? KaSourceModule ?: return defaultName
+        val sourceModule = ktModule.baseContextModuleOrSelf as? KaSourceModule ?: return defaultName
 
         if (symbol.hasPublishedApiAnnotation()) return defaultName
         if (symbol.visibility != KaSymbolVisibility.INTERNAL) return defaultName
