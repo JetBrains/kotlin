@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.util.TaskInstantiationTrackingBuildService
 import org.jetbrains.kotlin.gradle.util.WithSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
-import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
@@ -169,9 +168,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
     fun sourceSetDependencyProjectMode(gradleVersion: GradleVersion) {
         project(
             cinteropProjectName,
-            gradleVersion,
-            // KT-77812 MetadataDependencyTransformationTaskInputs is not (always) compatible with Gradle Isolated Projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            gradleVersion
         ) {
             setUp()
             reportSourceSetCommonizerDependencies(
@@ -436,9 +433,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
     fun upToDateTransformationsAddingRemovingTargetProjectMode(gradleVersion: GradleVersion) {
         project(
             cinteropProjectName,
-            gradleVersion,
-            // KT-77812 MetadataDependencyTransformationTaskInputs is not (always) compatible with Gradle Isolated Projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            gradleVersion
         ) {
             setUp()
             testUpToDateTransformationOnRemovingOrAddingTargets(projectDependencyMode)
@@ -481,9 +476,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
     fun kt50952UpToDateChangingConsumerTargetsProjectMode(gradleVersion: GradleVersion) {
         project(
             cinteropProjectNameForKt50952,
-            gradleVersion,
-            // KT-77812 MetadataDependencyTransformationTaskInputs is not (always) compatible with Gradle Isolated Projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            gradleVersion
         ) {
             testUpToDateOnChangingConsumerTargets(projectDependencyMode)
         }

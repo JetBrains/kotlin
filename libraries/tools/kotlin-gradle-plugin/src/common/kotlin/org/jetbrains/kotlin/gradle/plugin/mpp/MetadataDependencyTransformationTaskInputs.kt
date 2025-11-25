@@ -136,10 +136,9 @@ internal class MetadataDependencyTransformationTaskInputs(
             it.name to project.configurations.getByName(it.compileDependencyConfigurationName)
                 .allDependencies
                 .map { dependency ->
-                    if (dependency is ProjectDependency && keepProjectDependencies) {
-                        dependency.compatAccessor(project).dependencyProject().path
-                    } else {
-                        "${dependency.name}:${dependency.group}:${dependency.version}"
+                    when (dependency) {
+                        is ProjectDependency -> dependency.compatAccessor(project).dependencyProject().path
+                        else -> "${dependency.name}:${dependency.group}:${dependency.version}"
                     }
                 }
                 .toSet()
