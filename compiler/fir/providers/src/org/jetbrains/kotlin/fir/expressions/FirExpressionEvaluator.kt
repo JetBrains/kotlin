@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -246,6 +248,21 @@ object FirExpressionEvaluator {
                                 val unaryArg = receiver.unwrapOr<FirExpression> { return it } ?: return NotEvaluated
                                 evaluateUnary(unaryArg, propertySymbol.callableId!!)
                                     .adjustTypeAndConvertToLiteral(propertyAccessExpression)
+                            }
+                        }
+
+                        // The `name` property will be evaluated only for `Enum` and `KCallable` objects.
+                        // All other objects receive the default treatment.
+                        propertySymbol.callableId?.callableName == StandardNames.NAME -> {
+                            evaluate(propertyAccessExpression.explicitReceiver).let { receiver ->
+                                if (receiver !is Evaluated) return receiver
+                                return when (val result = receiver.result) {
+                                    is FirPropertyAccessExpression -> {
+                                        val name = result.calleeReference.name.asString()
+                                        name.adjustTypeAndConvertToLiteral(propertyAccessExpression)
+                                    }
+                                    else -> evaluateWithSourceCopy(propertySymbol.fir.initializer)
+                                }
                             }
                         }
                         else -> evaluateWithSourceCopy(propertySymbol.fir.initializer)

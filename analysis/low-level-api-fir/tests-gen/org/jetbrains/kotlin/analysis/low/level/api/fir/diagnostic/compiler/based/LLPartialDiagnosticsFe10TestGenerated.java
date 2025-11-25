@@ -7591,6 +7591,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("enumName_after.kt")
+        public void testEnumName_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/enumName_after.kt");
+        }
+
+        @Test
+        @TestMetadata("enumName_before.kt")
+        public void testEnumName_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/enumName_before.kt");
+        }
+
+        @Test
         @TestMetadata("equals.kt")
         public void testEquals() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/equals.kt");
