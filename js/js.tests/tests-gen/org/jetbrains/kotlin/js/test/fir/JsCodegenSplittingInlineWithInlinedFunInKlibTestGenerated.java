@@ -24513,6 +24513,18 @@ public class JsCodegenSplittingInlineWithInlinedFunInKlibTestGenerated extends A
       }
 
       @Test
+      @TestMetadata("noConversionForSubtype.kt")
+      public void testNoConversionForSubtype() {
+        runTest("compiler/testData/codegen/box/funInterface/noConversionForSubtype.kt");
+      }
+
+      @Test
+      @TestMetadata("noConversionForSubtypeGeneric.kt")
+      public void testNoConversionForSubtypeGeneric() {
+        runTest("compiler/testData/codegen/box/funInterface/noConversionForSubtypeGeneric.kt");
+      }
+
+      @Test
       @TestMetadata("nonAbstractMethod.kt")
       public void testNonAbstractMethod() {
         runTest("compiler/testData/codegen/box/funInterface/nonAbstractMethod.kt");

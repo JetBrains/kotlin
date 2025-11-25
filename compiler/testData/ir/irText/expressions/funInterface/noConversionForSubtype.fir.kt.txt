@@ -1,0 +1,63 @@
+class FooWorker : SimpleRibCoroutineWorker, Function1<String, Unit> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun invoke(str: String) {
+  }
+
+  override suspend fun onStart(scope: MyInterface) {
+  }
+
+}
+
+interface MyInterface {
+}
+
+fun interface SimpleRibCoroutineWorker {
+  abstract suspend fun onStart(scope: MyInterface)
+
+}
+
+fun bar(vararg x: SimpleRibCoroutineWorker) {
+}
+
+fun createNewPlugin(): SimpleRibCoroutineWorker {
+  val x: SimpleRibCoroutineWorker = { // BLOCK
+    local suspend fun FooWorker.suspendConversion0(p0: MyInterface) {
+      $callee.invoke(str = p0)
+    }
+
+    ::suspendConversion0/*($callee = FooWorker()) */
+  }
+  return { // BLOCK
+    local suspend fun FooWorker.suspendConversion1(p0: MyInterface) {
+      $callee.invoke(str = p0)
+    }
+
+    ::suspendConversion1/*($callee = FooWorker()) */
+  }
+}
+
+fun foo(x: SimpleRibCoroutineWorker) {
+}
+
+fun main() {
+  foo(x = { // BLOCK
+    local suspend fun FooWorker.suspendConversion0(p0: MyInterface) {
+      $callee.invoke(str = p0)
+    }
+
+    ::suspendConversion0/*($callee = FooWorker()) */
+  })
+  bar(x = [{ // BLOCK
+    local suspend fun FooWorker.suspendConversion1(p0: MyInterface) {
+      $callee.invoke(str = p0)
+    }
+
+    ::suspendConversion1/*($callee = FooWorker()) */
+  }])
+}
+
