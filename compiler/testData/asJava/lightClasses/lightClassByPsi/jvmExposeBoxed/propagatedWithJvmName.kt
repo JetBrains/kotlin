@@ -12,4 +12,4 @@ class Implicit {
     fun foo1(sw: StringWrapper): Int = 42
 }
 
-// LIGHT_ELEMENTS_NO_DECLARATION: Implicit.class[foo11], StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]
+// LIGHT_ELEMENTS_NO_DECLARATION: StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]

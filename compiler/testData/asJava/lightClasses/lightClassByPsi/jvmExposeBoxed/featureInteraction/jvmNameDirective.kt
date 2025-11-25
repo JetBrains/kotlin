@@ -16,4 +16,4 @@ class Foo {
     fun foo2(): StringWrapper = StringWrapper("OK")
 }
 
-// LIGHT_ELEMENTS_NO_DECLARATION: Foo.class[foo11;foo22], StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]
+// LIGHT_ELEMENTS_NO_DECLARATION: Foo.class[foo22], StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]

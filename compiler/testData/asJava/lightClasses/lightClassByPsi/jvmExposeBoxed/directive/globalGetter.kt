@@ -7,5 +7,4 @@ value class StringWrapper(val s: String)
 
 val foo: StringWrapper get() = StringWrapper("str")
 
-// LIGHT_ELEMENTS_NO_DECLARATION: GlobalGetterKt.class[getFoo], StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]
-// DECLARATIONS_NO_LIGHT_ELEMENTS: GlobalGetterKt.class[foo]
+// LIGHT_ELEMENTS_NO_DECLARATION: StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]
