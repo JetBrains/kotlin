@@ -41,6 +41,7 @@ private fun spawnThread(block: () -> Unit) {
 }
 
 private inline fun call(localsCount: Int, blockLocalsCount: Int, block: (Int) -> Any?): Any? {
+    if (terminationRequest) return null
     val nextLocalsCount = localsCount + blockLocalsCount
     if (nextLocalsCount > 200) {
         return null
@@ -49,6 +50,7 @@ private inline fun call(localsCount: Int, blockLocalsCount: Int, block: (Int) ->
 }
 
 var allocBlocker: Boolean = false
+var terminationRequest: Boolean = false
 
 fun performGC() { kotlin.native.runtime.GC.collect() }
 

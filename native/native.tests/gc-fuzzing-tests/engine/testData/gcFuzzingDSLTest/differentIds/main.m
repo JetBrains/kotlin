@@ -54,7 +54,10 @@ static void spawnThread(void (^block)()) {
     }];
 }
 
+static atomic_bool terminationRequest = false;
+
 static inline id call(int32_t localsCount, int32_t blockLocalsCount, id (^block)(int32_t)) {
+    if (atomic_load_explicit(&terminationRequest, memory_order_relaxed)) return nil;
     int32_t nextLocalsCount = localsCount + blockLocalsCount;
     if (nextLocalsCount > 200) {
         return nil;
@@ -127,12 +130,23 @@ static bool allocBlockerInHazardMode() {
 }
 
 bool updateAllocBlocker() {
+    if (atomic_load_explicit(&terminationRequest, memory_order_relaxed)) return true;
     [allocBlockerLock lock];
+    if (atomic_load_explicit(&terminationRequest, memory_order_relaxed)) return true;
     bool result = allocBlocker ? allocBlockerInNormalMode() : allocBlockerInHazardMode();
     allocBlocker = result;
     KtlibKtlibKt.allocBlocker = result;
     [allocBlockerLock unlock];
     return result;
+}
+
+static void scheduleTermination() {
+    [NSThread detachNewThreadWithBlock:^{
+        [NSThread sleepForTimeInterval:60.0];
+        NSLog(@"Soft timeout exceeded. Requesting termination.");
+        terminationRequest = true;
+        KtlibKtlibKt.terminationRequest = true;
+    }];
 }
 
 static void allocBlockerUpdater() {
@@ -1729,8 +1743,9 @@ id fun5(int32_t localsCount, id l0, id l1) {
 
 int main() {
    globals = [Globals new];
+   scheduleTermination();
    allocBlockerUpdater();
-   for (int i = 0; i < 100000; ++i) {
+   for (int i = 0; i < 100000 && !atomic_load_explicit(&terminationRequest, memory_order_relaxed); ++i) {
        [KtlibKtlibKt mainBody];
    }
    return 0;

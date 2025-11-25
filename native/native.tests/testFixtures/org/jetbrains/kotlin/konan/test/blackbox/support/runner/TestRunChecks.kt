@@ -52,14 +52,6 @@ sealed interface TestRunCheck {
                     Result.Failed("Test is expected to fail with exceeded timeout, which hasn't happened.")
                 else Result.Passed
         }
-
-        // When we want the execution to stop on reaching the timeout, but it's not a failure.
-        // For example: stress tests, whose only check is that the execution did not crash.
-        class MayExceed(timeout: Duration) : ExecutionTimeout(timeout) {
-            override fun apply(testRun: TestRun, runResult: RunResult): Result {
-                return Result.Passed
-            }
-        }
     }
 
     sealed class ExitCode : TestRunCheck {

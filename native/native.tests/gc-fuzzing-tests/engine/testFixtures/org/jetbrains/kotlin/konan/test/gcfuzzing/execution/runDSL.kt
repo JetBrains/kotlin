@@ -54,7 +54,7 @@ fun AbstractNativeSimpleTest.runDSL(
         TestCompilerArgs(dslOutput.kotlin.args),
         setOf(TestModule.Given(cinterop.resultingArtifact.klibFile)),
         checks = TestRunChecks(
-            executionTimeoutCheck = ExecutionTimeout.MayExceed(executionTimeout),
+            executionTimeoutCheck = ExecutionTimeout.ShouldNotExceed(executionTimeout),
             testFiltering = TestFiltering(TestOutputFilter.NO_FILTERING),
             exitCodeCheck = ExitCode.Expected(0),
             outputDataFile = null,

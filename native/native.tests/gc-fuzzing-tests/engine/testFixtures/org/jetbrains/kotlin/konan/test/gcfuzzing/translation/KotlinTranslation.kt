@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.gcfuzzing.translation
 
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.*
+import kotlin.time.Duration
 
 class KotlinOutput(
     val filename: String,
@@ -83,6 +84,7 @@ private class KotlinTranslationContext(
             |}
             |
             |private inline fun call(localsCount: Int, blockLocalsCount: Int, block: (Int) -> Any?): Any? {
+            |    if (terminationRequest) return null
             |    val nextLocalsCount = localsCount + blockLocalsCount
             |    if (nextLocalsCount > ${config.maximumStackDepth}) {
             |        return null
@@ -91,6 +93,7 @@ private class KotlinTranslationContext(
             |}
             |
             |var allocBlocker: Boolean = false
+            |var terminationRequest: Boolean = false
             |
             |fun performGC() { kotlin.native.runtime.GC.collect() }
             |

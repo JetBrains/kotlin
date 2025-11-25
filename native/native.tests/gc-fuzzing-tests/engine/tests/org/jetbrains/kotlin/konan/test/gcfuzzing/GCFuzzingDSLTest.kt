@@ -35,8 +35,8 @@ private fun assertDirectoriesEqual(expected: java.io.File, actual: java.io.File)
     }
 }
 
-// These tests are not stress tests, they merely check the adequacy of generated code. Limit their execution time, these tests tolerate timeouts.
-@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "1m")
+// These tests are not stress tests, they merely check the adequacy of generated code.
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "10m")
 class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
     private val testDataDir =
         ForTestCompileRuntime.transformTestDataPath("native/native.tests/gc-fuzzing-tests/engine/testData/gcFuzzingDSLTest").absoluteFile

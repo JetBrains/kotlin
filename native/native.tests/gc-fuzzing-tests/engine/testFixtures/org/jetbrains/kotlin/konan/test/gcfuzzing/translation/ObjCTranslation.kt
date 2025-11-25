@@ -26,6 +26,7 @@ class ObjCConfig(
     val memoryPressureHazardZoneBytes: LongRange,
     val memoryPressureCheckInterval: Duration,
     val basename: String,
+    val softTimeout: Duration,
 )
 
 fun Program.produceObjC(config: ObjCConfig): ObjCOutput {
@@ -100,7 +101,10 @@ private class ObjCTranslationContext(
             |    }];
             |}
             |
+            |static atomic_bool terminationRequest = false;
+            |
             |static inline id call(int32_t localsCount, int32_t blockLocalsCount, id (^block)(int32_t)) {
+            |    if (atomic_load_explicit(&terminationRequest, memory_order_relaxed)) return nil;
             |    int32_t nextLocalsCount = localsCount + blockLocalsCount;
             |    if (nextLocalsCount > ${config.maximumStackDepth}) {
             |        return nil;
@@ -173,12 +177,23 @@ private class ObjCTranslationContext(
             |}
             |
             |bool updateAllocBlocker() {
+            |    if (atomic_load_explicit(&terminationRequest, memory_order_relaxed)) return true;
             |    [allocBlockerLock lock];
+            |    if (atomic_load_explicit(&terminationRequest, memory_order_relaxed)) return true;
             |    bool result = allocBlocker ? allocBlockerInNormalMode() : allocBlockerInHazardMode();
             |    allocBlocker = result;
             |    ${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass}.allocBlocker = result;
             |    [allocBlockerLock unlock];
             |    return result;
+            |}
+            |
+            |static void scheduleTermination() {
+            |    [NSThread detachNewThreadWithBlock:^{
+            |        [NSThread sleepForTimeInterval:${config.softTimeout.toDouble(DurationUnit.SECONDS)}];
+            |        NSLog(@"Soft timeout exceeded. Requesting termination.");
+            |        terminationRequest = true;
+            |        ${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass}.terminationRequest = true;
+            |    }];
             |}
             |
             |static void allocBlockerUpdater() {
@@ -232,8 +247,9 @@ private class ObjCTranslationContext(
             |
             |int main() {
             |   globals = [Globals new];
+            |   scheduleTermination();
             |   allocBlockerUpdater();
-            |   for (int i = 0; i < ${config.mainLoopRepeatCount}; ++i) {
+            |   for (int i = 0; i < ${config.mainLoopRepeatCount} && !atomic_load_explicit(&terminationRequest, memory_order_relaxed); ++i) {
             |       [${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass} mainBody];
             |   }
             |   return 0;

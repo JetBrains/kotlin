@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.produceObjC
 import java.io.File
 import kotlin.math.roundToLong
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 private val Double.GiB: Long get() = (this * 1024 * 1024 * 1024).roundToLong()
@@ -28,6 +29,7 @@ class Config(
     val maxThreadCount: Int,
     val memoryPressureHazardZoneBytes: LongRange,
     val memoryPressureCheckInterval: Duration,
+    val softTimeout: Duration,
 ) {
     companion object {
         val DEFAULT = Config(
@@ -36,6 +38,7 @@ class Config(
             maxThreadCount = 100,
             memoryPressureHazardZoneBytes = 2.5.GiB..3.0.GiB,
             memoryPressureCheckInterval = 1.seconds,
+            softTimeout = 1.minutes,
         )
     }
 }
@@ -72,7 +75,8 @@ fun Program.translate(config: Config = Config.DEFAULT): Output {
         mainLoopRepeatCount = config.mainLoopRepeatCount,
         memoryPressureHazardZoneBytes = config.memoryPressureHazardZoneBytes,
         memoryPressureCheckInterval = config.memoryPressureCheckInterval,
-        basename = "main"
+        basename = "main",
+        softTimeout = config.softTimeout,
     )
     val cinterop = produceCInterop(cinteropConfig)
     val kotlin = produceKotlin(kotlinConfig)
