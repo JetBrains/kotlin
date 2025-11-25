@@ -1,44 +1,44 @@
 /privateTypesInsideInternalInlineFunctionError.kt:52:5: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionError.kt:52:13: warning: The signature of 'fun makeA(): A' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
-
 /privateTypesInsideInternalInlineFunctionError.kt:52:13: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionError.kt:52:13: warning: The signature of 'fun makeA(): A' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:53:5: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionError.kt:53:7: warning: The signature of 'fun toString(): String' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
-/privateTypesInsideInternalInlineFunctionError.kt:54:5: warning: The signature of 'fun makeNested(): A.Nested' contains 'private-in-file' type 'A.Nested', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
-
 /privateTypesInsideInternalInlineFunctionError.kt:54:5: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionError.kt:55:5: warning: The signature of 'fun makeLocal(): <anonymous>' contains 'local' type '<anonymous>', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
+/privateTypesInsideInternalInlineFunctionError.kt:54:5: warning: The signature of 'fun makeNested(): A.Nested' contains 'private-in-file' type 'A.Nested', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:55:5: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionError.kt:56:5: warning: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
+/privateTypesInsideInternalInlineFunctionError.kt:55:5: warning: The signature of 'fun makeLocal(): <anonymous>' contains 'local' type '<anonymous>', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:56:5: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionError.kt:60:5: warning: The signature of 'fun privateInlineI(): I' contains 'private-in-file' type 'I', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
+/privateTypesInsideInternalInlineFunctionError.kt:56:5: warning: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:60:5: error: Public-API inline function accesses a non Public-API interface
+
+/privateTypesInsideInternalInlineFunctionError.kt:60:5: warning: The signature of 'fun privateInlineI(): I' contains 'private-in-file' type 'I', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:63:5: error: Local classes are not yet supported in inline functions.
 
 /privateTypesInsideInternalInlineFunctionError.kt:63:5: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionError.kt:63:19: warning: 'private-in-file' type 'Generic<A>' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
-
 /privateTypesInsideInternalInlineFunctionError.kt:63:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+
+/privateTypesInsideInternalInlineFunctionError.kt:63:19: warning: 'private-in-file' type 'Generic<A>' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:63:27: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:64:5: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionError.kt:64:23: warning: The signature of 'fun makeWithContext(): WithContext' contains 'private-in-file' type 'WithContext', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
-
 /privateTypesInsideInternalInlineFunctionError.kt:64:23: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionError.kt:64:23: warning: The signature of 'fun makeWithContext(): WithContext' contains 'private-in-file' type 'WithContext', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:65:5: error: Public-API inline function accesses a non Public-API class
 
@@ -52,37 +52,37 @@
 
 /privateTypesInsideInternalInlineFunctionError.kt:67:13: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
-/privateTypesInsideInternalInlineFunctionError.kt:68:5: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
-
 /privateTypesInsideInternalInlineFunctionError.kt:68:5: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionError.kt:68:5: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:74:13: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionError.kt:74:21: warning: The signature of 'fun makeA(): A' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
-
 /privateTypesInsideInternalInlineFunctionError.kt:74:21: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionError.kt:74:21: warning: The signature of 'fun makeA(): A' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:75:13: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionError.kt:75:15: warning: The signature of 'fun toString(): String' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
-/privateTypesInsideInternalInlineFunctionError.kt:76:13: warning: The signature of 'fun makeNested(): A.Nested' contains 'private-in-file' type 'A.Nested', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
-
 /privateTypesInsideInternalInlineFunctionError.kt:76:13: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionError.kt:77:13: warning: The signature of 'fun makeLocal(): <anonymous>' contains 'local' type '<anonymous>', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
+/privateTypesInsideInternalInlineFunctionError.kt:76:13: warning: The signature of 'fun makeNested(): A.Nested' contains 'private-in-file' type 'A.Nested', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:77:13: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionError.kt:79:13: warning: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
+/privateTypesInsideInternalInlineFunctionError.kt:77:13: warning: The signature of 'fun makeLocal(): <anonymous>' contains 'local' type '<anonymous>', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:79:13: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionError.kt:79:13: warning: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
+
 /privateTypesInsideInternalInlineFunctionError.kt:81:13: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionError.kt:81:27: warning: 'private-in-file' type 'Generic<A>' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
-
 /privateTypesInsideInternalInlineFunctionError.kt:81:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+
+/privateTypesInsideInternalInlineFunctionError.kt:81:27: warning: 'private-in-file' type 'Generic<A>' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:81:35: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
@@ -94,9 +94,9 @@
 
 /privateTypesInsideInternalInlineFunctionError.kt:83:21: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
-/privateTypesInsideInternalInlineFunctionError.kt:84:13: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
-
 /privateTypesInsideInternalInlineFunctionError.kt:84:13: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionError.kt:84:13: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:97:9: error: Local classes are not yet supported in inline functions.
 
