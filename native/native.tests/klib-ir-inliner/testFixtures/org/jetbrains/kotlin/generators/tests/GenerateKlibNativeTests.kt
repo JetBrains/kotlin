@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.konan.test.klib.AbstractKlibCrossCompilationIdentity
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationTest
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
-import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeLoadCompiledKotlinTest
 import org.junit.jupiter.api.Tag
 
@@ -51,25 +50,13 @@ fun main(args: Array<String>) {
 
         // New frontend test infrastructure tests
         testGroup(testsRoot = testsRoot, testDataRoot = "compiler/testData/diagnostics") {
-            testClass<AbstractPsiNativeDiagnosticsTest>(
-                suiteTestClassName = "PsiOldFrontendNativeDiagnosticsTestGenerated",
-            ) {
-                model("nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
-            testClass<AbstractLightTreeNativeDiagnosticsTest>(
-                suiteTestClassName = "LightTreeOldFrontendNativeDiagnosticsTestGenerated",
-            ) {
-                model("nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
             testClass<AbstractPsiNativeDiagnosticsWithBackendTestBase>(
                 suiteTestClassName = "PsiNativeKlibDiagnosticsTestGenerated",
                 annotations = listOf(klib())
             ) {
                 model("klibSerializationTests")
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests/specialBackendChecks")
+                model("nativeTests")
             }
 
             testClass<AbstractLightTreeNativeDiagnosticsWithBackendTestBase>(
@@ -78,7 +65,7 @@ fun main(args: Array<String>) {
             ) {
                 model("klibSerializationTests")
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests/specialBackendChecks")
+                model("nativeTests")
             }
 
             testClass<AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase>(
@@ -87,7 +74,7 @@ fun main(args: Array<String>) {
             ) {
                 model("klibSerializationTests")
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests/specialBackendChecks")
+                model("nativeTests")
                 model("testsWithAnyBackend")
             }
         }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ObjCSignatureOverrideAnnotation
 // API_VERSION: 2.0
 // WITH_PLATFORM_LIBS

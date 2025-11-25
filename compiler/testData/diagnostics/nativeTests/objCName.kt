@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 // FILE: kotlin.kt
 package kotlin.native

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +BareArrayClassLiteral
 
 val a01 = Array::class

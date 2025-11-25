@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LL_FIR_DIVERGENCE
 // Checkers are run with Common session in Analysis API, so they can't see actualized declarations
 // LL_FIR_DIVERGENCE
@@ -31,7 +32,7 @@ expect annotation class MyRefinesInSwift()
 @kotlin.experimental.ExperimentalObjCRefinement
 expect annotation class MyShouldRefineInSwift()
 
-@MyRefinesInSwift
+<!INVALID_REFINES_IN_SWIFT_TARGETS!>@MyRefinesInSwift<!>
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 expect annotation class MyWrongShouldRefineInSwift()
@@ -53,17 +54,17 @@ annotation class PluginMyShouldRefineInSwift
 @file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
 
 @MyHidesFromObjC
-@MyRefinesInSwift
+<!REDUNDANT_SWIFT_REFINEMENT!>@MyRefinesInSwift<!>
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationA
 
-@MyHidesFromObjC
+<!INVALID_OBJC_HIDES_TARGETS!>@MyHidesFromObjC<!>
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationB
 
-@MyRefinesInSwift
+<!INVALID_REFINES_IN_SWIFT_TARGETS!>@MyRefinesInSwift<!>
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationC
 
@@ -75,11 +76,11 @@ annotation class MyRefinedAnnotationD
 typealias HFOC = MyHiddenFromObjC
 
 @HFOC
-@MyShouldRefineInSwift
+<!REDUNDANT_SWIFT_REFINEMENT!>@MyShouldRefineInSwift<!>
 var refinedProperty: Int = 0
 
 @PluginMyHiddenFromObjC
-@PluginMyShouldRefineInSwift
+<!REDUNDANT_SWIFT_REFINEMENT!>@PluginMyShouldRefineInSwift<!>
 fun pluginRefinedFunction() { }
 
 @MyHiddenFromObjC
@@ -92,8 +93,8 @@ fun multipleSwiftRefinementsFunction() { }
 
 @MyHiddenFromObjC
 @PluginMyHiddenFromObjC
-@MyShouldRefineInSwift
-@PluginMyShouldRefineInSwift
+<!REDUNDANT_SWIFT_REFINEMENT!>@MyShouldRefineInSwift<!>
+<!REDUNDANT_SWIFT_REFINEMENT!>@PluginMyShouldRefineInSwift<!>
 fun multipleMixedRefinementsFunction() { }
 
 interface InterfaceA {
@@ -115,11 +116,11 @@ interface InterfaceB {
 }
 
 open class ClassA: InterfaceA, InterfaceB {
-    @MyHiddenFromObjC
+    <!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE!>@MyHiddenFromObjC<!>
     override val barA: Int = 0
-    @MyShouldRefineInSwift
+    <!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE!>@MyShouldRefineInSwift<!>
     override val barB: Int = 0
-    override fun fooA() { }
+    <!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE!>override fun fooA() { }<!>
     override fun fooB() { }
     @MyHiddenFromObjC
     open fun fooC() { }
@@ -128,7 +129,7 @@ open class ClassA: InterfaceA, InterfaceB {
 class ClassB: ClassA() {
     @MyHiddenFromObjC
     override fun fooB() { }
-    @MyShouldRefineInSwift
+    <!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE!>@MyShouldRefineInSwift<!>
     override fun fooC() { }
 }
 
@@ -141,7 +142,7 @@ interface I {
     fun foo()
 }
 
-open class Derived : Base(), I
+<!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE!>open class Derived : Base(), I<!>
 
 open class Derived2 : Derived() {
     override fun foo() {}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.*
 import kotlin.jvm.*
 import kotlin.native.concurrent.*

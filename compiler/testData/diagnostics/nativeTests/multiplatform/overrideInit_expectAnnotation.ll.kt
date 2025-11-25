@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LL_FIR_DIVERGENCE
 // Checkers are run with Common session in Analysis API, so they can't see actualized declarations
 // LL_FIR_DIVERGENCE
@@ -18,15 +19,15 @@ import platform.Foundation.*
 expect annotation class MyOverrideInit
 
 class DoesNotOverride : NSAssertionHandler {
-    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    <!CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
     <!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>@MyOverrideInit<!>
-    constructor(x: Int) { }
+    constructor(x: Int) { }<!>
 }
 
 class OverridesOverriden : NSString {
-    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    <!CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
     <!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>@MyOverrideInit<!>
-    constructor(coder: NSCoder) { }
+    constructor(coder: NSCoder) { }<!>
 
     @Suppress("OVERRIDE_DEPRECATION")
     override fun initWithCoder(coder: NSCoder): String? = "x"
