@@ -7,9 +7,10 @@
             "functionBind": true,
             "importMeta": true
         },
+        "loose": true,
+        "target": "es5"
     },
-    "env": {
-        "targets": {}
-    },
-    "sourceMaps": true
+    "exclude": [".*\\.d\\.m?ts$"],
+    "sourceMaps": true,
+    "inputSourceMap": true
 }
