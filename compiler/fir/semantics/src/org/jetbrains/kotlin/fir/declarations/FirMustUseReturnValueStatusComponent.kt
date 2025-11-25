@@ -20,7 +20,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.hasError
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -44,6 +48,13 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
         javaPackageAnnotations: List<ClassId>? = null,
     ): ReturnValueStatus
 
+    open fun isExpectActualIgnorabilityCompatible(
+        session: FirSession,
+        expect: FirCallableSymbol<*>,
+        actual: FirCallableSymbol<*>,
+        containingExpectClass: FirRegularClassSymbol?,
+    ): Boolean = true
+
     // FIXME (KTI-2545): One can't simply write errorprone package name, because whole com.google. package is relocated in kotlin-compiler-embeddable.
     // For the time being, string literal should be split.
     internal val errorPronePackageFqName: FqName = FqName.fromSegments(listOf("com", "google", "errorprone", "annotations"))
@@ -56,12 +67,16 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
 
     fun hasIgnorableLikeAnnotation(list: List<ClassId>?): Boolean = list.orEmpty().any { it in ignorableReturnValueLikeAnnotations }
 
-    open fun isExpectActualIgnorabilityCompatible(
-        session: FirSession,
-        expect: FirCallableSymbol<*>,
-        actual: FirCallableSymbol<*>,
-        containingExpectClass: FirRegularClassSymbol?,
-    ): Boolean = true
+    private val JAVA_LANG_VOID = ClassId.topLevel(FqName("java.lang.Void"))
+
+    fun isIgnorableType(type: ConeKotlinType): Boolean {
+        if (type is ConeErrorType || type.hasError()) return true
+        val classId = type.classId ?: return false
+        if (classId == StandardClassIds.Nothing) return true
+        if (classId == StandardClassIds.Unit && !type.isMarkedNullable) return true
+        if (classId == JAVA_LANG_VOID && !type.isMarkedNullable) return true // Void? is not ignorable just as Unit?
+        return false
+    }
 
     companion object {
         fun create(languageVersionSettings: LanguageVersionSettings): FirMustUseReturnValueStatusComponent {
@@ -164,6 +179,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             actual: FirCallableSymbol<*>,
             containingExpectClass: FirRegularClassSymbol?,
         ): Boolean {
+            if (isIgnorableType(expect.resolvedReturnType) || isIgnorableType(actual.resolvedReturnType)) return true
             val relaxedRules = actual.isNotDirectMember(containingExpectClass, session) || expect.isNotDirectMember(containingExpectClass, session)
             val expectStatus = expect.resolvedStatus.returnValueStatus
             val actualStatus = actual.resolvedStatus.returnValueStatus

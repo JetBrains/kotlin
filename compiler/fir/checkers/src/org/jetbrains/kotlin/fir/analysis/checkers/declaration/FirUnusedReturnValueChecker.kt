@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -37,14 +38,20 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 
+context(context: CheckerContext)
+private fun ConeKotlinType.isIgnorable(): Boolean {
+    return context.session.mustUseReturnValueStatusComponent.isIgnorableType(this)
+}
+
 object FirReturnValueOverrideChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirCallableDeclaration) {
         if (context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.DISABLED) return
 
-        // Only check mustUse overrides:
+        // Only check effectively-mustUse overrides:
         if (!declaration.isOverride) return
         if (declaration.status.returnValueStatus != ReturnValueStatus.MustUse) return
+        if (declaration.returnTypeRef.coneType.isIgnorable()) return
         val symbol = declaration.symbol
 
         // Check if any of the overridden symbols have @IgnorableReturnValue
@@ -156,25 +163,14 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         }
     }
 
-}
+    private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
+        session.mustUseReturnValueStatusComponent.hasIgnorableLikeAnnotation(resolvedAnnotationClassIds)
 
-private val JAVA_LANG_VOID = ClassId.topLevel(FqName("java.lang.Void"))
+    private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
+        // TBD: Do we want to report them unconditionally? Or only in FULL mode?
+        // If latter, metadata flag should be added for them too.
+        if (this is FirEnumEntrySymbol) return true
 
-private fun ConeKotlinType.isIgnorable(): Boolean {
-    if (this is ConeErrorType || this.hasError()) return true
-    val classId = classId ?: return false
-    if (classId == StandardClassIds.Nothing) return true
-    if (classId == StandardClassIds.Unit && !isMarkedNullable) return true
-    if (classId == JAVA_LANG_VOID && !isMarkedNullable) return true // Void? is not ignorable just as Unit?
-    return false
-}
-
-private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean = session.mustUseReturnValueStatusComponent.hasIgnorableLikeAnnotation(resolvedAnnotationClassIds)
-
-private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
-    // TBD: Do we want to report them unconditionally? Or only in FULL mode?
-    // If latter, metadata flag should be added for them too.
-    if (this is FirEnumEntrySymbol) return true
-
-    return resolvedStatus.returnValueStatus == ReturnValueStatus.MustUse
+        return resolvedStatus.returnValueStatus == ReturnValueStatus.MustUse
+    }
 }

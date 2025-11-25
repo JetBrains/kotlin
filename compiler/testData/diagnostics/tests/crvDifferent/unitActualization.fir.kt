@@ -24,7 +24,7 @@ public interface Readable {
 
 @MustUseReturnValues
 actual interface Foo : Readable {
-    actual fun <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT!>close<!>()
+    actual fun close()
     override fun read(): String
 }
 

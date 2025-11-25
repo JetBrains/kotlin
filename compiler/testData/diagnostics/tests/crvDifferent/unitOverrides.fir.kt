@@ -22,7 +22,7 @@ interface NonAnnotated<T> {
 @MustUseReturnValues
 interface U: Super<Unit>, NonAnnotated<Unit> {
     override fun x()
-    override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>y<!>()
+    override fun y()
     override fun z()
 }
 
