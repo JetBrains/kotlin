@@ -10220,6 +10220,18 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       public void testOverridesWithAny() {
         runTest("compiler/testData/diagnostics/tests/crvDifferent/overridesWithAny.kt");
       }
+
+      @Test
+      @TestMetadata("unitActualization.kt")
+      public void testUnitActualization() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/unitActualization.kt");
+      }
+
+      @Test
+      @TestMetadata("unitOverrides.kt")
+      public void testUnitOverrides() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/unitOverrides.kt");
+      }
     }
 
     @Nested
