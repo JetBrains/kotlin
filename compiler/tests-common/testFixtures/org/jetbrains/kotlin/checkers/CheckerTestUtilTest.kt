@@ -33,7 +33,7 @@ private data class DiagnosticData(
 
 private abstract class Test(private vararg val expectedMessages: String) {
     fun test(psiFile: PsiFile, environment: KotlinCoreEnvironment) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val bindingContext = JvmResolveUtil.analyze(psiFile as KtFile, environment).bindingContext
         val emptyModule = KotlinTestUtils.createEmptyModule()
         val container = createContainerForTests(environment.project, emptyModule)

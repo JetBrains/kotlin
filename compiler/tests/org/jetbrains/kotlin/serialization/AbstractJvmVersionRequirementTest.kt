@@ -45,7 +45,7 @@ abstract class AbstractJvmVersionRequirementTest : AbstractVersionRequirementTes
     }
 
     override fun loadModule(directory: File): ModuleDescriptor {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         return JvmResolveUtil.analyze(
             KotlinCoreEnvironment.createForTests(
                 testRootDisposable,

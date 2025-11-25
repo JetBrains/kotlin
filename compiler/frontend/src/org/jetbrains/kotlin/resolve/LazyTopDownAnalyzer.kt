@@ -56,7 +56,7 @@ class LazyTopDownAnalyzer(
     private val classifierUsageCheckers: Iterable<ClassifierUsageChecker>,
     private val filePreprocessor: FilePreprocessor
 ) {
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun analyzeDeclarations(
         topDownAnalysisMode: TopDownAnalysisMode,
         declarations: Collection<PsiElement>,
@@ -246,12 +246,12 @@ class LazyTopDownAnalyzer(
 
     private fun resolveImportsInAllFiles(c: TopDownAnalysisContext) {
         for (file in c.files + c.scripts.keys.map { it.containingKtFile }) {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             resolveImportsInFile(file)
         }
     }
 
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun resolveImportsInFile(file: KtFile) {
         fileScopeProvider.getImportResolver(file).forceResolveNonDefaultImports()
     }

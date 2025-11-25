@@ -75,7 +75,7 @@ import kotlin.reflect.KFunction1
 object TopDownAnalyzerFacadeForJVM {
     @JvmStatic
     @JvmOverloads
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun analyzeFilesWithJavaIntegration(
         project: Project,
         files: Collection<KtFile>,
@@ -89,7 +89,7 @@ object TopDownAnalyzerFacadeForJVM {
         explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList(),
         explicitCompilerEnvironment: TargetEnvironment = CompilerEnvironment
     ): AnalysisResult {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val container = createContainer(
             project, files, trace, configuration, packagePartProvider, declarationProviderFactory, explicitCompilerEnvironment,
             sourceModuleSearchScope, klibList, explicitModuleDependencyList = explicitModuleDependencyList,
@@ -119,7 +119,7 @@ object TopDownAnalyzerFacadeForJVM {
             }
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
 
         invokeExtensionsOnAnalysisComplete()?.let { return it }
@@ -127,7 +127,7 @@ object TopDownAnalyzerFacadeForJVM {
         return AnalysisResult.success(trace.bindingContext, module)
     }
 
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun createContainer(
         project: Project,
         files: Collection<KtFile>,

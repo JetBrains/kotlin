@@ -100,7 +100,7 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), Fron
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         setupLanguageVersionSettingsForCompilerTests(ktFile.readText(), environment)
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
         assertFalse("Nothing found in package ${LoadDescriptorUtil.TEST_PACKAGE_FQNAME}", packageView.isEmpty())

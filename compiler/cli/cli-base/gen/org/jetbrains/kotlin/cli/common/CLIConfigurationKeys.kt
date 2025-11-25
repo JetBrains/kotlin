@@ -30,7 +30,7 @@ object CLIConfigurationKeys {
     @Deprecated(
         "Please use CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY instead",
         ReplaceWith("CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY", "org.jetbrains.kotlin.config.CommonConfigurationKeys"),
-        DeprecationLevel.WARNING,
+        DeprecationLevel.ERROR,
     )
     @JvmField
     val MESSAGE_COLLECTOR_KEY = CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY

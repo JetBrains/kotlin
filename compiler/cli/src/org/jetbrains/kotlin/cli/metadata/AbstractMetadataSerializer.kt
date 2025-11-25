@@ -25,7 +25,7 @@ abstract class AbstractMetadataSerializer<T>(
         definedMetadataVersion ?: configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? BuiltInsBinaryVersion
         ?: BuiltInsBinaryVersion.INSTANCE
 
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun analyzeAndSerialize(): OutputInfo? {
         val destDir = environment.destDir
         if (destDir == null) {

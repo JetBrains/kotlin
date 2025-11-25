@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.upperIfFlexible
 
 class MemoryOptimizationsTest : KtUsefulTestCase() {
     fun testBasicFlexibleTypeCase() {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val moduleDescriptor = JvmResolveUtil.analyze(
             KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                 testRootDisposable,
@@ -78,7 +78,7 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
                     testRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
                 )
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val moduleDescriptor =
             JvmResolveUtil.analyze(
                 KtTestUtil.createFile("main.kt", text, environment.project),

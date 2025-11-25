@@ -38,7 +38,7 @@ class OldCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
 
         val ktFile = KotlinTestUtils.loadKtFile(environment.project, getTestDataFileWithExtension("kt"))
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val result = JvmResolveUtil.analyzeAndCheckForErrors(ktFile, environment)
 
         return result.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME).also {

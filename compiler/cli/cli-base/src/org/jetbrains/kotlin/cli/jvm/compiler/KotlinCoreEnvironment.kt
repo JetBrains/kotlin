@@ -840,7 +840,11 @@ class KotlinCoreEnvironment private constructor(
 
         // made public for Upsource
         @JvmStatic
-        @Deprecated("Use registerProjectServices(project) instead.", ReplaceWith("registerProjectServices(projectEnvironment.project)"))
+        @Deprecated(
+            "Use registerProjectServices(project) instead.",
+            ReplaceWith("registerProjectServices(projectEnvironment.project)"),
+            level = DeprecationLevel.ERROR,
+        )
         @K1Deprecation
         fun registerProjectServices(
             projectEnvironment: JavaCoreProjectEnvironment,

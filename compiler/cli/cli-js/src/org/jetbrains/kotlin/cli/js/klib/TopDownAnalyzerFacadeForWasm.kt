@@ -38,7 +38,7 @@ abstract class TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForWe
     }
 
     companion object {
-        @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+        @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
         fun facadeFor(target: WasmTarget?): TopDownAnalyzerFacadeForWasm = when (target) {
             WasmTarget.WASI -> TopDownAnalyzerFacadeForWasmWasi
             else -> TopDownAnalyzerFacadeForWasmJs

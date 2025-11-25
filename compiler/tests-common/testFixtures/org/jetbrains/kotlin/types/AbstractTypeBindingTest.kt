@@ -38,7 +38,7 @@ abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
         val testFile = File(path)
         val testKtFile = loadKtFile(project, testFile)
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val analyzeResult = JvmResolveUtil.analyze(testKtFile, environment)
 
         val testDeclaration = testKtFile.declarations.last() as KtCallableDeclaration

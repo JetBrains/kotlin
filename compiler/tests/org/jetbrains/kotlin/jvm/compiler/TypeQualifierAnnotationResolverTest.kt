@@ -112,7 +112,7 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
         }
 
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val container = JvmResolveUtil.createContainer(environment)
         val typeQualifierResolver = container.get<JavaResolverComponents>().annotationTypeQualifierResolver
 

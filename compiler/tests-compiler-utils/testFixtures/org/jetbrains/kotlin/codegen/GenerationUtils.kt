@@ -139,7 +139,7 @@ object GenerationUtils {
     ): Pair<GenerationState, BindingContext> {
         val klibs: List<KotlinLibrary> = loadJvmKlibs(configuration).all
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val analysisResult =
             JvmResolveUtil.analyzeAndCheckForErrors(
                 project, files, configuration, packagePartProvider, trace,

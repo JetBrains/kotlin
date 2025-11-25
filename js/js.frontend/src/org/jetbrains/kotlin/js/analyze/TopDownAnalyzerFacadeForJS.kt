@@ -43,7 +43,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
     protected abstract val analyzerServices: PlatformDependentAnalyzerServices
     protected abstract val platform: TargetPlatform
 
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun analyzeFiles(
         files: Collection<KtFile>,
         project: Project,
@@ -88,7 +88,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
         val trace = BindingTraceContext(project)
         trace.record(MODULE_KIND, context.module, moduleKind)
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         return analyzeFilesWithGivenTrace(files, trace, context, configuration, targetEnvironment, project, additionalPackages)
     }
 
@@ -99,7 +99,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
         languageVersionSettings: LanguageVersionSettings
     ): PackageFragmentProvider
 
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun analyzeFilesWithGivenTrace(
         files: Collection<KtFile>,
         trace: BindingTrace,
@@ -140,7 +140,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
         var result = analysisHandlerExtensions.firstNotNullOfOrNull { extension ->
             extension.doAnalysis(project, moduleContext.module, moduleContext, files, trace, container)
         } ?: run {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
             AnalysisResult.success(trace.bindingContext, moduleContext.module)
         }
@@ -166,7 +166,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
         }
     }
 
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext): Boolean {
         AnalyzingUtils.throwExceptionOnErrors(bindingContext)
 

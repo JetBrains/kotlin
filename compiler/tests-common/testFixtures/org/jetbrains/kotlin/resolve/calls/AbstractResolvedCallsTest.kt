@@ -57,7 +57,7 @@ abstract class AbstractResolvedCallsTest : KotlinTestWithEnvironment() {
 
         val ktFile = KtPsiFactory(project).createFile(text)
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val bindingContext = JvmResolveUtil.analyze(ktFile, environment).bindingContext
 
         val resolvedCallsAt = carets.map { caret -> caret to run {

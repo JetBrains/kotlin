@@ -212,7 +212,7 @@ class ClassicFrontendFacade(
 
         val moduleTrace = NoScopeRecordCliBindingTrace(project)
         if (module.dependsOnDependencies.isEmpty()) {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 project,
                 files,
@@ -262,7 +262,7 @@ class ClassicFrontendFacade(
             )
         )
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
 
         return AnalysisResult.success(moduleTrace.bindingContext, moduleDescriptor)
@@ -329,7 +329,7 @@ class ClassicFrontendFacade(
 
         val builtInModuleDescriptor = allDependencies.firstNotNullOfOrNull { it.builtIns }?.builtInsModule
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         return TopDownAnalyzerFacadeForJSIR.analyzeFiles(
             files,
             project,
@@ -372,10 +372,10 @@ class ClassicFrontendFacade(
 
         val builtInModuleDescriptor = allDependencies.firstNotNullOfOrNull { it.builtIns }?.builtInsModule
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val analyzerFacade = TopDownAnalyzerFacadeForWasm.facadeFor(wasmTarget)
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         return analyzerFacade.analyzeFiles(
             files,
             project,

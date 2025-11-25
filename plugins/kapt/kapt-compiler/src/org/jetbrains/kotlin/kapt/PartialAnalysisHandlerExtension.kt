@@ -52,7 +52,7 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
 
         for (file in files) {
             ForceResolveUtil.forceResolveAllContents(resolveSession.getFileAnnotations(file))
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             topDownAnalyzer.resolveImportsInFile(file)
         }
 

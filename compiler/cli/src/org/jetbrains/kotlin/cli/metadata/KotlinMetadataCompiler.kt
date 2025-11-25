@@ -113,7 +113,7 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
                 true -> K1MetadataKlibSerializer(configuration, environment)
                 false -> K1LegacyMetadataSerializer(configuration, environment, dependOnOldBuiltIns = true)
             }
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             metadataSerializer.analyzeAndSerialize()
         } catch (e: CompilationException) {
             collector.report(EXCEPTION, OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.element))

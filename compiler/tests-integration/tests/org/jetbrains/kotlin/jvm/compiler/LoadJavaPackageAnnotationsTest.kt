@@ -62,7 +62,7 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
             }
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val moduleDescriptor = JvmResolveUtil.analyze(environment).moduleDescriptor
 
         val packageFragmentDescriptor = moduleDescriptor.getPackage(FqName("test")).fragments

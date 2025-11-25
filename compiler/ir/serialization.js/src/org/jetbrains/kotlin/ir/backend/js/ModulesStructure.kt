@@ -62,7 +62,7 @@ class ModulesStructure(
 
     lateinit var jsFrontEndResult: JsFrontEndResult
 
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun runAnalysis(
         analyzer: AbstractAnalyzerWithCompilerReport,
         analyzerFacade: AbstractTopDownAnalyzerFacadeForWeb
@@ -71,7 +71,7 @@ class ModulesStructure(
         val files = mainModule.files
 
         analyzer.analyzeAndReport(files) {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             analyzerFacade.analyzeFiles(
                 files = files,
                 project = project,
@@ -106,7 +106,7 @@ class ModulesStructure(
             throw CompilationErrorException()
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val hasErrors = analyzerFacade.checkForErrors(files, analysisResult.bindingContext)
 
         jsFrontEndResult = JsFrontEndResult(analysisResult, hasErrors)

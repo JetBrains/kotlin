@@ -203,7 +203,7 @@ class CommonResolverForModuleFactory(
             var result = analysisHandlerExtensions.firstNotNullOfOrNull { extension ->
                 extension.doAnalysis(project, moduleDescriptor, projectContext, files, trace, container)
             } ?: run {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
                 AnalysisResult.success(trace.bindingContext, moduleDescriptor)
             }
