@@ -4,3 +4,5 @@
 
 @JvmExposeBoxed
 fun foo(u: UInt): Int = u.toInt()
+
+// LIGHT_ELEMENTS_NO_DECLARATION: IntKt.class[foo-WZ4Q5Ns]

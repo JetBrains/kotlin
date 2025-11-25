@@ -25,3 +25,4 @@ abstract class AbstractKotlinClass {
 lateinit var topLevelLateinit: Custom
 
 class Custom
+// LIGHT_ELEMENTS_NO_DECLARATION: AbstractKotlinClass.class[Companion], KotlinClass.class[Companion]

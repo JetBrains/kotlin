@@ -19,3 +19,6 @@ interface Test {
 class Foo(
     val p: TA?,
 )
+
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: TypealiasInTypeArgumentsKt.class[OtherA;OtherB;OtherOtherA;TA]

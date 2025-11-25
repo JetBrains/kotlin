@@ -16,3 +16,6 @@ class Foo {
             }
     }
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: Foo.class[baz]
+// LIGHT_ELEMENTS_NO_DECLARATION: Foo.class[Companion;getBaz-K4fyztM;getBaz-K4fyztM;setBaz-JELJCFg;setBaz-JELJCFg], StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]

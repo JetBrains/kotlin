@@ -14,3 +14,5 @@ class Baz {
     @JvmName("jvmMemberLevel")
     fun memberLevel(o: Int = 0, k: Int = 1): IntWrapper = IntWrapper(o + k)
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: IntWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]

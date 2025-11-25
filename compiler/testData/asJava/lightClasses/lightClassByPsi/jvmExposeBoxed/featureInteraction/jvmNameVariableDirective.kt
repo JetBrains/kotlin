@@ -29,3 +29,6 @@ class Foo {
 
         }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: Foo.class[foo11;foo41;fooGetter21;fooGetter22;fooGetter31;fooGetter32;fooSetter21;fooSetter31], StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]
+// DECLARATIONS_NO_LIGHT_ELEMENTS: Foo.class[foo1;foo4]

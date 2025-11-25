@@ -18,3 +18,4 @@ sealed class A(val x: String? = null) {
 class ClassWithPrivateCtor private constructor(
     public val property: Set<Int>
 )
+// LIGHT_ELEMENTS_NO_DECLARATION: AAA.class[AAA], Outer.class[Nested]

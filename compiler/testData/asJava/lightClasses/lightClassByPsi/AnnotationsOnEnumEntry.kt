@@ -26,3 +26,4 @@ enum class AnnotationsOnEnumEntry(i: Int = 1) {
 
     fun foo() = Unit
 }
+// LIGHT_ELEMENTS_NO_DECLARATION: AnnotationsOnEnumEntry.class[getEntries;valueOf;values]

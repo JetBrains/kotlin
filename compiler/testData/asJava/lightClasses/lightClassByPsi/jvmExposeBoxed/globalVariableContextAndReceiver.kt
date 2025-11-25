@@ -17,3 +17,5 @@ var A.f: String
     set(value) {
 
     }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: A.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl], GlobalVariableContextAndReceiverKt.class[getF-0rlsLgg;setF-xxIERmE], Z.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]

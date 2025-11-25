@@ -13,3 +13,6 @@ class B() : A() {
         else return "FAIL $a"
     }
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: A.class[abstractMethod]
+// LIGHT_ELEMENTS_NO_DECLARATION: A.class[abstractMethod-WZ4Q5Ns], B.class[abstractMethod-WZ4Q5Ns]

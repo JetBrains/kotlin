@@ -9,3 +9,5 @@ class Foo {
     @Throws(IOException::class)
     fun foo(i: UInt) {}
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: Foo.class[foo-WZ4Q5Ns]

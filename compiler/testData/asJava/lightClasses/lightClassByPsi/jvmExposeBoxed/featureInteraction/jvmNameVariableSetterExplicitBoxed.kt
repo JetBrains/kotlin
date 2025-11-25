@@ -13,3 +13,5 @@ class Foo {
 
         }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: Foo.class[getFoo-K4fyztM;setter], StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]

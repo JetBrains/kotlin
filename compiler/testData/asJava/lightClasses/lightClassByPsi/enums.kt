@@ -43,3 +43,4 @@ enum class IntArithmetics : BinaryOperator<Int>, IntBinaryOperator {
 class C {
     val enumConst: Direction? = Direction.EAST
 }
+// LIGHT_ELEMENTS_NO_DECLARATION: Color.class[getEntries;valueOf;values], Direction.class[getEntries;valueOf;values], IntArithmetics.class[getEntries;valueOf;values], ProtocolState.class[getEntries;valueOf;values]

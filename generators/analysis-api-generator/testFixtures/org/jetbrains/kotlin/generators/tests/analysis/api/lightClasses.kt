@@ -109,6 +109,8 @@ private fun TestGroup.lightClassesByPsiTests() {
     testClass<AbstractSymbolLightClassesByPsiForLibraryTest>(init = libraryModelInit)
     testClass<AbstractJsSymbolLightClassesByPsiForLibraryTest>(init = libraryModelInit)
 
+    testClass<AbstractSymbolLightClassesMatcherByPsiForLibraryTest>(init = libraryModelInit)
+
     testClass<AbstractSymbolLightClassesParentingByPsiForSourceTest>(init = sourceModelInit)
     testClass<AbstractSymbolLightClassesParentingByPsiForLibraryTest>(init = libraryModelInit)
     testClass<AbstractScriptSymbolLightClassesParentingByPsiForSourceTest>(init = scriptModelInit)

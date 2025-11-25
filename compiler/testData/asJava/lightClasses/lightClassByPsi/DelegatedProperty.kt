@@ -27,3 +27,5 @@ class Container {
         override val d: String by delegate()
     }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: Container.class[Companion]

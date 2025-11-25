@@ -30,3 +30,6 @@ value class ValueClassImpl(val int: Int) : Interface {
 
 @JvmInline
 value class ValueClass(val value: ValueClassImpl) : Interface by value
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: Interface.class[functionWithValueParam;propertyWithValueClass]
+// LIGHT_ELEMENTS_NO_DECLARATION: Interface.class[functionWithValueParam-_dSbK5w;getPropertyWithValueClass-NoPZT8w], ValueClass.class[constructor-impl;equals-impl;equals-impl0;functionWithValueParam-_dSbK5w;getPropertyWithValueClass-NoPZT8w;getRegularVariable-impl;getValue-NoPZT8w;hashCode-impl;regularFunction-impl;setRegularVariable-impl;toString-impl], ValueClassImpl.class[constructor-impl;equals-impl;equals-impl0;functionWithValueParam-_dSbK5w;getPropertyWithValueClass-NoPZT8w;getRegularVariable-impl;hashCode-impl;regularFunction-impl;setRegularVariable-impl;toString-impl]

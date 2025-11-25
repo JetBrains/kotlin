@@ -16,3 +16,5 @@ class Foo {
     @JvmName("foo21")
     fun foo2(): StringWrapper = StringWrapper("OK")
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: Foo.class[foo11;foo22], StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]

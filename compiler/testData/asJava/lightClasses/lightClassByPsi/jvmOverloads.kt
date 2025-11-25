@@ -47,3 +47,5 @@ class C @JvmOverloads constructor(
 
     }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: C.class[Companion]

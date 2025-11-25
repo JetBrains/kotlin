@@ -21,3 +21,6 @@ interface Base {
 class Derived(b: Base) : Base by b {
 
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: Ann.class[depr;e;t;x;y;z], SimpleAnn.class[value]
+// LIGHT_ELEMENTS_NO_DECLARATION: Ann.class[depr;e;t;x;y;z], SimpleAnn.class[value]

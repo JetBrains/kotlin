@@ -13,3 +13,7 @@ annotation class Ann(vararg val kClass: KClass<*>)
 
 @Ann(A::class, OtherA::class, OtherOtherA::class, B::class, OtherB::class)
 interface Test
+
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: Ann.class[kClass], TypealiasInAnnotationKt.class[OtherA;OtherB;OtherOtherA]
+// LIGHT_ELEMENTS_NO_DECLARATION: Ann.class[kClass]

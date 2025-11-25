@@ -16,3 +16,6 @@ interface BaseInterface {
 
     val propertyWithValueClassParameter: MyValueClass? get() = null
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: BaseInterface.class[functionWithValueClassParameter;propertyWithValueClassParameter]
+// LIGHT_ELEMENTS_NO_DECLARATION: BaseInterface.class[functionWithValueClassParameter-rdfNfmQ;getPropertyWithValueClassParameter-BXGQg7w], MyValueClass.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]

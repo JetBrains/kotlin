@@ -15,3 +15,5 @@ class A {
 
         }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: A.class[getF-IQRRRT4;setF-QiIUSjo], Z.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]

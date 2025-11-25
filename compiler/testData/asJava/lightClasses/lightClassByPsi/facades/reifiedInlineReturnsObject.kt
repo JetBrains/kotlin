@@ -7,3 +7,5 @@ inline fun <reified R> MutableList<R>.asTableModel(pageSize : Int = 42) =
         override val rows
             get() = this@asTableModel
     }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: ReifiedInlineReturnsObjectKt.class[asTableModel]

@@ -20,3 +20,5 @@ fun bar() {}
 @B("x", 1, 2, z = "z")
 @C(A(1, 2), B("x", 1, 2, z = "z"))
 fun baz() {}
+// DECLARATIONS_NO_LIGHT_ELEMENTS: A.class[x], B.class[x;y;z], C.class[a;b], D.class[x], E.class[d]
+// LIGHT_ELEMENTS_NO_DECLARATION: A.class[x], B.class[x;y;z], C.class[a;b], D.class[x], E.class[d]

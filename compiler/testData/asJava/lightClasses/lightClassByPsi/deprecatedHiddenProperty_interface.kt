@@ -12,3 +12,5 @@ interface TestInterface {
 
     var pNew: Int
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: TestInterface.class[pOld_deprecatedOnProperty]

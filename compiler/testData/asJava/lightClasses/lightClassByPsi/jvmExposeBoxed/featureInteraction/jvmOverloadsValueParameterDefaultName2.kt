@@ -8,3 +8,5 @@ value class StringWrapper(val s: String)
 @JvmExposeBoxed
 @JvmOverloads
 fun foo(o: StringWrapper = StringWrapper("O"), k: String = "K"): String = ""
+
+// LIGHT_ELEMENTS_NO_DECLARATION: JvmOverloadsValueParameterDefaultName2Kt.class[foo-JELJCFg;foo-d-auiwc], StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]
