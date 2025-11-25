@@ -551,6 +551,11 @@ class AdapterGenerator(
             return this
         }
 
+        val preparedArgumentType = prepareArgumentTypeForSuspendConversion(argument)
+        // No conversion should happen if an argument already satisfies the expected type requirements
+        // NB: It's not just a fast path, but sometimes the presence adapter generation is incorrect (see KT-82590)
+        if (preparedArgumentType.isSubtypeOf(expectedType, session)) return this
+
         val unwrappedExpectedType = getFunctionTypeForPossibleSamType(expectedType) ?: expectedType
 
         // Expect the expected type to be a suspend functional type.
@@ -559,7 +564,6 @@ class AdapterGenerator(
         }
         val expectedFunctionalType = unwrappedExpectedType.customFunctionTypeToSimpleFunctionType(session)
 
-        val preparedArgumentType = prepareArgumentTypeForSuspendConversion(argument)
         val invokeSymbol = findInvokeSymbol(expectedFunctionalType, preparedArgumentType) ?: return this
         val suspendConvertedType = unwrappedExpectedType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
