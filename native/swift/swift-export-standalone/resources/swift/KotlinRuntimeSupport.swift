@@ -1,3 +1,4 @@
+@_implementationOnly import KotlinRuntimeSupportBridge
 import KotlinRuntime
 
 public struct KotlinError: Error {

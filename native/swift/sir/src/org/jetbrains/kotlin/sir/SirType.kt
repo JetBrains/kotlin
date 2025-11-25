@@ -129,3 +129,6 @@ data object SirUnsupportedType : SirType {
 fun SirType.optional(): SirNominalType = SirOptionalType(this)
 
 fun SirType.implicitlyUnwrappedOptional(): SirNominalType = SirImplicitlyUnwrappedOptionalType(this)
+
+fun SirScopeDefiningDeclaration.nominalType(parameterTypes: List<SirType> = emptyList()): SirNominalType =
+    SirNominalType(this, parameterTypes)

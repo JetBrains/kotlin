@@ -61,7 +61,8 @@ public object KotlinRuntimeSupportModule : SirModule() {
     override val declarations: MutableList<SirDeclaration> by lazy {
         mutableListOf(
             kotlinError,
-            kotlinBridgeable
+            kotlinBridgeable,
+            kotlinExistential,
         )
     }
 
@@ -98,6 +99,26 @@ public object KotlinRuntimeSupportModule : SirModule() {
         superClass = SirNominalType(KotlinRuntimeModule.kotlinBase)
         protocols.add(kotlinBridgeable)
     }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
+}
+
+public object KotlinCoroutineSupportModule : SirModule() {
+    override val imports: MutableList<SirImport> = mutableListOf()
+    override val name: String = "KotlinCoroutineSupport"
+
+    override val declarations: MutableList<SirDeclaration> by lazy {
+        mutableListOf(
+            swiftJob,
+        )
+    }
+
+    public val swiftJob: SirClass = buildClass {
+        origin = KotlinRuntimeElement()
+        name = "KotlinTask"
+        visibility = SirVisibility.PUBLIC
+        modality = SirModality.FINAL
+        superClass = KotlinRuntimeModule.kotlinBase.nominalType()
+        protocols.add(KotlinRuntimeSupportModule.kotlinBridgeable)
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
 }
 
 private fun <T> T.initializeParentForSelfAndChildren(parentModule: SirModule): T where T : SirDeclaration, T : SirDeclarationContainer {

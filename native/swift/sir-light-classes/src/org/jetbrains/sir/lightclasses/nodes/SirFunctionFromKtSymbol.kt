@@ -72,7 +72,7 @@ internal open class SirFunctionFromKtSymbol(
         this.translatedAttributes + listOfNotNull(SirAttribute.NonOverride.takeIf { overrideStatus is OverrideStatus.Conflicts })
     }
 
-    override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
+    override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null || isAsync) SirType.any else SirType.never
 
     override val isAsync: Boolean get() = ktSymbol.isSuspend
 

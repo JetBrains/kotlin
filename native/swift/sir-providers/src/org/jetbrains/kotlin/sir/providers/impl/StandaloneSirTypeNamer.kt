@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirUnsupportedType
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
+import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -82,6 +83,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         return when (declaration) {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
             KotlinRuntimeSupportModule.kotlinBridgeable -> "kotlin.Any"
+            KotlinCoroutineSupportModule.swiftJob -> "SwiftJob"
             SirSwiftModule.anyHashable -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"
 

@@ -1,2 +1,6 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
-//@file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4Main3FooC")
+
+import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+import kotlin.native.internal.ExportedBridge
+
