@@ -331,6 +331,12 @@ public class LightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractLigh
     }
 
     @Test
+    @TestMetadata("dynamicNotCapture.kt")
+    public void testDynamicNotCapture() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicNotCapture.kt");
+    }
+
+    @Test
     @TestMetadata("dynamicSafeCalls.kt")
     public void testDynamicSafeCalls() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicSafeCalls.kt");
