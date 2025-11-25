@@ -231,6 +231,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                 .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KOTLIN_NATIVE_STDLIB_NAME }
                 .map { RequiredUnresolvedLibrary(it.absolutePath) }
                 .map { resolve(it, isDefaultLink = true) }
+                .onEach { it.isFromKotlinNativeDistribution = true }
         } else emptySequence()
 
     override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L> {
@@ -238,7 +239,9 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         val result = mutableListOf<L>()
 
         if (!noStdLib) {
-            result.add(resolve(RequiredUnresolvedLibrary(KOTLIN_NATIVE_STDLIB_NAME), isDefaultLink = true))
+            val library = resolve(RequiredUnresolvedLibrary(KOTLIN_NATIVE_STDLIB_NAME), isDefaultLink = true)
+            library.isFromKotlinNativeDistribution = true
+            result.add(library)
         }
 
         // Endorsed libraries in distHead.
