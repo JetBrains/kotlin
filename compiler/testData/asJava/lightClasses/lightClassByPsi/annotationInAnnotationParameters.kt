@@ -1,5 +1,3 @@
-// DECLARATIONS_NO_LIGHT_ELEMENTS: B.class[param]
-// LIGHT_ELEMENTS_NO_DECLARATION: B.class[param]
 
 // FILE: a/A.kt
 

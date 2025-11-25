@@ -100,8 +100,12 @@ class KotlinDeclarationInCompiledFileSearcher {
                                     val accessorName = (if (setter) setterName else getterName) ?: declarationName
                                     accessorName in names && doPropertyMatch(member, declaration, setter)
                                 } else {
+                                    val containingClass = member.containingClass
                                     getterName in names && doPropertyMatch(member, declaration, false) ||
-                                            setterName in names && doPropertyMatch(member, declaration, true)
+                                            setterName in names && doPropertyMatch(member, declaration, true) ||
+                                            getterName == null && setterName == null && declarationName in names &&
+                                            (containingClass?.isRecord == true || containingClass?.isAnnotationType == true) &&
+                                            doPropertyMatch(member, declaration, false)
                                 }
                             }
                             else -> false
@@ -185,8 +189,9 @@ class KotlinDeclarationInCompiledFileSearcher {
         }
 
         if (ktTypes.size != psiTypes.size) return false
+        val isInsideAnnotation = member.containingClass?.isAnnotationType == true
         ktTypes.zip(psiTypes).forEach { (ktType, psiType) ->
-            if (!areTypesTheSame(ktType, psiType, false)) return false
+            if (!areTypesTheSame(ktType, psiType, false, isInsideAnnotation)) return false
         }
         return true
     }
@@ -266,14 +271,19 @@ class KotlinDeclarationInCompiledFileSearcher {
     /**
      * Compare erased types
      */
-    private fun areTypesTheSame(ktTypeRef: KtTypeReference, psiType: PsiType, varArgs: Boolean): Boolean {
+    private fun areTypesTheSame(
+        ktTypeRef: KtTypeReference,
+        psiType: PsiType,
+        varArgs: Boolean,
+        insideAnnotation: Boolean = false
+    ): Boolean {
         val qualifiedName =
             getQualifiedName(ktTypeRef.typeElement, ktTypeRef.getAllModifierLists().any { it.hasSuspendModifier() }) ?: return false
         return if (psiType is PsiArrayType && psiType.componentType !is PsiPrimitiveType) {
             qualifiedName == StandardNames.FqNames.array.asString() ||
-                    varArgs && areTypesTheSame(ktTypeRef, psiType.componentType, false)
+                    varArgs && areTypesTheSame(ktTypeRef, psiType.componentType, varArgs = false, insideAnnotation = insideAnnotation)
         } else {
-            psiType.isTheSame(psiType(qualifiedName, ktTypeRef))
+            psiType.isTheSame(psiType(qualifiedName, ktTypeRef, isInsideAnnotation = insideAnnotation))
         }
     }
 

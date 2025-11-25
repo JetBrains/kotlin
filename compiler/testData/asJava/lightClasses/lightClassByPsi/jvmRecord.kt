@@ -6,6 +6,3 @@ package pkg
 
 @JvmRecord
 data class MyRec(val name: String)
-
-// DECLARATIONS_NO_LIGHT_ELEMENTS: MyRec.class[name]
-// LIGHT_ELEMENTS_NO_DECLARATION: MyRec.class[name]

@@ -36,5 +36,4 @@ class `A()B()`
 class `A B` {
     class C
 }
-// LIGHT_ELEMENTS_NO_DECLARATION: Anno.class[A B;name;size], StrangeEnum.class[getEntries;valueOf;values]
-// DECLARATIONS_NO_LIGHT_ELEMENTS: Anno.class[A B;name;size]
+// LIGHT_ELEMENTS_NO_DECLARATION: StrangeEnum.class[getEntries;valueOf;values]

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
+import com.intellij.psi.CommonClassNames
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypes
@@ -12,8 +13,9 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.StandardClassIds
 
-fun psiType(kotlinFqName: String, context: PsiElement, boxPrimitiveType: Boolean = false): PsiType {
+fun psiType(kotlinFqName: String, context: PsiElement, boxPrimitiveType: Boolean = false, isInsideAnnotation: Boolean = false): PsiType {
     if (!boxPrimitiveType) {
         when (kotlinFqName) {
             "kotlin.Int" -> return PsiTypes.intType()
@@ -37,6 +39,13 @@ fun psiType(kotlinFqName: String, context: PsiElement, boxPrimitiveType: Boolean
         "kotlin.DoubleArray" -> return PsiTypes.doubleType().createArrayType()
         "kotlin.FloatArray" -> return PsiTypes.floatType().createArrayType()
     }
+
+    if (isInsideAnnotation && kotlinFqName == StandardClassIds.KClass.asFqNameString())
+        return PsiType.getTypeByName(
+            CommonClassNames.JAVA_LANG_CLASS,
+            context.project,
+            context.resolveScope
+        )
 
     val javaFqName =
         JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(kotlinFqName))?.asSingleFqName()?.asString()

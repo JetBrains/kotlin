@@ -15,5 +15,4 @@ annotation class Ann(vararg val kClass: KClass<*>)
 interface Test
 
 
-// DECLARATIONS_NO_LIGHT_ELEMENTS: Ann.class[kClass], TypealiasInAnnotationKt.class[OtherA;OtherB;OtherOtherA]
-// LIGHT_ELEMENTS_NO_DECLARATION: Ann.class[kClass]
+// DECLARATIONS_NO_LIGHT_ELEMENTS: TypealiasInAnnotationKt.class[OtherA;OtherB;OtherOtherA]
