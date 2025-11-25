@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -50,19 +51,25 @@ private fun getJdkHomeFromSystemProperty(logger: DokkaLogger): File? {
 
 internal fun getLanguageVersionSettings(
     languageVersionString: String?,
-    apiVersionString: String?
+    apiVersionString: String?,
+    isMultiplatformProject: Boolean,
 ): LanguageVersionSettingsImpl {
-    val languageVersion = LanguageVersion.fromVersionString(languageVersionString) ?: LanguageVersion.LATEST_STABLE
-    val apiVersion =
-        apiVersionString?.let { ApiVersion.parse(it) } ?: ApiVersion.createByLanguageVersion(languageVersion)
+    val languageVersion = LanguageVersion.fromVersionString(languageVersionString)
+        ?: LanguageVersion.LATEST_STABLE
+    val apiVersion = apiVersionString?.let { ApiVersion.parse(it) }
+        ?: ApiVersion.createByLanguageVersion(languageVersion)
     return LanguageVersionSettingsImpl(
         languageVersion = languageVersion,
-        apiVersion = apiVersion, analysisFlags = hashMapOf(
+        apiVersion = apiVersion,
+        analysisFlags = hashMapOf(
             AnalysisFlags.allowKotlinPackage to InternalConfiguration.allowKotlinPackage,
             // special flag for Dokka
             // force to resolve light classes (lazily by default)
-            AnalysisFlags.eagerResolveOfLightClasses to true
-        )
+            AnalysisFlags.eagerResolveOfLightClasses to true,
+        ),
+        specificFeatures = listOfNotNull(
+            if (isMultiplatformProject) LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED else null
+        ).toMap()
     )
 }
 
@@ -73,6 +80,7 @@ internal fun createAnalysisSession(
     isSampleProject: Boolean = false
 ): KotlinAnalysis {
     val sourcesModule = mutableMapOf<DokkaConfiguration.DokkaSourceSet, KaSourceModule>()
+    val isMultiplatformProject = sourceSets.any { it.analysisPlatform != Platform.jvm }
 
     val analysisSession = buildStandaloneAnalysisAPISession(
         projectDisposable = projectDisposable,
@@ -116,8 +124,11 @@ internal fun createAnalysisSession(
             for (sourceSet in sortedSourceSets) {
                 val targetPlatform = sourceSet.analysisPlatform.toTargetPlatform()
                 val sourceModule = buildKtSourceModule {
-                    languageVersionSettings =
-                        getLanguageVersionSettings(sourceSet.languageVersion, sourceSet.apiVersion)
+                    languageVersionSettings = getLanguageVersionSettings(
+                        languageVersionString = sourceSet.languageVersion,
+                        apiVersionString = sourceSet.apiVersion,
+                        isMultiplatformProject = isMultiplatformProject,
+                    )
                     platform = targetPlatform
                     moduleName = "<module ${sourceSet.displayName}>"
 
@@ -161,8 +172,8 @@ internal fun topologicalSortByDependantSourceSets(
     val result = mutableListOf<DokkaConfiguration.DokkaSourceSet>()
 
     val verticesAssociatedWithState = sourceSets.associateWithTo(mutableMapOf()) { State.UNVISITED }
-    fun dfs(souceSet: DokkaConfiguration.DokkaSourceSet) {
-        when (verticesAssociatedWithState[souceSet]) {
+    fun dfs(sourceSet: DokkaConfiguration.DokkaSourceSet) {
+        when (verticesAssociatedWithState[sourceSet]) {
             State.VISITED -> return
             State.VISITING -> {
                 logger.error("Detected cycle in source set graph")
@@ -171,16 +182,17 @@ internal fun topologicalSortByDependantSourceSets(
 
             else -> {
                 val dependentSourceSets =
-                    souceSet.dependentSourceSets.mapNotNull { dependentSourceSetId ->
-                       sourceSets.find { it.sourceSetID == dependentSourceSetId } ?: run {
+                    sourceSet.dependentSourceSets.mapNotNull { dependentSourceSetId ->
+                        sourceSets.find { it.sourceSetID == dependentSourceSetId } ?: run {
                             logger.error("Cannot find source set with id $dependentSourceSetId")
-                            null }
+                            null
+                        }
 
                     }
-                verticesAssociatedWithState[souceSet] = State.VISITING
+                verticesAssociatedWithState[sourceSet] = State.VISITING
                 dependentSourceSets.forEach(::dfs)
-                verticesAssociatedWithState[souceSet] = State.VISITED
-                result += souceSet
+                verticesAssociatedWithState[sourceSet] = State.VISITED
+                result += sourceSet
             }
         }
     }
