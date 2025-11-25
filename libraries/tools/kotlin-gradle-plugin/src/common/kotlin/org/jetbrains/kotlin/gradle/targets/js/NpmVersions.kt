@@ -13,15 +13,12 @@ import java.io.Serializable
 // DO NOT MODIFY DIRECTLY! Use org.jetbrains.kotlin.generators.gradle.targets.js.MainKt
 class NpmVersions : Serializable {
     val karma = NpmPackageVersion("karma", "github:Kotlin/karma#6.4.5")
-    val swcCli = NpmPackageVersion("@swc/cli", "0.7.9")
-    val swcCore = NpmPackageVersion("@swc/core", "1.15.0")
     val swcHelpers = NpmPackageVersion("@swc/helpers", "0.5.17")
     val webpack = NpmPackageVersion("webpack", "5.102.1")
     val webpackCli = NpmPackageVersion("webpack-cli", "6.0.1")
     val webpackDevServer = NpmPackageVersion("webpack-dev-server", "5.2.2")
     val sourceMapLoader = NpmPackageVersion("source-map-loader", "5.0.0")
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.21")
-    val swcLoader = NpmPackageVersion("swc-loader", "0.2.6")
     val cssLoader = NpmPackageVersion("css-loader", "7.1.2")
     val styleLoader = NpmPackageVersion("style-loader", "4.0.0")
     val sassLoader = NpmPackageVersion("sass-loader", "16.0.5")
@@ -49,15 +46,12 @@ class NpmVersions : Serializable {
 
     val allDependencies = listOf(
         karma,
-        swcCli,
-        swcCore,
         swcHelpers,
         webpack,
         webpackCli,
         webpackDevServer,
         sourceMapLoader,
         sourceMapSupport,
-        swcLoader,
         cssLoader,
         styleLoader,
         sassLoader,
