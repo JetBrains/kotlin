@@ -158,7 +158,11 @@ class KotlinDeclarationInCompiledFileSearcher {
             it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == JvmStandardClassIds.JVM_NAME_SHORT
         }
         if (annotationEntry != null) {
-            val constantValue = (annotationEntry.stub as? KotlinAnnotationEntryStubImpl)?.valueArguments?.get(Name.identifier("name"))
+            // Decompiled stubs have value arguments,
+            // but stubs calculation has to be forced in case AST was loaded based on decompiled text and stubs were gc-collected
+            val annotationEntryStub =
+                annotationEntry.greenStub ?: annotationEntry.containingKtFile.calcStubTree().let { annotationEntry.greenStub }
+            val constantValue = (annotationEntryStub as? KotlinAnnotationEntryStubImpl)?.valueArguments?.get(Name.identifier("name"))
             if (constantValue is StringValue) {
                 return constantValue.value
             }
