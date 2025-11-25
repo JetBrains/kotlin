@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableM
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
@@ -136,7 +137,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         ApplicationManager.getApplication().assertWriteIntentLockAcquired()
 
         when (val changeType = calculateChangeType(element, modificationType)) {
-            is ChangeType.Invisible -> {}
+            is ChangeType.Whitespace -> handleWhitespaceModification(element)
             is ChangeType.InBlock -> addModificationToQueue(changeType)
             is ChangeType.OutOfBlock -> outOfBlockModification(element)
         }
@@ -149,7 +150,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         }
 
         if (element is PsiWhiteSpace || element is PsiComment) {
-            return ChangeType.Invisible
+            return ChangeType.Whitespace
         }
 
         if (element.language !is KotlinLanguage) {
@@ -210,6 +211,23 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         inBlockModificationOwner is KtPropertyAccessor &&
                 this is KaElementModificationType.ElementRemoved &&
                 removedElement.potentiallyAffectsPropertyBackingFieldResolution()
+
+    /**
+     * @see ChangeType.Whitespace
+     */
+    private fun handleWhitespaceModification(element: PsiElement) {
+        val file = element.containingFile as? KtFile ?: return
+        val module = KotlinProjectStructureProvider.getModule(project, element, useSiteModule = null)
+        val resolvableSession = module.getResolutionFacade(project).sessionProvider.getResolvableSession(module)
+
+        val fileStructure = resolvableSession.moduleComponents.fileStructureCache.getCachedFileStructure(file) ?: return
+
+        // `PsiWhiteSpace` is not a `KtElement`, so we cannot invalidate it directly.
+        val ktElement = element.parentOfType<KtElement>() ?: file
+
+        // To reset diagnostics, we have to invalidate the file structure cache for the affected element.
+        fileStructure.invalidateElement(ktElement)
+    }
 
     private fun inBlockModification(declaration: KtAnnotated, module: KaModule) {
         val resolutionFacade = module.getResolutionFacade(project)
@@ -320,7 +338,22 @@ private fun nonLocalDeclarationForLocalChange(psi: PsiElement): KtAnnotated? {
 
 private sealed class ChangeType {
     object OutOfBlock : ChangeType()
-    object Invisible : ChangeType()
+
+    /**
+     * Whitespace modification covers changes in whitespace and comments.
+     *
+     * It *usually* has no effect, but it can affect compiler diagnostics. For example, when we have `if (x) "a"else "b"`, the compiler
+     * produces the error "literals must be surrounded by whitespace" (see KT-82629). Changing it to `if (x) "a" else "b"` fixes the
+     * problem, but for the cached error to disappear, caches that can be affected by PSI-only changes need to be invalidated.
+     *
+     * Whitespace modification is distinct from [in-block modification][InBlock]. Its scope of effect is smaller than that of in-block
+     * modification because the underlying FIR is not affected by whitespace modification. Hence, this is a special case that only affects
+     * the PSI and thereby only PSI-based compiler checkers.
+     *
+     * Whitespace modification can occur in any location. Even if it occurs outside a declaration, whitespace modification only affects its
+     * containing declaration or the file itself, not the whole module.
+     */
+    object Whitespace : ChangeType()
 
     /**
      * In-block modification is a source code modification that doesn't affect the state of other non-local declarations.
