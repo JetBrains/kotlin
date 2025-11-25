@@ -1997,6 +1997,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralAsReceiver.kt");
       }
 
+      @Test
+      @TestMetadata("kt82684.kt")
+      public void testKt82684() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt82684.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled")
       @TestDataPath("$PROJECT_ROOT")
