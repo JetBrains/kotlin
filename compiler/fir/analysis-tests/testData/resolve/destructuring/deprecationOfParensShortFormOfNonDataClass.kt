@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
-// LANGUAGE: +NameBasedDestructuring, +DeprecateNameMismatchInShortDestructuringWithParentheses
+// LANGUAGE: +NameBasedDestructuring, +DeprecateNameMismatchInShortDestructuringWithParentheses, -EnableNameBasedDestructuringShortForm
 // RENDER_DIAGNOSTICS_FULL_TEXT
 fun declaration(x: List<String>) {
     // deprecations

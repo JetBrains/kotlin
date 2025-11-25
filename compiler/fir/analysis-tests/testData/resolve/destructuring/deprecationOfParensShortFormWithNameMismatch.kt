@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +NameBasedDestructuring, +DeprecateNameMismatchInShortDestructuringWithParentheses
+// LANGUAGE: +NameBasedDestructuring, +DeprecateNameMismatchInShortDestructuringWithParentheses, -EnableNameBasedDestructuringShortForm
 // RENDER_DIAGNOSTICS_FULL_TEXT
 data class Tuple(val a: String, val b: Int)
 
