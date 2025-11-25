@@ -121,6 +121,7 @@ val unpublishedCompilerRuntimeDependencies = listOf(
     ":core:descriptors", // for `fromUIntToLong`
     ":core:util.runtime", // for stdlib extensions
     ":kotlin-build-common", // for incremental compilation setup
+    ":js:js.config", // for k/js task
     ":wasm:wasm.config", // for k/js task
 )
 

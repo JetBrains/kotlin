@@ -211,10 +211,11 @@ class JsIrLoweringFacade(
                         ).finalizePath(moduleKind)
                     )
                 }
+
                 output.writeTo(outputFile, moduleId, moduleKind, mode.granularity)
 
                 if (delegateTranspilationToExternalTool) {
-                    SwcRunner.exec(outputFile.parentFile, moduleKind)
+                    SwcRunner.exec(outputFile.parentFile, moduleKind, mode)
                 }
             }
         }
