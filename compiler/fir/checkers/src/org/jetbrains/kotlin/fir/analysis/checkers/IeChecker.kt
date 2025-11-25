@@ -77,6 +77,7 @@ data class IEData(
     val oneLevelRedundant: Boolean? = null,
     val upperBound: Boolean? = null,
     val upperBoundedByTp: Boolean? = null,
+    val cringeHappened: Boolean = false,
 )
 
 object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
@@ -114,6 +115,15 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
                                 }
                                 false
                             }
+                            if (regClass.typeParameters.size != argument.returnTypeRef.coneType.typeArguments.size) {
+                                report(
+                                    IEData(
+                                        call = symbol.callableIdAsString(),
+                                        cringeHappened = true
+                                    )
+                                )
+                                return
+                            }
                             argument.returnTypeRef.coneType.typeArguments.forEachIndexed { index, typeProjection ->
                                 if (isUsed[index]) {
                                     if (typeProjection is ConeKotlinTypeProjection) {
@@ -136,9 +146,18 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
                 }
             }
 
-        expression.typeArguments.indices.forEach { index ->
-            if (!expression.typeArguments[index].isExplicit) return@forEach
-            val type = (expression.typeArguments[index] as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@forEach
+        if (expression.typeArguments.size != symbol.typeParameterSymbols.size) {
+            report(
+                IEData(
+                    call = symbol.callableIdAsString(),
+                    cringeHappened = true
+                )
+            )
+            return
+        }
+        expression.typeArguments.forEachIndexed { index, argument ->
+            if (!argument.isExplicit) return@forEachIndexed
+            val type = (argument as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@forEachIndexed
             val param = symbol.typeParameterSymbols[index]
             val originalParam = symbol.originalOrSelf().typeParameterSymbols.getOrNull(index)
 
