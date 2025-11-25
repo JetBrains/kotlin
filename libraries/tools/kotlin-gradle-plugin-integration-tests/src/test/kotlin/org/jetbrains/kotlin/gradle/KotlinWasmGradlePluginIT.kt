@@ -805,6 +805,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             gradleVersion,
             dependencyManagement = dependencyManagement
         ) {
+            @Suppress("UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS")
             buildScriptInjection {
                 project.plugins.withType(WasmNodeJsPlugin::class.java) {
                     project.extensions.getByType(WasmNodeJsEnvSpec::class.java).download.set(false)
