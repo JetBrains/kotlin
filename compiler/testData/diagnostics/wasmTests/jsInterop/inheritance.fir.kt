@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class C1
 
 interface I1
