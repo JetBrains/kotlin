@@ -101,7 +101,7 @@ fun createKotlinLibrary(
 
 fun createKotlinLibraryComponents(
     libraryFile: File,
-    isDefault: Boolean = true,
+    isDefault: Boolean,
     zipAccessor: ZipFileSystemAccessor? = null,
 ): List<KotlinLibrary> {
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null, zipAccessor)
