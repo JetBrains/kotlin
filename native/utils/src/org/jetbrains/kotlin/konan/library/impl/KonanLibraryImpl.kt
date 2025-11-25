@@ -63,7 +63,7 @@ fun createKonanLibrary(
     libraryFilePossiblyDenormalized: File,
     component: String,
     target: KonanTarget? = null,
-    isDefault: Boolean = false,
+    isDefault: Boolean,
     zipFileSystemAccessor: ZipFileSystemAccessor? = null,
 ): KotlinLibrary {
     val nonNullZipFileSystemAccessor = zipFileSystemAccessor ?: ZipFileSystemInPlaceAccessor

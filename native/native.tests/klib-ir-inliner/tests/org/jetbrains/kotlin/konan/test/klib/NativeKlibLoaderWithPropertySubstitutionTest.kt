@@ -86,6 +86,7 @@ class NativeKlibLoaderWithPropertySubstitutionTest {
             libraryFilePossiblyDenormalized = KlibFile(path = klibPath),
             component = KLIB_DEFAULT_COMPONENT_NAME,
             target = target,
+            isDefault = false,
         ).manifestProperties
     }
 
