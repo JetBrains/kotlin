@@ -10,6 +10,7 @@ import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToContextParameters
+import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.dfs
@@ -17,9 +18,11 @@ import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.MemberPageNode
 import org.junit.jupiter.api.Nested
+import translators.findClasslike
 import utils.OnlySymbols
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 
@@ -669,7 +672,7 @@ class ExpectActualsTest : BaseAbstractTest() {
                 with(first.contextParameters.single()) {
                     assertEquals(DRI("kotlin", "Int"), type.driOrNull)
                     assertEquals("_", name)
-                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex )
+                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex)
                     assertEquals(
                         setOf("common", "jvm", "native"), this.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
                     )
@@ -683,7 +686,7 @@ class ExpectActualsTest : BaseAbstractTest() {
                 with(second.contextParameters.single()) {
                     assertEquals(DRI("kotlin", "String"), type.driOrNull)
                     assertEquals("_", name)
-                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex )
+                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex)
                     assertEquals(
                         setOf("common", "jvm", "native"), this.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
                     )
@@ -720,7 +723,7 @@ class ExpectActualsTest : BaseAbstractTest() {
                 assertEquals("i", property.name)
                 with(property.contextParameters.single()) {
                     assertEquals(DRI("kotlin", "String"), type.driOrNull)
-                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex )
+                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex)
                     assertEquals("_", name)
                     assertEquals(
                         setOf("common", "jvm", "native"), this.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
@@ -728,6 +731,80 @@ class ExpectActualsTest : BaseAbstractTest() {
                 }
                 assertEquals(
                     setOf("common", "jvm", "native"), property.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
+                )
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("#4245: New KDoc resolve for symbols")
+    fun `kdoc on expect-actual`() {
+        testInline(
+            """
+        /src/common/test.kt
+        /**
+         * @constructor Common Description
+         */
+        expect class A() {
+            /**
+             * Common Description
+             */
+            fun foo()
+            
+            /**
+             * Common Description
+             */
+            fun bar()
+        }
+        
+        /src/jvm/test.kt
+        actual class A actual constructor() {
+            actual fun foo() {}
+            
+            /**
+             * Platform Description
+             */
+            actual fun bar() {}
+        }
+        """.trimMargin(),
+            multiplatformConfiguration
+        ) {
+            documentablesTransformationStage = { module ->
+                val a = module.findClasslike("", "A") as DClass
+                val constructor = a.constructors.single()
+                val foo = a.functions.first { it.name == "foo" }
+                val bar = a.functions.first { it.name == "bar" }
+
+                val common = multiplatformConfiguration.sourceSets.first { it.displayName == "common" }
+                val jvm = multiplatformConfiguration.sourceSets.first { it.displayName == "jvm" }
+
+                assertEquals(2, constructor.documentation.size)
+                assertEquals(constructor.documentation[common], constructor.documentation[jvm])
+                constructor.documentation.values.forEach {
+                    assertEquals(
+                        "DocumentationNode(children=[Description(root=CustomDocTag(children=[P(children=[Text(body=Common Description, children=[], params={})], params={})], params={}, name=MARKDOWN_FILE))])",
+                        it.toString()
+                    )
+                }
+
+                assertEquals(2, foo.documentation.size)
+                assertEquals(foo.documentation[common], foo.documentation[jvm])
+                foo.documentation.values.forEach {
+                    assertEquals(
+                        "DocumentationNode(children=[Description(root=CustomDocTag(children=[P(children=[Text(body=Common Description, children=[], params={})], params={})], params={}, name=MARKDOWN_FILE))])",
+                        it.toString()
+                    )
+                }
+
+                assertEquals(2, bar.documentation.size)
+                assertNotEquals(bar.documentation[common], bar.documentation[jvm])
+                assertEquals(
+                    "DocumentationNode(children=[Description(root=CustomDocTag(children=[P(children=[Text(body=Common Description, children=[], params={})], params={})], params={}, name=MARKDOWN_FILE))])",
+                    bar.documentation[common].toString()
+                )
+                assertEquals(
+                    "DocumentationNode(children=[Description(root=CustomDocTag(children=[P(children=[Text(body=Platform Description, children=[], params={})], params={})], params={}, name=MARKDOWN_FILE))])",
+                    bar.documentation[jvm].toString()
                 )
             }
         }
