@@ -2724,6 +2724,18 @@ public class PsiJsIrTextTestGenerated extends AbstractPsiJsIrTextTest {
       }
 
       @Test
+      @TestMetadata("noConversionForSubtype.kt")
+      public void testNoConversionForSubtype() {
+        runTest("compiler/testData/ir/irText/expressions/funInterface/noConversionForSubtype.kt");
+      }
+
+      @Test
+      @TestMetadata("noConversionForSubtypeGeneric.kt")
+      public void testNoConversionForSubtypeGeneric() {
+        runTest("compiler/testData/ir/irText/expressions/funInterface/noConversionForSubtypeGeneric.kt");
+      }
+
+      @Test
       @TestMetadata("partialSam.kt")
       public void testPartialSam() {
         runTest("compiler/testData/ir/irText/expressions/funInterface/partialSam.kt");

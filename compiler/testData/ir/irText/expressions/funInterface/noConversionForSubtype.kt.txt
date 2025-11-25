@@ -1,0 +1,38 @@
+class FooWorker : SimpleRibCoroutineWorker, Function1<String, Unit> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun invoke(str: String) {
+  }
+
+  override suspend fun onStart(scope: MyInterface) {
+  }
+
+}
+
+interface MyInterface {
+}
+
+fun interface SimpleRibCoroutineWorker {
+  abstract suspend fun onStart(scope: MyInterface)
+
+}
+
+fun bar(vararg x: SimpleRibCoroutineWorker) {
+}
+
+fun createNewPlugin(): SimpleRibCoroutineWorker {
+  val x: SimpleRibCoroutineWorker = FooWorker()
+  return FooWorker()
+}
+
+fun foo(x: SimpleRibCoroutineWorker) {
+}
+
+fun main() {
+  foo(x = FooWorker())
+  bar(x = [FooWorker()])
+}
