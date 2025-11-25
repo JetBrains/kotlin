@@ -1,0 +1,3 @@
+package kotlin.experimental
+
+public annotation class ExperimentalObjCEnum

@@ -53,6 +53,10 @@ open annotation class kotlin.experimental/ExperimentalNativeApi : kotlin/Annotat
     constructor <init>() // kotlin.experimental/ExperimentalNativeApi.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.experimental/ExperimentalObjCEnum : kotlin/Annotation { // kotlin.experimental/ExperimentalObjCEnum|null[0]
+    constructor <init>() // kotlin.experimental/ExperimentalObjCEnum.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.experimental/ExperimentalObjCName : kotlin/Annotation { // kotlin.experimental/ExperimentalObjCName|null[0]
     constructor <init>() // kotlin.experimental/ExperimentalObjCName.<init>|<init>(){}[0]
 }
