@@ -1,0 +1,38 @@
+FILE: elvisAndLongIlt.kt
+    public final fun fooElvis(x: R|kotlin/Long|, y: R|kotlin/Long?|): R|kotlin/Boolean| {
+        ^fooElvis !=(R|<local>/x|, R|<local>/y| ?: Int(0))
+    }
+    public final fun <I> id(i: R|I|): R|I| {
+        ^id R|<local>/i|
+    }
+    public final fun fooElvisId(x: R|kotlin/Long|, y: R|kotlin/Long?|): R|kotlin/Boolean| {
+        ^fooElvisId !=(R|<local>/x|, R|/id|<R|kotlin/Long|>(R|<local>/y| ?: Long(0)))
+    }
+    public final fun fooBar(x: R|kotlin/Long|, y: R|kotlin/Long?|): R|kotlin/Boolean| {
+        ^fooBar !=(R|<local>/x|, R|/bar|<R|kotlin/Long|>(R|<local>/y|, Long(0)))
+    }
+    public final fun <T> bar(x: R|T?|, y: R|T|): R|T| {
+        ^bar R|<local>/x| ?: R|<local>/y|
+    }
+    public final fun fooBarExact(x: R|kotlin/Long|, y: R|kotlin/Long?|): R|kotlin/Boolean| {
+        ^fooBarExact !=(R|<local>/x|, R|/barExact|<R|kotlin/Any?|>(R|<local>/y|, Int(0)))
+    }
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE))) public final fun <E> barExact(x: R|E?|, y: R|E|): R|@Exact E| {
+        ^barExact R|<local>/x| ?: R|<local>/y|
+    }
+    public final fun assign(x: R|kotlin/Long?|): R|kotlin/Unit| {
+        lval n: R|kotlin/Number| = R|<local>/x| ?: Int(0)
+        lval a: R|kotlin/Any?| = R|<local>/x| ?: Int(0)
+        lval l: R|kotlin/Long?| = R|<local>/x| ?: Long(0)
+    }
+    public final fun call(x: R|kotlin/Long?|): R|kotlin/Unit| {
+        R|/acceptNumber|(R|<local>/x| ?: Long(0))
+        R|/acceptAny|(R|<local>/x| ?: Long(0))
+        R|/acceptLong|(R|<local>/x| ?: Long(0))
+    }
+    public final fun acceptNumber(n: R|kotlin/Number|): R|kotlin/Unit| {
+    }
+    public final fun acceptAny(a: R|kotlin/Any?|): R|kotlin/Unit| {
+    }
+    public final fun acceptLong(l: R|kotlin/Long?|): R|kotlin/Unit| {
+    }
