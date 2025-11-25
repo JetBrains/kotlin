@@ -559,11 +559,11 @@ class AdapterGenerator(
         }
         val expectedFunctionalType = unwrappedExpectedType.customFunctionTypeToSimpleFunctionType(session)
 
-        val functionalArgumentType = calculateFunctionalArgumentType(argument)
-        val invokeSymbol = findInvokeSymbol(expectedFunctionalType, functionalArgumentType) ?: return this
+        val preparedArgumentType = prepareArgumentTypeForSuspendConversion(argument)
+        val invokeSymbol = findInvokeSymbol(expectedFunctionalType, preparedArgumentType) ?: return this
         val suspendConvertedType = unwrappedExpectedType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
-            val argumentType = functionalArgumentType.toIrType()
+            val argumentType = preparedArgumentType.toIrType()
             val irAdapterFunction =
                 createAdapterFunctionForArgument(startOffset, endOffset, suspendConvertedType, argumentType, invokeSymbol)
             val irAdapterRef = IrFunctionReferenceImpl(
@@ -577,8 +577,15 @@ class AdapterGenerator(
         }
     }
 
-    private fun calculateFunctionalArgumentType(argument: FirExpression): ConeKotlinType {
+    /**
+     * For SAM conversions, it unwraps a contained function type
+     * For KProperty-typed expression it transforms it to the similarly shaped FunctionN
+     * For all other cases, it just returns the resolved type.
+     */
+    private fun prepareArgumentTypeForSuspendConversion(argument: FirExpression): ConeKotlinType {
         var argumentType = ((argument as? FirSamConversionExpression)?.expression ?: argument).resolvedType.fullyExpandedType()
+        // TODO: This code looks like a workaround for KT-73399, but the initial problem is still reproducible as KT-82683
+        // TODO: Invent a more general fix and rename the function to "unwrapSamConversion" KT-82683
         if (argumentType.isKProperty(session) || argumentType.isKMutableProperty(session)) {
             val functionClassId = FunctionTypeKind.Function.numberedClassId(argumentType.typeArguments.size - 1)
             argumentType = functionClassId.toLookupTag().constructClassType(typeArguments = argumentType.typeArguments)
