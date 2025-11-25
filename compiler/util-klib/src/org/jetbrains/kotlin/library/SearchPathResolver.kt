@@ -74,8 +74,8 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
     val searchRoots: List<SearchRoot>
 
     fun resolutionSequence(givenPath: String): Sequence<File>
-    fun resolve(unresolved: LenientUnresolvedLibrary, isDefaultLink: Boolean = false): L?
-    fun resolve(unresolved: RequiredUnresolvedLibrary, isDefaultLink: Boolean = false): L
+    fun resolve(unresolved: LenientUnresolvedLibrary, isDefaultLink: Boolean): L?
+    fun resolve(unresolved: RequiredUnresolvedLibrary, isDefaultLink: Boolean): L
     fun resolve(givenPath: String): L
     fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L>
     fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean
@@ -83,8 +83,8 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
 }
 
 fun <L : KotlinLibrary> SearchPathResolver<L>.resolve(unresolved: UnresolvedLibrary): L? = when (unresolved) {
-    is LenientUnresolvedLibrary -> resolve(unresolved)
-    is RequiredUnresolvedLibrary -> resolve(unresolved)
+    is LenientUnresolvedLibrary -> resolve(unresolved, isDefaultLink = false)
+    is RequiredUnresolvedLibrary -> resolve(unresolved, isDefaultLink = false)
 }
 
 // This is a simple library resolver that only cares for file names.
@@ -213,7 +213,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean = true
 
-    override fun resolve(givenPath: String) = resolve(RequiredUnresolvedLibrary(givenPath), false)
+    override fun resolve(givenPath: String) = resolve(RequiredUnresolvedLibrary(givenPath), isDefaultLink = false)
 
     private val File.klib
         get() = File(this, "klib")
@@ -238,7 +238,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         val result = mutableListOf<L>()
 
         if (!noStdLib) {
-            result.add(resolve(RequiredUnresolvedLibrary(KOTLIN_NATIVE_STDLIB_NAME), true))
+            result.add(resolve(RequiredUnresolvedLibrary(KOTLIN_NATIVE_STDLIB_NAME), isDefaultLink = true))
         }
 
         // Endorsed libraries in distHead.
