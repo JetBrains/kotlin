@@ -269,6 +269,12 @@ public class LLNativeDiagnosticsTestGenerated extends AbstractLLNativeDiagnostic
     public void testInheritedDefaultValueWithIntersectionOverride() {
       runTest("compiler/testData/diagnostics/nativeTests/defaultArguments/inheritedDefaultValueWithIntersectionOverride.kt");
     }
+
+    @Test
+    @TestMetadata("inheritedDefaultValueWithIntersectionOverrideWithInlinedFunInKlib.kt")
+    public void testInheritedDefaultValueWithIntersectionOverrideWithInlinedFunInKlib() {
+      runTest("compiler/testData/diagnostics/nativeTests/defaultArguments/inheritedDefaultValueWithIntersectionOverrideWithInlinedFunInKlib.kt");
+    }
   }
 
   @Nested
