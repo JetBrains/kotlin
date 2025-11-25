@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LL_FIR_DIVERGENCE
 // AA doesn't run the compilation, so no metadata is present
 // See KmpCompilationMode.LOW_LEVEL_API

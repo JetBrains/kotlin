@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -55,6 +56,7 @@ abstract class AbstractDiagnosticsWasmKlibTestBase(
 
         enableMetaInfoHandler()
 
+        useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::WasmFirstStageEnvironmentConfigurator.bind(wasmTarget),
@@ -101,7 +103,7 @@ abstract class AbstractDiagnosticsWasmKlibTestBase(
             useHandlers(::KlibBackendDiagnosticsHandler)
         }
         useAfterAnalysisCheckers(
-            ::PhasedPipelineChecker.bind(TestPhase.FRONTEND),
+            ::PhasedPipelineChecker,
         )
     }
 }

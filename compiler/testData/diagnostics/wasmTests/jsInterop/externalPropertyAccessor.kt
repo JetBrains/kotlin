@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val x <!EXTERNAL_DELEGATION!>by lazy { "1" }<!>
     <!WRONG_EXTERNAL_DECLARATION!>external get<!>
 

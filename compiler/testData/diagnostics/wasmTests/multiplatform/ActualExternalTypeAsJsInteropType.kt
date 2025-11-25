@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: commonwasm
 // FILE: commonwasm.kt
 

@@ -62,19 +62,18 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/diagnostics") {
-            testClass<AbstractDiagnosticsFirWasmTest> {
-                model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
             testClass<AbstractDiagnosticsFirWasmWasiTest> {
                 model("wasmWasiTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
             testClass<AbstractDiagnosticsFirWasmKlibTest> {
+                model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
                 model("wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
             testClass<AbstractDiagnosticsWasmKlibWithInlinedFunInKlibTest> {
+                model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
                 model(
                     relativeRootPath = "testsWithAnyBackend",
                     pattern = "^([^_](.+))\\.kt$",
@@ -83,11 +82,21 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractDiagnosticsWasmJsWithIrInlinerTestBase> {
+                model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
                 model("irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model(
+                    relativeRootPath = "testsWithAnyBackend",
+                    pattern = "^([^_](.+))\\.kt$",
+                )
             }
 
             testClass<AbstractDiagnosticsWasmWasiWithIrInlinerTestBase> {
+                model("wasmWasiTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
                 model("irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model(
+                    relativeRootPath = "testsWithAnyBackend",
+                    pattern = "^([^_](.+))\\.kt$",
+                )
             }
         }
 
