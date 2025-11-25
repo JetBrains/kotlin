@@ -2096,6 +2096,40 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Kt81777 {
+        @Test
+        public void testAllFilesPresentInKt81777() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("inAnnotationDefaults.kt")
+        public void testInAnnotationDefaults() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/inAnnotationDefaults.kt");
+        }
+
+        @Test
+        @TestMetadata("inAnnotations.kt")
+        public void testInAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/inAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("withDisabledCL.kt")
+        public void testWithDisabledCL() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/withDisabledCL.kt");
+        }
+
+        @Test
+        @TestMetadata("withEnabledCL.kt")
+        public void testWithEnabledCL() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/withEnabledCL.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/multipleOverloads")
       @TestDataPath("$PROJECT_ROOT")
       public class MultipleOverloads {
