@@ -224,28 +224,33 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
             return
         }
 
-        val propertyName = originalDestructuringDeclarationType.associatedPropertyName(componentIndex)
-
-        if (propertyName == null) {
-            // If this condition is true for the first entry, it is true for all entries.
-            // Suppress repeated diagnostics by only reporting on the first one.
-            if (componentIndex == 1) {
-                reporter.reportOn(
-                    source,
-                    FirErrors.DESTRUCTURING_SHORT_FORM_OF_NON_DATA_CLASS,
-                    originalDestructuringDeclarationType,
-                    declaration.name
-                )
-            }
-        } else if (propertyName != declaration.name) {
-            reporter.reportOn(source, FirErrors.DESTRUCTURING_SHORT_FORM_NAME_MISMATCH, declaration.name, propertyName)
+        val problem = originalDestructuringDeclarationType.getProblem(componentIndex, declaration.name) ?: return
+        when (problem) {
+            NonDataClass, DataClassCustomComponent -> reporter.reportOn(
+                source,
+                FirErrors.DESTRUCTURING_SHORT_FORM_OF_NON_DATA_CLASS,
+                originalDestructuringDeclarationType,
+                declaration.name,
+                if (problem is NonDataClass) "non-data class" else "custom component operators of data class",
+            )
+            is DataClassNameMismatch -> reporter.reportOn(
+                source,
+                FirErrors.DESTRUCTURING_SHORT_FORM_NAME_MISMATCH,
+                declaration.name,
+                problem.propertyName,
+            )
         }
     }
 
+    private sealed class ProblemType
+    private class DataClassNameMismatch(val propertyName: Name) : ProblemType()
+    private object NonDataClass : ProblemType()
+    private object DataClassCustomComponent : ProblemType()
+
     context(context: CheckerContext)
-    private fun ConeKotlinType.associatedPropertyName(componentIndex: Int): Name? {
+    private fun ConeKotlinType.getProblem(componentIndex: Int, destructuredName: Name): ProblemType? {
         val classSymbol = fullyExpandedType().toRegularClassSymbol() ?: return null
-        return when {
+        val propertyName = when {
             classSymbol.isData -> {
                 val constructor = classSymbol.declaredMemberScope().getDeclaredConstructors().firstOrNull { it.isPrimary }
                 constructor?.valueParameterSymbols?.elementAtOrNull(componentIndex - 1)?.name
@@ -255,6 +260,15 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 2 -> StandardNames.MAP_ENTRY_VALUE
                 else -> null
             }
+            else -> null
+        }
+
+        return when {
+            // If this condition is true for the first entry, it is true for all entries.
+            // Suppress repeated diagnostics by only reporting on the first one.
+            !classSymbol.isData && propertyName == null && componentIndex == 1 -> NonDataClass
+            classSymbol.isData && propertyName == null -> DataClassCustomComponent
+            propertyName != null && propertyName != destructuredName -> DataClassNameMismatch(propertyName)
             else -> null
         }
     }

@@ -4038,6 +4038,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("dataClassCustomComponent.kt")
+      public void testDataClassCustomComponent() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/dataClassCustomComponent.kt");
+      }
+
+      @Test
       @TestMetadata("deprecationOfParensShortFormOfMapEntry.kt")
       public void testDeprecationOfParensShortFormOfMapEntry() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/deprecationOfParensShortFormOfMapEntry.kt");

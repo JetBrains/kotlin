@@ -2887,12 +2887,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             buildString {
                 append("This syntax will be used for name-based destructuring ")
                 appendVersion(LanguageFeature.EnableNameBasedDestructuringShortForm)
-                appendLine(" which will stop compiling or change its meaning for non-data class ''{0}''.")
+                appendLine(" which will stop compiling or change its meaning for {2} ''{0}''.")
                 appendLine("Use the new positional destructuring syntax ''[{1}, ...]'' to prepare for the transition.")
                 append("See https://kotl.in/name-based-destructuring for more information.")
             },
             RENDER_TYPE,
-            NAME
+            NAME,
+            TO_STRING,
         )
         map.put(
             DESTRUCTURING_SHORT_FORM_UNDERSCORE,

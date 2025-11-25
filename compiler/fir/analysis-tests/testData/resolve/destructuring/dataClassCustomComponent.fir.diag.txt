@@ -1,0 +1,3 @@
+/dataClassCustomComponent.kt:(354,363): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for custom component operators of data class 'User'.
+Use the new positional destructuring syntax '[otherName, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.

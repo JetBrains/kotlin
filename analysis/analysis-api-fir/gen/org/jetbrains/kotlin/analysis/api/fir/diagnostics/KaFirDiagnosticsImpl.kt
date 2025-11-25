@@ -3812,6 +3812,7 @@ internal class DestructuringShortFormNameMismatchImpl(
 internal class DestructuringShortFormOfNonDataClassImpl(
     override val rhsType: KaType,
     override val destructuredName: Name,
+    override val target: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.DestructuringShortFormOfNonDataClass
