@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArguments): K2JSCompilerArguments {
     copyK2WasmCompilerArguments(from, to)
 
+    to.allowExportingSuspendFunctions = from.allowExportingSuspendFunctions
     to.cacheDirectory = from.cacheDirectory
     to.compileLongAsBigInt = from.compileLongAsBigInt
     to.extensionFunctionsInExternals = from.extensionFunctionsInExternals

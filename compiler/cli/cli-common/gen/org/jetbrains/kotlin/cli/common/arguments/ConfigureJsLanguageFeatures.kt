@@ -10,4 +10,8 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureJsLangu
     if (arguments.extensionFunctionsInExternals) {
         put(LanguageFeature.JsEnableExtensionFunctionInExternals, LanguageFeature.State.ENABLED)
     }
+
+    if (arguments.allowExportingSuspendFunctions) {
+        put(LanguageFeature.JsAllowExportingSuspendFunctions, LanguageFeature.State.ENABLED)
+    }
 }
