@@ -66,8 +66,6 @@ kotlin {
             kotlin.srcDir("src/main/kotlin")
         }
     }
-    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
-    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
     jvmToolchain(17)
 }
 
