@@ -3,6 +3,8 @@ where advanced options include:
   -Xcache-directory=<path>   Path to the cache directory.
   -Xenable-extension-functions-in-externals
                              Enable extension function members in external interfaces.
+  -Xenable-suspend-function-exporting
+                             Enable exporting suspend functions to JavaScript/TypeScript.
   -Xes-arrow-functions       Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage
   -Xes-classes               Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
   -Xes-generators            Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
