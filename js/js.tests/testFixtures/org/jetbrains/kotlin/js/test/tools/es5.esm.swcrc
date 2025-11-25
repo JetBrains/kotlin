@@ -8,13 +8,14 @@
             "importMeta": true
         },
     },
+    "loose": true,
+    "target": "es5",
     "module": {
         "resolveFully": true,
         "type": "nodenext",
         "outFileExtension": "mjs"
     },
-    "env": {
-        "targets": {}
-    },
-    "sourceMaps": true
+    "exclude": [".*\\.d\\.m?ts$"],
+    "sourceMaps": true,
+    "inputSourceMap": true
 }
