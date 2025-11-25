@@ -199,7 +199,9 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
     afterEvaluate {
         // The common source set compilation artifacts are never intended for runtime consumption
-        configurations.getByName(commonSourceSet.runtimeElementsConfigurationName).isCanBeConsumed = false
+        configurations.getByName(commonSourceSet.runtimeElementsConfigurationName).attributes {
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("no-op"))
+        }
 
         listOf(
             /**
@@ -474,7 +476,9 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     }
 
                     // Make original configuration unpublishable and not visible
-                    originalConfiguration.isCanBeConsumed = false
+                    originalConfiguration.attributes {
+                        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("no-op"))
+                    }
                     originalConfiguration.isVisible = false
                     javaComponent.withVariantsFromConfiguration(originalConfiguration) {
                         skip()
