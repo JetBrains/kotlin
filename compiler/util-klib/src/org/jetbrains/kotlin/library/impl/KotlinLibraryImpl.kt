@@ -88,7 +88,7 @@ private class KotlinLibraryImpl(
 fun createKotlinLibrary(
     libraryFile: File,
     component: String,
-    isDefault: Boolean = false,
+    isDefault: Boolean,
     zipAccessor: ZipFileSystemAccessor? = null,
 ): KotlinLibrary {
     val nonNullZipFileSystemAccessor = zipAccessor ?: ZipFileSystemInPlaceAccessor
