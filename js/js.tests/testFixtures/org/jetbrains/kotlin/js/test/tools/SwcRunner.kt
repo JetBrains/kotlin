@@ -5,26 +5,32 @@
 
 package org.jetbrains.kotlin.js.test.tools
 
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import java.io.File
 import kotlin.test.fail
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.SwcConfig
 
 object SwcRunner {
     private val swcPath = System.getProperty("swc.path")
-    private val nodePath = System.getProperty("javascript.engine.path.NodeJs")
 
     private val es5Config = "js/js.tests/testFixtures/org/jetbrains/kotlin/js/test/tools/es5.swcrc"
     private val es5WithEsmConfig = "js/js.tests/testFixtures/org/jetbrains/kotlin/js/test/tools/es5.esm.swcrc"
 
-    fun exec(inputDirectory: File, moduleKind: ModuleKind) {
-        val processBuilder = ProcessBuilder(
-            nodePath,
-            swcPath,
-            "--config-file=${if (moduleKind == ModuleKind.ES) es5WithEsmConfig else es5Config}",
-            "--out-dir=./",
-            "--out-file-extension=${if (moduleKind == ModuleKind.ES) "mjs" else "js"}",
-            inputDirectory.absolutePath
+    fun exec(inputDirectory: File, moduleKind: ModuleKind, translationMode: TranslationMode) {
+        val command = arrayOf(
+            swcPath, *SwcConfig.getArgumentsWhen(
+                inputDirectory = "./",
+                outputDirectory = "./",
+                configPath = if (moduleKind == ModuleKind.ES) es5WithEsmConfig else es5Config,
+                fileExtension = if (moduleKind == ModuleKind.ES) "mjs" else "js",
+                environmentCode = if (translationMode.production) "production" else "development"
+            ).toTypedArray()
         )
+
+        val processBuilder = ProcessBuilder(*command)
+            .directory(inputDirectory)
+            .redirectErrorStream(true)
 
         val exitValue = processBuilder.inheritIO().start().waitFor()
 

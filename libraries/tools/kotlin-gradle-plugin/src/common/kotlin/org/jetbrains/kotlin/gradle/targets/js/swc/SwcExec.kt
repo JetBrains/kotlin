@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.js.config.SwcConfig
 import java.io.File
 import javax.inject.Inject
 
@@ -65,22 +66,14 @@ internal constructor(
     override fun exec() {
         configFile.get().writeText(json(config.toConfigMap()))
 
-        val inputDirectory = inputFilesDirectory.get().asFile
-        val outputDirectory = outputDirectory.get().asFile
-        val fileExtension = config.fileExtension.get()
-
-        workingDir = inputDirectory
-        args = buildList {
-            add("compile")
-            add("./")
-            add("--config-file")
-            add(configFile.get().absolutePath)
-            add("--env-name=${mode.get().code}")
-            add("--out-dir")
-            add(outputDirectory.absolutePath)
-            add("--out-file-extension=$fileExtension")
-            add("--extensions=$fileExtension")
-        }
+        workingDir = inputFilesDirectory.get().asFile
+        args = SwcConfig.getArgumentsWhen(
+            inputDirectory = "./",
+            outputDirectory = outputDirectory.get().asFile.absolutePath,
+            configPath = configFile.get().absolutePath,
+            fileExtension = config.fileExtension.get(),
+            environmentCode = mode.get().code
+        )
         super.exec()
     }
 

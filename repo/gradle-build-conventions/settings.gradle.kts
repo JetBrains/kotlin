@@ -35,6 +35,8 @@ include(":binary-compatibility-extended")
 include(":gradle-plugins-documentation")
 include(":gradle-plugins-common")
 include(":d8-configuration")
+// TODO: uncomment after bootstrap
+// include(":swc-configuration")
 include(":binaryen-configuration")
 include(":nodejs-configuration")
 include(":utilities")

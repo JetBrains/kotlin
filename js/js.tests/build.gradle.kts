@@ -9,6 +9,8 @@ plugins {
     kotlin("plugin.serialization")
     alias(libs.plugins.gradle.node)
     id("d8-configuration")
+    // TODO: uncomment this line after bootstrap
+    // id("swc-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
@@ -146,21 +148,11 @@ val generateTypeScriptTests by parallel(
         .map { generateTypeScriptTestFor(it.name) }
 )
 
-fun Test.setupSwc() {
-    systemProperty(
-        "swc.path",
-        node.nodeProjectDir.file("node_modules/@swc/cli/bin/swc.js")
-            .map { it.asFile.absolutePath }
-            .get()
-    )
-}
-
 fun Test.setUpJsBoxTests(tags: String?) {
     with(d8KotlinBuild) {
         setupV8()
     }
 
-    setupSwc()
     dependsOn(npmInstall)
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
