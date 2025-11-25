@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DuplicatesStrategy
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.targets.js.swc.KotlinTranspileWithSwc
+import org.jetbrains.kotlin.gradle.targets.js.swc.SwcExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
-    SubTargetConfigurator<KotlinTranspileWithSwc, KotlinTranspileWithSwc> {
+    SubTargetConfigurator<SwcExec, SwcExec> {
     private val project = subTarget.project
     private val propertiesProvider = PropertiesProvider(project)
 
@@ -40,11 +41,9 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
     override fun setupBuild(compilation: KotlinJsIrCompilation) {
         if (isWasm || !propertiesProvider.delegateTranspilationToExternalTool) return
 
-        if (subTarget is KotlinNodeJsIr) {
-            compilation.binaries
-                .withType<Executable>()
-                .configureEach { configureSwcTask(it, compilation) }
-        }
+        compilation.binaries
+            .withType<Executable>()
+            .configureEach { configureSwcTask(it, compilation) }
 
         compilation.binaries
             .withType<Library>()
@@ -59,7 +58,7 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
     }
 
     private fun configureSwcTask(binary: JsIrBinary, compilation: KotlinJsIrCompilation) {
-        val mode = binary.mode
+        val binaryMode = binary.mode
         val linkTask = binary.linkTask
         val linkSyncTask = binary.linkSyncTask
 
@@ -69,24 +68,22 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
             else -> error("Unsupported binary type: ${binary::class.simpleName}")
         }
 
-        val swcTask = subTarget.registerSubTargetTask<KotlinTranspileWithSwc>(
+        val swcTask = SwcExec.register(
+            compilation,
             subTarget.disambiguateCamelCased(name, SWC_TASK_NAME),
-            listOf(compilation)
-        ) { task ->
-            val inputFilesDirectory = linkTask.flatMap { it.destinationDirectory }
-            val outputDirectory = binary.distribution.distributionName.flatMap {
+        ) {
+            val sourceDirectory = linkTask.flatMap { it.destinationDirectory }
+            val destinationDirectory = binary.distribution.distributionName.flatMap {
                 project.layout.buildDirectory.dir("kotlin-swc/${compilation.target.name}/$it")
             }
 
-            task.description = "transpile compiler output with Swc [${mode.name.toLowerCaseAsciiOnly()}]"
+            description = "transpile compiler output with Swc [${binaryMode.name.toLowerCaseAsciiOnly()}]"
+            inputFilesDirectory.value(sourceDirectory).disallowChanges()
+            outputDirectory.value(destinationDirectory).disallowChanges()
+            npmToolingEnvDir.value(compilation.npmProject.dir).disallowChanges()
 
-            task.versions.value(nodeJsRoot.versions).disallowChanges()
-            task.inputFilesDirectory.value(inputFilesDirectory).disallowChanges()
-            task.outputDirectory.value(outputDirectory).disallowChanges()
-            task.npmToolingEnvDir.value(compilation.npmProject.dir).disallowChanges()
-
-            task.mode.set(
-                when (mode) {
+            mode.set(
+                when (binaryMode) {
                     KotlinJsBinaryMode.DEVELOPMENT -> Mode.DEVELOPMENT
                     KotlinJsBinaryMode.PRODUCTION -> Mode.PRODUCTION
                 }
@@ -94,35 +91,36 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
 
             val compilerOptions = binary.linkTask.map(Kotlin2JsCompile::compilerOptions)
 
-            task.config.apply {
+            config.apply {
                 platformType.set(JsPlatformType.NODE)
                 esTarget.set(compilerOptions.flatMap(KotlinJsCompilerOptions::target))
                 moduleKind.set(compilerOptions.flatMap(KotlinJsCompilerOptions::moduleKind))
                 sourceMaps.set(compilerOptions.flatMap(KotlinJsCompilerOptions::sourceMap))
             }
 
-            task.dependsOn(linkTask)
+            dependsOn(linkTask)
         }
 
-        // We shouldn't run SWC if the configured target is the latest compiler supported target
-        linkTask
-            .flatMap { it.compilerOptions.target }
-            .map {
-                if (it == ES_2015) return@map
-                linkSyncTask.configure { task ->
-                    task.from.from(swcTask.flatMap { it.outputDirectory })
-                    task.duplicatesStrategy = DuplicatesStrategy.INCLUDE
-                }
-            }
+        linkSyncTask.configure { task ->
+            val swcOutput = linkTask
+                .flatMap { it.compilerOptions.target }
+                // We shouldn't run SWC if the configured target is the latest compiler supported target
+                .filter { it != ES_2015 }
+                .flatMap<Any> { swcTask.flatMap(SwcExec::outputDirectory) }
+                .orElse(emptyArray<Directory>())
+
+            task.from.from(swcOutput)
+            task.duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
     }
 
-    override fun configureBuild(body: Action<KotlinTranspileWithSwc>) {
+    override fun configureBuild(body: Action<SwcExec>) {
     }
 
     override fun setupRun(compilation: KotlinJsIrCompilation) {
     }
 
-    override fun configureRun(body: Action<KotlinTranspileWithSwc>) {
+    override fun configureRun(body: Action<SwcExec>) {
     }
 
     internal companion object {

@@ -15,9 +15,7 @@ import org.gradle.api.tasks.Sync
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinBrowserJsIr.Companion.WEBPACK_TASK_NAME
@@ -25,15 +23,12 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.D
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.swc.JsPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackSwcRule
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
@@ -44,7 +39,6 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Comp
 class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTargetConfigurator<KotlinWebpack, KotlinWebpack> {
 
     private val project = subTarget.project
-    private val propertiesProvider = PropertiesProvider(project)
 
     private val nodeJsRoot = subTarget.target.webTargetVariant(
         { project.rootProject.kotlinNodeJsRootExtension },
@@ -62,7 +56,6 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
     override fun setupBuild(compilation: KotlinJsIrCompilation) {
         val target = compilation.target
         val project = target.project
-        val delegateTranspilationToExternalTool = propertiesProvider.delegateTranspilationToExternalTool
 
         val processResourcesTask = project.tasks.named(compilation.processResourcesTaskName)
 
@@ -74,15 +67,6 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                 { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
             )
         )
-
-        if (delegateTranspilationToExternalTool) {
-            // Add @swc/helpers dependency to minify the result output by swc
-            compilation.defaultSourceSet.dependencies {
-                with(nodeJsRoot.versions) {
-                    implementation(npm(swcHelpers.name, swcHelpers.version))
-                }
-            }
-        }
 
         compilation.binaries
             .withType<Executable>()
@@ -256,7 +240,6 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         npmToolingDir: DirectoryProperty,
     ) {
         val target = binary.target
-        val delegateTranspilationToExternalTool = propertiesProvider.delegateTranspilationToExternalTool
 
         dependsOn(
             target.project.tasks.named(compilation.processResourcesTaskName)
@@ -288,29 +271,16 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         this.inputFilesDirectory.set(inputFilesDirectory)
 
         val platformType = binary.compilation.platformType
-        val compilerOptions = binary.linkTask.map(Kotlin2JsCompile::compilerOptions)
-        val esTarget = compilerOptions.flatMap(KotlinJsCompilerOptions::target)
-        val moduleKind = compilerOptions.flatMap(KotlinJsCompilerOptions::moduleKind)
-
-        if (delegateTranspilationToExternalTool) {
-            with(rules.maybeCreate("swc", KotlinWebpackSwcRule::class.java)) {
-                // We shouldn't run SWC if the configured target is the latest compiler supported target
-                enabled.set(esTarget.map { it != ES_2015 })
-                swcConfig.esTarget.set(esTarget)
-                swcConfig.moduleKind.set(moduleKind)
-                swcConfig.sourceMaps.set(compilerOptions.flatMap(KotlinJsCompilerOptions::sourceMap))
-                swcConfig.platformType.set(JsPlatformType.BROWSER)
-            }
+        val moduleKind = binary.linkTask.flatMap { task ->
+            task.compilerOptions.moduleKind.orElse(task.compilerOptions.target.map {
+                if (it == ES_2015) JsModuleKind.MODULE_ES else JsModuleKind.MODULE_UMD
+            })
         }
-
-        val moduleSystemToUse = moduleKind.orElse(esTarget.map {
-            if (it == ES_2015) JsModuleKind.MODULE_ES else JsModuleKind.MODULE_UMD
-        })
 
         this.entryModuleName.set(entryModuleName)
         this.esModules.convention(
             project.provider {
-                platformType == KotlinPlatformType.wasm || moduleSystemToUse.get() == JsModuleKind.MODULE_ES
+                platformType == KotlinPlatformType.wasm || moduleKind.get() == JsModuleKind.MODULE_ES
             }
         ).finalizeValueOnRead()
 
