@@ -4,3 +4,4 @@ target
 !.idea/runConfigurations
 *.iml
 *.ipr
+.mvn/.develocity/
