@@ -50664,22 +50664,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Nested
-      @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/callsInPlace")
-      @TestDataPath("$PROJECT_ROOT")
-      public class CallsInPlace {
-        @Test
-        public void testAllFilesPresentInCallsInPlace() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/callsInPlace"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
-        }
-
-        @Test
-        @TestMetadata("nonInPlaceVariableCapture.kt")
-        public void testNonInPlaceVariableCapture() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/callsInPlace/nonInPlaceVariableCapture.kt");
-        }
-      }
-
-      @Nested
       @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow")
       @TestDataPath("$PROJECT_ROOT")
       public class Controlflow {
@@ -51936,6 +51920,22 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
           public void testWithoutSubject() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/when/withoutSubject.kt");
           }
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/varCapturing")
+      @TestDataPath("$PROJECT_ROOT")
+      public class VarCapturing {
+        @Test
+        public void testAllFilesPresentInVarCapturing() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/varCapturing"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("nonInPlaceVariableCapture.kt")
+        public void testNonInPlaceVariableCapture() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/varCapturing/nonInPlaceVariableCapture.kt");
         }
       }
     }
@@ -54727,12 +54727,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("lambdaArgumentOfInapplicableCall.kt")
       public void testLambdaArgumentOfInapplicableCall() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/lambdaArgumentOfInapplicableCall.kt");
-      }
-
-      @Test
-      @TestMetadata("propertyReferenceValVarAsArgument.kt")
-      public void testPropertyReferenceValVarAsArgument() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/propertyReferenceValVarAsArgument.kt");
       }
 
       @Test

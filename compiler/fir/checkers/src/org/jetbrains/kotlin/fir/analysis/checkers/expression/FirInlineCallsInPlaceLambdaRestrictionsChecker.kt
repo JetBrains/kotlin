@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import kotlin.reflect.full.memberProperties
 
 object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -30,6 +31,8 @@ object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpres
         val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
         val variableSymbol = expression.calleeReference.toResolvedVariableSymbol() ?: return
         if (!variableSymbol.isVar) return
+
+        if (variableSymbol.resolvedReturnType is ConeDynamicType) return
 
         val containingLambda = context.containingDeclarations.filterIsInstance<FirAnonymousFunctionSymbol>().lastOrNull() ?: return
 
