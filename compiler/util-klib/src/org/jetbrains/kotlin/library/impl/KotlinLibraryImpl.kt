@@ -40,7 +40,7 @@ class BaseKotlinLibraryImpl(
         }
     }
 
-    override fun toString() = "$libraryName[default=$isDefault]"
+    override fun toString() = libraryName
 
     override val manifestProperties: Properties by lazy {
         access.inPlace { it.manifestFile.loadProperties() }

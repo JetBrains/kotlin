@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.library.metadata.resolver.impl
 
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 
@@ -19,7 +20,7 @@ class KotlinResolvedLibraryImpl(override val library: KotlinLibrary) : KotlinRes
         private set
 
     override val isDefault: Boolean
-        get() = library.isDefault
+        get() = library.isFromKotlinNativeDistribution
 
     override fun markNeededForLink(packageFqName: String) {
         if (!isNeededForLink // fast path

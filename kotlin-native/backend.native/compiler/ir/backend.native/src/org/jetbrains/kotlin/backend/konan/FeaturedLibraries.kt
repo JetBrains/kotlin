@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SearchPathResolver
+import org.jetbrains.kotlin.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
@@ -61,7 +62,7 @@ private sealed class FeaturedLibrariesReporter {
     protected val KotlinLibrary.reportedKind: String
         get() = when {
             isCInteropLibrary() -> "Interop"
-            isDefault -> "Default"
+            isFromKotlinNativeDistribution -> "Default"
             else -> "Unknown kind"
         }
 
@@ -160,7 +161,7 @@ private fun getFeaturedLibraries(
         val libraryFile = library.libraryFile
         if (libraryFile in featuredLibraryFiles) {
             remainingFeaturedLibraries -= libraryFile
-            if (library.isCInteropLibrary() || (!allowDefaultLibs && library.isDefault)) {
+            if (library.isCInteropLibrary() || (!allowDefaultLibs && library.isFromKotlinNativeDistribution)) {
                 reporter.reportIllegalKind(library)
             } else {
                 result += library

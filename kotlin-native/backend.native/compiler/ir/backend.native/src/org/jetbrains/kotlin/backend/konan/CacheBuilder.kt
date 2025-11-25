@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
@@ -98,7 +99,7 @@ class CacheBuilder(
             if (konanConfig.target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
                 return@forEach
             }
-            val isSubjectOfIC = !library.isDefault && !library.isExternal && !library.isNativeStdlib
+            val isSubjectOfIC = !library.isFromKotlinNativeDistribution && !library.isExternal && !library.isNativeStdlib
             val cache = konanConfig.cachedLibraries.getLibraryCache(library, allowIncomplete = isSubjectOfIC)
             cache?.let {
                 caches[library] = it
@@ -255,7 +256,7 @@ class CacheBuilder(
         val makePerFileCache = !isExternal && !library.isCInteropLibrary()
 
         val libraryCacheDirectory = when {
-            library.isDefault || library.isNativeStdlib -> konanConfig.systemCacheDirectory
+            library.isFromKotlinNativeDistribution || library.isNativeStdlib -> konanConfig.systemCacheDirectory
             isExternal -> CachedLibraries.computeLibraryCacheDirectory(
                     konanConfig.autoCacheDirectory, library, uniqueNameToLibrary, uniqueNameToHash)
             else -> konanConfig.incrementalCacheDirectory!!
@@ -434,7 +435,7 @@ class CacheBuilder(
     ) {
         compilationSpawner.spawn(konanConfig.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
             val libraryPath = library.libraryFile.absolutePath
-            val libraries = dependencies.filter { !it.isDefault }.map { it.libraryFile.absolutePath }
+            val libraries = dependencies.filter { !it.isFromKotlinNativeDistribution }.map { it.libraryFile.absolutePath }
             val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }
             configuration.report(CompilerMessageSeverity.LOGGING,
                     "-p static_cache -Xadd-cache=${library.libraryName} \\\n" +

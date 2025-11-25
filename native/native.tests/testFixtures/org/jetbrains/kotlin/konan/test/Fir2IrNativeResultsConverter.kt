@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.konan.library.KonanLibraryProperResolver
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
@@ -86,7 +87,7 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrR
         val usedLibrariesForManifest = fir2IrResult.irModuleFragment.descriptor.allDependencyModules.mapNotNull { moduleDescriptor ->
             if (moduleDescriptor is ModuleDescriptorImpl) {
                 val library = moduleDescriptor.kotlinLibrary
-                if (!library.isDefault || moduleDescriptor.wasReallyUsed())
+                if (!library.isFromKotlinNativeDistribution || moduleDescriptor.wasReallyUsed())
                     return@mapNotNull library
             }
             null
