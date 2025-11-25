@@ -322,7 +322,7 @@ fun box() = abiTest {
 
     // inline fun
     expectSuccess(true) { createRemovedInlineFunReference() is kotlin.reflect.KFunction<*> }
-    expectFailure(linkage("Reference to function 'removedInlineFun' can not be evaluated: No function found for symbol '/removedInlineFun'")) { removedInlineFunReferenceName() }
+    expectSuccess("removedInlineFun") { removedInlineFunReferenceName() }
     expectSuccess(123) { removedInlineFunReferenceInvoke() }
 
     if (!testMode.isJs) {
