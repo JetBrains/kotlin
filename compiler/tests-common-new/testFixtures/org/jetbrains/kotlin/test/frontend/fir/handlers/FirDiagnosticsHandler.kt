@@ -157,7 +157,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             val currentModule = part.module
             val lightTreeComparingModeEnabled = FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in currentModule.directives
             val lightTreeEnabled = currentModule.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER) == FirParser.LightTree
-            val forceRenderArguments = FirDiagnosticsDirectives.RENDER_DIAGNOSTICS_MESSAGES in currentModule.directives
+            val forceRenderArguments = FirDiagnosticsDirectives.RENDER_DIAGNOSTIC_ARGUMENTS in currentModule.directives
 
             for (file in currentModule.files) {
                 val firFile = info.mainFirFilesByTestFile[file] ?: continue

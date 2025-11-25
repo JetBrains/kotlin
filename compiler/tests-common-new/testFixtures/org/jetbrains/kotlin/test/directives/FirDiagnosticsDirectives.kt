@@ -90,7 +90,7 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         description = "Defines which parser should be used for FIR compiler"
     )
 
-    val RENDER_DIAGNOSTICS_MESSAGES by directive(
+    val RENDER_DIAGNOSTIC_ARGUMENTS by directive(
         description = "Forces diagnostic arguments to be rendered"
     )
 

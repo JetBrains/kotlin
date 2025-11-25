@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTIC_ARGUMENTS
 // LANGUAGE: +DataFlowBasedExhaustiveness
 
 open class PhantomEquivalence {

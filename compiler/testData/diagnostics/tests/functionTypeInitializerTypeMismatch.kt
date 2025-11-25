@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 var f1: () -> Int = { <!TYPE_MISMATCH!>""<!> }
 var f2: () -> Int = l@ {

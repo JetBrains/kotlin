@@ -178,7 +178,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     CheckerTestUtil.parseDiagnosedRanges(addExtras(expectedText), diagnosedRanges, diagnosedRangesToDiagnosticNames)
                 this.createKtFile = lazy { TestCheckerUtil.createCheckAndReturnPsiFile(fileName, clearText, project) }
             }
-            this.renderDiagnosticMessages = RENDER_DIAGNOSTICS_MESSAGES in directives
+            this.renderDiagnosticMessages = RENDER_DIAGNOSTIC_ARGUMENTS in directives
             this.renderDiagnosticsFullText = RENDER_DIAGNOSTICS_FULL_TEXT in directives
         }
 
@@ -387,7 +387,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         // Change it to "true" to load diagnostics for old inference to test new inference (ignore diagnostics with <NI; prefix)
         val USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI = false
 
-        val RENDER_DIAGNOSTICS_MESSAGES = "RENDER_DIAGNOSTICS_MESSAGES"
+        val RENDER_DIAGNOSTIC_ARGUMENTS = "RENDER_DIAGNOSTIC_ARGUMENTS"
 
         val RENDER_DIAGNOSTICS_FULL_TEXT = "RENDER_DIAGNOSTICS_FULL_TEXT"
 

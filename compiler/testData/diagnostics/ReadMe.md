@@ -123,10 +123,10 @@ Note that if this directive is present, the `NEWER_VERSION_IN_SINCE_KOTLIN` diag
 
     // API_VERSION: 1.0
 
-### RENDER_DIAGNOSTICS_MESSAGES
+### RENDER_DIAGNOSTIC_ARGUMENTS
 
 This K2-specific directive forces the test infrastructure to print diagnostic arguments for *all* diagnostics.
 
 #### Usage:
 
-    // RENDER_DIAGNOSTICS_MESSAGES
+    // RENDER_DIAGNOSTIC_ARGUMENTS
