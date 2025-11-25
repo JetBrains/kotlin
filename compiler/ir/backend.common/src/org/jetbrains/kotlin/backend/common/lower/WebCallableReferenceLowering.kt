@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.functionReferenceLinkageError
 import org.jetbrains.kotlin.backend.common.functionReferenceReflectedName
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
-import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -158,28 +155,13 @@ abstract class WebCallableReferenceLowering(context: CommonBackendContext) :
         // TODO: What name should be in case of constructor? <init> or class name?
         val functionReferenceReflectedName = reflectionTargetSymbol.owner.name.asString()
 
-        val linkageError = reference.reflectionTargetLinkageError
-        val statement = if (linkageError != null) {
-            val file = PartialLinkageSources.File.determineFileFor(reference.invokeFunction)
-            clazz.functionReferenceLinkageError = context.partialLinkageSupport.prepareLinkageError(
-                doNotLog = true,
-                linkageError,
-                reference,
-                file,
-            )
-            context.partialLinkageSupport.throwLinkageError(
-                linkageError,
-                reference,
-                file,
-                doNotLog = true
-            )
-        } else {
+        val statement =
             IrReturnImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingType, getter.symbol, IrConstImpl.string(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, stringType, functionReferenceReflectedName
                 )
             )
-        }
+
         getter.body = context.irFactory.createBlockBody(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(statement)
         )

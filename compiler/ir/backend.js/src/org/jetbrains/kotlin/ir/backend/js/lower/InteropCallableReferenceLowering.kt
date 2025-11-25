@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.functionReferenceLinkageError
 import org.jetbrains.kotlin.backend.common.functionReferenceReflectedName
 import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -552,22 +551,13 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambdaDeclaration, JsStatementOrigins.CALLABLE_REFERENCE_CREATE)
         }
 
-        val functionReferenceLinkageError = lambdaInfo.lambdaClass.functionReferenceLinkageError
         val functionReferenceReflectedName = lambdaInfo.lambdaClass.functionReferenceReflectedName
 
-        if (functionReferenceLinkageError != null || functionReferenceReflectedName != null || lambdaDeclaration.isSuspend) {
+        if (functionReferenceReflectedName != null || lambdaDeclaration.isSuspend) {
             val tmpVar = JsIrBuilder.buildVar(functionExpression.type, factoryFunction, "l", initializer = functionExpression)
             statements.add(tmpVar)
 
-            if (functionReferenceLinkageError != null) {
-                statements.add(
-                    JsIrBuilder.buildCall(context.symbols.throwLinkageErrorInCallableNameSymbol).apply {
-                        arguments[0] = JsIrBuilder.buildGetValue(tmpVar.symbol)
-                        arguments[1] =
-                            functionReferenceLinkageError.toIrConst(context.irBuiltIns.stringType, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-                    }
-                )
-            } else if (functionReferenceReflectedName != null) {
+            if (functionReferenceReflectedName != null) {
                 statements.add(
                     setDynamicProperty(
                         tmpVar.symbol,
