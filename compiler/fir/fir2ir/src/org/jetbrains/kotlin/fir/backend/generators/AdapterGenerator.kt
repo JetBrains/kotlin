@@ -14,14 +14,16 @@ import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
 import org.jetbrains.kotlin.fir.backend.utils.createWhenForSafeFall
 import org.jetbrains.kotlin.fir.backend.utils.varargElementType
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
-import org.jetbrains.kotlin.fir.resolve.calls.stages.FirFakeArgumentForCallableReference
 import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument
+import org.jetbrains.kotlin.fir.resolve.calls.stages.FirFakeArgumentForCallableReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -31,7 +33,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -44,7 +45,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isPrimitiveArray
+import org.jetbrains.kotlin.ir.util.isSuspendFunction
+import org.jetbrains.kotlin.ir.util.isTypeParameter
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -541,20 +545,23 @@ class AdapterGenerator(
      */
     internal fun IrExpression.applySuspendConversionIfNeeded(
         argument: FirExpression,
-        parameterType: ConeKotlinType
+        expectedType: ConeKotlinType,
     ): IrExpression {
         if (this is IrBlock && origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
             return this
         }
+
+        val unwrappedExpectedType = getFunctionTypeForPossibleSamType(expectedType) ?: expectedType
+
         // Expect the expected type to be a suspend functional type.
-        if (!parameterType.isSuspendOrKSuspendFunctionType(session)) {
+        if (!unwrappedExpectedType.isSuspendOrKSuspendFunctionType(session)) {
             return this
         }
-        val expectedFunctionalType = parameterType.customFunctionTypeToSimpleFunctionType(session)
+        val expectedFunctionalType = unwrappedExpectedType.customFunctionTypeToSimpleFunctionType(session)
 
         val functionalArgumentType = calculateFunctionalArgumentType(argument)
         val invokeSymbol = findInvokeSymbol(expectedFunctionalType, functionalArgumentType) ?: return this
-        val suspendConvertedType = parameterType.toIrType() as IrSimpleType
+        val suspendConvertedType = unwrappedExpectedType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
             val argumentType = functionalArgumentType.toIrType()
             val irAdapterFunction =
