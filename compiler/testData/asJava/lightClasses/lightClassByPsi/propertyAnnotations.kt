@@ -52,4 +52,3 @@ const val constProperty = 1
 
 @Anno("private")
 private val privateProperty = 1
-// LIGHT_ELEMENTS_NO_DECLARATION: C.class[Companion]

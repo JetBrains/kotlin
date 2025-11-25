@@ -23,4 +23,4 @@ value class ValueClass(val original: OriginalClass) {
         fun companionFunctionWithValueClassType(): ValueClass? = null
     }
 }
-// LIGHT_ELEMENTS_NO_DECLARATION: ValueClass.class[Companion;RegularObject;companionFunctionWithValueClassType-RcbxKLE;constructor-impl;equals-impl;equals-impl0;funWithSelfParameter-0JCZ7rA;funWithoutParameters-impl;getCompanionPropertyWithValueClassType-RcbxKLE;getProperty-impl;getPropertyWithValueClassType-wCez43g;hashCode-impl;toString-impl]
+// LIGHT_ELEMENTS_NO_DECLARATION: ValueClass.class[companionFunctionWithValueClassType-RcbxKLE;constructor-impl;equals-impl;equals-impl0;funWithSelfParameter-0JCZ7rA;funWithoutParameters-impl;getCompanionPropertyWithValueClassType-RcbxKLE;getProperty-impl;getPropertyWithValueClassType-wCez43g;hashCode-impl;toString-impl]

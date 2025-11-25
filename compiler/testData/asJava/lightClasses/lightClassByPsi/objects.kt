@@ -57,5 +57,3 @@ class ClassWithConstContainer {
         const val complexFloat = 2.7182818284f + 2.4 // Float
     }
 }
-
-// LIGHT_ELEMENTS_NO_DECLARATION: C.class[Companion], C1.class[Companion], C2.class[Companion], ClassWithConstContainer.class[Companion], ConstContainer.class[ConstContainer], I.class[Companion], Obj.class[Obj]

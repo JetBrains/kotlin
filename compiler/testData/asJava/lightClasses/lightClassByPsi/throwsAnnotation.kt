@@ -9,5 +9,3 @@ class C @Throws(Exception::class) constructor(a: Int = 1) {
     @Throws(kotlin.Throwable::class)
     fun baz() {}
 }
-
-// LIGHT_ELEMENTS_NO_DECLARATION: C.class[C]

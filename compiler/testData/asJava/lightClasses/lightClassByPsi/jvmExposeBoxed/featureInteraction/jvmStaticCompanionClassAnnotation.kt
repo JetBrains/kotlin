@@ -14,4 +14,4 @@ class Foo {
 }
 
 // DECLARATIONS_NO_LIGHT_ELEMENTS: Foo.class[foo]
-// LIGHT_ELEMENTS_NO_DECLARATION: Foo.class[Companion;foo-K4fyztM;foo-K4fyztM], StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]
+// LIGHT_ELEMENTS_NO_DECLARATION: Foo.class[foo-K4fyztM;foo-K4fyztM], StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]

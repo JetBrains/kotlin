@@ -17,5 +17,3 @@ class MyClass {
             }
     }
 }
-
-// LIGHT_ELEMENTS_NO_DECLARATION: MyClass.class[Companion]

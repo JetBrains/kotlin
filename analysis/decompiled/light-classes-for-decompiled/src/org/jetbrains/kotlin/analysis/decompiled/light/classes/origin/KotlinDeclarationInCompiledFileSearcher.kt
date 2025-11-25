@@ -60,10 +60,9 @@ class KotlinDeclarationInCompiledFileSearcher {
         } ?: return null
 
         if (member is PsiMethod && member.isConstructor) {
-            return container.safeAs<KtClassOrObject>()
-                ?.takeIf { it.name == memberName }
-                ?.allConstructors
-                ?.firstOrNull { doParametersMatch(member, it) }
+            val classOrObject = container.safeAs<KtClassOrObject>()?.takeIf { it.name == memberName }
+            return classOrObject?.allConstructors?.firstOrNull { doParametersMatch(member, it) } ?: classOrObject?.primaryConstructor
+            ?: classOrObject
         }
 
         val (regularDeclarations, companionDeclarations) = if (container is KtClass && member.hasModifierProperty(PsiModifier.STATIC)) {

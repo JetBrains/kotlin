@@ -8,4 +8,3 @@ object O {
 
 
 // DECLARATIONS_NO_LIGHT_ELEMENTS: TypeAliasesKt.class[JO]
-// LIGHT_ELEMENTS_NO_DECLARATION: O.class[O]

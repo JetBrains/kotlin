@@ -13,4 +13,4 @@ class Baz {
     }
 }
 
-// LIGHT_ELEMENTS_NO_DECLARATION: Baz.class[Baz], IntWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]
+// LIGHT_ELEMENTS_NO_DECLARATION: IntWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl]

@@ -29,4 +29,4 @@ class Foo(
 enum class Em {
     FOO, BAR
 }
-// LIGHT_ELEMENTS_NO_DECLARATION: Em.class[getEntries;valueOf;values], Foo.class[Foo]
+// LIGHT_ELEMENTS_NO_DECLARATION: Em.class[getEntries;valueOf;values]

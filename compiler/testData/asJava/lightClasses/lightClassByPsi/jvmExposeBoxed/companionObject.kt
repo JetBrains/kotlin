@@ -11,4 +11,4 @@ value class StringWrapper(val s: String) {
 }
 
 // DECLARATIONS_NO_LIGHT_ELEMENTS: StringWrapper.class[unwrap]
-// LIGHT_ELEMENTS_NO_DECLARATION: StringWrapper.class[Companion;constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl;unwrap-JELJCFg]
+// LIGHT_ELEMENTS_NO_DECLARATION: StringWrapper.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl;unwrap-JELJCFg]
