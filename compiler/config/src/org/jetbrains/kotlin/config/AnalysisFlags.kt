@@ -98,11 +98,3 @@ object AnalysisFlags {
 
     val headerMode by AnalysisFlag.Delegates.Boolean
 }
-
-@Deprecated(
-    message = "Deprecated. Not needed",
-    replaceWith = ReplaceWith("supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)")
-)
-fun LanguageVersionSettings.doesDataClassCopyRespectConstructorVisibility(): Boolean { // Used in IDE
-    return supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
-}

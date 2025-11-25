@@ -27,7 +27,3 @@ data class OptInDescription(
         )
     }
 }
-
-@Deprecated("Please use OptInDescription instead", ReplaceWith("OptInDescription"))
-@Suppress("unused")
-typealias Experimentality = OptInDescription
