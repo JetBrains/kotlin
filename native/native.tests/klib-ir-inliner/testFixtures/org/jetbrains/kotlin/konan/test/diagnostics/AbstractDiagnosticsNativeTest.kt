@@ -35,13 +35,11 @@ import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
-import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Assumptions
 import java.io.File
 
 abstract class AbstractDiagnosticsNativeTestBase(
     private val parser: FirParser,
-    private val latestPhaseInPipeline: TestPhase,
 ) : AbstractKotlinCompilerTest() {
 
     val targetFrontend: FrontendKind<FirOutputArtifact>
@@ -57,11 +55,11 @@ abstract class AbstractDiagnosticsNativeTestBase(
             dependencyKind = DependencyKind.Source
         }
         defaultDirectives {
-            LATEST_PHASE_IN_PIPELINE with latestPhaseInPipeline
+            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
         }
         useAfterAnalysisCheckers(
             ::BlackBoxCodegenSuppressor,
-            ::PhasedPipelineChecker.bind(latestPhaseInPipeline),
+            ::PhasedPipelineChecker,
         )
         baseNativeDiagnosticTestConfiguration(frontend)
 
@@ -94,7 +92,7 @@ abstract class AbstractDiagnosticsNativeTestBase(
     }
 }
 
-abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) : AbstractDiagnosticsNativeTestBase(parser, TestPhase.BACKEND) {
+abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) : AbstractDiagnosticsNativeTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
 
@@ -126,9 +124,6 @@ abstract class AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase 
         }
     }
 }
-
-abstract class AbstractPsiNativeDiagnosticsTest : AbstractDiagnosticsNativeTestBase(FirParser.Psi, TestPhase.FRONTEND)
-abstract class AbstractLightTreeNativeDiagnosticsTest : AbstractDiagnosticsNativeTestBase(FirParser.LightTree, TestPhase.FRONTEND)
 
 abstract class AbstractPsiNativeDiagnosticsWithBackendTestBase : AbstractNativeDiagnosticsWithBackendTestBase(FirParser.Psi)
 abstract class AbstractLightTreeNativeDiagnosticsWithBackendTestBase : AbstractNativeDiagnosticsWithBackendTestBase(FirParser.LightTree)

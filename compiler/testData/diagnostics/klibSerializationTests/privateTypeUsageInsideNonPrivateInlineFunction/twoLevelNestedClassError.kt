@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import A.N1.N2
 
 // LANGUAGE: +ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs

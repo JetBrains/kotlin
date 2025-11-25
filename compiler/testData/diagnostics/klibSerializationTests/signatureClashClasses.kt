@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // DIAGNOSTICS: -ERROR_SUPPRESSION
 // RENDER_ALL_DIAGNOSTICS_FULL_TEXT
-
+// RUN_PIPELINE_TILL: BACKEND
 // IGNORE_BACKEND: JS_IR, NATIVE
 // ^ KT-65680: Class redeclaration leads to BackendException during IR fake override builder
 

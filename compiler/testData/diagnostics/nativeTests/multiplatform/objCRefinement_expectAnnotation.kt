@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 
