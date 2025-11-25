@@ -6356,6 +6356,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("elvisAndLongIlt.kt")
+      public void testElvisAndLongIlt() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisAndLongIlt.kt");
+      }
+
+      @Test
       @TestMetadata("elvisAndUnit.kt")
       public void testElvisAndUnit() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisAndUnit.kt");
