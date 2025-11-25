@@ -140,7 +140,7 @@ private fun getFeaturedLibraries(
         reporter: FeaturedLibrariesReporter,
         allowDefaultLibs: Boolean
 ) = getFeaturedLibraries(
-        featuredLibraries.toUnresolvedLibraries.map { resolver.resolve(it, isDefaultLink = false).libraryFile }.toSet(),
+        featuredLibraries.toUnresolvedLibraries.map { resolver.resolve(it).libraryFile }.toSet(),
         resolvedLibraries,
         reporter,
         allowDefaultLibs

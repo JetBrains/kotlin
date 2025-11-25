@@ -74,8 +74,8 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
     val searchRoots: List<SearchRoot>
 
     fun resolutionSequence(givenPath: String): Sequence<File>
-    fun resolve(unresolved: LenientUnresolvedLibrary, isDefaultLink: Boolean): L?
-    fun resolve(unresolved: RequiredUnresolvedLibrary, isDefaultLink: Boolean): L
+    fun resolve(unresolved: LenientUnresolvedLibrary): L?
+    fun resolve(unresolved: RequiredUnresolvedLibrary): L
     fun resolve(givenPath: String): L
     fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L>
     fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean
@@ -83,8 +83,8 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
 }
 
 fun <L : KotlinLibrary> SearchPathResolver<L>.resolve(unresolved: UnresolvedLibrary): L? = when (unresolved) {
-    is LenientUnresolvedLibrary -> resolve(unresolved, isDefaultLink = false)
-    is RequiredUnresolvedLibrary -> resolve(unresolved, isDefaultLink = false)
+    is LenientUnresolvedLibrary -> resolve(unresolved)
+    is RequiredUnresolvedLibrary -> resolve(unresolved)
 }
 
 // This is a simple library resolver that only cares for file names.
@@ -99,13 +99,13 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     open val distPlatformHead: File? = null
     private val currentDirHead: File? get() = if (!skipCurrentDir) File.userDir else null
 
-    abstract fun libraryComponentBuilder(file: File, isDefault: Boolean): List<L>
+    abstract fun libraryComponentBuilder(file: File, /* ignored */ isDefault: Boolean = false): List<L>
 
     private val directLibraryUniqueNames: Map</* Unique Name*/ String, File> by lazy {
         HashMap<String, File>().apply {
             for (directLib in directLibs) {
                 val absolutePath = SearchRoot.lookUpByAbsolutePath(File(directLib)) ?: continue
-                val uniqueName = libraryComponentBuilder(absolutePath, false).singleOrNull()?.uniqueName ?: continue
+                val uniqueName = libraryComponentBuilder(absolutePath).singleOrNull()?.uniqueName ?: continue
                 this[uniqueName] = absolutePath
             }
         }
@@ -170,12 +170,12 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     private val resolvedLibraries = HashMap<UnresolvedLibrary, ResolvedLibrary>()
 
-    private fun resolveOrNull(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L? {
+    private fun resolveOrNull(unresolved: UnresolvedLibrary): L? {
         return resolvedLibraries.getOrPut(unresolved) {
             val givenPath = unresolved.path
             try {
                 resolutionSequence(givenPath)
-                    .flatMap { libraryComponentBuilder(it, isDefaultLink).asSequence() }
+                    .flatMap { libraryComponentBuilder(it).asSequence() }
                     .map { it.takeIf { libraryMatch(it, unresolved) } }
                     .filterNotNull()
                     .firstOrNull()
@@ -187,16 +187,16 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         }.library
     }
 
-    override fun resolve(unresolved: LenientUnresolvedLibrary, isDefaultLink: Boolean): L? {
-        return resolveOrNull(unresolved, isDefaultLink)
+    override fun resolve(unresolved: LenientUnresolvedLibrary): L? {
+        return resolveOrNull(unresolved)
             ?: run {
                 logger.log("KLIB resolver: Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
                 null
             }
     }
 
-    override fun resolve(unresolved: RequiredUnresolvedLibrary, isDefaultLink: Boolean): L {
-        return resolveOrNull(unresolved, isDefaultLink)
+    override fun resolve(unresolved: RequiredUnresolvedLibrary): L {
+        return resolveOrNull(unresolved)
             ?: run {
                 // It does not make sense to replace logger.fatal() by logger.error() here, because:
                 // 1. We don't know which exactly side effect (throwing an exception, exiting JVM process, etc) is performed
@@ -213,7 +213,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean = true
 
-    override fun resolve(givenPath: String) = resolve(RequiredUnresolvedLibrary(givenPath), isDefaultLink = false)
+    override fun resolve(givenPath: String) = resolve(RequiredUnresolvedLibrary(givenPath))
 
     private val File.klib
         get() = File(this, "klib")
@@ -230,7 +230,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                 .filterNot { it.name.startsWith('.') }
                 .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KOTLIN_NATIVE_STDLIB_NAME }
                 .map { RequiredUnresolvedLibrary(it.absolutePath) }
-                .map { resolve(it, isDefaultLink = true) }
+                .map { resolve(it) }
                 .onEach { it.isFromKotlinNativeDistribution = true }
         } else emptySequence()
 
@@ -239,7 +239,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         val result = mutableListOf<L>()
 
         if (!noStdLib) {
-            val library = resolve(RequiredUnresolvedLibrary(KOTLIN_NATIVE_STDLIB_NAME), isDefaultLink = true)
+            val library = resolve(RequiredUnresolvedLibrary(KOTLIN_NATIVE_STDLIB_NAME))
             library.isFromKotlinNativeDistribution = true
             result.add(library)
         }
@@ -326,7 +326,7 @@ class SingleKlibComponentResolver(
     logger,
     knownIrProviders = knownIrProviders
 ) {
-    override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)
+    override fun libraryComponentBuilder(file: File, /* ignored */ isDefault: Boolean) = createKotlinLibraryComponents(file)
 }
 
 /**

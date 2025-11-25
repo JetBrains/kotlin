@@ -89,8 +89,6 @@ interface BaseKotlinLibrary {
     val componentList: List<String>
     val versions: KotlinLibraryVersioning
 
-    // Whether this library is default (provided by distribution)?
-    val isDefault: Boolean
     val manifestProperties: Properties
 }
 

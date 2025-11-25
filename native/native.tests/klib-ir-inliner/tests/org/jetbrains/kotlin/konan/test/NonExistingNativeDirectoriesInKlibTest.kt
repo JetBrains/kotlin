@@ -106,7 +106,7 @@ class NonExistingNativeDirectoriesInKlibTest {
     }
 
     private fun KFile.readLibrary(): KotlinLibrary =
-        createKonanLibrary(libraryFilePossiblyDenormalized = this, component = KLIB_DEFAULT_COMPONENT_NAME, target = TEST_TARGET, isDefault = false)
+        createKonanLibrary(libraryFilePossiblyDenormalized = this, component = KLIB_DEFAULT_COMPONENT_NAME, target = TEST_TARGET)
 
     private fun KFile.compressKlib(): KFile {
         val klibFile = this.parentFile.child("compressed.klib")

@@ -84,7 +84,6 @@ class KonanDriver(
                             File(libPath),
                             "default",
                             null,
-                            isDefault = false,
                             configuration.zipFileSystemAccessor
                     )
                     val ir = lib.irOrFail

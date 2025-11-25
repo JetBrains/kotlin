@@ -49,14 +49,14 @@ class SearchPathResolverTest {
                 targetPropertyName = targetPropertyName,
                 targetList = randomTargetsIncluding(5, currentTarget)
             )
-            resolver.resolve(RequiredUnresolvedLibrary(libraryWithTarget), isDefaultLink = false)
+            resolver.resolve(RequiredUnresolvedLibrary(libraryWithTarget))
 
             val libraryWithoutTarget = generateKlib(
                 mainTarget = currentTarget,
                 targetPropertyName = targetPropertyName,
                 targetList = randomTargetsExcluding(5, currentTarget)
             )
-            assertEquals(null, resolver.resolve(LenientUnresolvedLibrary(libraryWithoutTarget), isDefaultLink = false))
+            assertEquals(null, resolver.resolve(LenientUnresolvedLibrary(libraryWithoutTarget)))
         }
     }
 

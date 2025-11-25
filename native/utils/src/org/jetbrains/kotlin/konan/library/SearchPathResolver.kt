@@ -43,8 +43,8 @@ class KonanLibraryProperResolver(
     logger = logger,
     knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
 ), SearchPathResolverWithTarget<KotlinLibrary> {
-    override fun libraryComponentBuilder(file: File, isDefault: Boolean) =
-        createKonanLibraryComponents(file, target, isDefault, zipFileSystemAccessor)
+    override fun libraryComponentBuilder(file: File, /* ignored */ isDefault: Boolean) =
+        createKonanLibraryComponents(file, target, zipFileSystemAccessor)
 
     override val distPlatformHead: File?
         get() = distributionKlib?.File()?.child("platform")?.child(target.visibleName)

@@ -48,7 +48,6 @@ internal class KlibImpl(
 
     override val attributes = KlibAttributes()
 
-    override val isDefault get() = false
     override val libraryName get() = location.path
     override val libraryFile get() = location
     override val componentList get() = listOf(KLIB_DEFAULT_COMPONENT_NAME)

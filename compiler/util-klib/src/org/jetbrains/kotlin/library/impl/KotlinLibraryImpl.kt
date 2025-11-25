@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.library.*
 
 class BaseKotlinLibraryImpl(
     val access: BaseLibraryAccess<KotlinLibraryLayout>,
-    override val isDefault: Boolean
 ) : BaseKotlinLibrary {
     override val libraryFile get() = access.klib
     override val libraryName: String by lazy { access.inPlace { it.libraryName } }
@@ -88,25 +87,36 @@ private class KotlinLibraryImpl(
 fun createKotlinLibrary(
     libraryFile: File,
     component: String,
-    isDefault: Boolean,
     zipAccessor: ZipFileSystemAccessor? = null,
 ): KotlinLibrary {
     val nonNullZipFileSystemAccessor = zipAccessor ?: ZipFileSystemInPlaceAccessor
 
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, nonNullZipFileSystemAccessor)
-    val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
+    val base = BaseKotlinLibraryImpl(baseAccess)
 
     return KotlinLibraryImpl(libraryFile, nonNullZipFileSystemAccessor, base)
 }
 
 fun createKotlinLibraryComponents(
     libraryFile: File,
-    isDefault: Boolean,
     zipAccessor: ZipFileSystemAccessor? = null,
 ): List<KotlinLibrary> {
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null, zipAccessor)
-    val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
+    val base = BaseKotlinLibraryImpl(baseAccess)
     return base.componentList.map {
-        createKotlinLibrary(libraryFile, it, isDefault, zipAccessor = zipAccessor)
+        createKotlinLibrary(libraryFile, it, zipAccessor = zipAccessor)
     }
+}
+
+@Deprecated(
+    "Preserved for binary compatibility. Use createKotlinLibraryComponents(libraryFile, zipAccessor = ...) instead.",
+    level = DeprecationLevel.HIDDEN
+)
+fun createKotlinLibraryComponents(
+    libraryFile: File,
+    /* ignored*/ isDefault: Boolean = false,
+    zipAccessor: ZipFileSystemAccessor? = null,
+): List<KotlinLibrary> {
+    if (isDefault) repeat(0) { Unit }
+    return createKotlinLibraryComponents(libraryFile, zipAccessor)
 }

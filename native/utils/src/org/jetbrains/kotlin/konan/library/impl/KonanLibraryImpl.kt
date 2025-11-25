@@ -63,7 +63,6 @@ fun createKonanLibrary(
     libraryFilePossiblyDenormalized: File,
     component: String,
     target: KonanTarget? = null,
-    isDefault: Boolean,
     zipFileSystemAccessor: ZipFileSystemAccessor? = null,
 ): KotlinLibrary {
     val nonNullZipFileSystemAccessor = zipFileSystemAccessor ?: ZipFileSystemInPlaceAccessor
@@ -73,7 +72,7 @@ fun createKonanLibrary(
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, nonNullZipFileSystemAccessor)
     val targetedAccess = TargetedLibraryAccess<TargetedKotlinLibraryLayout>(libraryFile, component, target, nonNullZipFileSystemAccessor)
 
-    val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
+    val base = BaseKotlinLibraryImpl(baseAccess)
     val targeted = TargetedLibraryImpl(targetedAccess, base)
 
     return KonanLibraryImpl(libraryFile, nonNullZipFileSystemAccessor, targeted)
@@ -82,12 +81,11 @@ fun createKonanLibrary(
 fun createKonanLibraryComponents(
     libraryFile: File,
     target: KonanTarget? = null,
-    isDefault: Boolean,
     zipFileSystemAccessor: ZipFileSystemAccessor? = null,
 ) : List<KotlinLibrary> {
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null)
-    val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
+    val base = BaseKotlinLibraryImpl(baseAccess)
     return base.componentList.map {
-        createKonanLibrary(libraryFile, it, target, isDefault, zipFileSystemAccessor)
+        createKonanLibrary(libraryFile, it, target, zipFileSystemAccessor)
     }
 }

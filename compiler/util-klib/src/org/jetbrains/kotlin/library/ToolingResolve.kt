@@ -41,7 +41,7 @@ object ToolingSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
                     0 -> null
                     1 -> {
                         // single component library
-                        createKotlinLibrary(libraryFile, components.single().name, isDefault = false)
+                        createKotlinLibrary(libraryFile, components.single().name)
                     }
                     else -> { // TODO: choose the best fit among all available candidates
                         // mimic as old style library and warn
@@ -58,7 +58,7 @@ object ToolingSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
 
     private const val NONEXISTENT_COMPONENT_NAME = "__nonexistent_component_name__"
 
-    private fun fakeLibrary(libraryFile: File): KotlinLibrary = createKotlinLibrary(libraryFile, NONEXISTENT_COMPONENT_NAME, isDefault = false)
+    private fun fakeLibrary(libraryFile: File): KotlinLibrary = createKotlinLibrary(libraryFile, NONEXISTENT_COMPONENT_NAME)
 
     private fun <T : Any> withSafeAccess(libraryFile: File, action: (localRoot: File) -> T?): T? {
         val extension = libraryFile.extension
