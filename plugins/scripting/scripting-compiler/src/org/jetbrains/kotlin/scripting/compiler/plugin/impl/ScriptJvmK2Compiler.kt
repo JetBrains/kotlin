@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertAnalyzedFirToIr
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
@@ -16,20 +19,32 @@ import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
+import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.session.registerModuleData
+import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
+import org.jetbrains.kotlin.toSourceLinesMapping
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class ScriptJvmK2Compiler(
     state: K2ScriptingCompilerEnvironment,
@@ -40,7 +55,7 @@ class ScriptJvmK2Compiler(
 
     fun compile(script: SourceCode) = compile(script, state.baseScriptCompilationConfiguration)
 
-    @OptIn(LegacyK2CliPipeline::class)
+    @OptIn(LegacyK2CliPipeline::class, DirectDeclarationsAccess::class)
     override fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
@@ -58,8 +73,32 @@ class ScriptJvmK2Compiler(
         val renderDiagnosticName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         val targetId = TargetId(script.name!!, "java-production")
 
+        fun failure(diagnosticsCollector: BaseDiagnosticsCollector): ResultWithDiagnostics.Failure {
+            diagnosticsCollector.reportToMessageCollector(messageCollector, renderDiagnosticName)
+            return failure(messageCollector)
+        }
 
-        return scriptCompilationConfiguration.refineAll(script, diagnosticsCollector, convertToFir).onSuccess { refinedConfiguration ->
+        return scriptCompilationConfiguration.refineBeforeParsing(script).onSuccess {
+            val collectedData by lazy(LazyThreadSafetyMode.NONE) {
+                ScriptCollectedData(
+                    mapOf(
+                        ScriptCollectedData.fir to listOf(
+                            script.convertToFir(
+                                createDummySessionForScriptRefinement(script),
+                                diagnosticsCollector
+                            )
+                        )
+                    )
+                )
+            }
+            if (diagnosticsCollector.hasErrors) {
+                failure(diagnosticsCollector)
+            } else {
+                it.refineOnFir(script, collectedData)
+            }
+        }.onSuccess {
+            it.refineBeforeCompiling(script)
+        }.onSuccess { refinedConfiguration ->
             // TODO: separate reporter for refinement, to avoid double warnings reporting
             // imports -> compile one by one or all here?
             // add all deps
@@ -85,18 +124,11 @@ class ScriptJvmK2Compiler(
             }
             val frontendOutput = AllModulesFrontendOutput(outputs)
 
-
-            if (diagnosticsCollector.hasErrors) {
-                diagnosticsCollector.reportToMessageCollector(messageCollector, renderDiagnosticName)
-                return failure(messageCollector)
-            }
+            if (diagnosticsCollector.hasErrors) return failure(diagnosticsCollector)
 
             val irInput = convertAnalyzedFirToIr(compilerConfiguration, targetId, frontendOutput, compilerEnvironment)
 
-            if (diagnosticsCollector.hasErrors) {
-                diagnosticsCollector.reportToMessageCollector(messageCollector, renderDiagnosticName)
-                return failure(messageCollector)
-            }
+            if (diagnosticsCollector.hasErrors) return failure(diagnosticsCollector)
 
             val generationState = generateCodeFromIr(irInput, compilerEnvironment)
 
@@ -105,29 +137,57 @@ class ScriptJvmK2Compiler(
             if (diagnosticsCollector.hasErrors) {
                 return failure(messageCollector)
             }
-//            refinedConfiguration.asSuccess()
-            TODO()
+
+            return makeCompiledScript(
+                generationState,
+                script,
+                { rawFir.declarations.firstIsInstanceOrNull<FirScript>()?.let { it.symbol.packageFqName().child(NameUtils.getScriptTargetClassName(it.name)) } },
+                emptyList(),
+                { refinedConfiguration },
+                extractResultFields(irInput.irModuleFragment)
+            ).onSuccess { compiledScript ->
+                ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
+            }
         }
     }
 }
 
-private fun ScriptCompilationConfiguration.refineAll(
-    script: SourceCode,
-    diagnosticsCollector: BaseDiagnosticsCollector,
-    convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile
-): ResultWithDiagnostics<ScriptCompilationConfiguration> =
-    refineBeforeParsing(script).onSuccess {
-        val collectedData by lazy(LazyThreadSafetyMode.NONE) {
-            ScriptCollectedData(
-                mapOf(
-                    ScriptCollectedData.fir to listOf(script.convertToFir(createDummySessionForScriptRefinement(script), diagnosticsCollector))
-                )
-            )
-        }
-        it.refineOnFir(script, collectedData)
-    }.onSuccess {
-        it.refineBeforeCompiling(script)
+fun <T> withK2ScriptCompilerProxyWithLightTree(
+    scriptCompilationConfiguration: ScriptCompilationConfiguration,
+    parentMessageCollector: MessageCollector? = null,
+    moduleName: Name = Name.special("<script-module>"),
+    body: (ScriptJvmK2Compiler) -> T
+): T {
+    val disposable = Disposer.newDisposable("Default disposable for scripting compiler")
+    return try {
+        body(createK2ScriptCompilerProxyWithLightTree(scriptCompilationConfiguration, parentMessageCollector, moduleName, disposable))
+    } finally {
+        Disposer.dispose(disposable)
     }
+}
+
+fun createK2ScriptCompilerProxyWithLightTree(
+    scriptCompilationConfiguration: ScriptCompilationConfiguration,
+    parentMessageCollector: MessageCollector? = null,
+    moduleName: Name = Name.special("<script-module>"),
+    disposable: Disposable
+): ScriptJvmK2Compiler {
+    val state =
+        createCompilerState(
+            moduleName, ScriptDiagnosticsMessageCollector(parentMessageCollector), disposable,
+            scriptCompilationConfiguration,
+            scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
+        )
+    return ScriptJvmK2Compiler(state) { session, diagnosticsReporter ->
+//        val sourcesToPathsMapper = session.sourcesToPathsMapper
+        val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
+        val linesMapping = text.toSourceLinesMapping()
+        builder.buildFirFile(text, toKtSourceFile()!!, linesMapping)/*.also { firFile ->
+//            (session.firProvider as FirProviderImpl).recordFile(firFile)
+//            sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
+        }*/
+    }
+}
 
 @OptIn(SessionConfiguration::class, PrivateSessionConstructor::class)
 private fun createDummySessionForScriptRefinement(script: SourceCode): FirSession =
@@ -146,5 +206,6 @@ private fun createDummySessionForScriptRefinement(script: SourceCode): FirSessio
                 isMetadataCompilation = false
             ))
         register(FirExtensionService::class, FirExtensionService(this))
+        register(FirKotlinScopeProvider::class, FirKotlinScopeProvider())
     }
 
