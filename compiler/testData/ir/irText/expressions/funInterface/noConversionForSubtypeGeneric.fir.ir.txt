@@ -1,0 +1,133 @@
+FILE fqName:<root> fileName:/noConversionForSubtypeGeneric.kt
+  CLASS CLASS name:FooWorker modality:FINAL visibility:public superTypes:[<root>.SimpleRibCoroutineWorker<F of <root>.FooWorker>; kotlin.Function1<kotlin.String, kotlin.Unit>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.FooWorker<F of <root>.FooWorker>
+    TYPE_PARAMETER name:F index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public returnType:<root>.FooWorker<F of <root>.FooWorker> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FooWorker modality:FINAL visibility:public superTypes:[<root>.SimpleRibCoroutineWorker<F of <root>.FooWorker>; kotlin.Function1<kotlin.String, kotlin.Unit>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.SimpleRibCoroutineWorker
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Function1
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.SimpleRibCoroutineWorker
+        public open fun hashCode (): kotlin.Int declared in kotlin.Function1
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.SimpleRibCoroutineWorker
+        public open fun toString (): kotlin.String declared in kotlin.Function1
+    FUN name:invoke visibility:public modality:OPEN returnType:kotlin.Unit [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FooWorker<F of <root>.FooWorker>
+      VALUE_PARAMETER kind:Regular name:str index:1 type:kotlin.String
+      overridden:
+        public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+      BLOCK_BODY
+    FUN name:onStart visibility:public modality:OPEN returnType:kotlin.Unit [suspend]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FooWorker<F of <root>.FooWorker>
+      VALUE_PARAMETER kind:Regular name:scope index:1 type:F of <root>.FooWorker
+      overridden:
+        public abstract fun onStart (scope: E of <root>.SimpleRibCoroutineWorker): kotlin.Unit declared in <root>.SimpleRibCoroutineWorker
+      BLOCK_BODY
+  CLASS INTERFACE name:MyInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.MyInterface
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS INTERFACE name:SimpleRibCoroutineWorker modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.SimpleRibCoroutineWorker<E of <root>.SimpleRibCoroutineWorker>
+    TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:onStart visibility:public modality:ABSTRACT returnType:kotlin.Unit [suspend]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SimpleRibCoroutineWorker<E of <root>.SimpleRibCoroutineWorker>
+      VALUE_PARAMETER kind:Regular name:scope index:1 type:E of <root>.SimpleRibCoroutineWorker
+  FUN name:bar visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Array<out <root>.SimpleRibCoroutineWorker<T2 of <root>.bar>> varargElementType:<root>.SimpleRibCoroutineWorker<T2 of <root>.bar> [vararg]
+    BLOCK_BODY
+  FUN name:createNewPlugin visibility:public modality:FINAL returnType:<root>.SimpleRibCoroutineWorker<<root>.MyInterface>
+    BLOCK_BODY
+      VAR name:x type:<root>.SimpleRibCoroutineWorker<<root>.MyInterface> [val]
+        BLOCK type=kotlin.coroutines.SuspendFunction1<<root>.MyInterface, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:<root>.FooWorker<<root>.MyInterface>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:Regular name:p0 index:1 type:<root>.MyInterface
+            BLOCK_BODY
+              CALL 'public open fun invoke (str: kotlin.String): kotlin.Unit declared in <root>.FooWorker' type=kotlin.Unit origin=null
+                ARG <this>: GET_VAR '$callee: <root>.FooWorker<<root>.MyInterface> declared in <root>.createNewPlugin.suspendConversion0' type=<root>.FooWorker<<root>.MyInterface> origin=null
+                ARG str: GET_VAR 'p0: <root>.MyInterface declared in <root>.createNewPlugin.suspendConversion0' type=<root>.MyInterface origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: <root>.FooWorker<<root>.MyInterface>, p0: <root>.MyInterface): kotlin.Unit declared in <root>.createNewPlugin' type=kotlin.coroutines.SuspendFunction1<<root>.MyInterface, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            ARG $callee: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.FooWorker' type=<root>.FooWorker<<root>.MyInterface> origin=null
+              TYPE_ARG (of class) F: <root>.MyInterface
+      RETURN type=kotlin.Nothing from='public final fun createNewPlugin (): <root>.SimpleRibCoroutineWorker<<root>.MyInterface> declared in <root>'
+        BLOCK type=kotlin.coroutines.SuspendFunction1<<root>.MyInterface, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion1 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:<root>.FooWorker<<root>.MyInterface>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:Regular name:p0 index:1 type:<root>.MyInterface
+            BLOCK_BODY
+              CALL 'public open fun invoke (str: kotlin.String): kotlin.Unit declared in <root>.FooWorker' type=kotlin.Unit origin=null
+                ARG <this>: GET_VAR '$callee: <root>.FooWorker<<root>.MyInterface> declared in <root>.createNewPlugin.suspendConversion1' type=<root>.FooWorker<<root>.MyInterface> origin=null
+                ARG str: GET_VAR 'p0: <root>.MyInterface declared in <root>.createNewPlugin.suspendConversion1' type=<root>.MyInterface origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion1 ($callee: <root>.FooWorker<<root>.MyInterface>, p0: <root>.MyInterface): kotlin.Unit declared in <root>.createNewPlugin' type=kotlin.coroutines.SuspendFunction1<<root>.MyInterface, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            ARG $callee: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.FooWorker' type=<root>.FooWorker<<root>.MyInterface> origin=null
+              TYPE_ARG (of class) F: <root>.MyInterface
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:x index:0 type:<root>.SimpleRibCoroutineWorker<T1 of <root>.foo>
+    BLOCK_BODY
+  FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun foo <T1> (x: <root>.SimpleRibCoroutineWorker<T1 of <root>.foo>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        TYPE_ARG T1: <root>.MyInterface
+        ARG x: BLOCK type=kotlin.coroutines.SuspendFunction1<<root>.MyInterface, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:<root>.FooWorker<<root>.MyInterface>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:Regular name:p0 index:1 type:<root>.MyInterface
+            BLOCK_BODY
+              CALL 'public open fun invoke (str: kotlin.String): kotlin.Unit declared in <root>.FooWorker' type=kotlin.Unit origin=null
+                ARG <this>: GET_VAR '$callee: <root>.FooWorker<<root>.MyInterface> declared in <root>.main.suspendConversion0' type=<root>.FooWorker<<root>.MyInterface> origin=null
+                ARG str: GET_VAR 'p0: <root>.MyInterface declared in <root>.main.suspendConversion0' type=<root>.MyInterface origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: <root>.FooWorker<<root>.MyInterface>, p0: <root>.MyInterface): kotlin.Unit declared in <root>.main' type=kotlin.coroutines.SuspendFunction1<<root>.MyInterface, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            ARG $callee: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.FooWorker' type=<root>.FooWorker<<root>.MyInterface> origin=null
+              TYPE_ARG (of class) F: <root>.MyInterface
+      CALL 'public final fun bar <T2> (vararg x: <root>.SimpleRibCoroutineWorker<T2 of <root>.bar>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        TYPE_ARG T2: <root>.MyInterface
+        ARG x: VARARG type=kotlin.Array<out <root>.SimpleRibCoroutineWorker<<root>.MyInterface>> varargElementType=<root>.SimpleRibCoroutineWorker<<root>.MyInterface>
+          BLOCK type=kotlin.coroutines.SuspendFunction1<<root>.MyInterface, kotlin.Unit> origin=SUSPEND_CONVERSION
+            FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion1 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:<root>.FooWorker<<root>.MyInterface>
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:Regular name:p0 index:1 type:<root>.MyInterface
+              BLOCK_BODY
+                CALL 'public open fun invoke (str: kotlin.String): kotlin.Unit declared in <root>.FooWorker' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR '$callee: <root>.FooWorker<<root>.MyInterface> declared in <root>.main.suspendConversion1' type=<root>.FooWorker<<root>.MyInterface> origin=null
+                  ARG str: GET_VAR 'p0: <root>.MyInterface declared in <root>.main.suspendConversion1' type=<root>.MyInterface origin=null
+            FUNCTION_REFERENCE 'local final fun suspendConversion1 ($callee: <root>.FooWorker<<root>.MyInterface>, p0: <root>.MyInterface): kotlin.Unit declared in <root>.main' type=kotlin.coroutines.SuspendFunction1<<root>.MyInterface, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+              ARG $callee: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.FooWorker' type=<root>.FooWorker<<root>.MyInterface> origin=null
+                TYPE_ARG (of class) F: <root>.MyInterface

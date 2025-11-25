@@ -521,6 +521,28 @@ public class FirJsTypeScriptExportWithInlinedFunInKlibTestGenerated extends Abst
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/js-symbol")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
+  public class Js_symbol {
+    @Test
+    public void testAllFilesPresentInJs_symbol() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js-symbol"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/js-symbol-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
+  public class Js_symbol_in_exported_file {
+    @Test
+    public void testAllFilesPresentInJs_symbol_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js-symbol-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/long-type")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("es6")
@@ -1029,6 +1051,28 @@ public class FirJsTypeScriptExportWithInlinedFunInKlibTestGenerated extends Abst
     @TestMetadata("tuples.kt")
     public void testTuples() {
       runTest("js/js.translator/testData/typescript-export/js/tuples-in-exported-file/tuples.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/version-overloads")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
+  public class Version_overloads {
+    @Test
+    public void testAllFilesPresentInVersion_overloads() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/version-overloads"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/version-overloads-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
+  public class Version_overloads_in_exported_file {
+    @Test
+    public void testAllFilesPresentInVersion_overloads_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/version-overloads-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
   }
 
