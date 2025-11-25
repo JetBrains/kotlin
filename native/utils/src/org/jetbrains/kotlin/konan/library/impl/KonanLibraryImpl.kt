@@ -82,7 +82,7 @@ fun createKonanLibrary(
 fun createKonanLibraryComponents(
     libraryFile: File,
     target: KonanTarget? = null,
-    isDefault: Boolean = true,
+    isDefault: Boolean,
     zipFileSystemAccessor: ZipFileSystemAccessor? = null,
 ) : List<KotlinLibrary> {
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null)
