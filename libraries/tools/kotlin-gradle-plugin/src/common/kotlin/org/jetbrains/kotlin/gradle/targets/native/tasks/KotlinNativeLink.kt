@@ -238,21 +238,6 @@ constructor(
     internal val externalDependenciesBuildCompilerArgs: ListProperty<String> = objectFactory.listProperty<String>().empty()
 
     private val gradleUserHomeDir = project.gradle.gradleUserHomeDir
-    private val cacheBuilderSettings by lazy {
-        CacheBuilder.Settings(
-            konanHome = kotlinNativeProvider.flatMap { it.bundleDirectory }.map { File(it) },
-            konanCacheKind = konanCacheKind,
-            gradleUserHomeDir = gradleUserHomeDir,
-            konanTarget = konanTarget,
-            toolOptions = toolOptions,
-            externalDependenciesArgs = externalDependenciesBuildCompilerArgs.get(),
-            debuggable = binary.debuggable,
-            optimized = binary.optimized,
-            konanDataDir = kotlinNativeProvider.flatMap { it.konanDataDir.map { File(it) } },
-            kotlinCompilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel,
-            forceDisableRunningInProcess = forceDisableRunningInProcess,
-        )
-    }
 
     private class CacheSettings(
         val icEnabled: Boolean,
