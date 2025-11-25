@@ -14,14 +14,8 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms.unspecifiedNativePlat
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms.allWasmPlatforms
 
-@Suppress("DEPRECATION_ERROR")
 object CommonPlatforms {
-
-    @Deprecated(
-        message = "Should be accessed only by compatibility layer, other clients should use 'unspecifiedJvmPlatform'",
-        level = DeprecationLevel.ERROR
-    )
-    object CompatCommonPlatform : TargetPlatform(
+    private object CompatCommonPlatform : TargetPlatform(
         setOf(
             unspecifiedJvmPlatform.single(),
             defaultJsPlatform.single(),
@@ -29,10 +23,7 @@ object CommonPlatforms {
             WasmPlatforms.wasmWasi.single(),
             unspecifiedNativePlatform.single()
         )
-    ), org.jetbrains.kotlin.analyzer.common.CommonPlatform {
-        override val platformName: String
-            get() = "Default"
-    }
+    )
 
     val defaultCommonPlatform: TargetPlatform
         get() = CompatCommonPlatform

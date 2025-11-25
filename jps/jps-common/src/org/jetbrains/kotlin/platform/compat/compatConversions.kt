@@ -21,30 +21,7 @@ import org.jetbrains.kotlin.platform.konan.NativePlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 
-typealias OldPlatform = org.jetbrains.kotlin.resolve.TargetPlatform
 typealias NewPlatform = org.jetbrains.kotlin.platform.TargetPlatform
-
-fun NewPlatform.toOldPlatform(): OldPlatform = when (val single = singleOrNull()) {
-    null -> CommonPlatforms.CompatCommonPlatform
-    is JvmPlatform -> JvmPlatforms.CompatJvmPlatform
-    is JsPlatform -> JsPlatforms.CompatJsPlatform
-    is NativePlatform -> NativePlatforms.CompatNativePlatform
-    else -> error("Unknown platform $single")
-}
-
-fun OldPlatform.toNewPlatform(): NewPlatform = when (this) {
-    is CommonPlatforms.CompatCommonPlatform -> this
-    is JvmPlatforms.CompatJvmPlatform -> this
-    is JsPlatforms.CompatJsPlatform -> this
-    is NativePlatforms.CompatNativePlatform -> this
-    else -> error(
-        "Can't convert org.jetbrains.kotlin.resolve.TargetPlatform to org.jetbrains.kotlin.platform.TargetPlatform: " +
-                "non-Compat instance passed\n" +
-                "toString: $this\n" +
-                "class: ${this::class}\n" +
-                "hashCode: ${this.hashCode().toString(16)}"
-    )
-}
 
 fun IdePlatform<*, *>.toNewPlatform(): NewPlatform = when (this) {
     is CommonIdePlatformKind.Platform -> CommonPlatforms.defaultCommonPlatform

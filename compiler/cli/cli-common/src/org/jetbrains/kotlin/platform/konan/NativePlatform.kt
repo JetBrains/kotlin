@@ -27,7 +27,6 @@ data class NativePlatformWithTarget(val target: KonanTarget) : NativePlatform() 
         get() = target.visibleName
 }
 
-@Suppress("DEPRECATION_ERROR")
 object NativePlatforms {
     private val predefinedNativeTargetToSimpleNativePlatform: Map<KonanTarget, NativePlatformWithTarget> =
         KonanTarget.predefinedTargets.values.associateWith { NativePlatformWithTarget(it) }
@@ -55,16 +54,7 @@ object NativePlatforms {
     fun nativePlatformByTargetNames(targets: Collection<String>): TargetPlatform =
         nativePlatformByTargets(targets.mapNotNull { KonanTarget.predefinedTargets[it] })
 
-    @Deprecated(
-        message = "Should be accessed only by compatibility layer, other clients should use 'unspecifiedNativePlatform'",
-        level = DeprecationLevel.ERROR
-    )
-    object CompatNativePlatform : TargetPlatform(setOf(NativePlatformUnspecifiedTarget)),
-        // Needed for backward compatibility, because old code uses INSTANCEOF checks instead of calling extensions
-        org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform {
-        override val platformName: String
-            get() = "Native"
-    }
+    private object CompatNativePlatform : TargetPlatform(setOf(NativePlatformUnspecifiedTarget))
 }
 
 fun TargetPlatform?.isNative(): Boolean = this != null && this.size > 0 && all { it is NativePlatform }
