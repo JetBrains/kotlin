@@ -298,8 +298,6 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
   AddKotlinClassData(false, newClass, (void*)info->classDataImp);
   AddKotlinClassData(true, newClass, (void*)info->classDataImp);
 
-  const TypeInfo* actualTypeInfo = Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(newClass, info->typeInfo);
-
   int bodySize = sizeof(BackRef);
   char bodyTypeEncoding[16];
   snprintf(bodyTypeEncoding, sizeof(bodyTypeEncoding), "[%dc]", bodySize);
@@ -313,9 +311,18 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
   int32_t offset = (int32_t)ivar_getOffset(body);
   *info->bodyOffset = offset;
 
-  // Doing this after objc_registerClassPair because it is not clear whether calling class methods
-  // is safe before that.
+  // `GetKotlinClassData` below calls an Objective-C method on the generated class -- `_kotlinObjCClassData`.
+  //
+  // `Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom` calls a method as well -- `instancesRespondToSelector:`,
+  // as part of `IsKotlinObjCClass`. It also queries a lot of details from the class using Objective-C runtime APIs.
+  //
+  // Doing this to a dynamically created Objective-C class is not safe until it is registered with
+  // `objc_registerClassPair`. See e.g. KT-82669.
+  //
+  // That's why it is important to keep those two calls after `objc_registerClassPair`.
   auto* classData = GetKotlinClassData(newClass);
+  const TypeInfo* actualTypeInfo = Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(newClass, info->typeInfo);
+
   classData->typeInfo = actualTypeInfo;
   classData->objcClass = newClass;
   classData->bodyOffset = offset;
