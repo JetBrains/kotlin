@@ -2059,6 +2059,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         public void testInWhenConditions() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inWhenConditions.kt");
         }
+
+        @Test
+        @TestMetadata("outerTypeVariableInExpectedType.kt")
+        public void testOuterTypeVariableInExpectedType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/outerTypeVariableInExpectedType.kt");
+        }
       }
 
       @Nested
@@ -2092,6 +2098,40 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         @TestMetadata("inVarargsInAnnotations.kt")
         public void testInVarargsInAnnotations() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/formerArrayLiterals/inVarargsInAnnotations.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Kt81777 {
+        @Test
+        public void testAllFilesPresentInKt81777() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("inAnnotationDefaults.kt")
+        public void testInAnnotationDefaults() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/inAnnotationDefaults.kt");
+        }
+
+        @Test
+        @TestMetadata("inAnnotations.kt")
+        public void testInAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/inAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("withDisabledCL.kt")
+        public void testWithDisabledCL() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/withDisabledCL.kt");
+        }
+
+        @Test
+        @TestMetadata("withEnabledCL.kt")
+        public void testWithEnabledCL() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/withEnabledCL.kt");
         }
       }
 
