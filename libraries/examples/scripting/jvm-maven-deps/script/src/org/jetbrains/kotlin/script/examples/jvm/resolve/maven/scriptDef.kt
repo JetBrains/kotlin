@@ -30,17 +30,40 @@ object ScriptWithMavenDepsConfiguration : ScriptCompilationConfiguration(
             )
         }
         refineConfiguration {
-            @Suppress("DEPRECATION")
-            onAnnotations(DependsOn::class, Repository::class, handler = ::configureMavenDepsOnAnnotations)
+//            @Suppress("DEPRECATION")
+//            onAnnotations(DependsOn::class, Repository::class, handler = ::configureMavenDepsOnAnnotations)
+            onFir(handler = ::configureMavenDepsOnFir)
         }
     }
-)
+) {
+    @Suppress("unused")
+    private fun readResolve(): Any = ScriptWithMavenDepsConfiguration
+}
 
 private val resolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
 
 fun configureMavenDepsOnAnnotations(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
     val annotations = context.collectedData?.get(ScriptCollectedData.collectedAnnotations)?.takeIf { it.isNotEmpty() }
         ?: return context.compilationConfiguration.asSuccess()
+    return runBlocking {
+        resolver.resolveFromScriptSourceAnnotations(annotations)
+    }.onSuccess {
+        context.compilationConfiguration.with {
+            dependencies.append(JvmDependency(it))
+        }.asSuccess()
+    }
+}
+
+private fun configureMavenDepsOnFir(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    val fir = context.collectedData?.get(ScriptCollectedData.fir) ?: return context.compilationConfiguration.asSuccess()
+    val annotations = fir.flatMap {
+        it.annotations.mapNotNull {
+            it.toAnnotationObjectIfMatches(DependsOn::class.java, Repository::class.java)?.let {
+                ScriptSourceAnnotation(it, null)
+            }
+        }
+    }
+    if (annotations.isEmpty()) return context.compilationConfiguration.asSuccess()
     return runBlocking {
         resolver.resolveFromScriptSourceAnnotations(annotations)
     }.onSuccess {

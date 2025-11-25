@@ -9,7 +9,7 @@ project.updateJvmTarget("1.8")
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
-    compileOnly(project(":compiler:fir:tree"))
+    api(project(":compiler:fir:tree"))
 }
 
 sourceSets {
