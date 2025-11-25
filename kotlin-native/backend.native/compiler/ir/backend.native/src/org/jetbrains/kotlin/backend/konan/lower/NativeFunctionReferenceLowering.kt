@@ -87,9 +87,9 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
 
     override fun IrBuilderWithScope.generateSuperClassConstructorCall(constructor: IrConstructor, superClassType: IrType, functionReference: IrRichFunctionReference): IrDelegatingConstructorCall {
         return irDelegatingConstructorCall(superClassType.classOrFail.owner.primaryConstructor!!).apply {
-            functionReference.reflectionTargetSymbol?.let { reflectionTarget ->
+            functionReference.reflectionTargetSymbol?.let {
                 val reflectionTargetLinkageError = functionReference.reflectionTargetLinkageError
-                val description = if (reflectionTargetLinkageError == null) KFunctionDescription(functionReference) else null
+                val description = KFunctionDescription(functionReference)
                 arguments[0] = irKFunctionDescription(functionReference, description, reflectionTargetLinkageError)
                 typeArguments[0] = functionReference.invokeFunction.returnType
             }
@@ -131,7 +131,7 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         }
     }
 
-    private fun IrBuilderWithScope.irKFunctionDescription(functionReference: IrRichFunctionReference, description: KFunctionDescription?, reflectionTargetLinkageError: PartialLinkageCase?): IrConstantValue {
+    private fun IrBuilderWithScope.irKFunctionDescription(functionReference: IrRichFunctionReference, description: KFunctionDescription, reflectionTargetLinkageError: PartialLinkageCase?): IrConstantValue {
         if (reflectionTargetLinkageError != null) {
             val errorMessage = generationState.context.partialLinkageSupport.prepareLinkageError(
                     doNotLog = true,
@@ -142,11 +142,11 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
             return irConstantObject(
                     kFunctionDescriptionLinkageErrorSymbol.owner,
                     mapOf(
+                            "name" to irConstantPrimitive(irString(description.getName())),
                             "reflectionTargetLinkageError" to irConstantPrimitive(irString(errorMessage))
                     )
             )
         } else {
-            requireNotNull(description)
             val kTypeGenerator = toNativeConstantReflectionBuilder(symbols)
             return irConstantObject(
                     kFunctionDescriptionCorrectSymbol.owner,
