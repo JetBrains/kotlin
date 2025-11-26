@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.gcfuzzing.translation
 
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Definition
+import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Field
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Program
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.TargetLanguage
 
@@ -89,8 +90,14 @@ private class CInteropTranslationContext(
 
     private fun translateClassDefinition(definition: Definition.Class) {
         headerContents.lineEnd("@interface ${scopeResolver.computeName(definition)} : NSObject<ObjCIndexAccess>")
-        definition.fields.forEachIndexed { index, _ ->
-            headerContents.lineEnd("@property id f${index};")
+        definition.fields.forEachIndexed { index, field ->
+            headerContents.lineEnd{
+                append("@property")
+                if (field is Field.WeakRef) {
+                    append("(weak)")
+                }
+                append(" id f${index};")
+            }
         }
         if (definition.fields.isNotEmpty()) {
             headerContents.lineEnd {

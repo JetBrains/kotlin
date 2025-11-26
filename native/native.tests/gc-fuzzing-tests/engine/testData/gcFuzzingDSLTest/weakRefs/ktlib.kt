@@ -65,59 +65,51 @@ private inline fun alloc(block: () -> Any?): Any? {
     return null
 }
 
-class Class0(f0: Any?) : KotlinIndexAccess {
+private var g0Impl: WeakReference<Any>? = null?.let { WeakReference(it) }
+private var g0: Any?
+    get() = g0Impl?.value
+    set(value) { g0Impl = value?.let { WeakReference(it) } }
+class Class2(f0: Any?, f1: Any?) : KotlinIndexAccess {
     var f0: Any? = f0
+    private var f1Impl: WeakReference<Any>? = f1?.let { WeakReference(it) }
+    var f1: Any?
+        get() = f1Impl?.value
+        set(value) { f1Impl = value?.let { WeakReference(it) } }
     override fun loadKotlinField(index: Int): Any? {
-        return when (index % 1) {
+        return when (index % 2) {
             0 -> f0
+            1 -> f1
             else -> null
         }
     }
 
     override fun storeKotlinField(index: Int, value: Any?) {
-        when (index % 1) {
+        when (index % 2) {
             0 -> f0 = value
+            1 -> f1 = value
         }
     }
 }
 
-private var g1: Any? = null
 
-fun fun3(localsCount: Int, l0: Any?): Any? {
-    var l1: Any? = alloc({ Class0(l0) })
-    var l2: Any? = alloc({ Class0(l1) })
-    var l3: Any? = alloc({ Class0(l0) })
-    return null
-}
-
-fun fun5(localsCount: Int, l0: Any?): Any? {
-    var l1: Any? = call(localsCount, 4, { fun3(it, l0) })
-    var l2: Any? = call(localsCount, 4, { fun3(it, l1) })
-    var l3: Any? = call(localsCount, 4, { fun3(it, l0) })
-    return null
-}
-
-fun fun7(localsCount: Int, l0: Any?): Any? {
-    var l1: Any? = l0
-    var l2: Any? = l1
-    var l3: Any? = l0
-    return null
-}
-
-fun fun9(localsCount: Int, l0: Any?): Any? {
-    var l1: Any? = null
-    l1 = null
-    l1 = null
-    l1 = null
+fun fun4(localsCount: Int): Any? {
+    var l0: Any? = alloc({ Class2(g0, g0) })
+    l0?.storeField(0, l0?.loadField(1))
+    l0?.storeField(1, l0?.loadField(0))
+    l0?.storeField(0, l0?.loadField(1))
+    l0?.storeField(1, l0?.loadField(0))
     return null
 }
 
 private fun mainBodyImpl(localsCount: Int) {
-    var l0: Any? = call(localsCount, 4, { fun3(it, null) })
-    var l1: Any? = call(localsCount, 4, { fun4(it, null) })
+    var l0: Any? = alloc({ Class2(null, null) })
+    g0 = l0
+    g0 = l0
+    var l1: Any? = call(localsCount, 1, { fun4(it) })
+    var l2: Any? = call(localsCount, 1, { fun5(it) })
 }
 
 fun mainBody() {
     val localsCount = 0
-    call(localsCount, 2, { mainBodyImpl(it) })
+    call(localsCount, 3, { mainBodyImpl(it) })
 }

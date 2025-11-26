@@ -259,7 +259,11 @@ private class ObjCTranslationContext(
 
     private fun translateGlobalDefinition(definition: Definition.Global) {
         check(!scopeResolver.isExported(definition)) { "Exported globals are unsupported" }
-        contents.lineEnd("@property id ${scopeResolver.computeName(definition)};")
+        contents.lineEnd {
+            append("@property")
+            if (definition.field is Field.WeakRef) append("(weak)")
+            append(" id ${scopeResolver.computeName(definition)};")
+        }
     }
 
     private fun translateClassDefinition(definition: Definition.Class) {

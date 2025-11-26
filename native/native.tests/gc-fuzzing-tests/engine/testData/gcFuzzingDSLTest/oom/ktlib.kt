@@ -1,8 +1,14 @@
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
+@file:OptIn(
+    kotlinx.cinterop.ExperimentalForeignApi::class,
+    kotlin.native.runtime.NativeRuntimeApi::class,
+    kotlin.experimental.ExperimentalNativeApi::class
+)
+
 package ktlib
 
 import cinterop.*
 import kotlin.native.concurrent.Worker
+import kotlin.native.ref.WeakReference
 
 interface KotlinIndexAccess {
    fun loadKotlinField(index: Int): Any?
@@ -12,13 +18,13 @@ interface KotlinIndexAccess {
 private fun Any.loadField(index: Int) = when (this) {
     is KotlinIndexAccess -> loadKotlinField(index)
     is ObjCIndexAccessProtocol -> loadObjCField(index)
-    else -> error("Invalid loadField call")
+    else -> error("Invalid loadField call " + this)
 }
 
 private fun Any.storeField(index: Int, value: Any?) = when (this) {
     is KotlinIndexAccess -> storeKotlinField(index, value)
     is ObjCIndexAccessProtocol -> storeObjCField(index, value)
-    else -> error("Invalid storeField call")
+    else -> error("Invalid storeField call " + this)
 }
 
 object WorkerTerminationProcessor {
@@ -59,7 +65,17 @@ private inline fun alloc(block: () -> Any?): Any? {
     return null
 }
 
-class Class0(var f0: Any?, var f1: Any?, var f2: Any?, var f3: Any?, var f4: Any?, var f5: Any?, var f6: Any?, var f7: Any?, var f8: Any?, var f9: Any?) : KotlinIndexAccess {
+class Class0(f0: Any?, f1: Any?, f2: Any?, f3: Any?, f4: Any?, f5: Any?, f6: Any?, f7: Any?, f8: Any?, f9: Any?) : KotlinIndexAccess {
+    var f0: Any? = f0
+    var f1: Any? = f1
+    var f2: Any? = f2
+    var f3: Any? = f3
+    var f4: Any? = f4
+    var f5: Any? = f5
+    var f6: Any? = f6
+    var f7: Any? = f7
+    var f8: Any? = f8
+    var f9: Any? = f9
     override fun loadKotlinField(index: Int): Any? {
         return when (index % 10) {
             0 -> f0

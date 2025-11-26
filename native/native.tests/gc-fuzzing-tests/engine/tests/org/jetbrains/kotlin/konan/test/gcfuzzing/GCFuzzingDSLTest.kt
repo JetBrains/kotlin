@@ -143,19 +143,19 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
             definitions = listOf(
                 Definition.Class(
                     TargetLanguage.Kotlin,
-                    listOf(Field, Field),
+                    listOf(Field.StrongRef, Field.StrongRef),
                 ),
                 Definition.Class(
                     TargetLanguage.ObjC,
-                    listOf(Field, Field),
+                    listOf(Field.StrongRef, Field.StrongRef),
                 ),
                 Definition.Global(
                     TargetLanguage.Kotlin,
-                    Field,
+                    Field.StrongRef,
                 ),
                 Definition.Global(
                     TargetLanguage.ObjC,
-                    Field,
+                    Field.StrongRef,
                 ),
                 Definition.Function(
                     TargetLanguage.Kotlin, parameters = listOf(Parameter, Parameter), body = body
@@ -200,13 +200,13 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
             definitions = listOf(
                 Definition.Class(
                     TargetLanguage.Kotlin,
-                    listOf(Field),
+                    listOf(Field.StrongRef),
                 ), Definition.Global(
                     TargetLanguage.Kotlin,
-                    Field,
+                    Field.StrongRef,
                 ), Definition.Global(
                     TargetLanguage.ObjC,
-                    Field,
+                    Field.StrongRef,
                 ), *bodies.flatMap { statements ->
                     listOf(
                         Definition.Function(
@@ -247,11 +247,11 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
             definitions = listOf(
                 Definition.Class(
                     TargetLanguage.Kotlin,
-                    listOf(Field, Field),
+                    listOf(Field.StrongRef, Field.StrongRef),
                 ),
                 Definition.Class(
                     TargetLanguage.ObjC,
-                    listOf(Field, Field),
+                    listOf(Field.StrongRef, Field.StrongRef),
                 ),
                 Definition.Function(
                     TargetLanguage.Kotlin,
@@ -271,24 +271,98 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun weakRefs(testInfo: TestInfo) = runTest(testInfo) {
+        val testFunBody = Body(
+            listOf(
+                BodyStatement.Alloc(
+                    0, listOf(
+                        LoadExpression.Global(0, Path(listOf())),
+                        LoadExpression.Global(1, Path(listOf())),
+                    )
+                ),
+                BodyStatement.Store(
+                    StoreExpression.Local(0, Path(listOf(0))),
+                    LoadExpression.Local(0, Path(listOf(1)))
+                ),
+                BodyStatement.Store(
+                    StoreExpression.Local(0, Path(listOf(1))),
+                    LoadExpression.Local(0, Path(listOf(0)))
+                ),
+                BodyStatement.Store(
+                    StoreExpression.Local(1, Path(listOf(0))),
+                    LoadExpression.Local(1, Path(listOf(1)))
+                ),
+                BodyStatement.Store(
+                    StoreExpression.Local(1, Path(listOf(1))),
+                    LoadExpression.Local(1, Path(listOf(0)))
+                ),
+            )
+        )
+        Program(
+            definitions = listOf(
+                Definition.Global(
+                    TargetLanguage.Kotlin,
+                    Field.WeakRef,
+                ),
+                Definition.Global(
+                    TargetLanguage.ObjC,
+                    Field.WeakRef,
+                ),
+                Definition.Class(
+                    TargetLanguage.Kotlin,
+                    listOf(Field.StrongRef, Field.WeakRef),
+                ),
+                Definition.Class(
+                    TargetLanguage.ObjC,
+                    listOf(Field.StrongRef, Field.WeakRef),
+                ),
+                Definition.Function(
+                    TargetLanguage.Kotlin,
+                    emptyList(),
+                    body = BodyWithReturn(body = testFunBody, returnExpression = LoadExpression.Default)
+                ),
+                Definition.Function(
+                    TargetLanguage.ObjC,
+                    emptyList(),
+                    body = BodyWithReturn(body = testFunBody, returnExpression = LoadExpression.Default)
+                ),
+            ), mainBody = Body(
+                listOf(
+                    BodyStatement.Alloc(0, emptyList()),
+                    BodyStatement.Store(
+                        StoreExpression.Global(0, Path(emptyList())),
+                        LoadExpression.Local(0, Path(emptyList()))
+                    ),
+                    BodyStatement.Store(
+                        StoreExpression.Global(1, Path(emptyList())),
+                        LoadExpression.Local(0, Path(emptyList()))
+                    ),
+                    BodyStatement.Call(0, listOf(LoadExpression.Default, LoadExpression.Default)),
+                    BodyStatement.Call(1, listOf(LoadExpression.Default, LoadExpression.Default))
+                )
+            )
+        )
+    }
+
+    @Test
     fun smoke(testInfo: TestInfo) = runTest(testInfo) {
         Program(
             definitions = listOf(
                 Definition.Class(
                     TargetLanguage.Kotlin,
-                    listOf(Field, Field),
+                    listOf(Field.StrongRef, Field.StrongRef),
                 ),
                 Definition.Class(
                     TargetLanguage.ObjC,
-                    listOf(Field, Field),
+                    listOf(Field.StrongRef, Field.StrongRef),
                 ),
                 Definition.Global(
                     TargetLanguage.Kotlin,
-                    Field,
+                    Field.StrongRef,
                 ),
                 Definition.Global(
                     TargetLanguage.ObjC,
-                    Field,
+                    Field.StrongRef,
                 ),
                 Definition.Function(
                     TargetLanguage.Kotlin, listOf(Parameter, Parameter), BodyWithReturn(
@@ -367,7 +441,7 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
     fun oom(testInfo: TestInfo) = runTest(testInfo) {
         val fieldsCount = 10
         val listsLengthCount = 100
-        fun defineNode(targetLanguage: TargetLanguage) = Definition.Class(targetLanguage, Array(fieldsCount) { Field }.toList())
+        fun defineNode(targetLanguage: TargetLanguage) = Definition.Class(targetLanguage, Array(fieldsCount) { Field.StrongRef }.toList())
         fun populateNode(classId: EntityId) = buildList {
             (0 until fieldsCount).forEach {
                 add(BodyStatement.Alloc(classId, emptyList()))

@@ -1,8 +1,14 @@
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
+@file:OptIn(
+    kotlinx.cinterop.ExperimentalForeignApi::class,
+    kotlin.native.runtime.NativeRuntimeApi::class,
+    kotlin.experimental.ExperimentalNativeApi::class
+)
+
 package ktlib
 
 import cinterop.*
 import kotlin.native.concurrent.Worker
+import kotlin.native.ref.WeakReference
 
 interface KotlinIndexAccess {
    fun loadKotlinField(index: Int): Any?
@@ -12,13 +18,13 @@ interface KotlinIndexAccess {
 private fun Any.loadField(index: Int) = when (this) {
     is KotlinIndexAccess -> loadKotlinField(index)
     is ObjCIndexAccessProtocol -> loadObjCField(index)
-    else -> error("Invalid loadField call")
+    else -> error("Invalid loadField call " + this)
 }
 
 private fun Any.storeField(index: Int, value: Any?) = when (this) {
     is KotlinIndexAccess -> storeKotlinField(index, value)
     is ObjCIndexAccessProtocol -> storeObjCField(index, value)
-    else -> error("Invalid storeField call")
+    else -> error("Invalid storeField call " + this)
 }
 
 object WorkerTerminationProcessor {
