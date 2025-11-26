@@ -20,6 +20,7 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     api(project(":compiler:frontend"))
     api(project(":compiler:frontend.common"))

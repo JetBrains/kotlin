@@ -29,6 +29,7 @@ dependencies {
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
     compileOnly(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.platform.launcher)
     noArgCompilerPlugin(project(":kotlin-noarg-compiler-plugin.embeddable"))
     assignmentCompilerPlugin(project(":kotlin-assignment-compiler-plugin.embeddable"))
 }

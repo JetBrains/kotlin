@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
     implementation(project(":native:analysis-api-based-export-common"))
 
+    testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(projectTests(":native:objcexport-header-generator"))
     testImplementation(project(":native:analysis-api-based-test-utils"))

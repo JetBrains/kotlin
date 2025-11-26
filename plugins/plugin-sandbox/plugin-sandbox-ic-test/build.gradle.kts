@@ -21,6 +21,7 @@ dependencies {
 
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {

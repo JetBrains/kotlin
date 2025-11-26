@@ -20,6 +20,7 @@ dependencies {
 
     testFixturesApi("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
     testFixturesApi(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
