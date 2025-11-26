@@ -12,32 +12,12 @@ import org.jetbrains.kotlin.name.Name
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
 object SyntheticCallableId {
     private val syntheticPackageName: FqName = FqName("_synthetic")
+    private fun syntheticCallableId(name: String) = CallableId(syntheticPackageName, Name.identifier(name))
 
-    val WHEN = CallableId(
-        syntheticPackageName,
-        Name.identifier("WHEN_CALL")
-    )
-    val TRY = CallableId(
-        syntheticPackageName,
-        Name.identifier("TRY_CALL")
-    )
-    val CHECK_NOT_NULL = CallableId(
-        syntheticPackageName,
-        Name.identifier("CHECK_NOT_NULL_CALL")
-    )
-
-    val ELVIS_NOT_NULL = CallableId(
-        syntheticPackageName,
-        Name.identifier("ELVIS_CALL")
-    )
-
-    val ID = CallableId(
-        syntheticPackageName,
-        Name.identifier("ID_CALL")
-    )
-
-    val ACCEPT_SPECIFIC_TYPE = CallableId(
-        syntheticPackageName,
-        Name.identifier("ACCEPT_SPECIFIC_TYPE_CALL")
-    )
+    val WHEN = syntheticCallableId("WHEN_CALL")
+    val TRY = syntheticCallableId("TRY_CALL")
+    val CHECK_NOT_NULL = syntheticCallableId("CHECK_NOT_NULL_CALL")
+    val ELVIS_NOT_NULL = syntheticCallableId("ELVIS_NOT_NULL_CALL")
+    val ID = syntheticCallableId("ID_CALL")
+    val ACCEPT_SPECIFIC_TYPE = syntheticCallableId("ACCEPT_SPECIFIC_TYPE_CALL")
 }
