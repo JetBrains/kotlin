@@ -384,12 +384,14 @@ public expect fun max(a: Double, b: Double): Double
 /**
  * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
  * that is, the cube root of a negative value is the negative of the cube root
- * of that value's magnitude. Special cases:
+ * of that value's magnitude.
  *
  * Special cases:
  *   - If the argument is `NaN`, then the result is `NaN`.
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
+ *
+ * @sample samples.math.MathSamples.Doubles.cbrt
  */
 @SinceKotlin("1.8")
 public expect fun cbrt(x: Double): Double
@@ -898,12 +900,14 @@ public expect fun max(a: Float, b: Float): Float
 /**
  * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
  * that is, the cube root of a negative value is the negative of the cube root
- * of that value's magnitude. Special cases:
+ * of that value's magnitude.
  *
  * Special cases:
  *   - If the argument is `NaN`, then the result is `NaN`.
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
+ *
+ * @sample samples.math.MathSamples.Floats.cbrt
  */
 @SinceKotlin("1.8")
 @WasExperimental(ExperimentalStdlibApi::class)

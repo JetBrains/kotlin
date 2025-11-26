@@ -237,6 +237,18 @@ class MathSamples {
             assertPrints((-3.14).withSign(0), "3.14")
             assertPrints(Double.NaN.withSign(-1), "NaN")
         }
+
+        @Sample
+        fun cbrt() {
+            assertPrints(cbrt(8.0), "2.0")
+            assertPrints(cbrt(-8.0), "-2.0")
+
+            // special cases
+            assertPrints(cbrt(Double.NaN), "NaN")
+            assertPrints(cbrt(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(cbrt(Double.NEGATIVE_INFINITY), "-Infinity")
+            assertPrints(cbrt(-0.0), "-0.0")
+        }
     }
 
     class Floats {
@@ -464,6 +476,18 @@ class MathSamples {
             assertPrints((-3.14f).withSign(-100), "-3.14")
             assertPrints((-3.14f).withSign(0), "3.14")
             assertPrints(Float.NaN.withSign(-1), "NaN")
+        }
+
+        @Sample
+        fun cbrt() {
+            assertPrints(cbrt(8.0f), "2.0")
+            assertPrints(cbrt(-8.0f), "-2.0")
+
+            // special cases
+            assertPrints(cbrt(Float.NaN), "NaN")
+            assertPrints(cbrt(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(cbrt(Float.NEGATIVE_INFINITY), "-Infinity")
+            assertPrints(cbrt(-0.0f), "-0.0")
         }
     }
 
