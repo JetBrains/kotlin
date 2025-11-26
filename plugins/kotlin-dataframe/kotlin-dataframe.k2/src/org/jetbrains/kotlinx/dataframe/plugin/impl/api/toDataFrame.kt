@@ -184,21 +184,19 @@ internal fun KotlinTypeFacade.toDataFrame(
                 .filter { !it.isStatic && it.valueParameterSymbols.isEmpty() && it.typeParameterSymbols.isEmpty() }
                 .mapNotNull { function ->
                     val name = function.name.identifier
-                    if (name.startsWith("get") || name.startsWith("is")) {
-                        val propertyName = name
-                            .replaceFirst("get", "")
-                            .replaceFirst("is", "")
-                            .let {
-                                if (it.firstOrNull()?.isUpperCase() == true) {
-                                    it.replaceFirstChar { it.lowercase(Locale.getDefault()) }
-                                } else {
-                                    null
-                                }
-                            }
-                        propertyName?.let { function to it }
-                    } else {
-                        null
+                    val propertyName = when {
+                        name.startsWith("get") -> name.replaceFirst("get", "")
+                        name.startsWith("is") -> name.replaceFirst("is", "")
+                        else -> return@mapNotNull null
+                    }.let {
+                        if (it.firstOrNull()?.isUpperCase() == true) {
+                            it.replaceFirstChar { it.lowercase(Locale.getDefault()) }
+                        } else {
+                            return@mapNotNull null
+                        }
                     }
+
+                    function to propertyName
                 }
         } else {
             scope
