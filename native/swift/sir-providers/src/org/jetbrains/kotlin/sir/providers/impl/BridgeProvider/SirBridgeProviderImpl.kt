@@ -300,7 +300,9 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
 
     allParameters.forEach {
         val parameterName = "__${it.name}".kotlinIdentifier
-        add("${indent}val $parameterName = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name.kotlinIdentifier.ast())}")
+        val parameterValue = it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name.kotlinIdentifier.ast())
+            .toString().replaceIndentByMargin("    ")
+        add("${indent}val $parameterName = $parameterValue")
     }
     val callSite = buildCallSite()
     val resultName = "_result"
@@ -357,7 +359,7 @@ private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: Si
 private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer: SirTypeNamer): List<String> {
     val swiftInvocation = swiftInvocationLineForCBridge(typeNamer)
     if (returnType.typeList.size <= 1) {
-        return listOf(returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvocation).toString())
+        return listOf(returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvocation).toString().trimMargin())
     }
     return buildList {
         add("let _result = $swiftInvocation")

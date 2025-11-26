@@ -769,7 +769,7 @@ internal sealed class Bridge(
                     val callArgs = argsInClosure?.map { (name, bridge) ->
                         bridge.inKotlinSources.kotlinToSwift(typeNamer, name.ast())
                     }.orEmpty()
-                    return "run".ast().invokeLambda {
+                    return "run".ast().invokeLambda(separateLines = true) {
                         +"kotlinFun".variable(isSwift = false).op(
                             MixedAST.Operator.ASSIGN,
                             "convertBlockPtrToKotlinFunction<$kotlinFunctionTypeRendered>".ast().invoke(valueExpression)
@@ -792,7 +792,7 @@ internal sealed class Bridge(
                 val callArgs = argsInClosure?.map { (name, bridge) ->
                     bridge.inSwiftSources.kotlinToSwift(typeNamer, name.ast())
                 }.orEmpty()
-                return block {
+                return block(separateLines = true) {
                     +"originalBlock".variable(isSwift = true).op(MixedAST.Operator.ASSIGN, valueExpression)
                     +block(defineArgs?.let { MixedAST.LambdaParameters(it, isSwift = true) }) {
                         +returnType.inSwiftSources.swiftToKotlin(
