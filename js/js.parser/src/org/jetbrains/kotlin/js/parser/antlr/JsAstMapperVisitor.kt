@@ -1300,7 +1300,7 @@ internal class JsAstMapperVisitor(
                             }
                             append(octalVal.toChar())
                         }
-                        else -> reportError("Invalid escape sequence", terminal)
+                        else -> { append(char); i += 2 }
                     }
                 } else {
                     append(char)

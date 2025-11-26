@@ -6,5 +6,6 @@ fun box(): String {
     assertEquals(js("'ab\\0\\01\\012\\123\\377c'"), "ab\u0000\u0001\u000A\u0053\u00FFc")
     assertEquals(js("'\\401'"), " 1")
     assertEquals(js("'\\0'"), "\u0000")
+    assertEquals(js("'\\a'"), "a")
     return "OK"
 }
