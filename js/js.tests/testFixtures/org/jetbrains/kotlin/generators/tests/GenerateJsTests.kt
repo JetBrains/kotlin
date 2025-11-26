@@ -217,25 +217,11 @@ fun main(args: Array<String>) {
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
                 )
-            }
-
-            testClass<AbstractPsiJsDiagnosticTest>(suiteTestClassName = "PsiJsOldFrontendDiagnosticsTestGenerated") {
                 model(
                     relativeRootPath = "testsWithJsStdLib",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 )
-            }
-
-            testClass<AbstractLightTreeJsDiagnosticTest>(suiteTestClassName = "LightTreeJsOldFrontendDiagnosticsTestGenerated") {
-                model(
-                    relativeRootPath = "testsWithJsStdLib",
-                    pattern = "^([^_](.+))\\.kt$",
-                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
-                )
-            }
-
-            testClass<AbstractPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "PsiJsOldFrontendDiagnosticsWithBackendTestGenerated") {
                 model(
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
@@ -243,7 +229,17 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractLightTreeJsDiagnosticWithBackendTest>(suiteTestClassName = "LightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated") {
+            testClass<AbstractLightTreeJsDiagnosticWithBackendTest>(suiteTestClassName = "LightTreeJsKlibDiagnosticsTestGenerated") {
+                model(
+                    relativeRootPath = "klibSerializationTests",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                )
+                model(
+                    relativeRootPath = "testsWithJsStdLib",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                )
                 model(
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
@@ -251,7 +247,12 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractJsDiagnosticWithBackendWithInlinedFunInKlibTestBase>(suiteTestClassName = "JsOldFrontendDiagnosticsWithBackendWithInlinedFunInKlibTestGenerated") {
+            testClass<AbstractJsDiagnosticWithIrInlinerTestBase>(suiteTestClassName = "JsDiagnosticsWithIrInlinerTestGenerated") {
+                model(
+                    relativeRootPath = "klibSerializationTests",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                )
                 model(
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
@@ -262,9 +263,6 @@ fun main(args: Array<String>) {
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
                 )
-            }
-
-            testClass<AbstractJsDiagnosticWithIrInlinerTest>(suiteTestClassName = "JsDiagnosticWithIrInlinerTestGenerated") {
                 model(
                     relativeRootPath = "irInliner",
                     pattern = "^([^_](.+))\\.kt$",
