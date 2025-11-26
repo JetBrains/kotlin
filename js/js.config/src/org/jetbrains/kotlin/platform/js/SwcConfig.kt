@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.js.config.ModuleKind
 
 object SwcConfig {
     fun getArgumentsWhen(
-        inputDirectory: String,
+        inputDirectoryOrFiles: List<String>,
         configPath: String,
         outputDirectory: String,
         environmentCode: String,
         fileExtension: String
     ) = buildList {
         add("compile")
-        add(inputDirectory)
+        inputDirectoryOrFiles.forEach(::add)
         add("--config-file")
         add(configPath)
         add("--env-name=${environmentCode}")
