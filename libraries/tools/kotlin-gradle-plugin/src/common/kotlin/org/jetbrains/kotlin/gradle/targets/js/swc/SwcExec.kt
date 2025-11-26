@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.js.config.SwcConfig
+import org.jetbrains.kotlin.platform.js.SwcConfig
 import java.io.File
 import javax.inject.Inject
 

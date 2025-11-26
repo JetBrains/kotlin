@@ -3,7 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.config
+package org.jetbrains.kotlin.platform.js
+
+import org.jetbrains.kotlin.js.config.ModuleKind
 
 object SwcConfig {
     fun getArgumentsWhen(

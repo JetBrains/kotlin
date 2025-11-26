@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import java.io.File
 import kotlin.test.fail
 import org.jetbrains.kotlin.js.config.ModuleKind
-import org.jetbrains.kotlin.js.config.SwcConfig
+import org.jetbrains.kotlin.platform.js.SwcConfig
 import kotlinx.serialization.json.Json
 
 object SwcRunner {

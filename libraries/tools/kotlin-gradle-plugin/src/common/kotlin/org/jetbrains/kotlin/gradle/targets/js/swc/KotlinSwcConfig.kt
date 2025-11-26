@@ -12,7 +12,7 @@ import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.js.config.ModuleKind
-import org.jetbrains.kotlin.js.config.SwcConfig
+import org.jetbrains.kotlin.platform.js.SwcConfig
 
 internal abstract class KotlinSwcConfig {
     @get:Input
