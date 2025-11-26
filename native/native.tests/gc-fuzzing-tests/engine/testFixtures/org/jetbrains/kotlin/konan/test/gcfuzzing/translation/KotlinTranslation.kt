@@ -27,7 +27,13 @@ fun Program.produceKotlin(config: KotlinConfig): KotlinOutput {
     return KotlinOutput(
         filename = "${config.moduleName}.kt",
         contents = context.contents.toString(),
-        args = listOf("-Xstatic-framework", "-Xbinary=bundleId=${config.moduleName}", "-module-name", config.moduleName),
+        args = listOf(
+            "-Xstatic-framework",
+            "-Xbinary=bundleId=${config.moduleName}",
+            "-module-name",
+            config.moduleName,
+            "-Xbinary=minidumpOnSignal=true", // TODO check that minidumpLocation is set?
+        ),
         frameworkName = config.moduleName,
     )
 }

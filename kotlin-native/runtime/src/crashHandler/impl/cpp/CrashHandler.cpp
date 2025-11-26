@@ -23,6 +23,39 @@
 #endif
 
 namespace {
+
+// copy&pasted from `exception_handler_no_mach.cc`
+std::array kExceptionSignals = {
+        // Core-generating signals.
+        SIGABRT, SIGBUS, SIGFPE, SIGILL, SIGQUIT, SIGSEGV, SIGSYS, SIGTRAP, SIGEMT,
+        SIGXCPU, SIGXFSZ,
+        // Non-core-generating but terminating signals.
+        SIGALRM, SIGHUP, SIGINT, SIGPIPE, SIGPROF, SIGTERM, SIGUSR1, SIGUSR2,
+        SIGVTALRM, SIGXCPU, SIGXFSZ, SIGIO,
+};
+
+void minidumpSigaction(int sig, siginfo_t*, void*) {
+    konan::consoleErrorf("Signal %s received. Generating minidump.\n", strsignal(sig));
+    kotlin::writeMinidump();
+    exit(1);
+}
+
+bool installMinidumpSigaction() {
+    for (auto signal : kExceptionSignals) {
+        struct sigaction sa{};
+        memset(&sa, 0, sizeof(sa));
+        sigemptyset(&sa.sa_mask);
+        sigaddset(&sa.sa_mask, signal);
+        sa.sa_sigaction = minidumpSigaction;
+        sa.sa_flags = SA_ONSTACK | SA_SIGINFO;
+
+        if (sigaction(signal, &sa, nullptr) == -1) {
+            return false;
+        }
+    }
+    return true;
+}
+
 #if KONAN_OSX
     bool minidumpsEnabled() {
         return kotlin::compiler::minidumpLocation() != nullptr;
@@ -74,6 +107,10 @@ void kotlin::crashHandlerInit() noexcept {
         if (isDebuggerAttached()) {
             RuntimeLogInfo({logging::Tag::kRT}, "Debugger detected, skipping crash handler initialization");
             return;
+        }
+
+        if (compiler::minidumpOnSignal()) {
+            installMinidumpSigaction();
         }
 
         RuntimeLogInfo({logging::Tag::kRT}, "Initializing crash handler, minidumps will be written to \"%s\"",
