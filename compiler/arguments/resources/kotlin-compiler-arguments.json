@@ -11421,6 +11421,601 @@
                                     }
                                 ],
                                 "nestedLevels": []
+                            },
+                            {
+                                "name": "nativeKlibArguments",
+                                "arguments": [
+                                    {
+                                        "name": "Xexport-kdoc",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Export KDoc entries in the klib.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "Xfake-override-validator",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Enable the IR fake override validator.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "Xheader-klib-path",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Save a klib that only contains the public ABI to the given path.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "Xkonan-data-dir",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Custom path to the location of konan distributions.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "Xmanifest-native-targets",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            },
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "Xrefines-paths",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Paths to output directories for refined modules (modules whose 'expect' declarations this module can actualize).",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            },
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "Xshort-module-name",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "A short name used to denote this library in the IDE and in a generated Objective-C header.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<name>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "Xwrite-dependencies-of-produced-klib-to",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Write file containing the paths of dependencies used during klib compilation to the provided path",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "friend-modules",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Paths to friend modules.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": "2.2.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "include-binary",
+                                        "shortName": "ib",
+                                        "deprecatedName": "includeBinary",
+                                        "description": {
+                                            "current": "Pack the given external binary into the klib.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            },
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": "2.2.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "library",
+                                        "shortName": "l",
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Link with the given library.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": "None",
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            },
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": "2.2.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "manifest",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Provide a manifest addend file.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": "2.2.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "module-name",
+                                        "shortName": null,
+                                        "deprecatedName": "module_name",
+                                        "description": {
+                                            "current": "Specify a name for the compilation module.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<name>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": "2.2.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "native-library",
+                                        "shortName": "nl",
+                                        "deprecatedName": "nativelibrary",
+                                        "description": {
+                                            "current": "Include the given native bitcode library.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": "None",
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            },
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": "2.2.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "no-default-libs",
+                                        "shortName": null,
+                                        "deprecatedName": "nodefaultlibs",
+                                        "description": {
+                                            "current": "Don't link the libraries from dist/klib automatically.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": "2.2.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "nopack",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Don't pack the library into a klib file.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": "2.2.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "nostdlib",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Don't link with the stdlib.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": "2.2.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "output",
+                                        "shortName": "o",
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Output name.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<name>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": "2.2.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "target",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Set the hardware target.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<target>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": "2.2.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    }
+                                ],
+                                "nestedLevels": []
                             }
                         ]
                     },

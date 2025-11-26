@@ -47,6 +47,7 @@ generatedSourcesTask(
             "wasmArguments",
             "jsArguments",
             "nativeArguments",
+            "nativeKlibArguments",
             "metadataArguments",
         )
     }

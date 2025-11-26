@@ -13,9 +13,14 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeKlibCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyCommonKlibBasedCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyOf
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -26,6 +31,7 @@ import org.jetbrains.kotlin.ir.validation.IrValidationException
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.native.pipeline.NativeKlibCliPipeline
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -39,6 +45,42 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override fun MutableList<String>.addPlatformOptions(arguments: K2NativeCompilerArguments) {}
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = MetadataVersion(*versionArray)
+
+    override fun doExecutePhased(
+        arguments: K2NativeCompilerArguments,
+        services: Services,
+        basicMessageCollector: MessageCollector
+    ): ExitCode? {
+        return null
+        // phased CLI interface supports only KLIB compilation.
+        if (arguments.produce != "library") return null
+        val klibCompilerArguments = K2NativeKlibCompilerArguments().apply {
+            (arguments as CommonKlibBasedCompilerArguments).
+
+            disableDefaultScriptingPlugin = true
+            copyCommonKlibBasedCompilerArguments(arguments, this)
+            exportKDoc = arguments.exportKDoc
+            fakeOverrideValidator = arguments.fakeOverrideValidator
+            headerKlibPath = arguments.headerKlibPath
+            konanDataDir = arguments.konanDataDir
+            manifestNativeTargets = arguments.manifestNativeTargets
+            refinesPaths = arguments.refinesPaths
+            shortModuleName = arguments.shortModuleName
+            writeDependenciesOfProducedKlibTo = arguments.writeDependenciesOfProducedKlibTo
+            friendModules = arguments.friendModules
+            includeBinaries = arguments.includeBinaries
+            libraries = arguments.libraries
+            manifestFile = arguments.manifestFile
+            moduleName = arguments.moduleName
+            nativeLibraries = arguments.nativeLibraries
+            nodefaultlibs = arguments.nodefaultlibs
+            nopack = arguments.nopack
+            nostdlib = arguments.nostdlib
+            outputName = arguments.outputName
+            target = arguments.target
+        }
+        return NativeKlibCliPipeline(defaultPerformanceManager).execute(klibCompilerArguments, services, basicMessageCollector)
+    }
 
     override fun doExecute(@NotNull arguments: K2NativeCompilerArguments,
                            @NotNull configuration: CompilerConfiguration,
