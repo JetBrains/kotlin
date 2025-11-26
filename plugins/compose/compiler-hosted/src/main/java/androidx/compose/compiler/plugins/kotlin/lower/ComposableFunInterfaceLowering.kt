@@ -28,14 +28,17 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.IMPLICIT_CAST
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.SAM_CONVERSION
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrRichFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isLambda
+import org.jetbrains.kotlin.ir.util.selectSAMOverriddenFunction
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 
 @Suppress("PRE_RELEASE_CLASS")
 class ComposableFunInterfaceLowering(private val context: IrPluginContext) :
@@ -43,7 +46,7 @@ class ComposableFunInterfaceLowering(private val context: IrPluginContext) :
     ModuleLoweringPass {
 
     override fun lower(irModule: IrModuleFragment) {
-        if (context.platform.isJvm()) {
+        if (context.platform.isJvm() || context.platform.isNative()) {
             irModule.transformChildrenVoid(this)
         }
     }
@@ -54,15 +57,27 @@ class ComposableFunInterfaceLowering(private val context: IrPluginContext) :
             val argument = functionExpr.transform(this, null) as IrFunctionExpression
             val superType = expression.typeOperand
             val superClass = superType.classOrNull ?: error("Expected non-null class")
-            return FunctionReferenceBuilder(
-                argument,
-                superClass,
-                superType,
-                currentDeclarationParent!!,
-                context,
-                currentScope!!.scope.scopeOwnerSymbol,
-                IrTypeSystemContextImpl(context.irBuiltIns)
-            ).build()
+            return if (!context.platform.isJvm()) {
+                IrRichFunctionReferenceImpl(
+                    startOffset = expression.startOffset,
+                    endOffset = expression.endOffset,
+                    type = expression.typeOperand,
+                    reflectionTargetSymbol = null,
+                    overriddenFunctionSymbol = superClass.owner.selectSAMOverriddenFunction().symbol,
+                    invokeFunction = functionExpr.function,
+                    origin = functionExpr.origin
+                )
+            } else {
+                FunctionReferenceBuilder(
+                    argument,
+                    superClass,
+                    superType,
+                    currentDeclarationParent!!,
+                    context,
+                    currentScope!!.scope.scopeOwnerSymbol,
+                    IrTypeSystemContextImpl(context.irBuiltIns)
+                ).build()
+            }
         }
         return super.visitTypeOperator(expression)
     }

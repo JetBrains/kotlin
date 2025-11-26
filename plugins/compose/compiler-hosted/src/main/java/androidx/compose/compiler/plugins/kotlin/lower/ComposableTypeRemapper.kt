@@ -309,6 +309,13 @@ internal class ComposableTypeTransformer(
         return super.visitFunctionReference(expression)
     }
 
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        if (expression.overriddenFunctionSymbol.owner.needsComposableRemapping()) {
+            expression.overriddenFunctionSymbol.owner.transform(this, null)
+        }
+        return super.visitRichFunctionReference(expression)
+    }
+
     private fun IrClass.underlyingFunctionForComposable(invokeFn: IrSimpleFunction): IrSimpleFunction {
         val realParams = typeParameters.size - /* return type */ 1
         val newArgsSize = realParams + /* composer */ 1 + changedParamCount(realParams, 0)
