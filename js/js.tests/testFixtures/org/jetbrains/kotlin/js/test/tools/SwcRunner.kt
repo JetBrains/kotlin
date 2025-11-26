@@ -37,7 +37,7 @@ object SwcRunner {
 
         val command = arrayOf(
             swcPath, *SwcConfig.getArgumentsWhen(
-                inputDirectory = "./",
+                inputDirectoryOrFiles = listOf("./"),
                 outputDirectory = "./",
                 configPath = configFile.absolutePath,
                 fileExtension = moduleKind.jsExtension,

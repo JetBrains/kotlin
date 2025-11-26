@@ -270,7 +270,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     abstract override val libraries: ConfigurableFileCollection
 
     @get:InputFiles
-    @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Incremental

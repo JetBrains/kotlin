@@ -18,6 +18,10 @@ enum class ModuleKind(
     companion object {
         private val moduleMap = entries.associateBy(ModuleKind::type)
 
+        val allowedJsExtensions: Set<String> = entries.mapTo(mutableSetOf()) {
+            it.jsExtension.removePrefix(".")
+        }
+
         @JvmStatic
         fun fromType(type: String) = moduleMap[type] ?: error("Unknown module type: $type")
     }

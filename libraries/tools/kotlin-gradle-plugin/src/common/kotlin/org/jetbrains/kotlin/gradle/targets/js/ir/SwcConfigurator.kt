@@ -95,8 +95,8 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
             }
 
             description = "transpile compiler output with Swc [${binaryMode.name.toLowerCaseAsciiOnly()}]"
-            inputDirectory.value(sourceDirectory).disallowChanges()
-            outputDirectory.value(destinationDirectory).disallowChanges()
+            inputDirectory.set(sourceDirectory)
+            outputDirectory.set(destinationDirectory)
         }
 
         linkSyncTask.configure { task ->
