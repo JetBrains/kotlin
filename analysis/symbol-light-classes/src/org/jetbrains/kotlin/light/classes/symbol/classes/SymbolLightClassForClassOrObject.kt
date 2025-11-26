@@ -254,12 +254,17 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                         createDelegateMethod(functionSymbol = callableSymbol)
                         return@forEach
                     }
-
-                    val originalFunction = callableSymbol.fakeOverrideOriginal as? KaNamedFunctionSymbol
+                    val kotlinCollectionFunction = (callableSymbol.fakeOverrideOriginal as? KaNamedFunctionSymbol).takeIf {
+                        it?.isFromKotlinCollectionsPackage() == true
+                    }
+                    if (kotlinCollectionFunction == null) {
+                        createDelegateMethod(functionSymbol = callableSymbol)
+                        return@forEach
+                    }
                     val shouldCreateRegularDelegate = processPossiblyMappedMethod(
                         containingClass = this@SymbolLightClassForClassOrObject,
                         ownFunction = callableSymbol,
-                        kotlinCollectionFunction = originalFunction,
+                        kotlinCollectionFunction = kotlinCollectionFunction,
                         allSupertypes = allSupertypes,
                         result = result,
                         originKind = JvmDeclarationOriginKind.DELEGATION
