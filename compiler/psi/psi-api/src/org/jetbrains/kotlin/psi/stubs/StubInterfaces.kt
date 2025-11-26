@@ -139,6 +139,7 @@ interface KotlinImportAliasStub : NamedStub<KtImportAlias>, KotlinStubElement<Kt
 @SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinImportDirectiveStub : KotlinStubElement<KtImportDirective> {
     val isAllUnder: Boolean
+    val isPackage: Boolean
     val importedFqName: FqName?
     val isValid: Boolean
 }

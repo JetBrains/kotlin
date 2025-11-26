@@ -11,10 +11,19 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 abstract class FirQualifierResolver : FirSessionComponent {
-    abstract fun resolveSymbolWithPrefix(prefix: ClassId, remainingParts: List<FirQualifierPart>): FirClassifierSymbol<*>?
-    abstract fun resolveFullyQualifiedSymbol(parts: List<FirQualifierPart>): Pair<FirClassifierSymbol<*>, FirResolvedSymbolOrigin>?
+    abstract fun resolveSymbolWithPrefix(
+        prefix: ClassId,
+        remainingParts: List<FirQualifierPart>
+    ): FirClassifierSymbol<*>?
+
+    abstract fun resolveFullyQualifiedSymbol(
+        parts: List<FirQualifierPart>,
+        packageImports: Map<Name, List<FqName>>
+    ): Pair<FirClassifierSymbol<*>, FirResolvedSymbolOrigin>?
 
     companion object {
         context(_: SessionHolder)

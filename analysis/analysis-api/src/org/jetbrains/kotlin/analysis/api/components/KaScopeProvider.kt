@@ -411,6 +411,9 @@ public sealed interface KaScopeKind {
     @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ExplicitStarImportingScope : ImportingScope
 
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ExplicitPackageImportingScope : ImportingScope
+
     /**
      * Represents a [KaScope] containing declarations from non-star imports which are not declared explicitly and are added by default.
      */
@@ -456,6 +459,9 @@ public object KaScopeKinds {
 
     @KaIdeApi
     public class ExplicitStarImportingScope(override val indexInTower: Int) : KaScopeKind.ExplicitStarImportingScope
+
+    @KaIdeApi
+    public class ExplicitPackageImportingScope(override val indexInTower: Int) : KaScopeKind.ExplicitPackageImportingScope
 
     @KaIdeApi
     public class DefaultSimpleImportingScope(override val indexInTower: Int) : KaScopeKind.DefaultSimpleImportingScope

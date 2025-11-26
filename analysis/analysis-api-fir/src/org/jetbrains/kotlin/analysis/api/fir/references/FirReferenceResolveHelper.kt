@@ -528,6 +528,7 @@ internal object FirReferenceResolveHelper {
         val rawImportForSelectedFqName = buildImport {
             importedFqName = selectedFqName
             isAllUnder = false
+            isPackage = false
         }
 
         // For e.g. a selected name `org.example.MyClass.NestedClass`, we need `MyClass` for the relative parent class name, as we are

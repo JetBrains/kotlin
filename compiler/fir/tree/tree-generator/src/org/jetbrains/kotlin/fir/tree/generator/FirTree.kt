@@ -1006,6 +1006,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("importedFqName", fqNameType, nullable = true)
         +field("isAllUnder", boolean)
+        +field("isPackage", boolean)
         +field("aliasName", nameType, nullable = true)
         +field("aliasSource", sourceElementType, nullable = true)
     }

@@ -84,7 +84,7 @@ private class KotlinStandaloneAnnotationsResolver(
 
         val targetName = referencedName.shortName()
         for (import in containingKtFile.importDirectives) {
-            val importedName = import.importedFqName ?: continue
+            val importedName = import.importedFqName?.takeIf { !import.isPackage } ?: continue
             when {
                 import.isAllUnder -> importedName.child(targetName).resolveToClassIds(candidates)
                 importedName.shortName() == targetName -> importedName.resolveToClassIds(candidates)

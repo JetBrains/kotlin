@@ -147,6 +147,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_BE_IMPORTE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHECK_FOR_ERASED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_IMPORT_AS_PACKAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_IT_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_RECEIVER_PARAMETER_TYPE
@@ -3552,6 +3553,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     "Use original class ''{1}'' instead or rewrite calls with ''{0}'' as a qualifier. " +
                     "See https://youtrack.jetbrains.com/issue/KT-64431.",
             NAME, NAME
+        )
+        map.put(
+            CANNOT_IMPORT_AS_PACKAGE,
+            "Cannot import as package.",
         )
 
         // Suspend

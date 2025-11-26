@@ -42,16 +42,15 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFile) {
         declaration.imports.forEach { import ->
             if (import.source?.kind?.shouldSkipErrorTypeReporting == true) return@forEach
-            if (import.isAllUnder) {
-                if (import is FirResolvedImport) {
-                    checkAllUnderFromObject(import)
-                } else {
-                    checkAllUnderFromEnumEntry(import)
-                }
-            } else {
-                checkCanBeImported(import)
-                if (import is FirResolvedImport) {
-                    checkOperatorRename(import)
+            when {
+                import.isAllUnder && import is FirResolvedImport -> checkAllUnderFromObject(import)
+                import.isAllUnder -> checkAllUnderFromEnumEntry(import)
+                import.isPackage -> checkIsPackage(import)
+                else -> {
+                    checkCanBeImported(import)
+                    if (import is FirResolvedImport) {
+                        checkOperatorRename(import)
+                    }
                 }
             }
             checkImportApiStatus(import)
@@ -89,6 +88,18 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         if (!classLike.isVisible()) {
             val source = import.getLastImportedFqNameSegmentSource() ?: error("`${import.source}` does not contain `$fqName`")
             reporter.report(classLike.toInvisibleReferenceDiagnostic(source, context.session), context)
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkIsPackage(import: FirImport) {
+        val fqName = import.importedFqName ?: return
+        if (context.session.symbolProvider.hasPackage(fqName)) return
+        when (val resolutionResult = resolveToPackageOrClass(context.session.symbolProvider, fqName)) {
+            is PackageResolutionResult.PackageOrClass if resolutionResult.classSymbol != null ->
+                reporter.reportOn(import.source, FirErrors.CANNOT_IMPORT_AS_PACKAGE)
+            else ->
+                reporter.reportOn(import.source, FirErrors.UNRESOLVED_IMPORT, fqName.asString())
         }
     }
 

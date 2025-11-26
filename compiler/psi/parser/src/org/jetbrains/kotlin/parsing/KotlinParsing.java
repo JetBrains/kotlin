@@ -363,7 +363,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * import
-     *   : "import" SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
+     *   : "import" PACKAGE? SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
      *   ;
      */
     private void parseImportDirective() {
@@ -373,6 +373,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (closeImportWithErrorIfNewline(importDirective, null, "Expecting qualified name")) {
             return;
+        }
+
+        boolean isPackage = false;
+        if (at(PACKAGE_KEYWORD)) {
+            isPackage = true;
+            advance(); // PACKAGE_KEYWORD
         }
 
         if (!at(IDENTIFIER)) {
@@ -414,7 +420,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (at(DOT)) {
             advance(); // DOT
             assert _at(MUL);
-            advance(); // MUL
+            if (!isPackage) {
+                advance(); // MUL
+            } else {
+                errorAndAdvance("Package imports cannot use star");
+            }
             if (at(AS_KEYWORD)) {
                 PsiBuilder.Marker as = mark();
                 advance(); // AS_KEYWORD

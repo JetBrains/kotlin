@@ -37,6 +37,7 @@ class FirDefaultSimpleImportingScope(
                 buildImport {
                     importedFqName = it.fqName
                     isAllUnder = false
+                    isPackage = false
                 }.resolve(importResolveTransformer)
             }
             ?.groupBy { it.importedName!! }

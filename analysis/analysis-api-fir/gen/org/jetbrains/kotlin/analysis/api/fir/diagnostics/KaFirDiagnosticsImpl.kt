@@ -5279,6 +5279,11 @@ internal class TypealiasAsCallableQualifierInImportWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtImportDirective>(firDiagnostic, token), KaFirDiagnostic.TypealiasAsCallableQualifierInImportWarning
 
+internal class CannotImportAsPackageImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtImportDirective>(firDiagnostic, token), KaFirDiagnostic.CannotImportAsPackage
+
 internal class IllegalSuspendFunctionCallImpl(
     override val suspendCallable: KaSymbol,
     firDiagnostic: KtPsiDiagnostic,

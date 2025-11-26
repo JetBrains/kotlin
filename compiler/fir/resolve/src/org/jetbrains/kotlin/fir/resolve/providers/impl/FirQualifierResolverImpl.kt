@@ -13,8 +13,11 @@ import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
+import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
+import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
@@ -22,7 +25,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 class FirQualifierResolverImpl(override val session: FirSession) : FirQualifierResolver(), SessionHolder {
 
     override fun resolveSymbolWithPrefix(
-        prefix: ClassId, remainingParts: List<FirQualifierPart>
+        prefix: ClassId, remainingParts: List<FirQualifierPart>,
     ): FirClassifierSymbol<*>? {
 
         val symbolProvider = session.symbolProvider
@@ -35,9 +38,9 @@ class FirQualifierResolverImpl(override val session: FirSession) : FirQualifierR
         return symbolProvider.getClassLikeSymbolByClassId(fqName)
     }
 
-    override fun resolveFullyQualifiedSymbol(parts: List<FirQualifierPart>): Pair<FirClassifierSymbol<*>, FirResolvedSymbolOrigin>? {
+    override fun resolveFullyQualifiedSymbol(parts: List<FirQualifierPart>, packageImports: Map<Name, List<FqName>>): Pair<FirClassifierSymbol<*>, FirResolvedSymbolOrigin>? {
         if (isRootIdePackageAllowed() && parts.firstOrNull()?.name?.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
-            return resolveFullyQualifiedSymbol(parts.drop(1))
+            return resolveFullyQualifiedSymbol(parts.drop(1), packageImports)
                 ?.applyIf(isRootIdePackageDeprecated()) { copy(second = FirResolvedSymbolOrigin.QualifiedWithDeprecatedRootIdePackage) }
         }
 
@@ -60,6 +63,18 @@ class FirQualifierResolverImpl(override val session: FirSession) : FirQualifierR
                 }
             }
         }
+
+        // try by substituting the first part with its expansion
+        val initial = parts.firstOrNull()?.takeIf { it.typeArgumentList.typeArguments.isEmpty() }
+        if (initial != null) {
+            packageImports[initial.name]?.mapNotNull { attempt ->
+                val newInitial = attempt.pathSegments().map {
+                    FirQualifierPartImpl(initial.source, it, FirTypeArgumentListImpl(initial.typeArgumentList.source))
+                }
+                resolveFullyQualifiedSymbol(newInitial + parts.drop(1), emptyMap())
+            }?.singleOrNull()?.let { return it }
+        }
+
         return null
     }
 

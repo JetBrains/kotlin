@@ -44,6 +44,7 @@ class FirSingleLevelDefaultStarImportingScope(
                     delegate = buildImport {
                         importedFqName = it.fqName
                         isAllUnder = true
+                        isPackage = false
                     }
                     packageFqName = it.fqName
                 }

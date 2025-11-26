@@ -300,6 +300,9 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaS
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaScopeKind$DefaultStarImportingScope : org/jetbrains/kotlin/analysis/api/components/KaScopeKind$ImportingScope {
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaScopeKind$ExplicitPackageImportingScope : org/jetbrains/kotlin/analysis/api/components/KaScopeKind$ImportingScope {
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaScopeKind$ExplicitSimpleImportingScope : org/jetbrains/kotlin/analysis/api/components/KaScopeKind$ImportingScope {
 }
 

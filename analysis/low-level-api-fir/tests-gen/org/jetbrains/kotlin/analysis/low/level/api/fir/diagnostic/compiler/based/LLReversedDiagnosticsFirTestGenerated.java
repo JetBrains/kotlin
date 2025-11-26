@@ -7295,6 +7295,28 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/packageImports")
+    @TestDataPath("$PROJECT_ROOT")
+    public class PackageImports {
+      @Test
+      public void testAllFilesPresentInPackageImports() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/packageImports"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("packageImports.kt")
+      public void testPackageImports() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/packageImports/packageImports.kt");
+      }
+
+      @Test
+      @TestMetadata("user.kt")
+      public void testUser() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/packageImports/user.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/problems")
     @TestDataPath("$PROJECT_ROOT")
     public class Problems {

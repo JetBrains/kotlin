@@ -54,7 +54,7 @@ open class FirImportResolveTransformer protected constructor(
 
         if (!fqName.isAcceptable) return import
 
-        if (import.isAllUnder) {
+        if (import.isAllUnder || import.isPackage) {
             return transformImportForFqName(fqName, import)
         }
 

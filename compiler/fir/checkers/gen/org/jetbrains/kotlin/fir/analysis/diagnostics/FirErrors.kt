@@ -1039,6 +1039,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY: KtDiagnosticFactory2<ClassId, Int> = KtDiagnosticFactory2("K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY", WARNING, SourceElementPositioningStrategies.IMPORT_LAST_NAME, KtElement::class, getRendererFactory())
     val OPERATOR_RENAMED_ON_IMPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPERATOR_RENAMED_ON_IMPORT", ERROR, SourceElementPositioningStrategies.IMPORT_LAST_NAME, KtImportDirective::class, getRendererFactory())
     val TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT: KtDiagnosticFactoryForDeprecation2<Name, Name> = KtDiagnosticFactoryForDeprecation2("TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT", ProhibitTypealiasAsCallableQualifierInImport, SourceElementPositioningStrategies.IMPORT_LAST_BUT_ONE_NAME, KtImportDirective::class, getRendererFactory())
+    val CANNOT_IMPORT_AS_PACKAGE: KtDiagnosticFactory0 = KtDiagnosticFactory0("CANNOT_IMPORT_AS_PACKAGE", ERROR, SourceElementPositioningStrategies.IMPORT_LAST_NAME, KtImportDirective::class, getRendererFactory())
 
     // Suspend errors
     val ILLEGAL_SUSPEND_FUNCTION_CALL: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("ILLEGAL_SUSPEND_FUNCTION_CALL", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())

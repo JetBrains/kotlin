@@ -394,6 +394,7 @@ private class FirShorteningContext(val analysisSession: KaFirSession) {
         val delegateImport = buildImport {
             importedFqName = fqNameToImport
             isAllUnder = false
+            isPackage = false
         }
 
         return buildResolvedImport {

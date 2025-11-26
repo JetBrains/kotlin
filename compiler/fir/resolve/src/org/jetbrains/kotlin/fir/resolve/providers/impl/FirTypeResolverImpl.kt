@@ -18,12 +18,16 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector.TypeResolutionResult
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitPackageImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.asPackageImportMap
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 @ThreadSafeMutableState
@@ -55,7 +59,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         typeRef: FirUserTypeRef,
         configuration: TypeResolutionConfiguration,
         supertypeSupplier: SupertypeSupplier,
-        resolveDeprecations: Boolean
+        resolveDeprecations: Boolean,
+        packageImports: Map<Name, List<FqName>>
     ): TypeResolutionResult {
         session.lookupTracker?.recordUserTypeRefLookup(
             typeRef, configuration.scopes.flatMap { it.scopeOwnerLookupNames }, configuration.useSiteFile?.source
@@ -118,7 +123,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
 
         if (collector.applicability != CandidateApplicability.RESOLVED) {
-            qualifierResolver.resolveFullyQualifiedSymbol(qualifier)?.let { (symbol, resolvedSymbolOrigin) ->
+            qualifierResolver.resolveFullyQualifiedSymbol(qualifier, packageImports)?.let { (symbol, resolvedSymbolOrigin) ->
                 collector.processCandidate(symbol, substitutor = null, resolvedSymbolOrigin)
             }
         }
@@ -389,7 +394,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return when (typeRef) {
             is FirResolvedTypeRef -> error("Do not resolve, resolved type-refs")
             is FirUserTypeRef -> {
-                val result = resolveUserTypeToSymbol(typeRef, configuration, supertypeSupplier, resolveDeprecations)
+                val packageImports = configuration.scopes.filterIsInstance<FirExplicitPackageImportingScope>().asPackageImportMap
+                val result = resolveUserTypeToSymbol(typeRef, configuration, supertypeSupplier, resolveDeprecations, packageImports)
                 val resolvedType = resolveUserType(
                     typeRef,
                     result,

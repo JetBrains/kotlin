@@ -6272,6 +6272,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CANNOT_IMPORT_AS_PACKAGE) { firDiagnostic ->
+        CannotImportAsPackageImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ILLEGAL_SUSPEND_FUNCTION_CALL) { firDiagnostic ->
         IllegalSuspendFunctionCallImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),

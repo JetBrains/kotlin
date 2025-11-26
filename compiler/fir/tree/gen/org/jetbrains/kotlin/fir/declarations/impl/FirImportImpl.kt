@@ -21,6 +21,7 @@ internal class FirImportImpl(
     override val source: KtSourceElement?,
     override val importedFqName: FqName?,
     override val isAllUnder: Boolean,
+    override val isPackage: Boolean,
     override val aliasName: Name?,
     override val aliasSource: KtSourceElement?,
 ) : FirImport() {

@@ -67,6 +67,15 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         return getNode().findChildByType(KtTokens.MUL) != null;
     }
 
+    @Override
+    public boolean isPackage() {
+        KotlinImportDirectiveStub stub = getGreenStub();
+        if (stub != null) {
+            return stub.isPackage();
+        }
+        return getNode().findChildByType(KtTokens.PACKAGE_KEYWORD) != null;
+    }
+
     @Nullable
     @Override
     public ImportContent getImportContent() {

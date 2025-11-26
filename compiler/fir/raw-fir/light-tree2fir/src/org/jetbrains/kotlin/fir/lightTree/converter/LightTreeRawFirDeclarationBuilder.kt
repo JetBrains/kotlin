@@ -243,6 +243,7 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertImportDirective(importDirective: LighterASTNode): FirImport {
         var importedFqName: FqName? = null
         var isAllUnder = false
+        var isPackage = false
         var aliasName: String? = null
         var aliasSource: KtSourceElement? = null
         importDirective.forEachChildren { child ->
@@ -254,6 +255,7 @@ class LightTreeRawFirDeclarationBuilder(
                         .let { FqName(it) }
                 }
                 MUL -> isAllUnder = true
+                PACKAGE_KEYWORD -> isPackage = true
                 IMPORT_ALIAS -> {
                     val importAlias = convertImportAlias(child)
                     if (importAlias != null) {
@@ -268,6 +270,7 @@ class LightTreeRawFirDeclarationBuilder(
             source = importDirective.toFirSourceElement()
             this.importedFqName = importedFqName
             this.isAllUnder = isAllUnder
+            this.isPackage = isPackage
             this.aliasName = aliasName?.let { Name.identifier(it) }
             this.aliasSource = aliasSource
         }

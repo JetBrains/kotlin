@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDeprecated
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNestedClassAccessedViaInstanceReference
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitPackageImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.asPackageImportMap
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -87,6 +89,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
 
     // KT-72173 To mimic K1 behavior,
     // we allow resolving to classifiers in the root package without import if they are receivers but not top-level.
+    val packageImports = scopes.filterIsInstance<FirExplicitPackageImportingScope>().asPackageImportMap
     return FqName.ROOT.continueQualifierInPackage(
         name,
         qualifiedAccess,
@@ -171,7 +174,7 @@ private fun FqName.continueQualifierInPackage(
     qualifiedAccess: FirQualifiedAccessExpression,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
     components: BodyResolveComponents,
-    resolvedSymbolOrigin: FirResolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified
 ): QualifierResolutionResult? {
     val childFqName = this.child(name)
     if (components.symbolProvider.hasPackage(childFqName)) {
@@ -181,6 +184,19 @@ private fun FqName.continueQualifierInPackage(
             nonFatalDiagnostics = nonFatalDiagnosticsFromExpression,
             resolvedSymbolOrigin = resolvedSymbolOrigin,
         )
+    }
+
+    if (this == FqName.ROOT) {
+        components.fileImportsScope.filterIsInstance<FirExplicitPackageImportingScope>()
+            .asPackageImportMap[name].orEmpty()
+            .singleOrNull { components.symbolProvider.hasPackage(it) }?.let {
+                return components.buildResolvedQualifierResult(
+                    qualifiedAccess = qualifiedAccess,
+                    packageFqName = it,
+                    nonFatalDiagnostics = nonFatalDiagnosticsFromExpression,
+                    resolvedSymbolOrigin = resolvedSymbolOrigin,
+                )
+            }
     }
 
     val classId = ClassId.topLevel(childFqName)

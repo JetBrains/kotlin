@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 class KotlinImportDirectiveStubImpl(
     parent: StubElement<*>?,
     override val isAllUnder: Boolean,
+    override val isPackage: Boolean,
     private val importedFqNameRef: StringRef?,
     override val isValid: Boolean,
 ) : KotlinStubBaseImpl<KtImportDirective>(parent, KtStubElementTypes.IMPORT_DIRECTIVE), KotlinImportDirectiveStub {
@@ -27,6 +28,7 @@ class KotlinImportDirectiveStubImpl(
     override fun copyInto(newParent: StubElement<*>?): KotlinImportDirectiveStubImpl = KotlinImportDirectiveStubImpl(
         parent = newParent,
         isAllUnder = isAllUnder,
+        isPackage = isPackage,
         importedFqNameRef = importedFqNameRef,
         isValid = isValid,
     )

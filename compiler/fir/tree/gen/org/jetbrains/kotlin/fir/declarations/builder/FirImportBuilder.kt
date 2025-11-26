@@ -23,6 +23,7 @@ class FirImportBuilder {
     var source: KtSourceElement? = null
     var importedFqName: FqName? = null
     var isAllUnder: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    var isPackage: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var aliasName: Name? = null
     var aliasSource: KtSourceElement? = null
 
@@ -31,6 +32,7 @@ class FirImportBuilder {
             source,
             importedFqName,
             isAllUnder,
+            isPackage,
             aliasName,
             aliasSource,
         )

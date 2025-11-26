@@ -51,6 +51,8 @@ class FileScopeFactory(
     private class DefaultImportImpl(private val importPath: ImportPath) : KtImportInfo {
         override val isAllUnder: Boolean get() = importPath.isAllUnder
 
+        override val isPackage: Boolean get() = false
+
         override val importContent = KtImportInfo.ImportContent.FqNameBased(importPath.fqName)
 
         override val aliasName: String? get() = importPath.alias?.asString()

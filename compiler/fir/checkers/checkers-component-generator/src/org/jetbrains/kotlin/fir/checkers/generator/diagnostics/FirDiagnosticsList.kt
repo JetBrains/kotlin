@@ -2214,6 +2214,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Name>("typealiasName")
             parameter<Name>("originalClassName")
         }
+
+        val CANNOT_IMPORT_AS_PACKAGE by error<KtImportDirective>(PositioningStrategy.IMPORT_LAST_NAME)
     }
 
     val SUSPEND by object : DiagnosticGroup("Suspend errors") {

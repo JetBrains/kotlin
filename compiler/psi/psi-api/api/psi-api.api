@@ -1754,6 +1754,7 @@ public class org/jetbrains/kotlin/psi/KtImportDirective : org/jetbrains/kotlin/p
 	public fun getImportedFqName ()Lorg/jetbrains/kotlin/name/FqName;
 	public fun getImportedReference ()Lorg/jetbrains/kotlin/psi/KtExpression;
 	public fun isAllUnder ()Z
+	public fun isPackage ()Z
 	public fun isValidImport ()Z
 	public fun subtreeChanged ()V
 }
@@ -1764,6 +1765,7 @@ public abstract interface class org/jetbrains/kotlin/psi/KtImportInfo {
 	public abstract fun getImportedFqName ()Lorg/jetbrains/kotlin/name/FqName;
 	public fun getImportedName ()Lorg/jetbrains/kotlin/name/Name;
 	public abstract fun isAllUnder ()Z
+	public abstract fun isPackage ()Z
 }
 
 public abstract class org/jetbrains/kotlin/psi/KtImportInfo$ImportContent {
@@ -4122,6 +4124,7 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinImportAlias
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinImportDirectiveStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
 	public abstract fun getImportedFqName ()Lorg/jetbrains/kotlin/name/FqName;
 	public abstract fun isAllUnder ()Z
+	public abstract fun isPackage ()Z
 	public abstract fun isValid ()Z
 }
 

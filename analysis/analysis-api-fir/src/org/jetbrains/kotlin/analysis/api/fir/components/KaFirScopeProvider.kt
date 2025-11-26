@@ -360,6 +360,7 @@ internal class KaFirScopeProvider(
             is FirDefaultStarImportingScope -> KaFirDefaultStarImportingScope(firScope, analysisSession)
             is FirPackageMemberScope -> createPackageScope(firScope.fqName)
             is FirContainingNamesAwareScope -> KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
+            is FirExplicitPackageImportingScope -> KaFirExplicitPackageImportingScope(firScope, analysisSession)
             else -> TODO(firScope::class.toString())
         }
     }
@@ -382,6 +383,8 @@ internal class KaFirScopeProvider(
         is FirExplicitStarImportingScope -> KaScopeKinds.ExplicitStarImportingScope(indexInTower)
         is FirDefaultSimpleImportingScope -> KaScopeKinds.DefaultSimpleImportingScope(indexInTower)
         is FirDefaultStarImportingScope -> KaScopeKinds.DefaultStarImportingScope(indexInTower)
+
+        is FirExplicitPackageImportingScope -> KaScopeKinds.ExplicitPackageImportingScope(indexInTower)
 
         is FirScriptDeclarationsScope -> KaScopeKinds.ScriptMemberScope(indexInTower)
 

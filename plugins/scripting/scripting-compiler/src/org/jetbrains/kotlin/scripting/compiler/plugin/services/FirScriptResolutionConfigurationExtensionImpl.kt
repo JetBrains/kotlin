@@ -51,5 +51,6 @@ internal fun List<String>?.firImportsFromDefaultImports(sourceElement: KtSourceE
             source = sourceElement
             importedFqName = fqName
             isAllUnder = endsWithStar
+            isPackage = false
         }
     }

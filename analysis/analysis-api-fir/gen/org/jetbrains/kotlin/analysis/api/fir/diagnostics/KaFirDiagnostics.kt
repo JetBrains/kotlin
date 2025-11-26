@@ -4399,6 +4399,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val originalClassName: Name
     }
 
+    interface CannotImportAsPackage : KaFirDiagnostic<KtImportDirective> {
+        override val diagnosticClass get() = CannotImportAsPackage::class
+    }
+
     interface IllegalSuspendFunctionCall : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = IllegalSuspendFunctionCall::class
         val suspendCallable: KaSymbol

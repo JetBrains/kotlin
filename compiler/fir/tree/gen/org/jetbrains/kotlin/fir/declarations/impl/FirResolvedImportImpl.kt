@@ -30,6 +30,8 @@ internal class FirResolvedImportImpl(
         get() = delegate.importedFqName
     override val isAllUnder: Boolean
         get() = delegate.isAllUnder
+    override val isPackage: Boolean
+        get() = delegate.isPackage
     override val aliasName: Name?
         get() = delegate.aliasName
     override val aliasSource: KtSourceElement?

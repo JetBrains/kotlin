@@ -114,6 +114,9 @@ internal fun computeImportingScopes(
             }
         }
         // TODO: explicit simple importing scope should have highest priority (higher than inner scopes added in process)
+        if (file.imports.any { it.isPackage })
+            this += FirExplicitPackageImportingScope(file.imports)
+
         this += FirExplicitSimpleImportingScope(file.imports, session, scopeSession)
     }
 }
