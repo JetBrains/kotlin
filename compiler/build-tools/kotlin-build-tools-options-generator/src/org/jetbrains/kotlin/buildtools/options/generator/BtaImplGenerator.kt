@@ -66,6 +66,7 @@ internal class BtaImplGenerator(
 
                     val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
                     val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
+                    val defaultsInitializer = CodeBlock.builder()
 
                     val argumentTypeNameString =
                         generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
@@ -87,8 +88,12 @@ internal class BtaImplGenerator(
                             argumentTypeName = argumentImplTypeName,
                             applyCompilerArgumentsFun = applyCompilerArgumentsFun,
                             toCompilerConverterFun = toCompilerConverterFun,
+                            defaultsInitializer = defaultsInitializer,
                         )
                     }.build())
+
+                    // Initialize default values for custom arguments
+                    defaultsInitializer.build().takeIf { it.isNotEmpty() }?.let { addInitializerBlock(it) }
 
                     if (level.isLeaf()) {
                         toCompilerConverterFun.addStatement(
@@ -119,6 +124,7 @@ internal class BtaImplGenerator(
         argumentTypeName: ClassName,
         applyCompilerArgumentsFun: FunSpec.Builder,
         toCompilerConverterFun: FunSpec.Builder,
+        defaultsInitializer: CodeBlock.Builder,
     ) {
         arguments.forEach { argument ->
             val name = argument.extractName()
@@ -175,6 +181,7 @@ internal class BtaImplGenerator(
                     )
                 }
                 is BtaCompilerArgument.CustomCompilerArgument -> {
+                    defaultsInitializer.addStatement("optionsMap[%S] = %L", name, argument.defaultValue)
                     generateCustomRepresentation(
                         implClassName,
                         name,

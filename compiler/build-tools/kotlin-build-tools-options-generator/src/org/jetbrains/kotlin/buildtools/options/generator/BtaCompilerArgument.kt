@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.options.generator
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
@@ -49,6 +50,7 @@ sealed class BtaCompilerArgument(
         deprecatedSinceVersion: KotlinReleaseVersion?,
         removedSinceVersion: KotlinReleaseVersion?,
         val applier: MemberName,
+        val defaultValue: CodeBlock,
     ) : BtaCompilerArgument(
         name = name,
         description = description,
@@ -93,5 +95,10 @@ object CustomCompilerArguments {
         deprecatedSinceVersion = null,
         removedSinceVersion = null,
         applier = MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "applyCompilerPlugins"),
+        defaultValue = CodeBlock.of(
+            "%M<%T>()",
+            MemberName("kotlin.collections", "emptyList"),
+            ClassName(API_ARGUMENTS_PACKAGE, "CompilerPlugin")
+        ),
     )
 }

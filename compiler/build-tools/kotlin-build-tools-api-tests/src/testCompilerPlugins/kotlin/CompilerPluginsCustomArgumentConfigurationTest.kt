@@ -12,13 +12,11 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrder
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
 class CompilerPluginsCustomArgumentConfigurationTest {
     @Test
-    @Disabled("Not passing currently")
     fun testDefaultValue() {
         val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
         val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
