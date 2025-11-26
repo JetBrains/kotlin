@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.swc.GenerateSwcConfig
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.withType
@@ -67,36 +67,36 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
             else -> error("Unsupported binary type: ${binary::class.simpleName}")
         }
 
-        val swcTask = SwcExec.register(
+        val generateConfigTask = GenerateSwcConfig.register(
             compilation,
-            subTarget.disambiguateCamelCased(name, SWC_TASK_NAME),
+            subTarget.disambiguateCamelCased(name, SWC_CONFIG_TASK_NAME),
         ) {
-            val sourceDirectory = linkTask.flatMap { it.destinationDirectory }
-            val destinationDirectory = binary.distribution.distributionName.flatMap {
-                project.layout.buildDirectory.dir("kotlin-swc/${compilation.target.name}/$it")
-            }
+            val compilerOptions = binary.linkTask.map(Kotlin2JsCompile::compilerOptions)
 
-            description = "transpile compiler output with Swc [${binaryMode.name.toLowerCaseAsciiOnly()}]"
-            inputFilesDirectory.value(sourceDirectory).disallowChanges()
-            outputDirectory.value(destinationDirectory).disallowChanges()
-            npmToolingEnvDir.value(compilation.npmProject.dir).disallowChanges()
-
+            esTarget.set(compilerOptions.flatMap(KotlinJsCompilerOptions::target))
+            moduleKind.set(compilerOptions.flatMap(KotlinJsCompilerOptions::moduleKind))
+            sourceMaps.set(compilerOptions.flatMap(KotlinJsCompilerOptions::sourceMap))
             mode.set(
                 when (binaryMode) {
                     KotlinJsBinaryMode.DEVELOPMENT -> Mode.DEVELOPMENT
                     KotlinJsBinaryMode.PRODUCTION -> Mode.PRODUCTION
                 }
             )
+        }
 
-            val compilerOptions = binary.linkTask.map(Kotlin2JsCompile::compilerOptions)
-
-            config.apply {
-                esTarget.set(compilerOptions.flatMap(KotlinJsCompilerOptions::target))
-                moduleKind.set(compilerOptions.flatMap(KotlinJsCompilerOptions::moduleKind))
-                sourceMaps.set(compilerOptions.flatMap(KotlinJsCompilerOptions::sourceMap))
+        val swcTask = SwcExec.register(
+            compilation,
+            subTarget.disambiguateCamelCased(name, SWC_TASK_NAME),
+            generateConfigTask,
+        ) {
+            val sourceDirectory = linkTask.flatMap(KotlinJsIrLink::destinationDirectory)
+            val destinationDirectory = binary.distribution.distributionName.flatMap {
+                project.layout.buildDirectory.dir("kotlin-swc/${compilation.target.name}/$it")
             }
 
-            dependsOn(linkTask)
+            description = "transpile compiler output with Swc [${binaryMode.name.toLowerCaseAsciiOnly()}]"
+            inputDirectory.value(sourceDirectory).disallowChanges()
+            outputDirectory.value(destinationDirectory).disallowChanges()
         }
 
         linkSyncTask.configure { task ->
@@ -123,5 +123,6 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
 
     internal companion object {
         internal const val SWC_TASK_NAME = "transpileWithSwc"
+        internal const val SWC_CONFIG_TASK_NAME = "generateSwcConfig"
     }
 }
