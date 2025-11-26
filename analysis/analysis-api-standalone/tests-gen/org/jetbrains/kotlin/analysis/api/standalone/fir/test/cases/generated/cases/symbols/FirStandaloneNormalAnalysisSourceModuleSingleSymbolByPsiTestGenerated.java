@@ -836,6 +836,344 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
     public void testEntryUnderscoreInDestructuringDeclarationParameterInLambda() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryUnderscoreInDestructuringDeclarationParameterInLambda.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NameBased {
+      @Test
+      public void testAllFilesPresentInNameBased() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+      }
+
+      @Test
+      @TestMetadata("fullFormDeclaration.kt")
+      public void testFullFormDeclaration() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormDeclarationEntry.kt")
+      public void testFullFormDeclarationEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormDeclarationEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormDeclarationEntryExplicitType.kt")
+      public void testFullFormDeclarationEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormDeclarationEntryExplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormDeclarationEntryMutable.kt")
+      public void testFullFormDeclarationEntryMutable() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormDeclarationEntryMutable.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormDeclarationEntryRenamed.kt")
+      public void testFullFormDeclarationEntryRenamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormDeclarationEntryRenamed.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormDeclarationEntryRenamedUnnamed.kt")
+      public void testFullFormDeclarationEntryRenamedUnnamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormDeclarationEntryRenamedUnnamed.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLambda.kt")
+      public void testFullFormLambda() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLambdaEntry.kt")
+      public void testFullFormLambdaEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormLambdaEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLambdaEntryExplicitType.kt")
+      public void testFullFormLambdaEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormLambdaEntryExplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLambdaEntryRenamed.kt")
+      public void testFullFormLambdaEntryRenamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormLambdaEntryRenamed.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLambdaEntryRenamedUnnamed.kt")
+      public void testFullFormLambdaEntryRenamedUnnamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormLambdaEntryRenamedUnnamed.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLoop.kt")
+      public void testFullFormLoop() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormLoop.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLoopEntry.kt")
+      public void testFullFormLoopEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormLoopEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLoopEntryExplicitType.kt")
+      public void testFullFormLoopEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormLoopEntryExplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLoopEntryRenamed.kt")
+      public void testFullFormLoopEntryRenamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormLoopEntryRenamed.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLoopEntryRenamedUnnamed.kt")
+      public void testFullFormLoopEntryRenamedUnnamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/fullFormLoopEntryRenamedUnnamed.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormDeclaration.kt")
+      public void testShortFormDeclaration() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormDeclarationEntry.kt")
+      public void testShortFormDeclarationEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormDeclarationEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormDeclarationEntryExplicitType.kt")
+      public void testShortFormDeclarationEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormDeclarationEntryExplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormDeclarationEntryMutable.kt")
+      public void testShortFormDeclarationEntryMutable() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormDeclarationEntryMutable.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormDeclarationEntryRenamed.kt")
+      public void testShortFormDeclarationEntryRenamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormDeclarationEntryRenamed.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormDeclarationEntryRenamedUnnamed.kt")
+      public void testShortFormDeclarationEntryRenamedUnnamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormDeclarationEntryRenamedUnnamed.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormDeclarationMutable.kt")
+      public void testShortFormDeclarationMutable() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormDeclarationMutable.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLambda.kt")
+      public void testShortFormLambda() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLambdaEntry.kt")
+      public void testShortFormLambdaEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormLambdaEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLambdaEntryExplicitType.kt")
+      public void testShortFormLambdaEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormLambdaEntryExplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLambdaEntryRenamed.kt")
+      public void testShortFormLambdaEntryRenamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormLambdaEntryRenamed.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLambdaEntryRenamedUnnamed.kt")
+      public void testShortFormLambdaEntryRenamedUnnamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormLambdaEntryRenamedUnnamed.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLoop.kt")
+      public void testShortFormLoop() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormLoop.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLoopEntry.kt")
+      public void testShortFormLoopEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormLoopEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLoopEntryExplicitType.kt")
+      public void testShortFormLoopEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormLoopEntryExplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLoopEntryRenamed.kt")
+      public void testShortFormLoopEntryRenamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormLoopEntryRenamed.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLoopEntryRenamedUnnamed.kt")
+      public void testShortFormLoopEntryRenamedUnnamed() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased/shortFormLoopEntryRenamedUnnamed.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased")
+    @TestDataPath("$PROJECT_ROOT")
+    public class PositionBased {
+      @Test
+      public void testAllFilesPresentInPositionBased() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+      }
+
+      @Test
+      @TestMetadata("fullFormDeclaration.kt")
+      public void testFullFormDeclaration() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/fullFormDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormDeclarationEntry.kt")
+      public void testFullFormDeclarationEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/fullFormDeclarationEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormDeclarationEntryExplicitType.kt")
+      public void testFullFormDeclarationEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/fullFormDeclarationEntryExplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormDeclarationEntryMutable.kt")
+      public void testFullFormDeclarationEntryMutable() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/fullFormDeclarationEntryMutable.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLambda.kt")
+      public void testFullFormLambda() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/fullFormLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLambdaEntry.kt")
+      public void testFullFormLambdaEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/fullFormLambdaEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLambdaEntryExplicitType.kt")
+      public void testFullFormLambdaEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/fullFormLambdaEntryExplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLoop.kt")
+      public void testFullFormLoop() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/fullFormLoop.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLoopEntry.kt")
+      public void testFullFormLoopEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/fullFormLoopEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLoopEntryExplicitType.kt")
+      public void testFullFormLoopEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/fullFormLoopEntryExplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormDeclaration.kt")
+      public void testShortFormDeclaration() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/shortFormDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormDeclarationEntry.kt")
+      public void testShortFormDeclarationEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/shortFormDeclarationEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormDeclarationEntryExplicitType.kt")
+      public void testShortFormDeclarationEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/shortFormDeclarationEntryExplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormDeclarationMutable.kt")
+      public void testShortFormDeclarationMutable() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/shortFormDeclarationMutable.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLambda.kt")
+      public void testShortFormLambda() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/shortFormLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLambdaEntry.kt")
+      public void testShortFormLambdaEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/shortFormLambdaEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLambdaEntryExplicitType.kt")
+      public void testShortFormLambdaEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/shortFormLambdaEntryExplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLoop.kt")
+      public void testShortFormLoop() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/shortFormLoop.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLoopEntry.kt")
+      public void testShortFormLoopEntry() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/shortFormLoopEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLoopEntryExplicitType.kt")
+      public void testShortFormLoopEntryExplicitType() {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased/shortFormLoopEntryExplicitType.kt");
+      }
+    }
   }
 
   @Nested

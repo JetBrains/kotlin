@@ -1,0 +1,1 @@
+val foo: ERROR(component1() return type)

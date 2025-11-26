@@ -122,6 +122,26 @@ public class FirIdeNormalAnalysisScriptSourceModuleSingleSymbolByPsiTestGenerate
     public void testScriptDestructuringDeclarationMutable() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/scriptDestructuringDeclarationMutable.kts");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NameBased {
+      @Test
+      public void testAllFilesPresentInNameBased() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/nameBased"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased")
+    @TestDataPath("$PROJECT_ROOT")
+    public class PositionBased {
+      @Test
+      public void testAllFilesPresentInPositionBased() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/positionBased"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
   }
 
   @Nested

@@ -1,0 +1,24 @@
+KaLocalVariableSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Local
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isLateInit: false
+  isVal: false
+  location: LOCAL
+  modality: FINAL
+  name: second
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaErrorType:
+    annotations: []
+    type: ERROR_TYPE
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(fullFormDeclarationEntryMutable.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+  importableFqName: null
