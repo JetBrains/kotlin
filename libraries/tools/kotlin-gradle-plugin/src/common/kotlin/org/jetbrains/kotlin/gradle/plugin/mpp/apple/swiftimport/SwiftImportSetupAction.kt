@@ -937,14 +937,16 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val resolvedPackagesState: ConfigurableFileCollection
 
+    private val layout = project.layout
+
     @get:OutputDirectory
     protected val defFiles = xcodebuildSdk.flatMap { sdk ->
-        project.layout.buildDirectory.dir("kotlin/swiftImportDefs/${sdk}")
+        layout.buildDirectory.dir("kotlin/swiftImportDefs/${sdk}")
     }
 
     @get:OutputDirectory
     protected val ldDump = xcodebuildSdk.flatMap { sdk ->
-        project.layout.buildDirectory.dir("kotlin/swiftImportLdDump/${sdk}")
+        layout.buildDirectory.dir("kotlin/swiftImportLdDump/${sdk}")
     }
 
     @get:Internal
@@ -961,8 +963,6 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
     @get:Inject
     protected abstract val objects: ObjectFactory
-
-    private val layout = project.layout
 
     private val cinteropNamespace = listOf(
         "swiftPMImport",
