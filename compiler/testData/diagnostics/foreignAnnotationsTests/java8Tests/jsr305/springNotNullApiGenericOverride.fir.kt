@@ -39,7 +39,7 @@ import test.CrudRepository
 import java.util.*
 
 fun test(repository: SpringTemplateRepository, int: Int) {
-    repository.<!OVERLOAD_RESOLUTION_AMBIGUITY!>findById<!>(int)
+    repository.findById(int)
 }
 
 interface SpringTemplateRepository : TemplateRepository, CrudRepository<String, Int>
