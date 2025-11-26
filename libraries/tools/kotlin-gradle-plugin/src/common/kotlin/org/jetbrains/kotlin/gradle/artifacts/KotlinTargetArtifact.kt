@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.gradle.artifacts
 
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency.ARCHIVES_CONFIGURATION
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradlePluginExtensionPoint
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -40,19 +40,55 @@ internal fun KotlinTarget.createArtifactsTask(configure: (Jar) -> Unit = {}): Ta
     }
 }
 
+/**
+ * Creates a publish artifact and attaches it to the specified [elementsConfiguration]s.
+ *
+ * **Gradle 9.0 Compatibility:**
+ * This method avoids using the deprecated `archives` configuration. Instead, it:
+ * 1. Explicitly declares the [artifactTask] as a dependency of the `assemble` lifecycle task.
+ * 2. Registers the artifact directly on the provided [elementsConfiguration]s.
+ *
+ * @param artifactTask The provider of the task that produces the artifact (e.g. a Jar task).
+ * @param artifactType The standard Gradle artifact type (e.g. "jar").
+ * @param elementsConfiguration Vararg of configurations (usually `apiElements` or `runtimeElements`) where this artifact should be exposed.
+ * @return The created [PublishArtifact] handle.
+ */
 internal fun KotlinTarget.createPublishArtifact(
     artifactTask: TaskProvider<*>,
     artifactType: String,
     vararg elementsConfiguration: Configuration?,
 ): PublishArtifact {
-    val artifact = project.artifacts.add(ARCHIVES_CONFIGURATION, artifactTask) { artifact ->
+    // 1. Lifecycle: Ensure the artifact is built when 'assemble' runs.
+    project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).configure { assembleTask ->
+        assembleTask.dependsOn(artifactTask)
+    }
+
+    val configurations = elementsConfiguration.filterNotNull()
+
+    // Safety check: We need at least one configuration to register the artifact against
+    // to generate a valid PublishArtifact object easily, or we use a fallback strategy.
+    val primaryConfig = configurations.firstOrNull()
+        ?: project.configurations.detachedConfiguration() // Fallback if no config provided, just to create the object
+
+    // 2. Create the artifact handle by registering it on the primary configuration.
+    // Using project.artifacts.add returns the PublishArtifact object we need to return.
+    val artifact = project.artifacts.add(primaryConfig.name, artifactTask) { artifact ->
         artifact.builtBy(artifactTask)
         artifact.type = artifactType
     }
 
-    elementsConfiguration.filterNotNull().forEach { configuration ->
-        configuration.outgoing.artifacts.add(artifact)
-        configuration.outgoing.attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, artifactType)
+    // 3. Configure attributes and add to any additional configurations.
+    configurations.forEach { configuration ->
+        // If it's the primary config, the artifact is already added (step 2), but we strictly ensure
+        // attributes are set. If it's a secondary config, we add the artifact reference.
+        if (configuration != primaryConfig) {
+            configuration.outgoing.artifacts.add(artifact)
+        }
+
+        configuration.outgoing.attributes.attribute(
+            ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE,
+            artifactType
+        )
     }
 
     return artifact

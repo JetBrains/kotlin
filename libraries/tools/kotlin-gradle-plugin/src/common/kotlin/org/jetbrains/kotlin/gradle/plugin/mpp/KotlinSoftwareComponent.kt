@@ -20,6 +20,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -76,7 +77,9 @@ abstract class KotlinSoftwareComponent(
     override fun getVariants(): Set<SoftwareComponent> = _variants.getOrThrow()
 
     /**
-     * These are variants exposed directly through the root component
+     * These are variants exposed directly through the root component.
+     * * **Gradle 9.0 Migration:** * Artifacts are now explicitly wired to the `assemble` task and the specific
+     * `apiElements` configuration, bypassing the deprecated `archives` configuration.
      */
     private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
         metadataTarget.awaitMetadataCompilationsCreated()
@@ -86,17 +89,30 @@ abstract class KotlinSoftwareComponent(
 
         mutableSetOf<DefaultKotlinUsageContext>().apply {
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
-            val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
+
+            // 1. Lifecycle: Wire the metadata jar to 'assemble'
+            project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).configure {
+                it.dependsOn(allMetadataJar)
+            }
+
+            // 2. Create the artifact specifically for the Metadata Target's API Elements.
+            // We use the actual configuration intended for this artifact instead of "archives".
+            val apiElementsName = metadataTarget.apiElementsConfigurationName
+
+            val allMetadataArtifact = project.artifacts.add(apiElementsName, allMetadataJar) { allMetadataArtifact ->
                 allMetadataArtifact.classifier = project.psmJarClassifier ?: ""
+                allMetadataArtifact.builtBy(allMetadataJar)
             }
 
             this += DefaultKotlinUsageContext(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                 mavenScope = KotlinUsageContext.MavenScope.COMPILE,
-                dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
+                dependencyConfigurationName = apiElementsName,
+                // We pass the artifact we just created.
+                // Since we added it to 'apiElementsName' above, it is natively part of the configuration,
+                // but this override ensures it's treated as the explicit artifact for this usage context.
                 overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
-
 
             val sourcesElements = metadataTarget.sourcesElementsConfigurationName
             if (metadataTarget.isSourcesPublishable) {
@@ -116,7 +132,6 @@ abstract class KotlinSoftwareComponent(
             }
         }
     }
-
 
     override fun getUsages(): Set<UsageContext> {
         return _usages.getOrThrow().publishableUsages() + includeExtraUsagesFrom.usages + uklibUsages.getOrThrow().toSet()
