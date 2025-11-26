@@ -342,12 +342,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateConstructorInInnerClassThroughReference.kt")
-      public void testLeakingPrivateConstructorInInnerClassThroughReference() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorInInnerClassThroughReference.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateConstructorInInnerClassWithTypeParameter.kt")
       public void testLeakingPrivateConstructorInInnerClassWithTypeParameter() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorInInnerClassWithTypeParameter.kt");
@@ -363,18 +357,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("leakingPrivateConstructorThroughObjectInInternalInlineFun.kt")
       public void testLeakingPrivateConstructorThroughObjectInInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughObjectInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateConstructorThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateConstructorThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt");
       }
 
       @Test
@@ -396,33 +378,9 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateExtensionFunThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateExtensionFunThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateExtensionFunThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateExtensionFunThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateExtensionMember.kt")
       public void testLeakingPrivateExtensionMember() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateExtensionMember.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateExtensionValThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateExtensionValThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt");
       }
 
       @Test
@@ -435,18 +393,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt")
       public void testLeakingPrivateExtensionVarThroughPrivateInlineVarChain() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
       }
 
       @Test
@@ -540,12 +486,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateMethodThroughReference.kt")
-      public void testLeakingPrivateMethodThroughReference() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodThroughReference.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateMethodWithDifferentVisibility.kt")
       public void testLeakingPrivateMethodWithDifferentVisibility() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodWithDifferentVisibility.kt");
@@ -588,18 +528,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateValThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateValThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateValThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateVarThroughInlineFun.kt")
       public void testLeakingPrivateVarThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughInlineFun.kt");
@@ -627,18 +555,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("leakingPrivateVarThroughPrivateInlineVarChain.kt")
       public void testLeakingPrivateVarThroughPrivateInlineVarChain() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughPrivateInlineVarChain.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateVarThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateVarThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateVarThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateVarThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughReferenceInPublicInlineFun.kt");
       }
 
       @Test
@@ -742,12 +658,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateConstructorInInnerClassThroughReference.kt")
-      public void testLeakingPrivateConstructorInInnerClassThroughReference() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorInInnerClassThroughReference.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateConstructorInInnerClassWithTypeParameter.kt")
       public void testLeakingPrivateConstructorInInnerClassWithTypeParameter() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorInInnerClassWithTypeParameter.kt");
@@ -763,18 +673,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("leakingPrivateConstructorThroughObjectInInternalInlineFun.kt")
       public void testLeakingPrivateConstructorThroughObjectInInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughObjectInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateConstructorThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateConstructorThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt");
       }
 
       @Test
@@ -796,33 +694,9 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateExtensionFunThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateExtensionFunThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionFunThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateExtensionFunThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateExtensionMember.kt")
       public void testLeakingPrivateExtensionMember() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionMember.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateExtensionValThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateExtensionValThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt");
       }
 
       @Test
@@ -835,18 +709,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt")
       public void testLeakingPrivateExtensionVarThroughPrivateInlineVarChain() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
       }
 
       @Test
@@ -940,12 +802,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateMethodThroughReference.kt")
-      public void testLeakingPrivateMethodThroughReference() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodThroughReference.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateMethodWithDifferentVisibility.kt")
       public void testLeakingPrivateMethodWithDifferentVisibility() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodWithDifferentVisibility.kt");
@@ -988,18 +844,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateValThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateValThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateValThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateVarThroughInlineFun.kt")
       public void testLeakingPrivateVarThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughInlineFun.kt");
@@ -1030,33 +874,9 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateVarThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateVarThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateVarThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateVarThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("leakingSeveralPrivateConstructorsThroughInternalInlineFun.kt")
       public void testLeakingSeveralPrivateConstructorsThroughInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingSeveralPrivateConstructorsThroughInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("reflectionViaReferenceToLeakingPrivateMethod.kt")
-      public void testReflectionViaReferenceToLeakingPrivateMethod() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateMethod.kt");
-      }
-
-      @Test
-      @TestMetadata("reflectionViaReferenceToLeakingPrivateVar.kt")
-      public void testReflectionViaReferenceToLeakingPrivateVar() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateVar.kt");
       }
 
       @Test
@@ -1106,12 +926,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateConstructorInInnerClassThroughReference.kt")
-      public void testLeakingPrivateConstructorInInnerClassThroughReference() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateConstructorInInnerClassThroughReference.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateConstructorInInnerClassWithTypeParameter.kt")
       public void testLeakingPrivateConstructorInInnerClassWithTypeParameter() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateConstructorInInnerClassWithTypeParameter.kt");
@@ -1124,63 +938,9 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateConstructorThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateConstructorThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateExtensionFunThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateExtensionFunThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateExtensionFunThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateExtensionFunThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateExtensionValThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateExtensionValThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateMethodThroughEffectivelyInternalInline.kt")
       public void testLeakingPrivateMethodThroughEffectivelyInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateMethodThroughEffectivelyInternalInline.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateMethodThroughReference.kt")
-      public void testLeakingPrivateMethodThroughReference() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateMethodThroughReference.kt");
       }
 
       @Test
@@ -1196,18 +956,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateValThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateValThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateValThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("useCompanionPrivateMethodFromInternalInline.kt")
       public void testUseCompanionPrivateMethodFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/useCompanionPrivateMethodFromInternalInline.kt");
@@ -1217,12 +965,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("useLateinitIsInitializedFromInternalInline.kt")
       public void testUseLateinitIsInitializedFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/useLateinitIsInitializedFromInternalInline.kt");
-      }
-
-      @Test
-      @TestMetadata("usePrivateClassConstructor.kt")
-      public void testUsePrivateClassConstructor() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateClassConstructor.kt");
       }
 
       @Test
@@ -1241,12 +983,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("usePrivateExtensionFromInternalInline.kt")
       public void testUsePrivateExtensionFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateExtensionFromInternalInline.kt");
-      }
-
-      @Test
-      @TestMetadata("usePrivateFunInterfaceFromInternalFun.kt")
-      public void testUsePrivateFunInterfaceFromInternalFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateFunInterfaceFromInternalFun.kt");
       }
 
       @Test
@@ -1334,18 +1070,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("usePrivateVarFromReferenceInInternalInlineFun.kt")
-      public void testUsePrivateVarFromReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateVarFromReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("usePrivateVarFromReferenceInPublicInlineFun.kt")
-      public void testUsePrivateVarFromReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateVarFromReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("useSeveralPrivateConstructorsThroughInternalInlineFun.kt")
       public void testUseSeveralPrivateConstructorsThroughInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/useSeveralPrivateConstructorsThroughInternalInlineFun.kt");
@@ -1423,18 +1147,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt")
       public void testLeakingPrivateExtensionVarThroughPrivateInlineVarChain() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
       }
 
       @Test
@@ -1540,18 +1252,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateVarThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateVarThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateVarThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("leakingTopLevelPrivateSetterThroughPrivateInlineFunChain.kt")
       public void testLeakingTopLevelPrivateSetterThroughPrivateInlineFunChain() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingTopLevelPrivateSetterThroughPrivateInlineFunChain.kt");
@@ -1627,12 +1327,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("usePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument.kt")
       public void testUsePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument.kt");
-      }
-
-      @Test
-      @TestMetadata("usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt")
-      public void testUsePrivateTopLevelFunFromReferenceAsDefaultArgument() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt");
       }
 
       @Test
@@ -1742,18 +1436,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateFunWithContextParameterThroughInternalInline.kt")
       public void testLeakingPrivateFunWithContextParameterThroughInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateFunWithContextParameterThroughInternalInline.kt");
@@ -1856,18 +1538,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateVarThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateVarThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateVarThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("leakingTopLevelPrivateSetterThroughPrivateInlineFunChain.kt")
       public void testLeakingTopLevelPrivateSetterThroughPrivateInlineFunChain() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingTopLevelPrivateSetterThroughPrivateInlineFunChain.kt");
@@ -1895,18 +1565,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("potentiallyClashingVarAccessors.kt")
       public void testPotentiallyClashingVarAccessors() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/potentiallyClashingVarAccessors.kt");
-      }
-
-      @Test
-      @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelFun.kt")
-      public void testReflectionViaReferenceToLeakingPrivateTopLevelFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelFun.kt");
-      }
-
-      @Test
-      @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelVar.kt")
-      public void testReflectionViaReferenceToLeakingPrivateTopLevelVar() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelVar.kt");
       }
 
       @Test
@@ -1955,12 +1613,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("usePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument.kt")
       public void testUsePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument.kt");
-      }
-
-      @Test
-      @TestMetadata("usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt")
-      public void testUsePrivateTopLevelFunFromReferenceAsDefaultArgument() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt");
       }
 
       @Test
@@ -2046,18 +1698,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       }
 
       @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateFunWithContextParameterThroughInternalInline.kt")
       public void testLeakingPrivateFunWithContextParameterThroughInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateFunWithContextParameterThroughInternalInline.kt");
@@ -2073,18 +1713,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("leakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation.kt")
       public void testLeakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
-      public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateVarThroughReferenceInInternalInlineFun.kt")
-      public void testLeakingPrivateVarThroughReferenceInInternalInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateVarThroughReferenceInInternalInlineFun.kt");
       }
 
       @Test
@@ -2163,12 +1791,6 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsSyntheticAc
       @TestMetadata("usePrivateTopLevelFunFromLambdaInsidePublicInline.kt")
       public void testUsePrivateTopLevelFunFromLambdaInsidePublicInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromLambdaInsidePublicInline.kt");
-      }
-
-      @Test
-      @TestMetadata("usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt")
-      public void testUsePrivateTopLevelFunFromReferenceAsDefaultArgument() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt");
       }
 
       @Test

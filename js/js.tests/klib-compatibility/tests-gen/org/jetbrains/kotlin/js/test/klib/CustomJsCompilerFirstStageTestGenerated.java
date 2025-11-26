@@ -70235,30 +70235,6 @@ public class CustomJsCompilerFirstStageTestGenerated extends AbstractCustomJsCom
       }
 
       @Test
-      @TestMetadata("nestedInPrivateClass.kt")
-      public void testNestedInPrivateClass() {
-        runTest("compiler/testData/codegen/boxInline/private/nestedInPrivateClass.kt");
-      }
-
-      @Test
-      @TestMetadata("nestedInPrivateClass2.kt")
-      public void testNestedInPrivateClass2() {
-        runTest("compiler/testData/codegen/boxInline/private/nestedInPrivateClass2.kt");
-      }
-
-      @Test
-      @TestMetadata("privateClass.kt")
-      public void testPrivateClass() {
-        runTest("compiler/testData/codegen/boxInline/private/privateClass.kt");
-      }
-
-      @Test
-      @TestMetadata("privateClassExtensionLambda.kt")
-      public void testPrivateClassExtensionLambda() {
-        runTest("compiler/testData/codegen/boxInline/private/privateClassExtensionLambda.kt");
-      }
-
-      @Test
       @TestMetadata("privateFakeOverride.kt")
       public void testPrivateFakeOverride() {
         runTest("compiler/testData/codegen/boxInline/private/privateFakeOverride.kt");
