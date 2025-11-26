@@ -359,6 +359,12 @@ public class JsDiagnosticsWithIrInlinerTestGenerated extends AbstractJsDiagnosti
       }
 
       @Test
+      @TestMetadata("badAssignmentWithIrInliner.kt")
+      public void testBadAssignmentWithIrInliner() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/badAssignmentWithIrInliner.kt");
+      }
+
+      @Test
       @TestMetadata("compileTimeString.kt")
       public void testCompileTimeString() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeString.kt");
@@ -401,9 +407,21 @@ public class JsDiagnosticsWithIrInlinerTestGenerated extends AbstractJsDiagnosti
       }
 
       @Test
+      @TestMetadata("deleteOperationWithIrInliner.kt")
+      public void testDeleteOperationWithIrInliner() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/deleteOperationWithIrInliner.kt");
+      }
+
+      @Test
       @TestMetadata("error.kt")
       public void testError() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/error.kt");
+      }
+
+      @Test
+      @TestMetadata("errorWithIrInliner.kt")
+      public void testErrorWithIrInliner() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/errorWithIrInliner.kt");
       }
 
       @Test
@@ -416,6 +434,12 @@ public class JsDiagnosticsWithIrInlinerTestGenerated extends AbstractJsDiagnosti
       @TestMetadata("javaScriptError.kt")
       public void testJavaScriptError() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/javaScriptError.kt");
+      }
+
+      @Test
+      @TestMetadata("javaScriptErrorWithIrInliner.kt")
+      public void testJavaScriptErrorWithIrInliner() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/javaScriptErrorWithIrInliner.kt");
       }
 
       @Test
