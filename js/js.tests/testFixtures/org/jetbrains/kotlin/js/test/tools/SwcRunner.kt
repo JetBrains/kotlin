@@ -5,31 +5,48 @@
 
 package org.jetbrains.kotlin.js.test.tools
 
+import kotlinx.serialization.encodeToString
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import java.io.File
 import kotlin.test.fail
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.SwcConfig
+import kotlinx.serialization.json.Json
 
 object SwcRunner {
     private val swcPath = System.getProperty("swc.path")
 
-    private val es5Config = "js/js.tests/testFixtures/org/jetbrains/kotlin/js/test/tools/es5.swcrc"
-    private val es5WithEsmConfig = "js/js.tests/testFixtures/org/jetbrains/kotlin/js/test/tools/es5.esm.swcrc"
+    fun exec(
+        artifactsDirectory: File,
+        moduleKind: ModuleKind,
+        translationMode: TranslationMode,
+        sourceMapEnabled: Boolean,
+    ) {
+        val config = SwcConfig.getConfigWhen(
+            sourceMapEnabled = sourceMapEnabled,
+            // In tests, we're testing ES5 only
+            target = "es5",
+            // Since we're running our tests with D8, module resolution doesn't work, so, helpers are not used
+            includeExternalHelpers = false,
+            moduleKind = moduleKind
+        )
 
-    fun exec(inputDirectory: File, moduleKind: ModuleKind, translationMode: TranslationMode) {
+        val configFile = File("output.json").apply {
+            writeText(Json.encodeToString(config))
+        }
+
         val command = arrayOf(
             swcPath, *SwcConfig.getArgumentsWhen(
                 inputDirectory = "./",
                 outputDirectory = "./",
-                configPath = if (moduleKind == ModuleKind.ES) es5WithEsmConfig else es5Config,
-                fileExtension = if (moduleKind == ModuleKind.ES) "mjs" else "js",
+                configPath = configFile.absolutePath,
+                fileExtension = moduleKind.jsExtension,
                 environmentCode = if (translationMode.production) "production" else "development"
             ).toTypedArray()
         )
 
         val processBuilder = ProcessBuilder(*command)
-            .directory(inputDirectory)
+            .directory(artifactsDirectory)
             .redirectErrorStream(true)
 
         val exitValue = processBuilder.inheritIO().start().waitFor()

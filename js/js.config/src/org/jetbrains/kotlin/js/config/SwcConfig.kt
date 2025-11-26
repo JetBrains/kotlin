@@ -23,4 +23,32 @@ object SwcConfig {
         add("--out-file-extension=$fileExtension")
         add("--extensions=$fileExtension")
     }
+
+    fun getConfigWhen(
+        sourceMapEnabled: Boolean,
+        target: String,
+        includeExternalHelpers: Boolean,
+        moduleKind: ModuleKind
+    ) = buildMap<String, Any> {
+        set("\$schema", "https://swc.rs/schema.json")
+        set("sourceMaps", sourceMapEnabled)
+        set("inputSourceMap", sourceMapEnabled)
+        set("exclude", arrayOf(".*\\.d\\.m?ts$"))
+        set("jsc", buildMap<String, Any> {
+            set("parser", buildMap {
+                set("syntax", "ecmascript")
+                set("dynamicImport", true)
+                set("functionBind", true)
+                set("importMeta", true)
+            })
+            set("loose", true)
+            set("externalHelpers", includeExternalHelpers)
+            set("target", target)
+        })
+        set("module", buildMap {
+            set("resolveFully", true)
+            set("type", if (moduleKind === ModuleKind.ES) "nodenext" else moduleKind.type)
+            set("outFileExtension", moduleKind.jsExtension)
+        })
+    }
 }

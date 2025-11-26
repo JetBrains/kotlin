@@ -8,14 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.js.swc
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
-import org.jetbrains.kotlin.gradle.plugin.mpp.JsFileExtensions
-import kotlin.collections.buildMap
-
-internal enum class JsPlatformType { NODE, BROWSER, LIBRARY }
+import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.SwcConfig
 
 internal abstract class KotlinSwcConfig {
     @get:Input
@@ -28,51 +25,17 @@ internal abstract class KotlinSwcConfig {
     @get:Optional
     abstract val moduleKind: Property<JsModuleKind>
 
-    @get:Input
-    abstract val platformType: Property<JsPlatformType>
-
-    private val moduleSystemToUse: Provider<JsModuleKind> =
+    internal val moduleSystemToUse: Provider<ModuleKind> =
         moduleKind
-            .orElse(esTarget.zip(platformType) { esTarget, platformType ->
-                when {
-                    esTarget == ES_2015 -> JsModuleKind.MODULE_ES
-                    platformType == JsPlatformType.NODE -> JsModuleKind.MODULE_COMMONJS
-                    else -> JsModuleKind.MODULE_UMD
-                }
-            })
+            .orElse(esTarget.map { if (it == ES_2015) JsModuleKind.MODULE_ES else JsModuleKind.MODULE_UMD })
+            .map { ModuleKind.fromType(it.kind) }
 
-    private val swcModuleType: Provider<String> = moduleSystemToUse.map {
-        if (it == JsModuleKind.MODULE_ES) "nodenext" else it.kind
-    }
-
-    @get:Internal
-    internal val fileExtension: Provider<String> =
-        moduleSystemToUse.map { if (it == JsModuleKind.MODULE_ES) JsFileExtensions.MODULE else JsFileExtensions.REGULAR }
-
-    fun toConfigMap(): Map<String, Any> = buildMap {
-        set("\$schema", "https://swc.rs/schema.json")
-        set("sourceMaps", sourceMaps.get())
-        set("inputSourceMap", sourceMaps.get())
-        set("exclude", arrayOf(".*\\.d\\.m?ts$"))
-        set("jsc", buildMap<String, Any> {
-            set("parser", buildMap {
-                set("syntax", "ecmascript")
-                set("dynamicImport", true)
-                set("functionBind", true)
-                set("importMeta", true)
-            })
-            set("loose", true)
-            set("externalHelpers", true)
-            set("target", esTarget.get())
-        })
-        if (platformType.get() == JsPlatformType.NODE) {
-            set("module", buildMap {
-                set("resolveFully", true)
-                set("type", swcModuleType.get())
-                set("outFileExtension", fileExtension.get())
-            })
-        } else {
-            set("isModule", "unknown")
-        }
-    }
+    fun toConfigMap() =
+        SwcConfig.getConfigWhen(
+            sourceMapEnabled = sourceMaps.get(),
+            target = esTarget.get(),
+            // To reduce the final code size, we always turn on this option
+            includeExternalHelpers = true,
+            moduleKind = moduleSystemToUse.get()
+        )
 }
