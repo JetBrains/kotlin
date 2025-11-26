@@ -166,7 +166,11 @@ public actual fun hypot(x: Double, y: Double): Double = kotlin.math.fdlibm.__iee
  * Computes the positive square root of the value [x].
  *
  * Special cases:
- *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
+ *   - `sqrt(NaN)` is `NaN`
+ *   - `sqrt(-0.0)` is `-0.0`
+ *   - `sqrt(x)` is `NaN` when `x < 0`
+ *
+ * @sample samples.math.MathSamples.Doubles.sqrt
  */
 @SinceKotlin("1.2")
 public actual fun sqrt(x: Double): Double = kotlin.wasm.internal.wasm_f64_sqrt(x)
@@ -710,7 +714,11 @@ public actual fun hypot(x: Float, y: Float): Float = kotlin.math.fdlibm.__ieee75
  * Computes the positive square root of the value [x].
  *
  * Special cases:
- *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
+ *   - `sqrt(NaN)` is `NaN`
+ *   - `sqrt(-0.0)` is `-0.0`
+ *   - `sqrt(x)` is `NaN` when `x < 0`
+ *
+ * @sample samples.math.MathSamples.Floats.sqrt
  */
 @SinceKotlin("1.2")
 public actual fun sqrt(x: Float): Float = kotlin.wasm.internal.wasm_f32_sqrt(x)
