@@ -56,7 +56,7 @@ class PhasedPipelineChecker(
     }
 
     private fun getTargetedPhase(): TestPhase? {
-        return testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].firstOrNull() ?: defaultRunPipelineTill
+        return testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].lastOrNull() ?: defaultRunPipelineTill
     }
 
     private fun TestArtifactKind<*>.toPhase(): TestPhase? = when (this) {
