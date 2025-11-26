@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LL_FIR_DIVERGENCE
 // Reason is unknown,
 // the same test also diverges in non-kmp test infrastructure
