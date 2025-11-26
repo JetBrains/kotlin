@@ -41,4 +41,7 @@ class SymbolBasedMethod(
         get() = element.defaultValue?.let { defaultValue ->
             SymbolBasedAnnotationArgument.create(defaultValue, Name.identifier("value"), javac)
         }
+
+    override val isNative: Boolean
+        get() = element.isNative
 }

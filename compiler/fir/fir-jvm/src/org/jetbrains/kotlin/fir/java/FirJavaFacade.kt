@@ -585,6 +585,7 @@ private fun convertJavaMethodToFir(
     ).apply {
         isStatic = javaMethod.isStatic
         hasStableParameterNames = false
+        isExternal = javaMethod.isNative
     }
 
     return buildJavaMethod {

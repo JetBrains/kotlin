@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiAnnotationMethod;
-import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,5 +87,10 @@ public class JavaMethodImpl extends JavaMemberImpl<PsiMethod> implements JavaMet
     @NotNull
     public JavaType getReturnType() {
         return JavaTypeImpl.create(Objects.requireNonNull(getPsi().getReturnType()), createMethodReturnTypeSource(psiElementSource));
+    }
+
+    @Override
+    public boolean isNative() {
+        return JavaElementUtil.isNative(this);
     }
 }

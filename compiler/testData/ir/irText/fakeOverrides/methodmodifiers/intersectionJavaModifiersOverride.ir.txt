@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract fun foo (): kotlin.Unit declared in <root>.Java1
         public final fun foo (): kotlin.Unit declared in <root>.Java2
-    FUN FAKE_OVERRIDE name:foo2 visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo2 visibility:public modality:OPEN returnType:kotlin.Unit [external,fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
       overridden:
         public open fun foo2 (): kotlin.Unit declared in <root>.Java2
@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public final fun foo (): kotlin.Unit declared in <root>.Java2
         public abstract fun foo (): kotlin.Unit declared in <root>.Java3
-    FUN FAKE_OVERRIDE name:foo2 visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo2 visibility:public modality:OPEN returnType:kotlin.Unit [external,fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
       overridden:
         public open fun foo2 (): kotlin.Unit declared in <root>.Java2
@@ -200,7 +200,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public final fun foo (): kotlin.Unit declared in <root>.Java2
         public abstract fun foo (): kotlin.Unit declared in <root>.KotlinInterface
-    FUN FAKE_OVERRIDE name:foo2 visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo2 visibility:public modality:OPEN returnType:kotlin.Unit [external,fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
       overridden:
         public open fun foo2 (): kotlin.Unit declared in <root>.Java2

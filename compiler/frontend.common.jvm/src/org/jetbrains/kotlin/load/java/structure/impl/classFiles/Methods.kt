@@ -186,6 +186,9 @@ class BinaryJavaMethod(
             }
             field = value
         }
+
+    override val isNative: Boolean
+        get() = isSet(Opcodes.ACC_NATIVE)
 }
 
 class BinaryJavaConstructor(

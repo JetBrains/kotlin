@@ -125,6 +125,8 @@ interface JavaMethod : JavaMember, JavaTypeParameterListOwner {
 
     val hasAnnotationParameterDefaultValue: Boolean
         get() = annotationParameterDefaultValue != null
+
+    val isNative: Boolean
 }
 
 interface JavaField : JavaMember {

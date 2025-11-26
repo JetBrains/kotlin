@@ -4800,7 +4800,7 @@ KaNamedFunctionSymbol:
   isBuiltinFunctionInvoke: false
   isExpect: false
   isExtension: false
-  isExternal: false
+  isExternal: true
   isInfix: false
   isInline: false
   isOperator: false

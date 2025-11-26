@@ -37421,6 +37421,12 @@ public class JsIrDeserializationCodegenBoxTestGenerated extends AbstractJsIrDese
       }
 
       @Test
+      @TestMetadata("nestedClassInheritsFromExternalClass.kt")
+      public void testNestedClassInheritsFromExternalClass() {
+        runTest("compiler/testData/codegen/box/js/nestedClassInheritsFromExternalClass.kt");
+      }
+
+      @Test
       @TestMetadata("trailingLambdaOnDynamic.kt")
       public void testTrailingLambdaOnDynamic() {
         runTest("compiler/testData/codegen/box/js/trailingLambdaOnDynamic.kt");

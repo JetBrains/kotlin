@@ -174,6 +174,11 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
     runTest("compiler/testData/loadJava/compiledJava/MyException.java");
   }
 
+  @TestMetadata("NativeMethod.java")
+  public void testNativeMethod() {
+    runTest("compiler/testData/loadJava/compiledJava/NativeMethod.java");
+  }
+
   @TestMetadata("NestedClass.java")
   public void testNestedClass() {
     runTest("compiler/testData/loadJava/compiledJava/NestedClass.java");
