@@ -16,7 +16,7 @@ inline fun a(f: () -> Any) =
 fun b(vararg functions: () -> Any) = a {
     for (function in functions) {
         try {
-            return function()
+            return@a function()
         } catch (fail: Throwable) {
         }
     }
