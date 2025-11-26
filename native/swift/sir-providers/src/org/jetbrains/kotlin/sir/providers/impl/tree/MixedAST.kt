@@ -48,14 +48,29 @@ internal sealed class MixedAST {
         }
     }
 
-    class Block(val lambdaParameters: LambdaParameters?, val statements: List<MixedAST>) : MixedAST() {
+    class Block(val lambdaParameters: LambdaParameters?, val statements: List<MixedAST>, val separateLines: Boolean) : MixedAST() {
         override fun toString() = buildString {
             append("{ ")
             if (lambdaParameters != null) {
                 append("$lambdaParameters ")
             }
-            append(statements.joinToString(separator = "; "))
-            append(" }")
+            if (separateLines) {
+                appendLine()
+            }
+            if (separateLines) {
+                for (statement in statements) {
+                    append("|    ")
+                    appendLine(statement)
+                }
+            } else {
+                append(statements.joinToString(separator = "; "))
+            }
+            if (!separateLines) {
+                append(" ")
+            } else {
+                append("|")
+            }
+            append("}")
         }
     }
 
@@ -179,8 +194,8 @@ internal fun MixedAST.invoke(vararg arguments: MixedAST): MixedAST.Invoke =
 internal fun brackets(vararg arguments: MixedAST): MixedAST =
     "".ast().invoke(*arguments)
 
-internal fun MixedAST.invokeLambda(f: BlockBuilder.() -> Unit) =
-    MixedAST.InvokeLambda(this, block(null, f))
+internal fun MixedAST.invokeLambda(separateLines: Boolean = false, f: BlockBuilder.() -> Unit) =
+    MixedAST.InvokeLambda(this, block(null, separateLines = separateLines, f))
 
 internal fun String.variable(isSwift: Boolean): MixedAST.Variable = MixedAST.Variable(ast(), isSwift)
 
@@ -229,15 +244,19 @@ internal fun SirType.createClassWrapper(namer: SirTypeNamer, expression: MixedAS
 internal fun SirType.create(namer: SirTypeNamer, expression: MixedAST): MixedAST =
     swiftTypeName(namer).invoke(expression.named("__externalRCRefUnsafe"), asBestFittingWrapper())
 
-internal fun block(lambdaParameters: MixedAST.LambdaParameters? = null, f: BlockBuilder.() -> Unit): MixedAST.Block {
-    return BlockBuilder(lambdaParameters).apply { f() }.block
+internal fun block(
+    lambdaParameters: MixedAST.LambdaParameters? = null,
+    separateLines: Boolean = false,
+    f: BlockBuilder.() -> Unit,
+): MixedAST.Block {
+    return BlockBuilder(lambdaParameters, separateLines).apply { f() }.block
 }
 
 internal fun switch(ast: MixedAST, f: SwitchBuilder.() -> Unit): MixedAST.Switch {
     return SwitchBuilder(ast).apply { f() }.switch
 }
 
-internal class BlockBuilder(val lambdaParameters: MixedAST.LambdaParameters?) {
+internal class BlockBuilder(val lambdaParameters: MixedAST.LambdaParameters?, val separateLines: Boolean) {
     private val statements: MutableList<MixedAST> = mutableListOf()
 
     operator fun MixedAST.unaryPlus() {
@@ -254,7 +273,7 @@ internal class BlockBuilder(val lambdaParameters: MixedAST.LambdaParameters?) {
 
     val block: MixedAST.Block
         get() {
-            return MixedAST.Block(lambdaParameters, statements)
+            return MixedAST.Block(lambdaParameters, statements, separateLines)
         }
 }
 
