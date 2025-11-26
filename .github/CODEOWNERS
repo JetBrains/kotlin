@@ -450,3 +450,6 @@ gradlew.bat @JetBrains/kotlin-build-infrastructure
 
 /.space/CODEOWNERS @JetBrains/kotlin-build-infrastructure
 /.github/CODEOWNERS @JetBrains/kotlin-build-infrastructure
+
+.patronus/config.yaml @JetBrains/kotlin-build-infrastructure
+test.txt @JetBrains/kotlin-build-infrastructure

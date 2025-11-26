@@ -492,3 +492,6 @@ gradlew.bat "Kotlin Build Infrastructure"
 
 /.space/CODEOWNERS "Kotlin Build Infrastructure"
 /.github/CODEOWNERS "Kotlin Build Infrastructure"
+
+.patronus/config.yaml "Kotlin Build Infrastructure"
+test.txt "Kotlin Build Infrastructure"
