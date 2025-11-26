@@ -77,7 +77,7 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
  *  transitions to K2, code in this file should no longer be needed.
  */
 
-object JKlibIrMangler : IrBasedKotlinManglerImpl() {
+class JKlibIrMangler : IrBasedKotlinManglerImpl() {
     private class JKlibIrExportChecker(compatibleMode: Boolean) : IrExportCheckerVisitor(compatibleMode) {
         override fun IrDeclaration.isPlatformSpecificExported() = false
     }
