@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -121,6 +122,10 @@ internal open class KotlinJsIrLinkConfig(
                         }
                     )
                     it.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
+//                    it.classpath.from(task.libraries)
+                    project.kotlinPropertiesProvider.wasmPerModuleInvalidate?.let { invalidate ->
+                        it.invalidate.set(invalidate)
+                    }
                 }
             }
         }

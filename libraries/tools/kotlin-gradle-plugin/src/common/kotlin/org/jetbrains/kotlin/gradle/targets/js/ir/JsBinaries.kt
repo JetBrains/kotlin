@@ -68,7 +68,11 @@ sealed class JsIrBinary(
         .map { it.dir(name) }
 
     val linkTask: TaskProvider<KotlinJsIrLink> =
-        project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project, target.platformType))
+        project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project, target.platformType)).apply {
+            if (compilation.isMain() && mode == KotlinJsBinaryMode.DEVELOPMENT) {
+                project.artifacts.add(compilation.wasmBinaryOutputConfigurationName, this.map { it.destinationDirectory })
+            }
+        }
 
     @Suppress("PropertyName")
     protected val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =

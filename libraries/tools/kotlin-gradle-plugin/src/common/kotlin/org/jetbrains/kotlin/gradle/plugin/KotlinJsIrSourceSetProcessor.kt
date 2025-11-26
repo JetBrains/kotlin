@@ -43,10 +43,6 @@ internal class KotlinJsIrSourceSetProcessor(
             it.dependsOn(kotlinTask)
         }
 
-        (compilationInfo.tcs.compilation as KotlinJsIrCompilation).also { compilation ->
-            compilation.binaries.executableIrInternal(compilation)
-        }
-
         project.whenEvaluated {
             val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
             /* Not supported in KPM, yet */
