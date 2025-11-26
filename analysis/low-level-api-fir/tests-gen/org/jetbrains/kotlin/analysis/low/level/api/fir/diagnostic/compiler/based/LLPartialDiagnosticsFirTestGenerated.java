@@ -7907,6 +7907,316 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction")
+    @TestDataPath("$PROJECT_ROOT")
+    public class PrivateLeakInInlineFunction {
+      @Test
+      public void testAllFilesPresentInPrivateLeakInInlineFunction() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember")
+      @TestDataPath("$PROJECT_ROOT")
+      public class PrivateMember {
+        @Test
+        public void testAllFilesPresentInPrivateMember() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak")
+        @TestDataPath("$PROJECT_ROOT")
+        public class CrossFilePrivateLeak {
+          @Test
+          public void testAllFilesPresentInCrossFilePrivateLeak() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateConstructorInInnerClassThroughReference.kt")
+          public void testLeakingPrivateConstructorInInnerClassThroughReference() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateConstructorInInnerClassThroughReference.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateConstructorThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateConstructorThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateExtensionFunThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateExtensionFunThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateExtensionFunThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateExtensionFunThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateExtensionValThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateExtensionValThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateMethodThroughReference.kt")
+          public void testLeakingPrivateMethodThroughReference() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateMethodThroughReference.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateValThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateValThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateValThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateVarThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateVarThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateVarThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateVarThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughReferenceInPublicInlineFun.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile")
+        @TestDataPath("$PROJECT_ROOT")
+        public class SingleFile {
+          @Test
+          public void testAllFilesPresentInSingleFile() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateConstructorInInnerClassThroughReference.kt")
+          public void testLeakingPrivateConstructorInInnerClassThroughReference() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateConstructorInInnerClassThroughReference.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateConstructorThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateConstructorThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateExtensionFunThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateExtensionFunThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateExtensionFunThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateExtensionFunThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateExtensionValThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateExtensionValThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateMethodThroughReference.kt")
+          public void testLeakingPrivateMethodThroughReference() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateMethodThroughReference.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateValThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateValThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateValThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("usePrivateClassConstructor.kt")
+          public void testUsePrivateClassConstructor() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/usePrivateClassConstructor.kt");
+          }
+
+          @Test
+          @TestMetadata("usePrivateFunInterfaceFromInternalFun.kt")
+          public void testUsePrivateFunInterfaceFromInternalFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/usePrivateFunInterfaceFromInternalFun.kt");
+          }
+
+          @Test
+          @TestMetadata("usePrivateVarFromReferenceInInternalInlineFun.kt")
+          public void testUsePrivateVarFromReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/usePrivateVarFromReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("usePrivateVarFromReferenceInPublicInlineFun.kt")
+          public void testUsePrivateVarFromReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/privateMember/singleFile/usePrivateVarFromReferenceInPublicInlineFun.kt");
+          }
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate")
+      @TestDataPath("$PROJECT_ROOT")
+      public class TopLevelPrivate {
+        @Test
+        public void testAllFilesPresentInTopLevelPrivate() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/crossFilePrivateLeak")
+        @TestDataPath("$PROJECT_ROOT")
+        public class CrossFilePrivateLeak {
+          @Test
+          public void testAllFilesPresentInCrossFilePrivateLeak() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/crossFilePrivateLeak"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/crossFilePrivateLeak/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateVarThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateVarThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/crossFilePrivateLeak/leakingPrivateVarThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt")
+          public void testUsePrivateTopLevelFunFromReferenceAsDefaultArgument() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/singleFile")
+        @TestDataPath("$PROJECT_ROOT")
+        public class SingleFile {
+          @Test
+          public void testAllFilesPresentInSingleFile() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/singleFile"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/singleFile/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/singleFile/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
+          public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/singleFile/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("leakingPrivateVarThroughReferenceInInternalInlineFun.kt")
+          public void testLeakingPrivateVarThroughReferenceInInternalInlineFun() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/singleFile/leakingPrivateVarThroughReferenceInInternalInlineFun.kt");
+          }
+
+          @Test
+          @TestMetadata("usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt")
+          public void testUsePrivateTopLevelFunFromReferenceAsDefaultArgument() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/privateLeakInInlineFunction/topLevelPrivate/singleFile/usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt");
+          }
+        }
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/problems")
     @TestDataPath("$PROJECT_ROOT")
     public class Problems {
