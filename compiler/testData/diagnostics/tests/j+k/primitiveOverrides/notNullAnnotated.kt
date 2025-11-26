@@ -1,6 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: A.java
 import org.jetbrains.annotations.*;
 

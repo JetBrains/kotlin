@@ -1,5 +1,4 @@
-// LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82721
 
 class B<T> {
@@ -18,7 +17,7 @@ class C<E>(val value: E) {
 
     fun baz(otherBaz: C<*>) {
         val it = otherBaz.num
-        otherBaz.consume(<!MEMBER_PROJECTED_OUT!>it<!>)
+        otherBaz.consume(it)
     }
 
     fun <R> ban(other: C<R>) {

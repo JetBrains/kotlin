@@ -1,9 +1,8 @@
-// LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-42096
 
 enum class E {
-    <!DEPRECATED_MODIFIER_FOR_TARGET!>inline<!> E1 {
+    <!WRONG_MODIFIER_TARGET!>inline<!> E1 {
         override fun invoke() = 123
     };
     abstract fun invoke(): Int
