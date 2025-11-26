@@ -9,6 +9,8 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
@@ -20,9 +22,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
 import org.jetbrains.kotlin.test.TestDataAssertions
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.test.assertContains
 import kotlin.test.assertIs
 
 abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
@@ -124,6 +128,140 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         )
 
         TestDataAssertions.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
+    }
+
+    @Test
+    fun testCacheLinkageErrorMessage() {
+        val rootDir = File("native/native.tests/testData/compilerOutput/cacheLinkageErrorMessage")
+
+        // Trigger the binary linkage to fail by requesting a non-existing library:
+        val secondStageCompilerArgs = listOf("-linker-option", "-ldoes-not-exist")
+
+        val compilationResult = compileToExecutableInTwoStages(rootDir, secondStageCompilerArgs)
+
+        assertIs<TestCompilationResult.Failure>(compilationResult)
+        val output = compilationResult.toOutput().sanitizeCompilationOutput()
+
+        if (testRunSettings.get<CacheMode>() == CacheMode.WithoutCache) {
+            assertFalse(output.contains("compiler caches")) {
+                "The compiler output wrongly mentions compiler caches:\n```\n$output\n```\n"
+            }
+        } else {
+            val presetName = targets.testTarget.presetName
+            assertContains(
+                output,
+                """
+                |Please try to disable compiler caches and rerun the build. To disable compiler caches, add the following line to the gradle.properties file in the project's root directory:
+                |    
+                |    kotlin.native.cacheKind.$presetName=none
+                |    
+                |Also, consider filing an issue with full Gradle log here: https://kotl.in/issue""".trimMargin()
+            )
+        }
+    }
+
+    @Test
+    fun testCacheBuildErrorMessage() {
+        // Disable when not using cache:
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>() == CacheMode.WithoutCache)
+        // MinGW support for caches is limited to stdlib, so these tests won't work as expected.
+        Assumptions.assumeFalse(targets.testTarget == KonanTarget.MINGW_X64)
+
+        val rootDir = File("native/native.tests/testData/compilerOutput/cacheBuildErrorMessage")
+
+        // Make sure the stdlib cache is built. Otherwise, it will fail instead of the main.klib cache.
+        compileToExecutableInTwoStages(rootDir).assertSuccess()
+
+        val autoCacheDir = buildDir.resolve("cache")
+        autoCacheDir.mkdirs()
+
+        val secondStageCompilerArgs = listOf(
+            // Trigger the cache compilation to crash by passing an invalid flag:
+            "-Xoverride-konan-properties=additionalCacheFlags=-Xpartial-linkage=invalid-mode",
+
+            "-Xauto-cache-from=$buildDir",
+            "-Xauto-cache-dir=$autoCacheDir",
+        )
+        val compilationResult = compileToExecutableInTwoStages(rootDir, secondStageCompilerArgs)
+
+        assertIs<TestCompilationResult.Failure>(compilationResult)
+
+        // Check only the first 5 lines because the rest contains a stack trace.
+        val output = compilationResult.toOutput().sanitizeCompilationOutput()
+            .lines().take(5).joinToString("\n")
+
+        val goldenData = rootDir.resolve("output.txt")
+
+        TestDataAssertions.assertEqualsToFile(goldenData, output)
+    }
+
+    @Test
+    fun testIncrementalBuildErrorMessage() {
+        // Disable when not using cache:
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>() == CacheMode.WithoutCache)
+        // MinGW support for caches is limited to stdlib, so these tests won't work as expected.
+        Assumptions.assumeFalse(targets.testTarget == KonanTarget.MINGW_X64)
+
+        val rootDir = File("native/native.tests/testData/compilerOutput/incrementalBuildErrorMessage")
+
+        // Make sure the stdlib cache is built. Otherwise, it will fail instead of the main.klib incremental cache.
+        compileToExecutableInTwoStages(rootDir).assertSuccess()
+
+        val icCacheDir = buildDir.resolve("ic_cache")
+        icCacheDir.mkdirs()
+
+        val secondStageCompilerArgs = listOf(
+            // Trigger the cache compilation to crash by passing an invalid flag:
+            "-Xoverride-konan-properties=additionalCacheFlags=-Xpartial-linkage=invalid-mode",
+            "-Xic-cache-dir=${icCacheDir.absolutePath}",
+            "-Xenable-incremental-compilation"
+        )
+        val compilationResult = compileToExecutableInTwoStages(rootDir, secondStageCompilerArgs)
+
+        assertIs<TestCompilationResult.Failure>(compilationResult)
+
+        // Check only the first 5 lines because the rest contains a stack trace.
+        val output = compilationResult.toOutput().sanitizeCompilationOutput()
+            .lines().take(5).joinToString("\n")
+
+        val goldenData = rootDir.resolve("output.txt")
+
+        TestDataAssertions.assertEqualsToFile(goldenData, output)
+    }
+
+    private fun compileToExecutableInTwoStages(
+        rootDir: File,
+        secondStageCompilerArgs: List<String> = emptyList(),
+    ): TestCompilationResult<out TestCompilationArtifact.Executable> {
+        val testCase = generateTestCaseWithSingleFile(
+            rootDir.resolve("main.kt"),
+            freeCompilerArgs = TestCompilerArgs.EMPTY,
+            extras = TestCase.NoTestRunnerExtras("main"),
+            testKind = TestKind.STANDALONE_NO_TR,
+        )
+
+        val libraryCompilation = LibraryCompilation(
+            testRunSettings,
+            freeCompilerArgs = testCase.freeCompilerArgs,
+            sourceModules = testCase.modules,
+            dependencies = emptyList(),
+            expectedArtifact = TestCompilationArtifact.KLIB(buildDir.resolve("main.klib"))
+        )
+
+        val libraryCompilationAsDependency = CompiledDependency(
+            libraryCompilation,
+            TestCompilationDependencyType.IncludedLibrary
+        )
+        val compilation = ExecutableCompilation(
+            testRunSettings,
+            freeCompilerArgs = TestCompilerArgs(secondStageCompilerArgs),
+            sourceModules = emptyList(),
+            extras = testCase.extras,
+            dependencies = listOf(libraryCompilationAsDependency),
+            expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("main")),
+        )
+
+        return compilation.result
     }
 
     fun String.sanitizeCompilationOutput(): String = lines().joinToString(separator = "\n") { line ->
