@@ -8,10 +8,7 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 public fun __root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U29202D_U20Swift_Int8__(block: kotlin.native.internal.NativePtr): Byte {
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Byte)->Byte>(block);
-        { arg0: Byte ->
-            val _result = kotlinFun(arg0)
-            _result
-        }
+        { arg0: Byte -> kotlinFun(arg0) }
     }
     val _result = consume_block_with_byte_id(__block)
     return _result
@@ -21,10 +18,7 @@ public fun __root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U
 public fun __root___consume_block_with_uint_id__TypesOfArguments__U28Swift_UInt32U29202D_U20Swift_UInt32__(block: kotlin.native.internal.NativePtr): UInt {
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(UInt)->UInt>(block);
-        { arg0: UInt ->
-            val _result = kotlinFun(arg0)
-            _result
-        }
+        { arg0: UInt -> kotlinFun(arg0) }
     }
     val _result = consume_block_with_uint_id(__block)
     return _result

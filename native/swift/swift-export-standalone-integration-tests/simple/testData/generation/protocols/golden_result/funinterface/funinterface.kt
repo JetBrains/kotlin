@@ -15,10 +15,7 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 public fun funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
-        {
-            val _result = kotlinFun()
-            _result
-        }
+        { kotlinFun() }
     }
     val _result = funinterface.FunctionalInterface(__function)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
@@ -54,10 +51,7 @@ public fun funinterface_FunctorClass_invoke(self: kotlin.native.internal.NativeP
 public fun funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
-        {
-            val _result = kotlinFun()
-            _result
-        }
+        { kotlinFun() }
     }
     val _result = funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation(__function)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
@@ -74,10 +68,7 @@ public fun funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke(sel
 public fun funinterface__123FunctionalInterfaceWithLeadingNumbers__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
-        {
-            val _result = kotlinFun()
-            _result
-        }
+        { kotlinFun() }
     }
     val _result = funinterface._123FunctionalInterfaceWithLeadingNumbers(__function)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
@@ -94,10 +85,7 @@ public fun funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke(self: k
 public fun funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
-        {
-            val _result = kotlinFun()
-            _result
-        }
+        { kotlinFun() }
     }
     val _result = funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation(__function)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
@@ -114,10 +102,7 @@ public fun funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAn
 public fun funinterface__FunctionalInterfaceWithLeadingUnderscore__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
-        {
-            val _result = kotlinFun()
-            _result
-        }
+        { kotlinFun() }
     }
     val _result = funinterface._FunctionalInterfaceWithLeadingUnderscore(__function)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
@@ -134,10 +119,7 @@ public fun funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke(self: k
 public fun funinterface_functionalInterfaceWithAlreadyLowercaseLeading__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
-        {
-            val _result = kotlinFun()
-            _result
-        }
+        { kotlinFun() }
     }
     val _result = funinterface.functionalInterfaceWithAlreadyLowercaseLeading(__function)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)

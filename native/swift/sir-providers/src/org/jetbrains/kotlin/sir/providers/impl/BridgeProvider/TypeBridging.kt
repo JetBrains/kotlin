@@ -765,8 +765,16 @@ internal sealed class Bridge(
                             valueExpression.convertBlockPtrToKotlinFunction(kotlinFunctionTypeRendered)
                         )
                         +block(defineArgs?.let { MixedAST.LambdaParameters(it, isSwift = false) }) {
-                            +"_result".variable(isSwift = false).op(MixedAST.Operator.ASSIGN, "kotlinFun".ast().invoke(*callArgs.toTypedArray()))
-                            +returnType.inKotlinSources.swiftToKotlin(typeNamer, "_result".ast())
+                            val kotlinFunCall = "kotlinFun".ast().invoke(*callArgs.toTypedArray())
+                            val resultVariable = "_result".variable(isSwift = false)
+                            val resultVariableAssignment = resultVariable.op(MixedAST.Operator.ASSIGN, kotlinFunCall)
+                            val transformedResult = returnType.inKotlinSources.swiftToKotlin(typeNamer, resultVariable.identifier)
+                            if (transformedResult == resultVariable.identifier) {
+                                +kotlinFunCall
+                            } else {
+                                +resultVariableAssignment
+                                +transformedResult
+                            }
                         }
                     }
                 }

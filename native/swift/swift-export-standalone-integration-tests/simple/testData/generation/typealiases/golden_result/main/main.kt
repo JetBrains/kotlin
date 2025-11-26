@@ -312,10 +312,7 @@ public fun __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMu
 public fun __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Unit {
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(block);
-        {
-            val _result = kotlinFun()
-            Unit
-        }
+        { val _result = kotlinFun(); Unit }
     }
     consume_closure(__block)
 }
