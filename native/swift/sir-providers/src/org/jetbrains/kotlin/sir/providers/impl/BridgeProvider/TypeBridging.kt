@@ -654,18 +654,37 @@ internal sealed class Bridge(
     class AsOptionalWrapper(
         val wrappedObject: AnyBridge,
     ) : Bridge(
-        wrappedObject.swiftType.optional(),
-        wrappedObject.typeList.map { AnyBridge.TypePair(it.kotlinType, it.cType.nullable) },
+        swiftType = wrappedObject.swiftType.optional(),
+        typeList = wrappedObject.typeList.map {
+            // We can't use _Nullable on primitive numbers
+            val cType = if (it.kotlinType.isPrimitiveNumber) CType.NSNumber.nullable else it.cType.nullable
+            // If we use NSNumber* in ObjC we have to use NativePtr in Kotlin
+            val kotlinType = if (it.kotlinType.isPrimitiveNumber) KotlinType.KotlinObject else it.kotlinType
+            AnyBridge.TypePair(kotlinType, cType)
+        },
     ) {
+        private val nsNumberBridge by lazy { AsNSNumber((wrappedObject.swiftType as SirNominalType).typeArguments.single()) }
 
         override val inKotlinSources: ValueConversion
             get() = object : ValueConversion {
                 override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: MixedAST): MixedAST {
                     require(wrappedObject is SwiftToKotlinBridge)
-                    return valueExpression.eq(MixedAST.NativeNull).cond(
-                        MixedAST.Null,
-                        wrappedObject.inKotlinSources.swiftToKotlin(typeNamer, valueExpression)
-                    )
+
+                    val wrappedResult = wrappedObject.inKotlinSources.swiftToKotlin(typeNamer, valueExpression)
+                    val condition = if (typeList.size > 1 && wrappedResult is MixedAST.BinaryOp) {
+                        wrappedResult.replace(operator = MixedAST.Operator.OR) {
+                            it.op(MixedAST.Operator.EQUALS, MixedAST.NativeNull)
+                        }
+                    } else {
+                        valueExpression.op(MixedAST.Operator.EQUALS, MixedAST.NativeNull)
+                    }
+                    val result = if (wrappedResult is MixedAST.BinaryOp) {
+                        wrappedResult.replace { nsNumberBridge.inKotlinSources.swiftToKotlin(typeNamer, it) }
+                    } else {
+                        wrappedResult
+                    }
+
+                    return condition.cond(MixedAST.Null, result)
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: MixedAST): MixedAST {
@@ -684,6 +703,18 @@ internal sealed class Bridge(
                             wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsBlock ||
                             wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
                 )
+                val wrappedResult = wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, valueExpression)
+                return wrappedResult.replace(operator = MixedAST.Operator.COMMA) {
+                    valueExpression.mapSwift {
+                        if (it is MixedAST.BinaryOp) {
+                            it
+                        } else {
+                            nsNumberBridge.inSwiftSources.swiftToKotlin(typeNamer, it)
+                        }
+                    }.op(MixedAST.Operator.SWIFT_ELVIS, wrappedObject.nil())
+                }
+
+
                 return valueExpression.mapSwift {
                     wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it)
                 }.op(MixedAST.Operator.SWIFT_ELVIS, wrappedObject.nil())

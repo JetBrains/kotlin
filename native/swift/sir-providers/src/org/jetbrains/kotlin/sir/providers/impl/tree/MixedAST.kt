@@ -137,6 +137,7 @@ internal sealed class MixedAST {
         AS_EXCL(" as! "),
         ASSIGN(" = "),
         EQUALS(" == "),
+        OR(representation = " || "),
         IN(" in "),
         SWIFT_ELVIS(" ?? "),
         RANGE_KOTLIN(" .. "),

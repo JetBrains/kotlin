@@ -16,11 +16,10 @@ func testSimple() throws {
 
 @Test
 func nullable() throws {
-    // Currently crashes with SIGSEGV
-    //let n1 = nullable(some: -10 ... -5)
-    //let n2 = nullable(some: nil)
-    //#expect(n1 == -11 ... -4)
-    //#expect(n2 == nil)
+    let n1 = nullable(some: -10 ... -5)
+    let n2 = nullable(some: nil)
+    #expect(n1 == -11 ... -4)
+    #expect(n2 == nil)
 }
 
 @Test
