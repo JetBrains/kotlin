@@ -75,8 +75,8 @@ internal constructor(
             fs.delete { spec ->
                 spec.delete(deletedFiles.flatMap {
                     listOf(
-                        outputDirectory.file(it.file.name),
-                        outputDirectory.file("${it.file.nameWithoutExtension}.js.map")
+                        outputDirectory.file(it.normalizedPath),
+                        outputDirectory.file("${it.normalizedPath.substringBeforeLast(".")}.js.map")
                     )
                 })
             }
@@ -87,7 +87,7 @@ internal constructor(
                 spec.executable = executable.get()
                 spec.workingDir = inputDirectory.get().asFile
                 spec.args = SwcConfig.getArgumentsWhen(
-                    inputDirectoryOrFiles = filesToTranspile.map { it.file.name },
+                    inputDirectoryOrFiles = filesToTranspile.map { it.normalizedPath },
                     outputDirectory = outputDirectory.get().asFile.absolutePath,
                     configPath = configFile.get().asFile.absolutePath,
                     fileExtension = fileExtension.get(),
