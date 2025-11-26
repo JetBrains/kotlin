@@ -599,7 +599,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
             return kotlinx_serialization_internal_TaggedDecoder_decodeNotNullMark(self.__externalRCRef())
         }
         public final func decodeNull() -> Swift.Never? {
-            return { kotlinx_serialization_internal_TaggedDecoder_decodeNull(self.__externalRCRef()); return nil; }()
+            return { kotlinx_serialization_internal_TaggedDecoder_decodeNull(self.__externalRCRef()); return nil }()
         }
         public final func decodeShort() -> Swift.Int16 {
             return kotlinx_serialization_internal_TaggedDecoder_decodeShort(self.__externalRCRef())
@@ -1816,7 +1816,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             return kotlinx_serialization_encoding_AbstractDecoder_decodeNotNullMark(self.__externalRCRef())
         }
         open func decodeNull() -> Swift.Never? {
-            return { kotlinx_serialization_encoding_AbstractDecoder_decodeNull(self.__externalRCRef()); return nil; }()
+            return { kotlinx_serialization_encoding_AbstractDecoder_decodeNull(self.__externalRCRef()); return nil }()
         }
         open func decodeShort() -> Swift.Int16 {
             return kotlinx_serialization_encoding_AbstractDecoder_decodeShort(self.__externalRCRef())
@@ -2402,7 +2402,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder where Se
         return kotlinx_serialization_encoding_Decoder_decodeNotNullMark(self.__externalRCRef())
     }
     public func decodeNull() -> Swift.Never? {
-        return { kotlinx_serialization_encoding_Decoder_decodeNull(self.__externalRCRef()); return nil; }()
+        return { kotlinx_serialization_encoding_Decoder_decodeNull(self.__externalRCRef()); return nil }()
     }
     public func decodeShort() -> Swift.Int16 {
         return kotlinx_serialization_encoding_Decoder_decodeShort(self.__externalRCRef())

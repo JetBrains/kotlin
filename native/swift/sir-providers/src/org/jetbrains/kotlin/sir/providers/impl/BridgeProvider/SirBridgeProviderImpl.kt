@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.*
+import org.jetbrains.kotlin.sir.providers.impl.tree.MixedAST
+import org.jetbrains.kotlin.sir.providers.impl.tree.ast
+import org.jetbrains.kotlin.sir.providers.impl.tree.invoke
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
@@ -247,9 +250,11 @@ private class BridgeFunctionDescriptor(
         } else if (errorParameter != null) {
             add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
             add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvocationLineForCBridge(typeNamer))
-            val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
+            val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name.ast())
             add("guard ${errorParameter.name} == nil else { throw KotlinError(wrapped: $error) }")
-            resultTransformer?.let { add(it(descriptor.returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result"))) }
+            resultTransformer?.let {
+                add(it(descriptor.returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result".ast()).toString()))
+            }
         } else {
             val swiftCallAndTransformationLines = descriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer)
             addAll(swiftCallAndTransformationLines.dropLast(1))
@@ -308,7 +313,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
 
     allParameters.forEach {
         val parameterName = "__${it.name}".kotlinIdentifier
-        add("${indent}val $parameterName = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name.kotlinIdentifier)}")
+        add("${indent}val $parameterName = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name.kotlinIdentifier.ast())}")
     }
     val callSite = buildCallSite()
     val resultName = "_result"
@@ -342,7 +347,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
                 """
             try {
                 val $resultName = $callSite
-                return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}
+                return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName.ast())}
             } catch (error: Throwable) {
                 __${errorParameter.name}.value = StableRef.create(error).asCPointer()
                 return $defaultValue
@@ -351,28 +356,28 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
             )
         } else {
             add("${indent}val $resultName = $callSite")
-            add("${indent}return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}")
+            add("${indent}return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName.ast())}")
         }
     }
     add("}")
 }
 
-private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: SirTypeNamer): String {
-    val parameters = allParameters.filter { it.isRenderable }.joinToString {
+private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: SirTypeNamer): MixedAST {
+    val parameters = allParameters.filter { it.isRenderable }.map {
         // We fix ugly `self` escaping here. This is the only place we'd otherwise need full support for swift's contextual keywords
-        it.bridge.inSwiftSources.swiftToKotlin(typeNamer, it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier)
+        it.bridge.inSwiftSources.swiftToKotlin(typeNamer, (it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier).ast())
     }
-    return "$cBridgeName($parameters)"
+    return cBridgeName.ast().invoke(*parameters.toTypedArray())
 }
 
 private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer: SirTypeNamer): List<String> {
     val swiftInvocation = swiftInvocationLineForCBridge(typeNamer)
     if (returnType.typeList.size <= 1) {
-        return listOf(returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvocation))
+        return listOf(returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvocation).toString())
     }
     return buildList {
         add("let _result = $swiftInvocation")
-        add(returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result"))
+        add(returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result".ast()).toString())
     }
 }
 
@@ -448,7 +453,7 @@ private fun BridgeFunctionDescriptor.additionalImports(): List<String> = listOfN
 private val BridgeFunctionDescriptor.safeImportName: String
     get() = kotlinFqName.pathSegments().joinToString(separator = "_") { it.asString().replace("_", "__") }
 
-private fun String.prependIndentToTrailingLines(indent: String): String = this.lines().let { lines ->
+private fun MixedAST.prependIndentToTrailingLines(indent: String): String = toString().lines().let { lines ->
     lines.singleOrNull() ?: buildString {
         append(lines.first())
         for (line in lines.drop(1)) {

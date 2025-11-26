@@ -24,7 +24,7 @@ public final class Bar: KotlinRuntime.KotlinBase {
 }
 public var nullableNothingVariable: Swift.Never? {
     get {
-        return { __root___nullableNothingVariable_get(); return nil; }()
+        return { __root___nullableNothingVariable_get(); return nil }()
     }
     set {
         return __root___nullableNothingVariable_set__TypesOfArguments__Swift_Optional_Swift_Never___()
@@ -49,7 +49,7 @@ public func meaningOfLife() -> Swift.Never {
 public func meaningOfLife(
     input: Swift.Int32
 ) -> Swift.Never? {
-    return { __root___meaningOfLife__TypesOfArguments__Swift_Int32__(input); return nil; }()
+    return { __root___meaningOfLife__TypesOfArguments__Swift_Int32__(input); return nil }()
 }
 public func meaningOfLife(
     input: Swift.Never?
@@ -67,5 +67,5 @@ public func nullableNothingInput(
     return __root___nullableNothingInput__TypesOfArguments__Swift_Optional_Swift_Never___()
 }
 public func nullableNothingOutput() -> Swift.Never? {
-    return { __root___nullableNothingOutput(); return nil; }()
+    return { __root___nullableNothingOutput(); return nil }()
 }
