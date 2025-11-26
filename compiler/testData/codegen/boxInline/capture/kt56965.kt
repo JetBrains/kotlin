@@ -9,5 +9,5 @@ fun box() = foo {
         fun local() = localInline { it }
         inline fun localInline(block: (String) -> String) = block(s) + "K"
     }
-    return obj.local()
+    obj.local()
 }
