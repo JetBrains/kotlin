@@ -3,6 +3,7 @@
 // the same test also diverges in non-kmp test infrastructure
 // LL_FIR_DIVERGENCE
 
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: lib
 // FILE: lib.kt
 

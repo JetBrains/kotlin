@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // TODO: should we disable NOTHING_TO_INLINE in JS backend?
 // TODO: uncomment declarations in case we decide to implement KT-14031

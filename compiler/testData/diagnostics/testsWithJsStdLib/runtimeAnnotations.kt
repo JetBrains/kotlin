@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: +RUNTIME_ANNOTATION_NOT_SUPPORTED
 @Retention(AnnotationRetention.BINARY)
 annotation class X

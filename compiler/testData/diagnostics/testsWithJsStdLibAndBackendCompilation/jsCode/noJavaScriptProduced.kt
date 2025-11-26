@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_DIFFERENCE
 // IGNORE_FIR_DIAGNOSTICS
 // The diagnostic cannot be implemented with the FIR frontend checker because it requires constant evaluation over FIR.

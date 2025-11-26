@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters
 external class Scope1
 class Scope2

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun interface Foo<T> {
     fun invoke(): T
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +BreakContinueInInlineLambdas +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // ISSUE: KT-68975

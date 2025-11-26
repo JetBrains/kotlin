@@ -1,8 +1,8 @@
+// RUN_PIPELINE_TILL: BACKEND
 // RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 // FILE: Function1.kt
 @file:Suppress("OPT_IN_USAGE")
 package Function1
-
 <!EXPORTING_JS_NAME_CLASH_ES!>@JsExport fun test() = 1<!>
 
 // FILE: Function2.kt
