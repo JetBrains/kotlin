@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 inline fun <T, reified K> bar() {}
 
 fun foo() {

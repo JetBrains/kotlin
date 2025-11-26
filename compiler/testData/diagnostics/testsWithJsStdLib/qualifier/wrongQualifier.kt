@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 @file:JsQualifier(<!WRONG_JS_QUALIFIER!>""<!>)
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_DIFFERENCE
 // The diagnostic cannot be implemented with the FIR frontend checker because it requires constant evaluation over FIR.
 // The diagnostic is implemented as a klib check over IR.

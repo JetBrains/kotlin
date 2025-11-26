@@ -2,6 +2,7 @@
 // KT-82218
 // LL_FIR_DIVERGENCE
 
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1
 // FILE: a.kt
 package foo

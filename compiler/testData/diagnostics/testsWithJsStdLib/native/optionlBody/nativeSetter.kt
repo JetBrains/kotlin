@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -DEPRECATION
 @nativeSetter
 fun String.foo(n: Int, v: Any)

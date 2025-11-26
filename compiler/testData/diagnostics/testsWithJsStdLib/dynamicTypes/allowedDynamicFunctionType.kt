@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // MARK_DYNAMIC_CALLS
 
 fun withDynamicReceiver(d: dynamic.() -> Unit) {}

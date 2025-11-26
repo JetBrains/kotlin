@@ -56,7 +56,7 @@ abstract class AbstractJsDiagnosticTestBase(val parser: FirParser) : AbstractKot
         }
 
         useAfterAnalysisCheckers(
-            ::PhasedPipelineChecker.bind(TestPhase.FRONTEND),
+            ::PhasedPipelineChecker,
             ::BlackBoxCodegenSuppressor,
         )
         enableMetaInfoHandler()

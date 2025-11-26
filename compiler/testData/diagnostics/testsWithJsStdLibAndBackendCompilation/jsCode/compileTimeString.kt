@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 
 fun testSimpleString() {
     js("var a = 123;")

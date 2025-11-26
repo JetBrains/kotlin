@@ -2,6 +2,7 @@
 // KT-82245
 // LL_FIR_DIVERGENCE
 
+// RUN_PIPELINE_TILL: FRONTEND
 // IGNORE_BACKEND_K1: JS_IR
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // LANGUAGE: +AllowExpectDeclarationsInJsExport +MultiPlatformProjects
