@@ -4234,6 +4234,7 @@ public class kotlin/jvm/internal/Intrinsics {
 	public static fun checkNotNull (Ljava/lang/Object;)V
 	public static fun checkNotNull (Ljava/lang/Object;Ljava/lang/String;)V
 	public static fun checkNotNullExpressionValue (Ljava/lang/Object;Ljava/lang/String;)V
+	public static fun checkNotNullInCast (Ljava/lang/Object;Ljava/lang/Class;)V
 	public static fun checkNotNullParameter (Ljava/lang/Object;Ljava/lang/String;)V
 	public static fun checkParameterIsNotNull (Ljava/lang/Object;Ljava/lang/String;)V
 	public static fun checkReturnedValueIsNotNull (Ljava/lang/Object;Ljava/lang/String;)V

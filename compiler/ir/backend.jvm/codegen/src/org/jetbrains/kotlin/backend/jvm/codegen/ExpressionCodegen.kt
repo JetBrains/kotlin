@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -1570,7 +1568,7 @@ class ExpressionCodegen(
         val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data, context.evaluatorData)
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
-            IrInlineIntrinsicsSupport(classCodegen, element, irFunction.fileParent),
+            IrInlineIntrinsicsSupport(classCodegen, element, irFunction.fileParent, irFunction),
             context.typeSystem,
             context.irBuiltIns,
         )

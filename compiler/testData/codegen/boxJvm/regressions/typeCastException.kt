@@ -1,8 +1,6 @@
+// LANGUAGE: -JvmOptimizedNullCastMessages
 // TARGET_BACKEND: JVM
-
 // WITH_STDLIB
-
-import java.util.ArrayList
 
 // KT-2823 TypeCastException has no message
 // KT-5121 Better error message in on casting null to non-null type

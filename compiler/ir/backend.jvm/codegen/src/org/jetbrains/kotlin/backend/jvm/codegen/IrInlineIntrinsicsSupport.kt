@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.inlineScopeVisibility
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
@@ -34,9 +35,13 @@ class IrInlineIntrinsicsSupport(
     private val classCodegen: ClassCodegen,
     private val reportErrorsOn: IrElement,
     private val containingFile: IrFile,
+    private val irFunction: IrFunction,
 ) : ReifiedTypeInliner.IntrinsicsSupport {
     override val config: JvmBackendConfig
         get() = classCodegen.context.config
+
+    override val isInInlineScope: Boolean
+        get() = irFunction.inlineScopeVisibility != null
 
     override fun putClassInstance(v: InstructionAdapter, type: IrType) {
         ExpressionCodegen.generateClassInstance(v, type, classCodegen.typeMapper, wrapPrimitives = false)

@@ -1,3 +1,4 @@
+// LANGUAGE: -JvmOptimizedNullCastMessages
 inline fun <reified T> Any?.foo() = this as T
 
 fun bar(x: Any?) = x.foo<String>()
