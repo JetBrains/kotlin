@@ -15,6 +15,7 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.emptyList
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
@@ -129,6 +130,10 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     ArgumentsCommonCompilerArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+  init {
+    optionsMap["COMPILER_PLUGINS"] = emptyList<CompilerPlugin>()
+  }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
