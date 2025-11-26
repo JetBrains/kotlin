@@ -74,6 +74,11 @@ internal fun KaSession.processOwnDeclarationsMappedSpecialSignaturesAware(
         for (callableSymbol in callableDeclarations) {
             if (callableSymbol is KaNamedFunctionSymbol) {
                 val kotlinCollectionFunction = findOverriddenCollectionSymbol(callableSymbol)
+                if (kotlinCollectionFunction == null) {
+                    add(callableSymbol)
+                    continue
+                }
+
                 val shouldCreateRegularDeclaration = processPossiblyMappedMethod(
                     containingClass = containingClass,
                     ownFunction = callableSymbol,
@@ -125,7 +130,7 @@ internal fun hasCollectionSupertype(allSupertypes: List<KaClassType>): Boolean =
  *
  * @param containingClass The containing light class
  * @param ownFunction The Kotlin function symbol to process
- * @param kotlinCollectionFunction The overridden symbol from Kotlin collections, or null if not overriding
+ * @param kotlinCollectionFunction The overridden symbol from Kotlin collections
  * @param allSupertypes All supertypes of the containing class
  * @param result Mutable list where generated PSI methods are added
  * @param originKind The origin kind of the original Kotlin function symbol
@@ -137,12 +142,11 @@ internal fun hasCollectionSupertype(allSupertypes: List<KaClassType>): Boolean =
 internal fun KaSession.processPossiblyMappedMethod(
     containingClass: SymbolLightClassForClassOrObject,
     ownFunction: KaNamedFunctionSymbol,
-    kotlinCollectionFunction: KaNamedFunctionSymbol?,
+    kotlinCollectionFunction: KaNamedFunctionSymbol,
     allSupertypes: List<KaClassType>,
     result: MutableList<PsiMethod>,
     originKind: JvmDeclarationOriginKind,
 ): Boolean {
-    if (kotlinCollectionFunction == null) return true
     val javaMethod = tryToMapKotlinCollectionMethodToJavaMethod(kotlinCollectionFunction, allSupertypes) ?: return true
     val collectionSupertype = allSupertypes.find { it.classId == kotlinCollectionFunction.callableId?.classId } ?: return true
     val javaCollection = javaMethod.containingClass ?: return true
@@ -441,13 +445,9 @@ private fun PsiMethod.wrap(
 
 @Suppress("UnstableApiUsage")
 private fun KaSession.tryToMapKotlinCollectionMethodToJavaMethod(
-    kotlinCollectionFunction: KaNamedFunctionSymbol?,
+    kotlinCollectionFunction: KaNamedFunctionSymbol,
     allSupertypes: List<KaClassType>,
 ): PsiMethod? {
-    if (kotlinCollectionFunction == null || !kotlinCollectionFunction.isFromKotlinCollectionsPackage()) {
-        return null
-    }
-
     val name = kotlinCollectionFunction.name.asString()
     if (name == "addAll") {
         // "addAll" has two overloads from different types with different number of parameters
@@ -491,7 +491,7 @@ private fun KaSession.getJavaPsiClass(allSupertypes: List<KaClassType>, kotlinCl
     return javaCollectionSymbol.psi as? PsiClass
 }
 
-private fun KaCallableSymbol.isFromKotlinCollectionsPackage(): Boolean =
+internal fun KaCallableSymbol.isFromKotlinCollectionsPackage(): Boolean =
     callableId?.packageName?.startsWith(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME) == true
 
 private fun KaSession.findOverriddenCollectionSymbol(symbol: KaNamedFunctionSymbol): KaNamedFunctionSymbol? =
