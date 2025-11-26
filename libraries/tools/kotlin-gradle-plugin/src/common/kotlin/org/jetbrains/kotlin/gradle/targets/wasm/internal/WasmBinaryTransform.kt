@@ -12,8 +12,11 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.CompileClasspath
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyOf
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
@@ -34,10 +37,7 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
         @get:Classpath
         abstract val defaultCompilerClasspath: ConfigurableFileCollection
 
-        @get:Internal
-        abstract val languageVersion: Property<String>
-
-        @get:Internal
+        @get:Input
         abstract val kotlinPluginVersion: Property<String>
 
         @get:Internal
@@ -56,13 +56,17 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
         abstract val buildDir: Property<File>
 
         @get:Internal
-        abstract val moduleName: Property<String>
-
-        @get:Internal
         internal abstract val libraryFilterCacheService: Property<LibraryFilterCachingService>
 
-        @get:Internal
+        @get:Input
         internal abstract val enhancedFreeCompilerArgs: ListProperty<String>
+
+//        @get:Classpath
+//        internal abstract val classpath: ConfigurableFileCollection
+
+        @get:Input
+        @get:Optional
+        internal abstract val invalidate: Property<String>
     }
 
     @get:Inject
@@ -97,7 +101,7 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
             return
         }
 
-        val args = parameters.compilerOptions.get()
+        val args = parameters.compilerOptions.get().copyOf()
         args.apply {
             this.outputDir = outputDir.absolutePath
             moduleName = inputFile.nameWithoutExtension
@@ -107,17 +111,18 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
 
         args.freeArgs += parameters.enhancedFreeCompilerArgs.get()
 
-        args.debuggerCustomFormatters = true
-        args.main = "call"
-        args.irProduceJs = true
-        args.sourceMap = true
-        args.sourceMapEmbedSources = "never"
-        args.target = "es5"
-        args.irModuleName = null
+//        args.debuggerCustomFormatters = true
+//        args.main = "call"
+//        args.irProduceJs = true
+//        args.sourceMap = true
+//        args.sourceMapEmbedSources = "never"
+//        args.target = "es5"
+//        args.irModuleName = null
+//        args.multiPlatform = true
 
-        args.freeArgs = args.freeArgs.filterNot { it.startsWith("-Xir-module-name=") }
+//        args.freeArgs = args.freeArgs.filterNot { it.startsWith("-Xir-module-name=") }
 
-        println("TRANSFORMING ")
+        println("TRANSFORMING")
         println(ArgumentUtils.convertArgumentsToStringList(args))
 
         val workArgs = GradleKotlinCompilerWorkArguments(
@@ -147,7 +152,7 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
             errorsFiles = null,
             kotlinPluginVersion = parameters.kotlinPluginVersion.get(),
             //no need to log warnings in MessageCollector hear it will be logged by compiler
-            kotlinLanguageVersion = parameters.languageVersion.orNull?.let { v ->
+            kotlinLanguageVersion = args.languageVersion?.let { v ->
                 KotlinVersion.fromVersion(
                     v
                 )
