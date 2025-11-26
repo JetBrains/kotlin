@@ -191,7 +191,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             IrLinkerFakeOverrideProvider(
                 linker = this,
                 symbolTable = symbolTable,
-                mangler = JKlibIrMangler,
+                mangler = JKlibIrMangler(),
                 typeSystem = IrTypeSystemContextImpl(builtIns),
                 friendModules = emptyMap(), // TODO: provide friend modules?
                 partialLinkageSupport = partialLinkageSupport,
