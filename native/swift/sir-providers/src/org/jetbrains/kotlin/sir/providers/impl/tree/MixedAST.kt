@@ -58,9 +58,11 @@ internal sealed class MixedAST {
                 appendLine()
             }
             if (separateLines) {
-                for (statement in statements) {
+                for ((index, statement) in statements.withIndex()) {
                     append("|    ")
-                    appendLine(statement)
+                    append(statement)
+                    val nextIsBlock = statements.getOrNull(index + 1) is Block
+                    appendLine(if (nextIsBlock) ";" else "")
                 }
             } else {
                 append(statements.joinToString(separator = "; "))
