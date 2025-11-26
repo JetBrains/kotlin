@@ -118,7 +118,7 @@ private fun FirElement.toConstantValue(session: FirSession, scopeSession: ScopeS
                 (it.singleOrNull()?.unwrapArgument() as? FirCollectionLiteral)?.arguments ?: it
             }
 
-            return ArrayValue(arguments.mapNotNull { it.toConstantValue(session, scopeSession) })
+            ArrayValue(arguments.mapNotNull { it.toConstantValue(session, scopeSession) })
         }
         else -> null
     }

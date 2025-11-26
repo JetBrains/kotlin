@@ -3351,7 +3351,7 @@ open class PsiRawFirBuilder(
             } else {
                 val firOperation = operationToken.toFirOperation()
                 if (firOperation in FirOperation.ASSIGNMENTS) {
-                    return expression.left.generateAssignment(
+                    expression.left.generateAssignment(
                         source,
                         expression.left?.toFirSourceElement(),
                         rightArgument,

@@ -169,7 +169,7 @@ private fun buildResultingTypeAndAdaptation(
                 ?: fir.specialFunctionTypeKind(context.session)
                 ?: FunctionTypeKind.Function
 
-            return createFunctionType(
+            createFunctionType(
                 if (callableReferenceAdaptation == null || forceReflectionType) baseFunctionTypeKind.reflectKind() else baseFunctionTypeKind.nonReflectKind(),
                 parameters,
                 receiverType = receiverType.takeIf { fir.receiverParameter != null },

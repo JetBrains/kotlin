@@ -68,7 +68,7 @@ object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement
         return when {
             // Necessary for finding the next leaf in complex binary expressions, for example 'a foo"asdsfsa"foo a'
             leaf == null && parent.tokenType == BINARY_EXPRESSION -> parent.getLeaf(direction, treeStructure)
-            leaf == null -> return null
+            leaf == null -> null
             else -> {
                 // This is necessary to obtain the simplest node, as the found leaf can be a complex expression
                 var result = leaf

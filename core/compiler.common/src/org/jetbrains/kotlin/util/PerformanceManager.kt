@@ -433,7 +433,7 @@ class PerformanceManagerImpl(targetPlatform: TargetPlatform, presentableName: St
 }
 
 fun <T> PerformanceManager?.tryMeasureSideTime(phaseSideType: PhaseSideType, block: () -> T): T {
-    return if (this == null) return block() else measureSideTime(phaseSideType, block)
+    return if (this == null) block() else measureSideTime(phaseSideType, block)
 }
 
 inline fun <T> PerformanceManager?.tryMeasurePhaseTime(phaseType: PhaseType, block: () -> T): T {

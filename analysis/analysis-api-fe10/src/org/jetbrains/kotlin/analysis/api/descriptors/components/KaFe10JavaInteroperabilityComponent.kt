@@ -195,7 +195,7 @@ internal class KaFe10JavaInteroperabilityComponent(
                         }?.fqNameForClassNameWithoutDollars?.asString()
                     }
                     else -> {
-                        return if (containingSymbolOrSelf.isTopLevel) {
+                        if (containingSymbolOrSelf.isTopLevel) {
                             descriptor?.let(DescriptorToSourceUtils::getContainingFile)
                                 ?.takeUnless { it.isScript() }
                                 ?.javaFileFacadeFqName?.asString()

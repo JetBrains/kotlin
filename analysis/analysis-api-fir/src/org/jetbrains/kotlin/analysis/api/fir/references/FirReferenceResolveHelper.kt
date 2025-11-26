@@ -611,7 +611,7 @@ internal object FirReferenceResolveHelper {
                 )
             }
             is FirResolvedTypeRef -> {
-                return getSymbolsForResolvedTypeRef(typeRef, expression, session, symbolBuilder)
+                getSymbolsForResolvedTypeRef(typeRef, expression, session, symbolBuilder)
             }
             else -> throwUnexpectedFirElementError(
                 typeRef,

@@ -115,7 +115,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         return if (classSymbol.classId == GENERATED_CLASS_ID) {
-            return classIdsForMatchedClasses.keys.mapTo(mutableSetOf()) { it.shortClassName }
+            classIdsForMatchedClasses.keys.mapTo(mutableSetOf()) { it.shortClassName }
         } else {
             emptySet()
         }

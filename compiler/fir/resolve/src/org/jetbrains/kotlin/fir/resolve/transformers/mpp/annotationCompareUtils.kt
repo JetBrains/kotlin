@@ -134,7 +134,7 @@ private fun FirExpectActualMatchingContext.areAnnotationArgumentsEqual(
             }
             is FirAnnotation -> {
                 when (this.toResolvedCallableSymbol()) {
-                    !is FirConstructorSymbol -> return false
+                    !is FirConstructorSymbol -> false
                     else -> {
                         val constructorCall1 = this as FirFunctionCall
                         val annotationMapping1 = (constructorCall1.argumentList as FirResolvedArgumentList).toAnnotationArgumentMapping()

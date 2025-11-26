@@ -2134,7 +2134,7 @@ class LightTreeRawFirDeclarationBuilder(
                     processLegacyContractDescription(block, diagnostic)
                 }
                 if (generateHeader) {
-                    return buildEmptyExpressionBlock() to contractDescription
+                    buildEmptyExpressionBlock() to contractDescription
                 } else {
                     block to contractDescription
                 }

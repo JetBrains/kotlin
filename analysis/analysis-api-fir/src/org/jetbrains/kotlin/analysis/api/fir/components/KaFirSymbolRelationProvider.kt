@@ -512,7 +512,7 @@ internal class KaFirSymbolRelationProvider(
             val overloadabilityHelper = analysisSession.firSession.declarationOverloadabilityHelper
 
             return if (analysisSession.firSession.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
-                return overloadabilityHelper.getContextParameterShadowing(thisFirSymbol, otherFirSymbol) == BothWays
+                overloadabilityHelper.getContextParameterShadowing(thisFirSymbol, otherFirSymbol) == BothWays
             } else {
                 overloadabilityHelper.isConflicting(
                     thisFirSymbol,

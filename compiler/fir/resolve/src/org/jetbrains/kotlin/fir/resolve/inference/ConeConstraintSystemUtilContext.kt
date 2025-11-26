@@ -100,7 +100,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         return when (declaration) {
             is ConeLambdaWithTypeVariableAsExpectedTypeAtom -> {
                 val anonymousFunction = declaration.anonymousFunction
-                return if (anonymousFunction.isLambda) { // lambda - must return null in case of absent parameters
+                if (anonymousFunction.isLambda) { // lambda - must return null in case of absent parameters
                     if (anonymousFunction.valueParameters.isNotEmpty())
                         anonymousFunction.collectDeclaredValueParameterTypes()
                     else null

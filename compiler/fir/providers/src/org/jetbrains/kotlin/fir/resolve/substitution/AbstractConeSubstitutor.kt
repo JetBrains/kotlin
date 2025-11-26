@@ -68,13 +68,13 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
     private fun ConeKotlinType.substituteRecursive(): ConeKotlinType? {
         return when (this) {
             is ConeClassLikeType -> this.substituteArguments()
-            is ConeLookupTagBasedType, is ConeTypeVariableType -> return null
+            is ConeLookupTagBasedType, is ConeTypeVariableType -> null
             is ConeFlexibleType -> this.mapTypesOrNull(typeContext) { substituteOrNull(it) }
-            is ConeCapturedType -> return this.substitute(::substituteOrNull)
+            is ConeCapturedType -> this.substitute(::substituteOrNull)
             is ConeDefinitelyNotNullType -> this.substituteOriginal()
             is ConeIntersectionType -> this.substituteIntersectedTypes()
-            is ConeStubType -> return null
-            is ConeIntegerLiteralType -> return null
+            is ConeStubType -> null
+            is ConeIntegerLiteralType -> null
         }
     }
 

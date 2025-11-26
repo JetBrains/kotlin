@@ -119,7 +119,7 @@ internal fun FirBasedSymbol<*>.getContainingFile(): FirFile? {
     return when (this) {
         is FirCallableSymbol<*> -> moduleData.session.firProvider.getFirCallableContainerFile(this)
         is FirClassLikeSymbol<*> -> moduleData.session.firProvider.getFirClassifierContainerFileIfAny(this)
-        else -> return null
+        else -> null
     }
 }
 

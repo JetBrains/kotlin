@@ -136,7 +136,7 @@ context(context: CheckerContext)
 fun FirAnnotationContainer.getImplicitUseSiteTargetList(): List<AnnotationUseSiteTarget> {
     return when (this) {
         is FirValueParameter -> {
-            return if (context.findClosest<FirBasedSymbol<*>>().let { it is FirConstructorSymbol && it.isPrimary })
+            if (context.findClosest<FirBasedSymbol<*>>().let { it is FirConstructorSymbol && it.isPrimary })
                 UseSiteTargetsList.T_CONSTRUCTOR_PARAMETER
             else
                 emptyList()

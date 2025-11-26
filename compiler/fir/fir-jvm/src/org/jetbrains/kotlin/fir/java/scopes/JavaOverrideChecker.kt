@@ -353,10 +353,10 @@ class JavaOverrideChecker internal constructor(
             is FirNamedFunction -> {
                 if (receiverTypeRef == null) {
                     // TODO: setters
-                    return overrideCandidate.valueParameters.isEmpty()
+                    overrideCandidate.valueParameters.isEmpty()
                 } else {
                     if (overrideCandidate.valueParameters.size != 1) return false
-                    return isEqualTypes(
+                    isEqualTypes(
                         receiverTypeRef, overrideCandidate.valueParameters.single().returnTypeRef, ConeSubstitutor.Empty,
                         forceBoxCandidateType = false, forceBoxBaseType = false,
                         dontComparePrimitivity = false,
@@ -365,7 +365,7 @@ class JavaOverrideChecker internal constructor(
             }
             is FirProperty -> {
                 val overrideReceiverTypeRef = overrideCandidate.receiverParameter?.typeRef
-                return when {
+                when {
                     receiverTypeRef == null -> overrideReceiverTypeRef == null
                     overrideReceiverTypeRef == null -> false
                     else -> isEqualTypes(
