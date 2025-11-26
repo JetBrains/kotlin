@@ -422,6 +422,8 @@
 
 *Generated.java
 
+test-both-repos.txt @JetBrains/kotlin-build-infrastructure
+
 /.gitattributes @JetBrains/kotlin-build-infrastructure
 /tests-permissions.template.policy @JetBrains/kotlin-build-infrastructure
 /ChangeLog.md @JetBrains/kotlin-release

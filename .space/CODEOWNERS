@@ -462,6 +462,8 @@
 # NO_OWNER: *Generated.java
 *Generated.java
 
+test-both-repos.txt "Kotlin Build Infrastructure"
+
 # Singular files
 /.gitattributes "Kotlin Build Infrastructure"
 /tests-permissions.template.policy "Kotlin Build Infrastructure"
