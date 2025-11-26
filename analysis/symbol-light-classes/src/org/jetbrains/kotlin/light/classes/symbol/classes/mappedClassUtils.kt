@@ -25,25 +25,25 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
-private val javaGetterNameToKotlinGetterName: Map<String, String> = buildMap {
+private val JAVA_GETTER_NAME_TO_KOTLIN_GETTER_NAME: Map<String, String> = buildMap {
     BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.forEach { (propertyFqName, javaGetterShortName) ->
         put(javaGetterShortName.asString(), JvmAbi.getterName(propertyFqName.shortName().asString()))
     }
 }
 
-private val membersWithSpecialSignature: Set<String> = buildSet {
+private val MEMBERS_WITH_SPECIAL_SIGNATURE: Set<String> = buildSet {
     addAll(SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SHORT_NAMES.map { it.asString() })
     add("addAll")
     add("putAll")
 }
 
-private val erasedCollectionParameterNames: Set<String> = buildSet {
+private val ERASED_COLLECTION_METHOD_NAMES: Set<String> = buildSet {
     addAll(SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES)
     add("addAll")
     add("putAll")
 }
 
-private val ignoredMethodNames: Set<String> = setOf("equals", "hashCode", "toString")
+private val IGNORED_METHOD_NAMES: Set<String> = setOf("equals", "hashCode", "toString")
 
 /**
  * This function is responsible for filtering and transforming callable declarations when the containing
@@ -137,7 +137,6 @@ internal fun hasCollectionSupertype(allSupertypes: List<KaClassType>): Boolean =
  * @return `true` if the caller should generate the original Kotlin method, `false` if it should be skipped
  *
  * @see tryToMapKotlinCollectionMethodToJavaMethod
- * @see erasedCollectionParameterNames
  */
 internal fun KaSession.processPossiblyMappedMethod(
     containingClass: SymbolLightClassForClassOrObject,
@@ -151,7 +150,7 @@ internal fun KaSession.processPossiblyMappedMethod(
     val collectionSupertype = allSupertypes.find { it.classId == kotlinCollectionFunction.callableId?.classId } ?: return true
     val javaCollection = javaMethod.containingClass ?: return true
     val substitutor = createPsiSubstitutor(javaCollection, collectionSupertype, containingClass)
-    val isErasedSignature = javaMethod.name in erasedCollectionParameterNames ||
+    val isErasedSignature = javaMethod.name in ERASED_COLLECTION_METHOD_NAMES ||
             ownFunction.valueParameters.any { it.returnType is KaTypeParameterType }
 
     val lightMemberOrigin = (ownFunction.psi as? KtDeclaration)?.let { originalElement ->
@@ -274,7 +273,7 @@ private fun KaSession.generateJavaCollectionMethodStubs(
         .toSet()
 
     val javaMethods = javaCollectionPsiClass.methods
-        .filterNot { it.name in ignoredMethodNames }
+        .filterNot { it.name in IGNORED_METHOD_NAMES }
         .filterNot { it.hasModifierProperty(PsiModifier.DEFAULT) }
 
     val candidateMethods = javaMethods.flatMap { method ->
@@ -295,7 +294,7 @@ private fun createWrappersForJavaCollectionMethod(
     substitutor: PsiSubstitutor,
 ): List<PsiMethod> {
     val methodName = method.name
-    val getterName = javaGetterNameToKotlinGetterName[methodName]
+    val getterName = JAVA_GETTER_NAME_TO_KOTLIN_GETTER_NAME[methodName]
 
     return when {
         getterName != null -> {
@@ -335,7 +334,7 @@ private fun createMethodsWithSpecialSignature(
     substitutor: PsiSubstitutor,
 ): List<PsiMethod> {
     val methodName = method.name
-    if (methodName in erasedCollectionParameterNames || methodName !in membersWithSpecialSignature) {
+    if (methodName in ERASED_COLLECTION_METHOD_NAMES || methodName !in MEMBERS_WITH_SPECIAL_SIGNATURE) {
         return emptyList()
     }
 
