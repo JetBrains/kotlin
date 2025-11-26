@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-51009
-// LATEST_LV_DIFFERENCE
 
 fun test(b: Boolean, f: () -> String?): () -> String {
     val foo = try {
@@ -15,7 +14,7 @@ fun test2(b: Boolean, f: () -> String?) = run { // implicit return type
     val foo = try {
         f
     } catch (e: Exception) {
-        <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING!>return<!> { "1" }
+        <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> { "1" }
     }
     { "2" }
 }

@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 class My<T>(val value: T)
 
 open class Base

@@ -1,5 +1,4 @@
-// LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-67374
 
 object Some
@@ -10,7 +9,7 @@ inline fun <reified T> test_1(): T? {
 }
 
 fun test_2(): CharSequence? {
-    if (<!IMPOSSIBLE_IS_CHECK_WARNING!>Some is CharSequence<!>) return Some
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>Some is CharSequence<!>) return Some
     return null
 }
 
@@ -22,7 +21,7 @@ inline fun <reified T> test_3(): T? {
 }
 
 fun test_4(): CharSequence? {
-    if (<!IMPOSSIBLE_IS_CHECK_WARNING!>Other is CharSequence<!>) return Other
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>Other is CharSequence<!>) return Other
     return null
 }
 
