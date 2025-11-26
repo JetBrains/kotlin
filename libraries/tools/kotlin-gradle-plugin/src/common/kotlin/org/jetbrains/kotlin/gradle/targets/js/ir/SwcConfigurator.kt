@@ -92,7 +92,6 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
             val compilerOptions = binary.linkTask.map(Kotlin2JsCompile::compilerOptions)
 
             config.apply {
-                platformType.set(JsPlatformType.NODE)
                 esTarget.set(compilerOptions.flatMap(KotlinJsCompilerOptions::target))
                 moduleKind.set(compilerOptions.flatMap(KotlinJsCompilerOptions::moduleKind))
                 sourceMaps.set(compilerOptions.flatMap(KotlinJsCompilerOptions::sourceMap))

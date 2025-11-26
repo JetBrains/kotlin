@@ -71,7 +71,7 @@ internal constructor(
             inputDirectory = "./",
             outputDirectory = outputDirectory.get().asFile.absolutePath,
             configPath = configFile.get().absolutePath,
-            fileExtension = config.fileExtension.get(),
+            fileExtension = config.moduleSystemToUse.get().jsExtension,
             environmentCode = mode.get().code
         )
         super.exec()

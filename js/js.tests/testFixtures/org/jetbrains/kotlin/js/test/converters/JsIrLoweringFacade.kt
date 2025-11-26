@@ -192,6 +192,7 @@ class JsIrLoweringFacade(
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 
         val generateDts = JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives
+        val sourceMapsEnabled = JsEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in module.directives
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in module.directives
         val delegateTranspilationToExternalTool =
             JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION in module.directives &&
@@ -215,7 +216,7 @@ class JsIrLoweringFacade(
                 output.writeTo(outputFile, moduleId, moduleKind, mode.granularity)
 
                 if (delegateTranspilationToExternalTool) {
-                    SwcRunner.exec(outputFile.parentFile, moduleKind, mode)
+                    SwcRunner.exec(outputFile.parentFile, moduleKind, mode, sourceMapsEnabled)
                 }
             }
         }
