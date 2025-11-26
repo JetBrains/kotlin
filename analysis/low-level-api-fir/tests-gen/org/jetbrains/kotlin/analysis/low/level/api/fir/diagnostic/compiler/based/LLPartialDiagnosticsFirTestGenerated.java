@@ -6707,6 +6707,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("equalityOfStarProjection.kt")
+        public void testEqualityOfStarProjection() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypes/equalityOfStarProjection.kt");
+        }
+
+        @Test
         @TestMetadata("hugeMixedCapturedType.kt")
         public void testHugeMixedCapturedType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypes/hugeMixedCapturedType.kt");
