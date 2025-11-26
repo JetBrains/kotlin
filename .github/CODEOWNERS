@@ -375,6 +375,7 @@
 /native/native.tests/ @JetBrains/kotlin-native @JetBrains/kotlin-common-backend
 /native/native.tests/cli-tests/ @JetBrains/kotlin-native
 /native/native.tests/driver/ @JetBrains/kotlin-native
+test2.txt @JetBrains/kotlin-build-infrastructure
 /native/native.tests/litmus-tests/ @JetBrains/kotlin-native
 /native/native.tests/stress/ @JetBrains/kotlin-native
 /native/native.tests/klib-compatibility/ @JetBrains/kotlin-common-backend

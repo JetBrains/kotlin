@@ -413,6 +413,7 @@
 /native/native.tests/ "Kotlin Native" "Kotlin Common Backend"
 /native/native.tests/cli-tests/ "Kotlin Native"
 /native/native.tests/driver/ "Kotlin Native"
+test2.txt "Kotlin Build Infrastructure"
 /native/native.tests/litmus-tests/ "Kotlin Native"
 /native/native.tests/stress/ "Kotlin Native"
 /native/native.tests/klib-compatibility/ "Kotlin Common Backend"
