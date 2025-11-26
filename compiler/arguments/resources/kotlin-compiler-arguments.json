@@ -378,6 +378,12 @@
             "major": 2,
             "minor": 3,
             "patch": 20
+        },
+        {
+            "name": "2.4.0",
+            "major": 2,
+            "minor": 4,
+            "patch": 0
         }
     ],
     "types": {
@@ -514,7 +520,7 @@
                     "name": "2.4",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.2.20",
-                        "stabilizedVersion": null,
+                        "stabilizedVersion": "2.4.0",
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
