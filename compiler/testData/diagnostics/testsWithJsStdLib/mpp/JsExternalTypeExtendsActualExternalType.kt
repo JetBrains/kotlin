@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: KLIB
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects
 // MODULE: commonjs
 // FILE: commonjs.kt

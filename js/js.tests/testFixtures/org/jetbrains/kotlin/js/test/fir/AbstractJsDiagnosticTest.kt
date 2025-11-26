@@ -65,15 +65,6 @@ abstract class AbstractJsDiagnosticTestBase(val parser: FirParser) : AbstractKot
     }
 }
 
-abstract class AbstractJsDiagnosticTestWithoutBackendTestBase(parser: FirParser) : AbstractJsDiagnosticTestBase(parser) {
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        super.configure(builder)
-        defaultDirectives {
-            TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.KLIB
-        }
-    }
-}
-
 abstract class AbstractJsDiagnosticWithBackendTestBase(parser: FirParser) : AbstractJsDiagnosticTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
@@ -86,7 +77,7 @@ abstract class AbstractJsDiagnosticWithBackendTestBase(parser: FirParser) : Abst
     }
 }
 
-abstract class AbstractJsDiagnosticWithBackendWithInlinedFunInKlibTestBase : AbstractJsDiagnosticWithBackendTestBase(FirParser.LightTree) {
+abstract class AbstractJsDiagnosticWithIrInlinerTestBase : AbstractJsDiagnosticWithBackendTestBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {
@@ -97,23 +88,6 @@ abstract class AbstractJsDiagnosticWithBackendWithInlinedFunInKlibTestBase : Abs
         }
     }
 }
-
-abstract class AbstractJsDiagnosticWithIrInlinerTestBase(parser: FirParser) : AbstractJsDiagnosticTestWithoutBackendTestBase(parser) {
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        super.configure(builder)
-        defaultDirectives {
-            LANGUAGE with listOf(
-                "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
-        }
-    }
-}
-
-abstract class AbstractPsiJsDiagnosticTest : AbstractJsDiagnosticTestWithoutBackendTestBase(FirParser.Psi)
-abstract class AbstractLightTreeJsDiagnosticTest : AbstractJsDiagnosticTestWithoutBackendTestBase(FirParser.LightTree)
-
-abstract class AbstractJsDiagnosticWithIrInlinerTest : AbstractJsDiagnosticWithIrInlinerTestBase(FirParser.LightTree)
 
 abstract class AbstractPsiJsDiagnosticWithBackendTest : AbstractJsDiagnosticWithBackendTestBase(FirParser.Psi)
 abstract class AbstractLightTreeJsDiagnosticWithBackendTest : AbstractJsDiagnosticWithBackendTestBase(FirParser.LightTree)

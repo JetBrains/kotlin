@@ -3,7 +3,7 @@
 // LL_FIR_DIVERGENCE
 
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: KLIB
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects -AllowExpectDeclarationsInJsExport
 // ISSUE: KT-64951
 
