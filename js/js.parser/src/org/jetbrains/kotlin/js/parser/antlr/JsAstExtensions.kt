@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsStringLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsVars
-import org.jetbrains.kotlin.js.parser.antlr.JsAstMapper.Companion.createParserException
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 
 internal val ParserRuleContext.startPosition: CodePosition
@@ -106,57 +105,4 @@ internal fun String.toBinaryLiteral(): JsNumberLiteral {
         JsIntLiteral(longValue.toInt())
     else
         JsDoubleLiteral(longValue.toDouble())
-}
-
-internal fun String.unescapeString(ctx: ParserRuleContext): String {
-    val chars = this.toCharArray()
-
-    return buildString(this.length) {
-        var i = 0
-
-        while (i < chars.size) {
-            var char = chars[i]
-            if (char == '\\' && i + 1 < chars.size) {
-                char = chars[i + 1]
-                when (char) {
-                    'b' -> { append('\b'); i += 2 }
-                    'f' -> { append('\u000C'); i += 2 }
-                    'n' -> { append('\n'); i += 2 }
-                    'r' -> { append('\r'); i += 2 }
-                    't' -> { append('\t'); i += 2 }
-                    'v' -> { append('\u000B'); i += 2 }
-                    '\\' -> { append("\\"); i += 2 }
-                    'u' if i + 5 < chars.size -> {
-                        val hex = String(chars, i + 2, 4)
-                        append(hex.toInt(16).toChar())
-                        i += 6
-                    }
-                    'x' if i + 3 < chars.size -> {
-                        val hex = String(chars, i + 2, 2)
-                        append(hex.toInt(16).toChar())
-                        i += 4
-                    }
-                    in '0'..'7' -> {
-                        var octalVal = char - '0'
-                        i += 2
-                        if (i < chars.size && chars[i] in '0'..'7') {
-                            octalVal = 8 * octalVal + (chars[i] - '0')
-                            i++
-                            // c is the 3rd char of an octal sequence only if
-                            // the resulting val <= 037 (31 in decimal)
-                            if (i < chars.size && chars[i] in '0'..'7' && octalVal <= 31) {
-                                octalVal = 8 * octalVal + (chars[i] - '0')
-                                i++
-                            }
-                        }
-                        append(octalVal.toChar())
-                    }
-                    else -> createParserException("Invalid escape sequence", ctx)
-                }
-            } else {
-                append(char)
-                i++
-            }
-        }
-    }
 }

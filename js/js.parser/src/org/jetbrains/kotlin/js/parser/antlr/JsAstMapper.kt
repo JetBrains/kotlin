@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 
 internal class JsAstMapper(scope: JsScope, private val fileName: String, private val reporter: ErrorReporter) {
     companion object {
-        fun createParserException(message: String, ctx: ParserRuleContext): JsParserException {
-            return JsParserException("Parser encountered internal error: $message", ctx.startPosition)
+        private fun raiseParserException(message: String, ctx: ParserRuleContext): Nothing {
+            throw JsParserException("Parser encountered internal error: $message", ctx.startPosition)
         }
     }
 
@@ -24,7 +24,7 @@ internal class JsAstMapper(scope: JsScope, private val fileName: String, private
     fun mapStatement(statement: JavaScriptParser.StatementContext): JsStatement {
         val jsStatement = map(statement)
         if (jsStatement !is JsStatement)
-            throw createParserException("Expecting a statement", statement)
+            raiseParserException("Expecting a statement", statement)
 
         return jsStatement
     }
@@ -32,7 +32,7 @@ internal class JsAstMapper(scope: JsScope, private val fileName: String, private
     fun mapFunction(function: JavaScriptParser.FunctionDeclarationContext): JsFunction {
         val jsFunction = map(function)
         if (jsFunction !is JsFunction)
-            throw createParserException("Expecting a function", function)
+            raiseParserException("Expecting a function", function)
 
         return jsFunction
     }
@@ -40,7 +40,7 @@ internal class JsAstMapper(scope: JsScope, private val fileName: String, private
     fun mapExpression(expression: ParserRuleContext): JsExpression {
         val jsExpression = map(expression)
         if (jsExpression !is JsExpression)
-            throw createParserException("Expecting an expression", expression)
+            raiseParserException("Expecting an expression", expression)
 
         return jsExpression
     }
