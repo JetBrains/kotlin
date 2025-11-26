@@ -522,7 +522,7 @@ internal class JsAstMapperVisitor(
         }
 
         ctx.StringLiteral()?.let {
-            return it.text.unescapeString(it).toStringLiteral().applyLocation(ctx)
+            return it.text.unescapeString().toStringLiteral().applyLocation(ctx)
         }
 
         ctx.numericLiteral()?.let {
@@ -572,7 +572,12 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitTemplateStringExpression(ctx: JavaScriptParser.TemplateStringExpressionContext): JsNode? {
-        reportError("Template string literals are not supported yet", ctx)
+        val template = visitNode<JsTemplateStringLiteral>(ctx.templateStringLiteral())
+
+        return template.apply {
+            tag = ctx.singleExpressionImpl()?.let { visitNode<JsExpression>(it) }
+            applyLocation(ctx)
+        }
     }
 
     override fun visitTernaryExpression(ctx: JavaScriptParser.TernaryExpressionContext): JsConditional {
@@ -1047,7 +1052,7 @@ internal class JsAstMapperVisitor(
         }
 
         ctx.StringLiteral()?.let {
-            return it.text.unescapeString(ctx).toStringLiteral().applyLocation(ctx)
+            return it.text.unescapeString().toStringLiteral().applyLocation(ctx)
         }
 
         ctx.RegularExpressionLiteral()?.run {
@@ -1064,12 +1069,29 @@ internal class JsAstMapperVisitor(
         return super.visitLiteral(ctx) as JsLiteral
     }
 
-    override fun visitTemplateStringLiteral(ctx: JavaScriptParser.TemplateStringLiteralContext): JsNode? {
-        reportError("Template string literals are not supported yet", ctx)
+    override fun visitTemplateStringLiteral(ctx: JavaScriptParser.TemplateStringLiteralContext): JsTemplateStringLiteral {
+        return JsTemplateStringLiteral(
+            tag = null,
+            segments = ctx.templateStringAtom()?.map { element ->
+                visitNode<JsTemplateStringLiteral.Segment>(element)
+            } ?: listOf()
+        ).applyLocation(ctx)
     }
 
-    override fun visitTemplateStringAtom(ctx: JavaScriptParser.TemplateStringAtomContext): JsNode? {
-        reportError("Template string literals are not supported yet", ctx)
+    override fun visitTemplateStringAtom(ctx: JavaScriptParser.TemplateStringAtomContext): JsTemplateStringLiteral.Segment {
+        ctx.TemplateStringAtom()?.let { stringElement ->
+            return JsTemplateStringLiteral.Segment.StringLiteral(stringElement.text.unescapeTemplateString(stringElement))
+                .applyLocation(ctx)
+        }
+
+        ctx.singleExpression()?.let { expressionElement ->
+            return JsTemplateStringLiteral.Segment.Interpolation(
+                visitNode<JsExpression>(expressionElement)
+                    .applyLocation(expressionElement)
+            ).applyLocation(ctx)
+        }
+
+        raiseParserException("Invalid template string segment '${ctx.text}'", ctx)
     }
 
     override fun visitNumericLiteral(ctx: JavaScriptParser.NumericLiteralContext): JsNumberLiteral {
@@ -1257,7 +1279,7 @@ internal class JsAstMapperVisitor(
         return this
     }
 
-    private fun String.unescapeString(terminal: TerminalNode): String {
+    private fun String.unescapeString(): String {
         val chars = this.toCharArray()
 
         return buildString(this.length) {
@@ -1300,6 +1322,52 @@ internal class JsAstMapperVisitor(
                             }
                             append(octalVal.toChar())
                         }
+                        else -> { append(char); i += 2 }
+                    }
+                } else {
+                    append(char)
+                    i++
+                }
+            }
+        }
+    }
+
+    private fun String.unescapeTemplateString(terminal: TerminalNode): String {
+        val chars = this.toCharArray()
+
+        return buildString(this.length) {
+            var i = 0
+
+            while (i < chars.size) {
+                var char = chars[i]
+                if (char == '\\' && i + 1 < chars.size) {
+                    char = chars[i + 1]
+                    when (char) {
+                        'b' -> { append('\b'); i += 2 }
+                        'f' -> { append('\u000C'); i += 2 }
+                        'n' -> { append('\n'); i += 2 }
+                        'r' -> { append('\r'); i += 2 }
+                        't' -> { append('\t'); i += 2 }
+                        'v' -> { append('\u000B'); i += 2 }
+                        '\\' -> { append("\\"); i += 2 }
+                        'u' if i + 5 < chars.size -> {
+                            val hex = String(chars, i + 2, 4)
+                            append(hex.toInt(16).toChar())
+                            i += 6
+                        }
+                        'u' -> reportError("Invalid Unicode escape sequence", terminal)
+                        'x' if i + 3 < chars.size -> {
+                            val hex = String(chars, i + 2, 2)
+                            append(hex.toInt(16).toChar())
+                            i += 4
+                        }
+                        'x' ->
+                            reportError("Invalid hexadecimal escape sequence", terminal)
+                        '0' -> { append('\u0000'); i += 2 }
+                        in '1'..'7' ->
+                            reportError("Octal escape sequences are not allowed in template strings", terminal)
+                        in '8'..'9' ->
+                            reportError("\\8 and \\9 are not allowed in template strings", terminal)
                         else -> { append(char); i += 2 }
                     }
                 } else {

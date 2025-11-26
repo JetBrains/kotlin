@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragmen
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramTestEnvironment
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsTemplateStringLiteral
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import java.math.BigInteger
 import java.nio.ByteBuffer
@@ -324,6 +325,18 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         }
                         STRING_LITERAL -> {
                             JsStringLiteral(stringTable[readInt()])
+                        }
+                        TEMPLATE_STRING_LITERAL -> {
+                            JsTemplateStringLiteral(
+                                ifTrue { readExpression() },
+                                readList { readExpression() as JsTemplateStringLiteral.Segment }
+                            )
+                        }
+                        TEMPLATE_ELEMENT_STRING -> {
+                            JsTemplateStringLiteral.Segment.StringLiteral(stringTable[readInt()])
+                        }
+                        TEMPLATE_ELEMENT_INTERPOLATION -> {
+                            JsTemplateStringLiteral.Segment.Interpolation(readExpression())
                         }
                         REG_EXP -> {
                             JsRegExp().apply {

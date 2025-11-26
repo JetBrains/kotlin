@@ -7836,6 +7836,12 @@ public class JsES6BoxTestGenerated extends AbstractJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("templateString.kt")
+    public void testTemplateString() {
+      runTest("js/js.translator/testData/box/jsCode/templateString.kt");
+    }
+
+    @Test
     @TestMetadata("tryCatchFinally.kt")
     public void testTryCatchFinally() {
       runTest("js/js.translator/testData/box/jsCode/tryCatchFinally.kt");

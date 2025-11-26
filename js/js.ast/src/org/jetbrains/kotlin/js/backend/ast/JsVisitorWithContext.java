@@ -404,6 +404,18 @@ public abstract class JsVisitorWithContext {
         return true;
     }
 
+    public boolean visit(@NotNull JsTemplateStringLiteral x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsTemplateStringLiteral.Segment.StringLiteral x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsTemplateStringLiteral.Segment.Interpolation x, @NotNull JsContext ctx) {
+        return true;
+    }
+
     public boolean visit(@NotNull JsSwitch x, @NotNull JsContext ctx) {
         return true;
     }

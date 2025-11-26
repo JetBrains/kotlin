@@ -60,6 +60,33 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_WHILE = "while".toCharArray();
     private static final char[] HEX_DIGITS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final Map<Character, Integer> COMMON_ESCAPE_MAPPING = createCommonEscapeMapping();
+    private static final Map<Character, Integer> STRING_ESCAPE_MAPPING = createStringEscapeMapping();
+    private static final Map<Character, Integer> TEMPLATE_ESCAPE_MAPPING = createTemplateEscapeMapping();
+    private static Map<Character, Integer> createCommonEscapeMapping() {
+        Map<Character, Integer> mapping = new HashMap<>();
+        mapping.put('\0', (int) '0');
+        mapping.put('\b', (int) 'b');
+        mapping.put('\f', (int) 'f');
+        mapping.put('\n', (int) 'n');
+        mapping.put('\r', (int) 'r');
+        mapping.put('\t', (int) 't');
+        mapping.put('\\', (int) '\\');
+        return mapping;
+    }
+    private static Map<Character, Integer> createStringEscapeMapping() {
+        Map<Character, Integer> mapping = new HashMap<>(COMMON_ESCAPE_MAPPING);
+        mapping.put('"', (int) '"');
+        mapping.put('\'', (int) '\'');
+        mapping.put('\\', (int) '\\');
+        return mapping;
+    }
+    private static Map<Character, Integer> createTemplateEscapeMapping() {
+        Map<Character, Integer> mapping = new HashMap<>(COMMON_ESCAPE_MAPPING);
+        mapping.put('`', (int) '`');
+        mapping.put('$', (int) '$');
+        return mapping;
+    }
     @NotNull
     private final SourceLocationConsumer sourceLocationConsumer;
 
@@ -76,7 +103,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
      * . The difference is that we quote with either &quot; or &apos; depending on
      * which one is used less inside the string.
      */
-    @SuppressWarnings({"ConstantConditions", "UnnecessaryFullyQualifiedName", "JavadocReference"})
+    @SuppressWarnings({"ConstantConditions", "JavadocReference"})
     public static CharSequence javaScriptString(CharSequence chars, boolean forceDoubleQuote) {
         int n = chars.length();
         int quoteCount = 0;
@@ -97,48 +124,28 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         char quoteChar = (quoteCount < aposCount || forceDoubleQuote) ? '"' : '\'';
         result.append(quoteChar);
+        escapeString(chars, quoteChar, result, STRING_ESCAPE_MAPPING);
+        result.append(quoteChar);
+        escapeClosingTags(result);
+        return result;
+    }
 
-        for (int i = 0; i < n; i++) {
+    private static void escapeString(CharSequence chars, char quoteChar, StringBuilder result, Map<Character, Integer> escapeMapping) {
+        for (int i = 0; i < chars.length(); i++) {
             char c = chars.charAt(i);
 
-            if (' ' <= c && c <= '~' && c != quoteChar && c != '\\') {
+            if (' ' <= c && c <= '~' && c != quoteChar && c != '\\' && !escapeMapping.containsKey(c)) {
                 // an ordinary print character (like C isprint())
                 result.append(c);
                 continue;
             }
 
-            int escape = -1;
-            switch (c) {
-                case '\b':
-                    escape = 'b';
-                    break;
-                case '\f':
-                    escape = 'f';
-                    break;
-                case '\n':
-                    escape = 'n';
-                    break;
-                case '\r':
-                    escape = 'r';
-                    break;
-                case '\t':
-                    escape = 't';
-                    break;
-                case '"':
-                    escape = '"';
-                    break; // only reach here if == quoteChar
-                case '\'':
-                    escape = '\'';
-                    break; // only reach here if == quoteChar
-                case '\\':
-                    escape = '\\';
-                    break;
-            }
+            Integer escape = escapeMapping.get(c);
 
-            if (escape >= 0) {
+            if (escape != null && escape >= 0) {
                 // an \escaped sort of character
                 result.append('\\');
-                result.append((char) escape);
+                result.append((char) escape.intValue());
             }
             else {
                 int hexSize;
@@ -159,7 +166,11 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                 }
             }
         }
-        result.append(quoteChar);
+    }
+
+    private static CharSequence escapeTemplateStringSegment(CharSequence chars) {
+        StringBuilder result = new StringBuilder();
+        escapeString(chars, '`', result, TEMPLATE_ESCAPE_MAPPING);
         escapeClosingTags(result);
         return result;
     }
@@ -1211,6 +1222,43 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print(javaScriptString(x.getValue()));
 
         printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitTemplateString(@NotNull JsTemplateStringLiteral x) {
+        pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
+
+        accept(x.getTag());
+
+        p.print('`');
+        for (JsExpression segment : x.getSegments()) {
+            accept(segment);
+        }
+        p.print('`');
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitTemplateSegmentString(@NotNull JsTemplateStringLiteral.Segment.StringLiteral x) {
+        pushSourceInfo(x.getSource());
+
+        p.print(escapeTemplateStringSegment(x.getValue()));
+
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitTemplateSegmentInterpolation(@NotNull JsTemplateStringLiteral.Segment.Interpolation x) {
+        pushSourceInfo(x.getSource());
+
+        p.print("${");
+        accept(x.getExpression());
+        p.print('}');
+
         popSourceInfo();
     }
 

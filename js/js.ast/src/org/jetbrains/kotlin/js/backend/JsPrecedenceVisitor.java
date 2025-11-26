@@ -160,6 +160,16 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitTemplateString(@NotNull JsTemplateStringLiteral x) {
+        if (x.getTag() != null) {
+            answer = 2;
+        }
+        else {
+            answer = 17; // primary
+        }
+    }
+
+    @Override
     public void visitThis(@NotNull JsThisRef x) {
         answer = 17; // primary
     }

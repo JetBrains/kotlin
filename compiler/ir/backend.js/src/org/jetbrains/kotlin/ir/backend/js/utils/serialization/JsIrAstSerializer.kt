@@ -408,6 +408,24 @@ private class JsIrAstSerializer {
                 writeInt(internalizeString(x.value))
             }
 
+            override fun visitTemplateString(x: JsTemplateStringLiteral) {
+                writeByte(ExpressionIds.TEMPLATE_STRING_LITERAL)
+                ifNotNull(x.tag) { writeExpression(it) }
+                writeCollection(x.segments) {
+                    writeExpression(it)
+                }
+            }
+
+            override fun visitTemplateSegmentString(x: JsTemplateStringLiteral.Segment.StringLiteral) {
+                writeByte(ExpressionIds.TEMPLATE_ELEMENT_STRING)
+                writeInt(internalizeString(x.value))
+            }
+
+            override fun visitTemplateSegmentInterpolation(x: JsTemplateStringLiteral.Segment.Interpolation) {
+                writeByte(ExpressionIds.TEMPLATE_ELEMENT_INTERPOLATION)
+                writeExpression(x.expression)
+            }
+
             override fun visitRegExp(x: JsRegExp) {
                 writeByte(ExpressionIds.REG_EXP)
                 writeInt(internalizeString(x.pattern))

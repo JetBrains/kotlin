@@ -153,6 +153,15 @@ abstract class JsVisitor {
     open fun visitString(x: JsStringLiteral): Unit =
             visitElement(x)
 
+    open fun visitTemplateString(x: JsTemplateStringLiteral): Unit =
+            visitElement(x)
+
+    open fun visitTemplateSegmentString(x: JsTemplateStringLiteral.Segment.StringLiteral): Unit =
+            visitElement(x)
+
+    open fun visitTemplateSegmentInterpolation(x: JsTemplateStringLiteral.Segment.Interpolation): Unit =
+            visitElement(x)
+
     open fun visit(x: JsSwitch): Unit =
             visitElement(x)
 

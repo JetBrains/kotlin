@@ -75,4 +75,7 @@ object ExpressionIds {
     const val YIELD = 24
     const val BIGINT_LITERAL = 25
     const val YIELD_STAR = 26
+    const val TEMPLATE_STRING_LITERAL = 27
+    const val TEMPLATE_ELEMENT_STRING = 28
+    const val TEMPLATE_ELEMENT_INTERPOLATION = 29
 }
