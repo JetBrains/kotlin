@@ -167,6 +167,7 @@ fun lowerPreservingTags(
 data class WasmModuleDependencyImport(val name: String, val fileName: String)
 
 internal const val jsBuiltinsModulePrefix = "wasm:"
+internal const val importedStringConstants = "'"
 
 private fun String.normalizeEmptyLines(): String {
     return this.replace(Regex("\n\\s*\n+"), "\n\n")
@@ -577,7 +578,7 @@ export const importObject = {
     intrinsics: {
         tag: wasmTag
     },
-    "'": StringConstantsProxy,
+    "$importedStringConstants": StringConstantsProxy,
 $imports};
     """.trimIndent()
 }
@@ -623,7 +624,7 @@ if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
 }
 
 const wasmFilePath = $pathJsStringLiteral;
-const wasmOptions = { builtins: ['${builtinsList.joinToString(", ")}'], importedStringConstants: "'" }
+const wasmOptions = { builtins: ['${builtinsList.joinToString(", ")}'], importedStringConstants: "$importedStringConstants" }
 
 try {
   if (isNodeJs) {

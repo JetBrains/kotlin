@@ -26,6 +26,7 @@ object BinaryenConfig {
         //
         "--no-inline=kotlin.wasm.internal.throwValue",
         "--no-inline=kotlin.wasm.internal.getKotlinException",
+        "--no-inline=kotlin.wasm.internal.jsToKotlinStringAdapter",
         "--inline-functions-with-loops",
         "--traps-never-happen",
         "--fast-math",

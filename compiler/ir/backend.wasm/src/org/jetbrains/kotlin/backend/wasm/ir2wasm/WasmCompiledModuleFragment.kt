@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.MultimoduleCompileOptions
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.importedStringConstants
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.*
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
@@ -1040,11 +1041,11 @@ class WasmCompiledModuleFragment(
                 var literalGlobal = literalGlobalSymbolMap[stringValue]
                 if (literalGlobal == null) {
                     literalGlobal = WasmGlobal(
-                        name = "global_${globalCounter++}",
+                        name = "string_${globalCounter++}",
                         type = WasmRefType(WasmHeapType.Simple.Extern),
                         isMutable = false,
                         init = emptyList(),
-                        importPair = WasmImportDescriptor("'", WasmSymbol(stringValue))
+                        importPair = WasmImportDescriptor(importedStringConstants, WasmSymbol(stringValue))
                     )
                     literalGlobalSymbolMap[stringValue] = literalGlobal
                 }
