@@ -1,0 +1,130 @@
+FILE: outerTypeVariableInExpectedType.kt
+    public final fun <T> takeGenericArray(arr: R|kotlin/Array<T>|): R|T| {
+        ^takeGenericArray R|<local>/arr|.R|SubstitutionOverride<kotlin/Array.get: R|T|>|(Int(0))
+    }
+    public final fun <T> runGenericArray(arr: R|() -> kotlin/Array<T>|): R|T| {
+        ^runGenericArray R|<local>/arr|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Array<T>|>|().R|SubstitutionOverride<kotlin/Array.get: R|T|>|(Int(0))
+    }
+    public final class Box<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Box<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun put(t: R|T|): R|kotlin/Unit| {
+        }
+
+        public final fun putAll(arr: R|kotlin/Array<T>|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun <T> buildBox(block: R|Box<T>.() -> kotlin/Unit|): R|Box<T>| {
+        ^buildBox R|/Box.Box|<R|T|>().R|kotlin/apply|<R|Box<T>|>(<L> = apply@fun R|Box<T>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|special/anonymous|)
+        }
+        )
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/takeGenericArray|<R|kotlin/Any|>(<collectionLiteralCall>())
+        R|/takeGenericArray|<R|kotlin/String|>(<collectionLiteralCall>(String(42)))
+        R|/takeGenericArray|<R|kotlin/Int|>(<collectionLiteralCall>(Int(42)))
+        R|/takeGenericArray|<R|() -> kotlin/Unit|>(<collectionLiteralCall>(takeGenericArray@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@takeGenericArray Unit
+        }
+        ))
+        R|/takeGenericArray|<R|kotlin/reflect/KFunction0<kotlin/Unit>|>(<collectionLiteralCall>(::R|/test|))
+        R|/takeGenericArray<Inapplicable(INAPPLICABLE): /takeGenericArray>#|<R|kotlin/String|>(<collectionLiteralCall>())
+        lval resTake: R|kotlin/String| = R|/takeGenericArray|<R|kotlin/Any|>(<collectionLiteralCall>())
+        lval errorTake: R|kotlin/String| = R|/takeGenericArray|<R|kotlin/Int|>(<collectionLiteralCall>(Int(42)))
+        lval errorLamTake: R|kotlin/String| = R|/takeGenericArray|<R|() -> kotlin/Unit|>(<collectionLiteralCall>(takeGenericArray@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@takeGenericArray Unit
+        }
+        ))
+        R|/runGenericArray|<R|kotlin/Any|>(<L> = runGenericArray@fun <anonymous>(): R|kotlin/Array<kotlin/Any>| <inline=NoInline>  {
+            ^ <collectionLiteralCall>()
+        }
+        )
+        R|/runGenericArray|<R|kotlin/String|>(<L> = runGenericArray@fun <anonymous>(): R|kotlin/Array<kotlin/String>| <inline=NoInline>  {
+            ^ <collectionLiteralCall>(String(42))
+        }
+        )
+        R|/runGenericArray|<R|kotlin/Int|>(<L> = runGenericArray@fun <anonymous>(): R|kotlin/Array<kotlin/Int>| <inline=NoInline>  {
+            ^ <collectionLiteralCall>(Int(42))
+        }
+        )
+        R|/runGenericArray|<R|() -> kotlin/Unit|>(<L> = runGenericArray@fun <anonymous>(): R|kotlin/Array<() -> kotlin/Unit>| <inline=NoInline>  {
+            ^ <collectionLiteralCall>(runGenericArray@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                ^@runGenericArray Unit
+            }
+            )
+        }
+        )
+        R|/runGenericArray|<R|kotlin/reflect/KFunction0<kotlin/Unit>|>(<L> = runGenericArray@fun <anonymous>(): R|kotlin/Array<kotlin/reflect/KFunction0<kotlin/Unit>>| <inline=NoInline>  {
+            ^ <collectionLiteralCall>(::R|/test|)
+        }
+        )
+        R|/runGenericArray<Inapplicable(INAPPLICABLE): /runGenericArray>#|<R|kotlin/String|>(<L> = runGenericArray@fun <anonymous>(): R|kotlin/Array<kotlin/String>| <inline=NoInline>  {
+            ^ <collectionLiteralCall>()
+        }
+        )
+        lval resRun: R|kotlin/String| = R|/runGenericArray<Inapplicable(INAPPLICABLE): /runGenericArray>#|<R|kotlin/String|>(<L> = runGenericArray@fun <anonymous>(): R|kotlin/Array<kotlin/String>| <inline=NoInline>  {
+            ^ <collectionLiteralCall>()
+        }
+        )
+        lval errorRun: R|kotlin/String| = R|/runGenericArray<Inapplicable(INAPPLICABLE): /runGenericArray>#|<R|kotlin/String|>(<L> = runGenericArray@fun <anonymous>(): R|kotlin/Array<kotlin/String>| <inline=NoInline>  {
+            ^ <collectionLiteralCall>(Int(42))
+        }
+        )
+        lval errorLamRun: R|kotlin/String| = R|/runGenericArray<Inapplicable(INAPPLICABLE): /runGenericArray>#|<R|kotlin/String|>(<L> = runGenericArray@fun <anonymous>(): R|kotlin/Array<kotlin/String>| <inline=NoInline>  {
+            ^ <collectionLiteralCall>(runGenericArray@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                ^@runGenericArray Unit
+            }
+            )
+        }
+        )
+        R|/buildBox|<R|kotlin/Array<kotlin/Any>|>(<L> = buildBox@fun R|Box<kotlin/Array<kotlin/Any>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.put: R|kotlin/Unit|>|(<collectionLiteralCall>())
+        }
+        )
+        R|/buildBox|<R|kotlin/Array<kotlin/String>|>(<L> = buildBox@fun R|Box<kotlin/Array<kotlin/String>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.put: R|kotlin/Unit|>|(<collectionLiteralCall>(String(42)))
+        }
+        )
+        R|/buildBox|<R|kotlin/Array<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/Array<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.put: R|kotlin/Unit|>|(<collectionLiteralCall>(Int(42)))
+        }
+        )
+        R|/buildBox|<R|kotlin/Array<() -> kotlin/Unit>|>(<L> = buildBox@fun R|Box<kotlin/Array<() -> kotlin/Unit>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.put: R|kotlin/Unit|>|(<collectionLiteralCall>(put@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                ^@put Unit
+            }
+            ))
+        }
+        )
+        R|/buildBox|<R|kotlin/Array<kotlin/reflect/KFunction0<kotlin/Unit>>|>(<L> = buildBox@fun R|Box<kotlin/Array<kotlin/reflect/KFunction0<kotlin/Unit>>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.put: R|kotlin/Unit|>|(<collectionLiteralCall>(::R|/test|))
+        }
+        )
+        R|/buildBox|<R|kotlin/Any|>(<L> = buildBox@fun R|Box<kotlin/Any>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.putAll: R|kotlin/Unit|>|(<collectionLiteralCall>())
+        }
+        )
+        R|/buildBox|<R|kotlin/String|>(<L> = buildBox@fun R|Box<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.putAll: R|kotlin/Unit|>|(<collectionLiteralCall>(String(42)))
+        }
+        )
+        R|/buildBox|<R|kotlin/Int|>(<L> = buildBox@fun R|Box<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.putAll: R|kotlin/Unit|>|(<collectionLiteralCall>(Int(42)))
+        }
+        )
+        R|/buildBox|<R|() -> kotlin/Unit|>(<L> = buildBox@fun R|Box<() -> kotlin/Unit>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.putAll: R|kotlin/Unit|>|(<collectionLiteralCall>(putAll@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                ^@putAll Unit
+            }
+            ))
+        }
+        )
+        R|/buildBox|<R|kotlin/reflect/KFunction0<kotlin/Unit>|>(<L> = buildBox@fun R|Box<kotlin/reflect/KFunction0<kotlin/Unit>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.putAll: R|kotlin/Unit|>|(<collectionLiteralCall>(::R|/test|))
+        }
+        )
+    }

@@ -32,7 +32,7 @@ fun test() {
     takeGenericArray<String>(<!ARGUMENT_TYPE_MISMATCH!>[]<!>)
     val resTake: String <!INITIALIZER_TYPE_MISMATCH!>=<!> takeGenericArray([])
     val errorTake: String <!INITIALIZER_TYPE_MISMATCH!>=<!> takeGenericArray([42])
-    val errorLamTake: String = takeGenericArray([{}])
+    val errorLamTake: String <!INITIALIZER_TYPE_MISMATCH!>=<!> takeGenericArray([{}])
 
     runGenericArray { [] }
     runGenericArray { ["42"] }
@@ -42,7 +42,7 @@ fun test() {
     runGenericArray<String> { <!RETURN_TYPE_MISMATCH!>[]<!> }
     val resRun: String = runGenericArray { <!RETURN_TYPE_MISMATCH!>[]<!> }
     val errorRun: String = runGenericArray { <!RETURN_TYPE_MISMATCH!>[42]<!> }
-    val errorLamRun: String = runGenericArray { [{}] }
+    val errorLamRun: String = runGenericArray { <!RETURN_TYPE_MISMATCH!>[{}]<!> }
 
     buildBox { put([]) }
     buildBox { put(["42"]) }

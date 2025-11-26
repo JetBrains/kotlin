@@ -1973,15 +1973,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         )
     }
 
-    @OptIn(ExperimentalContracts::class)
-    private val ResolutionMode.forCollectionLiteralInAnnotationResolution: Boolean
-        get() {
-            contract {
-                returns(true) implies (this@forCollectionLiteralInAnnotationResolution is ResolutionMode.WithExpectedType)
-            }
-            return (this as? ResolutionMode.WithExpectedType)?.arrayLiteralPosition != null
-        }
-
     override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement =
         whileAnalysing(session, collectionLiteral) {
             when {
@@ -2007,44 +1998,38 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         collectionLiteral: FirCollectionLiteral,
         data: ResolutionMode,
     ): FirStatement {
-        return when {
-            data.forCollectionLiteralInAnnotationResolution -> {
-                // Default value of a constructor parameter inside an annotation class or an argument in an annotation call.
-                collectionLiteral.transformChildren(
-                    transformer,
-                    data.expectedType.arrayElementType()?.let { withExpectedType(it) }
-                        ?: ResolutionMode.ContextDependent,
-                )
+        val expectedType = (data as? ResolutionMode.WithExpectedType)?.expectedType
 
-                val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(
-                    collectionLiteral,
-                    data.expectedType,
-                    resolutionContext,
-                    data,
-                )
-                callCompleter.completeCall(call, data)
-                arrayOfCallTransformer.transformFunctionCall(call, session)
-            }
-            else -> {
-                // Other unsupported usage.
-                collectionLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
-                // We set the arrayLiteral's type to the expect type or Array<Any>
-                // because arguments need to have a type during resolution of the synthetic call.
-                // We remove the type so that it will be set during completion to the CST of the arguments.
-                collectionLiteral.replaceConeTypeOrNull(
-                    (data as? ResolutionMode.WithExpectedType)?.expectedType
-                        ?: StandardClassIds.Array.constructClassLikeType(arrayOf(StandardTypes.Any))
-                )
-                val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
-                    collectionLiteral,
-                    resolutionContext,
-                    data,
-                )
-                collectionLiteral.replaceConeTypeOrNull(null)
-                callCompleter.completeCall(syntheticIdCall, ResolutionMode.ContextIndependent)
-                collectionLiteral
-            }
+        collectionLiteral.transformChildren(
+            transformer,
+            expectedType?.arrayElementType()?.let { withExpectedType(it) }
+                ?: ResolutionMode.ContextDependent
+        )
+
+        val expectedTypeForResolution = when {
+            expectedType != null && expectedType.isArrayType -> expectedType
+            else -> StandardClassIds.Array.constructClassLikeType(arrayOf(StandardTypes.Any))
         }
+        val resolutionMode: ResolutionMode = when {
+            (expectedType != null && expectedType.isArrayType)
+                    // Here, we ensure that the type parameter of `arrayOf` will be inferred successfully.
+                    // Otherwise, we might get an error expression with an error that will be skipped later.
+                    || collectionLiteral.arguments.isEmpty() -> withExpectedType(expectedTypeForResolution)
+            else -> ContextIndependent
+        }
+
+        val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(
+            collectionLiteral,
+            expectedTypeForResolution,
+            resolutionContext,
+            resolutionMode,
+        )
+
+        val completedCall = callCompleter.completeCall(call, resolutionMode)
+
+        // We must preserve array literal even if arrayOf transformation is not enabled.
+        // Otherwise, UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION will be lost.
+        return arrayOfCallTransformer.transformFunctionCall(completedCall, session)
     }
 
     override fun transformStringConcatenationCall(

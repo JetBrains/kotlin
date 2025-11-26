@@ -72,7 +72,6 @@ class FirSyntheticCallGenerator(
 
     private val whenSelectFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
     private val trySelectFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
-    private val idFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.ID)
     private val checkNotNullFunction: FirNamedFunction = generateSyntheticCheckNotNullFunction()
     private val elvisFunction: FirNamedFunction = generateSyntheticElvisFunction()
     private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol?, Nothing?> = session.firCachesFactory.createCache(::getArrayOfSymbol)
@@ -175,23 +174,6 @@ class FirSyntheticCallGenerator(
         )
 
         return elvisExpression.transformCalleeReference(UpdateReference, reference)
-    }
-
-    fun generateSyntheticIdCall(arrayLiteral: FirExpression, context: ResolutionContext, resolutionMode: ResolutionMode): FirFunctionCall {
-        val argumentList = buildArgumentList {
-            arguments += arrayLiteral
-        }
-        return buildFunctionCall {
-            this.argumentList = argumentList
-            calleeReference = generateCalleeReferenceWithCandidate(
-                arrayLiteral,
-                idFunction,
-                argumentList,
-                SyntheticCallableId.ID.callableName,
-                context = context,
-                resolutionMode = resolutionMode,
-            )
-        }
     }
 
     fun generateSyntheticArrayOfCall(

@@ -1,0 +1,35 @@
+FILE: inAnnotations.kt
+    @R|kotlin/annotation/Repeatable|() public final annotation class AnnoString : R|kotlin/Annotation| {
+        public constructor(args: R|kotlin/Array<kotlin/String>|): R|AnnoString| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val args: R|kotlin/Array<kotlin/String>| = R|<local>/args|
+            public get(): R|kotlin/Array<kotlin/String>|
+
+    }
+    @R|kotlin/annotation/Repeatable|() public final annotation class AnnoInt : R|kotlin/Annotation| {
+        public constructor(vararg args: R|kotlin/IntArray|): R|AnnoInt| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val args: R|kotlin/IntArray| = R|<local>/args|
+            public get(): R|kotlin/IntArray|
+
+    }
+    @R|AnnoString|(args = ERROR_EXPR(CS errors: kotlin/arrayOf)) @R|AnnoString|(args = ERROR_EXPR(CS errors: kotlin/arrayOf)) @R|AnnoInt|(args = vararg(*ERROR_EXPR(Inapplicable(INAPPLICABLE): kotlin/intArrayOf))) @R|AnnoInt|(args = vararg(*ERROR_EXPR(Inapplicable(INAPPLICABLE): kotlin/intArrayOf))) @R|AnnoInt|(args = vararg(*ERROR_EXPR(Inapplicable(INAPPLICABLE): kotlin/intArrayOf))) public final fun testWithLambdas(): R|kotlin/Unit| {
+    }
+    @R|AnnoInt|(args = vararg(*ERROR_EXPR(Inapplicable(INAPPLICABLE): kotlin/intArrayOf))) @R|AnnoInt|(args = vararg(*ERROR_EXPR(Inapplicable(INAPPLICABLE): kotlin/intArrayOf))) @R|AnnoString|(args = ERROR_EXPR(CS errors: kotlin/arrayOf)) @R|AnnoString|(args = ERROR_EXPR(CS errors: kotlin/arrayOf)) public final fun testWithAnons(): R|kotlin/Unit| {
+    }
+    public final fun skip(): R|kotlin/Unit| {
+    }
+    public final fun <T> id(it: R|T|): R|T| {
+        ^id R|<local>/it|
+    }
+    public final fun const42(): R|kotlin/Int| {
+        ^const42 Int(42)
+    }
+    public final fun <T> consume(it: R|T|): R|kotlin/Unit| {
+    }
+    @R|AnnoString|(args = <collectionLiteralCall>(::R|/skip|)) @R|AnnoString|(args = ERROR_EXPR(CS errors: kotlin/arrayOf)) @R|AnnoInt|(args = vararg(*ERROR_EXPR(Inapplicable(INAPPLICABLE): kotlin/intArrayOf))) @R|AnnoInt|(args = vararg(*ERROR_EXPR(Inapplicable(INAPPLICABLE): kotlin/intArrayOf))) public final fun testWithCallables(): R|kotlin/Unit| {
+    }

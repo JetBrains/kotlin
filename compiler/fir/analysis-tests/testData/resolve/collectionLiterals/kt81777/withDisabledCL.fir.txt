@@ -1,0 +1,83 @@
+FILE: withDisabledCL.kt
+    public final fun testWithLambdas(): R|kotlin/Unit| {
+        lval lam: R|kotlin/Array<() -> kotlin/Unit>| = <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+        )
+        lval withParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Unit>| = <collectionLiteralCall>(fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+        )
+        lval withParamOfSpecifiedType: R|kotlin/Array<(kotlin/Int) -> kotlin/Unit>| = <collectionLiteralCall>(fun <anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+        )
+        lval withReturn: R|kotlin/Array<() -> kotlin/Int>| = <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(42)
+        }
+        )
+        lval withReturnAndParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Int>| = <collectionLiteralCall>(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/x|
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+        )
+        ERROR_EXPR(CS errors: kotlin/arrayOf)
+        <collectionLiteralCall>(fun <anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(42)
+        }
+        )
+        ERROR_EXPR(CS errors: kotlin/arrayOf)
+    }
+    public final fun testWithAnons(): R|kotlin/Unit| {
+        lval anon: R|kotlin/Array<() -> kotlin/Unit>| = <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        }
+        )
+        lval withParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Unit>| = <collectionLiteralCall>(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+        }
+        )
+        lval withReturn: R|kotlin/Array<() -> kotlin/Int>| = <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(42)
+        }
+        )
+        lval withReturnAndParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Int>| = <collectionLiteralCall>(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/x|
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(42)
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/x|
+        }
+        )
+    }
+    public final fun skip(): R|kotlin/Unit| {
+    }
+    public final fun <T> id(it: R|T|): R|T| {
+        ^id R|<local>/it|
+    }
+    public final fun const42(): R|kotlin/Int| {
+        ^const42 Int(42)
+    }
+    public final fun <T> consume(it: R|T|): R|kotlin/Unit| {
+    }
+    public final fun testWithCallables(): R|kotlin/Unit| {
+        lval callable: R|kotlin/Array<() -> kotlin/Unit>| = <collectionLiteralCall>(::R|/skip|)
+        lval withParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Unit>| = <collectionLiteralCall>(::R|/consume<kotlin/Int>|)
+        lval withReturn: R|kotlin/Array<() -> kotlin/Int>| = <collectionLiteralCall>(::R|/const42|)
+        lval withReturnAndParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Int>| = <collectionLiteralCall>(::R|/id<kotlin/Int>|)
+    }

@@ -1,0 +1,17 @@
+FILE: kt49961.fir.kt
+    public final class Xyz : R|kotlin/Any| {
+        public constructor(): R|Xyz| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun x(): R|kotlin/String?| {
+            ^x try {
+                ERROR_EXPR(Inapplicable(INAPPLICABLE): kotlin/arrayOf) ?: <Unresolved name: XYZ>#
+            }
+            catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
+                Null(null)
+            }
+
+        }
+
+    }
