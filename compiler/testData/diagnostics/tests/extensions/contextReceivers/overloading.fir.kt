@@ -20,7 +20,7 @@ fun foo(): Double {
 fun test() {
     with(42) {
         with("") {
-            val a: String = foo()
+            val a: String = <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>()
         }
         val b: Int = foo()
     }

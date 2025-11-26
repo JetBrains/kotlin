@@ -20,7 +20,7 @@ object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
 
 class TypeWithConversion(val resultType: KotlinTypeMarker?, val originalTypeIfWasConverted: KotlinTypeMarker? = null)
 
-class FlatSignature<out T> constructor(
+class FlatSignature<out T>(
     val origin: T,
     val typeParameters: Collection<TypeParameterMarker>,
     val hasExtensionReceiver: Boolean,
@@ -29,8 +29,7 @@ class FlatSignature<out T> constructor(
     val numDefaults: Int,
     val isExpect: Boolean,
     val isSyntheticMember: Boolean,
-    val valueParameterTypes: List<TypeWithConversion?>,
-    val hasContext: Boolean = contextReceiverCount > 0
+    val valueParameterTypes: List<TypeWithConversion?>
 ) {
     val isGeneric = typeParameters.isNotEmpty()
 

@@ -10,8 +10,8 @@ fun f(): String = TODO()
 fun f(): Any = TODO()
 
 fun test() {
-    with(Context()) {
-        f().length
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(Context()) {
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>().<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 

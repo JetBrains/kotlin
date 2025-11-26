@@ -70,8 +70,6 @@ class ConeOverloadConflictResolver(
     private val transformerComponents: BodyResolveComponents,
 ) : ConeCallConflictResolver() {
 
-    private val contextParametersEnabled = inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
-
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateAbstracts: Boolean,
@@ -393,11 +391,6 @@ class ConeOverloadConflictResolver(
             }
         }
 
-        if (!contextParametersEnabled) {
-            if (call1.contextReceiverCount > call2.contextReceiverCount) return true
-            if (call1.contextReceiverCount < call2.contextReceiverCount) return false
-        }
-
         return createEmptyConstraintSystem().also {
             inferenceComponents.session.inferenceLogger?.logStage("Some compareCallsByUsedArguments() call", it.constraintSystemMarker)
         }.isSignatureEquallyOrMoreSpecific(
@@ -490,12 +483,11 @@ class ConeOverloadConflictResolver(
             typeParameters = (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
             valueParameterTypes = computeSignatureTypes(call, variable),
             hasExtensionReceiver = variable.receiverParameter != null,
-            contextReceiverCount = if (!contextParametersEnabled) variable.contextParameters.size else 0,
+            contextReceiverCount = 0,
             hasVarargs = false,
             numDefaults = 0,
             isExpect = (variable as? FirProperty)?.isExpect == true,
             isSyntheticMember = false,
-            hasContext = variable.contextParameters.isNotEmpty(),
         )
     }
 
@@ -506,12 +498,11 @@ class ConeOverloadConflictResolver(
             valueParameterTypes = computeSignatureTypes(call, constructor),
             //constructor.receiverParameter != null,
             hasExtensionReceiver = false,
-            contextReceiverCount = if (!contextParametersEnabled) constructor.contextParameters.size else 0,
+            contextReceiverCount = 0,
             hasVarargs = constructor.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
             isExpect = constructor.isExpect,
             isSyntheticMember = false,
-            hasContext = constructor.contextParameters.isNotEmpty(),
         )
     }
 
@@ -521,12 +512,11 @@ class ConeOverloadConflictResolver(
             typeParameters = function.typeParameters.map { it.symbol.toLookupTag() },
             valueParameterTypes = computeSignatureTypes(call, function),
             hasExtensionReceiver = function.receiverParameter != null,
-            contextReceiverCount = if (!contextParametersEnabled) function.contextParameters.size else 0,
+            contextReceiverCount = 0,
             hasVarargs = function.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
             isExpect = function.isExpect,
             isSyntheticMember = false,
-            hasContext = function.contextParameters.isNotEmpty(),
         )
     }
 
@@ -559,9 +549,6 @@ class ConeOverloadConflictResolver(
                         )
                     }
             } else {
-                if (!contextParametersEnabled) {
-                    called.contextParameters.mapTo(this) { TypeWithConversion(it.returnTypeRef.coneType.prepareType(session, call)) }
-                }
                 if (call.argumentMappingInitialized) {
                     call.argumentMapping.mapNotNullTo(this) { (argument, parameter) ->
                         parameter.toTypeWithConversion(argument, session, call)

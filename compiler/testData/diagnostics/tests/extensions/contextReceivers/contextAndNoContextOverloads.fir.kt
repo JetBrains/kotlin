@@ -32,7 +32,7 @@ fun test() {
     val scope = Scope("")
     val c = ClassBoth()
     c.foo()
-    with(scope) { c.foo() }
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(scope) { c.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>() }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, interfaceDeclaration,

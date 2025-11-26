@@ -119,7 +119,7 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
                 valueParameters.mapTo(this) { it.resolvedReturnType }
             },
             hasExtensionReceiver = declaration.receiverParameterSymbol != null,
-            contextReceiverCount = if (ignoreContextParameters) 0 else declaration.contextParameterSymbols.size,
+            contextReceiverCount = 0,
             hasVarargs = valueParameters.any { it.isVararg },
             numDefaults = 0,
             isExpect = declaration.isExpect,
