@@ -212,7 +212,7 @@ fun compileWasm(
         null
     }
 
-    val writer = ByteWriterWithOffsetWrite.makeNew()
+    val writer = ByteWriterWithOffsetWrite()
 
     val wasmIrToBinary =
         WasmIrToBinary(

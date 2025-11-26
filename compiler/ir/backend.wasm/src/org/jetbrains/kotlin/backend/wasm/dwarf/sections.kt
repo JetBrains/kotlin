@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.toByteArray
 
 sealed class DebuggingSection(val name: String) {
     val offset get() = writer.written
-    val writer = ByteWriterWithOffsetWrite.makeNew()
+    val writer = ByteWriterWithOffsetWrite()
 
     fun writeWithPrependSize(
         encoding: Dwarf.Encoding,

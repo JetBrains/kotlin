@@ -146,6 +146,8 @@ class WasmBinaryData(private val data: ByteArray, private val size: Int) {
 }
 
 class ByteWriterWithOffsetWrite private constructor(private val os: ByteArrayOutputStreamWithInternals) : ByteWriter(os) {
+    constructor() : this(ByteArrayOutputStreamWithInternals())
+
     private class ByteArrayOutputStreamWithInternals : ByteArrayOutputStream() {
         val streamBuffer: ByteArray get() = this.buf
         var offset
@@ -153,10 +155,6 @@ class ByteWriterWithOffsetWrite private constructor(private val os: ByteArrayOut
             set(value) {
                 this.count = value
             }
-    }
-
-    companion object {
-        fun makeNew(): ByteWriterWithOffsetWrite = ByteWriterWithOffsetWrite(ByteArrayOutputStreamWithInternals())
     }
 
     val written: Int get() = os.size()
