@@ -150,15 +150,7 @@ internal fun KaSession.processPossiblyMappedMethod(
     val javaMethod = tryToMapKotlinCollectionMethodToJavaMethod(kotlinCollectionFunction, allSupertypes) ?: return true
     val collectionSupertype = allSupertypes.find { it.classId == kotlinCollectionFunction.callableId?.classId } ?: return true
     val javaCollection = javaMethod.containingClass ?: return true
-
-    val substitutionMap = buildMap<PsiTypeParameter, PsiType> {
-        javaCollection.typeParameters.zip(collectionSupertype.typeArguments).forEach { (typeParameter, typeArgument) ->
-            val psiType = typeArgument.type?.asPsiType(useSitePosition = containingClass, allowErrorTypes = true)
-            if (psiType != null) put(typeParameter, psiType)
-        }
-    }
-
-    val substitutor = PsiSubstitutor.createSubstitutor(substitutionMap)
+    val substitutor = createPsiSubstitutor(javaCollection, collectionSupertype, containingClass)
     val isErasedSignature = javaMethod.name in erasedCollectionParameterNames ||
             ownFunction.valueParameters.any { it.returnType is KaTypeParameterType }
 
@@ -242,15 +234,8 @@ internal fun KaSession.generateJavaCollectionMethodStubsIfNeeded(
     val kotlinCollectionSymbol = closestMappedSupertype.symbol as? KaClassSymbol ?: return
     val javaCollectionSymbol = findClass(javaClassId) ?: return
     val javaCollectionPsiClass = javaCollectionSymbol.psi as? PsiClass ?: return
+    val substitutor = createPsiSubstitutor(javaCollectionPsiClass, closestMappedSupertype, containingClass)
 
-    val substitutionMap = buildMap<PsiTypeParameter, PsiType> {
-        javaCollectionPsiClass.typeParameters.zip(closestMappedSupertype.typeArguments).forEach { (javaParam, kotlinArg) ->
-            val psiType = kotlinArg.type?.asPsiType(useSitePosition = containingClass, allowErrorTypes = true) ?: return@forEach
-            put(javaParam, psiType)
-        }
-    }
-
-    val substitutor = PsiSubstitutor.createSubstitutor(substitutionMap)
     generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, kotlinCollectionSymbol, substitutor, result)
 }
 
@@ -258,6 +243,20 @@ private fun mapKotlinClassToJava(classId: ClassId): ClassId? {
     return JavaToKotlinClassMap.mutabilityMappings.find {
         classId == it.kotlinReadOnly || classId == it.kotlinMutable
     }?.javaClass
+}
+
+private fun KaSession.createPsiSubstitutor(
+    javaCollection: PsiClass,
+    kotlinCollection: KaClassType,
+    containingClass: SymbolLightClassForClassOrObject,
+): PsiSubstitutor {
+    val substitutionMap = buildMap<PsiTypeParameter, PsiType> {
+        javaCollection.typeParameters.zip(kotlinCollection.typeArguments).forEach { (typeParameter, typeArgument) ->
+            val psiType = typeArgument.type?.asPsiType(useSitePosition = containingClass, allowErrorTypes = true) ?: return@forEach
+            put(typeParameter, psiType)
+        }
+    }
+    return PsiSubstitutor.createSubstitutor(substitutionMap)
 }
 
 private fun KaSession.generateJavaCollectionMethodStubs(
