@@ -52,6 +52,13 @@ import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSDiction
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSSet
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsObjCBridged
 import org.jetbrains.kotlin.sir.providers.impl.SirTypeProviderImpl.TypeTranslationCtx
+import org.jetbrains.kotlin.sir.providers.impl.tree.MixedAST
+import org.jetbrains.kotlin.sir.providers.impl.tree.access
+import org.jetbrains.kotlin.sir.providers.impl.tree.ast
+import org.jetbrains.kotlin.sir.providers.impl.tree.createRetainedExternalRCRef
+import org.jetbrains.kotlin.sir.providers.impl.tree.invoke
+import org.jetbrains.kotlin.sir.providers.impl.tree.op
+import org.jetbrains.kotlin.sir.providers.impl.tree.parameterX
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 public class SirCustomTypeTranslatorImpl(
@@ -214,24 +221,25 @@ public class SirCustomTypeTranslatorImpl(
             get() = typeList.first().cType
 
         override val inKotlinSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                val operator = if (inclusive) ".." else "..<"
-                return "${valueExpression}_1 $operator ${valueExpression}_2"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: MixedAST): MixedAST {
+                val operator = if (inclusive) MixedAST.Operator.RANGE_KOTLIN else MixedAST.Operator.RANGE_UNTIL
+                return valueExpression.parameterX(1).op(operator, valueExpression.parameterX(2))
             }
 
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: MixedAST): MixedAST =
+                valueExpression.createRetainedExternalRCRef()
         }
 
         override val inSwiftSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "$valueExpression.lowerBound, $valueExpression.upperBound"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: MixedAST): MixedAST =
+                valueExpression.access("lowerBound").op(MixedAST.Operator.COMMA, valueExpression.access("upperBound"))
 
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: MixedAST): MixedAST {
                 val startBridge = nativePointerToMultipleObjCBridge(0)
                 val endBridge = nativePointerToMultipleObjCBridge(1)
-                val operator = if (inclusive) "..." else "..<"
-                return "${startBridge.name}($valueExpression) $operator ${endBridge.name}($valueExpression)"
+                val operator = if (inclusive) MixedAST.Operator.RANGE_SWIFT else MixedAST.Operator.RANGE_UNTIL
+                return startBridge.name.ast().invoke(valueExpression)
+                    .op(operator, endBridge.name.ast().invoke(valueExpression))
             }
         }
 
