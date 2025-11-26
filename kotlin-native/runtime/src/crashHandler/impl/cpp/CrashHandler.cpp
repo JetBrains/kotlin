@@ -35,8 +35,9 @@ std::array kExceptionSignals = {
 };
 
 void minidumpSigaction(int sig, siginfo_t*, void*) {
-    konan::consoleErrorf("Signal %s received. Generating minidump.\n", strsignal(sig));
+    konan::consoleErrorf("Signal %s received. Generating minidump.\n", sys_signame[sig]);
     kotlin::writeMinidump();
+    fflush(stderr);
     exit(1);
 }
 

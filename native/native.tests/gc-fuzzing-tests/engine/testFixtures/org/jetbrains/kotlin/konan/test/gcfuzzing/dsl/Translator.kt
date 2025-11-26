@@ -30,6 +30,7 @@ class Config(
     val memoryPressureHazardZoneBytes: LongRange,
     val memoryPressureCheckInterval: Duration,
     val softTimeout: Duration,
+    val hardTimeout: Duration,
 ) {
     companion object {
         val DEFAULT = Config(
@@ -39,6 +40,7 @@ class Config(
             memoryPressureHazardZoneBytes = 2.5.GiB..3.0.GiB,
             memoryPressureCheckInterval = 1.seconds,
             softTimeout = 1.minutes,
+            hardTimeout = 10.minutes,
         )
     }
 }
@@ -77,6 +79,7 @@ fun Program.translate(config: Config = Config.DEFAULT): Output {
         memoryPressureCheckInterval = config.memoryPressureCheckInterval,
         basename = "main",
         softTimeout = config.softTimeout,
+        hardTimeout = config.hardTimeout,
     )
     val cinterop = produceCInterop(cinteropConfig)
     val kotlin = produceKotlin(kotlinConfig)
