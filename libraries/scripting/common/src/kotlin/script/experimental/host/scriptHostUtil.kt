@@ -104,11 +104,13 @@ fun File.toScriptSource(): SourceCode = FileScriptSource(this)
 /**
  * The implementation of the ScriptSource for a script in a String
  */
-open class StringScriptSource(val source: String, override val name: String? = null) : SourceCode, Serializable {
+open class StringScriptSource(
+    val source: String,
+    override val name: String? = null,
+    override val locationId: String? = "${name ?: ""}\$${source.hashCode().toHexString()}",
+) : SourceCode, Serializable {
 
     override val text: String get() = source
-
-    override val locationId: String? get() = name
 
     override fun equals(other: Any?): Boolean =
         this === other || (other as? StringScriptSource)?.let { text == it.text && name == it.name && locationId == it.locationId } == true

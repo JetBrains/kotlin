@@ -9,11 +9,12 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import kotlin.script.experimental.api.*
 
 class FirScriptDefinitionProviderService(
     session: FirSession,
@@ -42,6 +43,31 @@ class FirScriptDefinitionProviderService(
         set(value) {
             synchronized(this) { _configurationProvider = value }
         }
+
+    fun getDefaultConfiguration(): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+        definitionProvider!!.getDefaultDefinition().compilationConfiguration.asSuccess()
+
+    fun getBaseConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
+        definitionProvider!!.findDefinition(sourceCode)?.compilationConfiguration?.asSuccess()
+
+    private val refinedCache = mutableMapOf<String, ResultWithDiagnostics<ScriptCompilationConfiguration>>()
+
+    fun getRefinedConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
+        sourceCode.locationId?.let { refinedCache[it] }
+            ?: configurationProvider!!.getScriptCompilationConfiguration(sourceCode)?.onSuccess { it.configuration?.asSuccess() ?: return null }
+
+    fun storeRefinedConfiguration(
+        sourceCode: SourceCode,
+        configuration: ResultWithDiagnostics<ScriptCompilationConfiguration>
+    ): ResultWithDiagnostics<ScriptCompilationConfiguration>? {
+        val locationId = sourceCode.locationId ?: error("Cannot cache script without location: ${sourceCode.name ?: sourceCode.text}")
+        return refinedCache.put(locationId, configuration)
+    }
+
+    fun clearRefinedConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? {
+        val locationId = sourceCode.locationId ?: return null
+        return refinedCache.remove(locationId)
+    }
 
     companion object {
         fun getFactory(

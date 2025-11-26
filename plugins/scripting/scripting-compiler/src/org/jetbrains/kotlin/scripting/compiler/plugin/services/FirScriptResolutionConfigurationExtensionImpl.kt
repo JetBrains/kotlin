@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.extensions.FirScriptResolutionConfigurationExtension
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationConfiguration
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.defaultImports
@@ -29,7 +30,8 @@ class FirScriptResolutionConfigurationExtensionImpl(
         val scriptSession = script.moduleData.session
         val scriptFile = scriptSession.firProvider.getFirScriptContainerFile(script.symbol) ?: return emptyList()
         val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return emptyList()
-        val compilationConfiguration = session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return emptyList()
+        val compilationConfiguration = script.scriptCompilationConfiguration
+            ?: session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return emptyList()
 
         return compilationConfiguration[ScriptCompilationConfiguration.defaultImports]
             .firImportsFromDefaultImports(script.source.fakeElement(KtFakeSourceElementKind.ImplicitImport))

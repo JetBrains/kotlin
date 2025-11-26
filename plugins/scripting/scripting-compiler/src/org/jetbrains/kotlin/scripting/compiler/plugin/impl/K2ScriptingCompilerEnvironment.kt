@@ -12,8 +12,11 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -26,6 +29,10 @@ import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingCompilerExtensionRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -128,7 +135,19 @@ fun createCompilerState(
         configureCompiler
     )
     val project = compilerContext.environment.project
-    val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings
+    val compilerConfiguration = compilerContext.environment.configuration
+    val languageVersionSettings = compilerConfiguration.languageVersionSettings
+
+    val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
+
+    compilerConfiguration.scriptingHostConfiguration = hostConfiguration
+    compilerConfiguration.add(
+        ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
+        ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
+    )
+    with(ScriptingK2CompilerPluginRegistrar()) { extensionStorage.registerExtensions(compilerConfiguration) }
+    extensionStorage.registerInProject(project) { "Error on plugin registration: ${it.javaClass.name}" }
+
     val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
         (it as? JvmDependency)?.classpath ?: emptyList()
     }
@@ -144,7 +163,7 @@ fun createCompilerState(
     val moduleDataProvider = createModuleDataProvider(classpath.map(File::toPath))
 
     val sessionFactoryContext = FirJvmSessionFactory.Context(
-        configuration = compilerContext.environment.configuration,
+        configuration = compilerConfiguration,
         projectEnvironment = projectEnvironment,
         librariesScope = projectFileSearchScope,
     )

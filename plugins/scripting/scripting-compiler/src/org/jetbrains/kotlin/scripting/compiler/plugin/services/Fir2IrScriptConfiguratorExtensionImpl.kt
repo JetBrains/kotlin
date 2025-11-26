@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationConfiguration
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -25,7 +26,8 @@ class Fir2IrScriptConfiguratorExtensionImpl(
         // processing only refined scripts here
         val scriptFile = session.firProvider.getFirScriptContainerFile(script.symbol) ?: return
         val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return
-        val compilationConfiguration = session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return
+        val compilationConfiguration = script.scriptCompilationConfiguration
+            ?: session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return
 
         // assuming that if the script is compiled, the import files should be all resolved already
         val importedScripts = compilationConfiguration[ScriptCompilationConfiguration.resolvedImportScripts]
