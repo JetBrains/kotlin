@@ -74,7 +74,6 @@ open class AbstractReplWithTestExtensionsDiagnosticsTest : AbstractKotlinCompile
 open class AbstractReplViaApiDiagnosticsTest : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
-            val baseDir = "."
             globalDefaults {
                 frontend = FrontendKinds.FIR
                 targetPlatform = JvmPlatforms.defaultJvmPlatform
@@ -143,6 +142,17 @@ open class AbstractReplViaApiEvaluationTest : AbstractReplViaApiDiagnosticsTest(
     }
 }
 
+open class AbstractReplViaApiDiagnosticsCompatTest : AbstractReplViaApiDiagnosticsTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+
+        with(builder) {
+            useMetaTestConfigurators(
+                ::ReplCompatDiagnosticTestConfigurator,
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalCompilerApi::class)
 private class ReplConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -150,7 +160,7 @@ private class ReplConfigurator(testServices: TestServices) : EnvironmentConfigur
         val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
             repl {
                 firReplHistoryProvider(FirReplHistoryProviderImpl())
-                isReplSnippetSource { sourceFile, scriptSource -> true }
+                isReplSnippetSource { _, _ -> true }
             }
         }
         configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))

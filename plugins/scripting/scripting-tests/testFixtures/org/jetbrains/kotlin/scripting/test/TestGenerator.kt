@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.scripting.test
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
+import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
@@ -32,6 +35,29 @@ fun main(args: Array<String>) {
 
             testClass<AbstractReplViaApiEvaluationTest> {
                 model("testData/codegen/repl", extension = "kts")
+            }
+        }
+
+        testGroup("plugins/scripting/scripting-tests/tests-gen", "compiler/") {
+            testClass<AbstractReplViaApiDiagnosticsCompatTest> {
+                val relativeRootPaths = listOf(
+                    "testData/diagnostics/tests",
+                    "testData/diagnostics/testsWithAnyBackend",
+                    "testData/diagnostics/testsWithStdLib",
+                    "testData/diagnostics/jvmIntegration",
+                    "fir/analysis-tests/testData/resolve",
+                    "fir/analysis-tests/testData/resolveWithStdlib",
+                )
+
+                for (path in relativeRootPaths) {
+                    model(
+                        path,
+                        excludeDirs = listOf("declarations/multiplatform/k1"),
+                        skipTestAllFilesCheck = true,
+                        pattern = TestGeneratorUtil.KT_OR_KTS.canFreezeIDE,
+                        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                    )
+                }
             }
         }
     }
