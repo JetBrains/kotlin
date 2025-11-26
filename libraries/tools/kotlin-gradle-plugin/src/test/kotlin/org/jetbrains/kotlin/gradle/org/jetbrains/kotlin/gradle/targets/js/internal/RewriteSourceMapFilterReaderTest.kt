@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.org.jetbrains.kotlin.gradle.targets.js.inter
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.Ignore
 import java.io.Reader
 import java.io.StringReader
 
@@ -53,6 +54,7 @@ class RewriteSourceMapFilterReaderTest {
     }
 
     @Test
+    @Ignore // Such a prolog became supported since we started to use SWC, and it produces exactly such a prolog
     fun testUnsupportedUnderfindProlog() {
         val filter =
             RewriteSourceMapFilterReaderMock(
