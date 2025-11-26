@@ -89,6 +89,7 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
             subTarget.disambiguateCamelCased(name, SWC_TASK_NAME),
             generateConfigTask,
         ) {
+            val outputGranularity = linkTask.map(KotlinJsIrLink::outputGranularity)
             val sourceDirectory = linkTask.flatMap(KotlinJsIrLink::destinationDirectory)
             val destinationDirectory = binary.distribution.distributionName.flatMap {
                 project.layout.buildDirectory.dir("kotlin-swc/${compilation.target.name}/$it")
@@ -97,6 +98,7 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
             description = "transpile compiler output with Swc [${binaryMode.name.toLowerCaseAsciiOnly()}]"
             inputDirectory.set(sourceDirectory)
             outputDirectory.set(destinationDirectory)
+            granularity.set(outputGranularity)
         }
 
         linkSyncTask.configure { task ->

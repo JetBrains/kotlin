@@ -25,6 +25,7 @@ import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -52,6 +53,10 @@ internal constructor(
     @get:Input
     abstract val fileExtension: Property<String>
 
+    @get:Input
+    // We want on the granularity changes to run the task in non-incremental mode, since there will be a lot of changes anyway
+    abstract val granularity: Property<KotlinJsIrOutputGranularity>
+
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val configFile: RegularFileProperty
@@ -67,19 +72,25 @@ internal constructor(
 
     @TaskAction
     fun exec(inputs: InputChanges) {
-        val (filesToTranspile, deletedFiles) = inputs.getFileChanges(inputDirectory)
-            .filter { change -> change.file.extension.let { it in ModuleKind.allowedJsExtensions } }
-            .partition { it.changeType == ChangeType.ADDED || it.changeType == ChangeType.MODIFIED }
+        val isIncremental = inputs.isIncremental
+
+        val (filesToTranspile, deletedFiles) = if (isIncremental) {
+            val (changedFiles, deletedFiles) = inputs.getFileChanges(inputDirectory)
+                .filter { change -> change.file.extension.let { it in ModuleKind.allowedJsExtensions } }
+                .partition { it.changeType == ChangeType.ADDED || it.changeType == ChangeType.MODIFIED }
+
+            changedFiles.map { it.normalizedPath } to deletedFiles.flatMap {
+                listOf(
+                    outputDirectory.file(it.normalizedPath),
+                    outputDirectory.file("${it.normalizedPath.substringBeforeLast(".")}.js.map")
+                )
+            }
+        } else {
+            listOf("./") to listOf(outputDirectory)
+        }
 
         if (deletedFiles.isNotEmpty()) {
-            fs.delete { spec ->
-                spec.delete(deletedFiles.flatMap {
-                    listOf(
-                        outputDirectory.file(it.normalizedPath),
-                        outputDirectory.file("${it.normalizedPath.substringBeforeLast(".")}.js.map")
-                    )
-                })
-            }
+            fs.delete { it.delete(deletedFiles) }
         }
 
         if (filesToTranspile.isNotEmpty()) {
@@ -87,7 +98,7 @@ internal constructor(
                 spec.executable = executable.get()
                 spec.workingDir = inputDirectory.get().asFile
                 spec.args = SwcConfig.getArgumentsWhen(
-                    inputDirectoryOrFiles = filesToTranspile.map { it.normalizedPath },
+                    inputDirectoryOrFiles = filesToTranspile,
                     outputDirectory = outputDirectory.get().asFile.absolutePath,
                     configPath = configFile.get().asFile.absolutePath,
                     fileExtension = fileExtension.get(),
