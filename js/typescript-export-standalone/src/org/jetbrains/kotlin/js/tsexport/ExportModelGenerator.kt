@@ -165,7 +165,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     private fun exportType(type: KaType): ExportedType = TypeExporter(config).exportType(type)
 
     context(_: KaSession)
-    private fun exportTypeParameter(typeParameter: KaTypeParameterSymbol): ExportedType.TypeParameter {
+    private fun exportTypeParameter(typeParameter: KaTypeParameterSymbol): ExportedTypeParameter {
         val constraints = typeParameter.upperBounds
             .mapNotNull {
                 val exportedType = exportType(it)
@@ -177,7 +177,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 }
             }
 
-        return ExportedType.TypeParameter(
+        return ExportedTypeParameter(
             name = typeParameter.name.identifier,
             constraint = when (constraints.size) {
                 0 -> null

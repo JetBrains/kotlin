@@ -134,7 +134,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     }
 
     private fun ExportedConstructSignature.generateTypeScriptString(indent: String): String {
-        return "new(${parameters.generateTypeScriptString(indent)}): ${returnType.toTypeScript(indent)};"
+        return "new${renderTypeParameters(typeParameters)}(${parameters.generateTypeScriptString(indent)}): ${returnType.toTypeScript(indent)};"
     }
 
     private fun ExportedProperty.generateTypeScriptString(indent: String, prefix: String): String {
@@ -179,6 +179,16 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         }
     }
 
+    private fun renderTypeParameters(typeParameters: List<ExportedTypeParameter>): String = if (typeParameters.isNotEmpty()) {
+        typeParameters.joinToString(", ", "<", ">") { tp ->
+            tp.constraint?.let {
+                "${tp.name} extends ${it.toTypeScript(indent, isInCommentContext = false)}"
+            } ?: tp.name
+        }
+    } else {
+        ""
+    }
+
     private fun ExportedFunction.generateTypeScriptString(indent: String, prefix: String): String {
         val visibility = if (isProtected) "protected " else ""
 
@@ -193,11 +203,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         }
 
         val renderedParameters = parameters.generateTypeScriptString(indent)
-        val renderedTypeParameters = if (typeParameters.isNotEmpty()) {
-            "<" + typeParameters.joinToString(", ") { it.toTypeScript(indent) } + ">"
-        } else {
-            ""
-        }
+        val renderedTypeParameters = renderTypeParameters(typeParameters)
 
         val renderedReturnType = returnType.toTypeScript(indent)
         val containsUnresolvedChar = when (val exportedName = name) {
@@ -328,11 +334,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             ""
         }
 
-        val renderedTypeParameters = if (typeParameters.isNotEmpty()) {
-            "<" + typeParameters.joinToString(", ") { it.toTypeScript(indent) } + ">"
-        } else {
-            ""
-        }
+        val renderedTypeParameters = renderTypeParameters(typeParameters)
 
         val modifiers = if (isAbstract && !isInterface) "abstract " else ""
 
@@ -345,7 +347,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                     typeParameters,
                     ExportedType.ClassType(
                         name,
-                        typeParameters.map { it.copy(constraint = null) },
+                        typeParameters.map(ExportedType::TypeParameterRef),
                         isObject = false,
                         isExternal,
                         originalClassId,
@@ -445,14 +447,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             "(" + parameters.generateTypeScriptString(indent) + ") => " + returnType.toTypeScript(indent, isInCommentContext)
 
         is ExportedType.ConstructorType ->
-            "abstract new " + (if (typeParameters.isNotEmpty()) "<${
-                typeParameters.joinToString(", ") {
-                    it.toTypeScript(
-                        indent,
-                        isInCommentContext
-                    )
-                }
-            }>" else "") + "() => ${returnType.toTypeScript(indent, isInCommentContext)}"
+            "abstract new " + renderTypeParameters(typeParameters) + "() => ${returnType.toTypeScript(indent, isInCommentContext)}"
 
         is ExportedType.ClassType -> {
             val classTypeReference = if (isObject && !isExternal && isEsModules) "$name.$Metadata.$MetadataType" else name
@@ -501,9 +496,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             )
         }]"
 
-        is ExportedType.TypeParameter -> constraint?.let {
-            "$name extends ${it.toTypeScript(indent, isInCommentContext)}"
-        } ?: name
+        is ExportedType.TypeParameterRef -> typeParameter.name
     }
 
     private fun generateMetadataNamespace(members: List<ExportedDeclaration>): ExportedNamespace =

@@ -40,7 +40,7 @@ public data class ExportedFunction(
     val name: ExportedFunctionName,
     val returnType: ExportedType,
     val parameters: List<ExportedParameter>,
-    val typeParameters: List<ExportedType.TypeParameter> = emptyList(),
+    val typeParameters: List<ExportedTypeParameter> = emptyList(),
     val isMember: Boolean = false,
     val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
@@ -58,6 +58,7 @@ public data class ExportedConstructor(
 public data class ExportedConstructSignature(
     val parameters: List<ExportedParameter>,
     val returnType: ExportedType,
+    val typeParameters: List<ExportedTypeParameter> = emptyList(),
     override val isProtected: Boolean,
 ) : ExportedDeclaration()
 
@@ -97,7 +98,7 @@ public data class ExportedRegularClass(
     val requireMetadata: Boolean = !isInterface,
     override val superClasses: List<ExportedType> = emptyList(),
     override val superInterfaces: List<ExportedType> = emptyList(),
-    val typeParameters: List<ExportedType.TypeParameter>,
+    val typeParameters: List<ExportedTypeParameter>,
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
     override val originalClassId: ClassId?,
@@ -113,7 +114,7 @@ public data class ExportedObject(
     override val superInterfaces: List<ExportedType> = emptyList(),
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
-    val typeParameters: List<ExportedType.TypeParameter> = emptyList(),
+    val typeParameters: List<ExportedTypeParameter> = emptyList(),
     override val originalClassId: ClassId?,
     override val isExternal: Boolean,
     override val isCompanion: Boolean,
@@ -169,7 +170,7 @@ public sealed class ExportedType {
     ) : ExportedType()
 
     public class ConstructorType(
-        public val typeParameters: List<TypeParameter>,
+        public val typeParameters: List<ExportedTypeParameter>,
         public val returnType: ExportedType
     ) : ExportedType()
 
@@ -187,7 +188,7 @@ public sealed class ExportedType {
             substitution[this] ?: copy(arguments = arguments.map { it.replaceTypes(substitution) })
     }
 
-    public data class TypeParameter(val name: String, val constraint: ExportedType? = null) : ExportedType()
+    public data class TypeParameterRef(val typeParameter: ExportedTypeParameter) : ExportedType()
     public class Nullable(public val baseType: ExportedType) : ExportedType()
     public class NonNullable(public val baseType: ExportedType) : ExportedType()
     public class ErrorType(public val comment: String) : ExportedType()
@@ -217,6 +218,8 @@ public sealed class ExportedType {
     public fun withImplicitlyExported(implicitlyExportedType: Boolean, exportedSupertype: ExportedType): ExportedType =
         if (implicitlyExportedType) ImplicitlyExportedType(this, exportedSupertype) else this
 }
+
+public data class ExportedTypeParameter(val name: String, val constraint: ExportedType? = null)
 
 public enum class ExportedVisibility(public val keyword: String) {
     DEFAULT(""),

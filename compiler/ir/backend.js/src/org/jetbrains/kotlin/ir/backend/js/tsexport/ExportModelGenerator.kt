@@ -414,7 +414,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                             ?.let {
                                 ExportedConstructSignature(
                                     parameters = it.parameters.drop(1),
-                                    returnType = ExportedType.TypeParameter(innerClassReference),
+                                    returnType = ExportedType.TypeParameterRef(ExportedTypeParameter(innerClassReference)),
                                     isProtected = it.isProtected,
                                 )
                             }
@@ -625,7 +625,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         return ExportedType.ErrorType("UnknownType ${type.render()}")
     }
 
-    fun exportTypeParameter(typeParameter: IrTypeParameter, typeOwner: IrDeclaration?): ExportedType.TypeParameter {
+    fun exportTypeParameter(typeParameter: IrTypeParameter, typeOwner: IrDeclaration?): ExportedTypeParameter {
         val constraint = typeParameter.superTypes.asSequence()
             .filter { it != context.irBuiltIns.anyNType }
             .map {
@@ -639,7 +639,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             .filter { it !is ExportedType.ErrorType }
             .toList()
 
-        return ExportedType.TypeParameter(
+        return ExportedTypeParameter(
             typeParameter.name.identifier,
             constraint.run {
                 when (size) {
@@ -717,7 +717,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 returnType = exportTypeArgument(nonNullType.arguments.last(), typeOwner)
             )
 
-            classifier is IrTypeParameterSymbol -> ExportedType.TypeParameter(classifier.owner.name.identifier)
+            classifier is IrTypeParameterSymbol -> ExportedType.TypeParameterRef(ExportedTypeParameter(classifier.owner.name.identifier))
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner

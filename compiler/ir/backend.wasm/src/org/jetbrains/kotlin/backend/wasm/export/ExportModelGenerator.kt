@@ -215,7 +215,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             )
             nonNullType.isNothing() -> ExportedType.Primitive.Nothing
 
-            classifier is IrTypeParameterSymbol -> ExportedType.TypeParameter(classifier.owner.name.identifier)
+            classifier is IrTypeParameterSymbol -> ExportedType.TypeParameterRef(ExportedTypeParameter(classifier.owner.name.identifier))
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
@@ -267,14 +267,14 @@ class ExportModelGenerator(val context: WasmBackendContext) {
         return ExportedType.ErrorType("UnknownType ${type.render()}")
     }
 
-    private fun exportTypeParameter(typeParameter: IrTypeParameter): ExportedType.TypeParameter {
+    private fun exportTypeParameter(typeParameter: IrTypeParameter): ExportedTypeParameter {
         val constraint = typeParameter.superTypes.asSequence()
             .filter { !it.isNullable() || it.makeNotNull() != context.wasmSymbols.jsRelatedSymbols.jsAnyType }
             .map { exportType(it) }
             .filter { it !is ExportedType.ErrorType }
             .toList()
 
-        return ExportedType.TypeParameter(
+        return ExportedTypeParameter(
             typeParameter.name.identifier,
             constraint.run {
                 when (size) {

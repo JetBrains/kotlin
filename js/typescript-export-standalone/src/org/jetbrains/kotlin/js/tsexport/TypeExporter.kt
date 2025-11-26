@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Array
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Function
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedTypeParameter
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
@@ -129,7 +130,7 @@ internal class TypeExporter(private val config: TypeScriptExportConfig) {
             }
         }
         if (type is KaTypeParameterType) {
-            return TypeParameter(type.name.identifier)
+            return TypeParameterRef(ExportedTypeParameter(type.name.identifier))
         }
         if (type is KaClassType) {
             val symbol = type.symbol
