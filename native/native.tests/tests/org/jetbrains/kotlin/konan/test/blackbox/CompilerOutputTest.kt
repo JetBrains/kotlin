@@ -151,10 +151,10 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             assertContains(
                 output,
                 """
-                |Please try to disable compiler caches and rerun the build. To disable compiler caches, add the following line to the gradle.properties file in the project's root directory:
-                |    
-                |    kotlin.native.cacheKind.$presetName=none
-                |    
+                |Please try to disable compiler caches and rerun the build.
+                |To disable compiler caches, use `disableNativeCache` in the binary declaration in the Gradle build script.
+                |See https://kotl.in/disable-native-cache for specific instructions.
+                |
                 |Also, consider filing an issue with full Gradle log here: https://kotl.in/issue""".trimMargin()
             )
         }

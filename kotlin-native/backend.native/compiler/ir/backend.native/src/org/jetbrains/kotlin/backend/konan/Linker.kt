@@ -165,10 +165,10 @@ internal fun runLinkerCommands(context: NativeBackendPhaseContext, commands: Lis
 } catch (e: KonanExternalToolFailure) {
     val extraUserInfo = if (cachingInvolved)
         """
-                    Please try to disable compiler caches and rerun the build. To disable compiler caches, add the following line to the gradle.properties file in the project's root directory:
-                        
-                        kotlin.native.cacheKind.${context.config.target.presetName}=none
-                        
+                    Please try to disable compiler caches and rerun the build.
+                    To disable compiler caches, use `disableNativeCache` in the binary declaration in the Gradle build script.
+                    See https://kotl.in/disable-native-cache for specific instructions.
+
                     Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
                     """.trimIndent()
     else null

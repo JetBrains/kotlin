@@ -414,7 +414,7 @@ class CacheBuilder(
                                         if (makePerFileCache)
                                             "incremental compilation (kotlin.incremental.native=false)"
                                         else
-                                            "compiler caches (kotlin.native.cacheKind=none)"
+                                            "compiler caches (https://kotl.in/disable-native-cache)"
                                     }
 
                                     Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
