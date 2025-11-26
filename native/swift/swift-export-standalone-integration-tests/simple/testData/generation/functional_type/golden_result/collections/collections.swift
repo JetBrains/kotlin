@@ -16,7 +16,7 @@ public func consume_block_with_dict_id(
 ) -> [Swift.Int32: Swift.Int32] {
     return __root___consume_block_with_dict_id__TypesOfArguments__U28Swift_Dictionary_Swift_Int32_Swift_Int32_U29202D_U20Swift_Dictionary_Swift_Int32_Swift_Int32___({
         let originalBlock = block
-        return { arg0 in return Dictionary(uniqueKeysWithValues: originalBlock(arg0 as! Swift.Dictionary<Swift.Int32,Swift.Int32>).map { key, value in (NSNumber(value: key), NSNumber(value: value) )}) }
+        return { arg0 in return Dictionary(uniqueKeysWithValues: originalBlock(arg0 as! Swift.Dictionary<Swift.Int32,Swift.Int32>).map { key, value in (NSNumber(value: key), NSNumber(value: value)) }) }
     }()) as! Swift.Dictionary<Swift.Int32,Swift.Int32>
 }
 public func consume_block_with_listRef_id(
