@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation(kotlinStdlib()) // `kotlinStdlib()` is not available in kotlin-native/build-tools project
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 nativeInteropPlugin {

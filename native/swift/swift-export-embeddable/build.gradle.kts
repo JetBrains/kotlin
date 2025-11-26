@@ -197,6 +197,7 @@ val shadedIntransitiveTestDependenciesJar = tasks.register<ShadowJar>("shadedTes
 
 val transitiveTestRuntimeClasspath = configurations.detachedConfiguration().apply {
     dependencies.add(libs.junit.jupiter.engine.get())
+    dependencies.add(libs.junit.platform.launcher.get())
 }
 
 val unarchivedStandaloneSimpleITClasses = tasks.register<Sync>("unarchivedStandaloneSimpleITClasses") {
