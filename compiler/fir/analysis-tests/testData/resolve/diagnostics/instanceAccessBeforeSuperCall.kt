@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 class A {
     constructor(x: Int = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>getSomeInt<!>(), other: A = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>, header: String = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>keker<!>) {}
     fun getSomeInt() = 10
@@ -47,7 +46,7 @@ class F(var a: Int, b: Int, closure: () -> Unit, instance: F?) {
 
 open class Base(val x: Int)
 
-class Derived : Base(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.y) { // FE 1.0 reports NO_THIS here
+class Derived : Base(<!UNINITIALIZED_VARIABLE!><!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.y<!>) { // FE 1.0 reports NO_THIS here
     val y = 42
 }
 

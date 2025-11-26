@@ -1,5 +1,4 @@
-// LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 abstract class A
 abstract class B : A()
 

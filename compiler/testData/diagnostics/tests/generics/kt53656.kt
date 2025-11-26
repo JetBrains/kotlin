@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 interface One<T>
 fun <E, R> foo(): E where E : Number, E : One<R>, R : One<E> = null!!

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 package h
 
 interface A<T> {}
@@ -48,10 +47,10 @@ fun Z.equals(any: Any): Int { use(any); return 1 }
 fun test3(z: Z) {
     z == <!CANNOT_INFER_PARAMETER_TYPE!>newA<!>()
     z == newA<Z>()
-    id(z == <!CANNOT_INFER_PARAMETER_TYPE!>newA<!>())
+    <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>id<!>(z == <!CANNOT_INFER_PARAMETER_TYPE!>newA<!>())
     id(z == newA<Z>())
 
-    id(z === <!CANNOT_INFER_PARAMETER_TYPE!>newA<!>())
+    <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>id<!>(z === <!CANNOT_INFER_PARAMETER_TYPE!>newA<!>())
     id(z === newA<Z>())
 }
 

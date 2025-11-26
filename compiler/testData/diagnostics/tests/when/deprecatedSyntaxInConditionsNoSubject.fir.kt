@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProhibitConfusingSyntaxInWhenBranches
 // DIAGNOSTICS: -INCOMPATIBLE_TYPES, -NON_EXHAUSTIVE_WHEN_STATEMENT, -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
@@ -41,8 +40,8 @@ fun testWithSubject_ok(x: Boolean, y: Boolean?, any: Any, z: Boolean) {
         y ?: x -> {}
         x in x -> {}
         x !in x -> {}
-        <!IMPOSSIBLE_IS_CHECK_WARNING!>x is String<!> -> {}
-        <!IMPOSSIBLE_IS_CHECK_WARNING!>x !is String<!> -> {}
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!> -> {}
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!> -> {}
         x < x -> {}
         x > x -> {}
         x <= x -> {}

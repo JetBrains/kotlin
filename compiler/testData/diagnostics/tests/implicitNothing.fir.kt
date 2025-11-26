@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>foo<!>() = throw Exception()
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>bar<!>() = null!!
@@ -19,7 +18,7 @@ fun check() {
     val x = null!!
 }
 
-fun <!IMPLICIT_NOTHING_RETURN_TYPE!>nonLocalReturn<!>() = run { <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING, RETURN_TYPE_MISMATCH!>return<!> }
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>nonLocalReturn<!>() = run { <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE, RETURN_TYPE_MISMATCH!>return<!> }
 
 class Klass {
     fun <!IMPLICIT_NOTHING_RETURN_TYPE!>bar<!>() = null!!
