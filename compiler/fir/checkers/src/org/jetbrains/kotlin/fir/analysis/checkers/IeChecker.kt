@@ -85,99 +85,104 @@ object FirMyChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
-        val symbol = expression.toResolvedCallableSymbol() ?: return
-        val usedParameters =
-            buildSet {
-                symbol.fir.returnTypeRef.coneType.forEachType { type ->
-                    if (type is ConeTypeParameterType) {
-                        add(type.lookupTag.typeParameterSymbol)
+        try {
+            val symbol = expression.toResolvedCallableSymbol() ?: return
+            val usedParameters =
+                buildSet {
+                    symbol.fir.returnTypeRef.coneType.forEachType { type ->
+                        if (type is ConeTypeParameterType) {
+                            add(type.lookupTag.typeParameterSymbol)
+                        }
                     }
-                }
-                (symbol.fir as? FirFunction)?.let { function ->
-                    function.valueParameters.forEachIndexed { index, argument ->
-                        val samUsed = expression.argumentList.arguments.getOrNull(index) is FirSamConversionExpression
-                        val regClass = argument.returnTypeRef.firClassLike(context.session) as? FirRegularClass
-                        val abstractMethod = abstractMethod(regClass)
-                        if (samUsed && abstractMethod != null) {
-                            regClass!!
-                            val isUsed = regClass.typeParameters.map { tp ->
-                                abstractMethod.fir.returnTypeRef.coneType.forEachType {
-                                    if (it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol == tp.symbol) {
-                                        return@map true
-                                    }
-                                }
-                                abstractMethod.fir.valueParameters.forEach { arg ->
-                                    arg.returnTypeRef.coneType.forEachType {
+                    (symbol.fir as? FirFunction)?.let { function ->
+                        function.valueParameters.forEachIndexed { index, argument ->
+                            val samUsed = expression.argumentList.arguments.getOrNull(index) is FirSamConversionExpression
+                            val regClass = argument.returnTypeRef.firClassLike(context.session) as? FirRegularClass
+                            val abstractMethod = abstractMethod(regClass)
+                            if (samUsed && abstractMethod != null) {
+                                regClass!!
+                                val isUsed = regClass.typeParameters.map { tp ->
+                                    abstractMethod.fir.returnTypeRef.coneType.forEachType {
                                         if (it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol == tp.symbol) {
                                             return@map true
                                         }
                                     }
+                                    abstractMethod.fir.valueParameters.forEach { arg ->
+                                        arg.returnTypeRef.coneType.forEachType {
+                                            if (it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol == tp.symbol) {
+                                                return@map true
+                                            }
+                                        }
+                                    }
+                                    false
                                 }
-                                false
-                            }
-                            if (regClass.typeParameters.size != argument.returnTypeRef.coneType.typeArguments.size) {
-                                report(
-                                    IEData(
-                                        call = symbol.callableIdAsString(),
-                                        cringeHappened = true
+                                if (regClass.typeParameters.size != argument.returnTypeRef.coneType.typeArguments.size) {
+                                    report(
+                                        IEData(
+                                            call = symbol.callableIdAsString(),
+                                            cringeHappened = true
+                                        )
                                     )
-                                )
-                                return
-                            }
-                            argument.returnTypeRef.coneType.typeArguments.forEachIndexed { index, typeProjection ->
-                                if (isUsed[index]) {
-                                    if (typeProjection is ConeKotlinTypeProjection) {
-                                        typeProjection.type.forEachType {
-                                            if (it is ConeTypeParameterType) {
-                                                add(it.lookupTag.typeParameterSymbol)
+                                    return
+                                }
+                                argument.returnTypeRef.coneType.typeArguments.forEachIndexed { index, typeProjection ->
+                                    if (isUsed[index]) {
+                                        if (typeProjection is ConeKotlinTypeProjection) {
+                                            typeProjection.type.forEachType {
+                                                if (it is ConeTypeParameterType) {
+                                                    add(it.lookupTag.typeParameterSymbol)
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
-                        } else {
-                            argument.returnTypeRef.coneType.forEachType { type ->
-                                if (type is ConeTypeParameterType) {
-                                    add(type.lookupTag.typeParameterSymbol)
+                            } else {
+                                argument.returnTypeRef.coneType.forEachType { type ->
+                                    if (type is ConeTypeParameterType) {
+                                        add(type.lookupTag.typeParameterSymbol)
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
+            if (expression.typeArguments.size != symbol.typeParameterSymbols.size) {
+                report(
+                    IEData(
+                        call = symbol.callableIdAsString(),
+                        cringeHappened = true
+                    )
+                )
+                return
             }
+            expression.typeArguments.forEachIndexed { index, argument ->
+                if (!argument.isExplicit) return@forEachIndexed
+                val type = (argument as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@forEachIndexed
+                val param = symbol.typeParameterSymbols[index]
+                val originalParam = symbol.originalOrSelf().typeParameterSymbols.getOrNull(index)
 
-        if (expression.typeArguments.size != symbol.typeParameterSymbols.size) {
-            report(
-                IEData(
-                    call = symbol.callableIdAsString(),
-                    cringeHappened = true
+                val singleBound = if (param.resolvedBounds.size == 1) param.resolvedBounds.first().coneType else null
+                val originalSingleBound =
+                    if (originalParam?.resolvedBounds?.size == 1) originalParam.resolvedBounds.first().coneType else null
+
+                val upperBound = singleBound?.equalTypes(type, context.session) ?: false
+                val upperBoundedByTp = originalSingleBound is ConeTypeParameterType
+                val oneLevelRedundant = param !in usedParameters
+                report(
+                    IEData(
+                        type = type.renderReadable(),
+                        boundType = singleBound?.renderReadable(),
+                        call = symbol.callableIdAsString(),
+                        isReified = param.isReified,
+                        oneLevelRedundant = oneLevelRedundant,
+                        upperBound = upperBound,
+                        upperBoundedByTp = upperBoundedByTp,
+                    )
                 )
-            )
-            return
-        }
-        expression.typeArguments.forEachIndexed { index, argument ->
-            if (!argument.isExplicit) return@forEachIndexed
-            val type = (argument as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@forEachIndexed
-            val param = symbol.typeParameterSymbols[index]
-            val originalParam = symbol.originalOrSelf().typeParameterSymbols.getOrNull(index)
-
-            val singleBound = if (param.resolvedBounds.size == 1) param.resolvedBounds.first().coneType else null
-            val originalSingleBound = if (originalParam?.resolvedBounds?.size == 1) originalParam.resolvedBounds.first().coneType else null
-
-            val upperBound = singleBound?.equalTypes(type, context.session) ?: false
-            val upperBoundedByTp = originalSingleBound is ConeTypeParameterType
-            val oneLevelRedundant = param !in usedParameters
-            report(
-                IEData(
-                    type = type.renderReadable(),
-                    boundType = singleBound?.renderReadable(),
-                    call = symbol.callableIdAsString(),
-                    isReified = param.isReified,
-                    oneLevelRedundant = oneLevelRedundant,
-                    upperBound = upperBound,
-                    upperBoundedByTp = upperBoundedByTp,
-                )
-            )
+            }
+        } catch (e: Exception) {
+            report(IEData(cringeHappened = true, type = e.message))
         }
     }
 
