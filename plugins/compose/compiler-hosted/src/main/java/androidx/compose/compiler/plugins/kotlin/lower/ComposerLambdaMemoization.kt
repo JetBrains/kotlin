@@ -770,7 +770,9 @@ class ComposerLambdaMemoization(
                 // to ensure that we don't break existing consumers.
                 wrapFunctionExpression(
                     declarationContext,
-                    functionExpression.deepCopyWithSymbols(functionExpression.function.parent),
+                    functionExpression.deepCopyWithSymbols(
+                        declarationContextStack.map { it.declaration as? IrDeclarationParent }.last { it != null }
+                    ),
                     collector,
                     isComposableContext
                 )

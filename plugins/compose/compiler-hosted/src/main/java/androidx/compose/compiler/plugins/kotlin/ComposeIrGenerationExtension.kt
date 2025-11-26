@@ -215,6 +215,14 @@ class ComposeIrGenerationExtension(
             ).lower(moduleFragment)
         }
 
+        // TODO remove and regenerate goldens
+        ComposableTypeRemover.ComposableTypeRemoverLowering(
+            pluginContext,
+            metrics,
+            stabilityInferencer,
+            featureFlags
+        ).lower(moduleFragment)
+
         if (generateFunctionKeyMetaAnnotations == true ||
             (generateFunctionKeyMetaAnnotations == null && !pluginContext.keyMetaAnnotation.hasRuntimeRetention())
         ) {

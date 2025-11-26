@@ -80,9 +80,6 @@ class ComposerParamTransformer(
         irModule.patchDeclarationParents()
     }
 
-    private val transformedFunctions: MutableMap<IrSimpleFunction, IrSimpleFunction> =
-        mutableMapOf()
-
     private val transformedFunctionSet = mutableSetOf<IrSimpleFunction>()
 
     private val composerType = composerIrClass.defaultType.replaceArgumentsWithStarProjections()
@@ -530,12 +527,7 @@ class ComposerParamTransformer(
             return this
         }
 
-        // we don't bother transforming expect functions. They exist only for type resolution and
-        // don't need to be transformed to have a composer parameter
-        if (isExpect) return this
-
-        // cache the transformed function with composer parameter
-        return transformedFunctions[this] ?: copyWithComposerParam()
+        return copyWithComposerParam()
     }
 
     private fun IrSimpleFunction.lambdaInvokeWithComposerParam(): IrSimpleFunction {
@@ -601,6 +593,7 @@ class ComposerParamTransformer(
         }
     }
 
+    // TODO REMOVE
     internal inline fun <reified T : IrElement> T.deepCopyWithSymbolsAndMetadata(
         initialParent: IrDeclarationParent? = null,
         createTypeRemapper: (SymbolRemapper) -> TypeRemapper = ::DeepCopyTypeRemapper,
@@ -638,148 +631,138 @@ class ComposerParamTransformer(
         assert(parameters.lastOrNull()?.name != ComposeNames.ComposerParameter) {
             "Attempted to add composer param to $this, but it has already been added."
         }
-        return deepCopyWithSymbolsAndMetadata(parent).also { fn ->
-            val oldFn = this
 
-            // NOTE: it's important to add these here before we recurse into the body in
-            // order to avoid an infinite loop on circular/recursive calls
-            transformedFunctionSet.add(fn)
-            transformedFunctions[oldFn] = fn
+        // NOTE: it's important to add these here before we recurse into the body in
+        // order to avoid an infinite loop on circular/recursive calls
+        transformedFunctionSet.add(this)
 
-            fn.metadata = oldFn.metadata
+        // The overridden symbols might also be composable functions, so we want to make sure
+        // and transform them as well
+        this.overriddenSymbols = this.overriddenSymbols.map {
+            it.owner.withComposerParamIfNeeded().symbol
+        }
 
-            // The overridden symbols might also be composable functions, so we want to make sure
-            // and transform them as well
-            fn.overriddenSymbols = oldFn.overriddenSymbols.map {
-                it.owner.withComposerParamIfNeeded().symbol
-            }
-
-            val propertySymbol = oldFn.correspondingPropertySymbol
-            if (propertySymbol != null) {
-                fn.correspondingPropertySymbol = propertySymbol
-                if (propertySymbol.owner.getter == oldFn) {
-                    propertySymbol.owner.getter = fn
+        // if we are transforming a composable property, the jvm signature of the
+        // corresponding getters and setters have a composer parameter. Since Kotlin uses the
+        // lack of a parameter to determine if it is a getter, this breaks inlining for
+        // composable property getters since it ends up looking for the wrong jvmSignature.
+        // In this case, we manually add the appropriate "@JvmName" annotation so that the
+        // inliner doesn't get confused.
+        this.correspondingPropertySymbol?.let { propertySymbol ->
+            if (!this.hasAnnotation(DescriptorUtils.JVM_NAME)) {
+                val propertyName = propertySymbol.owner.name.identifier
+                val name = if (this.isGetter) {
+                    JvmAbi.getterName(propertyName)
+                } else {
+                    JvmAbi.setterName(propertyName)
                 }
-                if (propertySymbol.owner.setter == oldFn) {
-                    propertySymbol.owner.setter = fn
-                }
+                this.annotations += jvmNameAnnotation(name)
             }
-            // if we are transforming a composable property, the jvm signature of the
-            // corresponding getters and setters have a composer parameter. Since Kotlin uses the
-            // lack of a parameter to determine if it is a getter, this breaks inlining for
-            // composable property getters since it ends up looking for the wrong jvmSignature.
-            // In this case, we manually add the appropriate "@JvmName" annotation so that the
-            // inliner doesn't get confused.
-            fn.correspondingPropertySymbol?.let { propertySymbol ->
-                if (!fn.hasAnnotation(DescriptorUtils.JVM_NAME)) {
-                    val propertyName = propertySymbol.owner.name.identifier
-                    val name = if (fn.isGetter) {
-                        JvmAbi.getterName(propertyName)
-                    } else {
-                        JvmAbi.setterName(propertyName)
-                    }
-                    fn.annotations += jvmNameAnnotation(name)
-                }
+        }
+
+        this.parameters.fastForEach { param ->
+            // Composable lambdas will always have `IrGet`s of all of their parameters
+            // generated, since they are passed into the restart lambda. This causes an
+            // interesting corner case with "anonymous parameters" of composable functions.
+            // If a parameter is anonymous (using the name `_`) in user code, you can usually
+            // make the assumption that it is never used, but this is technically not the
+            // case in composable lambdas. The synthetic name that kotlin generates for
+            // anonymous parameters has an issue where it is not safe to dex, so we sanitize
+            // the names here to ensure that dex is always safe.
+            if (param.kind == IrParameterKind.Regular || param.kind == IrParameterKind.Context) {
+                val newName = dexSafeName(param.name)
+                param.name = newName
             }
+            param.isAssignable = param.defaultValue != null // TODO do smth about assignable params
+        }
 
-            fn.parameters.fastForEach { param ->
-                // Composable lambdas will always have `IrGet`s of all of their parameters
-                // generated, since they are passed into the restart lambda. This causes an
-                // interesting corner case with "anonymous parameters" of composable functions.
-                // If a parameter is anonymous (using the name `_`) in user code, you can usually
-                // make the assumption that it is never used, but this is technically not the
-                // case in composable lambdas. The synthetic name that kotlin generates for
-                // anonymous parameters has an issue where it is not safe to dex, so we sanitize
-                // the names here to ensure that dex is always safe.
-                if (param.kind == IrParameterKind.Regular || param.kind == IrParameterKind.Context) {
-                    val newName = dexSafeName(param.name)
-                    param.name = newName
-                }
-                param.isAssignable = param.defaultValue != null
-            }
+        val currentParams = this.parameters.count { it.kind == IrParameterKind.Regular }
+        val realParams = currentParams
 
-            val currentParams = fn.parameters.count { it.kind == IrParameterKind.Regular }
-            val realParams = currentParams
+        // $composer
+        val composerParam = this.addValueParameter {
+            name = ComposeNames.ComposerParameter
+            type = composerType.makeNullable()
+            origin = IrDeclarationOrigin.DEFINED
+            isAssignable = true
+        }
 
-            // $composer
-            val composerParam = fn.addValueParameter {
-                name = ComposeNames.ComposerParameter
-                type = composerType.makeNullable()
-                origin = IrDeclarationOrigin.DEFINED
-                isAssignable = true
-            }
+        // $changed[n]
+        val changed = ComposeNames.ChangedParameter.identifier
+        for (i in 0 until changedParamCount(realParams, this.thisParamCount)) {
+            this.addValueParameter(
+                if (i == 0) changed else "$changed$i",
+                context.irBuiltIns.intType
+            )
+        }
 
-            // $changed[n]
-            val changed = ComposeNames.ChangedParameter.identifier
-            for (i in 0 until changedParamCount(realParams, fn.thisParamCount)) {
-                fn.addValueParameter(
-                    if (i == 0) changed else "$changed$i",
-                    context.irBuiltIns.intType
+        val actual: IrSimpleFunction? = if (this.isExpect) {
+            context.findActualForExpect(this.symbol.owner)
+        } else null
+
+        // $default[n]
+        if (this.requiresDefaultParameter() || actual != null) {
+            val defaults = ComposeNames.DefaultParameter.identifier
+            val paramsCount = if (isExpect) actual!!.parameters.count { it.kind == IrParameterKind.Regular } else currentParams
+            for (i in 0 until defaultParamCount(paramsCount)) {
+                this.addValueParameter(
+                    if (i == 0) defaults else "$defaults$i",
+                    context.irBuiltIns.intType,
+                    IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION
                 )
             }
-
-            // $default[n]
-            if (fn.requiresDefaultParameter()) {
-                val defaults = ComposeNames.DefaultParameter.identifier
-                for (i in 0 until defaultParamCount(currentParams)) {
-                    fn.addValueParameter(
-                        if (i == 0) defaults else "$defaults$i",
-                        context.irBuiltIns.intType,
-                        IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION
-                    )
-                }
-            }
-
-            val stubs = fn.makeStubsForDefaultValueClassIfNeeded()
-
-            // update parameter types so they are ready to accept the default values
-            fn.parameters.fastForEach { param ->
-                if (fn.hasDefaultForParam(param.indexInParameters)) {
-                    param.type = param.type.defaultParameterType()
-                }
-            }
-
-            val parent = fn.parent
-            if (parent is IrClass || parent is IrFile) {
-                // checking if any stubs have all same-type parameters and discarding them
-                val addedParamTypes = mutableSetOf(fn.toComparableParams(fn))
-                stubs.forEach { stub ->
-                    val stubParamTypes = stub.toComparableParams(fn)
-                    if (addedParamTypes.add(stubParamTypes)) {
-                        parent.addChild(stub)
-                    }
-                }
-            } else {
-                // ignore
-            }
-
-            inlineLambdaInfo.scan(fn)
-
-            fn.transformChildrenVoid(object : IrElementTransformerVoid() {
-                var isNestedScope = false
-                override fun visitFunction(declaration: IrFunction): IrStatement {
-                    val wasNested = isNestedScope
-                    try {
-                        // we don't want to pass the composer parameter in to composable calls
-                        // inside of nested scopes.... *unless* the scope was inlined.
-                        isNestedScope = wasNested ||
-                                !inlineLambdaInfo.isInlineLambda(declaration) ||
-                                declaration.hasComposableAnnotation()
-                        return super.visitFunction(declaration)
-                    } finally {
-                        isNestedScope = wasNested
-                    }
-                }
-
-                override fun visitCall(expression: IrCall): IrExpression {
-                    val expr = if (!isNestedScope) {
-                        expression.withComposerParamIfNeeded(composerParam)
-                    } else
-                        expression
-                    return super.visitCall(expr)
-                }
-            })
         }
+
+        val stubs = this.makeStubsForDefaultValueClassIfNeeded()
+
+        // update parameter types so they are ready to accept the default values
+        this.parameters.fastForEach { param ->
+            if (this.hasDefaultForParam(param.indexInParameters)) {
+                param.type = param.type.defaultParameterType()
+            }
+        }
+
+        val parent = this.parent
+        if (parent is IrClass || parent is IrFile) {
+            // checking if any stubs have all same-type parameters and discarding them
+            val addedParamTypes = mutableSetOf(this.toComparableParams(this))
+            stubs.forEach { stub ->
+                val stubParamTypes = stub.toComparableParams(this)
+                if (addedParamTypes.add(stubParamTypes)) {
+                    parent.addChild(stub)
+                }
+            }
+        } else {
+            // ignore
+        }
+
+        inlineLambdaInfo.scan(this)
+
+        this.transformChildrenVoid(object : IrElementTransformerVoid() {
+            var isNestedScope = false
+            override fun visitFunction(declaration: IrFunction): IrStatement {
+                val wasNested = isNestedScope
+                try {
+                    // we don't want to pass the composer parameter in to composable calls
+                    // inside of nested scopes.... *unless* the scope was inlined.
+                    isNestedScope = wasNested ||
+                            !inlineLambdaInfo.isInlineLambda(declaration) ||
+                            declaration.hasComposableAnnotation()
+                    return super.visitFunction(declaration)
+                } finally {
+                    isNestedScope = wasNested
+                }
+            }
+
+            override fun visitCall(expression: IrCall): IrExpression {
+                val expr = if (!isNestedScope) {
+                    expression.withComposerParamIfNeeded(composerParam)
+                } else
+                    expression
+                return super.visitCall(expr)
+            }
+        })
+        return this
     }
 
     /**
@@ -815,7 +798,6 @@ class ComposerParamTransformer(
 
         val source = this
         return makeStub().also { copy ->
-            transformedFunctions[copy] = copy
             transformedFunctionSet += copy
 
             copy.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
@@ -878,7 +860,6 @@ class ComposerParamTransformer(
         val source = this
 
         return makeStub().also { copy ->
-            transformedFunctions[copy] = copy
             transformedFunctionSet += copy
 
             // update parameter types so they are ready to accept the default values
