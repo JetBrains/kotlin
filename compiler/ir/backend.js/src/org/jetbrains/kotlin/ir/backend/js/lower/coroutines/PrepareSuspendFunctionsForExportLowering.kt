@@ -234,12 +234,14 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
             isSuspend = false
             isFakeOverride = !originalFunc.isInterfaceMethod && !originalFunctionIsTheFirstRealMethod
             modality = Modality.OPEN
-            returnType = promiseClass.typeWith(originalFunc.returnType)
             startOffset = UNDEFINED_OFFSET
             endOffset = UNDEFINED_OFFSET
         }.apply {
             parent = originalFunc.parent
-            copyValueAndTypeParametersFrom(originalFunc)
+            copyTypeParametersFrom(originalFunc)
+            val substitutionMap = makeTypeParameterSubstitutionMap(originalFunc, this)
+            copyParametersFrom(originalFunc, substitutionMap)
+            returnType = promiseClass.typeWith(originalFunc.returnType.substitute(substitutionMap))
             parameters.forEach {
                 if (it.defaultValue != null) {
                     it.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER

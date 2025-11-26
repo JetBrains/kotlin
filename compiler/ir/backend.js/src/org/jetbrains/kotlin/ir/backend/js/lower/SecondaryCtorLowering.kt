@@ -202,7 +202,6 @@ private fun JsIrBackendContext.buildInitDeclaration(constructor: IrConstructor, 
 }
 
 private fun JsIrBackendContext.buildFactoryDeclaration(constructor: IrConstructor, irClass: IrClass): IrSimpleFunction {
-    val type = irClass.defaultType
     val constructorName = "${irClass.name}_init"
     val functionName = "${constructorName}_\$Create\$"
 
@@ -210,17 +209,18 @@ private fun JsIrBackendContext.buildFactoryDeclaration(constructor: IrConstructo
         startOffset = constructor.startOffset
         endOffset = constructor.endOffset
         name = Name.identifier(functionName)
-        returnType = type
         visibility = constructor.visibility
         modality = Modality.FINAL
         isInline = constructor.isInline
         isExternal = constructor.isExternal
     }.also { factory ->
         factory.parent = constructor.parent
-        factory.copyTypeParametersFrom(constructor.parentAsClass)
-        factory.parameters = constructor.parameters.map { p -> p.copyTo(factory) }
+        val klass = constructor.parentAsClass
+        factory.copyTypeParametersFrom(klass)
+        val substitutionMap = makeTypeParameterSubstitutionMap(klass, factory)
+        factory.copyParametersFrom(constructor, substitutionMap)
         factory.annotations = constructor.annotations
-        factory.returnType = constructor.returnType.remapTypeParameters(constructor, factory)
+        factory.returnType = constructor.returnType.substitute(substitutionMap)
     }
 }
 

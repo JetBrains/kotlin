@@ -216,12 +216,10 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
     private fun IrConstructor.generateCreateFunction(): IrSimpleFunction {
         val constructor = this
         val irClass = parentAsClass
-        val type = irClass.defaultType
         val constructorName = "new_${irClass.constructorPostfix}"
 
         return context.irFactory.buildFun {
             name = Name.identifier(constructorName)
-            returnType = type
             visibility = constructor.visibility
             modality = Modality.FINAL
             isInline = constructor.isInline
@@ -233,8 +231,11 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         }.also { factory ->
             factory.parent = irClass
             factory.copyTypeParametersFrom(irClass)
-            factory.parameters = listOf(irClass.thisReceiver!!.copyTo(factory))
-            factory.copyParametersFrom(constructor)
+            val substitutionMap = makeTypeParameterSubstitutionMap(irClass, factory)
+            val thisReceiver = irClass.thisReceiver!!
+            factory.parameters = listOf(thisReceiver.copyTo(factory, type = thisReceiver.type.substitute(substitutionMap)))
+            factory.copyParametersFrom(constructor, substitutionMap)
+            factory.returnType = irClass.defaultType.substitute(substitutionMap)
             factory.annotations = annotations
 
             if (irClass.isExported(context) && constructor.isPrimary) {
