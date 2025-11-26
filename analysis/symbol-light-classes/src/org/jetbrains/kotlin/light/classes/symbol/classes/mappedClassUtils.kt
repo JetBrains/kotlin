@@ -25,16 +25,29 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
-private val JAVA_GETTER_NAME_TO_KOTLIN_GETTER_NAME: Map<String, String> = buildMap {
+/**
+ * Java getters with non-standard names that have corresponding Kotlin properties with different JVM ABI names.
+ *
+ * For example, Java `size()` method corresponds to Kotlin `size` property, that is translated to `getSize()` method.
+ * In this case, the light class will have both `size()` and `getSize()` methods (with different modalities).
+ */
+private val JAVA_GETTER_NAME_TO_KOTLIN_GETTER_NAME_WITH_DIFFERENT_ABI: Map<String, String> = buildMap {
     BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.forEach { (propertyFqName, javaGetterShortName) ->
         put(javaGetterShortName.asString(), JvmAbi.getterName(propertyFqName.shortName().asString()))
     }
 }
 
+/**
+ * Java map entry methods that have corresponding Kotlin properties with the same JVM ABI name (`key` -> `getKey`, `value` -> `getValue`).
+ */
+private val JAVA_MAP_ENTRY_METHODS: Set<String> = buildSet {
+    add("getKey")
+    add("getValue")
+}
+
 private val MEMBERS_WITH_SPECIAL_SIGNATURE: Set<String> = buildSet {
     addAll(SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SHORT_NAMES.map { it.asString() })
-    add("addAll")
-    add("putAll")
+    addAll(JAVA_MAP_ENTRY_METHODS)
 }
 
 private val ERASED_COLLECTION_METHOD_NAMES: Set<String> = buildSet {
@@ -291,37 +304,40 @@ private fun createWrappersForJavaCollectionMethod(
     substitutor: PsiSubstitutor,
 ): List<PsiMethod> {
     val methodName = method.name
-    val getterName = JAVA_GETTER_NAME_TO_KOTLIN_GETTER_NAME[methodName]
+
+    val kotlinGetterNameWithDifferentAbi = JAVA_GETTER_NAME_TO_KOTLIN_GETTER_NAME_WITH_DIFFERENT_ABI[methodName]
+    val hasCorrespondingKotlinDeclaration = methodName in kotlinNames || methodName in JAVA_MAP_ENTRY_METHODS
+    val isSpecialNotErasedSignature = methodName in MEMBERS_WITH_SPECIAL_SIGNATURE && methodName !in ERASED_COLLECTION_METHOD_NAMES
 
     return when {
-        getterName != null -> {
+        kotlinGetterNameWithDifferentAbi != null -> {
             val hasImplementation = methodName == "size" && containingClass.withClassSymbol { classSymbol ->
                 classSymbol.delegatedMemberScope.callables(Name.identifier("size")).toList().isNotEmpty()
             }
             val finalBridgeForJava = method.finalBridge(containingClass, substitutor)
-            val abstractKotlinGetter = method.wrap(containingClass, substitutor, name = getterName, hasImplementation = hasImplementation)
+            val abstractKotlinGetter = method.wrap(
+                containingClass,
+                substitutor,
+                name = kotlinGetterNameWithDifferentAbi,
+                hasImplementation = hasImplementation
+            )
 
             listOf(finalBridgeForJava, abstractKotlinGetter)
         }
 
-        method.isInKotlinInterface(javaCollectionPsiClass, kotlinNames) ->
-            createMethodsWithSpecialSignature(containingClass, method, javaCollectionPsiClass, substitutor)
+        hasCorrespondingKotlinDeclaration -> {
+            if (isSpecialNotErasedSignature) {
+                createMethodsWithSpecialSignature(containingClass, method, javaCollectionPsiClass, substitutor)
+            } else {
+                emptyList()
+            }
+        }
 
         else -> {
-            val stubOverride = method.openBridge(containingClass, substitutor)
-            listOf(stubOverride)
+            val stubOverrideOfJavaOnlyMethod = method.openBridge(containingClass, substitutor)
+            listOf(stubOverrideOfJavaOnlyMethod)
         }
     }
-}
-
-private fun PsiMethod.isInKotlinInterface(javaCollectionPsiClass: PsiClass, kotlinNames: Set<String>): Boolean {
-    if (javaCollectionPsiClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP_ENTRY) {
-        if (name == "getKey" || name == "getValue") {
-            // from properties "key" / "value"
-            return true
-        }
-    }
-    return name in kotlinNames
 }
 
 private fun createMethodsWithSpecialSignature(
@@ -330,11 +346,6 @@ private fun createMethodsWithSpecialSignature(
     javaCollectionPsiClass: PsiClass,
     substitutor: PsiSubstitutor,
 ): List<PsiMethod> {
-    val methodName = method.name
-    if (methodName in ERASED_COLLECTION_METHOD_NAMES || methodName !in MEMBERS_WITH_SPECIAL_SIGNATURE) {
-        return emptyList()
-    }
-
     // Case 1: two type parameters
     if (javaCollectionPsiClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP) {
         val abstractKotlinVariantWithGeneric = createJavaUtilMapMethodWithSpecialSignature(containingClass, method, substitutor)
@@ -344,7 +355,7 @@ private fun createMethodsWithSpecialSignature(
     }
 
     // Remaining cases: one type parameter
-    if (methodName == "remove") {
+    if (method.name == "remove") {
         if (method.parameterList.parameters.singleOrNull()?.type == PsiTypes.intType()) {
             // remove(int) -> final bridge remove(int), abstract removeAt(int)
             return listOf(
