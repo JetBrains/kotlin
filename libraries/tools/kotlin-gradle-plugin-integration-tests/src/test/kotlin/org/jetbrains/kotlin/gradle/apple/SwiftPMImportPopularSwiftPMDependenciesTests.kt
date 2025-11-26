@@ -37,31 +37,31 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         version = version,
         expectedCinteropAPIs = mapOf(
             "firestoreForApp" to """
-                      @kotlinx/cinterop/ObjCMethod(encoding = "@32@0:8@16@24", selector = "firestoreForApp:database:", isStret = false)
-                      public open expect fun firestoreForApp(app: swiftPMImport/empty/FIRApp, database: kotlin/String): swiftPMImport/empty/FIRFirestore
-                      @kotlinx/cinterop/ObjCMethod(encoding = "@24@0:8@16", selector = "firestoreForApp:", isStret = false)
-                      public open expect fun firestoreForApp(app: swiftPMImport/empty/FIRApp): swiftPMImport/empty/FIRFirestore
+@kotlinx/cinterop/ObjCMethod(encoding = "@24@0:8@16", selector = "firestoreForApp:", isStret = false)
+public open expect fun firestoreForApp(app: swiftPMImport/empty/FIRApp): swiftPMImport/empty/FIRFirestore
+@kotlinx/cinterop/ObjCMethod(encoding = "@32@0:8@16@24", selector = "firestoreForApp:database:", isStret = false)
+public open expect fun firestoreForApp(app: swiftPMImport/empty/FIRApp, database: kotlin/String): swiftPMImport/empty/FIRFirestore
                 """.trimIndent(),
             "FIRAnalytics" to """
-                        // class name: swiftPMImport/empty/FIRAnalytics.Companion
-                        // class name: swiftPMImport/empty/FIRAnalytics
-                        public final expect companion object swiftPMImport/empty/FIRAnalytics.Companion : swiftPMImport/empty/FIRAnalyticsMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/empty/FIRAnalytics> {
-                        public open expect class swiftPMImport/empty/FIRAnalytics : platform/darwin/NSObject {
-                          @kotlin/Deprecated(level = kotlin/DeprecationLevel.ERROR, message = "Use constructor instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = "FIRAnalytics()"))
-                          public open expect fun init(): swiftPMImport/empty/FIRAnalytics?
-                        // class name: swiftPMImport/empty/FIRAnalyticsMeta
-                        public open expect class swiftPMImport/empty/FIRAnalyticsMeta : platform/darwin/NSObjectMeta {
-                          public open expect fun new(): swiftPMImport/empty/FIRAnalytics?
-                          public open expect fun alloc(): swiftPMImport/empty/FIRAnalytics?
-                          public open expect fun allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/empty/FIRAnalytics?
-                          public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.initiateOnDeviceConversionMeasurementWithEmailAddress(emailAddress: kotlin/String): kotlin/Unit
-                          public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.setConsent(consentSettings: kotlin/collections/Map<kotlin/Any?, *>): kotlin/Unit
-                          public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.initiateOnDeviceConversionMeasurementWithHashedEmailAddress(hashedEmailAddress: platform/Foundation/NSData): kotlin/Unit
-                          public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.initiateOnDeviceConversionMeasurementWithHashedPhoneNumber(hashedPhoneNumber: platform/Foundation/NSData): kotlin/Unit
-                          public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.handleUserActivity(userActivity: kotlin/Any): kotlin/Unit
-                          public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.handleOpenURL(url: platform/Foundation/NSURL): kotlin/Unit
-                          public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.handleEventsForBackgroundURLSession(identifier: kotlin/String, completionHandler: kotlin/Function0<kotlin/Unit>?): kotlin/Unit
-                          public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.initiateOnDeviceConversionMeasurementWithPhoneNumber(phoneNumber: kotlin/String): kotlin/Unit
+// class name: swiftPMImport/empty/FIRAnalytics
+// class name: swiftPMImport/empty/FIRAnalytics.Companion
+// class name: swiftPMImport/empty/FIRAnalyticsMeta
+public open expect class swiftPMImport/empty/FIRAnalytics : platform/darwin/NSObject {
+  @kotlin/Deprecated(level = kotlin/DeprecationLevel.ERROR, message = "Use constructor instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = "FIRAnalytics()"))
+  public open expect fun init(): swiftPMImport/empty/FIRAnalytics?
+public final expect companion object swiftPMImport/empty/FIRAnalytics.Companion : swiftPMImport/empty/FIRAnalyticsMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/empty/FIRAnalytics> {
+public open expect class swiftPMImport/empty/FIRAnalyticsMeta : platform/darwin/NSObjectMeta {
+  public open expect fun alloc(): swiftPMImport/empty/FIRAnalytics?
+  public open expect fun allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/empty/FIRAnalytics?
+  public open expect fun new(): swiftPMImport/empty/FIRAnalytics?
+  public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.handleEventsForBackgroundURLSession(identifier: kotlin/String, completionHandler: kotlin/Function0<kotlin/Unit>?): kotlin/Unit
+  public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.handleOpenURL(url: platform/Foundation/NSURL): kotlin/Unit
+  public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.handleUserActivity(userActivity: kotlin/Any): kotlin/Unit
+  public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.initiateOnDeviceConversionMeasurementWithEmailAddress(emailAddress: kotlin/String): kotlin/Unit
+  public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.initiateOnDeviceConversionMeasurementWithHashedEmailAddress(hashedEmailAddress: platform/Foundation/NSData): kotlin/Unit
+  public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.initiateOnDeviceConversionMeasurementWithHashedPhoneNumber(hashedPhoneNumber: platform/Foundation/NSData): kotlin/Unit
+  public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.initiateOnDeviceConversionMeasurementWithPhoneNumber(phoneNumber: kotlin/String): kotlin/Unit
+  public final expect fun swiftPMImport/empty/FIRAnalyticsMeta.setConsent(consentSettings: kotlin/collections/Map<kotlin/Any?, *>): kotlin/Unit
                 """.trimIndent()
         )
     ) {
