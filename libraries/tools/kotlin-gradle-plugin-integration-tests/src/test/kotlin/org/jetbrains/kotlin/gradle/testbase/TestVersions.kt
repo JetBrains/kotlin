@@ -33,6 +33,7 @@ interface TestVersions {
         const val G_8_13 = "8.13"
         const val G_8_14 = "8.14"
         const val G_9_0 = "9.0.0"
+        const val G_9_2 = "9.2.1"
 
         /**
          * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
@@ -41,11 +42,11 @@ interface TestVersions {
 
         // Should be the same as GradleCompatibilityCheck.minSupportedGradleVersion
         const val MIN_SUPPORTED = MINIMALLY_SUPPORTED_GRADLE_VERSION
-        const val MAX_SUPPORTED = G_9_0
+        const val MAX_SUPPORTED = G_9_2
     }
 
     object Kotlin {
-        const val STABLE_RELEASE = "2.2.10"
+        const val STABLE_RELEASE = "2.2.21"
 
         // Copied from KOTLIN_VERSION.kt file
         val CURRENT
@@ -64,8 +65,8 @@ interface TestVersions {
         const val AGP_810 = "8.10.1"
         const val AGP_811 = "8.11.2"
         const val AGP_812 = "8.12.3"
-        const val AGP_813 = "8.13.0"
-        const val AGP_90 = "9.0.0-alpha13"
+        const val AGP_813 = "8.13.1"
+        const val AGP_90 = "9.0.0-beta02"
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
         const val MIN_SUPPORTED = AGP_82 // AgpCompatibilityCheck.minimalSupportedAgpVersion
@@ -87,10 +88,10 @@ interface TestVersions {
         AGP_88(AGP.AGP_88, GradleVersion.version(Gradle.G_8_10), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
         AGP_89(AGP.AGP_89, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
         AGP_810(AGP.AGP_810, GradleVersion.version(Gradle.G_8_12), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
-        AGP_811(AGP.AGP_811, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_0), JavaVersion.VERSION_17),
-        AGP_812(AGP.AGP_812, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_0), JavaVersion.VERSION_17),
-        AGP_813(AGP.AGP_813, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_0), JavaVersion.VERSION_17),
-        AGP_90(AGP.AGP_90, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_0), JavaVersion.VERSION_17),
+        AGP_811(AGP.AGP_811, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_2), JavaVersion.VERSION_17),
+        AGP_812(AGP.AGP_812, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_2), JavaVersion.VERSION_17),
+        AGP_813(AGP.AGP_813, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_2), JavaVersion.VERSION_17),
+        AGP_90(AGP.AGP_90, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_2), JavaVersion.VERSION_17),
         ;
 
         companion object {
@@ -101,7 +102,7 @@ interface TestVersions {
     }
 
     object COCOAPODS {
-        const val VERSION = "1.11.0"
+        const val VERSION = "1.16.2"
     }
 
     object AppleGradlePlugin {
@@ -117,8 +118,9 @@ interface TestVersions {
         const val KOTLINX_KOVER = "0.9.1"
         const val KOTLINX_BINARY_COMPATIBILITY_VALIDATOR = "0.17.0"
         const val DOKKA = "1.8.10"
+
         // TODO KT-70336 update Dokka version to a stable version when 2.0.0 is released
-        const val DOKKA_V2 = "2.0.20-dev-360"
+        const val DOKKA_V2 = "2.1.0"
 
         const val KSP = "1.9.22-1.0.16"
     }
