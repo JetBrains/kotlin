@@ -1,6 +1,6 @@
 FILE: instanceAccessBeforeSuperCall.kt
     public final class A : R|kotlin/Any| {
-        public constructor(x: R|kotlin/Int| = R|A|this@R|/A|.R|/A.getSomeInt|(), other: R|A| = this@R|/A|, header: R|kotlin/String| = R|A|this@R|/A|.R|/A.keker|): R|A| {
+        public constructor(x: R|kotlin/Int| = R|A|this@R|/A|.R|/A.getSomeInt<Inapplicable(INAPPLICABLE): /A.getSomeInt>#|(), other: R|A| = this@R|/A|, header: R|kotlin/String| = R|A|this@R|/A|.R|/A.keker<Inapplicable(INAPPLICABLE): /A.keker>#|): R|A| {
             super<R|kotlin/Any|>()
         }
 
@@ -79,7 +79,7 @@ FILE: instanceAccessBeforeSuperCall.kt
                 lval a: R|kotlin/Int| = Int(10)
                 this@R|/F|
                 R|/test|(this@R|/F|)
-                this@R|/F|.<Unresolved name: a># = Int(20)
+                this@R|/F|.R|/F.a| = Int(20)
             }
             , this@R|/F|)
             this@R|/F|.R|/F.a| = Int(30)
@@ -97,7 +97,7 @@ FILE: instanceAccessBeforeSuperCall.kt
     }
     public final class Derived : R|Base| {
         public constructor(): R|Derived| {
-            super<R|Base|>(this@R|/Derived|.<Unresolved name: y>#)
+            super<R|Base|>(this@R|/Derived|.R|/Derived.y|)
         }
 
         public final val y: R|kotlin/Int| = Int(42)

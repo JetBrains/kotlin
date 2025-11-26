@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
@@ -13,7 +12,7 @@ expect enum class Base {
 interface I
 
 fun testCommon(base: Base) {
-    if (<!IMPOSSIBLE_IS_CHECK_WARNING!>base is I<!>) {
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>base is I<!>) {
         val x = <!NO_ELSE_IN_WHEN!>when<!> (base) { // must be an error
             Base.A -> 1
             Base.B -> 2
@@ -28,7 +27,7 @@ actual enum class Base {
 }
 
 fun testPlatformGood(base: Base) {
-    if (<!IMPOSSIBLE_IS_CHECK_WARNING!>base is I<!>) {
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>base is I<!>) {
         val x = when (base) { // must be OK
             Base.A -> 1
             Base.B -> 2
@@ -38,7 +37,7 @@ fun testPlatformGood(base: Base) {
 }
 
 fun testPlatformBad(base: Base) {
-    if (<!IMPOSSIBLE_IS_CHECK_WARNING!>base is I<!>) {
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>base is I<!>) {
         val x = <!NO_ELSE_IN_WHEN!>when<!> (base) { // must be an error
             Base.A -> 1
             Base.B -> 2

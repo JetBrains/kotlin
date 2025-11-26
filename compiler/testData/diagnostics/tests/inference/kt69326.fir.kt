@@ -1,5 +1,4 @@
-// LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-69326
 
 interface MyExpression<F>
@@ -13,10 +12,10 @@ fun <K : Any> checkNotNull(k: K?): K = TODO()
 
 fun foo(x: MyExpression<String>) {
     getElement(x.min1())!!.length
-    checkNotNull(getElement(x.min1())).<!UNRESOLVED_REFERENCE!>length<!>
+    checkNotNull(getElement(x.min1())).length
 
     getElement(x.min2())!!.length
-    checkNotNull(getElement(x.min2())).<!UNRESOLVED_REFERENCE!>length<!>
+    checkNotNull(getElement(x.min2())).length
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, inProjection,

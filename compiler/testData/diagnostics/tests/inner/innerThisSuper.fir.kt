@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
-// LATEST_LV_DIFFERENCE
 
 interface Trait {
     fun bar() = 42
@@ -8,11 +7,11 @@ interface Trait {
 
 class Outer : Trait {
     class Nested {
-        val t = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>this@Outer<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
+        val t = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>this@Outer<!>.bar()
         val s = super<!UNRESOLVED_LABEL!>@Outer<!>.bar()
 
         inner class NestedInner {
-            val t = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>this@Outer<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
+            val t = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>this@Outer<!>.bar()
             val s = super<!UNRESOLVED_LABEL!>@Outer<!>.bar()
         }
     }
