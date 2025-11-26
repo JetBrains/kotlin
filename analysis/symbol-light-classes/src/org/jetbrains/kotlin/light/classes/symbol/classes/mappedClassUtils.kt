@@ -43,8 +43,6 @@ private val ERASED_COLLECTION_METHOD_NAMES: Set<String> = buildSet {
     add("putAll")
 }
 
-private val IGNORED_METHOD_NAMES: Set<String> = setOf("equals", "hashCode", "toString")
-
 /**
  * This function is responsible for filtering and transforming callable declarations when the containing
  * class extends or implements Kotlin collection types (from `kotlin.collections` package) that map to
@@ -273,7 +271,6 @@ private fun KaSession.generateJavaCollectionMethodStubs(
         .toSet()
 
     val javaMethods = javaCollectionPsiClass.methods
-        .filterNot { it.name in IGNORED_METHOD_NAMES }
         .filterNot { it.hasModifierProperty(PsiModifier.DEFAULT) }
 
     val candidateMethods = javaMethods.flatMap { method ->
