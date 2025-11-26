@@ -245,19 +245,15 @@ class FirScriptConfiguratorExtensionImpl(
     }
 }
 
-private fun FirScriptDefinitionProviderService.configurationFor(sourceCode: SourceCode): ScriptCompilationConfiguration? =
-    definitionProvider?.findDefinition(sourceCode)?.compilationConfiguration
-
-private fun FirScriptDefinitionProviderService.defaultConfiguration(): ScriptCompilationConfiguration? =
-    definitionProvider?.getDefaultDefinition()?.compilationConfiguration
-
 internal fun getOrLoadConfiguration(session: FirSession, file: KtSourceFile): ScriptCompilationConfiguration? {
     val service = checkNotNull(session.scriptDefinitionProviderService)
     val sourceCode = file.toSourceCode()
     val configuration = with(service) {
-        sourceCode?.let { asSourceCode -> configurationFor(asSourceCode) }
-            ?: defaultConfiguration()
-    }
+        sourceCode?.let { asSourceCode ->
+            getRefinedConfiguration(asSourceCode)
+                ?: getBaseConfiguration(asSourceCode)
+        } ?: getDefaultConfiguration()
+    }.valueOrNull()
     return configuration
 }
 

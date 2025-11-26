@@ -12,11 +12,12 @@ import kotlin.script.experimental.api.valueOrNull
 
 fun FirSession.getScriptCompilationConfiguration(
     sourceCode: SourceCode?,
-    getDefault: FirScriptDefinitionProviderService.() -> ScriptCompilationConfiguration? = { definitionProvider?.getDefaultDefinition()?.compilationConfiguration }
+    getDefault: FirScriptDefinitionProviderService.() -> ScriptCompilationConfiguration? = { getDefaultConfiguration().valueOrNull() }
 ) =
     scriptDefinitionProviderService?.let { providerService ->
         sourceCode?.let { script ->
-            providerService.configurationProvider?.getScriptCompilationConfiguration(script)?.valueOrNull()?.configuration
-                ?: providerService.getDefault()
+            providerService.getRefinedConfiguration(script)?.valueOrNull()
+                ?: providerService.getBaseConfiguration(script)?.valueOrNull()
+                ?: providerService.getDefaultConfiguration().valueOrNull()
         } ?: providerService.getDefault()
     }

@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
-import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
@@ -12,8 +11,6 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
@@ -52,18 +49,13 @@ import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.getKtFile
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.topologicalSort
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.impl._languageVersion
-import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
-import kotlin.script.experimental.jvm.compilationCache
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-import kotlin.script.experimental.jvm.jvm
 
 class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
 

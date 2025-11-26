@@ -28,11 +28,13 @@ import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.SourcesToPathsMapper
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.session.registerModuleData
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.*
@@ -117,6 +120,8 @@ class ScriptJvmK2Compiler(
                 init = {},
             )
 
+            session.scriptDefinitionProviderService!!.storeRefinedConfiguration(script, refinedConfiguration.asSuccess())
+
             val rawFir = script.convertToFir(session, diagnosticsCollector)
 
             val outputs = listOf(resolveAndCheckFir(session, listOf(rawFir), diagnosticsCollector)).also {
@@ -179,13 +184,13 @@ fun createK2ScriptCompilerProxyWithLightTree(
             scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
         )
     return ScriptJvmK2Compiler(state) { session, diagnosticsReporter ->
-//        val sourcesToPathsMapper = session.sourcesToPathsMapper
+        val sourcesToPathsMapper = session.sourcesToPathsMapper
         val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
         val linesMapping = text.toSourceLinesMapping()
-        builder.buildFirFile(text, toKtSourceFile()!!, linesMapping)/*.also { firFile ->
-//            (session.firProvider as FirProviderImpl).recordFile(firFile)
-//            sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
-        }*/
+        builder.buildFirFile(text, toKtSourceFile()!!, linesMapping).also { firFile ->
+            (session.firProvider as FirProviderImpl).recordFile(firFile)
+            sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
+        }
     }
 }
 
@@ -207,5 +212,7 @@ private fun createDummySessionForScriptRefinement(script: SourceCode): FirSessio
             ))
         register(FirExtensionService::class, FirExtensionService(this))
         register(FirKotlinScopeProvider::class, FirKotlinScopeProvider())
+        register(FirProvider::class, FirProviderImpl(this, kotlinScopeProvider))
+        register(SourcesToPathsMapper::class, SourcesToPathsMapper())
     }
 

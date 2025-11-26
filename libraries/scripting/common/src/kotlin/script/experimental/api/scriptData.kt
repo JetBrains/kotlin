@@ -26,7 +26,7 @@ interface SourceCode {
     val name: String?
 
     /**
-     * The path or another script location identifier
+     * The path or another script location identifier; it should be unique, if not null
      */
     val locationId: String?
 
