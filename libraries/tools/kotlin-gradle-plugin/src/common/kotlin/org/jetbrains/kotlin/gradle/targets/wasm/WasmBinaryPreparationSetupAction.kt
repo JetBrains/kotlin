@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryModeAttribute
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryModeAttribute.attributeByMode
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform.Companion.ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
@@ -28,6 +30,7 @@ internal val WasmBinaryPreparationSetupAction = KotlinCompilationSideEffect { co
     compilation as KotlinJsIrCompilation
 
     val runtime = project.configurations.maybeCreateConsumable(target.runtimeElementsConfigurationName)
+    val runtimeConfiguration = compilation.internal.configurations.deprecatedRuntimeConfiguration
 
     project.dependencies.artifactTypes.maybeCreate(ARTIFACT_TYPE)
 
@@ -42,13 +45,29 @@ internal val WasmBinaryPreparationSetupAction = KotlinCompilationSideEffect { co
         KotlinUsages.configureProducerRuntimeUsage(this, target)
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY)
-        val runtimeConfiguration = compilation.internal.configurations.deprecatedRuntimeConfiguration
         extendsFrom(runtime)
         runtimeConfiguration?.let { extendsFrom(it) }
         usesPlatformOf(target)
     }
 
     if (compilation.isMain()) {
+        compilation.binaries.configureEach { binary ->
+            val conf = compilation.project.configurations.maybeCreateResolvable(binary.wasmBinaryConfigurationName) {
+                description = "Elements of runtime for main."
+                @Suppress("DEPRECATION")
+                isVisible = false
+                KotlinUsages.configureProducerRuntimeUsage(this, target)
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY)
+
+                usesPlatformOf(target)
+            }
+
+            conf.extendsFrom(runtime)
+            runtimeConfiguration?.let { conf.extendsFrom(it) }
+
+        }
+
         project.configurations.maybeCreateConsumable(compilation.wasmBinaryOutputConfigurationName) {
             description = "Elements of runtime for main."
             @Suppress("DEPRECATION")
@@ -56,7 +75,6 @@ internal val WasmBinaryPreparationSetupAction = KotlinCompilationSideEffect { co
             KotlinUsages.configureProducerRuntimeUsage(this, target)
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY)
-            val runtimeConfiguration = compilation.internal.configurations.deprecatedRuntimeConfiguration
             extendsFrom(runtime)
             runtimeConfiguration?.let { extendsFrom(it) }
             usesPlatformOf(target)

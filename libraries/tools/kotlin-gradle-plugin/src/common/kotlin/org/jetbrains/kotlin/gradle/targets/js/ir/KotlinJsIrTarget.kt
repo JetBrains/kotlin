@@ -180,17 +180,17 @@ constructor(
             { NpmResolverPlugin.apply(project) },
             { WasmNpmResolverPlugin.apply(project) },
         )
-        compilations.all { compilation ->
-            compilation.binaries
-                .withType(JsIrBinary::class.java)
-                .all { binary ->
-                    val syncTask = binary.linkSyncTask
-
-                    binary.linkTask.configure {
-                        it.finalizedBy(syncTask)
-                    }
-                }
-        }
+//        compilations.all { compilation ->
+//            compilation.binaries
+//                .withType(JsIrBinary::class.java)
+//                .all { binary ->
+//                    val syncTask = binary.linkSyncTask
+//
+//                    binary.linkTask.configure {
+//                        it.finalizedBy(syncTask)
+//                    }
+//                }
+//        }
     }
 
     private val commonLazy by commonLazyDelegate
