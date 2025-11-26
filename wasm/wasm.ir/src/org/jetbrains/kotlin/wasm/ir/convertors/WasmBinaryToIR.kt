@@ -444,11 +444,11 @@ class WasmBinaryToIR(val b: MyByteReader) {
         }
 
         return when (immediates.size) {
-            0 -> WasmInstr0.getOrCreate(op)
-            1 -> WasmInstr1(op, immediates[0])
-            2 -> WasmInstr2(op, immediates[0], immediates[1])
-            3 -> WasmInstr3(op, immediates[0], immediates[1], immediates[3])
-            4 -> WasmInstr4(op, immediates[0], immediates[1], immediates[3], immediates[4])
+            0 -> wasmInstrWithoutLocation(op)
+            1 -> wasmInstrWithoutLocation(op, immediates[0])
+            2 -> wasmInstrWithoutLocation(op, immediates[0], immediates[1])
+            3 -> wasmInstrWithoutLocation(op, immediates[0], immediates[1], immediates[2])
+            4 -> wasmInstrWithoutLocation(op, immediates[0], immediates[1], immediates[2], immediates[3])
             else -> error("Immediates count ${immediates.size} instructions not supported")
         }
     }

@@ -89,7 +89,7 @@ internal fun removeInstructionPriorUnreachable(input: Sequence<WasmInstr>): Sequ
                     val firstLocation = first.location as? SourceLocation.DefinedLocation
                     if (firstLocation != null) {
                         //replace first instruction to NOP
-                        yield(WasmInstr0Located(WasmOp.NOP, firstLocation))
+                        yield(wasmInstrWithLocation(WasmOp.NOP, firstLocation))
                     }
                 }
             } else {
@@ -130,7 +130,7 @@ internal fun removeInstructionPriorDrop(input: Sequence<WasmInstr>): Sequence<Wa
                 val firstLocation = first.location as? SourceLocation.DefinedLocation
                 if (firstLocation != null) {
                     //replace first instruction
-                    firstInstruction = WasmInstr0Located(WasmOp.NOP, firstLocation)
+                    firstInstruction = wasmInstrWithLocation(WasmOp.NOP, firstLocation)
                     secondInstruction = instruction
                 } else {
                     //eat both instructions
@@ -168,14 +168,20 @@ internal fun mergeSetAndGetIntoTee(input: Sequence<WasmInstr>): Sequence<WasmIns
 
             if (first.operator == WasmOp.LOCAL_SET && instruction.operator == WasmOp.LOCAL_GET) {
                 if (first.immediatesCount == 1 && instruction.immediatesCount == 1) {
-                    val setNumber = ((first as? WasmInstr1)?.immediate1 as? WasmImmediate.LocalIdx)?.value
-                    val getNumber = ((instruction as? WasmInstr1)?.immediate1 as? WasmImmediate.LocalIdx)?.value
+                    var firstImmediate: WasmImmediate? = null
+                    first.forEachImmediates { firstImmediate = it }
+                    var secondImmediate: WasmImmediate? = null
+                    instruction.forEachImmediates { secondImmediate = it }
+
+                    val setNumber = (firstImmediate as? WasmImmediate.LocalIdx)?.value
+                    val getNumber = (secondImmediate as? WasmImmediate.LocalIdx)?.value
+
                     if (getNumber != null && getNumber == setNumber) {
                         val location = instruction.location
                         firstInstruction = if (location != null) {
-                            WasmInstr1Located(WasmOp.LOCAL_TEE, location, instruction.immediate1)
+                            wasmInstrWithLocation(WasmOp.LOCAL_TEE, location, firstImmediate!!)
                         } else {
-                            WasmInstr1(WasmOp.LOCAL_TEE, instruction.immediate1)
+                            wasmInstrWithoutLocation(WasmOp.LOCAL_TEE, firstImmediate!!)
                         }
                         continue
                     }

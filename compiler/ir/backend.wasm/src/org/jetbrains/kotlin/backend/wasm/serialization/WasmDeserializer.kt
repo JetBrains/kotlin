@@ -242,25 +242,25 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
             when (tag) {
                 LOCATED0 ->
-                    WasmInstr0Located(op, deserializeSourceLocation())
+                    wasmInstrWithLocation(op, deserializeSourceLocation())
                 LOCATED1 ->
-                    WasmInstr1Located(op, deserializeSourceLocation(), deserializeImmediate())
+                    wasmInstrWithLocation(op, deserializeSourceLocation(), deserializeImmediate())
                 LOCATED2 ->
-                    WasmInstr2Located(op, deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate())
+                    wasmInstrWithLocation(op, deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate())
                 LOCATED3 ->
-                    WasmInstr3Located(op, deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
+                    wasmInstrWithLocation(op, deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
                 LOCATED4 ->
-                    WasmInstr4Located(op, deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
+                    wasmInstrWithLocation(op, deserializeSourceLocation(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
                 NOT_LOCATED0 ->
-                    WasmInstr0.getOrCreate(op)
+                    wasmInstrWithoutLocation(op)
                 NOT_LOCATED1 ->
-                    WasmInstr1(op, deserializeImmediate())
+                    wasmInstrWithoutLocation(op, deserializeImmediate())
                 NOT_LOCATED2 ->
-                    WasmInstr2(op, deserializeImmediate(), deserializeImmediate())
+                    wasmInstrWithoutLocation(op, deserializeImmediate(), deserializeImmediate())
                 NOT_LOCATED3 ->
-                    WasmInstr3(op, deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
+                    wasmInstrWithoutLocation(op, deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
                 NOT_LOCATED4 ->
-                    WasmInstr4(op, deserializeImmediate(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
+                    wasmInstrWithoutLocation(op, deserializeImmediate(), deserializeImmediate(), deserializeImmediate(), deserializeImmediate())
                 else -> tagError(tag)
             }
         }

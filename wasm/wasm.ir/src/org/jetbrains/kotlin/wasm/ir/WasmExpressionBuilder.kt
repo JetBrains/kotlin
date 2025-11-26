@@ -37,10 +37,10 @@ class WasmExpressionBuilder(
         location: SourceLocation,
     ) {
         if (location == SourceLocation.NoLocation) {
-            WasmInstr0.getOrCreate(op)
+            wasmInstrWithoutLocation(op)
         } else {
             check(!skipLocations) { "Unexpected location in skipLocation mode" }
-            WasmInstr0Located(op, location)
+            wasmInstrWithLocation(op, location)
         }.appendInstruction()
     }
 
@@ -51,10 +51,10 @@ class WasmExpressionBuilder(
     ) {
         if (skipLocations || location == SourceLocation.NoLocation) {
             check(location !is SourceLocation.DefinedLocation)
-            WasmInstr1(op, immediate)
+            wasmInstrWithoutLocation(op, immediate)
         } else {
             check(!skipLocations) { "Unexpected location in skipLocation mode" }
-            WasmInstr1Located(op, location, immediate)
+            wasmInstrWithLocation(op, location, immediate)
         }.appendInstruction()
     }
 
@@ -65,10 +65,10 @@ class WasmExpressionBuilder(
         immediate2: WasmImmediate,
     ) {
         if (skipLocations || location == SourceLocation.NoLocation) {
-            WasmInstr2(op, immediate1, immediate2)
+            wasmInstrWithoutLocation(op, immediate1, immediate2)
         } else {
             check(!skipLocations) { "Unexpected location in skipLocation mode" }
-            WasmInstr2Located(op, location, immediate1, immediate2)
+            wasmInstrWithLocation(op, location, immediate1, immediate2)
         }.appendInstruction()
     }
 
@@ -79,10 +79,10 @@ class WasmExpressionBuilder(
         immediate3: WasmImmediate,
     ) {
         if (skipLocations || location == SourceLocation.NoLocation) {
-            WasmInstr3(op, immediate1, immediate2, immediate3)
+            wasmInstrWithoutLocation(op, immediate1, immediate2, immediate3)
         } else {
             check(!skipLocations) { "Unexpected location in skipLocation mode" }
-            WasmInstr3Located(op, location, immediate1, immediate2, immediate3)
+            wasmInstrWithLocation(op, location, immediate1, immediate2, immediate3)
         }.appendInstruction()
     }
 
@@ -94,10 +94,10 @@ class WasmExpressionBuilder(
         immediate4: WasmImmediate,
     ) {
         if (skipLocations || location == SourceLocation.NoLocation) {
-            WasmInstr4(op, immediate1, immediate2, immediate3, immediate4)
+            wasmInstrWithoutLocation(op, immediate1, immediate2, immediate3, immediate4)
         } else {
             check(!skipLocations) { "Unexpected location in skipLocation mode" }
-            WasmInstr4Located(op, location, immediate1, immediate2, immediate3, immediate4)
+            wasmInstrWithLocation(op, location, immediate1, immediate2, immediate3, immediate4)
         }.appendInstruction()
     }
 

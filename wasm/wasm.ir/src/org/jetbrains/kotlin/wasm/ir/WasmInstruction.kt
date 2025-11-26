@@ -13,21 +13,15 @@ sealed class WasmInstr(val operator: WasmOp) {
     abstract val location: SourceLocation?
 }
 
-open class WasmInstr0(
+private open class WasmInstr0(
     operator: WasmOp,
 ) : WasmInstr(operator) {
     override val location: SourceLocation? get() = null
     override fun forEachImmediates(body: (WasmImmediate) -> Unit): Unit = Unit
     override val immediatesCount: Int get() = 0
-
-    companion object {
-        private val cache = mutableMapOf<WasmOp, WasmInstr0>()
-        fun getOrCreate(operator: WasmOp): WasmInstr0 =
-            cache.getOrPut(operator) { WasmInstr0(operator) }
-    }
 }
 
-open class WasmInstr1(
+private open class WasmInstr1(
     operator: WasmOp,
     val immediate1: WasmImmediate,
 ) : WasmInstr0(operator) {
@@ -35,7 +29,7 @@ open class WasmInstr1(
     override val immediatesCount: Int get() = 1
 }
 
-open class WasmInstr2(
+private open class WasmInstr2(
     operator: WasmOp,
     immediate1: WasmImmediate,
     val immediate2: WasmImmediate,
@@ -47,7 +41,7 @@ open class WasmInstr2(
     override val immediatesCount: Int get() = 2
 }
 
-open class WasmInstr3(
+private open class WasmInstr3(
     operator: WasmOp,
     immediate1: WasmImmediate,
     immediate2: WasmImmediate,
@@ -60,7 +54,7 @@ open class WasmInstr3(
     override val immediatesCount: Int get() = 3
 }
 
-open class WasmInstr4(
+private open class WasmInstr4(
     operator: WasmOp,
     immediate1: WasmImmediate,
     immediate2: WasmImmediate,
@@ -74,25 +68,25 @@ open class WasmInstr4(
     override val immediatesCount: Int get() = 4
 }
 
-open class WasmInstr0Located(
+private open class WasmInstr0Located(
     operator: WasmOp,
     override val location: SourceLocation,
 ) : WasmInstr0(operator)
 
-open class WasmInstr1Located(
+private open class WasmInstr1Located(
     operator: WasmOp,
     override val location: SourceLocation,
     immediate1: WasmImmediate,
 ) : WasmInstr1(operator, immediate1)
 
-open class WasmInstr2Located(
+private open class WasmInstr2Located(
     operator: WasmOp,
     override val location: SourceLocation,
     immediate1: WasmImmediate,
     immediate2: WasmImmediate,
 ) : WasmInstr2(operator, immediate1, immediate2)
 
-open class WasmInstr3Located(
+private open class WasmInstr3Located(
     operator: WasmOp,
     override val location: SourceLocation,
     immediate1: WasmImmediate,
@@ -100,7 +94,7 @@ open class WasmInstr3Located(
     immediate3: WasmImmediate,
 ) : WasmInstr3(operator, immediate1, immediate2, immediate3)
 
-open class WasmInstr4Located(
+private open class WasmInstr4Located(
     operator: WasmOp,
     override val location: SourceLocation,
     immediate1: WasmImmediate,
@@ -108,3 +102,83 @@ open class WasmInstr4Located(
     immediate3: WasmImmediate,
     immediate4: WasmImmediate,
 ) : WasmInstr4(operator, immediate1, immediate2, immediate3, immediate4)
+
+private val wasmInst0cache = mutableMapOf<WasmOp, WasmInstr0>()
+fun wasmInstrWithoutLocation(operator: WasmOp): WasmInstr =
+    wasmInst0cache.getOrPut(operator) { WasmInstr0(operator) }
+
+fun wasmInstrWithLocation(
+    operator: WasmOp,
+    location: SourceLocation,
+): WasmInstr =
+    if (location == SourceLocation.NoLocation) wasmInstrWithoutLocation(operator)
+    else WasmInstr0Located(operator, location)
+
+fun wasmInstrWithoutLocation(
+    operator: WasmOp,
+    immediate1: WasmImmediate,
+): WasmInstr =
+    WasmInstr1(operator, immediate1)
+
+fun wasmInstrWithLocation(
+    operator: WasmOp,
+    location: SourceLocation,
+    immediate1: WasmImmediate,
+): WasmInstr =
+    if (location == SourceLocation.NoLocation) wasmInstrWithoutLocation(operator, immediate1)
+    else WasmInstr1Located(operator, location, immediate1)
+
+fun wasmInstrWithoutLocation(
+    operator: WasmOp,
+    immediate1: WasmImmediate,
+    immediate2: WasmImmediate,
+): WasmInstr =
+    WasmInstr2(operator, immediate1, immediate2)
+
+fun wasmInstrWithLocation(
+    operator: WasmOp,
+    location: SourceLocation,
+    immediate1: WasmImmediate,
+    immediate2: WasmImmediate,
+): WasmInstr =
+    if (location == SourceLocation.NoLocation) wasmInstrWithoutLocation(operator, immediate1, immediate2)
+    else WasmInstr2Located(operator, location, immediate1, immediate2)
+
+fun wasmInstrWithoutLocation(
+    operator: WasmOp,
+    immediate1: WasmImmediate,
+    immediate2: WasmImmediate,
+    immediate3: WasmImmediate,
+): WasmInstr =
+    WasmInstr3(operator, immediate1, immediate2, immediate3)
+
+fun wasmInstrWithLocation(
+    operator: WasmOp,
+    location: SourceLocation,
+    immediate1: WasmImmediate,
+    immediate2: WasmImmediate,
+    immediate3: WasmImmediate,
+): WasmInstr =
+    if (location == SourceLocation.NoLocation) wasmInstrWithoutLocation(operator, immediate1, immediate2, immediate3)
+    else WasmInstr3Located(operator, location, immediate1, immediate2, immediate3)
+
+fun wasmInstrWithoutLocation(
+    operator: WasmOp,
+    immediate1: WasmImmediate,
+    immediate2: WasmImmediate,
+    immediate3: WasmImmediate,
+    immediate4: WasmImmediate,
+): WasmInstr =
+    WasmInstr4(operator, immediate1, immediate2, immediate3, immediate4)
+
+fun wasmInstrWithLocation(
+    operator: WasmOp,
+    location: SourceLocation,
+    immediate1: WasmImmediate,
+    immediate2: WasmImmediate,
+    immediate3: WasmImmediate,
+    immediate4: WasmImmediate,
+): WasmInstr =
+    if (location == SourceLocation.NoLocation) wasmInstrWithoutLocation(operator, immediate1, immediate2, immediate3, immediate4)
+    else WasmInstr4Located(operator, location, immediate1, immediate2, immediate3, immediate4)
+
