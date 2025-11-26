@@ -46,14 +46,16 @@ class NativeCompilerDownloader(
         internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
         internal const val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
 
-        internal fun getCompilerDependencyNotation(project: Project): Map<String, String> {
-            return mapOf(
-                "group" to KOTLIN_GROUP_ID,
-                "name" to getDependencyName(project),
-                "version" to getCompilerVersion(project),
-                "classifier" to simpleOsName,
-                "ext" to archiveExtension
-            )
+        internal fun getCompilerDependencyNotation(project: Project): String {
+            val group = KOTLIN_GROUP_ID
+            val name = getDependencyName(project)
+            val version = getCompilerVersion(project)
+            val classifier = simpleOsName
+            val ext = archiveExtension
+
+            // Gradle 9 Best Practice: Use single-string notation
+            // Format: "group:name:version:classifier@extension"
+            return "$group:$name:$version:$classifier@$ext"
         }
 
         internal fun getCompilerDirectory(
