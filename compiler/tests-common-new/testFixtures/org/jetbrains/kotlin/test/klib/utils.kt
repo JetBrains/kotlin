@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.klib
 
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 
@@ -14,9 +15,9 @@ import org.jetbrains.kotlin.test.directives.model.StringDirective
  */
 
 
-context(directives: RegisteredDirectives, customCompilerVersion: String)
+context(directives: RegisteredDirectives, customCompilerVersion: LanguageVersion)
 internal fun createUnmutingErrorIfNeeded(stringDirective: StringDirective): List<Throwable> {
-    return if (customCompilerVersion in directives[stringDirective])
+    return if (directives[stringDirective].any { it.startsWith(customCompilerVersion.versionString) })
         listOf(
             AssertionError(
                 "Looks like this test can be unmuted. Remove $customCompilerVersion from the $stringDirective directive"

@@ -34,7 +34,10 @@ optInToExperimentalCompilerApi()
 sourceSets {
     "main" { }
     "testFixtures" { projectDefault() }
-    "test" { generatedTestDir() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
 }
 
 testsJar {}

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE
@@ -24,7 +25,7 @@ import org.junit.jupiter.api.Assumptions
  */
 class CustomKlibCompilerFirstStageTestSuppressor(
     testServices: TestServices,
-    private val customCompilerVersion: String,
+    private val defaultLanguageVersion: LanguageVersion,
 ) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CustomKlibCompilerTestDirectives)
@@ -33,7 +34,7 @@ class CustomKlibCompilerFirstStageTestSuppressor(
         if (failedAssertions.isEmpty()) {
             return buildList {
                 with(testServices.moduleStructure.modules.first().directives) {
-                    with(customCompilerVersion) {
+                    with(defaultLanguageVersion) {
                         addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE))
                     }
                 }
@@ -113,10 +114,8 @@ class CustomKlibCompilerFirstStageTestSuppressor(
         if (IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE !in directives)
             return listOf(wrappedException)
 
-        for (prefix in directives[IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE]) {
-            if (customCompilerVersion.startsWith(prefix))
-                return emptyList()
-        }
+        if (directives[IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE].any { it.startsWith(defaultLanguageVersion.versionString) })
+            return emptyList()
 
         return listOf(wrappedException)
     }

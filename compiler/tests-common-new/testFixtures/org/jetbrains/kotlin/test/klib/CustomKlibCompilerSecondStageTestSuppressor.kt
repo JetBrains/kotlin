@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.klib
 
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
@@ -25,7 +26,7 @@ import org.junit.jupiter.api.Assumptions
  */
 class CustomKlibCompilerSecondStageTestSuppressor(
     testServices: TestServices,
-    private val customCompilerVersion: String,
+    private val defaultLanguageVersion: LanguageVersion,
 ) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CustomKlibCompilerTestDirectives)
@@ -34,7 +35,7 @@ class CustomKlibCompilerSecondStageTestSuppressor(
         if (failedAssertions.isEmpty()) {
             return buildList {
                 with(testServices.moduleStructure.modules.first().directives) {
-                    with(customCompilerVersion) {
+                    with(defaultLanguageVersion) {
                         addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE))
                         addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE))
                         addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE))
@@ -46,7 +47,12 @@ class CustomKlibCompilerSecondStageTestSuppressor(
         val newFailedAssertions = failedAssertions.flatMap { wrappedException ->
             when (wrappedException) {
                 is WrappedException.FromHandler -> when (wrappedException.handler) {
-                    is NoFirCompilationErrorsHandler -> emptyList() // Some tests cannot be compiled with previous LV. These are just ignored
+                    is NoFirCompilationErrorsHandler ->  {
+                        if (defaultLanguageVersion < LanguageVersion.LATEST_STABLE)
+                            emptyList()  // Some tests cannot be compiled with previous LV. These are just ignored
+                        else
+                            listOf(wrappedException)
+                    }
                     is JsBinaryArtifactHandler -> processException(  // Execution error
                         wrappedException,
                         IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE
@@ -74,10 +80,8 @@ class CustomKlibCompilerSecondStageTestSuppressor(
 
     private fun processException(wrappedException: WrappedException, ignoreDirective: StringDirective): List<WrappedException> {
         val directives = testServices.moduleStructure.modules.first().directives
-        for (prefix in directives[ignoreDirective]) {
-            if (customCompilerVersion.startsWith(prefix))
-                return emptyList()
-        }
+        if (directives[ignoreDirective].any { it.startsWith(defaultLanguageVersion.versionString) })
+            return emptyList()
 
         return listOf(wrappedException)
     }

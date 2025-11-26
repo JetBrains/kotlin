@@ -84,7 +84,7 @@ open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithT
             ::CustomKlibCompilerTestSuppressor,
             // Suppress failed tests having `// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: X.Y.Z`,
             // where `X.Y.Z` matches to `customJsCompilerSettings.version`
-            ::CustomKlibCompilerSecondStageTestSuppressor.bind(customJsCompilerSettings.version),
+            ::CustomKlibCompilerSecondStageTestSuppressor.bind(customJsCompilerSettings.defaultLanguageVersion),
         )
         forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
             defaultDirectives {
