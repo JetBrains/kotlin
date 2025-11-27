@@ -29,7 +29,8 @@ internal fun compileAndIndex(
         excludeSystemLibs = false,
         headerExclusionPolicy = HeaderExclusionPolicyImpl(),
         headerFilter = NativeLibraryHeaderFilter.Predefined(
-            files.directory.listFiles()?.filter { it.extension == "h" }?.map { it.path }.orEmpty().toSet(), listOf("*")
+            headers = files.directory.listFiles()?.filter { it.extension == "h" }?.map { it.path }.orEmpty().toSet(),
+            modules = emptyList()
         ),
         objCClassesIncludingCategories = emptySet(),
         allowIncludingObjCCategoriesFromDefFile = false
