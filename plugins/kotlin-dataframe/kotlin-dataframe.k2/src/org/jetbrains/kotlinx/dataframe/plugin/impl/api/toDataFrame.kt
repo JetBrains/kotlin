@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -183,10 +184,10 @@ internal fun KotlinTypeFacade.toDataFrame(
                 .collectAllFunctions()
                 .filter { !it.isStatic && it.valueParameterSymbols.isEmpty() && it.typeParameterSymbols.isEmpty() }
                 .mapNotNull { function ->
-                    val name = function.name.identifier
-                    val propertyName = when {
-                        name.startsWith("get") -> name.replaceFirst("get", "")
-                        name.startsWith("is") -> name.replaceFirst("is", "")
+                    val identifier = function.name.identifier
+                    val columnName = when {
+                        identifier.startsWith("get") -> identifier.replaceFirst("get", "")
+                        identifier.startsWith("is") -> identifier.replaceFirst("is", "")
                         else -> return@mapNotNull null
                     }.let {
                         if (it.firstOrNull()?.isUpperCase() == true) {
@@ -196,23 +197,23 @@ internal fun KotlinTypeFacade.toDataFrame(
                         }
                     }
 
-                    function to propertyName
+                    ToDataFrameProperty(function, columnName)
                 }
         } else {
             scope
                 .collectAllProperties()
                 .filterIsInstance<FirPropertySymbol>()
                 .map {
-                    it to it.name.identifier
+                    ToDataFrameProperty(it, it.name.identifier)
                 }
         }
 
         return declarations
-            .filterNot { excludes.contains(it.first) }
-            .filterNot { excludedClasses.contains(it.first.resolvedReturnType) }
-            .filter { it.first.visibility == Visibilities.Public }
-            .map { (it, name) ->
-                var returnType = it.fir.returnTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, null)
+            .filterNot { excludes.contains(it.callable) }
+            .filterNot { excludedClasses.contains(it.callable.resolvedReturnType) }
+            .filter { it.callable.visibility == Visibilities.Public }
+            .map { (callable, name) ->
+                var returnType = callable.fir.returnTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, null)
                     .coneType.upperBoundIfFlexible()
 
                 returnType = if (returnType is ConeTypeParameterType) {
@@ -238,7 +239,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                     depth >= maxDepth && !fieldKind.shouldBeConvertedToColumnGroup && !fieldKind.shouldBeConvertedToFrameColumn
                 val shouldCreateValueCol = keepSubtree
                         || returnType.classId in preserveClasses
-                        || it in preserveProperties
+                        || callable in preserveProperties
                         || (!returnType.canBeUnfolded(session) && !fieldKind.shouldBeConvertedToColumnGroup && !fieldKind.shouldBeConvertedToFrameColumn)
                 if (shouldCreateValueCol) {
                     SimpleDataColumn(
@@ -294,6 +295,8 @@ internal fun KotlinTypeFacade.toDataFrame(
         }
     }
 }
+
+private data class ToDataFrameProperty(val callable: FirCallableSymbol<*>, val columnName: String)
 
 fun ConeKotlinType.canBeUnfolded(session: FirSession): Boolean =
     !isValueType(session) && hasProperties(session)
