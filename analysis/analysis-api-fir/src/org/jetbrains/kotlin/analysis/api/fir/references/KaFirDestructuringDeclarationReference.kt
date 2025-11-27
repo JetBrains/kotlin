@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
@@ -27,6 +26,7 @@ internal class KaFirDestructuringDeclarationReference(
     override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
         val fir = expression.getOrBuildFirSafe<FirProperty>(resolutionFacade) ?: return emptyList()
         return listOfNotNull(
+            // TODO(KT-82708): Only the initializer symbol is expected
             fir.buildSymbol(firSymbolBuilder),
             initializerSymbol(fir),
         )

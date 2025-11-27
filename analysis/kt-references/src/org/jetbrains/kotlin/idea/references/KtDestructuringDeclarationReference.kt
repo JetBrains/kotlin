@@ -17,6 +17,7 @@ abstract class KtDestructuringDeclarationReference(
 
     override fun getRangeInElement() = TextRange(0, element.textLength)
 
+    // TODO(KT-82708): Should be dropped
     override fun resolve(): PsiElement? = element
 
     override val resolvesByNames: Collection<Name>
