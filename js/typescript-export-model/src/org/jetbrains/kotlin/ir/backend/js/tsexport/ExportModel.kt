@@ -219,7 +219,7 @@ public sealed class ExportedType {
         if (implicitlyExportedType) ImplicitlyExportedType(this, exportedSupertype) else this
 }
 
-public data class ExportedTypeParameter(val name: String, val constraint: ExportedType? = null)
+public data class ExportedTypeParameter(val name: String, var constraint: ExportedType? = null)
 
 public enum class ExportedVisibility(public val keyword: String) {
     DEFAULT(""),

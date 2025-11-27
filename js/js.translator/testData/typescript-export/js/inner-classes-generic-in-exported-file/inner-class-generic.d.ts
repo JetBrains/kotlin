@@ -9,33 +9,33 @@ declare namespace JS_TESTS {
         constructor(a: T);
         get a(): T;
         get Inner(): {
-            new(a: T): GenericTestInner.Inner;
+            new(a: T): GenericTestInner.Inner<T>;
             fromNumber(a: number): GenericTestInner.Inner<T>;
         };
         get GenericInner(): {
-            new(a: S): GenericTestInner.GenericInner;
+            new<S extends Box<R, S>, R extends string>(a: S): GenericTestInner.GenericInner<S, R, T>;
             fromNumber<S extends Box<R, S>, R extends string>(a: number, copier: S): GenericTestInner.GenericInner<S, R, T>;
         };
         get GenericInnerWithShadowingTP(): {
-            new(a: T): GenericTestInner.GenericInnerWithShadowingTP;
+            new<T extends Box<string, T>>(a: T): GenericTestInner.GenericInnerWithShadowingTP<T, T>;
             fromNumber<T extends Box<string, T>>(a: number, copier: T): GenericTestInner.GenericInnerWithShadowingTP<T, T>;
         };
         get OpenInnerWithPublicConstructor(): {
-            new(a: T): GenericTestInner.OpenInnerWithPublicConstructor;
+            new(a: T): GenericTestInner.OpenInnerWithPublicConstructor<T>;
             fromNumber(a: number): GenericTestInner.OpenInnerWithPublicConstructor<T>;
         };
         get SubclassOfOpenInnerWithPublicConstructor(): {
-            new(a: T): GenericTestInner.SubclassOfOpenInnerWithPublicConstructor;
+            new(a: T): GenericTestInner.SubclassOfOpenInnerWithPublicConstructor<T>;
         };
         get GenericOpenInnerWithPublicConstructor(): {
-            new(a: S): GenericTestInner.GenericOpenInnerWithPublicConstructor;
+            new<S extends Box<string, S>>(a: S): GenericTestInner.GenericOpenInnerWithPublicConstructor<S, T>;
             fromNumber<S extends Box<string, S>>(a: number, copier: S): GenericTestInner.GenericOpenInnerWithPublicConstructor<S, T>;
         };
         get SubclassOfGenericOpenInnerWithPublicConstructor(): {
-            new(a: T): GenericTestInner.SubclassOfGenericOpenInnerWithPublicConstructor;
+            new(a: T): GenericTestInner.SubclassOfGenericOpenInnerWithPublicConstructor<T>;
         };
         get GenericSubclassOfGenericOpenInnerWithPublicConstructor1(): {
-            new(a: S): GenericTestInner.GenericSubclassOfGenericOpenInnerWithPublicConstructor1;
+            new<S extends Box<string, S>>(a: S): GenericTestInner.GenericSubclassOfGenericOpenInnerWithPublicConstructor1<S, T>;
         };
         get OpenInnerWithProtectedConstructor(): {
         };
@@ -47,45 +47,45 @@ declare namespace JS_TESTS {
         namespace $metadata$ {
             const constructor: abstract new <T extends Box<string, T>>() => GenericTestInner<T>;
         }
-        class Inner {
+        class Inner<T$GenericTestInner extends Box<string, T$GenericTestInner>> {
             private constructor();
-            get a(): T;
+            get a(): T$GenericTestInner;
             get concat(): string;
             get SecondLayerInner(): {
-                new(a: T): GenericTestInner.Inner.SecondLayerInner;
+                new(a: T$GenericTestInner): GenericTestInner.Inner.SecondLayerInner<T$GenericTestInner>;
             };
         }
         namespace Inner {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
-                const constructor: abstract new () => Inner;
+                const constructor: abstract new <T$GenericTestInner extends Box<string, T$GenericTestInner>>() => Inner<T$GenericTestInner>;
             }
-            class SecondLayerInner {
+            class SecondLayerInner<T$GenericTestInner extends Box<string, T$GenericTestInner>> {
                 private constructor();
-                get a(): T;
+                get a(): T$GenericTestInner;
                 get concat(): string;
             }
             namespace SecondLayerInner {
                 /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
                 namespace $metadata$ {
-                    const constructor: abstract new () => SecondLayerInner;
+                    const constructor: abstract new <T$GenericTestInner extends Box<string, T$GenericTestInner>>() => SecondLayerInner<T$GenericTestInner>;
                 }
             }
         }
-        class GenericInner<S extends Box<R, S>, R extends string> {
+        class GenericInner<S extends Box<R, S>, R extends string, T$GenericTestInner extends Box<string, T$GenericTestInner>> {
             private constructor();
             get a(): S;
             get concat(): string;
             get SecondLayerGenericInner(): {
-                new(a: U, v: V): GenericTestInner.GenericInner.SecondLayerGenericInner;
+                new<U extends Box<string, U>, V>(a: U, v: V): GenericTestInner.GenericInner.SecondLayerGenericInner<U, V, S, R, T$GenericTestInner>;
             };
         }
         namespace GenericInner {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
-                const constructor: abstract new <S extends Box<R, S>, R extends string>() => GenericInner<S, R>;
+                const constructor: abstract new <S extends Box<R, S>, R extends string, T$GenericTestInner extends Box<string, T$GenericTestInner>>() => GenericInner<S, R, T$GenericTestInner>;
             }
-            class SecondLayerGenericInner<U extends Box<string, U>, V> {
+            class SecondLayerGenericInner<U extends Box<string, U>, V, S$GenericInner$GenericTestInner extends Box<R$GenericInner$GenericTestInner, S$GenericInner$GenericTestInner>, R$GenericInner$GenericTestInner extends string, T$GenericTestInner extends Box<string, T$GenericTestInner>> {
                 private constructor();
                 get a(): U;
                 get v(): V;
@@ -94,11 +94,11 @@ declare namespace JS_TESTS {
             namespace SecondLayerGenericInner {
                 /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
                 namespace $metadata$ {
-                    const constructor: abstract new <U extends Box<string, U>, V>() => SecondLayerGenericInner<U, V>;
+                    const constructor: abstract new <U extends Box<string, U>, V, S$GenericInner$GenericTestInner extends Box<R$GenericInner$GenericTestInner, S$GenericInner$GenericTestInner>, R$GenericInner$GenericTestInner extends string, T$GenericTestInner extends Box<string, T$GenericTestInner>>() => SecondLayerGenericInner<U, V, S$GenericInner$GenericTestInner, R$GenericInner$GenericTestInner, T$GenericTestInner>;
                 }
             }
         }
-        class GenericInnerWithShadowingTP<T extends Box<string, T>> {
+        class GenericInnerWithShadowingTP<T extends Box<string, T>, T$GenericTestInner extends Box<string, T$GenericTestInner>> {
             private constructor();
             get a(): T;
             get concat(): string;
@@ -106,78 +106,78 @@ declare namespace JS_TESTS {
         namespace GenericInnerWithShadowingTP {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
-                const constructor: abstract new <T extends Box<string, T>>() => GenericInnerWithShadowingTP<T>;
+                const constructor: abstract new <T extends Box<string, T>, T$GenericTestInner extends Box<string, T$GenericTestInner>>() => GenericInnerWithShadowingTP<T, T$GenericTestInner>;
             }
         }
-        class OpenInnerWithPublicConstructor {
-            protected constructor($outer: GenericTestInner<T>, a: T);
-            get a(): T;
+        class OpenInnerWithPublicConstructor<T$GenericTestInner extends Box<string, T$GenericTestInner>> {
+            protected constructor($outer: GenericTestInner<T$GenericTestInner>, a: T$GenericTestInner);
+            get a(): T$GenericTestInner;
             get concat(): string;
         }
         namespace OpenInnerWithPublicConstructor {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
-                const constructor: abstract new () => OpenInnerWithPublicConstructor;
+                const constructor: abstract new <T$GenericTestInner extends Box<string, T$GenericTestInner>>() => OpenInnerWithPublicConstructor<T$GenericTestInner>;
             }
         }
-        class SubclassOfOpenInnerWithPublicConstructor extends GenericTestInner.OpenInnerWithPublicConstructor.$metadata$.constructor<T> {
+        class SubclassOfOpenInnerWithPublicConstructor<T$GenericTestInner extends Box<string, T$GenericTestInner>> extends GenericTestInner.OpenInnerWithPublicConstructor.$metadata$.constructor<T$GenericTestInner> {
             private constructor();
         }
         namespace SubclassOfOpenInnerWithPublicConstructor {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
-                const constructor: abstract new () => SubclassOfOpenInnerWithPublicConstructor;
+                const constructor: abstract new <T$GenericTestInner extends Box<string, T$GenericTestInner>>() => SubclassOfOpenInnerWithPublicConstructor<T$GenericTestInner>;
             }
         }
-        class GenericOpenInnerWithPublicConstructor<S extends Box<string, S>> {
-            protected constructor($outer: GenericTestInner<T>, a: S);
+        class GenericOpenInnerWithPublicConstructor<S extends Box<string, S>, T$GenericTestInner extends Box<string, T$GenericTestInner>> {
+            protected constructor($outer: GenericTestInner<T$GenericTestInner>, a: S);
             get a(): S;
             get concat(): string;
         }
         namespace GenericOpenInnerWithPublicConstructor {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
-                const constructor: abstract new <S extends Box<string, S>>() => GenericOpenInnerWithPublicConstructor<S>;
+                const constructor: abstract new <S extends Box<string, S>, T$GenericTestInner extends Box<string, T$GenericTestInner>>() => GenericOpenInnerWithPublicConstructor<S, T$GenericTestInner>;
             }
         }
-        class SubclassOfGenericOpenInnerWithPublicConstructor extends GenericTestInner.GenericOpenInnerWithPublicConstructor.$metadata$.constructor<T, T> {
+        class SubclassOfGenericOpenInnerWithPublicConstructor<T$GenericTestInner extends Box<string, T$GenericTestInner>> extends GenericTestInner.GenericOpenInnerWithPublicConstructor.$metadata$.constructor<T$GenericTestInner, T$GenericTestInner> {
             private constructor();
         }
         namespace SubclassOfGenericOpenInnerWithPublicConstructor {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
-                const constructor: abstract new () => SubclassOfGenericOpenInnerWithPublicConstructor;
+                const constructor: abstract new <T$GenericTestInner extends Box<string, T$GenericTestInner>>() => SubclassOfGenericOpenInnerWithPublicConstructor<T$GenericTestInner>;
             }
         }
-        class GenericSubclassOfGenericOpenInnerWithPublicConstructor1<S extends Box<string, S>> extends GenericTestInner.GenericOpenInnerWithPublicConstructor.$metadata$.constructor<S, T> {
+        class GenericSubclassOfGenericOpenInnerWithPublicConstructor1<S extends Box<string, S>, T$GenericTestInner extends Box<string, T$GenericTestInner>> extends GenericTestInner.GenericOpenInnerWithPublicConstructor.$metadata$.constructor<S, T$GenericTestInner> {
             private constructor();
         }
         namespace GenericSubclassOfGenericOpenInnerWithPublicConstructor1 {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
-                const constructor: abstract new <S extends Box<string, S>>() => GenericSubclassOfGenericOpenInnerWithPublicConstructor1<S>;
+                const constructor: abstract new <S extends Box<string, S>, T$GenericTestInner extends Box<string, T$GenericTestInner>>() => GenericSubclassOfGenericOpenInnerWithPublicConstructor1<S, T$GenericTestInner>;
             }
         }
-        class OpenInnerWithProtectedConstructor {
-            protected constructor($outer: GenericTestInner<T>, a: T);
-            get a(): T;
+        class OpenInnerWithProtectedConstructor<T$GenericTestInner extends Box<string, T$GenericTestInner>> {
+            protected constructor($outer: GenericTestInner<T$GenericTestInner>, a: T$GenericTestInner);
+            get a(): T$GenericTestInner;
             get concat(): string;
         }
         namespace OpenInnerWithProtectedConstructor {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
-                const constructor: abstract new () => OpenInnerWithProtectedConstructor;
+                const constructor: abstract new <T$GenericTestInner extends Box<string, T$GenericTestInner>>() => OpenInnerWithProtectedConstructor<T$GenericTestInner>;
             }
         }
-        class GenericOpenInnerWithProtectedConstructor<S extends Box<string, S>> {
-            protected constructor($outer: GenericTestInner<T>, a: S);
+        class GenericOpenInnerWithProtectedConstructor<S extends Box<string, S>, T$GenericTestInner extends Box<string, T$GenericTestInner>> {
+            protected constructor($outer: GenericTestInner<T$GenericTestInner>, a: S);
             get a(): S;
             get concat(): string;
         }
         namespace GenericOpenInnerWithProtectedConstructor {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
-                const constructor: abstract new <S extends Box<string, S>>() => GenericOpenInnerWithProtectedConstructor<S>;
+                const constructor: abstract new <S extends Box<string, S>, T$GenericTestInner extends Box<string, T$GenericTestInner>>() => GenericOpenInnerWithProtectedConstructor<S, T$GenericTestInner>;
             }
         }
     }
