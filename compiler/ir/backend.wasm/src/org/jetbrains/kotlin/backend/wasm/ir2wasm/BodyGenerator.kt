@@ -823,7 +823,7 @@ class BodyGenerator(
                 //TODO: check why it could be needed
                 generateRefCast(receiver.type, klass.defaultType, isRefNullCast = false, location)
 
-                body.buildStructGet(wasmFileCodegenContext.referenceGcType(klassSymbol), anyVtableFieldId, location)
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(klassSymbol), ANY_VTABLE_FIELD_ID, location)
                 val vTableSlotId = vfSlot + 1 //First element is always contains Special ITable
                 body.buildStructGet(vTableGcTypeReference, vTableSlotId, location)
                 body.buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(functionTypeReference))
@@ -937,8 +937,8 @@ class BodyGenerator(
     }
 
     private fun generateSpecialITableFromAny(location: SourceLocation) {
-        body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), anyVtableFieldId, location)
-        body.buildStructGet(wasmFileCodegenContext.referenceVTableGcType(irBuiltIns.anyClass), vTableSpecialITableFieldId, location)
+        body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_VTABLE_FIELD_ID, location)
+        body.buildStructGet(wasmFileCodegenContext.referenceVTableGcType(irBuiltIns.anyClass), VTABLE_SPECIAL_ITABLE_FIELD_ID, location)
     }
 
     // Return true if generated.
@@ -982,20 +982,20 @@ class BodyGenerator(
             }
 
             wasmSymbols.wasmGetRttiSupportedInterfaces -> {
-                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), anyRttiFieldId, location)
-                body.buildStructGet(wasmFileCodegenContext.rttiType, rttiImplementedIFacesFieldId, location)
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_RTTI_FIELD_ID, location)
+                body.buildStructGet(wasmFileCodegenContext.rttiType, RTTI_IMPLEMENTED_INTERFACES_FIELD_ID, location)
             }
 
             wasmSymbols.wasmGetRttiSuperClass -> {
                 body.buildRefCastStatic(wasmFileCodegenContext.rttiType, location)
-                body.buildStructGet(wasmFileCodegenContext.rttiType, rttiSuperClassFieldId, location)
+                body.buildStructGet(wasmFileCodegenContext.rttiType, RTTI_SUPER_CLASS_FIELD_ID, location)
             }
 
             wasmSymbols.wasmGetQualifierImpl, wasmSymbols.wasmGetSimpleNameImpl -> {
                 body.buildRefCastStatic(wasmFileCodegenContext.rttiType, location)
 
                 val fieldId =
-                    if (function.symbol == wasmSymbols.wasmGetQualifierImpl) rttiQualifierGetterFieldId else rttiSimpleNameGetterFieldId
+                    if (function.symbol == wasmSymbols.wasmGetQualifierImpl) RTTI_QUALIFIED_NAME_GETTER_FIELD_ID else RTTI_SIMPLE_NAME_GETTER_FIELD_ID
 
                 body.buildStructGet(wasmFileCodegenContext.rttiType, fieldId, location)
 
@@ -1010,12 +1010,12 @@ class BodyGenerator(
                 //This is implementation of getInterfaceVTable, so argument locals could be used from the call-site
                 //obj.interfacesArray
                 body.buildGetLocal(functionContext.referenceLocal(0), location) //obj
-                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), anyITableFieldId, location)
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_ITABLE_FIELD_ID, location)
 
                 //wasmArrayAnyIndexOfValue(obj.rtti.interfaceIds)
                 body.buildGetLocal(functionContext.referenceLocal(0), location) //obj
-                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), anyRttiFieldId, location)
-                body.buildStructGet(wasmFileCodegenContext.rttiType, rttiImplementedIFacesFieldId, location)
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_RTTI_FIELD_ID, location)
+                body.buildStructGet(wasmFileCodegenContext.rttiType, RTTI_IMPLEMENTED_INTERFACES_FIELD_ID, location)
                 body.buildGetLocal(functionContext.referenceLocal(1), location) //interfaceId
                 body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.wasmArrayAnyIndexOfValue), location)
 
@@ -1027,7 +1027,7 @@ class BodyGenerator(
             }
 
             wasmSymbols.wasmGetObjectRtti -> {
-                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), anyRttiFieldId, location)
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_RTTI_FIELD_ID, location)
             }
 
             wasmSymbols.wasmIsInterface -> {
@@ -1168,7 +1168,7 @@ class BodyGenerator(
             }
 
             wasmSymbols.getWasmAbiVersion -> {
-                body.buildConstI32(wasmAbiVersion, location)
+                body.buildConstI32(WASM_ABI_VERSION, location)
             }
 
             wasmSymbols.wasmArrayNewData0 -> {
@@ -1209,7 +1209,7 @@ class BodyGenerator(
                 )
                 body.buildStructGet(
                     struct = getterWrapperType,
-                    fieldId = classAssociatedObjectsGetterWrapperFieldId,
+                    fieldId = CLASS_ASSOCIATED_OBJECT_GETTER_WRAPPER_FIELD_ID,
                     location = location
                 )
                 body.buildInstr(
@@ -1604,16 +1604,16 @@ class BodyGenerator(
         locationProvider.nextLocation(this, functionContext.currentFunctionSymbol, functionContext.currentFileEntry)
 
     companion object {
-        val wasmAbiVersion = 1
-        val anyVtableFieldId = 0
-        val anyITableFieldId = 1
-        val anyRttiFieldId = 2
-        val vTableSpecialITableFieldId = 0
-        val rttiImplementedIFacesFieldId = 0
-        val rttiSuperClassFieldId = 1
-        val rttiQualifierGetterFieldId = 6
-        val rttiSimpleNameGetterFieldId = 7
-        private val classAssociatedObjectsGetterWrapperFieldId = 0
+        const val WASM_ABI_VERSION = 1
+        const val ANY_VTABLE_FIELD_ID = 0
+        const val ANY_ITABLE_FIELD_ID = 1
+        const val ANY_RTTI_FIELD_ID = 2
+        const val VTABLE_SPECIAL_ITABLE_FIELD_ID = 0
+        const val RTTI_IMPLEMENTED_INTERFACES_FIELD_ID = 0
+        const val RTTI_SUPER_CLASS_FIELD_ID = 1
+        const val RTTI_QUALIFIED_NAME_GETTER_FIELD_ID = 6
+        const val RTTI_SIMPLE_NAME_GETTER_FIELD_ID = 7
+        private const val CLASS_ASSOCIATED_OBJECT_GETTER_WRAPPER_FIELD_ID = 0
         private val exceptionTagId = WasmSymbol(0)
         private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx(0)
     }
