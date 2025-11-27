@@ -1325,12 +1325,12 @@ fun case_72(t: Any?, z1: Nothing?) {
     <!CAN_BE_VAL!>var<!> z2 = null
 
     if (t is Interface1? && t != z1 ?: z2 && t is Interface2?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest2()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>t<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>t<!>.itest1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>t<!>.itest2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>t<!>.itest()
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!><!UNSAFE_CALL!>.<!>itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!><!UNSAFE_CALL!>.<!>itest2() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>it<!>.itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>it<!>.itest2() }
     }
 }
 
