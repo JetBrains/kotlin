@@ -1,3 +1,4 @@
+import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -85,6 +86,7 @@ projectTests {
     ) {
         extensions.configure<TestInputsCheckExtension> {
             isNative.set(true)
+            useXcode.set(OperatingSystem.current().isMacOsX)
         }
     }
 
