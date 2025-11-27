@@ -14,18 +14,6 @@ internal fun compileAndIndex(
     vararg args: String,
 ): IndexerResult {
 
-    val headersNames = headers.map {
-        "header \"" + it.name + "\"\n"
-    }
-
-    files.file(
-        "module.modulemap", """
-            module Foo {
-              ${headersNames.joinToString(separator = "")}
-            }
-        """.trimIndent()
-    )
-
     val includeInfos = headers.map {
         IncludeInfo(it.absolutePath, integrationModuleName)
     }
