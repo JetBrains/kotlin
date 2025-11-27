@@ -44,28 +44,19 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
         compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON,
     )
 
-    private fun project(
-        gradleVersion: GradleVersion,
-        strategy: String,
-        test: TestProject.() -> Unit = {},
-    ): TestProject? {
-        return project(
+    @GradleTest
+    @DisplayName("Smoke test for Gradle / CRI data generation and deserialization")
+    @GradleTestExtraStringArguments("in-process", "daemon")
+    fun smokeTestCriDataGeneration(gradleVersion: GradleVersion, strategy: String) {
+        project(
             "kotlinProject",
             gradleVersion,
             buildOptions = when (strategy) {
                 "in-process" -> defaultInProcessBuildOptions
                 "daemon" -> defaultDaemonBuildOptions
-                else -> return null // `out-of-process` strategy is not supported by BTA
+                else -> return // `out-of-process` strategy is not supported by BTA
             },
-            test = test,
-        )
-    }
-
-    @GradleTest
-    @DisplayName("Smoke test for Gradle / CRI data generation and deserialization")
-    @GradleTestExtraStringArguments("in-process", "daemon")
-    fun smokeTestCriDataGeneration(gradleVersion: GradleVersion, strategy: String) {
-        project(gradleVersion, strategy) {
+        ) {
             kotlinSourcesDir().source("main.kt") {
                 //language=kotlin
                 """
@@ -87,10 +78,13 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("Incremental CRI data generation tracks old and new entries, and rebuild resets old ones")
-    @GradleTestExtraStringArguments("in-process", "daemon")
-    fun testIncrementalCriDataGeneration(gradleVersion: GradleVersion, strategy: String) {
-        project(gradleVersion, strategy) {
+    @DisplayName("Incremental CRI data generation appends new entries without invalidation, rebuild removes stale entries")
+    fun testIncrementalCriDataGeneration(gradleVersion: GradleVersion) {
+        project(
+            "kotlinProject",
+            gradleVersion,
+            buildOptions = defaultInProcessBuildOptions,
+        ) {
             val source1Filename = "file1.kt"
             val source2Filename = "file2.kt"
             kotlinSourcesDir().source(source1Filename) {
@@ -162,18 +156,20 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
             assertEquals(listOf("Derived"), baseSubtypeEntries.first().subtypes)
             assertEquals(listOf("Derived2"), baseSubtypeEntries.last().subtypes)
 
-            // Force rebuild
+            // force rebuild to clean stale CRI data
             build("assemble", "--rerun-tasks")
 
             val (afterRebuildLookups, afterRebuildFileIdsToPaths, afterRebuildSubtypes) = deserializeCriData()
 
             assertNotNull(afterRebuildFileIdsToPaths.singleOrNull { it.path == requiredSource2Path })
 
+            // make sure that the stale lookup entries are gone
             assertNull(afterRebuildLookups.firstOrNull { it.fqNameHashCode == derivedHash })
             val afterRebuildDerived2LookupEntry = assertNotNull(afterRebuildLookups.singleOrNull { it.fqNameHashCode == derived2Hash })
             assertContains(afterRebuildDerived2LookupEntry.fileIds, source2FileIdToPath.fileId)
 
             val afterRebuildBaseSubtypeEntry = assertNotNull(afterRebuildSubtypes.singleOrNull { it.fqNameHashCode == baseHash })
+            // stale `Derived` entry should not be there anymore
             assertEquals(listOf("Derived2"), afterRebuildBaseSubtypeEntry.subtypes)
         }
     }
