@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
@@ -100,6 +99,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirComposedDiagnosticRendererFactory::class, FirComposedDiagnosticRendererFactory())
     register(FirMustUseReturnValueStatusComponent::class, FirMustUseReturnValueStatusComponent.create(languageVersionSettings))
     register(FirInlineCheckerPlatformSpecificComponent::class, FirInlineCheckerPlatformSpecificComponent.NonJvmDefault)
+    register(FirExpectActualMappingStorage::class, FirExpectActualMappingStorage(this))
 }
 
 @OptIn(SessionConfiguration::class)

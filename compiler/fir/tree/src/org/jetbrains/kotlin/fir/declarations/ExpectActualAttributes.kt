@@ -5,12 +5,18 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 private object ExpectForActualAttributeKey : FirDeclarationDataKey()
 
@@ -56,13 +62,11 @@ val FirBasedSymbol<*>.expectForActual: ExpectForActualMatchingData?
     }
 
 
-private object MemberExpectForActualAttributeKey : FirDeclarationDataKey()
-
 // Expect class in the key is needed, because class may correspond to two expects
 // in case when two `actual typealias` point to the same class.
 typealias MemberExpectForActualData =
-        Map<Pair</* actual member */ FirBasedSymbol<*>, /* expect class */ FirRegularClassSymbol>,
-                Map</* expect member */ FirBasedSymbol<*>, ExpectActualMatchingCompatibility>>
+        ConcurrentMap<Pair</* actual member */ FirBasedSymbol<*>, /* expect class */ FirRegularClassSymbol>,
+                ConcurrentMap</* expect member */ FirBasedSymbol<*>, ExpectActualMatchingCompatibility>>
 
 /**
  * Actual class + expect class + actual member declaration -> (many) expect member declaration mapping.
@@ -100,5 +104,11 @@ typealias MemberExpectForActualData =
  *
  * See `/docs/fir/k2_kmp.md`
  */
-// TODO this cache is questionable. Maybe we want to drop it KT-62913
-var FirRegularClass.memberExpectForActual: MemberExpectForActualData? by FirDeclarationDataRegistry.data(MemberExpectForActualAttributeKey)
+class FirExpectActualMappingStorage(val session: FirSession) : FirSessionComponent {
+    val cache: FirCache<FirRegularClassSymbol, MemberExpectForActualData, Nothing?> = session.firCachesFactory.createCache { _, _ ->
+        ConcurrentHashMap()
+    }
+}
+
+val FirSession.expectActualMappingStorage: FirExpectActualMappingStorage by FirSession.sessionComponentAccessor()
+

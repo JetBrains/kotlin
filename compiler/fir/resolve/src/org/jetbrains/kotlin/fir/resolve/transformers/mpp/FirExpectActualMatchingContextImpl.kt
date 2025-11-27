@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 class FirExpectActualMatchingContextImpl private constructor(
     private val actualSession: FirSession,
@@ -569,12 +571,10 @@ class FirExpectActualMatchingContextImpl private constructor(
         expectClassSymbol: FirRegularClassSymbol, compatibility: ExpectActualMatchingCompatibility,
     ) {
         check(allowedWritingMemberExpectForActualMapping) { "Writing memberExpectForActual is not allowed in this context" }
-        val fir = fir
-        val expectForActualMap = fir.memberExpectForActual ?: mutableMapOf()
-        fir.memberExpectForActual = expectForActualMap
+        val expectForActualMap = actualSession.expectActualMappingStorage.cache.getValue(this)
 
-        val expectToCompatibilityMap = expectForActualMap.asMutableMap()
-            .computeIfAbsent(actualMember to expectClassSymbol) { mutableMapOf() }
+        val expectToCompatibilityMap = expectForActualMap
+            .computeIfAbsent(actualMember to expectClassSymbol) { ConcurrentHashMap() }
 
         /*
         Don't report when value is overwritten, because it's the case for actual inner classes:
@@ -585,10 +585,8 @@ class FirExpectActualMatchingContextImpl private constructor(
         }
         Can be fixed after KT-61361.
          */
-        expectToCompatibilityMap.asMutableMap()[expectMember] = compatibility
+        expectToCompatibilityMap[expectMember] = compatibility
     }
-
-    private fun <K, V> Map<K, V>.asMutableMap(): MutableMap<K, V> = this as MutableMap
 
     override val checkClassScopesForAnnotationCompatibility: Boolean = true
 
@@ -601,7 +599,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         actualClass: RegularClassSymbolMarker,
         actualMember: DeclarationSymbolMarker,
     ): Map<FirBasedSymbol<*>, ExpectActualMatchingCompatibility> {
-        val mapping = actualClass.asSymbol().fir.memberExpectForActual
+        val mapping = actualSession.expectActualMappingStorage.cache.getValueIfComputed(actualClass.asSymbol())
         return mapping?.get(actualMember to expectClass) ?: emptyMap()
     }
 
