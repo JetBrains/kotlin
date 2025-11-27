@@ -63,7 +63,7 @@ fun box(): String {
     res.number.print()
     res.numberFloat.print()
     res.ll.print()
-    res.nullableNumber
+    res.compareSchemas(strict = true)
 
     val preservedRecord: DataColumn<PreservedRecord> = res.preservedRecord
     val anotherRecord: DataColumn<AnotherRecord> = res.s2.preservedProperty
