@@ -2065,6 +2065,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         public void testInWhenConditions() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inWhenConditions.kt");
         }
+
+        @Test
+        @TestMetadata("outerTypeVariableInExpectedType.kt")
+        public void testOuterTypeVariableInExpectedType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/outerTypeVariableInExpectedType.kt");
+        }
       }
 
       @Nested
