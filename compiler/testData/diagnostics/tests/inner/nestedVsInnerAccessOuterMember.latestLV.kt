@@ -9,8 +9,8 @@ class Outer {
     class Nested {
         fun f() = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>function<!>()
         fun g() = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>property<!>
-        fun h() = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>this@Outer<!>.<!UNRESOLVED_REFERENCE!>function<!>()
-        fun i() = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>this@Outer<!>.<!UNRESOLVED_REFERENCE!>property<!>
+        fun h() = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>this@Outer<!>.function()
+        fun i() = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>this@Outer<!>.property
     }
     
     inner class Inner {

@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 
 class AList<T>() : List<T> by <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>inner<!> {
     private val inner = ArrayList<T>()

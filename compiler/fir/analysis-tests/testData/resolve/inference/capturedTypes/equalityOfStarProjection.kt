@@ -24,7 +24,7 @@ val c: SerializerAndValue<*>.() -> Unit = {
 }
 
 val d: SerializerAndValue<*>.() -> Unit = {
-    encodeToString(this.serializer, <!ARGUMENT_TYPE_MISMATCH!>this.value<!>)
+    encodeToString(this.serializer, this.value)
 }
 
 fun test(a: Array<*>) {

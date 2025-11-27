@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// LATEST_LV_DIFFERENCE
 class A {
     val prop = 1
     constructor(x: Int)

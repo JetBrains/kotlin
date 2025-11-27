@@ -113,6 +113,10 @@ class ImplicitValueStorage private constructor(
         }
     }
 
+    fun getBySymbol(symbol: FirBasedSymbol<*>): ImplicitValue<*>? {
+        return implicitValuesBySymbol[symbol]
+    }
+
     fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {
         return implicitReceiverStack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
     }

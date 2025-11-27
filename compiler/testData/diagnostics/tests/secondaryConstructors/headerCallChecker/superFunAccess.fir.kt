@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// LATEST_LV_DIFFERENCE
 open class B(x: Int) {
     fun foo() = 1
 }

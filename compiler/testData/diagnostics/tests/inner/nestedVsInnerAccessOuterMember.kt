@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
+// LATEST_LV_DIFFERENCE
 
 class Outer {
     fun function() = 42
