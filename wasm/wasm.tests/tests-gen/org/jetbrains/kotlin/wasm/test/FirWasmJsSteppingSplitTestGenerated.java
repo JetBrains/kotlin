@@ -481,12 +481,6 @@ public class FirWasmJsSteppingSplitTestGenerated extends AbstractFirWasmJsSteppi
   }
 
   @Test
-  @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
-  public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
-    runTest("compiler/testData/debug/stepping/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
-  }
-
-  @Test
   @TestMetadata("leakingPrivateValThroughInternalInlineFun.kt")
   public void testLeakingPrivateValThroughInternalInlineFun() {
     runTest("compiler/testData/debug/stepping/leakingPrivateValThroughInternalInlineFun.kt");
