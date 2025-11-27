@@ -62315,6 +62315,12 @@ public class JsCodegenSplittingInlineWithInlinedFunInKlibTestGenerated extends A
       }
 
       @Test
+      @TestMetadata("conversionOfInterfaceInheritingFunctionN.kt")
+      public void testConversionOfInterfaceInheritingFunctionN() {
+        runTest("compiler/testData/codegen/box/suspendConversion/conversionOfInterfaceInheritingFunctionN.kt");
+      }
+
+      @Test
       @TestMetadata("kt50949_suspendConversionForExtensionFunction.kt")
       public void testKt50949_suspendConversionForExtensionFunction() {
         runTest("compiler/testData/codegen/box/suspendConversion/kt50949_suspendConversionForExtensionFunction.kt");
