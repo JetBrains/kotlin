@@ -180,7 +180,10 @@ private class ObjCTranslationContext(
             |bool updateAllocBlocker() {
             |    if (atomic_load_explicit(&terminationRequest, memory_order_relaxed)) return true;
             |    [allocBlockerLock lock];
-            |    if (atomic_load_explicit(&terminationRequest, memory_order_relaxed)) return true;
+            |    if (atomic_load_explicit(&terminationRequest, memory_order_relaxed)) {
+            |        [allocBlockerLock unlock];
+            |        return true;
+            |    }
             |    bool result = allocBlocker ? allocBlockerInNormalMode() : allocBlockerInHazardMode();
             |    allocBlocker = result;
             |    ${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass}.allocBlocker = result;
