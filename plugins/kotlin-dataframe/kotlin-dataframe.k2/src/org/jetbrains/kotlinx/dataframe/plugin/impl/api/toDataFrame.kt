@@ -2,6 +2,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
@@ -167,8 +168,10 @@ internal fun KotlinTypeFacade.toDataFrame(
 ): PluginDataFrameSchema {
     val excludes =
         traverseConfiguration.excludeProperties.mapNotNullTo(mutableSetOf()) { it.calleeReference.toResolvedPropertySymbol() }
-    val excludedClasses = traverseConfiguration.excludeClasses.mapTo(mutableSetOf()) { it.argument.resolvedType }
-    val preserveClasses = traverseConfiguration.preserveClasses.mapNotNullTo(mutableSetOf()) { it.classId }
+    val excludedClasses =
+        traverseConfiguration.excludeClasses.mapNotNullTo(mutableSetOf()) { it.argument.resolvedType.fullyExpandedClassId(session) }
+    val preserveClasses =
+        traverseConfiguration.preserveClasses.mapNotNullTo(mutableSetOf()) { it.argument.resolvedType.fullyExpandedClassId(session) }
     val preserveProperties =
         traverseConfiguration.preserveProperties.mapNotNullTo(mutableSetOf()) { it.calleeReference.toResolvedPropertySymbol() }
 
@@ -210,7 +213,10 @@ internal fun KotlinTypeFacade.toDataFrame(
 
         return declarations
             .filterNot { excludes.contains(it.callable) }
-            .filterNot { excludedClasses.contains(it.callable.resolvedReturnType) }
+            .filterNot {
+                val classLikeType = it.callable.resolvedReturnType as? ConeClassLikeType
+                classLikeType?.fullyExpandedClassId(session) in excludedClasses
+            }
             .filter { it.callable.visibility == Visibilities.Public }
             .map { (callable, name) ->
                 var returnType = callable.fir.returnTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, null)
