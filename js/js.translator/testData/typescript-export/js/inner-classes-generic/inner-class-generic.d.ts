@@ -17,8 +17,8 @@ declare namespace JS_TESTS {
             fromNumber<S extends Box<R, S>, R extends string>(a: number, copier: S): GenericTestInner.GenericInner<S, R, T>;
         };
         get GenericInnerWithShadowingTP(): {
-            new<T extends Box<string, T>>(a: T): GenericTestInner.GenericInnerWithShadowingTP<T, T>;
-            fromNumber<T extends Box<string, T>>(a: number, copier: T): GenericTestInner.GenericInnerWithShadowingTP<T, T>;
+            new<T_0 extends Box<string, T_0>>(a: T_0): GenericTestInner.GenericInnerWithShadowingTP<T_0, T>;
+            fromNumber<T_0 extends Box<string, T_0>>(a: number, copier: T_0): GenericTestInner.GenericInnerWithShadowingTP<T_0, T>;
         };
         get OpenInnerWithPublicConstructor(): {
             new(a: T): GenericTestInner.OpenInnerWithPublicConstructor<T>;

@@ -718,21 +718,30 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         renameOuterTypeParameters: Boolean = false,
     ): TypeParameterScope = buildMap {
         val newTypeParameters = container.typeParameters
+        val shouldIncludeOuterScope = container !is IrClass || container.isInner
+
+        val nameTable = NameTable<IrTypeParameterSymbol>()
+        if (shouldIncludeOuterScope && !renameOuterTypeParameters) {
+            for ((irTypeParameter, exported) in outerScope) {
+                nameTable.declareStableName(irTypeParameter, exported.name)
+            }
+        }
+
         // First, create all the exported type parameters without constraints, because constraints may reference a type parameter
         // that we haven't yet met.
         for (tp in newTypeParameters) {
-            this[tp.symbol] = ExportedTypeParameter(tp.name.identifier)
+            this[tp.symbol] = ExportedTypeParameter(nameTable.declareFreshName(tp.symbol, tp.name.identifier))
         }
 
         var shouldRecomputeOuterConstraints = false
-        if (container !is IrClass || container.isInner) {
+        if (shouldIncludeOuterScope) {
             if (renameOuterTypeParameters) {
                 for ((irTypeParameter, exported) in outerScope) {
                     shouldRecomputeOuterConstraints = true
                     val disambiguatedName = irTypeParameter.owner.parentDeclarationsWithSelf.joinToString(separator = "\$") {
                         (it as IrDeclarationWithName).getExportedIdentifier()
                     }
-                    this[irTypeParameter] = exported.copy(name = disambiguatedName)
+                    this[irTypeParameter] = exported.copy(name = nameTable.declareFreshName(irTypeParameter, disambiguatedName))
                 }
             } else {
                 putAll(outerScope)

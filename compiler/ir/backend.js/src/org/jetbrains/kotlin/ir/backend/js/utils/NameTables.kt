@@ -33,7 +33,7 @@ abstract class NameScope {
 
 class NameTable<T>(
     val parent: NameScope = EmptyScope,
-    val reserved: MutableSet<String> = mutableSetOf(),
+    val reserved: MutableSet<String> = hashSetOf(),
 ) : NameScope() {
     val names = mutableMapOf<T, String>()
 
