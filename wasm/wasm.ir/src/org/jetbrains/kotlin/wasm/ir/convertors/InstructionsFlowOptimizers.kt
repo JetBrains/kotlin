@@ -167,24 +167,21 @@ internal fun mergeSetAndGetIntoTee(input: Sequence<WasmInstr>): Sequence<WasmIns
             }
 
             if (first.operator == WasmOp.LOCAL_SET && instruction.operator == WasmOp.LOCAL_GET) {
-                if (first.immediatesCount == 1 && instruction.immediatesCount == 1) {
-                    var firstImmediate: WasmImmediate? = null
-                    first.forEachImmediates { firstImmediate = it }
-                    var secondImmediate: WasmImmediate? = null
-                    instruction.forEachImmediates { secondImmediate = it }
+                check(first.immediatesCount == 1 && instruction.immediatesCount == 1)
+                val firstImmediate = first.firstImmediateOrNull()
+                val secondImmediate = instruction.firstImmediateOrNull()
+                val setNumber = (firstImmediate as? WasmImmediate.LocalIdx)?.value
+                val getNumber = (secondImmediate as? WasmImmediate.LocalIdx)?.value
+                check(setNumber != null && getNumber != null)
 
-                    val setNumber = (firstImmediate as? WasmImmediate.LocalIdx)?.value
-                    val getNumber = (secondImmediate as? WasmImmediate.LocalIdx)?.value
-
-                    if (getNumber != null && getNumber == setNumber) {
-                        val location = instruction.location
-                        firstInstruction = if (location != null) {
-                            wasmInstrWithLocation(WasmOp.LOCAL_TEE, location, firstImmediate!!)
-                        } else {
-                            wasmInstrWithoutLocation(WasmOp.LOCAL_TEE, firstImmediate!!)
-                        }
-                        continue
+                if (getNumber == setNumber) {
+                    val location = instruction.location
+                    firstInstruction = if (location != null) {
+                        wasmInstrWithLocation(WasmOp.LOCAL_TEE, location, firstImmediate)
+                    } else {
+                        wasmInstrWithoutLocation(WasmOp.LOCAL_TEE, firstImmediate)
                     }
+                    continue
                 }
             }
 

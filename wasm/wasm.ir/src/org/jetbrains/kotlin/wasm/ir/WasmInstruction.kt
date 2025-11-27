@@ -182,3 +182,14 @@ fun wasmInstrWithLocation(
     if (location == SourceLocation.NoLocation) wasmInstrWithoutLocation(operator, immediate1, immediate2, immediate3, immediate4)
     else WasmInstr4Located(operator, location, immediate1, immediate2, immediate3, immediate4)
 
+fun WasmInstr.firstImmediateOrNull(): WasmImmediate? =
+    (this as? WasmInstr1)?.immediate1
+
+fun WasmInstr.secondImmediateOrNull(): WasmImmediate? =
+    (this as? WasmInstr2)?.immediate2
+
+fun WasmInstr.thirdImmediateOrNull(): WasmImmediate? =
+    (this as? WasmInstr3)?.immediate3
+
+fun WasmInstr.fourthImmediateOrNull(): WasmImmediate? =
+    (this as? WasmInstr4)?.immediate4

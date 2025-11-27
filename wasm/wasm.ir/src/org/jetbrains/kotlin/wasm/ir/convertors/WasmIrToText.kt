@@ -106,9 +106,9 @@ class WasmIrToText(
 
         if (op.opcode == WASM_OP_PSEUDO_OPCODE) {
             fun commentText(): String {
-                var immediate: WasmImmediate? = null
-                wasmInstr.forEachImmediates { immediate = it }
-                return (immediate as WasmImmediate.ConstString).value
+                val comment = (wasmInstr.firstImmediateOrNull() as? WasmImmediate.ConstString?)?.value
+                check(comment != null)
+                return comment
             }
 
             when (op) {
