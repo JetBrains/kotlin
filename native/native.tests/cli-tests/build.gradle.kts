@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
@@ -37,6 +39,7 @@ projectTests {
     ) {
         extensions.configure<TestInputsCheckExtension> {
             isNative.set(true)
+            useXcode.set(OperatingSystem.current().isMacOsX)
         }
         // Kotlin test infra and IntelliJ platform Disposer debug mode use reflection to access JDK internals.
         // With JDK 11, some JVM args are required to silence the warnings caused by that:

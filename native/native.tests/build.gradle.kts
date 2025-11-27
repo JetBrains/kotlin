@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
@@ -80,6 +82,7 @@ projectTests {
     ) {
         extensions.configure<TestInputsCheckExtension> {
             isNative.set(true)
+            useXcode.set(OperatingSystem.current().isMacOsX)
         }
         options {
             // See [org.jetbrains.kotlin.konan.test.KlibCrossCompilationIdentityTest.FULL_CROSS_DIST_ENABLED_PROPERTY]
