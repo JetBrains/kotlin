@@ -203,7 +203,7 @@ tasks.withType<Test>().configureEach {
                                 if (nativeHome.isPresent) {
                                     konanPermissions.add("""permission java.io.FilePermission "${nativeHome.get()}/-" , "read,write,delete";""")
                                 }
-                                if (testInputsCheck.useXcode.get()) {
+                                if (OperatingSystem.current().isMacOsX) {
                                     // Should we consider those files inputs? I need to think about the execute permission
                                     // in any case I need to check where those paths come from to avoid hardcoding
                                     konanPermissions.addAll(

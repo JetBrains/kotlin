@@ -9,5 +9,4 @@ import javax.inject.Inject
 
 abstract class TestInputsCheckExtension @Inject constructor(objects: ObjectFactory){
     val isNative: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
-    val useXcode: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
 }

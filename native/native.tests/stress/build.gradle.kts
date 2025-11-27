@@ -1,5 +1,3 @@
-import org.gradle.internal.os.OperatingSystem
-
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
@@ -34,7 +32,6 @@ projectTests {
     ) {
         extensions.configure<TestInputsCheckExtension> {
             isNative.set(true)
-            useXcode.set(OperatingSystem.current().isMacOsX)
         }
         // nativeTest sets workingDir to rootDir so here we need to override it
         workingDir = projectDir
