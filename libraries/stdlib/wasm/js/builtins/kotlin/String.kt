@@ -1,7 +1,9 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+@file:Suppress("OPT_IN_USAGE")
 
 package kotlin
 
@@ -12,12 +14,13 @@ import kotlin.wasm.internal.*
  * implemented as instances of this class.
  */
 public actual class String internal @WasmPrimitiveConstructor constructor(
-    private var leftIfInSum: String?,
-    @kotlin.internal.IntrinsicConstEvaluation
-    public actual override val length: Int,
-    private var _chars: WasmCharArray,
+    internal val internalStr: JsString
 ) : Comparable<String>, CharSequence {
     public actual companion object {}
+
+    @kotlin.internal.IntrinsicConstEvaluation
+    public actual override val length: Int
+        get() = jsLength(internalStr)
 
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
@@ -27,7 +30,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun plus(other: Any?): String {
         val right = other.toString()
-        return String(this, this.length + right.length, right.chars)
+        return String(jsConcat(this.internalStr, right.internalStr).unsafeCast())
     }
 
     /**
@@ -41,40 +44,12 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun get(index: Int): Char {
         rangeCheck(index, this.length)
-        return chars.get(index)
-    }
-
-    internal fun foldChars() {
-        val stringLength = this.length
-        val newArray = WasmCharArray(stringLength)
-
-        var currentStartIndex = stringLength
-        var currentLeftString: String? = this
-        while (currentLeftString != null) {
-            val currentLeftStringChars = currentLeftString._chars
-            val currentLeftStringLen = currentLeftStringChars.len()
-            currentStartIndex -= currentLeftStringLen
-            copyWasmArray(currentLeftStringChars, newArray, 0, currentStartIndex, currentLeftStringLen)
-            currentLeftString = currentLeftString.leftIfInSum
-        }
-        check(currentStartIndex == 0)
-        _chars = newArray
-        leftIfInSum = null
-    }
-
-    internal val chars: WasmCharArray get() {
-        if (leftIfInSum != null) {
-            foldChars()
-        }
-        return _chars
+        return jsCharCodeAt(this.internalStr, index).reinterpretAsChar()
     }
 
     public actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
         checkStringBounds(startIndex, endIndex, length)
-        val newLength = endIndex - startIndex
-        val newChars = WasmCharArray(newLength)
-        copyWasmArray(chars, newChars, startIndex, 0, newLength)
-        return newChars.createString()
+        return String(jsSubstring(this.internalStr, startIndex, endIndex).unsafeCast())
     }
 
     private fun checkStringBounds(startIndex: Int, endIndex: Int, length: Int) {
@@ -89,18 +64,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun compareTo(other: String): Int {
         if (this === other) return 0
-        val thisChars = this.chars
-        val otherChars = other.chars
-        val thisLength = thisChars.len()
-        val otherLength = otherChars.len()
-        val minimumLength = if (thisLength < otherLength) thisLength else otherLength
-
-        repeat(minimumLength) {
-            val l = thisChars.get(it)
-            val r = otherChars.get(it)
-            if (l != r) return l - r
-        }
-        return thisLength - otherLength
+        return jsCompare(this.internalStr, other.internalStr)
     }
 
     /**
@@ -116,22 +80,9 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     public actual override fun equals(other: Any?): Boolean {
         if (other == null) return false
         if (other === this) return true
-        val otherString = other as? String ?: return false
+        if (other !is String) return false
 
-        val thisLength = this.length
-        val otherLength = otherString.length
-        if (thisLength != otherLength) return false
-
-        val thisHash = this._hashCode
-        val otherHash = other._hashCode
-        if (thisHash != otherHash && thisHash != 0 && otherHash != 0) return false
-
-        val thisChars = this.chars
-        val otherChars = other.chars
-        repeat(thisLength) {
-            if (thisChars.get(it) != otherChars.get(it)) return false
-        }
-        return true
+        return jsEquals(this.internalStr, other.internalStr) == 1
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -142,10 +93,9 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
         val thisLength = this.length
         if (thisLength == 0) return 0
 
-        val thisChars = chars
         var hash = 0
         repeat(thisLength) {
-            hash = (hash shl 5) - hash + thisChars.get(it).code
+            hash = (hash shl 5) - hash + get(it).code
         }
         _hashCode = hash
         return _hashCode
