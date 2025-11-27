@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.List
 import org.jetbrains.kotlinx.dataframe.codeGen.FieldKind
-import org.jetbrains.kotlinx.dataframe.plugin.classId
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
@@ -61,7 +60,7 @@ class ToDataFrame : AbstractSchemaModificationInterpreter() {
     val Arguments.typeArg0: ConeTypeProjection by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return toDataFrame(maxDepth.toInt(), typeArg0, TraverseConfiguration())
+        return toDataFrame(maxDepth.toInt(), typeArg0, TraverseConfigurationBuilder().build(session))
     }
 }
 
@@ -70,7 +69,7 @@ class ToDataFrameDefault : AbstractSchemaModificationInterpreter() {
     val Arguments.typeArg0: ConeTypeProjection by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return toDataFrame(DEFAULT_MAX_DEPTH, typeArg0, TraverseConfiguration())
+        return toDataFrame(DEFAULT_MAX_DEPTH, typeArg0, TraverseConfiguration.EMPTY)
     }
 }
 
@@ -94,8 +93,8 @@ class Properties0 : AbstractInterpreter<Unit>() {
 
     override fun Arguments.interpret() {
         dsl.configuration.maxDepth = maxDepth
-        body(dsl.configuration.traverseConfiguration, emptyMap())
-        val schema = toDataFrame(dsl.configuration.maxDepth, typeArg0, dsl.configuration.traverseConfiguration)
+        body(dsl.configuration.traverseConfigurationBuilder, emptyMap())
+        val schema = toDataFrame(dsl.configuration.maxDepth, typeArg0, dsl.configuration.traverseConfigurationBuilder.build(session))
         dsl.columns.addAll(schema.columns())
     }
 }
@@ -114,18 +113,38 @@ class ToDataFrameDslStringInvoke : AbstractInterpreter<Unit>() {
 
 class CreateDataFrameConfiguration {
     var maxDepth = DEFAULT_MAX_DEPTH
-    var traverseConfiguration: TraverseConfiguration = TraverseConfiguration()
+    var traverseConfigurationBuilder: TraverseConfigurationBuilder = TraverseConfigurationBuilder()
 }
 
-class TraverseConfiguration {
+class TraverseConfigurationBuilder {
     val excludeProperties = mutableSetOf<FirCallableReferenceAccess>()
     val excludeClasses = mutableSetOf<FirGetClassCall>()
     val preserveClasses = mutableSetOf<FirGetClassCall>()
     val preserveProperties = mutableSetOf<FirCallableReferenceAccess>()
+
+    fun build(session: FirSession): TraverseConfiguration {
+        return TraverseConfiguration(
+            excludeProperties.mapNotNullTo(mutableSetOf()) { it.calleeReference.toResolvedPropertySymbol() },
+            excludeClasses.mapNotNullTo(mutableSetOf()) { it.argument.resolvedType.fullyExpandedClassId(session) },
+            preserveClasses.mapNotNullTo(mutableSetOf()) { it.argument.resolvedType.fullyExpandedClassId(session) },
+            preserveProperties.mapNotNullTo(mutableSetOf()) { it.calleeReference.toResolvedPropertySymbol() }
+        )
+    }
+}
+
+class TraverseConfiguration(
+    val excludes: Set<FirPropertySymbol>,
+    val excludeClasses: Set<ClassId>,
+    val preserveClasses: Set<ClassId>,
+    val preserveProperties: Set<FirPropertySymbol>,
+) {
+    companion object {
+        val EMPTY = TraverseConfiguration(emptySet(), emptySet(), emptySet(), emptySet())
+    }
 }
 
 class Preserve0 : AbstractInterpreter<Unit>() {
-    val Arguments.dsl: TraverseConfiguration by arg()
+    val Arguments.dsl: TraverseConfigurationBuilder by arg()
     val Arguments.classes: FirVarargArgumentsExpression by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret() {
@@ -134,7 +153,7 @@ class Preserve0 : AbstractInterpreter<Unit>() {
 }
 
 class Preserve1 : AbstractInterpreter<Unit>() {
-    val Arguments.dsl: TraverseConfiguration by arg()
+    val Arguments.dsl: TraverseConfigurationBuilder by arg()
     val Arguments.properties: FirVarargArgumentsExpression by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret() {
@@ -143,7 +162,7 @@ class Preserve1 : AbstractInterpreter<Unit>() {
 }
 
 class Exclude0 : AbstractInterpreter<Unit>() {
-    val Arguments.dsl: TraverseConfiguration by arg()
+    val Arguments.dsl: TraverseConfigurationBuilder by arg()
     val Arguments.classes: FirVarargArgumentsExpression by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret() {
@@ -152,7 +171,7 @@ class Exclude0 : AbstractInterpreter<Unit>() {
 }
 
 class Exclude1 : AbstractInterpreter<Unit>() {
-    val Arguments.dsl: TraverseConfiguration by arg()
+    val Arguments.dsl: TraverseConfigurationBuilder by arg()
     val Arguments.properties: FirVarargArgumentsExpression by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret() {
@@ -166,14 +185,10 @@ internal fun KotlinTypeFacade.toDataFrame(
     arg: ConeTypeProjection,
     traverseConfiguration: TraverseConfiguration,
 ): PluginDataFrameSchema {
-    val excludes =
-        traverseConfiguration.excludeProperties.mapNotNullTo(mutableSetOf()) { it.calleeReference.toResolvedPropertySymbol() }
-    val excludedClasses =
-        traverseConfiguration.excludeClasses.mapNotNullTo(mutableSetOf()) { it.argument.resolvedType.fullyExpandedClassId(session) }
-    val preserveClasses =
-        traverseConfiguration.preserveClasses.mapNotNullTo(mutableSetOf()) { it.argument.resolvedType.fullyExpandedClassId(session) }
-    val preserveProperties =
-        traverseConfiguration.preserveProperties.mapNotNullTo(mutableSetOf()) { it.calleeReference.toResolvedPropertySymbol() }
+    val excludes = traverseConfiguration.excludes
+    val excludedClasses = traverseConfiguration.excludeClasses
+    val preserveClasses = traverseConfiguration.preserveClasses
+    val preserveProperties = traverseConfiguration.preserveProperties
 
     fun convert(classLike: ConeKotlinType, depth: Int, makeNullable: Boolean): List<SimpleCol> {
         if (!classLike.canBeUnfolded(session)) {
