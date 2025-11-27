@@ -16,7 +16,7 @@ class Ss(
 
 class Record(val r: String)
 
-class S(
+class KotlinRecord(
     val str: String,
     val s1: Int,
     val s2: Ss,
@@ -34,7 +34,7 @@ class S(
 
 fun box(): String {
     val res = listOf(
-        S(
+        KotlinRecord(
             "123",
             321,
             Ss(12),

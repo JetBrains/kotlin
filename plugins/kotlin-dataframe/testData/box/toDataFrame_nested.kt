@@ -13,7 +13,8 @@ fun box(): String {
         }
     }
 
-    df.group.b
-    df.group.anotherGroup.a
+    val s: String = df[0].group.b
+    val i: Int = df[0].group.anotherGroup.a
+    df.compareSchemas(strict = true)
     return "OK"
 }
