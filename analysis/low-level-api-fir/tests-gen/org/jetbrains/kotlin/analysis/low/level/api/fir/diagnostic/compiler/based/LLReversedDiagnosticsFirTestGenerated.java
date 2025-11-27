@@ -10480,6 +10480,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("importJavaMapped.kt")
+      public void testImportJavaMapped() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/importJavaMapped.kt");
+      }
+
+      @Test
       @TestMetadata("IntersectionTypesProblem.kt")
       public void testIntersectionTypesProblem() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/IntersectionTypesProblem.kt");
