@@ -69,7 +69,9 @@ internal open class RunnerWithExecutor(
                 val minidumpAnalyzerOutput = ByteArrayOutputStream()
                 runProcess(
                     ProcessLevelProperty.MINIDUMP_ANALYZER.readValue(),
-                    executable.executable.executableFile.absolutePath, minidumpFileName,
+                    "-b",
+                    executable.executable.executableFile.absolutePath,
+                    minidumpFileName,
                 ) {
                     this.workingDirectory = workingDirectory
                     this.stdout = minidumpAnalyzerOutput

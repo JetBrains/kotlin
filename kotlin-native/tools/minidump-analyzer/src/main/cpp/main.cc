@@ -496,7 +496,8 @@ static void PrintStack(const CallStack* stack,
                        bool output_stack_contents,
                        const MemoryRegion* memory,
                        const CodeModules* modules,
-                       SourceLineResolverInterface* resolver) {
+                       SourceLineResolverInterface* resolver,
+                       bool brief) {
   int frame_count = stack->frames()->size();
   if (frame_count == 0) {
     printf(" <no frames>\n");
@@ -505,6 +506,8 @@ static void PrintStack(const CallStack* stack,
     const StackFrame* frame = stack->frames()->at(frame_index);
     PrintFrameHeader(frame, frame_index);
     printf("\n ");
+
+    if (brief) continue;
 
     // Inlined frames don't have registers info.
     if (frame->trust != StackFrameAMD64::FRAME_TRUST_INLINE) {
@@ -1127,6 +1130,14 @@ static void PrintStack(const CallStack* stack,
   }
 }
 
+struct Options {
+  bool brief = false;
+
+  std::string executable_path;
+  std::string minidump_file;
+  std::string symbol_path;
+};
+
 // Processes |options.minidump_file| using MinidumpProcessor.
 // |options.symbol_path|, if non-empty, is the base directory of a
 // symbol storage area, laid out in the format required by
@@ -1138,9 +1149,9 @@ static void PrintStack(const CallStack* stack,
 // information if the minidump was produced as a result of a crash, and
 // call stacks for each thread contained in the minidump.  All information
 // is printed to stdout.
-bool PrintMinidumpProcess(const char* minidump_file, const char* symbol_path) {
+bool PrintMinidumpProcess(const Options& options) {
   std::vector<string> symbol_paths;
-  symbol_paths.push_back(symbol_path);
+  symbol_paths.push_back(options.symbol_path);
   scoped_ptr<SimpleSymbolSupplier> symbol_supplier;
   symbol_supplier.reset(new SimpleSymbolSupplier(symbol_paths));
 
@@ -1151,7 +1162,7 @@ bool PrintMinidumpProcess(const char* minidump_file, const char* symbol_path) {
   MinidumpThreadList::set_max_threads(std::numeric_limits<uint32_t>::max());
   MinidumpMemoryList::set_max_regions(std::numeric_limits<uint32_t>::max());
   // Process the minidump.
-  Minidump dump(minidump_file);
+  Minidump dump(options.minidump_file);
   if (!dump.Read()) {
      BPLOG(ERROR) << "Minidump " << dump.path() << " could not be read";
      return false;
@@ -1199,7 +1210,7 @@ bool PrintMinidumpProcess(const char* minidump_file, const char* symbol_path) {
     PrintStack(process_state.threads()->at(requesting_thread), cpu,
                output_stack_contents,
                process_state.thread_memory_regions()->at(requesting_thread),
-               process_state.modules(), &resolver);
+               process_state.modules(), &resolver, options.brief);
   }
 
   // Print all of the threads in the dump.
@@ -1212,7 +1223,7 @@ bool PrintMinidumpProcess(const char* minidump_file, const char* symbol_path) {
       PrintStack(process_state.threads()->at(thread_index), cpu,
                 output_stack_contents,
                 process_state.thread_memory_regions()->at(thread_index),
-                process_state.modules(), &resolver);
+                process_state.modules(), &resolver, options.brief);
     }
   }
 
@@ -1220,12 +1231,54 @@ bool PrintMinidumpProcess(const char* minidump_file, const char* symbol_path) {
 }
 
 //=============================================================================
+
+static void Usage(int argc, const char *argv[], bool error) {
+  fprintf(error ? stderr : stdout,
+          "Usage: %s [options] <executable-path> <minidump-file>\n"
+          "\n"
+          "Options:\n"
+          "\n"
+          "  -b         Brief output - print only stacktraces\n",
+          google_breakpad::BaseName(argv[0]).c_str());
+}
+
+static void SetupOptions(int argc, const char *argv[], Options& options) {
+  int ch;
+  while ((ch = getopt(argc, (char* const*)argv, "bh")) != -1) {
+    switch (ch) {
+      case 'h':
+        Usage(argc, argv, false);
+        exit(0);
+        break;
+
+      case 'b':
+        options.brief = true;
+        break;
+
+      case '?':
+        Usage(argc, argv, true);
+        exit(1);
+        break;
+    }
+  }
+
+  if ((argc - optind) != 2) {
+    Usage(argc, argv, true);
+    exit(1);
+  }
+
+  options.executable_path = argv[optind];
+  options.minidump_file = argv[optind + 1];
+}
+
 int main (int argc, const char * argv[]) {
-  const char* symbol_path = "syms";
-  auto syms = CreateSyms(argv[1]);
-  if (!syms)
-    return 1;
-  if (!SaveSyms(std::move(*syms), symbol_path)) return 1;
-  if (!PrintMinidumpProcess(argv[2], symbol_path)) return 1;
+  Options options{};
+  SetupOptions(argc, argv, options);
+
+  options.symbol_path = "syms";
+  auto syms = CreateSyms(options.executable_path.c_str());
+  if (!syms) return 1;
+  if (!SaveSyms(std::move(*syms), options.symbol_path.c_str())) return 1;
+  if (!PrintMinidumpProcess(options)) return 1;
   return 0;
 }
