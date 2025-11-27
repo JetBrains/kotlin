@@ -147,6 +147,11 @@ static void scheduleTermination() {
         terminationRequest = true;
         KtlibKtlibKt.terminationRequest = true;
     }];
+    [NSThread detachNewThreadWithBlock:^{
+        [NSThread sleepForTimeInterval:600.0];
+        NSLog(@"Hard timeout exceeded. Terminating forcefully.");
+        abort();
+    }];
 }
 
 static void allocBlockerUpdater() {
