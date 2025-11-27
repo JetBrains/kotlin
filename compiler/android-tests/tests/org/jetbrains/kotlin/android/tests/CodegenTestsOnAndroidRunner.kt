@@ -40,6 +40,8 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         val emulatorType = if (isTeamcity) Emulator.ARM else Emulator.X86
         println("Using $emulatorType emulator!")
         val emulator = Emulator(pathManager, emulatorType)
+
+        emulator.downloadSystemImage()
         emulator.createEmulator()
 
         val gradleRunner = GradleRunner(pathManager)

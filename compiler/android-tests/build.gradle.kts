@@ -42,7 +42,7 @@ optInToK1Deprecation()
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit4) {
         dependsOn(":dist")
-        val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
+        val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
         doFirst {
             environment("kotlin.tests.android.timeout", "45")
             environment("JAVA_HOME", jdkHome.get())

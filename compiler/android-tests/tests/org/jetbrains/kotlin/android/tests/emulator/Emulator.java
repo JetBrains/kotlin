@@ -26,6 +26,10 @@ import org.jetbrains.kotlin.android.tests.run.RunResult;
 import org.jetbrains.kotlin.android.tests.run.RunUtils;
 import org.junit.Assert;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,6 +50,31 @@ public class Emulator {
         this.platform = platform;
     }
 
+    private GeneralCommandLine getDownloadSystemImageCommand() {
+        GeneralCommandLine commandLine = new GeneralCommandLine();
+        String androidCmdName = SystemInfo.isWindows ? "sdkmanager.bat" : "sdkmanager";
+        commandLine.setExePath(pathManager.getToolsFolderInAndroidSdk() + "/bin/" + androidCmdName);
+        commandLine.addParameter("--sdk_root=" + pathManager.getAndroidSdkRoot());
+
+        // Always install emulator package
+        commandLine.addParameter("emulator");
+
+        // Allow override of system image via system property
+        String overrideImage = System.getProperty("kotlin.android.avd.systemImage");
+        if (overrideImage != null && !overrideImage.isEmpty()) {
+            commandLine.addParameter(overrideImage);
+        } else if (platform == X86) {
+            commandLine.addParameter("system-images;android-28;default;x86_64");
+        } else {
+            commandLine.addParameter("system-images;android-28;default;arm64-v8a");
+        }
+
+        commandLine.withEnvironment("ANDROID_SDK_ROOT", pathManager.getAndroidSdkRoot());
+        commandLine.withEnvironment("ANDROID_HOME", pathManager.getAndroidSdkRoot());
+
+        return commandLine;
+    }
+
     private GeneralCommandLine getCreateCommand() {
         GeneralCommandLine commandLine = new GeneralCommandLine();
         String androidCmdName = SystemInfo.isWindows ? "avdmanager.bat" : "avdmanager";
@@ -58,17 +87,38 @@ public class Emulator {
         commandLine.addParameter("-p");
         commandLine.addParameter(pathManager.getAndroidAvdRoot());
         commandLine.addParameter("-k");
-        if (platform == X86) {
-            commandLine.addParameter("system-images;android-28;default;x86");
+
+        // Allow override of system image via system property
+        String overrideImage = System.getProperty("kotlin.android.avd.systemImage");
+        if (overrideImage != null && !overrideImage.isEmpty()) {
+            commandLine.addParameter(overrideImage);
+        } else if (platform == X86) {
+            commandLine.addParameter("system-images;android-28;default;x86_64");
         } else {
             commandLine.addParameter("system-images;android-28;default;arm64-v8a");
         }
+
+        commandLine.withEnvironment("ANDROID_SDK_ROOT", pathManager.getAndroidSdkRoot());
+        commandLine.withEnvironment("ANDROID_HOME", pathManager.getAndroidSdkRoot());
+
         return commandLine;
     }
 
     private GeneralCommandLine getStartCommand() {
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        commandLine.setExePath(pathManager.getEmulatorFolderInAndroidSdk() + "/" + "emulator");
+
+        // Prefer the new SDK layout: $SDK/emulator/emulator
+        String sdkRoot = pathManager.getAndroidSdkRoot();
+        String newLayoutEmulator = sdkRoot + "/emulator";
+
+        File newEmulatorFile = new File(newLayoutEmulator);
+        if (newEmulatorFile.isFile() && newEmulatorFile.canExecute()) {
+            commandLine.setExePath(newEmulatorFile.getAbsolutePath());
+        } else {
+            // Fallback to the old path if needed
+            commandLine.setExePath(pathManager.getEmulatorFolderInAndroidSdk() + "/emulator");
+        }
+
         commandLine.addParameter("-avd");
         commandLine.addParameter(AVD_NAME);
         commandLine.addParameter("-no-audio");
@@ -102,9 +152,69 @@ public class Emulator {
         return null;
     }
 
+    private GeneralCommandLine getAcceptLicensesCommand() {
+        GeneralCommandLine commandLine = new GeneralCommandLine();
+        String androidCmdName = SystemInfo.isWindows ? "sdkmanager.bat" : "sdkmanager";
+        commandLine.setExePath(pathManager.getToolsFolderInAndroidSdk() + "/bin/" + androidCmdName);
+        commandLine.addParameter("--sdk_root=" + pathManager.getAndroidSdkRoot());
+        commandLine.addParameter("--licenses");
+
+        commandLine.withEnvironment("ANDROID_SDK_ROOT", pathManager.getAndroidSdkRoot());
+        commandLine.withEnvironment("ANDROID_HOME", pathManager.getAndroidSdkRoot());
+
+        return commandLine;
+    }
+
+    private void acceptLicenses() {
+        System.out.println("Accepting Android SDK licenses...");
+        // Feed 'y' repeatedly to stdin
+        String yesInput = "y\ny\ny\ny\ny\ny\ny\ny\n";
+        OutputUtils.checkResult(
+                RunUtils.execute(new RunUtils.RunSettings(getAcceptLicensesCommand(), yesInput, true, null, false))
+        );
+    }
+
+    public void downloadSystemImage() {
+        System.out.println("Downloading system image...");
+        acceptLicenses();
+        OutputUtils.checkResult(RunUtils.execute(new RunUtils.RunSettings(getDownloadSystemImageCommand(), "no", true, null, false)));
+    }
+
+    private void patchAvdConfigSystemImage() {
+        File configIni = new File(pathManager.getAndroidAvdRoot(), "config.ini");
+        if (!configIni.isFile()) return;
+
+        try {
+            List<String> lines = Files.readAllLines(configIni.toPath());
+            List<String> patched = new ArrayList<>(lines.size());
+            boolean replaced = false;
+
+            for (String line : lines) {
+                if (line.startsWith("image.sysdir.1=")) {
+                    // Force the correct relative path under SDK root
+                    patched.add("image.sysdir.1=system-images/android-28/default/x86_64/");
+                    replaced = true;
+                } else {
+                    patched.add(line);
+                }
+            }
+
+            if (!replaced) {
+                // If the key was missing, add it explicitly
+                patched.add("image.sysdir.1=system-images/android-28/default/x86_64/");
+            }
+
+            Files.write(configIni.toPath(), patched);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
     public void createEmulator() {
         System.out.println("Creating emulator...");
         OutputUtils.checkResult(RunUtils.execute(new RunUtils.RunSettings(getCreateCommand(), "no", true, null, false)));
+        // Fix up stale system image path in config.ini, otherwise, there will be androidSdk/androidSdk in path.
+        patchAvdConfigSystemImage();
     }
 
     private GeneralCommandLine createAdbCommand() {
