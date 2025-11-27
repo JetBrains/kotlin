@@ -143,6 +143,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, CreateNonPackedKlibVariantsSideEffect)
             register(project, ConfigureNonPackedKlibConsumingSideEffect)
         }
+        register(project, WasmBinaryPreparationSetupAction)
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {
@@ -154,7 +155,6 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinCreateNativeCInteropTasksSideEffect)
         register(project, KotlinCreateCompilationArchivesTask)
         register(project, KotlinJvmCompilationWireJavaSourcesSideEffect)
-        register(project, WasmBinaryPreparationSetupAction)
     }
 
     KotlinTargetArtifact.extensionPoint.apply {

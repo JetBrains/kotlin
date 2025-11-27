@@ -99,7 +99,7 @@ sealed class JsIrBinary(
     val linkTask: TaskProvider<KotlinJsIrLink> =
         project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project, target.platformType)).apply {
             if (compilation.isMain() && mode == KotlinJsBinaryMode.DEVELOPMENT) {
-                project.artifacts.add(compilation.wasmBinaryOutputConfigurationName, this.map { it.destinationDirectory })
+                project.artifacts.add(wasmBinaryOutputConfigurationName, this.map { it.destinationDirectory })
             }
         }
 
