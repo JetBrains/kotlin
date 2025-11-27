@@ -5,14 +5,15 @@
 
 package kotlin.script.experimental.api
 
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.tryCreateCallableMapping
+import kotlin.reflect.KClass
 
-fun FirAnnotation.toAnnotationObjectIfMatches(vararg expectedAnnClasses: Class<out Annotation>): Annotation? {
+fun FirAnnotationCall.toAnnotationObjectIfMatches(vararg expectedAnnClasses: KClass<out Annotation>): Annotation? {
     val shortName = when(val typeRef = annotationTypeRef) {
         is FirResolvedTypeRef -> typeRef.coneType.classId?.shortClassName ?: return null
         is FirUserTypeRef -> typeRef.qualifier.last().name
@@ -20,15 +21,23 @@ fun FirAnnotation.toAnnotationObjectIfMatches(vararg expectedAnnClasses: Class<o
     }.asString()
     val expectedAnnClass = expectedAnnClasses.firstOrNull { it.simpleName == shortName } ?: return null
     val ctor = expectedAnnClass.constructors.firstOrNull() ?: return null
-    val argsMap = LinkedHashMap<String, Any?>()
-    ctor.parameters.forEach {
-        argsMap[it.name] =
-            when(val arg = argumentMapping.mapping[Name.identifier(it.name)]) {
-                // TODO: classrefs?
-                is FirLiteralExpression -> arg.value
-                else -> null
+    val mapping =
+        tryCreateCallableMapping(
+            ctor,
+            argumentList.arguments.map {
+                when (it) {
+                    // TODO: classrefs?
+                    is FirLiteralExpression -> it.value
+                    else -> null
+                }
             }
+        )
+    if (mapping != null) {
+        try {
+            return ctor.callBy(mapping)
+        } catch (e: Exception) { // TODO: find the exact exception type thrown then callBy fails
+        }
     }
-    return ctor.newInstance(*argsMap.values.toTypedArray()) as Annotation
+    return null
 }
 

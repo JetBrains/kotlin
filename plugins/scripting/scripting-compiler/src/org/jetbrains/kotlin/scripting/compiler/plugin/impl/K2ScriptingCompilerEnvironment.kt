@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingCompilerExtensionRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -107,7 +106,7 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
         return newDependenciesModuleData to newLibraryPaths
     }
 
-    fun addNewSscriptModuleData(name: Name): FirModuleData =
+    fun addNewScriptModuleData(name: Name): FirModuleData =
         FirSourceModuleData(
             name,
             dependencies = moduleDataHistory.filter { it.dependencies.isEmpty() },
