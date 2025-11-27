@@ -192,6 +192,8 @@ private class ObjCTranslationContext(
             |    [NSThread detachNewThreadWithBlock:^{
             |        [NSThread sleepForTimeInterval:${config.softTimeout.toDouble(DurationUnit.SECONDS)}];
             |        NSLog(@"Soft timeout exceeded. Requesting termination.");
+            |            atomic_store_explicit(&allocBlocker, true, memory_order_relaxed);
+            |            ${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass}.allocBlocker = true;
             |        terminationRequest = true;
             |        ${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass}.terminationRequest = true;
             |    }];
