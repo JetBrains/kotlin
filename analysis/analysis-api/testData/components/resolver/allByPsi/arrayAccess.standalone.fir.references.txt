@@ -106,7 +106,6 @@ KtOperationReferenceExpression(168,170): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'set' !in [plusAssign, plus]
     symbols:
       (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
@@ -128,7 +127,6 @@ KtOperationReferenceExpression(187,189): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'set' !in [plusAssign, plus]
     symbols:
       (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
@@ -212,14 +210,12 @@ KtOperationReferenceExpression(266,268): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'set' !in [inc]
     symbols:
       (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'set' !in [inc]
     symbols:
       (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 

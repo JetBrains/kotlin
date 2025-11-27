@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -62,10 +63,14 @@ private fun operatorNames(expression: KtOperationReferenceExpression): Collectio
     }
 
     val isArrayModification = when (parent) {
-        is KtBinaryExpression if parent.left is KtArrayAccessExpression && tokenType in KtTokens.ALL_ASSIGNMENTS -> true
-        is KtUnaryExpression if parent.baseExpression is KtArrayAccessExpression && tokenType in KtTokens.INCREMENT_AND_DECREMENT -> true
-        else -> false
-    }
+        is KtBinaryExpression if tokenType in KtTokens.ALL_ASSIGNMENTS ->
+            parent.left?.unwrapParenthesesLabelsAndAnnotations()
+
+        is KtUnaryExpression if tokenType in KtTokens.INCREMENT_AND_DECREMENT ->
+            parent.baseExpression?.unwrapParenthesesLabelsAndAnnotations()
+
+        else -> null
+    } is KtArrayAccessExpression
 
     if (isArrayModification) {
         add(OperatorNameConventions.SET)
