@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.codegen.ir.AbstractCompileKotlinAgainstKlibTest
+import org.jetbrains.kotlin.codegen.ir.AbstractJKlibTest
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.test.TargetBackend
 
@@ -16,6 +17,9 @@ fun main(args: Array<String>) {
         testGroup("compiler/tests-against-klib/tests-gen", "compiler/testData") {
             testClass<AbstractCompileKotlinAgainstKlibTest> {
                 model("codegen/boxKlib", targetBackend = TargetBackend.JVM_IR)
+            }
+            testClass<AbstractJKlibTest> {
+                model("codegen/jklib", targetBackend = TargetBackend.JVM_IR)
             }
         }
     }

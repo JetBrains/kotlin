@@ -513,7 +513,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         val sortedDependencies = sortDependencies(moduleDependencies) // Удалить??
 
         val jarDepsModuleDescriptor = createJarDependenciesModuleDescriptor(projectEnvironment, projectContext)
-        val descriptors = sortedDependencies.map { getModuleDescriptor(it) } + jarDepsModuleDescriptor
+        val descriptors = sortedDependencies.map { getModuleDescriptor(it) } //+ jarDepsModuleDescriptor
         descriptors.forEach { descriptor ->
             descriptor.setDependencies(descriptors) // + listOf(dependencyModule))
         }
