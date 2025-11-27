@@ -7,7 +7,7 @@
 import kotlin.test.assertEquals
 
 inline fun <T> Iterable<T>.myForEach(action: (T) -> Unit): Unit {
-    for (element in this) js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"action(element)"<!>)
+    for (element in this) js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"action(element)"<!>)
 }
 
 private fun testMyForEach() {
