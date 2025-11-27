@@ -3,6 +3,8 @@
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // LANGUAGE: +ForbidOverriddenDefaultParametersInInline
 // FIR_IDENTICAL
+// TARGET_BACKEND: NATIVE, JVM, JS_IR
+// ^^^ All the backends can be targeted after fixing KT-82730
 
 interface I {
     abstract fun foo(a: Int = 42): Int
