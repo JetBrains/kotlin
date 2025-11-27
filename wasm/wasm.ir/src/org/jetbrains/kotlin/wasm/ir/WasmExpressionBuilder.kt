@@ -28,63 +28,33 @@ internal fun WasmOp.isBlockEnd(): Boolean = this == WasmOp.END
 class WasmExpressionBuilder(
     val expression: MutableList<WasmInstr>,
     val skipCommentInstructions: Boolean = true,
-    val skipLocations: Boolean = true,
 ) {
     private var _numberOfNestedBlocks = 0
 
     fun buildInstr(
         op: WasmOp,
         location: SourceLocation,
-    ) {
-        if (location == SourceLocation.NoLocation) {
-            wasmInstrWithoutLocation(op)
-        } else {
-            check(!skipLocations) { "Unexpected location in skipLocation mode" }
-            wasmInstrWithLocation(op, location)
-        }.appendInstruction()
-    }
+    ) = wasmInstrWithLocation(op, location).appendInstruction()
 
     fun buildInstr(
         op: WasmOp,
         location: SourceLocation,
         immediate: WasmImmediate,
-    ) {
-        if (skipLocations || location == SourceLocation.NoLocation) {
-            check(location !is SourceLocation.DefinedLocation)
-            wasmInstrWithoutLocation(op, immediate)
-        } else {
-            check(!skipLocations) { "Unexpected location in skipLocation mode" }
-            wasmInstrWithLocation(op, location, immediate)
-        }.appendInstruction()
-    }
+    ): Unit = wasmInstrWithLocation(op, location, immediate).appendInstruction()
 
     fun buildInstr(
         op: WasmOp,
         location: SourceLocation,
         immediate1: WasmImmediate,
         immediate2: WasmImmediate,
-    ) {
-        if (skipLocations || location == SourceLocation.NoLocation) {
-            wasmInstrWithoutLocation(op, immediate1, immediate2)
-        } else {
-            check(!skipLocations) { "Unexpected location in skipLocation mode" }
-            wasmInstrWithLocation(op, location, immediate1, immediate2)
-        }.appendInstruction()
-    }
+    ): Unit = wasmInstrWithLocation(op, location, immediate1, immediate2).appendInstruction()
 
     fun buildInstr(
         op: WasmOp, location: SourceLocation,
         immediate1: WasmImmediate,
         immediate2: WasmImmediate,
         immediate3: WasmImmediate,
-    ) {
-        if (skipLocations || location == SourceLocation.NoLocation) {
-            wasmInstrWithoutLocation(op, immediate1, immediate2, immediate3)
-        } else {
-            check(!skipLocations) { "Unexpected location in skipLocation mode" }
-            wasmInstrWithLocation(op, location, immediate1, immediate2, immediate3)
-        }.appendInstruction()
-    }
+    ): Unit = wasmInstrWithLocation(op, location, immediate1, immediate2, immediate3).appendInstruction()
 
     fun buildInstr(
         op: WasmOp, location: SourceLocation,
@@ -92,14 +62,7 @@ class WasmExpressionBuilder(
         immediate2: WasmImmediate,
         immediate3: WasmImmediate,
         immediate4: WasmImmediate,
-    ) {
-        if (skipLocations || location == SourceLocation.NoLocation) {
-            wasmInstrWithoutLocation(op, immediate1, immediate2, immediate3, immediate4)
-        } else {
-            check(!skipLocations) { "Unexpected location in skipLocation mode" }
-            wasmInstrWithLocation(op, location, immediate1, immediate2, immediate3, immediate4)
-        }.appendInstruction()
-    }
+    ): Unit = wasmInstrWithLocation(op, location, immediate1, immediate2, immediate3, immediate4).appendInstruction()
 
     val numberOfNestedBlocks: Int
         get() = _numberOfNestedBlocks

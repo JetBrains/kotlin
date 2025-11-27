@@ -28,10 +28,9 @@ class WasmFunctionCodegenContext(
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
     private val functionFileEntry: IrFileEntry,
     skipCommentInstructions: Boolean,
-    skipLocations: Boolean,
 ) {
     val bodyGen: WasmExpressionBuilder =
-        WasmExpressionBuilder(wasmFunction.instructions, skipCommentInstructions = skipCommentInstructions, skipLocations = skipLocations)
+        WasmExpressionBuilder(wasmFunction.instructions, skipCommentInstructions = skipCommentInstructions)
 
     private val wasmLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
     private val wasmSyntheticLocals = LinkedHashMap<SyntheticLocalType, WasmLocal>()

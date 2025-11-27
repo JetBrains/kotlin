@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isFunctionMarker
+import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilder
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 // Backed codegen can only handle try/catch in the canonical form.
 // The defined for Wasm backend canonical form of try/catch:
@@ -38,3 +40,16 @@ internal fun getFunctionalInterfaceSlot(iFace: IrClass): Int {
 
 internal val String.fitsLatin1
     get() = this.all { it.code in 0..255 }
+
+internal fun WasmExpressionBuilder.buildUnreachableForVerifier() {
+    buildUnreachable(SourceLocation.NoLocation("This instruction should never be reached, but required for wasm verifier"))
+}
+
+internal fun WasmExpressionBuilder.buildUnreachableAfterNothingType() {
+    buildUnreachable(
+        SourceLocation.NoLocation(
+            "The unreachable instruction after an expression with Nothing type to make sure that " +
+                    "execution doesn't come here (or it fails fast if so). It also might be required for wasm verifier."
+        )
+    )
+}
