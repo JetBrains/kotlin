@@ -12,7 +12,8 @@ fun box(): String {
         properties(maxDepth = 1)
         "col" from { it.str }
     }
-    res.col.print()
-    res.str.print()
+    val s: String = res[0].col
+    val s1: String = res[0].str
+    res.compareSchemas(strict = true)
     return "OK"
 }

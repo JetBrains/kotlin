@@ -9,8 +9,8 @@ data class D(
 )
 
 fun box(): String {
-    val df1 = listOf(D("bb"), null).toDataFrame()
-    df1.schema().print()
-    df1.compileTimeSchema().print()
+    val df = listOf(D("bb"), null).toDataFrame()
+    val str: String? = df[0].s
+    df.compareSchemas(strict = true)
     return "OK"
 }
