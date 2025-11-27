@@ -3,3 +3,4 @@ org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,KT-82305,
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11IrBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11FirLightTreeBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
 org.jetbrains.kotlin.gradle.MppIdeDependencyResolutionIT.KT-81973_npe_when_strange_dependency_is-added[Gradle 7.6.3: KT-81973_npe_when_strange_dependency_is-added(GradleVersion)],KT-81973,FLAKY
+non.existent.test,KT-123456,FLAKY
