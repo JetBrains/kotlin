@@ -22,7 +22,10 @@ class DataFrameUnfold : AbstractSchemaModificationInterpreter() {
                 if (!column.type.coneType.canBeUnfolded(session)) {
                     it
                 } else {
-                    SimpleColumnGroup(it.name(), toDataFrame(maxDepth, column.type.coneType, TraverseConfiguration()).columns()).asDataColumn()
+                    SimpleColumnGroup(
+                        it.name(),
+                        toDataFrame(maxDepth, column.type.coneType, TraverseConfiguration.EMPTY).columns()
+                    ).asDataColumn()
                 }
             } else {
                 it
