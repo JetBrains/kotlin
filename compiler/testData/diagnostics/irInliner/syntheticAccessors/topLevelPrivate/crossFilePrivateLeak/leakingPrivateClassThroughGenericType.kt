@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-71416
 // FIR_IDENTICAL
 // DIAGNOSTICS: -NOTHING_TO_INLINE
@@ -12,7 +12,7 @@ private inline fun <reified T> parameterized(): String {
     return T::class.simpleName ?: "Unknown type"
 }
 
-internal inline fun inlineFun() = <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING_ERROR!>parameterized<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>>()<!>
+internal inline fun inlineFun() = parameterized<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Private<!>>()
 
 // FILE: main.kt
 fun box(): String {
