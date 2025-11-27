@@ -431,6 +431,15 @@ class KonanConfig(
         configuration.get(BinaryOptions.minidumpLocation)
     }
 
+    val minidumpOnSignal by lazy {
+        configuration.get(BinaryOptions.minidumpOnSignal)?.let {
+            if (it && minidumpLocation == null) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Minidump location is not defined")
+                false
+            } else it
+        } ?: false
+    }
+
     val swiftExport by lazy {
         configuration.get(BinaryOptions.swiftExport)?.let {
             if (it && !target.supportsObjcInterop()) {
