@@ -66,7 +66,8 @@ internal open class RunnerWithExecutor(
             val matchResult = regex.find(stderrString)
             val minidumpFileName = matchResult?.groups?.get(1)?.value
             if (minidumpFileName != null) {
-                val minidumpAnalyzerOutput = ByteArrayOutputStream()
+                val minidumpAnalyzerStdout = ByteArrayOutputStream()
+                val minidumpAnalyzerStderr = ByteArrayOutputStream()
                 runProcess(
                     ProcessLevelProperty.MINIDUMP_ANALYZER.readValue(),
                     "-b",
@@ -74,11 +75,13 @@ internal open class RunnerWithExecutor(
                     minidumpFileName,
                 ) {
                     this.workingDirectory = workingDirectory
-                    this.stdout = minidumpAnalyzerOutput
-                    this.stderr = minidumpAnalyzerOutput
+                    this.stdout = minidumpAnalyzerStdout
+                    this.stderr = minidumpAnalyzerStderr
                 }
-                stderr.write(minidumpAnalyzerOutput.toByteArray())
-                Files.write(Path("$minidumpFileName.log"), minidumpAnalyzerOutput.toByteArray())
+                // print stdout first as stderr can be polluted by less useful error messages
+                val minidumpAnalyzerOutput = minidumpAnalyzerStdout.toByteArray() + minidumpAnalyzerStderr.toByteArray()
+                stderr.write(minidumpAnalyzerOutput)
+                Files.write(Path("$minidumpFileName.log"), minidumpAnalyzerOutput)
             }
         }
 
