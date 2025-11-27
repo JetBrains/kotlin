@@ -29,13 +29,14 @@ internal fun patchConfigAndLogIssues(modules: Set<InputModule>, config: SwiftExp
         }
     }
 
-    val enableCoroutineSupport = config.enableCoroutinesSupport && modules.any { it.name == "KotlinxCoroutinesCore" }.also {
+    val enableCoroutineSupport = config.enableCoroutinesSupport
+            && modules.any { it.name.contains("KotlinxCoroutinesCore") }.also {
         if (!it) {
             logger.report(
                 SwiftExportLogger.Severity.Warning,
                 """
                 Coroutine support is enabled, but no `kotlinx-coroutines-core` module was found in path.
-                Please add kotlinx-coutines as a dependency to your project, or disable coroutines support to silence this warning.
+                Please add kotlinx-coroutines as a dependency to your project, or disable coroutines support to silence this warning.
                 """.trimIndent().replace("\n", " ")
             )
         }
