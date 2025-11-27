@@ -28,7 +28,16 @@ internal abstract class OptimizeFlow {
     abstract fun complete()
 }
 
-internal class RemoveUnreachableInstructions(val output: OptimizeFlow) : OptimizeFlow() {
+private abstract class OptimizeFlowBase(protected val output: OptimizeFlow) : OptimizeFlow() {
+    final override fun complete() {
+        flash()
+        output.complete()
+    }
+
+    protected open fun flash() {}
+}
+
+private class RemoveUnreachableInstructions(output: OptimizeFlow) : OptimizeFlowBase(output) {
     private var eatEverythingUntilLevel: Int? = null
     private var numberOfNestedBlocks = 0
 
@@ -66,17 +75,14 @@ internal class RemoveUnreachableInstructions(val output: OptimizeFlow) : Optimiz
         }
         output.push(instruction)
     }
-
-    override fun complete() {
-        output.complete()
-    }
 }
 
-internal class RemoveInstructionPriorUnreachable(private val output: OptimizeFlow) : OptimizeFlow() {
+private class RemoveInstructionPriorUnreachable(output: OptimizeFlow) : OptimizeFlowBase(output) {
     private var firstInstruction: WasmInstr? = null
 
     override fun push(instruction: WasmInstr) {
         if (instruction.operator.opcode == WASM_OP_PSEUDO_OPCODE) {
+            flash()
             output.push(instruction)
             return
         }
@@ -101,21 +107,21 @@ internal class RemoveInstructionPriorUnreachable(private val output: OptimizeFlo
         }
     }
 
-    override fun complete() {
-        firstInstruction?.let { toEmit ->
-            output.push(toEmit)
+    override fun flash() {
+        firstInstruction?.let {
+            push(it)
             firstInstruction = null
         }
-        output.complete()
     }
 }
 
-internal class RemoveInstructionPriorDrop(private val output: OptimizeFlow) : OptimizeFlow() {
+private class RemoveInstructionPriorDrop(output: OptimizeFlow) : OptimizeFlowBase(output) {
     private var firstInstruction: WasmInstr? = null
     private var secondInstruction: WasmInstr? = null
 
     override fun push(instruction: WasmInstr) {
         if (instruction.operator.opcode == WASM_OP_PSEUDO_OPCODE) {
+            flash()
             output.push(instruction)
             return
         }
@@ -150,27 +156,26 @@ internal class RemoveInstructionPriorDrop(private val output: OptimizeFlow) : Op
         }
     }
 
-    override fun complete() {
-        firstInstruction?.let { toEmit ->
+    override fun flash() {
+        firstInstruction?.let {
+            output.push(it)
             firstInstruction = null
-            output.push(toEmit)
         }
 
-        secondInstruction?.let { toEmit ->
+        secondInstruction?.let {
+            output.push(it)
             secondInstruction = null
-            output.push(toEmit)
         }
-
-        output.complete()
     }
 }
 
 
-internal class MergeSetAndGetIntoTee(private val output: OptimizeFlow) : OptimizeFlow() {
+private class MergeSetAndGetIntoTee(output: OptimizeFlow) : OptimizeFlowBase(output) {
     private var firstInstruction: WasmInstr? = null
 
     override fun push(instruction: WasmInstr) {
         if (instruction.operator.opcode == WASM_OP_PSEUDO_OPCODE) {
+            flash()
             output.push(instruction)
             return
         }
@@ -205,12 +210,11 @@ internal class MergeSetAndGetIntoTee(private val output: OptimizeFlow) : Optimiz
         output.push(first)
     }
 
-    override fun complete() {
-        firstInstruction?.let { toEmit ->
+    override fun flash() {
+        firstInstruction?.let {
+            output.push(it)
             firstInstruction = null
-            output.push(toEmit)
         }
-        output.complete()
     }
 }
 
