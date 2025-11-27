@@ -245,7 +245,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                         name,
                         ColumnType(
                             returnType.withNullability(
-                                makeNullable,
+                                returnType.isMarkedNullable || makeNullable,
                                 session.typeContext
                             )
                         )

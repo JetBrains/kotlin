@@ -60,7 +60,7 @@ fun box(): String {
     val i: Int = res[0].javaRecord.i
     res.compileTimeSchema().print()
     val l: List<String?> = res[0].javaRecord.stringList
-    val array: IntArray = res[0].javaRecord.beans[0].array
+    val array: IntArray? = res[0].javaRecord.beans[0].array
     res.assert()
     return "OK"
 }

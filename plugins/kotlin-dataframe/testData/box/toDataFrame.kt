@@ -62,5 +62,6 @@ fun box(): String {
     res.ll.print()
     res.lld.forEach { it.r.print() }
     res.nullableNumber
+    res.compareSchemas(strict = true)
     return "OK"
 }
