@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // TARGET_BACKEND: JVM_IR, WASM_JS, WASM_WASI
 //  ^Reason: JS doesn't support inheritance from FunctionN, Native doesn't support coroutine testing utilities
 // WITH_STDLIB

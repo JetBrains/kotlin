@@ -567,9 +567,14 @@ class AdapterGenerator(
         val invokeSymbol = findInvokeSymbol(expectedFunctionalType, preparedArgumentType) ?: return this
         val suspendConvertedType = unwrappedExpectedType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
-            val argumentType = preparedArgumentType.toIrType()
-            val irAdapterFunction =
-                createAdapterFunctionForArgument(startOffset, endOffset, suspendConvertedType, argumentType, invokeSymbol)
+            val irAdapterFunction = createAdapterFunctionForArgument(
+                startOffset,
+                endOffset,
+                suspendConvertedType,
+                expectedFunctionalType.toIrType(),
+                preparedArgumentType.isMarkedNullable,
+                invokeSymbol
+            )
             val irAdapterRef = IrFunctionReferenceImpl(
                 startOffset, endOffset, suspendConvertedType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
                 null, IrStatementOrigin.SUSPEND_CONVERSION
@@ -588,8 +593,6 @@ class AdapterGenerator(
      */
     private fun prepareArgumentTypeForSuspendConversion(argument: FirExpression): ConeKotlinType {
         var argumentType = ((argument as? FirSamConversionExpression)?.expression ?: argument).resolvedType.fullyExpandedType()
-        // TODO: This code looks like a workaround for KT-73399, but the initial problem is still reproducible as KT-82683
-        // TODO: Invent a more general fix and rename the function to "unwrapSamConversion" KT-82683
         if (argumentType.isKProperty(session) || argumentType.isKMutableProperty(session)) {
             val functionClassId = FunctionTypeKind.Function.numberedClassId(argumentType.typeArguments.size - 1)
             argumentType = functionClassId.toLookupTag().constructClassType(typeArguments = argumentType.typeArguments)
@@ -604,15 +607,14 @@ class AdapterGenerator(
         expectedFunctionalType: ConeClassLikeType,
         argumentType: ConeKotlinType
     ): IrSimpleFunctionSymbol? {
-        val argumentTypeWithInvoke = argumentType
-            .findSubtypeOfBasicFunctionType(session, expectedFunctionalType)
-            ?.lowerBoundIfFlexible()
-            ?: return null
+        if (argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionalType) == null) {
+            return null
+        }
 
-        return if (argumentTypeWithInvoke.isSomeFunctionType(session)) {
-            (argumentTypeWithInvoke as? ConeClassLikeType)?.findBaseInvokeSymbol(session, scopeSession)
+        return if (expectedFunctionalType.isSomeFunctionType(session)) {
+            expectedFunctionalType.findBaseInvokeSymbol(session, scopeSession)
         } else {
-            argumentTypeWithInvoke.findContributedInvokeSymbol(
+            expectedFunctionalType.findContributedInvokeSymbol(
                 session, scopeSession, expectedFunctionalType, shouldCalculateReturnTypesOfFakeOverrides = true
             )
         }?.let {
@@ -624,7 +626,8 @@ class AdapterGenerator(
         startOffset: Int,
         endOffset: Int,
         type: IrSimpleType,
-        argumentType: IrType,
+        adapterParameterType: IrType,
+        argumentIsNullable: Boolean,
         invokeSymbol: IrSimpleFunctionSymbol
     ): IrSimpleFunction {
         val returnType = type.arguments.last().typeOrFail
@@ -650,7 +653,7 @@ class AdapterGenerator(
                 this += createAdapterParameter(
                     irAdapterFunction,
                     Name.identifier($$"$callee"),
-                    argumentType,
+                    adapterParameterType,
                     IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
                     IrParameterKind.ExtensionReceiver,
                 )
@@ -668,7 +671,7 @@ class AdapterGenerator(
             irAdapterFunction.body = IrFactoryImpl.createBlockBody(startOffset, endOffset) {
                 var irCall = createAdapteeCallForArgument(startOffset, endOffset, irAdapterFunction, invokeSymbol)
 
-                if (argumentType.isMarkedNullable()) {
+                if (argumentIsNullable) {
                     irCall = createWhenForSafeFall(irCall.type, irAdapterFunction.parameters[0].symbol, irCall)
                 }
 
