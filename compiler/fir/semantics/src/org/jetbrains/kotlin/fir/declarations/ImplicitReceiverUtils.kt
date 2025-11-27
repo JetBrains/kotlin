@@ -86,7 +86,8 @@ data class FirTowerDataContext private constructor(
     val implicitValueStorage: ImplicitValueStorage,
     val classesUnderInitialization: PersistentList<FirClassSymbol<*>>,
     val localScopes: FirLocalScopes,
-    val nonLocalTowerDataElements: PersistentList<FirTowerDataElement>
+    val nonLocalTowerDataElements: PersistentList<FirTowerDataElement>,
+    val localVariableScopeStorage: LocalVariableScopeStorage,
 ) {
 
     constructor() : this(
@@ -94,8 +95,21 @@ data class FirTowerDataContext private constructor(
         ImplicitValueStorage(),
         persistentListOf(),
         persistentListOf(),
-        persistentListOf()
+        persistentListOf(),
+        LocalVariableScopeStorage(),
     )
+
+    fun addLocalVariable(variable: FirVariable, session: FirSession): FirTowerDataContext {
+        val oldLastScope = localScopes.lastOrNull() ?: return this
+        val indexOfLastLocalScope = towerDataElements.indexOfLast { it.scope === oldLastScope }
+        val newLastScope = oldLastScope.storeVariable(variable, session)
+
+        return copy(
+            towerDataElements = towerDataElements.set(indexOfLastLocalScope, newLastScope.asTowerDataElement(isLocal = true)),
+            localScopes = localScopes.set(localScopes.lastIndex, newLastScope),
+            localVariableScopeStorage = localVariableScopeStorage.addLocalVariable(variable.symbol)
+        )
+    }
 
     fun setLastLocalScope(newLastScope: FirLocalScope): FirTowerDataContext {
         val oldLastScope = localScopes.last()

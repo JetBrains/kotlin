@@ -1887,6 +1887,10 @@ abstract class FirDataFlowAnalyzer(
     private fun Flow.getOrCreateVariable(fir: FirExpression): DataFlowVariable? =
         getVariable(fir, createReal = true)
 
+    fun getOrCreateVariable(fir: FirExpression): DataFlowVariable? {
+        return currentSmartCastPosition?.getOrCreateVariable(fir)
+    }
+
     // Use this for calling `getTypeStatement` or accessing reassignment information.
     // Returns null if it's already known that no statements about the variable were made ever.
     private fun Flow.getRealVariableWithoutUnwrappingAlias(fir: FirExpression): RealVariable? =

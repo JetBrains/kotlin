@@ -36,7 +36,7 @@ fun foo(container: Container<*>, wrapper: Wrapper<String>) {
     container.simple = null
     container.setSimple(null)
     container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> container.simple
-    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>container.getSimple()<!>)
+    container.setSimple(container.getSimple())
     container.simple = null!!
 }
 

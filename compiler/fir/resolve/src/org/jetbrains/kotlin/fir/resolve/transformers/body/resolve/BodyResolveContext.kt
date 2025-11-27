@@ -392,7 +392,7 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     fun storeVariable(variable: FirVariable, session: FirSession) {
-        updateLastScope { storeVariable(variable, session) }
+        replaceTowerDataContext(towerDataContext.addLocalVariable(variable, session))
     }
 
     @OptIn(PrivateForInline::class)

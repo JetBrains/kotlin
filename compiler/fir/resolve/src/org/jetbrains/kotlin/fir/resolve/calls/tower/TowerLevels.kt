@@ -71,7 +71,14 @@ class DispatchReceiverMemberScopeTowerLevel(
         output: TowerLevelProcessor,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit,
     ): ProcessResult {
-        val scope = dispatchReceiverValue.scope() ?: return ProcessResult.SCOPE_EMPTY
+        val scope = when (dispatchReceiverValue) {
+            is ExpressionReceiverValue if LanguageFeature.CacheLocalVariableScopes.isEnabled() -> {
+                bodyResolveComponents.towerDataContext.localVariableScopeStorage.getScope(dispatchReceiverValue) {
+                    bodyResolveComponents.dataFlowAnalyzer.getOrCreateVariable(dispatchReceiverValue.receiverExpression)
+                }
+            }
+            else -> dispatchReceiverValue.scope()
+        } ?: return ProcessResult.SCOPE_EMPTY
 
         val receiverTypeWithoutSmartCast = getOriginalReceiverExpressionIfStableSmartCast()?.resolvedType
         val scopeWithoutSmartcast = receiverTypeWithoutSmartCast?.scope(

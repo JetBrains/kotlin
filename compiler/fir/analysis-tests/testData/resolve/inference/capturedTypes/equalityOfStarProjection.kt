@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-68606, KT-71024
 // WITH_STDLIB
+// LANGUAGE: +CacheLocalVariableScopes
 interface Foo<E>
 
 data class SerializerAndValue<T>(
@@ -15,7 +16,7 @@ val a: (SerializerAndValue<*>) -> Unit = { (serializer, value) ->
 }
 
 val b: (SerializerAndValue<*>) -> Unit = { serializerAndValue ->
-    encodeToString(serializerAndValue.serializer, <!ARGUMENT_TYPE_MISMATCH!>serializerAndValue.value<!>)
+    encodeToString(serializerAndValue.serializer, serializerAndValue.value)
 }
 
 val c: SerializerAndValue<*>.() -> Unit = {
@@ -27,7 +28,7 @@ val d: SerializerAndValue<*>.() -> Unit = {
 }
 
 fun test(a: Array<*>) {
-    a.set(0, <!MEMBER_PROJECTED_OUT!>a.get(0)<!>)
+    a.set(0, a.get(0))
 }
 
 fun Array<*>.reverse() {
@@ -52,19 +53,19 @@ fun different(a1: Array<*>, a2: Array<*>) {
 
 fun stableVar(a1: Array<*>) {
     var tmp = a1
-    tmp.set(0, <!MEMBER_PROJECTED_OUT!>tmp.get(0)<!>)
+    tmp.set(0, tmp.get(0))
 }
 
 fun smartCast(a1: Array<*>) {
     var tmp: Any? = null
     tmp = a1
-    tmp.set(0, <!MEMBER_PROJECTED_OUT!>tmp.get(0)<!>)
+    tmp.set(0, tmp.get(0))
 }
 
 fun stableCalledInPlaceInline(a1: Array<*>) {
     var tmp = a1
     run {
-        tmp.set(0, <!MEMBER_PROJECTED_OUT!>tmp.get(0)<!>)
+        tmp.set(0, tmp.get(0))
     }
 }
 
