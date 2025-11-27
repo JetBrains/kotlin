@@ -9,9 +9,10 @@ package org.jetbrains.kotlin.util
  * Perform BFS on the given collection with neighbors created by the given function.
  */
 fun <T> Collection<T>.bfs(getNeighbors: (T) -> Iterator<T>): Sequence<T> {
-    val queue = ArrayDeque(this)
-    val visited = mutableSetOf<T>()
     return sequence {
+        val queue = ArrayDeque(this@bfs)
+        val visited = mutableSetOf<T>()
+
         while (queue.isNotEmpty()) {
             val current = queue.removeFirst()
             if (current in visited) continue
