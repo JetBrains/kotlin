@@ -77,7 +77,8 @@ class TowerElementsForClass(
     val superClassesStaticsAndCompanionReceivers: List<FirTowerDataElement>,
 )
 
-class FirTowerDataContext private constructor(
+@ConsistentCopyVisibility
+data class FirTowerDataContext private constructor(
     val towerDataElements: PersistentList<FirTowerDataElement>,
     // These properties are effectively redundant, their content should be consistent with `towerDataElements`,
     // i.e. implicitReceiverStack == towerDataElements.mapNotNull { it.receiver }
@@ -100,47 +101,37 @@ class FirTowerDataContext private constructor(
         val oldLastScope = localScopes.last()
         val indexOfLastLocalScope = towerDataElements.indexOfLast { it.scope === oldLastScope }
 
-        return FirTowerDataContext(
-            towerDataElements.set(indexOfLastLocalScope, newLastScope.asTowerDataElement(isLocal = true)),
-            implicitValueStorage,
-            classesUnderInitialization,
-            localScopes.set(localScopes.lastIndex, newLastScope),
-            nonLocalTowerDataElements
+        return copy(
+            towerDataElements = towerDataElements.set(indexOfLastLocalScope, newLastScope.asTowerDataElement(isLocal = true)),
+            localScopes = localScopes.set(localScopes.lastIndex, newLastScope),
         )
     }
 
     fun addNonLocalTowerDataElements(newElements: List<FirTowerDataElement>): FirTowerDataContext {
-        return FirTowerDataContext(
-            towerDataElements.addAll(newElements),
-            implicitValueStorage
+        return copy(
+            towerDataElements = towerDataElements.addAll(newElements),
+            implicitValueStorage = implicitValueStorage
                 .addAllImplicitReceivers(newElements.mapNotNull { it.implicitReceiver })
                 .addAllContexts(
                     newElements.flatMap { it.contextParameterGroup.orEmpty() }
                 ),
-            classesUnderInitialization,
-            localScopes,
-            nonLocalTowerDataElements.addAll(newElements)
+            nonLocalTowerDataElements = nonLocalTowerDataElements.addAll(newElements)
         )
     }
 
     fun addLocalScope(localScope: FirLocalScope): FirTowerDataContext {
-        return FirTowerDataContext(
-            towerDataElements.add(localScope.asTowerDataElement(isLocal = true)),
-            implicitValueStorage,
-            classesUnderInitialization,
-            localScopes.add(localScope),
-            nonLocalTowerDataElements
+        return copy(
+            towerDataElements = towerDataElements.add(localScope.asTowerDataElement(isLocal = true)),
+            localScopes = localScopes.add(localScope),
         )
     }
 
     fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>): FirTowerDataContext {
         val element = implicitReceiverValue.asTowerDataElement()
-        return FirTowerDataContext(
-            towerDataElements.add(element),
-            implicitValueStorage.addImplicitReceiver(name, implicitReceiverValue),
-            classesUnderInitialization,
-            localScopes,
-            nonLocalTowerDataElements.add(element)
+        return copy(
+            towerDataElements = towerDataElements.add(element),
+            implicitValueStorage = implicitValueStorage.addImplicitReceiver(name, implicitReceiverValue),
+            nonLocalTowerDataElements = nonLocalTowerDataElements.add(element)
         )
     }
 
@@ -160,23 +151,17 @@ class FirTowerDataContext private constructor(
             isLocal = false
         )
 
-        return FirTowerDataContext(
-            towerDataElements.add(element),
-            implicitValueStorage.addAllContexts(contextParameterGroup),
-            classesUnderInitialization,
-            localScopes,
-            nonLocalTowerDataElements.add(element)
+        return copy(
+            towerDataElements = towerDataElements.add(element),
+            implicitValueStorage = implicitValueStorage.addAllContexts(contextParameterGroup),
+            nonLocalTowerDataElements = nonLocalTowerDataElements.add(element)
         )
     }
 
     fun addAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer): FirTowerDataContext {
         val correspondingClass = anonymousInitializer.containingDeclarationSymbol as? FirClassSymbol<*> ?: return this
-        return FirTowerDataContext(
-            towerDataElements,
-            implicitValueStorage,
-            classesUnderInitialization.add(correspondingClass),
-            localScopes,
-            nonLocalTowerDataElements
+        return copy(
+            classesUnderInitialization = classesUnderInitialization.add(correspondingClass),
         )
     }
 
@@ -202,22 +187,16 @@ class FirTowerDataContext private constructor(
 
     fun addNonLocalScope(scope: FirScope): FirTowerDataContext {
         val element = scope.asTowerDataElement(isLocal = false)
-        return FirTowerDataContext(
-            towerDataElements.add(element),
-            implicitValueStorage,
-            classesUnderInitialization,
-            localScopes,
-            nonLocalTowerDataElements.add(element)
+        return copy(
+            towerDataElements = towerDataElements.add(element),
+            nonLocalTowerDataElements = nonLocalTowerDataElements.add(element)
         )
     }
 
     private fun addNonLocalScopeElements(elements: List<FirTowerDataElement>): FirTowerDataContext {
-        return FirTowerDataContext(
-            towerDataElements.addAll(elements),
-            implicitValueStorage,
-            classesUnderInitialization,
-            localScopes,
-            nonLocalTowerDataElements.addAll(elements)
+        return copy(
+            towerDataElements = towerDataElements.addAll(elements),
+            nonLocalTowerDataElements = nonLocalTowerDataElements.addAll(elements)
         )
     }
 
@@ -231,12 +210,11 @@ class FirTowerDataContext private constructor(
             }
         }
 
-        return FirTowerDataContext(
-            towerDataElements.map { it.createSnapshot(keepMutable, implicitValueMapper) }.toPersistentList(),
-            implicitValueStorage.createSnapshot(implicitValueMapper),
-            classesUnderInitialization,
-            localScopes.toPersistentList(),
-            nonLocalTowerDataElements.map { it.createSnapshot(keepMutable, implicitValueMapper) }.toPersistentList()
+        return copy(
+            towerDataElements = towerDataElements.map { it.createSnapshot(keepMutable, implicitValueMapper) }.toPersistentList(),
+            implicitValueStorage = implicitValueStorage.createSnapshot(implicitValueMapper),
+            localScopes = localScopes.toPersistentList(),
+            nonLocalTowerDataElements = nonLocalTowerDataElements.map { it.createSnapshot(keepMutable, implicitValueMapper) }.toPersistentList()
         )
     }
 
@@ -244,12 +222,9 @@ class FirTowerDataContext private constructor(
         towerDataElements: PersistentList<FirTowerDataElement>,
         nonLocalTowerDataElements: PersistentList<FirTowerDataElement>,
     ): FirTowerDataContext {
-        return FirTowerDataContext(
-            towerDataElements,
-            implicitValueStorage,
-            classesUnderInitialization,
-            localScopes,
-            nonLocalTowerDataElements
+        return copy(
+            towerDataElements = towerDataElements,
+            nonLocalTowerDataElements = nonLocalTowerDataElements
         )
     }
 }
