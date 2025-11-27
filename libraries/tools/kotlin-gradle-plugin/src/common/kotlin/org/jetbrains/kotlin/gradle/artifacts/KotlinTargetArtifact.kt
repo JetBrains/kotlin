@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.gradle.artifacts
 
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency.ARCHIVES_CONFIGURATION
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradlePluginExtensionPoint
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -45,7 +45,14 @@ internal fun KotlinTarget.createPublishArtifact(
     artifactType: String,
     vararg elementsConfiguration: Configuration?,
 ): PublishArtifact {
-    val artifact = project.artifacts.add(ARCHIVES_CONFIGURATION, artifactTask) { artifact ->
+    project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).configure { assembleTask ->
+        assembleTask.dependsOn(artifactTask)
+    }
+
+    val primaryConfig = elementsConfiguration.firstOrNull()
+        ?: project.configurations.detachedConfiguration()
+
+    val artifact = project.artifacts.add(primaryConfig.name, artifactTask) { artifact ->
         artifact.builtBy(artifactTask)
         artifact.type = artifactType
     }

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.artifacts
 
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Usage
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.jvm.tasks.Jar
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
@@ -73,8 +73,13 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
             }
         }
     }
-    project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, hostSpecificMetadataJar)
+
+    project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).configure { assemble ->
+        assemble.dependsOn(hostSpecificMetadataJar)
+    }
+
     project.artifacts.add(target.hostSpecificMetadataElementsConfigurationName, hostSpecificMetadataJar) { artifact ->
         artifact.classifier = "metadata"
+        artifact.builtBy(hostSpecificMetadataJar)
     }
 }

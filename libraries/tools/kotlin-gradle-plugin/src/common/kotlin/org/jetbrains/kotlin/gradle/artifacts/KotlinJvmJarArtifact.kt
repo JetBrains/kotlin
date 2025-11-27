@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.artifacts
 
-import org.gradle.api.artifacts.Dependency.ARCHIVES_CONFIGURATION
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition.JAR_TYPE
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider

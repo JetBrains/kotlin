@@ -20,6 +20,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -86,8 +87,17 @@ abstract class KotlinSoftwareComponent(
 
         mutableSetOf<DefaultKotlinUsageContext>().apply {
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
-            val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
+
+            project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).configure {
+                it.dependsOn(allMetadataJar)
+            }
+
+            val allMetadataArtifact = project.artifacts.add(
+                metadataTarget.apiElementsConfigurationName,
+                allMetadataJar
+            ) { allMetadataArtifact ->
                 allMetadataArtifact.classifier = project.psmJarClassifier ?: ""
+                allMetadataArtifact.builtBy(allMetadataJar)
             }
 
             this += DefaultKotlinUsageContext(
