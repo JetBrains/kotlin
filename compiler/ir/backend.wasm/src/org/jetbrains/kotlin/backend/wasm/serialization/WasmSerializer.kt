@@ -281,9 +281,6 @@ class WasmSerializer(outputStream: OutputStream) {
                 else -> error("Unknown pseudo-opcode: $instr")
             }
         }
-        if (instr.operator == WasmOp.CALL_PURE) {
-            opcode = 0xFFFF - 3
-        }
 
         b.writeUInt16(opcode.toUShort())
 

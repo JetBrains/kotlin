@@ -39,8 +39,9 @@ class BodyGenerator(
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
     private val locationProvider: LocationProvider,
+    val body: WasmExpressionBuilder,
 ) : IrVisitorVoid() {
-    val body: WasmExpressionBuilder = functionContext.bodyGen
+
 
     // Shortcuts
     private val wasmSymbols: WasmSymbols = backendContext.wasmSymbols

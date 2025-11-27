@@ -147,9 +147,12 @@ class DeclarationGenerator(
         val functionStartLocation = locationProvider.getSourceLocation(locationTarget, declaration.symbol, sourceFile)
         val functionEndLocation = locationProvider.getSourceEndLocation(locationTarget, declaration.symbol, sourceFile)
 
+        val expressionBuilder = WasmExpressionBuilderWithOptimizer(skipCommentInstructions)
+
         val function = WasmFunction.Defined(
             watName,
             functionTypeSymbol,
+            instructions = expressionBuilder.expression,
             startLocation = functionStartLocation,
             endLocation = functionEndLocation
         )
@@ -160,14 +163,12 @@ class DeclarationGenerator(
             wasmFileCodegenContext,
             wasmModuleTypeTransformer,
             sourceFile,
-            skipCommentInstructions,
         )
 
         for (irParameter in irParameters) {
             functionCodegenContext.defineLocal(irParameter.symbol)
         }
 
-        val exprGen = functionCodegenContext.bodyGen
         val bodyBuilder = BodyGenerator(
             backendContext,
             wasmFileCodegenContext,
@@ -175,6 +176,7 @@ class DeclarationGenerator(
             wasmModuleMetadataCache,
             wasmModuleTypeTransformer,
             locationProvider,
+            expressionBuilder,
         )
 
         val declarationBody = declaration.body
@@ -190,15 +192,17 @@ class DeclarationGenerator(
         // variables on constructor call sites.
         // TODO: Redesign construction scheme.
         if (declaration is IrConstructor) {
-            exprGen.buildGetLocal(/*implicit this*/ function.locals[0], SourceLocation.NoLocation("Get implicit dispatch receiver"))
-            exprGen.buildInstr(WasmOp.RETURN, SourceLocation.NoLocation("Implicit return from constructor"))
+            expressionBuilder.buildGetLocal(/*implicit this*/ function.locals[0], SourceLocation.NoLocation("Get implicit dispatch receiver"))
+            expressionBuilder.buildInstr(WasmOp.RETURN, SourceLocation.NoLocation("Implicit return from constructor"))
         }
 
         // Add unreachable if function returns something but not as a last instruction.
         // We can do a separate lowering which adds explicit returns everywhere instead.
         if (wasmFunctionType.resultTypes.isNotEmpty()) {
-            exprGen.buildUnreachableForVerifier()
+            expressionBuilder.buildUnreachableForVerifier()
         }
+
+        expressionBuilder.complete()
 
         wasmFileCodegenContext.defineFunction(declaration.symbol, function)
 

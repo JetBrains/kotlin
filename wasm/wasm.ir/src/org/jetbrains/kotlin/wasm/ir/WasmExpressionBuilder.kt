@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
+import org.jetbrains.kotlin.wasm.ir.convertors.OptimizeFlow
+import org.jetbrains.kotlin.wasm.ir.convertors.createInstructionsFlow
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 internal fun WasmOp.isBlockStart(): Boolean = when (this) {
@@ -13,6 +15,34 @@ internal fun WasmOp.isBlockStart(): Boolean = when (this) {
 }
 
 internal fun WasmOp.isBlockEnd(): Boolean = this == WasmOp.END
+
+class WasmExpressionBuilderWithOptimizer(
+    skipCommentInstructions: Boolean = true,
+) : WasmExpressionBuilder(mutableListOf(), skipCommentInstructions) {
+
+    private var completed: Boolean = false
+
+    private val outputFlow = object : OptimizeFlow() {
+        override fun push(instruction: WasmInstr) {
+            expression.add(instruction)
+        }
+
+        override fun complete() {}
+    }
+
+    private val optimizer = createInstructionsFlow(outputFlow)
+
+    override fun appendToExpression(instruction: WasmInstr) {
+        check(!completed) { "Cannot append into completed builder" }
+        optimizer.push(instruction)
+    }
+
+    fun complete() {
+        check(!completed) { "Cannot complete completed builder" }
+        optimizer.complete()
+        completed = true
+    }
+}
 
 /**
  * Class for building a wasm instructions list.
@@ -25,7 +55,7 @@ internal fun WasmOp.isBlockEnd(): Boolean = this == WasmOp.END
  *     - at least, an API user has to think about what to pass a location
  *     - it's not taken from some context-like thing implicitly, so you will not get it implicitly from a wrong context/scope.
  */
-class WasmExpressionBuilder(
+open class WasmExpressionBuilder(
     val expression: MutableList<WasmInstr>,
     val skipCommentInstructions: Boolean = true,
 ) {
@@ -73,7 +103,11 @@ class WasmExpressionBuilder(
         } else if (operator.isBlockEnd()) {
             _numberOfNestedBlocks--
         }
-        expression += this
+        appendToExpression(this)
+    }
+
+    protected open fun appendToExpression(instruction: WasmInstr) {
+        expression.add(instruction)
     }
 
     fun buildConstI32(value: Int, location: SourceLocation) {

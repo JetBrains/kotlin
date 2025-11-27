@@ -56,7 +56,6 @@ class WasmIrToBinary(
     val moduleName: String,
     val emitNameSection: Boolean,
     private val debugInformationGenerator: DebugInformationGenerator? = null,
-    private val optimizeInstructionFlow: Boolean = true,
 ) : DebugInformationConsumer {
     private var codeSectionOffset = Box(0)
     private val appendImmediateDelegate = ::appendImmediate
@@ -483,18 +482,11 @@ class WasmIrToBinary(
     }
 
     private fun appendExpr(expr: Iterable<WasmInstr>, endLocation: SourceLocation? = null) {
+        expr.forEach {
+            appendInstr(it)
+        }
         val endInstr = endLocation?.let { wasmInstrWithLocation(WasmOp.END, it) } ?: defaultEndInstruction
-        val expressionWithEndOp = sequence {
-            yieldAll(expr)
-            yield(endInstr)
-        }
-        if (optimizeInstructionFlow) {
-            for (instruction in processInstructionsFlow(expressionWithEndOp)) {
-                appendInstr(instruction)
-            }
-        } else {
-            expressionWithEndOp.forEach(::appendInstr)
-        }
+        appendInstr(endInstr)
     }
 
     private fun appendExport(export: WasmExport<*>) {

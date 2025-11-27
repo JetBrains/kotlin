@@ -53,7 +53,6 @@ open class SExpressionBuilder {
 
 class WasmIrToText(
     private val debugInformationGenerator: DebugInformationGenerator? = null,
-    private val optimizeInstructionFlow: Boolean = true,
 ) : SExpressionBuilder(), DebugInformationConsumer {
     private var currentFunction: WasmFunction.Defined? = null
 
@@ -83,12 +82,8 @@ class WasmIrToText(
     }
 
     private fun appendInstrList(instr: List<WasmInstr>) {
-        if (optimizeInstructionFlow) {
-            for (instruction in processInstructionsFlow(instr.asSequence())) {
-                appendInstr(instruction)
-            }
-        } else {
-            instr.forEach(::appendInstr)
+        instr.forEach {
+            appendInstr(it)
         }
     }
 

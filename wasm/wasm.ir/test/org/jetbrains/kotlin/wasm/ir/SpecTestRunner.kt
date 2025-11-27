@@ -228,12 +228,12 @@ fun testWasmFile(wasmFile: File, dirName: String) {
 
 fun WasmModule.toBinaryFormat(): WasmBinaryData {
     val writer = ByteWriterWithOffsetWrite()
-    WasmIrToBinary(writer, this, "<WASM_TESTS>", emitNameSection = false, optimizeInstructionFlow = false).appendWasmModule()
+    WasmIrToBinary(writer, this, "<WASM_TESTS>", emitNameSection = false).appendWasmModule()
     return writer.getBinaryData()
 }
 
 fun WasmModule.toTextFormat(): String {
-    val builder = WasmIrToText(optimizeInstructionFlow = false)
+    val builder = WasmIrToText()
     builder.appendWasmModule(this)
     return builder.toString()
 }
