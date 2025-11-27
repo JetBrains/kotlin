@@ -17,6 +17,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModificationType
+import org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationLocality
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishModuleOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -73,13 +74,13 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         )
     }
 
-    private var modificationQueue: MutableSet<ChangeType.Deferrable>? = null
+    private var modificationQueue: MutableSet<LLModificationLocality.Deferrable>? = null
 
-    private fun addModificationToQueue(modification: ChangeType.Deferrable) {
+    private fun addModificationToQueue(modification: LLModificationLocality.Deferrable) {
         // There is no sense to add elements into the queue with an unresolved body.
-        if (modification is ChangeType.InBlock && !modification.affectedElement.hasFirBody) return
+        if (modification is LLModificationLocality.InBlock && !modification.affectedElement.hasFirBody) return
 
-        val queue = modificationQueue ?: HashSet<ChangeType.Deferrable>().also { modificationQueue = it }
+        val queue = modificationQueue ?: HashSet<LLModificationLocality.Deferrable>().also { modificationQueue = it }
         queue += modification
     }
 
@@ -101,7 +102,9 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      * **value** is a current element;
      * **iterator** is the corresponding iterator for this element.
      */
-    private inline fun processQueue(action: (value: ChangeType.Deferrable, iterator: MutableIterator<ChangeType.Deferrable>) -> Unit) {
+    private inline fun processQueue(
+        action: (value: LLModificationLocality.Deferrable, iterator: MutableIterator<LLModificationLocality.Deferrable>) -> Unit,
+    ) {
         val queue = modificationQueue ?: return
         val iterator = queue.iterator()
         while (iterator.hasNext()) {
@@ -131,22 +134,12 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     }
 
     /**
-     * @see org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationService.handleElementModification
+     * @see org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationService.detectLocality
      */
-    fun elementModified(element: PsiElement, modificationType: KaElementModificationType) {
-        ApplicationManager.getApplication().assertWriteIntentLockAcquired()
-
-        when (val changeType = calculateChangeType(element, modificationType)) {
-            is ChangeType.Invisible -> {}
-            is ChangeType.Deferrable -> addModificationToQueue(changeType)
-            is ChangeType.OutOfBlock -> handleOutOfBlockModification(element)
-        }
-    }
-
-    private fun calculateChangeType(element: PsiElement, modificationType: KaElementModificationType): ChangeType {
+    fun detectLocality(element: PsiElement, modificationType: KaElementModificationType): KaSourceModificationLocality {
         if (!element.isValid) {
-            // If PSI is not valid, well something bad happened; OOBM won't hurt
-            return ChangeType.OutOfBlock
+            // If PSI is not valid, something bad happened. An OOBM won't hurt.
+            return LLModificationLocality.OutOfBlock
         }
 
         if (element is PsiWhiteSpace || element is PsiComment) {
@@ -154,21 +147,21 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             // element instead of the (possibly deleted) whitespace.
             //
             // If there is no `KtElement` ancestor, we have a non-Kotlin file. Whitespace changes in such files are invisible to Kotlin.
-            val affectedElement = element.parentOfType<KtElement>() ?: return ChangeType.Invisible
+            val affectedElement = element.parentOfType<KtElement>() ?: return LLModificationLocality.Invisible
 
-            return ChangeType.Whitespace(affectedElement, project)
+            return LLModificationLocality.Whitespace(affectedElement, project)
         }
 
         if (element.language !is KotlinLanguage) {
             // TODO improve for Java KTIJ-21684
-            return ChangeType.OutOfBlock
+            return LLModificationLocality.OutOfBlock
         }
 
-        val inBlockModificationOwner = nonLocalDeclarationForLocalChange(element) ?: return ChangeType.OutOfBlock
+        val inBlockModificationOwner = nonLocalDeclarationForLocalChange(element) ?: return LLModificationLocality.OutOfBlock
 
         if (inBlockModificationOwner is KtCodeFragment) {
             // All code fragment content is local
-            return ChangeType.InBlock(inBlockModificationOwner, project)
+            return LLModificationLocality.InBlock(inBlockModificationOwner, project)
         }
 
         val isOutOfBlockChange = element.isNewDirectChildOf(inBlockModificationOwner, modificationType)
@@ -176,8 +169,26 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
                 || modificationType.isBackingFieldAccessChange(inBlockModificationOwner)
 
         return when {
-            !isOutOfBlockChange -> ChangeType.InBlock(inBlockModificationOwner, project)
-            else -> ChangeType.OutOfBlock
+            !isOutOfBlockChange -> LLModificationLocality.InBlock(inBlockModificationOwner, project)
+            else -> LLModificationLocality.OutOfBlock
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationService.handleInvalidation
+     */
+    fun handleInvalidation(element: PsiElement, modificationLocality: KaSourceModificationLocality) {
+        ApplicationManager.getApplication().assertWriteIntentLockAcquired()
+
+        require(modificationLocality is LLModificationLocality) {
+            "Expected `${LLModificationLocality::class.simpleName}` but instead got `${modificationLocality::class.simpleName}`. The" +
+                    " modification locality must be detected by the same service that performs the invalidation."
+        }
+
+        when (modificationLocality) {
+            is LLModificationLocality.Invisible -> {}
+            is LLModificationLocality.Deferrable -> addModificationToQueue(modificationLocality)
+            is LLModificationLocality.OutOfBlock -> handleOutOfBlockModification(element)
         }
     }
 
@@ -218,15 +229,18 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
                 this is KaElementModificationType.ElementRemoved &&
                 removedElement.potentiallyAffectsPropertyBackingFieldResolution()
 
-    private fun handleDeferredModification(changeType: ChangeType.Deferrable) {
-        when (changeType) {
-            is ChangeType.Whitespace -> handleWhitespaceModification(changeType.affectedElement, changeType.module)
-            is ChangeType.InBlock -> handleInBlockModification(changeType.affectedElement, changeType.module)
+    private fun handleDeferredModification(modificationLocality: LLModificationLocality.Deferrable) {
+        when (modificationLocality) {
+            is LLModificationLocality.Whitespace ->
+                handleWhitespaceModification(modificationLocality.affectedElement, modificationLocality.module)
+
+            is LLModificationLocality.InBlock ->
+                handleInBlockModification(modificationLocality.affectedElement, modificationLocality.module)
         }
     }
 
     /**
-     * @see ChangeType.Whitespace
+     * @see LLModificationLocality.Whitespace
      */
     private fun handleWhitespaceModification(element: KtElement, module: KaModule) {
         val resolvableSession = module.getResolutionFacade(project).sessionProvider.getResolvableSession(module)
@@ -239,6 +253,9 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         fileStructure.invalidateElement(element)
     }
 
+    /**
+     * @see LLModificationLocality.InBlock
+     */
     private fun handleInBlockModification(declaration: KtAnnotated, module: KaModule) {
         val resolutionFacade = module.getResolutionFacade(project)
         val firDeclaration = when (declaration) {
@@ -274,6 +291,9 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             .afterModification(declaration, module)
     }
 
+    /**
+     * @see LLModificationLocality.OutOfBlock
+     */
     private fun handleOutOfBlockModification(element: PsiElement) {
         val module = KotlinProjectStructureProvider.getModule(project, element, useSiteModule = null)
 
@@ -346,11 +366,11 @@ private fun nonLocalDeclarationForLocalChange(psi: PsiElement): KtAnnotated? {
     return psi.getNonLocalReanalyzableContainingDeclaration() ?: psi.containingFile as? KtCodeFragment
 }
 
-private sealed interface ChangeType {
+private sealed interface LLModificationLocality {
     /**
-     * A change that can be deferred to the next flush point (usually the end of a write action) to avoid excessive processing.
+     * A modification that can be deferred to the next flush point (usually the end of a write action) to avoid excessive processing.
      */
-    sealed class Deferrable : ChangeType {
+    sealed class Deferrable : LLModificationLocality {
         abstract val affectedElement: KtElement
         abstract val project: Project
 
@@ -369,66 +389,38 @@ private sealed interface ChangeType {
     }
 
     /**
-     * A change that has no effect on cached information.
+     * @see KaSourceModificationLocality.Invisible
      */
-    object Invisible : ChangeType
-
-    object OutOfBlock : ChangeType
+    object Invisible : LLModificationLocality, KaSourceModificationLocality.Invisible
 
     /**
-     * Whitespace modification covers changes in whitespace and comments.
-     *
-     * It *usually* has no effect, but it can affect compiler diagnostics. For example, when we have `if (x) "a"else "b"`, the compiler
-     * produces the error "literals must be surrounded by whitespace" (see KT-82629). Changing it to `if (x) "a" else "b"` fixes the
-     * problem, but for the cached error to disappear, caches that can be affected by PSI-only changes need to be invalidated.
-     *
-     * Whitespace modification is distinct from [in-block modification][InBlock]. Its scope of effect is smaller than that of in-block
-     * modification because the underlying FIR is not affected by whitespace modification. Hence, this is a special case that only affects
-     * the PSI and thereby only PSI-based compiler checkers.
-     *
-     * Whitespace modification can occur in any location. Even if it occurs outside a declaration, whitespace modification only affects its
-     * containing declaration or the file itself, not the whole module.
+     * @see KaSourceModificationLocality.Whitespace
      */
     class Whitespace(
         override val affectedElement: KtElement,
         override val project: Project,
-    ) : Deferrable()
+    ) : Deferrable(), KaSourceModificationLocality.Whitespace
 
     /**
-     * In-block modification is a source code modification that doesn't affect the state of other non-local declarations.
-     *
-     * #### Example 1
-     *
-     * ```
-     * val x: Int = 10<caret>
-     * val z = x
-     * ```
-     *
-     * If we change `10` to `"str"`, it would not change the type of `z`, so it is an **in-block-modification**.
-     *
-     * #### Example 2
-     *
-     * ```
-     * val x = 10<caret>
-     * val z = x
-     * ```
-     *
-     * If we change the initializer of `x` to `"str"`, as in the first example,
-     * the return type of `x` will become `String` instead of the initial `Int`.
-     * This will change the return type of `z` as it does not have an explicit type.
-     * So, it is an **out-of-block modification**.
-     *
-     * @property affectedElement The non-local declaration where the in-block modification occurs.
+     * @see KaSourceModificationLocality.InBlock
      */
     class InBlock(
         override val affectedElement: KtAnnotated,
         override val project: Project,
-    ) : Deferrable()
+    ) : Deferrable(), KaSourceModificationLocality.InBlock
+
+    /**
+     * @see KaSourceModificationLocality.OutOfBlock
+     */
+    object OutOfBlock : LLModificationLocality, KaSourceModificationLocality.OutOfBlock
 }
 
 /**
- * The purpose of this property as user data is to avoid FIR building in case the [KtAnnotated]
- * doesn't have an associated FIR with body.
+ * On in-block modification, we only have to invalidate a FIR body if it exists. If the corresponding FIR element doesn't exist or is in an
+ * earlier phase, there is nothing to invalidate.
+ *
+ * [hasFirBody] tracks whether a FIR body exists with user data on the PSI element. This allows us to avoid FIR building to perform this
+ * check.
  *
  * [KtProperty] is used as an anchor for [KtPropertyAccessor]s to avoid extra memory consumption.
  */
@@ -568,3 +560,20 @@ private fun KtNamedFunction.isReanalyzableContainer(): Boolean = hasBlockBody() 
 private fun KtPropertyAccessor.isReanalyzableContainer(): Boolean = isSetter || hasBlockBody() || property.typeReference != null
 
 private fun KtProperty.isReanalyzableContainer(): Boolean = typeReference != null && !hasDelegateExpressionOrInitializer()
+
+/**
+ * Detects the modification locality of [element] and handles the corresponding cache invalidation.
+ *
+ * This is a convenience function that combines [LLFirDeclarationModificationService.detectLocality] and
+ * [LLFirDeclarationModificationService.handleInvalidation].
+ *
+ * The function must be called from a write action.
+ *
+ * @see LLFirDeclarationModificationService.detectLocality
+ * @see LLFirDeclarationModificationService.handleInvalidation
+ */
+@LLFirInternals
+fun LLFirDeclarationModificationService.handleElementModification(element: PsiElement, modificationType: KaElementModificationType) {
+    val modificationLocality = detectLocality(element, modificationType)
+    handleInvalidation(element, modificationLocality)
+}

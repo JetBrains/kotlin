@@ -44,39 +44,6 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  * Only [KotlinModuleStateModificationEvent] guarantees that the event is published before the module is affected. This allows subscribers
  * to access the module's properties and dependencies to invalidate or update caches.
  *
- * ### Out-of-block modification (OOBM)
- *
- * Out-of-block modification is a source code modification which may affect the state of other non-local declarations.
- *
- * #### Example 1
- *
- * ```
- * val x = 10<caret>
- * val z = x
- * ```
- *
- * If we change the initializer of `x` to `"str"` the return type of `x` will become `String` instead of the initial `Int`. This will
- * change the return type of `z` as it does not have an explicit type. So, it is an **out-of-block modification**.
- *
- * #### Example 2
- *
- * ```
- * val x: Int = 10<caret>
- * val z = x
- * ```
- *
- * If we change `10` to `"str"` as in the first example, it would not change the type of `z`, so it is not an **out-of-block-modification**.
- *
- * #### Examples of out-of-block modifications
- *
- *  - Modifying the body of a non-local declaration which doesn't have an explicit return type specified
- *  - Changing the package of a file
- *  - Adding a new declaration
- *  - Moving a declaration to another package
- *
- * Generally, all modifications which happen outside the body of a callable declaration (functions, accessors, or properties) with an
- * explicit type are considered **out-of-block**.
- *
  * ### Implementation Notes
  *
  * Analysis API platforms need to take care of publishing modification events via the [analysisMessageBus]. In general, if a platform works
@@ -87,6 +54,8 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  * Source code modification should always be handled with [KaSourceModificationService]. It publishes out-of-block modification events if
  * it detects an out-of-block change, which makes modification handling much easier. But it also invalidates local caches on local changes,
  * which currently cannot be accomplished by modification events with the same level of granularity.
+ *
+ * @see KaSourceModificationLocality
  */
 public sealed interface KotlinModificationEvent {
     public companion object {

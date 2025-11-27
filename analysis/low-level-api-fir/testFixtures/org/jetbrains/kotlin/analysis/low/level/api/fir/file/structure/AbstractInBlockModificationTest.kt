@@ -165,7 +165,7 @@ private fun LLFirDeclarationModificationService.modifyElement(element: PsiElemen
             }
         )
 
-        elementModified(element, modificationType = KaElementModificationType.Unknown)
+        handleElementModification(element, KaElementModificationType.Unknown)
     } finally {
         Disposer.dispose(disposable)
     }
