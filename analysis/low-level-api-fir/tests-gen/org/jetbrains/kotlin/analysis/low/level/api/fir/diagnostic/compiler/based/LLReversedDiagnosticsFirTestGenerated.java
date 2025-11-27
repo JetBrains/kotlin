@@ -825,6 +825,24 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Test
+    @TestMetadata("uninferredTypeParamInArgumentLambda.kt")
+    public void testUninferredTypeParamInArgumentLambda() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/uninferredTypeParamInArgumentLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("uninferredTypeParamInLambdaInPCLA.kt")
+    public void testUninferredTypeParamInLambdaInPCLA() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/uninferredTypeParamInLambdaInPCLA.kt");
+    }
+
+    @Test
+    @TestMetadata("uninferredTypeParamInTopLevelLambda.kt")
+    public void testUninferredTypeParamInTopLevelLambda() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/uninferredTypeParamInTopLevelLambda.kt");
+    }
+
+    @Test
     @TestMetadata("unitTypeFromOtherModule.kt")
     public void testUnitTypeFromOtherModule() {
       runTest("compiler/fir/analysis-tests/testData/resolve/unitTypeFromOtherModule.kt");
