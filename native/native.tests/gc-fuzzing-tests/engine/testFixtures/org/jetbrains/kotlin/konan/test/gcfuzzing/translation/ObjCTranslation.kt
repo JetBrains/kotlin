@@ -27,6 +27,7 @@ class ObjCConfig(
     val memoryPressureCheckInterval: Duration,
     val basename: String,
     val softTimeout: Duration,
+    val hardTimeout: Duration,
 )
 
 fun Program.produceObjC(config: ObjCConfig): ObjCOutput {
@@ -193,6 +194,11 @@ private class ObjCTranslationContext(
             |        NSLog(@"Soft timeout exceeded. Requesting termination.");
             |        terminationRequest = true;
             |        ${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass}.terminationRequest = true;
+            |    }];
+            |    [NSThread detachNewThreadWithBlock:^{
+            |        [NSThread sleepForTimeInterval:${config.hardTimeout.toDouble(DurationUnit.SECONDS)}];
+            |        NSLog(@"Hard timeout exceeded. Terminating forcefully.");
+            |        abort();
             |    }];
             |}
             |

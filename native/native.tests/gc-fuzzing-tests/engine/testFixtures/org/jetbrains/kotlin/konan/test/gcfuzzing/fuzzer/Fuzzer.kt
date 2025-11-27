@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Config
 import kotlin.random.*
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 fun buildProgram(programId: ProgramId): Program = when (programId) {
     is ProgramId.Initial -> generate(programId.seed)
@@ -29,13 +30,15 @@ fun AbstractNativeSimpleTest.execute(id: ProgramId) {
             memoryPressureHazardZoneBytes = Config.DEFAULT.memoryPressureHazardZoneBytes,
             memoryPressureCheckInterval = Config.DEFAULT.memoryPressureCheckInterval,
             softTimeout = System.getProperty("gcfuzzing.softTimeout")?.let { Duration.parse(it) } ?: Config.DEFAULT.softTimeout,
+            hardTimeout = testRunSettings.get<Timeouts>().executionTimeout,
         )
     )
     output.save(dslGeneratedDir)
     runDSL(
         name,
         output,
-        testRunSettings.get<Timeouts>().executionTimeout
+        // Give the test just one more minute to abort by internal hardTimeout and write minidump.
+        testRunSettings.get<Timeouts>().executionTimeout + 1.minutes
     )
 }
 
