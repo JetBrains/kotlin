@@ -100,7 +100,6 @@ class SetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     isFromSource = true
                 }
 
-                isStatic = false
                 isFromSource = true
             }
             setterName to function

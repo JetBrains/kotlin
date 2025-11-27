@@ -100,7 +100,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     coneType = classSymbol.classId.defaultType(functionTypeParameterToJavaTypeParameter.keys.toList())
                 }
 
-                isStatic = true
                 isFromSource = true
             }
         }

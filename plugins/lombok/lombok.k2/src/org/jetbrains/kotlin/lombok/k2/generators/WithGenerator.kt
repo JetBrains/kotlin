@@ -80,7 +80,6 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
                     isFromSource = true
                 }
 
-                isStatic = false
                 isFromSource = true
             }
             withName to function

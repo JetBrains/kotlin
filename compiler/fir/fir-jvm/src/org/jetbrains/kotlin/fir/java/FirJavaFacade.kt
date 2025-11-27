@@ -596,7 +596,6 @@ private fun convertJavaMethodToFir(
         isFromSource = javaMethod.isFromSource
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
-        isStatic = javaMethod.isStatic
         javaMethod.typeParameters.mapTo(typeParameters) { it.toFirTypeParameter(methodSymbol, moduleData) }
         for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
             valueParameters += valueParameter.toFirValueParameter(session, methodSymbol, moduleData, index)

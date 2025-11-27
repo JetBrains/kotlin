@@ -74,7 +74,6 @@ class GetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 symbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, getterName))
                 val visibility = getterInfo.visibility.toVisibility()
                 status = FirResolvedDeclarationStatusImpl(visibility, Modality.OPEN, visibility.toEffectiveVisibility(classSymbol))
-                isStatic = false
                 isFromSource = true
             }
             getterName to function
