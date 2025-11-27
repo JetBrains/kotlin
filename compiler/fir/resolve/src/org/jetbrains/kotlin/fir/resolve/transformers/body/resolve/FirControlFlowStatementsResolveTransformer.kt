@@ -234,16 +234,18 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         )
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
 
+        val resolutionModeForRhs = withExpectedType(
+            data.expectedTypeUnlessFromEquality,
+            lastStatementInBlock = (data as? ResolutionMode.WithExpectedType)?.lastStatementInBlock == true
+        )
         elvisExpression.transformRhs(
             transformer,
-            withExpectedType(
-                data.expectedType,
-                lastStatementInBlock = (data as? ResolutionMode.WithExpectedType)?.lastStatementInBlock == true
-            )
+            resolutionModeForRhs
         )
 
         val result = callCompleter.completeCall(
-            syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext, data), data
+            syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext, data),
+            if (data is ResolutionMode.WithExpectedType) resolutionModeForRhs else data
         )
 
         var isLhsNotNull = false
@@ -300,7 +302,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     private fun computeResolutionModeForElvisLHS(
         data: ResolutionMode,
     ): ResolutionMode {
-        val expectedType = data.expectedType
+        val expectedType = data.expectedTypeUnlessFromEquality
         val lastStatementInBlock = (data as? ResolutionMode.WithExpectedType)?.lastStatementInBlock == true
 
         val isObsoleteCompilerMode =
