@@ -26,11 +26,11 @@ abstract class AnnotationDeserializerWithProtocol(
     override fun inheritAnnotationInfo(parent: AnnotationDeserializer) {}
 
     override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotation> {
-        return classProto.loadAnnotationsFromProtocol(session, protocol.classAnnotation, classProto.flags, nameResolver)
+        return classProto.loadAnnotationsFromProtocol(session, protocol.classAnnotation, nameResolver)
     }
 
     override fun loadTypeAliasAnnotations(aliasProto: ProtoBuf.TypeAlias, nameResolver: NameResolver): List<FirAnnotation> {
-        return loadAnnotationsFromMetadata(session, aliasProto.flags, aliasProto.annotationList, nameResolver)
+        return loadAnnotationsFromMetadata(session, aliasProto.annotationList, nameResolver)
     }
 
     override fun loadFunctionAnnotations(
@@ -39,7 +39,7 @@ abstract class AnnotationDeserializerWithProtocol(
         nameResolver: NameResolver,
         typeTable: TypeTable
     ): List<FirAnnotation> {
-        return functionProto.loadAnnotationsFromProtocol(session, protocol.functionAnnotation, functionProto.flags, nameResolver)
+        return functionProto.loadAnnotationsFromProtocol(session, protocol.functionAnnotation, nameResolver)
     }
 
     override fun loadPropertyAnnotations(
@@ -50,8 +50,7 @@ abstract class AnnotationDeserializerWithProtocol(
         typeTable: TypeTable
     ): List<FirAnnotation> {
         return propertyProto.loadAnnotationsFromProtocol(
-            session, protocol.propertyAnnotation, propertyProto.flags, nameResolver,
-            AnnotationUseSiteTarget.PROPERTY
+            session, protocol.propertyAnnotation, nameResolver, AnnotationUseSiteTarget.PROPERTY
         )
     }
 
@@ -62,8 +61,7 @@ abstract class AnnotationDeserializerWithProtocol(
         typeTable: TypeTable,
     ): List<FirAnnotation> {
         return propertyProto.loadAnnotationsFromProtocol(
-            session, protocol.propertyBackingFieldAnnotation, propertyProto.flags, nameResolver,
-            AnnotationUseSiteTarget.FIELD
+            session, protocol.propertyBackingFieldAnnotation, nameResolver, AnnotationUseSiteTarget.FIELD
         )
     }
 
@@ -74,8 +72,7 @@ abstract class AnnotationDeserializerWithProtocol(
         typeTable: TypeTable,
     ): List<FirAnnotation> {
         return propertyProto.loadAnnotationsFromProtocol(
-            session, protocol.propertyDelegatedFieldAnnotation, propertyProto.flags, nameResolver,
-            AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+            session, protocol.propertyDelegatedFieldAnnotation, nameResolver, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
         )
     }
 
@@ -87,8 +84,7 @@ abstract class AnnotationDeserializerWithProtocol(
         getterFlags: Int,
     ): List<FirAnnotation> {
         return propertyProto.loadAnnotationsFromProtocol(
-            session, protocol.propertyGetterAnnotation, getterFlags, nameResolver,
-            AnnotationUseSiteTarget.PROPERTY_GETTER
+            session, protocol.propertyGetterAnnotation, nameResolver, AnnotationUseSiteTarget.PROPERTY_GETTER
         )
     }
 
@@ -100,8 +96,7 @@ abstract class AnnotationDeserializerWithProtocol(
         setterFlags: Int
     ): List<FirAnnotation> {
         return propertyProto.loadAnnotationsFromProtocol(
-            session, protocol.propertySetterAnnotation, setterFlags, nameResolver,
-            AnnotationUseSiteTarget.PROPERTY_SETTER
+            session, protocol.propertySetterAnnotation, nameResolver, AnnotationUseSiteTarget.PROPERTY_SETTER
         )
     }
 
@@ -111,7 +106,7 @@ abstract class AnnotationDeserializerWithProtocol(
         nameResolver: NameResolver,
         typeTable: TypeTable
     ): List<FirAnnotation> {
-        return constructorProto.loadAnnotationsFromProtocol(session, protocol.constructorAnnotation, constructorProto.flags, nameResolver)
+        return constructorProto.loadAnnotationsFromProtocol(session, protocol.constructorAnnotation, nameResolver)
     }
 
     override fun loadValueParameterAnnotations(
@@ -124,12 +119,7 @@ abstract class AnnotationDeserializerWithProtocol(
         kind: CallableKind,
         parameterIndex: Int
     ): List<FirAnnotation> {
-        return valueParameterProto.loadAnnotationsFromProtocol(
-            session,
-            protocol.parameterAnnotation,
-            valueParameterProto.flags,
-            nameResolver
-        )
+        return valueParameterProto.loadAnnotationsFromProtocol(session, protocol.parameterAnnotation, nameResolver)
     }
 
     override fun loadEnumEntryAnnotations(
@@ -137,7 +127,7 @@ abstract class AnnotationDeserializerWithProtocol(
         enumEntryProto: ProtoBuf.EnumEntry,
         nameResolver: NameResolver,
     ): List<FirAnnotation> {
-        return enumEntryProto.loadAnnotationsFromProtocol(session, protocol.enumEntryAnnotation, null, nameResolver)
+        return enumEntryProto.loadAnnotationsFromProtocol(session, protocol.enumEntryAnnotation, nameResolver)
     }
 
     override fun loadExtensionReceiverParameterAnnotations(
@@ -149,10 +139,10 @@ abstract class AnnotationDeserializerWithProtocol(
     ): List<FirAnnotation> {
         return when (callableProto) {
             is ProtoBuf.Property -> callableProto.loadAnnotationsFromProtocol(
-                session, protocol.propertyExtensionReceiverAnnotation, callableProto.flags, nameResolver,
+                session, protocol.propertyExtensionReceiverAnnotation, nameResolver,
             )
             is ProtoBuf.Function -> callableProto.loadAnnotationsFromProtocol(
-                session, protocol.functionExtensionReceiverAnnotation, callableProto.flags, nameResolver,
+                session, protocol.functionExtensionReceiverAnnotation, nameResolver,
             )
             else -> emptyList()
         }
@@ -169,10 +159,10 @@ abstract class AnnotationDeserializerWithProtocol(
     }
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> {
-        return typeProto.loadAnnotationsFromProtocol(session, protocol.typeAnnotation, null, nameResolver)
+        return typeProto.loadAnnotationsFromProtocol(session, protocol.typeAnnotation, nameResolver)
     }
 
     override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> {
-        return typeParameterProto.loadAnnotationsFromProtocol(session, protocol.typeParameterAnnotation, null, nameResolver)
+        return typeParameterProto.loadAnnotationsFromProtocol(session, protocol.typeParameterAnnotation, nameResolver)
     }
 }

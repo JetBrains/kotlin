@@ -34,14 +34,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  */
 fun loadAnnotationsFromMetadataGuarded(
     session: FirSession,
-    flags: Int?,
     annotations: List<ProtoBuf.Annotation>,
     nameResolver: NameResolver,
     languageFeature: LanguageFeature,
     useSiteTarget: AnnotationUseSiteTarget? = null,
 ): List<FirAnnotation>? =
     runIf(session.languageVersionSettings.supportsFeature(languageFeature)) {
-        loadAnnotationsFromMetadataIfNotEmpty(session, flags, annotations, nameResolver, useSiteTarget)
+        loadAnnotationsFromMetadataIfNotEmpty(session, annotations, nameResolver, useSiteTarget)
     }
 
 /**
@@ -52,41 +51,32 @@ fun loadAnnotationsFromMetadataGuarded(
  */
 fun loadAnnotationsFromMetadataIfNotEmpty(
     session: FirSession,
-    flags: Int?,
     annotations: List<ProtoBuf.Annotation>,
     nameResolver: NameResolver,
     useSiteTarget: AnnotationUseSiteTarget? = null,
 ): List<FirAnnotation>? =
     annotations.ifNotEmpty {
-        loadAnnotationsFromMetadata(session, flags, annotations, nameResolver, useSiteTarget)
+        loadAnnotationsFromMetadata(session, annotations, nameResolver, useSiteTarget)
     }
 
 fun loadAnnotationsFromMetadata(
     session: FirSession,
-    flags: Int?,
     annotations: List<ProtoBuf.Annotation>,
     nameResolver: NameResolver,
     useSiteTarget: AnnotationUseSiteTarget? = null,
 ): List<FirAnnotation> =
-    if (isAnnotationsFlagNotSet(flags))
-        emptyList()
-    else
-        annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
+    annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
 
 fun <T : ExtendableMessage<T>> T.loadAnnotationsFromProtocol(
     session: FirSession,
     extension: GeneratedMessageLite.GeneratedExtension<T, List<ProtoBuf.Annotation>>?,
-    flags: Int?,
     nameResolver: NameResolver,
     useSiteTarget: AnnotationUseSiteTarget? = null
 ): List<FirAnnotation> {
-    if (extension == null || isAnnotationsFlagNotSet(flags)) return emptyList()
+    if (extension == null) return emptyList()
     val annotations = getExtension(extension)
     return annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
 }
-
-private fun isAnnotationsFlagNotSet(flags: Int?): Boolean =
-    flags != null && !Flags.HAS_ANNOTATIONS.get(flags)
 
 private fun deserializeAnnotation(
     session: FirSession,
