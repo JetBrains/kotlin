@@ -18,19 +18,14 @@ internal fun compileAndIndex(
         IncludeInfo(it.absolutePath, integrationModuleName)
     }
 
-    val compilation = compilation(
-        includeInfos,
-        "-I${files.directory}",
-        "-I${getClangResourceDir()}",
-        *args
-    )
+    val compilationArgs = listOf("-I${files.directory}", "-I${getClangResourceDir()}", *args)
 
     val nativeLibrary = NativeLibrary(
-        includes = compilation.includes,
-        additionalPreambleLines = compilation.additionalPreambleLines,
-        compilerArgs = compilation.compilerArgs,
+        includes = includeInfos,
+        additionalPreambleLines = emptyList(),
+        compilerArgs = compilationArgs,
         headerToIdMapper = HeaderToIdMapper(sysRoot = ""),
-        language = compilation.language,
+        language = Language.OBJECTIVE_C,
         excludeSystemLibs = false,
         headerExclusionPolicy = HeaderExclusionPolicyImpl(),
         headerFilter = NativeLibraryHeaderFilter.Predefined(
@@ -46,12 +41,5 @@ internal fun compileAndIndex(
 private class HeaderExclusionPolicyImpl : HeaderExclusionPolicy {
     override fun excludeAll(headerId: HeaderId): Boolean = false
 }
-
-private fun compilation(includes: List<IncludeInfo>, vararg args: String) = CompilationImpl(
-    includes = includes,
-    additionalPreambleLines = emptyList(),
-    compilerArgs = listOf(*args),
-    language = Language.OBJECTIVE_C
-)
 
 internal const val integrationModuleName = "Foo"
