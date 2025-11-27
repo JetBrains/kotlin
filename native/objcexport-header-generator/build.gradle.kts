@@ -71,14 +71,81 @@ projectTests {
     objCExportHeaderGeneratorTestTask("testK1", testDisplayNameTag = "K1") {
         classpath += k1TestRuntimeClasspath
         exclude("**/ObjCExportIntegrationTest.class")
-        outputs.dir(layout.buildDirectory.dir(integrationTestOutputsDir))
+        exclude("**/GenerateObjCExportIntegrationTestData.class")
     }
 
     objCExportHeaderGeneratorTestTask("testAnalysisApi", testDisplayNameTag = "AA") {
         classpath += analysisApiRuntimeClasspath
         exclude("**/ObjCExportIntegrationTest.class")
-        outputs.dir(layout.buildDirectory.dir(integrationTestOutputsDir))
+        exclude("**/GenerateObjCExportIntegrationTestData.class")
     }
+}
+
+// Dedicated tasks for generating integration test data
+projectTests {
+    objCExportHeaderGeneratorTestTask("generateK1IntegrationData", testDisplayNameTag = "K1") {
+        classpath += k1TestRuntimeClasspath
+
+        filter {
+            includeTestsMatching("org.jetbrains.kotlin.backend.konan.tests.integration.GenerateObjCExportIntegrationTestData")
+        }
+
+        val outputDir = layout.buildDirectory.dir("integration-artifacts/k1")
+        outputs.dir(outputDir)
+            .withPropertyName("k1IntegrationData")
+
+        // Configure system property to write to k1-specific directory
+        val argProvider = objects.newInstance<IntegrationTestOutputDirArgumentProvider>()
+        argProvider.propertyName = integrationTestOutputsDir
+        argProvider.outputDir.set(outputDir)
+        jvmArgumentProviders.add(argProvider)
+    }
+
+    objCExportHeaderGeneratorTestTask("generateK2IntegrationData", testDisplayNameTag = "AA") {
+        classpath += analysisApiRuntimeClasspath
+
+        filter {
+            includeTestsMatching("org.jetbrains.kotlin.backend.konan.tests.integration.GenerateObjCExportIntegrationTestData")
+        }
+
+        val outputDir = layout.buildDirectory.dir("integration-artifacts/k2")
+        outputs.dir(outputDir)
+            .withPropertyName("k2IntegrationData")
+
+        // Configure system property to write to k2-specific directory
+        val argProvider = objects.newInstance<IntegrationTestOutputDirArgumentProvider>()
+        argProvider.propertyName = integrationTestOutputsDir
+        argProvider.outputDir.set(outputDir)
+        jvmArgumentProviders.add(argProvider)
+    }
+}
+
+// Sync task to merge K1 and K2 outputs into a single location
+val prepareIntegrationTestData by tasks.registering(Sync::class) {
+    from(tasks.named("generateK1IntegrationData").map {
+        layout.buildDirectory.dir("integration-artifacts/k1")
+    })
+    from(tasks.named("generateK2IntegrationData").map {
+        layout.buildDirectory.dir("integration-artifacts/k2")
+    })
+
+    into(layout.buildDirectory.dir("integration-data"))
+}
+
+// Publish the merged data as an artifact
+val integrationDataElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+    }
+}
+
+artifacts {
+    add(integrationDataElements.name, prepareIntegrationTestData.map {
+        it.destinationDir
+    })
 }
 
 tasks.check.configure {
@@ -108,27 +175,34 @@ open class IntegrationTestOutputDirArgumentProvider @Inject constructor(
 }
 
 tasks.withType<Test>().configureEach {
-    val provider = objects.newInstance<IntegrationTestOutputDirArgumentProvider>()
-    provider.propertyName = integrationTestOutputsDir
-    provider.outputDir.set(layout.buildDirectory.dir(integrationTestOutputsDir))
-    jvmArgumentProviders.add(provider)
+    // Skip tasks that have custom system property configuration
+    if (name !in setOf("testIntegration", "generateK1IntegrationData", "generateK2IntegrationData")) {
+        val provider = objects.newInstance<IntegrationTestOutputDirArgumentProvider>()
+        provider.propertyName = integrationTestOutputsDir
+        provider.outputDir.set(layout.buildDirectory.dir(integrationTestOutputsDir))
+        jvmArgumentProviders.add(provider)
+    }
 }
 
 projectTests {
-    val testK1Task = tasks.named<Test>("testK1")
-    val testAnalysisApiTask = tasks.named<Test>("testAnalysisApi")
-
     objCExportHeaderGeneratorTestTask("testIntegration", testDisplayNameTag = "testIntegration") {
         filter {
             includeTestsMatching("org.jetbrains.kotlin.backend.konan.tests.integration.ObjCExportIntegrationTest")
         }
 
-        inputs.files(testK1Task.map { it.outputs.files })
-            .withPropertyName("testK1Outputs")
+        // Depend on the prepareIntegrationTestData task
+        dependsOn(prepareIntegrationTestData)
+
+        val integrationDataDir = layout.buildDirectory.dir("integration-data")
+        inputs.files(integrationDataDir)
+            .withPropertyName("integrationData")
             .withPathSensitivity(PathSensitivity.RELATIVE)
-        inputs.files(testAnalysisApiTask.map { it.outputs.files })
-            .withPropertyName("testAnalysisApiOutputs")
-            .withPathSensitivity(PathSensitivity.RELATIVE)
+
+        // Use a custom argument provider for the system property
+        val argProvider = objects.newInstance<IntegrationTestOutputDirArgumentProvider>()
+        argProvider.propertyName = integrationTestOutputsDir
+        argProvider.outputDir.set(integrationDataDir)
+        jvmArgumentProviders.add(argProvider)
     }
 }
 

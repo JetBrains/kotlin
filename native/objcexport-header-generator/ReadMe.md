@@ -152,10 +152,21 @@ To verify structural differences:
 
 ### To run/debug integration test
 
-1. `./gradlew :native:objcexport-header-generator:check --continue` to generate test data (can also be done from IDE by calling K1 and AA
-   test groups
-   on [GenerateObjCExportIntegrationTestData](test/org/jetbrains/kotlin/backend/konan/tests/integration/GenerateObjCExportIntegrationTestData.kt))
-2. Run test [ObjCExportIntegrationTest](test/org/jetbrains/kotlin/backend/konan/tests/integration/ObjCExportIntegrationTest.kt) in IDE in
-   debug mode
-3. Instance of [IntegrationTestReport](test/org/jetbrains/kotlin/backend/konan/tests/integration/utils/IntegrationTestReport.kt) is going to
-   be created and can be inspected in debugger. 
+1. Run test [ObjCExportIntegrationTest](test/org/jetbrains/kotlin/backend/konan/tests/integration/ObjCExportIntegrationTest.kt) in IDE in debug mode
+2. Instance of [IntegrationTestReport](test/org/jetbrains/kotlin/backend/konan/tests/integration/utils/IntegrationTestReport.kt) is going to be created and can be inspected in debugger. 
+
+### Gradle integration test setup
+
+Complete `testIntegration` task flow:
+```
+testIntegration
+├─ prepareIntegrationTestData (Sync task)
+│   ├─ generateK1IntegrationData (Test - only GenerateObjCExportIntegrationTestData with K1)
+│   └─ generateK2IntegrationData (Test - only GenerateObjCExportIntegrationTestData with K2)
+└─ Uses IntegrationTestOutputDirArgumentProvider to set output system property
+```
+
+Key Files and Locations:
+- K1 outputs: `build/integration-artifacts/k1/integrationTestFiles/`
+- K2 outputs: `build/integration-artifacts/k2/integrationTestFiles/`
+- Merged outputs: `build/integration-data/integrationTestFiles/`

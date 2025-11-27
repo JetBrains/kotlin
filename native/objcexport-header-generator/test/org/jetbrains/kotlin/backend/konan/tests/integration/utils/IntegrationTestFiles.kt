@@ -17,10 +17,11 @@ internal object IntegrationTestFiles {
 
     fun getHeaders(headersHandler: (name: String, k1Header: String, k2Header: String) -> Unit) {
         val generatorTestName = GenerateObjCExportIntegrationTestData::class.simpleName
-        if (integrationDir.listFiles().isEmpty()) {
+        val integrationFiles = integrationDir.listFiles()
+        if (integrationFiles?.isEmpty() == true) {
             error("No integration test files found in ${integrationDir.absolutePath}. Run `$generatorTestName`")
         }
-        integrationDir.listFiles()?.forEach { file ->
+        integrationFiles?.forEach { file ->
             val libName = file.name
             headersHandler(
                 libName,
