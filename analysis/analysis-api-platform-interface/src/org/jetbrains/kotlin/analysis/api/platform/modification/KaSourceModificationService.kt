@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 /**
  * [KaSourceModificationService] is an **engine service** which handles cache invalidation after source code changes:
  *
- * - For local changes (in-block modification), the service invalidates local caches for e.g. classes. This level of granularity cannot be
- *   reached by any module-level event (see [KotlinModificationEvent]), because the specific entity to invalidate needs to be discovered
- *   via the changed [PsiElement].
- * - For non-local changes (out-of-block modification), the service publishes a
- *   module out-of-block [modification event][KotlinModuleOutOfBlockModificationEvent].
+ * - For local changes (in-block modification and whitespace), the service invalidates local caches for, e.g., classes. This level of
+ *   granularity cannot be reached by any module-level event (see [KotlinModificationEvent]), because the specific entity to invalidate
+ *   needs to be discovered via the changed [PsiElement].
+ * - For non-local changes (out-of-block modification), the service publishes a module out-of-block
+ *   [modification event][KotlinModuleOutOfBlockModificationEvent].
  *
- * The service performs change locality detection to classify whether a change to a given [PsiElement] is an in-block or out-of-block
- * modification (or no modification in case of a whitespace/comment change).
+ * The service performs change locality detection to classify a change to a given [PsiElement] in terms of [KaSourceModificationLocality].
  *
  * An element may be submitted to consideration before or after the actual modification is performed, but service implementations don't
  * guarantee that the invalidation behavior is the same for before/after instances of the same modification.
@@ -31,11 +30,11 @@ import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
  */
 public interface KaSourceModificationService : KaEngineService {
     /**
-     * Handles cache invalidation before/after [element] has been modified according to the [modificationType], as described in the KDoc of
-     * [KaSourceModificationService]. The function must be called from a write action.
+     * Classifies the modification of [element] and its [modificationType] in terms of [KaSourceModificationLocality], as described in the
+     * KDoc of [KaSourceModificationService]. The function may be called before and after [element]'s modification.
      *
-     * If [KaElementModificationType.Unknown] is specified, the service must process the change pessimistically, so specifying a narrower
-     * modification type is usually beneficial.
+     * If [KaElementModificationType.Unknown] is specified, the service must classify the modification pessimistically, so specifying a
+     * narrower modification type is usually beneficial.
      *
      * Here are some examples for which [element] to pass:
      *
@@ -48,7 +47,19 @@ public interface KaSourceModificationService : KaEngineService {
      * - If [element] is the parent of an already removed element, [KaElementModificationType.ElementRemoved] should contain the removed
      *   element.
      */
-    public fun handleElementModification(element: PsiElement, modificationType: KaElementModificationType)
+    public fun detectLocality(element: PsiElement, modificationType: KaElementModificationType): KaSourceModificationLocality
+
+    /**
+     * Handles the cache invalidation for [element]'s modification based on the detected [modificationLocality].
+     *
+     * The function must be called from a write action.
+     *
+     * @param modificationLocality The modification locality detected by [detectLocality]. It *must* have been provided by this service. No
+     *  other [KaSourceModificationLocality] should be passed to the function.
+     *
+     * @see detectLocality
+     */
+    public fun handleInvalidation(element: PsiElement, modificationLocality: KaSourceModificationLocality)
 
     /**
      * Returns the farthest ancestor [PsiElement] of [element] which would be affected by an in-block modification to [element], or `null`
@@ -59,4 +70,20 @@ public interface KaSourceModificationService : KaEngineService {
     public companion object {
         public fun getInstance(project: Project): KaSourceModificationService = project.service()
     }
+}
+
+/**
+ * Detects the modification locality of [element] and handles the corresponding cache invalidation.
+ *
+ * This is a convenience function that combines [KaSourceModificationService.detectLocality] and
+ * [KaSourceModificationService.handleInvalidation].
+ *
+ * The function must be called from a write action.
+ *
+ * @see KaSourceModificationService.detectLocality
+ * @see KaSourceModificationService.handleInvalidation
+ */
+public fun KaSourceModificationService.handleElementModification(element: PsiElement, modificationType: KaElementModificationType) {
+    val modificationLocality = detectLocality(element, modificationType)
+    handleInvalidation(element, modificationLocality)
 }

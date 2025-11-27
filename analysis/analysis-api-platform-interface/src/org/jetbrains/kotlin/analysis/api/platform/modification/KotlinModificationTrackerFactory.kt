@@ -47,8 +47,8 @@ public interface KotlinModificationTrackerFactory : KotlinPlatformComponent {
  * Creates a [ModificationTracker] which is incremented every time a Kotlin source file is affected by a modification, in any of the
  * project's source modules.
  *
- * Such a modification can be any out-of-block code or project structure change affecting the analyzed source code. See
- * [KotlinModificationEvent] for a definition of out-of-block modification.
+ * Such a modification can be any [out-of-block][KaSourceModificationLocality.OutOfBlock] code or project structure change affecting the
+ * analyzed source code.
  */
 public fun Project.createProjectWideSourceModificationTracker(): ModificationTracker =
     KotlinModificationTrackerFactory.getInstance(this).createProjectWideSourceModificationTracker()

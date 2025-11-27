@@ -397,14 +397,34 @@ public final class org/jetbrains/kotlin/analysis/api/platform/modification/KaEle
 	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType$Unknown;
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationLocality {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationLocality$InBlock : org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationLocality {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationLocality$Invisible : org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationLocality {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationLocality$OutOfBlock : org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationLocality {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationLocality$Whitespace : org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationLocality {
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationService : org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
 	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationService$Companion;
 	public abstract fun ancestorAffectedByInBlockModification (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
-	public abstract fun handleElementModification (Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType;)V
+	public abstract fun detectLocality (Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType;)Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationLocality;
+	public abstract fun handleInvalidation (Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationLocality;)V
 }
 
 public final class org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationService$Companion {
 	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationService;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationServiceKt {
+	public static final fun handleElementModification (Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaSourceModificationService;Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType;)V
 }
 
 public final class org/jetbrains/kotlin/analysis/api/platform/modification/KotlinCodeFragmentContextModificationEvent : org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent {
