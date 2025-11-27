@@ -16,12 +16,12 @@ fun tst() {
         // expected String, top-level lambda
 
         val returnUnit: String <!INITIALIZER_TYPE_MISMATCH("String; () -> Unit")!>=<!> { }
-        val returnWithOuterTv: String <!INITIALIZER_TYPE_MISMATCH("String; () -> Int")!>=<!> { get() }
+        val returnWithOuterTv: String <!INITIALIZER_TYPE_MISMATCH("String; () -> ??? (Unknown lambda return type)")!>=<!> { get() }
         val returnInt: String <!INITIALIZER_TYPE_MISMATCH("String; () -> Int")!>=<!> { 42 }
-        val returnUnitWithParam: String <!INITIALIZER_TYPE_MISMATCH("String; (??? (Uninferred type c: ConeTypeVariableTypeConstructor(_RP0))) -> Unit")!>=<!> { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>it<!> -> }
-        val returnWithOuterTvWithParam: String <!INITIALIZER_TYPE_MISMATCH("String; (??? (Uninferred type c: ConeTypeVariableTypeConstructor(_RP0))) -> Int")!>=<!> { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>it<!> -> get() }
-        val returnIntWithParam: String <!INITIALIZER_TYPE_MISMATCH("String; (??? (Uninferred type c: ConeTypeVariableTypeConstructor(_RP0))) -> Int")!>=<!> { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>it<!> -> 42 }
-        val returnParam: String <!INITIALIZER_TYPE_MISMATCH("String; (??? (Uninferred type c: ConeTypeVariableTypeConstructor(_RP0))) -> ??? (Unknown type for value parameter it)")!>=<!> { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>it<!> -> it }
+        val returnUnitWithParam: String <!INITIALIZER_TYPE_MISMATCH("String; (??? (Unknown lambda parameter type)) -> Unit")!>=<!> { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>it<!> -> }
+        val returnWithOuterTvWithParam: String <!INITIALIZER_TYPE_MISMATCH("String; (??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type)")!>=<!> { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>it<!> -> get() }
+        val returnIntWithParam: String <!INITIALIZER_TYPE_MISMATCH("String; (??? (Unknown lambda parameter type)) -> Int")!>=<!> { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>it<!> -> 42 }
+        val returnParam: String <!INITIALIZER_TYPE_MISMATCH("String; (??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type)")!>=<!> { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>it<!> -> it }
 
         put(1)
     }

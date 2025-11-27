@@ -39,7 +39,9 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.TypeVariableReplacement
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.calls.removeTypeVariableTypes
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
@@ -58,7 +60,6 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ArrayFqNames
-import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.Variance
@@ -377,11 +378,20 @@ class FirSyntheticCallGenerator(
         when (this) {
             is FirAnonymousFunctionExpression -> {
                 val storage = if (candidate.usedOuterCs) candidate.system.currentStorage() else candidate.system.asReadOnlyStorage()
-                val substitutor = storage.buildCurrentSubstitutor(components.session.typeContext, emptyMap())
-                val substitutedType = substitutor.safeSubstitute(
-                    components.session.typeContext,
-                    argumentTypeMismatchOnWholeExpression.actualType
-                ).asCone()
+                val nonErrorSubstitutionMap = storage.fixedTypeVariables.filterValues { it !is ConeErrorType }
+                val substitutor = components.session.typeContext.typeSubstitutorByTypeConstructor(nonErrorSubstitutionMap)
+
+                val substitutedType = substitutor
+                    .safeSubstitute(
+                        components.session.typeContext,
+                        argumentTypeMismatchOnWholeExpression.actualType,
+                    )
+                    .asCone()
+                    .removeTypeVariableTypes(
+                        components.session.typeContext,
+                        TypeVariableReplacement.ErrorType,
+                        candidate.system.outerTypeVariables,
+                    )
 
                 anonymousFunction.replaceTypeRef(
                     anonymousFunction.typeRef.withReplacedConeType(substitutedType)

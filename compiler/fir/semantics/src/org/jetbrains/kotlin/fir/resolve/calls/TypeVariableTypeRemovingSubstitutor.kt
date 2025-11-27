@@ -12,19 +12,31 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 enum class TypeVariableReplacement {
     TypeParameter, ErrorType,
 }
 
-fun ConeKotlinType.removeTypeVariableTypes(typeContext: ConeTypeContext, replacement: TypeVariableReplacement): ConeKotlinType {
-    val substitutor = TypeVariableTypeRemovingSubstitutor(typeContext, replacement)
+fun ConeKotlinType.removeTypeVariableTypes(
+    typeContext: ConeTypeContext,
+    replacement: TypeVariableReplacement,
+    skippedOuterTypeVariables: Set<TypeConstructorMarker>? = null,
+): ConeKotlinType {
+    val substitutor = TypeVariableTypeRemovingSubstitutor(typeContext, replacement, skippedOuterTypeVariables)
     return substitutor.substituteOrSelf(this)
 }
 
-private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext, private val replacement: TypeVariableReplacement) : AbstractConeSubstitutor(typeContext) {
+private class TypeVariableTypeRemovingSubstitutor(
+    typeContext: ConeTypeContext,
+    private val replacement: TypeVariableReplacement,
+    private val skippedOuterTypeVariables: Set<TypeConstructorMarker>?,
+) : AbstractConeSubstitutor(typeContext) {
+
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? = when (type) {
-        is ConeTypeVariableType -> convertTypeVariableType(type)
+        is ConeTypeVariableType if (skippedOuterTypeVariables?.contains(type.typeConstructor) != true) -> {
+            convertTypeVariableType(type)
+        }
         else -> null
     }
 
