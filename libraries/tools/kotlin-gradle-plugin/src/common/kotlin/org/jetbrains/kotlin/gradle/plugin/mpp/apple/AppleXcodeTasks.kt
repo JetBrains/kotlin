@@ -457,8 +457,8 @@ fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
         pbxObject as Map<String, Any>
         val type = pbxObject.property<String>("isa")
         if (type == "PBXBuildFile") {
-            val packageProductRef = pbxObject.property<String>("productRef")
-            if (packageProductRef in linkageProducts) {
+            val packageProductRef = pbxObject.get("productRef") as? String
+            if (packageProductRef != null && packageProductRef in linkageProducts) {
                 id
             } else null
         } else null
