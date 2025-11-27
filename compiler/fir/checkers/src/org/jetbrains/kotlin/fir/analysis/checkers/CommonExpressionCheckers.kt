@@ -192,6 +192,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker.CallableReference,
         FirTypeArgumentsOfQualifierOfCallableReferenceChecker,
         FirCustomEnumEntriesMigrationReferenceChecker,
+        FirPrivateToThisCallableReferenceChecker,
     )
 
     override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> = setOf(
