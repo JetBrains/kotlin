@@ -30,8 +30,10 @@ abstract class AbstractDeclarationModificationServicePsiResilienceTest : Abstrac
         modifySelectedElement(selectedElement)
 
         // The test passes when `LLFirDeclarationModificationService` throws no exceptions.
-        LLFirDeclarationModificationService.getInstance(ktFile.project)
-            .elementModified(selectedElement, modificationType = KaElementModificationType.Unknown)
+        val declarationModificationService = LLFirDeclarationModificationService.getInstance(ktFile.project)
+        val locality = declarationModificationService.detectLocality(selectedElement, KaElementModificationType.Unknown)
+
+        declarationModificationService.handleInvalidation(selectedElement, locality)
     }
 }
 

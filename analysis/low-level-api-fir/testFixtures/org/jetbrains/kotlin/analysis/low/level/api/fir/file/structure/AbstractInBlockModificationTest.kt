@@ -165,7 +165,8 @@ private fun LLFirDeclarationModificationService.modifyElement(element: PsiElemen
             }
         )
 
-        elementModified(element, modificationType = KaElementModificationType.Unknown)
+        val locality = detectLocality(element, KaElementModificationType.Unknown)
+        handleInvalidation(element, locality)
     } finally {
         Disposer.dispose(disposable)
     }
