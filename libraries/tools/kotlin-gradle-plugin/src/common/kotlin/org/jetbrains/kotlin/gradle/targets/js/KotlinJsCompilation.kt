@@ -72,12 +72,6 @@ open class KotlinJsCompilation @Inject internal constructor(
     val publicPackageJsonConfigurationName
         get() = compilation.disambiguateName("publicPackageJsonConfiguration")
 
-    val wasmBinaryConfigurationName
-        get() = compilation.disambiguateName("wasmBinaryConfiguration")
-
-    val wasmBinaryOutputConfigurationName
-        get() = compilation.disambiguateName("wasmBinaryOutputConfiguration")
-
     override fun getAttributes(): AttributeContainer {
         return compilation.attributes
     }

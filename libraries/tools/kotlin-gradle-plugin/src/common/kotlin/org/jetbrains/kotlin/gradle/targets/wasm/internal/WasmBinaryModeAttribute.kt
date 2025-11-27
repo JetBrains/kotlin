@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 internal object WasmBinaryModeAttribute {
     val attribute: Attribute<String> = Attribute.of("org.jetbrains.kotlin.wasm.binary.mode", String::class.java)
 
+    const val NON_COMPILED = "non-compiled"
+
     const val PRODUCTION = "production"
 
     const val DEVELOPMENT = "development"
