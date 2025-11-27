@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.script.examples.jvm.resolve.maven
 
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.*
@@ -58,7 +59,7 @@ private fun configureMavenDepsOnFir(context: ScriptConfigurationRefinementContex
     val fir = context.collectedData?.get(ScriptCollectedData.fir) ?: return context.compilationConfiguration.asSuccess()
     val annotations = fir.flatMap {
         it.annotations.mapNotNull {
-            it.toAnnotationObjectIfMatches(DependsOn::class.java, Repository::class.java)?.let {
+            (it as? FirAnnotationCall)?.toAnnotationObjectIfMatches(DependsOn::class, Repository::class)?.let {
                 ScriptSourceAnnotation(it, null)
             }
         }
