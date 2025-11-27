@@ -11,12 +11,12 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	false REIFIED
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: kotlin/Long
-     >: kotlin/Int
-     = kotlin/Any?
-    FIXED TO: kotlin/Any?
+     >: ILT: 0
+     = kotlin/Long (inferred during fixation)
+    FIXED TO: kotlin/Long
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED

@@ -1,6 +1,6 @@
 FILE: elvisAndLongIlt.kt
     public final fun fooElvis(x: R|kotlin/Long|, y: R|kotlin/Long?|): R|kotlin/Boolean| {
-        ^fooElvis !=(R|<local>/x|, R|<local>/y| ?: Int(0))
+        ^fooElvis !=(R|<local>/x|, R|<local>/y| ?: Long(0))
     }
     public final fun fooBar(x: R|kotlin/Long|, y: R|kotlin/Long?|): R|kotlin/Boolean| {
         ^fooBar !=(R|<local>/x|, R|/bar|<R|kotlin/Long|>(R|<local>/y|, Long(0)))

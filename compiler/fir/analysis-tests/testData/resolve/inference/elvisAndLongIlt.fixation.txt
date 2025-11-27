@@ -1,8 +1,8 @@
 CHOSEN for fixation: TypeVariable(K) --- READY_FOR_FIXATION_LOWER
      >: kotlin/Long
-     >: kotlin/Int
-     = kotlin/Any?
-    FIXED TO: kotlin/Any?
+     >: ILT: 0
+     = kotlin/Long (inferred during fixation)
+    FIXED TO: kotlin/Long
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_LOWER
      >: kotlin/Long
