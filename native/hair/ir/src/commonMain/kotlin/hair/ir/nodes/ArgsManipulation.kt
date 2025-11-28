@@ -44,10 +44,6 @@ interface ArgsUpdater {
     fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?)
 }
 
-object SimpleArgsUpdater : ArgsUpdater {
-    override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {}
-}
-
 context(argsUpdater: ArgsUpdater)
 fun Node.replaceValueUses(by: Node) {
     // TODO optimize, perhaps introduce abstraction of edge?
@@ -64,24 +60,11 @@ context(argsUpdater: ArgsUpdater)
 private fun Node.updateArg(index: Int, oldValue: Node?, newValue: Node?, update: () -> Unit) {
     if (oldValue == newValue) return
 
-    val oldArgs = args.toList()
+    form.deregister(this)
 
     update()
 
-    if (!registered) return
-    // TODO there is more to do ?
-
-    newValue?.addUse(this)
-    oldValue?.removeUse(this)
-
     argsUpdater.onArgUpdate(this, index, oldValue, newValue)
-
-    // FIXME the node can be normalised already in the onArgUpdate !!!!! :C
-    val replacement = form.ensureUniqueAfterArgsUpdate(this, oldArgs)
-    if (replacement != this) {
-        // FIXME what about control here?
-        this.replaceValueUses(replacement)
-    }
 }
 
 context(argsUpdater: ArgsUpdater)
