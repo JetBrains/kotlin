@@ -1,12 +1,7 @@
 package org.jetbrains.kotlin.konan.util
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.loader.KlibManifestTransformer
 import java.util.*
-
-class KlibNativeManifestTransformer(private val target: KonanTarget) : KlibManifestTransformer {
-    override fun transform(manifestProperties: Properties) = manifestProperties.substituteFor(target)
-}
 
 fun Properties.substituteFor(target: KonanTarget): Properties {
     val tagetSuffix = target.visibleName

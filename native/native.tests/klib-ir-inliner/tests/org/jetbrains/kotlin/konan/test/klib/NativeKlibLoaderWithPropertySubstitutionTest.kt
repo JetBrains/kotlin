@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.konan.library.KlibNativeManifestTransformer
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.KlibNativeManifestTransformer
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.KlibMockDSL.Companion.generateRandomMetadata
 import org.jetbrains.kotlin.library.KlibMockDSL.Companion.generateRandomName

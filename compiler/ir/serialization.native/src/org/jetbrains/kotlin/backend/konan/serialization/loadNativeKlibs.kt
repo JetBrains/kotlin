@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.common.loadFriendLibraries
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.konan.library.KlibNativeManifestTransformer
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.KlibNativeManifestTransformer
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
