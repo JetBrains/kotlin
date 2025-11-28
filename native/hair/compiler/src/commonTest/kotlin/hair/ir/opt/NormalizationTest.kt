@@ -18,11 +18,11 @@ class NormalizationTest : IrTest {
 
     @Test
     fun testConstAdd() = withTestSession {
-
         buildInitialIR {
             val a = 23
             val b = 42
             assertEquals(ConstI(a + b), Add(INT)(ConstI(a), ConstI(b)))
+            ReturnVoid()
         }
     }
 
@@ -45,6 +45,7 @@ class NormalizationTest : IrTest {
                     )
                 )
             )
+            ReturnVoid()
         }
     }
 
