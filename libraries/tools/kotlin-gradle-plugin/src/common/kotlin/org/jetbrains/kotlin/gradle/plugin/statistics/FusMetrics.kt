@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+import org.gradle.api.provider.Provider
 import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.task.TaskFinishEvent
@@ -396,6 +397,16 @@ internal object KotlinCrossCompilationMetrics : FusMetrics {
 internal object KotlinCompilerRefIndexMetrics : FusMetrics {
     internal fun collectMetrics(enabled: Boolean, metricsConsumer: StatisticsValuesConsumer) {
         metricsConsumer.report(BooleanMetrics.ENABLED_COMPILER_REFERENCE_INDEX, enabled)
+    }
+}
+
+internal object KotlinNativeCacheMetrics : FusMetrics {
+    internal fun collectMetrics(project: Project, disabled: Provider<Boolean>) {
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
+            project.addConfigurationMetrics {
+                it.put(BooleanMetrics.KOTLIN_NATIVE_CACHE_DISABLED, disabled.get())
+            }
+        }
     }
 }
 

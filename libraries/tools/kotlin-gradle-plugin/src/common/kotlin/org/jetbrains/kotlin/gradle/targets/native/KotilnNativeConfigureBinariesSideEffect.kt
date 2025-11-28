@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinNativeCacheMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeLinkTaskMetrics
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.chooseKotlinNativeProvider
@@ -150,6 +151,7 @@ private fun Project.createLinkTask(binary: NativeBinary) {
     }
 
     NativeLinkTaskMetrics.collectMetrics(this)
+    KotlinNativeCacheMetrics.collectMetrics(this, linkTask.flatMap { it.disableCache })
 
     if (binary !is TestExecutable) {
         tasks.named(binary.compilation.target.artifactsTaskName).dependsOn(linkTask)
