@@ -7,9 +7,14 @@ package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.substituteFor
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibManifestTransformer
 import java.util.Properties
 
+/**
+ * An extension of [KlibLoader] specifically for Kotlin/Native libraries that allows doing the proper substitution of properties
+ * in the manifest based on the specified [target].
+ */
 class KlibNativeManifestTransformer(private val target: KonanTarget) : KlibManifestTransformer {
     override fun transform(manifestProperties: Properties) = manifestProperties.substituteFor(target)
 }
