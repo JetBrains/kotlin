@@ -97,6 +97,19 @@ internal class KaFe10SymbolProvider(
             }
         }
 
+    override val KtBackingField.symbol: KaBackingFieldSymbol
+        get() = withPsiValidityAssertion {
+            val owningProperty = parent as? KtProperty ?: errorWithAttachment("Orphaned backing field") {
+                withPsiEntry("psi", this@symbol)
+            }
+
+            KaFe10PsiBackingFieldSymbol(
+                this,
+                analysisContext,
+                owningProperty.symbol as KaKotlinPropertySymbol
+            )
+        }
+
     override val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
         get() = withPsiValidityAssertion { KaFe10PsiAnonymousObjectSymbol(objectDeclaration, analysisContext) }
 

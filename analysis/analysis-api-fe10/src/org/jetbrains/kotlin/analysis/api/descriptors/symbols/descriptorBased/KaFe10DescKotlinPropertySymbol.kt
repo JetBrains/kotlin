@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -116,8 +117,21 @@ internal class KaFe10DescKotlinPropertySymbol(
 
     override val backingFieldSymbol: KaBackingFieldSymbol?
         get() = withValidityAssertion {
-            if (descriptor.containingDeclaration is FunctionDescriptor) null
-            else KaFe10DescDefaultBackingFieldSymbol(descriptor.backingField, this, analysisContext)
+            if (descriptor.containingDeclaration is FunctionDescriptor) {
+                return null
+            }
+
+            val psi = this.psi
+            if (psi is KtProperty && !psi.containingKtFile.isCompiled) {
+                val fieldDeclaration = psi.fieldDeclaration
+                if (fieldDeclaration != null) {
+                    // Explicit backing fields aren't properly supported in descriptors.
+                    // However, we can return a slightly more complete PSI implementation where possible.
+                    return KaFe10PsiBackingFieldSymbol(fieldDeclaration, analysisContext, this)
+                }
+            }
+
+            return KaFe10DescDefaultBackingFieldSymbol(descriptor.backingField, this, analysisContext)
         }
 
     override val returnType: KaType
