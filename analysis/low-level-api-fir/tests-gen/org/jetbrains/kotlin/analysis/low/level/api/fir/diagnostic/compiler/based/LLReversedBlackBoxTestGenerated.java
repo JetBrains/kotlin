@@ -10186,6 +10186,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("privateSuperTypeDefaults2.kt")
+    public void testPrivateSuperTypeDefaults2() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/privateSuperTypeDefaults2.kt");
+    }
+
+    @Test
     @TestMetadata("propertyReference.kt")
     public void testPropertyReference() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/propertyReference.kt");
