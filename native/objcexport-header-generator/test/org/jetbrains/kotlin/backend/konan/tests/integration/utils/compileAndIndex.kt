@@ -11,20 +11,26 @@ import java.io.File
 internal fun compileAndIndex(
     headers: List<File>,
     files: IntegrationTempFiles,
-    vararg args: String,
+    sysRoot: String,
+    frameworkPath: String
 ): IndexerResult {
 
     val includeInfos = headers.map {
         IncludeInfo(it.absolutePath, integrationModuleName)
     }
 
-    val compilationArgs = listOf("-I${files.directory}", "-I${getClangResourceDir()}", *args)
+    val args = listOf(
+        "-I${files.directory}",
+        "-I${getClangResourceDir()}",
+        "-isysroot", sysRoot,
+        "-F", frameworkPath
+    )
 
     val nativeLibrary = NativeLibrary(
         includes = includeInfos,
         additionalPreambleLines = emptyList(),
-        compilerArgs = compilationArgs,
-        headerToIdMapper = HeaderToIdMapper(sysRoot = ""),
+        compilerArgs = args,
+        headerToIdMapper = HeaderToIdMapper(sysRoot = sysRoot),
         language = Language.OBJECTIVE_C,
         excludeSystemLibs = false,
         headerExclusionPolicy = HeaderExclusionPolicyImpl(),
