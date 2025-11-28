@@ -21,6 +21,7 @@ import junit.framework.TestCase
 import junit.framework.TestSuite
 import org.jetbrains.kotlin.android.tests.emulator.Emulator
 import org.jetbrains.kotlin.android.tests.gradle.GradleRunner
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.junit.Assert
 import org.w3c.dom.Element
 import org.xml.sax.SAXException
@@ -31,13 +32,19 @@ import javax.xml.parsers.ParserConfigurationException
 import kotlin.test.assertTrue
 
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) {
+    private fun detectArch(): String {
+        val arch = System.getProperty("os.arch")?.toLowerCaseAsciiOnly() ?: return Emulator.X86
 
-    private val isTeamcity = System.getProperty("kotlin.test.android.teamcity") != null || System.getenv("TEAMCITY_VERSION") != null
+        return when {
+            arch.startsWith("arm") || arch == "aarch64" -> Emulator.ARM
+            else -> Emulator.X86
+        }
+    }
 
     private fun runTestsInEmulator(): TestSuite {
         val rootSuite = TestSuite("Root")
 
-        val emulatorType = if (isTeamcity) Emulator.ARM else Emulator.X86
+        val emulatorType = detectArch()
         println("Using $emulatorType emulator!")
         val emulator = Emulator(pathManager, emulatorType)
 
