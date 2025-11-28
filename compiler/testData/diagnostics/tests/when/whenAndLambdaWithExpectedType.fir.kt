@@ -28,7 +28,7 @@ val test3: (String) -> Boolean =
             else -> null!!
         }
 
-val test4: (String) -> Boolean =
+val test4: (String) -> Boolean <!INITIALIZER_TYPE_MISMATCH("(String) -> Boolean; Function<Boolean>")!>=<!>
         when {
             true -> <!ARGUMENT_TYPE_MISMATCH!>{ s1, <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>s2<!> -> true }<!>
             else -> null!!
