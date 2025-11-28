@@ -11,6 +11,7 @@ dependencies {
     api(project(":kotlin-scripting-common"))
     api(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:cli-common"))
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 sourceSets {

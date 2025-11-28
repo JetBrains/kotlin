@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.utils.tryCreateCallableMapping
 import kotlin.reflect.KClass
 
-fun FirAnnotationCall.toAnnotationObjectIfMatches(vararg expectedAnnClasses: KClass<out Annotation>): Annotation? {
+fun FirAnnotationCall.toAnnotationObjectIfMatches(vararg expectedAnnClasses: KClass<out Annotation>): ResultWithDiagnostics<Annotation>? {
     val shortName = when(val typeRef = annotationTypeRef) {
         is FirResolvedTypeRef -> typeRef.coneType.classId?.shortClassName ?: return null
         is FirUserTypeRef -> typeRef.qualifier.last().name
@@ -34,8 +34,9 @@ fun FirAnnotationCall.toAnnotationObjectIfMatches(vararg expectedAnnClasses: KCl
         )
     if (mapping != null) {
         try {
-            return ctor.callBy(mapping)
+            return ctor.callBy(mapping).asSuccess()
         } catch (e: Exception) { // TODO: find the exact exception type thrown then callBy fails
+            return makeFailureResult(e.asDiagnostics())
         }
     }
     return null

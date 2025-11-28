@@ -59,7 +59,7 @@ private fun configureMavenDepsOnFir(context: ScriptConfigurationRefinementContex
     val fir = context.collectedData?.get(ScriptCollectedData.fir) ?: return context.compilationConfiguration.asSuccess()
     val annotations = fir.flatMap {
         it.annotations.mapNotNull {
-            (it as? FirAnnotationCall)?.toAnnotationObjectIfMatches(DependsOn::class, Repository::class)?.let {
+            (it as? FirAnnotationCall)?.toAnnotationObjectIfMatches(DependsOn::class, Repository::class)?.valueOrNull()?.let {
                 ScriptSourceAnnotation(it, null)
             }
         }
