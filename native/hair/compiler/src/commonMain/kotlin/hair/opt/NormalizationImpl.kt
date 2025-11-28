@@ -9,7 +9,7 @@ class NormalizationImpl(val session: Session, nodeBuilder: NodeBuilder, argsUpda
 
     override fun normalize(node: Node): Node {
         if (node.args.any { it == null }) return node
-        return node.accept(normalizer)
+        return node.accept(normalizer).also { require(it.accept(normalizer) == it)}
     }
 
     val normalizer: NodeVisitor<Node> = context(nodeBuilder, argsUpdater) {

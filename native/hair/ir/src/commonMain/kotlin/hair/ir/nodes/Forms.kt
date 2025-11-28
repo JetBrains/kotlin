@@ -25,7 +25,7 @@ abstract class ControlFlowForm(session: Session) : Form(session) {
     override fun ensureUniqueAfterArgsUpdate(node: Node, oldArgs: List<Node?>): Node = node
 
     override fun deregister(node: Node) {
-        nodes.remove(node).also { require(it) }
+        nodes.remove(node) // TODO add a deregister if registered .also { require(it) }
     }
 }
 

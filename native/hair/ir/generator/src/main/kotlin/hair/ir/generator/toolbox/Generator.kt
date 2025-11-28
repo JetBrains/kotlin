@@ -61,8 +61,8 @@ class Generator(private val generationPath: File) {
                         member("internal val ${metaFormNameInSession(node)} = ${refName(node)}.metaForm(this)")
                     }
                     blankLine()
-                    member("val entry by lazy { ${ControlFlow.blockEntry.name}(${formNameInSession(ControlFlow.blockEntry)}).register() }")
-                    member("val unreachable by lazy { ${ControlFlow.unreachable.name}(${formNameInSession(ControlFlow.unreachable)}).register() }")
+                    member("val entry by lazy { ${ControlFlow.blockEntry.name}(${formNameInSession(ControlFlow.blockEntry)}).also{ register(it) } }")
+                    member("val unreachable by lazy { ${ControlFlow.unreachable.name}(${formNameInSession(ControlFlow.unreachable)}).also{ register(it) } }")
                 }
             )
         })
@@ -179,12 +179,10 @@ class Generator(private val generationPath: File) {
                 fun nodeBuilderBody(formArg: String, nodeArgs: List<String>) =
                     node(listOf(formArg) + nodeArgs)
 
-                fun normalizeAndRegister(builder: () -> String) =
-                    if (isNormalizable(node)) {
-                        val cast = if (normalizedType == nodeInterface) "" else " as $normalizedType"
-                        "($nodeBuilder.normalize(${builder()})$cast).let { if (!it.registered) nodeBuilder.register(it) else it }"
-                    } else "$nodeBuilder.register(${builder()})"
-
+                fun normalizeAndRegister(builder: () -> String): String {
+                    val cast = if (resultNodeType == nodeInterface) "" else " as $resultNodeType"
+                    return "$nodeBuilder.onNodeBuilt(${builder()})$cast"
+                }
 
                 fun appendCtrl(builder: () -> String): String = when {
                     node.hasControlInput() -> "$controlBuilder.appendControlled { ctrl -> ${builder()} }"

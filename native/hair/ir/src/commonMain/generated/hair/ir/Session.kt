@@ -108,9 +108,9 @@ class Session: SessionBase() {
 
     
 
-    val entry by lazy { BlockEntry(blockEntryForm).register() }
+    val entry by lazy { BlockEntry(blockEntryForm).also { register(gvn(it)) } }
 
-    val unreachable by lazy { Unreachable(unreachableForm).register() }
+    val unreachable by lazy { Unreachable(unreachableForm).also { register(gvn(it)) } }
 
 }
 
