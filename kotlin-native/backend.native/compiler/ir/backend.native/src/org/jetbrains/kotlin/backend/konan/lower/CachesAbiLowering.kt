@@ -234,6 +234,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass {
                         )
                     }
                 }
+                handledFakeOverrides.add(accessorTarget)
                 addedFunctions.add(accessor)
             }
         }
