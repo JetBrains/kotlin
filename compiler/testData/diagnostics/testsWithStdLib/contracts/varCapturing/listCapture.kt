@@ -20,6 +20,7 @@ fun baz(s: List<String>) {
 }
 
 fun bazDeq(s : ArrayDeque<Int>) {}
+fun bazMap(s : Map<String, Int>) {}
 
 @OptIn(ExperimentalContracts::class)
 fun barWithContract(f: () -> Unit) {
@@ -128,15 +129,16 @@ fun collections() {
 
 fun negativeControls() {
     var mlVar = mutableListOf(1)
-    run { mlVar.add(2) }
-
     val list13: List<Int> = listOf(1)
-    run { list13.size }
-
     val set0: Set<Int> = setOf(1)
     val map0: Map<String, Int> = mapOf("a" to 1)
-    run { set0.contains(1) }
-    run { map0["a"] }
+
+    barRegular {
+        mlVar.add(2)
+        list13.size
+        set0.contains(1)
+        map0.size
+    }
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, classDeclaration, classReference, contractCallsEffect,

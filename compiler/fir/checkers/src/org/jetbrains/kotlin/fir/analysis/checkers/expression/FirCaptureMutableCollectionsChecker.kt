@@ -74,7 +74,7 @@ object FirCaptureMutableCollectionsChecker : FirQualifiedAccessExpressionChecker
                 containingLambda = containingLambda.name.asString(),
                 callName = calledFunctionSymbol.name.toString(),
                 variableName = variableSymbol.name.toString(),
-                leftmostReceiverName = baseReceiverSymbol?.name?.asString() ?: "no receiver",
+                leftmostReceiverName = baseReceiverSymbol?.name?.asString() ?: "no",
             )
         )
     }
@@ -112,10 +112,17 @@ object FirCaptureMutableCollectionsChecker : FirQualifiedAccessExpressionChecker
         val classId = classLike.lookupTag.classId
         if (classId in mutableIds) return true
 
-        val packageFqName = classId.packageFqName.asString()
-        if (packageFqName.startsWith("java.util")) {
-            return true
-        }
+        val mutableJavaClasses = setOf(
+            "java.util.ArrayList",
+            "java.util.HashSet",
+            "java.util.HashMap",
+            "java.util.LinkedHashSet",
+            "java.util.LinkedHashMap",
+            "java.util.concurrent.ConcurrentHashMap",
+            "java.util.Vector",
+            "java.util.Stack"
+        )
+        if (classId.asSingleFqName().asString() in mutableJavaClasses) return true
 
         return false
     }
