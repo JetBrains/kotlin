@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -217,13 +218,12 @@ private fun ConeKotlinType.isSubtypeOfFunctionType(session: FirSession, expected
 
 // ---------------------------------------------- function type scope utils ----------------------------------------------
 
-fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: ScopeSession): FirNamedFunctionSymbol? {
-    require(this.isSomeFunctionType(session))
-    val functionN = lookupTag.toClassSymbol(session)?.fir ?: return null
+context(c: SessionAndScopeSessionHolder)
+fun ConeClassLikeType.findBaseInvokeSymbol(): FirNamedFunctionSymbol? {
+    require(this.isSomeFunctionType(c.session))
+    val functionN = lookupTag.toClassSymbol()?.fir ?: return null
     var baseInvokeSymbol: FirNamedFunctionSymbol? = null
     functionN.unsubstitutedScope(
-        session,
-        scopeSession,
         withForcedTypeCalculator = false,
         memberRequiredPhase = null,
     ).processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
@@ -233,13 +233,12 @@ fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: Sc
     return baseInvokeSymbol
 }
 
+context(c: SessionAndScopeSessionHolder)
 fun ConeKotlinType.findContributedInvokeSymbol(
-    session: FirSession,
-    scopeSession: ScopeSession,
     expectedFunctionType: ConeClassLikeType,
     shouldCalculateReturnTypesOfFakeOverrides: Boolean
 ): FirFunctionSymbol<*>? {
-    val baseInvokeSymbol = expectedFunctionType.findBaseInvokeSymbol(session, scopeSession) ?: return null
+    val baseInvokeSymbol = expectedFunctionType.findBaseInvokeSymbol() ?: return null
 
     val callableCopyTypeCalculator = if (shouldCalculateReturnTypesOfFakeOverrides) {
         CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution
@@ -248,8 +247,6 @@ fun ConeKotlinType.findContributedInvokeSymbol(
     }
 
     val scope = scope(
-        useSiteSession = session,
-        scopeSession = scopeSession,
         callableCopyTypeCalculator = callableCopyTypeCalculator,
         requiredMembersPhase = FirResolvePhase.STATUS,
     ) ?: return null
@@ -272,8 +269,8 @@ fun ConeKotlinType.findContributedInvokeSymbol(
                 ProcessorAction.STOP
             } else {
                 val dispatchReceiverType = functionSymbol.originalOrSelf().dispatchReceiverType
-                val dispatchReceiverFunctionKind = (dispatchReceiverType as? ConeClassLikeType)?.functionTypeKind(session)
-                val expectedFunctionKind = expectedFunctionType.functionTypeKind(session)
+                val dispatchReceiverFunctionKind = (dispatchReceiverType as? ConeClassLikeType)?.functionTypeKind(c.session)
+                val expectedFunctionKind = expectedFunctionType.functionTypeKind(c.session)
                 if (dispatchReceiverFunctionKind == null || !dispatchReceiverFunctionKind.isBasicFunctionOrKFunction ||
                     expectedFunctionKind?.isBasicFunctionOrKFunction == true ||
                     expectedFunctionKind?.isReflectType != dispatchReceiverFunctionKind.isReflectType

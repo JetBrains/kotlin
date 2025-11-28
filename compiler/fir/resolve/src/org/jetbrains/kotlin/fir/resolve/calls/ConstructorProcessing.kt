@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -41,22 +42,21 @@ internal enum class ConstructorFilter {
 
 private fun FirScope.processConstructorsByName(
     callInfo: CallInfo,
-    session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
     constructorFilter: ConstructorFilter,
     processor: (FirCallableSymbol<*>) -> Unit,
 ) {
-    val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, constructorFilter, session, bodyResolveComponents)
+    val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, constructorFilter, bodyResolveComponents.session, bodyResolveComponents)
         ?: return
     val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*> ?: return
 
-    processConstructors(
-        matchedClassSymbol,
-        substitutor!!,
-        processor,
-        session,
-        bodyResolveComponents,
-    )
+    context(bodyResolveComponents) {
+        processConstructors(
+            matchedClassSymbol,
+            substitutor!!,
+            processor,
+        )
+    }
 
     processSyntheticConstructors(
         matchedClassSymbol,
@@ -67,13 +67,12 @@ private fun FirScope.processConstructorsByName(
 
 internal fun FirScope.processFunctionsAndConstructorsByName(
     callInfo: CallInfo,
-    session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
     constructorFilter: ConstructorFilter,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
     processConstructorsByName(
-        callInfo, session, bodyResolveComponents,
+        callInfo, bodyResolveComponents,
         constructorFilter,
         processor
     )
@@ -121,17 +120,16 @@ private fun processSyntheticConstructors(
     }
 }
 
+context(c: SessionAndScopeSessionHolder)
 private fun processConstructors(
     matchedSymbol: FirClassLikeSymbol<*>,
     substitutor: ConeSubstitutor,
     processor: (FirFunctionSymbol<*>) -> Unit,
-    session: FirSession,
-    bodyResolveComponents: BodyResolveComponents,
 ) {
-    whileAnalysing(session, matchedSymbol.fir) {
+    whileAnalysing(c.session, matchedSymbol.fir) {
         val scope = when (matchedSymbol) {
             is FirTypeAliasSymbol -> {
-                matchedSymbol.fir.scopeForTypeAlias(session, bodyResolveComponents.scopeSession)
+                matchedSymbol.fir.scopeForTypeAlias(c.session, c.scopeSession)
             }
             is FirClassSymbol -> {
                 val firClass = matchedSymbol.fir
@@ -139,8 +137,6 @@ private fun processConstructors(
                     ClassKind.INTERFACE -> null
                     else -> firClass.scopeForClass(
                         substitutor,
-                        session,
-                        bodyResolveComponents.scopeSession,
                         firClass.symbol.toLookupTag(),
                         memberRequiredPhase = FirResolvePhase.STATUS,
                     )

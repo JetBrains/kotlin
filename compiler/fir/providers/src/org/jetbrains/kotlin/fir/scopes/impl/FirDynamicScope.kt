@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -44,17 +45,17 @@ import org.jetbrains.kotlin.name.StandardClassIds
 annotation class FirDynamicScopeConstructor
 
 class FirDynamicScope @FirDynamicScopeConstructor constructor(
-    private val session: FirSession,
-    private val scopeSession: ScopeSession,
-) : FirTypeScope() {
+    override val session: FirSession,
+    override val scopeSession: ScopeSession,
+) : FirTypeScope(), SessionAndScopeSessionHolder {
     override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirNamedFunctionSymbol,
-        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
+        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction,
     ): ProcessorAction = ProcessorAction.NEXT
 
     override fun processDirectOverriddenPropertiesWithBaseScope(
         propertySymbol: FirPropertySymbol,
-        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction,
     ): ProcessorAction = ProcessorAction.NEXT
 
     override fun getCallableNames(): Set<Name> = emptySet()
@@ -63,8 +64,6 @@ class FirDynamicScope @FirDynamicScopeConstructor constructor(
 
     private val anyTypeScope by lazy {
         session.builtinTypes.anyType.coneType.scope(
-            session,
-            scopeSession,
             CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = null,
         )

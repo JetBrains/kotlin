@@ -115,7 +115,7 @@ private fun checkDispatchReceiver(
             expectedDispatchReceiverType.replaceArgumentsWithStarProjectionsOrNull() ?: expectedDispatchReceiverType, context.session
         )
     ) {
-        val scope = symbol.dispatchReceiverScope(context.session, context.scopeSession)
+        val scope = symbol.dispatchReceiverScope()
 
         var found = false
         val processor = { it: FirCallableSymbol<*> ->

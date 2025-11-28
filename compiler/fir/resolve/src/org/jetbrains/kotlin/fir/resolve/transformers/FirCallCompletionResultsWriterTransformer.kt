@@ -73,7 +73,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class FirCallCompletionResultsWriterTransformer(
     override val session: FirSession,
-    private val scopeSession: ScopeSession,
+    override val scopeSession: ScopeSession,
     private val finalSubstitutor: ConeSubstitutor,
     private val typeCalculator: ReturnTypeCalculator,
     private val typeApproximator: ConeTypeApproximator,
@@ -86,7 +86,8 @@ class FirCallCompletionResultsWriterTransformer(
     //  The way we deal with collection literals inside annotations (annotation constructors) and in usual calls should be unified.
     //  For now, however, they are intentionally separated. Related issue: KT-81110.
     private var insideAnnotationContext: Boolean = false,
-) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
+) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE),
+    SessionAndScopeSessionHolder{
 
     private fun finallySubstituteOrNull(
         type: ConeKotlinType,
@@ -296,8 +297,6 @@ class FirCallCompletionResultsWriterTransformer(
 
         val scope =
             updatedDispatchReceiverType.scope(
-                session,
-                scopeSession,
                 CallableCopyTypeCalculator.DoNothing,
                 FirResolvePhase.STATUS
             ) as? FirClassSubstitutionScope ?: return null

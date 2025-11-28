@@ -64,8 +64,6 @@ private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("
 context(context: CheckerContext)
 fun FirClass.unsubstitutedScope(): FirTypeScope =
     this.unsubstitutedScope(
-        context.sessionHolder.session,
-        context.sessionHolder.scopeSession,
         withForcedTypeCalculator = true,
         memberRequiredPhase = FirResolvePhase.STATUS,
     )
@@ -292,9 +290,8 @@ fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinT
  *
  * @param parentClassSymbol the contextual class for this query.
  */
-@OptIn(ScopeFunctionRequiresPrewarm::class)
+context(sessionHolder: SessionAndScopeSessionHolder) @OptIn(ScopeFunctionRequiresPrewarm::class)
 fun FirCallableSymbol<*>.getImplementationStatus(
-    sessionHolder: SessionAndScopeSessionHolder,
     parentClassSymbol: FirClassSymbol<*>
 ): ImplementationStatus {
     val containingClassSymbol = getContainingClassSymbol()
@@ -305,7 +302,7 @@ fun FirCallableSymbol<*>.getImplementationStatus(
     }
 
     if (symbol is FirIntersectionCallableSymbol) {
-        val dispatchReceiverScope = symbol.dispatchReceiverScope(sessionHolder.session, sessionHolder.scopeSession)
+        val dispatchReceiverScope = symbol.dispatchReceiverScope()
         val memberWithBaseScope = MemberWithBaseScope(symbol, dispatchReceiverScope)
         val nonSubsumed = memberWithBaseScope.getNonSubsumedOverriddenSymbols()
 

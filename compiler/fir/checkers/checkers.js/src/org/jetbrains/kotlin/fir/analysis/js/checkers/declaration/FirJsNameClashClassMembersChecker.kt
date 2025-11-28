@@ -114,17 +114,15 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             }
         }
 
-        fun addAllSymbolsFrom(symbols: Collection<FirCallableSymbol<*>>, sessionHolder: SessionAndScopeSessionHolder) {
+        context(sessionHolder: SessionAndScopeSessionHolder)
+        fun addAllSymbolsFrom(symbols: Collection<FirCallableSymbol<*>>) {
             for (symbol in symbols) {
                 when (symbol) {
                     is FirIntersectionCallableSymbol -> {
                         @OptIn(ScopeFunctionRequiresPrewarm::class) // the symbols come from calling process*ByName
-                        val nonSubsumedOverriddenSymbols = symbol.getNonSubsumedOverriddenSymbols(
-                            sessionHolder.session,
-                            sessionHolder.scopeSession
-                        )
+                        val nonSubsumedOverriddenSymbols = symbol.getNonSubsumedOverriddenSymbols()
                         val overriddenSymbols = nonSubsumedOverriddenSymbols.map { it.originalForSubstitutionOverride ?: it }
-                        addAllSymbolsFrom(overriddenSymbols, sessionHolder)
+                        addAllSymbolsFrom(overriddenSymbols)
                         for (intersectedSymbol in overriddenSymbols) {
                             overrideIntersections.getOrPut(intersectedSymbol) { hashSetOf() }.addAll(overriddenSymbols)
                         }
@@ -145,8 +143,8 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             val scope = declaration.symbol.unsubstitutedScope()
 
             scope.processDeclaredConstructors(allSymbols::add)
-            addAllSymbolsFrom(scope.collectAllFunctions(), context.sessionHolder)
-            addAllSymbolsFrom(scope.collectAllProperties(), context.sessionHolder)
+            addAllSymbolsFrom(scope.collectAllFunctions())
+            addAllSymbolsFrom(scope.collectAllProperties())
 
             for (callableMemberSymbol in allSymbols) {
                 val overriddenLeaves = scope.collectOverriddenLeaves(callableMemberSymbol)

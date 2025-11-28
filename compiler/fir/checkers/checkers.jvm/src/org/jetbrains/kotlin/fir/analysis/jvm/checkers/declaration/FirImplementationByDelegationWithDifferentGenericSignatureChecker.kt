@@ -32,7 +32,7 @@ object FirImplementationByDelegationWithDifferentGenericSignatureChecker : FirCl
             val wrappedGenericFunction = delegatedWrapperData.wrapped
             if (wrappedGenericFunction.typeParameters.isEmpty()) return@processAllFunctions
             val fieldScope = delegatedWrapperData.delegateFieldSymbol.resolvedInitializer?.resolvedType?.scope(
-                context.session, context.scopeSession, CallableCopyTypeCalculator.DoNothing, null
+                CallableCopyTypeCalculator.DoNothing, null
             ) ?: return@processAllFunctions
             var reported = false
             val genericSymbolToCompare = wrappedGenericFunction.symbol.unwrapFakeOverrides()

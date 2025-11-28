@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
@@ -334,13 +335,11 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.isTrivialIntersection(): Boolean {
 }
 
 @ScopeFunctionRequiresPrewarm
-fun FirIntersectionCallableSymbol.getNonSubsumedOverriddenSymbols(
-    session: FirSession,
-    scopeSession: ScopeSession,
-): List<FirCallableSymbol<*>> {
+context(c: SessionAndScopeSessionHolder)
+fun FirIntersectionCallableSymbol.getNonSubsumedOverriddenSymbols(): List<FirCallableSymbol<*>> {
     require(this is FirCallableSymbol<*>)
 
-    val dispatchReceiverScope = dispatchReceiverScope(session, scopeSession)
+    val dispatchReceiverScope = dispatchReceiverScope()
     return MemberWithBaseScope(this, dispatchReceiverScope).getNonSubsumedOverriddenSymbols()
 }
 
@@ -365,11 +364,10 @@ fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.getNonSubsumedNonPhant
         .distinctBy { it.member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() }
 }
 
-fun FirCallableSymbol<*>.dispatchReceiverScope(session: FirSession, scopeSession: ScopeSession): FirTypeScope {
+context(c: SessionAndScopeSessionHolder)
+fun FirCallableSymbol<*>.dispatchReceiverScope(): FirTypeScope {
     val dispatchReceiverType = requireNotNull(dispatchReceiverType)
     return dispatchReceiverType.scope(
-        session,
-        scopeSession,
         CallableCopyTypeCalculator.DoNothing,
         FirResolvePhase.STATUS
     ) ?: FirTypeScope.Empty

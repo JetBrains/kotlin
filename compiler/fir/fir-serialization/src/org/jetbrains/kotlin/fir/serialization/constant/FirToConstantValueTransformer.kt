@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.serialization.constant
 
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirEvaluatorResult
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
@@ -18,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -40,17 +36,16 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
+context(c: SessionAndScopeSessionHolder)
 internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue(
-    session: FirSession,
-    scopeSession: ScopeSession,
     constValueProvider: ConstValueProvider?
 ): T? {
     val valueFromIr = constValueProvider?.findConstantValueFor(this)
     if (valueFromIr != null) return valueFromIr as? T
 
     val valueFromFir = when (this) {
-        is FirAnnotation -> this.evaluateToAnnotationValue(session, scopeSession)
-        else -> this.toConstantValue(session, scopeSession)
+        is FirAnnotation -> this.evaluateToAnnotationValue()
+        else -> this.toConstantValue()
     }
     return valueFromFir as? T
 }
@@ -61,7 +56,8 @@ fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
 
 // --------------------------------------------- private implementation part ---------------------------------------------
 
-private fun FirElement.toConstantValue(session: FirSession, scopeSession: ScopeSession): ConstantValue<*>? {
+context(c: SessionAndScopeSessionHolder)
+private fun FirElement.toConstantValue(): ConstantValue<*>? {
     return when (this) {
         is FirLiteralExpression -> {
             val value = this.value
@@ -90,14 +86,14 @@ private fun FirElement.toConstantValue(session: FirSession, scopeSession: ScopeS
                     EnumValue(classId, symbol.name)
                 }
                 is FirConstructorSymbol -> {
-                    val constructedClassSymbol = symbol.containingClassLookupTag()?.toRegularClassSymbol(session) ?: return null
+                    val constructedClassSymbol = symbol.containingClassLookupTag()?.toRegularClassSymbol() ?: return null
                     if (constructedClassSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
 
                     val constructorCall = this as FirFunctionCall
                     val mappingToFirExpression = (constructorCall.argumentList as FirResolvedArgumentList).toAnnotationArgumentMapping().mapping
                     val mappingToConstantValues = mappingToFirExpression
-                        .mapValues { it.value.toConstantValue(session, scopeSession) ?: return null }
-                        .fillEmptyArray(symbol, session)
+                        .mapValues { it.value.toConstantValue() ?: return null }
+                        .fillEmptyArray(symbol, c.session)
                     AnnotationValue.create(constructedClassSymbol.classId, mappingToConstantValues)
                 }
                 else -> null
@@ -105,12 +101,12 @@ private fun FirElement.toConstantValue(session: FirSession, scopeSession: ScopeS
         }
         is FirAnnotation -> {
             val mappingToFirExpression = this.argumentMapping.mapping
-            val mappingToConstantValues = mappingToFirExpression.mapValues { it.value.toConstantValue(session, scopeSession) ?: return null }
-            this.toAnnotationValue(mappingToConstantValues, session, scopeSession)
+            val mappingToConstantValues = mappingToFirExpression.mapValues { it.value.toConstantValue() ?: return null }
+            this.toAnnotationValue(mappingToConstantValues)
         }
         is FirGetClassCall -> create(this.argument.resolvedType)
         is FirEnumEntryDeserializedAccessExpression -> EnumValue(this.enumClassId, this.enumEntryName)
-        is FirCollectionLiteral -> ArrayValue(this.argumentList.arguments.mapNotNull { it.toConstantValue(session, scopeSession) })
+        is FirCollectionLiteral -> ArrayValue(this.argumentList.arguments.mapNotNull { it.toConstantValue() })
         is FirVarargArgumentsExpression -> {
             val arguments = this.arguments.let {
                 // Named, spread or array literal arguments for vararg parameters have the form Vararg(Named/Spread?(ArrayLiteral(..))).
@@ -118,32 +114,34 @@ private fun FirElement.toConstantValue(session: FirSession, scopeSession: ScopeS
                 (it.singleOrNull()?.unwrapArgument() as? FirCollectionLiteral)?.arguments ?: it
             }
 
-            ArrayValue(arguments.mapNotNull { it.toConstantValue(session, scopeSession) })
+            ArrayValue(arguments.mapNotNull { it.toConstantValue() })
         }
         else -> null
     }
 }
 
-private fun FirAnnotation.evaluateToAnnotationValue(session: FirSession, scopeSession: ScopeSession): AnnotationValue {
-    val mappingFromFrontend = FirExpressionEvaluator.evaluateAnnotationArguments(this, session)
+context(c: SessionAndScopeSessionHolder)
+private fun FirAnnotation.evaluateToAnnotationValue(): AnnotationValue {
+    val mappingFromFrontend = FirExpressionEvaluator.evaluateAnnotationArguments(this, c.session)
         ?: errorWithAttachment("Can't compute constant annotation argument mapping") {
             withFirEntry("annotation", this@evaluateToAnnotationValue)
         }
     val result = argumentMapping.mapping.mapValuesTo(mutableMapOf()) { (name, _) ->
         mappingFromFrontend[name]?.let {
             val evaluatedValue = (it as? FirEvaluatorResult.Evaluated)?.result
-            evaluatedValue?.toConstantValue(session, scopeSession)
+            evaluatedValue?.toConstantValue()
         } ?: errorWithAttachment("Cannot convert value for parameter \"$name\" to constant") {
             withFirEntry("argument", argumentMapping.mapping[name]!!)
             withFirEntry("annotation", this@evaluateToAnnotationValue)
         }
     }
 
-    return this.toAnnotationValue(result, session, scopeSession)
+    return this.toAnnotationValue(result)
 }
 
-fun FirAnnotation.toAnnotationValue(mapping: Map<Name, ConstantValue<*>>, session: FirSession, scopeSession: ScopeSession): AnnotationValue {
-    val annotationType = this.annotationTypeRef.coneType.fullyExpandedType(session)
+context(c: SessionAndScopeSessionHolder)
+private fun FirAnnotation.toAnnotationValue(mapping: Map<Name, ConstantValue<*>>): AnnotationValue {
+    val annotationType = this.annotationTypeRef.coneType.fullyExpandedType()
     val classId = annotationType.classId
         ?: errorWithAttachment("Annotation without proper lookup tag }") {
             withFirEntry("annotation", this@toAnnotationValue)
@@ -151,10 +149,10 @@ fun FirAnnotation.toAnnotationValue(mapping: Map<Name, ConstantValue<*>>, sessio
 
     val constructorSymbol = this@toAnnotationValue
         .resolvedType
-        .scope(session, scopeSession, CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution, requiredMembersPhase = FirResolvePhase.TYPES)
+        .scope(CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution, requiredMembersPhase = FirResolvePhase.TYPES)
         ?.getDeclaredConstructors()
         ?.firstOrNull()
-    return AnnotationValue.create(classId, mapping.fillEmptyArray(constructorSymbol, session))
+    return AnnotationValue.create(classId, mapping.fillEmptyArray(constructorSymbol, c.session))
 }
 
 // For serialization, the compiler should insert an empty array in the place where an array was expected, but wasn't provided

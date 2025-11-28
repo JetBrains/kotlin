@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.analysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -214,10 +215,11 @@ private fun FirBasedSymbol<*>.getIntersectionOverriddenSymbols(useSiteSession: F
         "Required FirCallableSymbol but ${this::class} found"
     }
     return when (this) {
-        is FirIntersectionCallableSymbol -> getNonSubsumedOverriddenSymbols(
-            useSiteSession,
-            analysisSession.getScopeSessionFor(useSiteSession)
-        )
+        is FirIntersectionCallableSymbol -> {
+            with(SessionHolderImpl(useSiteSession, analysisSession.getScopeSessionFor(useSiteSession))) {
+                getNonSubsumedOverriddenSymbols()
+            }
+        }
         else -> listOf(this)
     }
 }

@@ -294,7 +294,7 @@ class FirTowerDataElement(
         // but there is no '-Xallow-kotlin-package' compiler argument provided
         val implicitScope = implicitScope ?: return FirTypeScope.Empty
 
-        val type = type.fullyExpandedType(useSiteSession)
+        val type = type.fullyExpandedType()
         if (type is ConeErrorType || type is ConeStubType) return FirTypeScope.Empty
 
         return implicitScope.processTypeScope(type)

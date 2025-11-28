@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirDelegatedMemberScope(
-    private val session: FirSession,
-    private val scopeSession: ScopeSession,
+    override val session: FirSession,
+    override val scopeSession: ScopeSession,
     private val containingClass: FirClass,
     private val declaredMemberScope: FirContainingNamesAwareScope,
     private val delegateFields: List<FirField>,
-) : FirContainingNamesAwareScope() {
+) : FirContainingNamesAwareScope(), SessionAndScopeSessionHolder {
     private val dispatchReceiverType = containingClass.defaultType()
     private val overrideChecker = session.firOverrideChecker
     private val delegatedMembersFilter = session.delegatedMembersFilter
@@ -52,8 +52,6 @@ class FirDelegatedMemberScope(
     }
 
     private fun buildScope(delegateField: FirField): FirTypeScope? = delegateField.symbol.resolvedReturnType.scope(
-        session,
-        scopeSession,
         CallableCopyTypeCalculator.CalculateDeferredWhenPossible,
         requiredMembersPhase = null,
     )

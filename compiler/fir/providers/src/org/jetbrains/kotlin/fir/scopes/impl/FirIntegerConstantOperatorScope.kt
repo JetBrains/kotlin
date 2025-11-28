@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunctionCopy
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -27,10 +28,10 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 class FirIntegerConstantOperatorScope(
-    val session: FirSession,
-    val scopeSession: ScopeSession,
+    override val session: FirSession,
+    override val scopeSession: ScopeSession,
     val isUnsigned: Boolean
-) : FirTypeScope() {
+) : FirTypeScope(), SessionAndScopeSessionHolder {
     private val baseScope: FirTypeScope = run {
         val baseType = when (isUnsigned) {
             true -> session.builtinTypes.uIntType
@@ -38,8 +39,6 @@ class FirIntegerConstantOperatorScope(
         }.coneType
 
         baseType.scope(
-            session,
-            scopeSession,
             CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         ) ?: Empty

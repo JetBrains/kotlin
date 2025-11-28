@@ -82,7 +82,7 @@ class FirStatusResolver(
             return emptyList()
         }
 
-        val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
+        val scope = containingClass.unsubstitutedScope(withForcedTypeCalculator = false, memberRequiredPhase = null)
 
         return buildList {
             scope.processPropertiesByName(property.name) {}
@@ -121,8 +121,6 @@ class FirStatusResolver(
 
         return buildList {
             val scope = containingClass.unsubstitutedScope(
-                session,
-                scopeSession,
                 withForcedTypeCalculator = false,
                 memberRequiredPhase = null,
             )

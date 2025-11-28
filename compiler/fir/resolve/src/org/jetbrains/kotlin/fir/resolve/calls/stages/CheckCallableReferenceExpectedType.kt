@@ -121,7 +121,6 @@ private fun buildResultingTypeAndAdaptation(
             val callableReferenceAdaptation =
                 context.bodyResolveComponents.getCallableReferenceAdaptation(
                     candidate,
-                    context.session,
                     fir,
                     callInfo.expectedType?.lowerBoundIfFlexible(),
                     unboundReferenceTarget
@@ -195,7 +194,6 @@ private fun buildResultingTypeAndAdaptation(
 
 private fun BodyResolveComponents.getCallableReferenceAdaptation(
     candidate: Candidate,
-    session: FirSession,
     function: FirFunction,
     expectedType: ConeKotlinType?,
     unboundReceiverCount: Int
@@ -211,8 +209,6 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
 
     val fakeArguments = createFakeArgumentsForReference(function, expectedArgumentsCount, inputTypes, unboundReceiverCount)
     val originScope = function.dispatchReceiverType?.scope(
-        useSiteSession = session,
-        scopeSession = scopeSession,
         callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
         requiredMembersPhase = FirResolvePhase.STATUS,
     )

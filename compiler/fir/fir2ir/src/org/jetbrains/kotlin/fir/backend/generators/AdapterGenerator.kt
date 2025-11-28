@@ -599,10 +599,10 @@ class AdapterGenerator(
         }
 
         return if (expectedFunctionalType.isSomeFunctionType(session)) {
-            expectedFunctionalType.findBaseInvokeSymbol(session, scopeSession)
+            expectedFunctionalType.findBaseInvokeSymbol()
         } else {
             expectedFunctionalType.findContributedInvokeSymbol(
-                session, scopeSession, expectedFunctionalType, shouldCalculateReturnTypesOfFakeOverrides = true
+                expectedFunctionalType, shouldCalculateReturnTypesOfFakeOverrides = true
             )
         }?.let {
             declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol

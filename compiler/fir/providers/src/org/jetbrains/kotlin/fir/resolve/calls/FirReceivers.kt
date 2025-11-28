@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildInaccessibleReceiverExpression
@@ -50,19 +51,16 @@ sealed interface ReceiverValue {
 
     val receiverExpression: FirExpression
 
-    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = type.scope(
-        useSiteSession = useSiteSession,
-        scopeSession = scopeSession,
-        callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
-        requiredMembersPhase = FirResolvePhase.STATUS,
-    )
+    context(c: SessionAndScopeSessionHolder)
+    fun scope(): FirTypeScope?
 }
 
 class ExpressionReceiverValue(override val receiverExpression: FirExpression) : ReceiverValue {
     override val type: ConeKotlinType
         get() = receiverExpression.resolvedType
 
-    override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? {
+    context(c: SessionAndScopeSessionHolder)
+    override fun scope(): FirTypeScope? {
         var receiverExpr: FirExpression? = receiverExpression
         // Unwrap `x!!` to `x` and use the resulted expression to derive receiver type. This is necessary so that smartcast types inside
         // `!!` is handled correctly.
@@ -72,15 +70,11 @@ class ExpressionReceiverValue(override val receiverExpression: FirExpression) : 
 
         if (receiverExpr is FirSmartCastExpression) {
             return receiverExpr.smartcastScope(
-                useSiteSession,
-                scopeSession,
                 requiredMembersPhase = FirResolvePhase.STATUS,
             )
         }
 
         return type.scope(
-            useSiteSession,
-            scopeSession,
             CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )
@@ -91,11 +85,11 @@ sealed class ImplicitReceiverValue<S : FirThisOwnerSymbol<*>>(
     override val boundSymbol: S,
     type: ConeKotlinType,
     originalType: ConeKotlinType,
-    val useSiteSession: FirSession,
-    protected val scopeSession: ScopeSession,
+    override val session: FirSession,
+    override val scopeSession: ScopeSession,
     mutable: Boolean,
     private val inaccessibleReceiverKind: InaccessibleReceiverKind? = null,
-) : ImplicitValue<S>(type, originalType, mutable), ReceiverValue {
+) : ImplicitValue<S>(type, originalType, mutable), ReceiverValue, SessionAndScopeSessionHolder {
 
     val implicitScope: FirTypeScope?
         get() = lazyImplicitScope.value
@@ -110,8 +104,6 @@ sealed class ImplicitReceiverValue<S : FirThisOwnerSymbol<*>>(
      */
     private var lazyImplicitScope: Lazy<FirTypeScope?> = lazy(LazyThreadSafetyMode.PUBLICATION) {
         type.scope(
-            useSiteSession,
-            scopeSession,
             CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )
@@ -119,7 +111,8 @@ sealed class ImplicitReceiverValue<S : FirThisOwnerSymbol<*>>(
 
     override fun computeOriginalExpression(): FirExpression = receiverExpression(boundSymbol, originalType, inaccessibleReceiverKind)
 
-    override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
+    context(c: SessionAndScopeSessionHolder)
+    override fun scope(): FirTypeScope? = implicitScope
 
     final override val receiverExpression: FirExpression
         get() = computeExpression()
@@ -129,8 +122,6 @@ sealed class ImplicitReceiverValue<S : FirThisOwnerSymbol<*>>(
         super.updateTypeFromSmartcast(type)
         lazyImplicitScope = lazy(LazyThreadSafetyMode.PUBLICATION) {
             type.scope(
-                useSiteSession = useSiteSession,
-                scopeSession = scopeSession,
                 callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
                 requiredMembersPhase = FirResolvePhase.STATUS,
             )
@@ -187,7 +178,7 @@ class ImplicitDispatchReceiverValue private constructor(
     ) : this(boundSymbol, type, originalType = type, useSiteSession, scopeSession, mutable = true)
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirClassSymbol<*>> {
-        return ImplicitDispatchReceiverValue(boundSymbol, type, originalType, useSiteSession, scopeSession, keepMutable)
+        return ImplicitDispatchReceiverValue(boundSymbol, type, originalType, session, scopeSession, keepMutable)
     }
 
     @DelicateScopeAPI
@@ -208,7 +199,7 @@ class ImplicitExtensionReceiverValue private constructor(
             : this(boundSymbol, type, originalType = type, useSiteSession, scopeSession, mutable = true)
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirReceiverParameterSymbol> {
-        return ImplicitExtensionReceiverValue(boundSymbol, type, originalType, useSiteSession, scopeSession, keepMutable)
+        return ImplicitExtensionReceiverValue(boundSymbol, type, originalType, session, scopeSession, keepMutable)
     }
 
     @DelicateScopeAPI
@@ -239,7 +230,7 @@ class InaccessibleImplicitReceiverValue private constructor(
     ) : this(boundSymbol, type, originalType = type, useSiteSession, scopeSession, mutable = true, kind)
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirClassSymbol<*>> {
-        return InaccessibleImplicitReceiverValue(boundSymbol, type, originalType, useSiteSession, scopeSession, keepMutable, kind)
+        return InaccessibleImplicitReceiverValue(boundSymbol, type, originalType, session, scopeSession, keepMutable, kind)
     }
 
     @DelicateScopeAPI
@@ -261,7 +252,7 @@ class ImplicitReceiverValueForScriptOrSnippet private constructor(
             : this(boundSymbol, type, originalType = type, useSiteSession, scopeSession, mutable = true)
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirReceiverParameterSymbol> =
-        ImplicitReceiverValueForScriptOrSnippet(boundSymbol, type, originalType, useSiteSession, scopeSession, keepMutable)
+        ImplicitReceiverValueForScriptOrSnippet(boundSymbol, type, originalType, session, scopeSession, keepMutable)
 
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiverValueForScriptOrSnippet {

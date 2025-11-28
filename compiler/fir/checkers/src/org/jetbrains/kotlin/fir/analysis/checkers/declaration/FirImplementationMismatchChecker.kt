@@ -267,7 +267,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         processFunctionsByName(name) { sym ->
             when (sym) {
                 is FirIntersectionOverrideFunctionSymbol -> sym
-                    .getNonSubsumedOverriddenSymbols(context.session, context.scopeSession)
+                    .getNonSubsumedOverriddenSymbols()
                     .mapNotNullTo(allCallables) { it as? FirNamedFunctionSymbol }
                 else -> allCallables.add(sym)
             }
@@ -275,7 +275,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         processPropertiesByName(name) { sym ->
             when (sym) {
                 is FirIntersectionOverridePropertySymbol -> sym
-                    .getNonSubsumedOverriddenSymbols(context.session, context.scopeSession)
+                    .getNonSubsumedOverriddenSymbols()
                     .mapNotNullTo(allCallables) { it as? FirNamedFunctionSymbol }
                 else -> allCallables.add(sym)
             }

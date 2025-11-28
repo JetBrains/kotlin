@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
@@ -33,9 +34,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 class IntegerLiteralAndOperatorApproximationTransformer(
-    val session: FirSession,
-    val scopeSession: ScopeSession
-) : FirTransformer<ConeKotlinType?>() {
+    override val session: FirSession,
+    override val scopeSession: ScopeSession
+) : FirTransformer<ConeKotlinType?>(), SessionAndScopeSessionHolder {
     companion object {
         private val TO_LONG = Name.identifier("toLong")
         private val TO_U_LONG = Name.identifier("toULong")
@@ -46,8 +47,6 @@ class IntegerLiteralAndOperatorApproximationTransformer(
 
     private fun findConversionFunction(receiverType: FirImplicitBuiltinTypeRef, name: Name): FirNamedFunctionSymbol {
         return receiverType.coneType.scope(
-            useSiteSession = session,
-            scopeSession = scopeSession,
             callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )!!.getFunctions(name).single()
@@ -62,7 +61,7 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         data: ConeKotlinType?,
     ): FirStatement {
         val type = literalExpression.resolvedType as? ConeIntegerLiteralType ?: return literalExpression
-        val approximatedType = type.getApproximatedType(data?.fullyExpandedType(session))
+        val approximatedType = type.getApproximatedType(data?.fullyExpandedType())
         literalExpression.resultType = approximatedType
         val kind = approximatedType.toConstKind() as ConstantValueKind
         literalExpression.replaceKind(kind)
@@ -77,7 +76,7 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         val call = integerLiteralOperatorCall
 
         val operatorType = call.resolvedType as? ConeIntegerLiteralType ?: return call
-        val approximatedType = operatorType.getApproximatedType(data?.fullyExpandedType(session))
+        val approximatedType = operatorType.getApproximatedType(data?.fullyExpandedType())
         call.transformDispatchReceiver(this, null)
         call.transformExtensionReceiver(this, null)
         call.argumentList.transformArguments(this, null)

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -218,6 +219,14 @@ fun FirClass.unsubstitutedScope(
     return scope
 }
 
+context(c: SessionAndScopeSessionHolder)
+fun FirClass.unsubstitutedScope(
+    withForcedTypeCalculator: Boolean,
+    memberRequiredPhase: FirResolvePhase?,
+): FirTypeScope {
+    return unsubstitutedScope(c.session, c.scopeSession, withForcedTypeCalculator, memberRequiredPhase)
+}
+
 fun FirClassSymbol<*>.unsubstitutedScope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
@@ -225,6 +234,14 @@ fun FirClassSymbol<*>.unsubstitutedScope(
     memberRequiredPhase: FirResolvePhase?,
 ): FirTypeScope {
     return fir.unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator, memberRequiredPhase)
+}
+
+context(c: SessionAndScopeSessionHolder)
+fun FirClassSymbol<*>.unsubstitutedScope(
+    withForcedTypeCalculator: Boolean,
+    memberRequiredPhase: FirResolvePhase?,
+): FirTypeScope {
+    return unsubstitutedScope(c.session, c.scopeSession, withForcedTypeCalculator, memberRequiredPhase)
 }
 
 fun FirClass.scopeForClass(
@@ -241,6 +258,19 @@ fun FirClass.scopeForClass(
     isFromExpectClass = false,
     memberOwnerLookupTag = memberOwnerLookupTag,
     memberRequiredPhase = memberRequiredPhase,
+)
+
+context(c: SessionAndScopeSessionHolder)
+fun FirClass.scopeForClass(
+    substitutor: ConeSubstitutor,
+    memberOwnerLookupTag: ConeClassLikeLookupTag,
+    memberRequiredPhase: FirResolvePhase?,
+): FirTypeScope = scopeForClass(
+    substitutor,
+    c.session,
+    c.scopeSession,
+    memberOwnerLookupTag,
+    memberRequiredPhase,
 )
 
 fun FirTypeAlias.scopeForTypeAlias(

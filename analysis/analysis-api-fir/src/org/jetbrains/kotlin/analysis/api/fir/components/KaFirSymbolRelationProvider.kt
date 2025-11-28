@@ -419,7 +419,9 @@ internal class KaFirSymbolRelationProvider(
             memberFir.lazyResolveToPhase(FirResolvePhase.STATUS)
 
             val scopeSession = analysisSession.getScopeSessionFor(analysisSession.firSession)
-            return memberFir.symbol.getImplementationStatus(SessionHolderImpl(rootModuleSession, scopeSession), parentClassFir.symbol)
+            return with(SessionHolderImpl(rootModuleSession, scopeSession)) {
+                memberFir.symbol.getImplementationStatus(parentClassFir.symbol)
+            }
         }
     }
 
