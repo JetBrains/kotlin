@@ -48,6 +48,7 @@ sealed class NodeBase(final override val form: Form, args: List<Node?>) : Node {
         get() = id > 0
 
     override fun addUse(use: Node) {
+        require(use !is Unreachable)
         uses_.add(use)
     }
 
