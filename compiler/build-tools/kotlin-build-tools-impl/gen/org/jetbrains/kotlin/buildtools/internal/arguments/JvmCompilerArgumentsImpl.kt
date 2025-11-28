@@ -108,8 +108,11 @@ import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmCompilerArguments {
+internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCompilerArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+  init {
+    applyCompilerArguments(K2JVMCompilerArguments())
+  }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted

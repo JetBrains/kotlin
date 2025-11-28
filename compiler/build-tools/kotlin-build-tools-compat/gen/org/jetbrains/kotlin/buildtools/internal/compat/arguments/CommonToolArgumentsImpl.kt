@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArg
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArgumentsImpl.Companion.X
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ArgumentsCommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as CommonToolArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
@@ -41,7 +42,8 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
   }
 
   override operator fun <V> `set`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 2, 20)) {
+    val currentKotlinVersion = KotlinToolingVersion(KC_VERSION)
+    if (key.availableSinceVersion > KotlinReleaseVersion(currentKotlinVersion.major, currentKotlinVersion.minor, currentKotlinVersion.patch)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = `value`

@@ -99,6 +99,10 @@ internal class BtaImplGenerator(
                             MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments"),
                             level.getCompilerArgumentsClassName()
                         )
+
+                        primaryConstructor(FunSpec.constructorBuilder().apply {
+                            addStatement("applyCompilerArguments(%T())", level.getCompilerArgumentsClassName())
+                        }.build())
                     }
                     toCompilerConverterFun.addStatement("return arguments")
                     addFunction(toCompilerConverterFun.build())
@@ -333,14 +337,26 @@ internal class BtaImplGenerator(
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
+            val currentKotlinVersion = if (generateCompatLayer) {
+                addStatement(
+                    "val currentKotlinVersion = %T(KC_VERSION)",
+                    ClassName("org.jetbrains.kotlin.tooling.core", "KotlinToolingVersion")
+                )
+                CodeBlock.of("(currentKotlinVersion.major, currentKotlinVersion.minor, currentKotlinVersion.patch)")
+            } else {
+                CodeBlock.of(
+                    "(%L, %L, %L)",
+                    kotlinVersion.major,
+                    kotlinVersion.minor,
+                    kotlinVersion.patch
+                )
+            }
             addCode(
                 CodeBlock.builder()
                     .beginControlFlow(
-                        "if (key.availableSinceVersion > %T(%L, %L, %L))",
+                        "if (key.availableSinceVersion > %T%L)",
                         kotlinVersionType,
-                        kotlinVersion.major,
-                        kotlinVersion.minor,
-                        kotlinVersion.patch
+                        currentKotlinVersion
                     )
                     .addStatement(
                         $$"throw %T(\"${key.id} is available only since ${key.availableSinceVersion}\")",
