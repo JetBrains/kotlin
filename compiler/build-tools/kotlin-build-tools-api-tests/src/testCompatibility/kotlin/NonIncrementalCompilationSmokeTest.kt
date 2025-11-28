@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrate
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 
@@ -62,9 +63,18 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
             val module1 = module("jvm-module-1") { it: JvmCompilationOperation ->
                 it.compilerArguments[JvmCompilerArguments.X_USE_K2_KAPT] = true
             }
-            if (kotlinToolchain.getCompilerVersion().startsWith("2.3") || kotlinToolchain.getCompilerVersion().startsWith("2.0")) {
+            if (kotlinToolchain.getCompilerVersion().startsWith("2.3")) {
                 val exception = assertThrows<IllegalStateException> { module1.compile {} }
-                assert(exception.message?.contains("Compiler parameter not recognized: X_USE_K2_KAPT") == true) { "Expected exception message to contain 'Compiler parameter not recognized: X_USE_K2_KAPT'" }
+                assertEquals(
+                    "Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: ${kotlinToolchain.getCompilerVersion()}, but the argument was introduced in 2.1.0 and removed in 2.3.0",
+                    exception.message
+                )
+            } else if (kotlinToolchain.getCompilerVersion().startsWith("2.0")) {
+                val exception = assertThrows<IllegalStateException> { module1.compile {} }
+                assertEquals(
+                    "X_USE_K2_KAPT is available only since 2.1.0",
+                    exception.message
+                )
             } else {
                 module1.compile {
                     assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
@@ -84,7 +94,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
             }
             if (kotlinToolchain.getCompilerVersion().startsWith("2.0") || kotlinToolchain.getCompilerVersion().startsWith("2.1")) {
                 val exception = assertThrows<IllegalStateException> { module1.compile {} }
-                assert(exception.message?.contains("Compiler parameter not recognized: X_ANNOTATIONS_IN_METADATA") == true) { "Expected exception message to contain 'Compiler parameter not recognized: X_ANNOTATIONS_IN_METADATA'" }
+                assertEquals("X_ANNOTATIONS_IN_METADATA is available only since 2.2.0", exception.message)
             } else {
                 module1.compile {
                     assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
