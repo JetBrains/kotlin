@@ -3,7 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.library
+package org.jetbrains.kotlin.konan.library
+
+import org.jetbrains.kotlin.library.Klib
+import org.jetbrains.kotlin.library.klibFlag
 
 /**
  * Indicates whether this [Klib] is from the Kotlin/Native distribution.

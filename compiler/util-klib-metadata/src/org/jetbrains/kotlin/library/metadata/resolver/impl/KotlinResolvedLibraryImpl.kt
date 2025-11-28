@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.library.metadata.resolver.impl
 
+import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.metadata
-import org.jetbrains.kotlin.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 
