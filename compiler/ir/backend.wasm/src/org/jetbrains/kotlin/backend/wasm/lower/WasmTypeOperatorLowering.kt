@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
 
 
 class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -75,6 +74,15 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         return super.visitVariable(declaration)
+    }
+
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
+        if (expression.value.type != expression.symbol.owner.type) {
+            builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)
+            expression.value = narrowType(expression.value.type, expression.symbol.owner.type, expression.value)
+        }
+
+        return super.visitSetValue(expression)
     }
 
     private fun lowerInstanceOf(
