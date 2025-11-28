@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -195,38 +194,7 @@ internal fun KotlinTypeFacade.toDataFrame(
             return listOf(simpleColumnOf("value", classLike))
         }
 
-        val symbol = classLike.toRegularClassSymbol() ?: return emptyList()
-        val scope = symbol.unsubstitutedScope(session, ScopeSession(), false, FirResolvePhase.STATUS)
-        val declarations = if (symbol.fir is FirJavaClass) {
-            scope
-                .collectAllFunctions()
-                .filter { !it.isStatic && it.valueParameterSymbols.isEmpty() && it.typeParameterSymbols.isEmpty() }
-                .mapNotNull { function ->
-                    val identifier = function.name.identifier
-                    val columnName = when {
-                        identifier.startsWith("get") -> identifier.replaceFirst("get", "")
-                        identifier.startsWith("is") -> identifier.replaceFirst("is", "")
-                        else -> return@mapNotNull null
-                    }.let {
-                        if (it.firstOrNull()?.isUpperCase() == true) {
-                            it.replaceFirstChar { it.lowercase(Locale.getDefault()) }
-                        } else {
-                            return@mapNotNull null
-                        }
-                    }
-
-                    ToDataFrameProperty(function, columnName)
-                }
-        } else {
-            scope
-                .collectAllProperties()
-                .filterIsInstance<FirPropertySymbol>()
-                .map {
-                    ToDataFrameProperty(it, it.name.identifier)
-                }
-        }
-
-        return declarations
+        return classLike.properties(session)
             .filterNot { excludes.contains(it.callable) }
             .filterNot {
                 val classLikeType = it.callable.resolvedReturnType as? ConeClassLikeType
@@ -355,23 +323,56 @@ private fun ConeKotlinType.isValueType(session: FirSession) =
 
 
 private fun ConeKotlinType.hasProperties(session: FirSession): Boolean {
-    val symbol = this.toRegularClassSymbol(session) as? FirClassSymbol<*> ?: return false
+    return properties(session).isNotEmpty()
+}
+
+private fun ConeKotlinType.properties(session: FirSession): List<ToDataFrameProperty> {
+    val symbol = this.toRegularClassSymbol(session) as? FirClassSymbol<*> ?: return emptyList()
     val scope = symbol.unsubstitutedScope(
         session,
         ScopeSession(),
         withForcedTypeCalculator = false,
-        memberRequiredPhase = null
+        memberRequiredPhase = FirResolvePhase.STATUS
     )
 
-    return scope.collectAllProperties().any { it.visibility == Visibilities.Public } ||
-            scope.collectAllFunctions().any { it.visibility == Visibilities.Public && it.isGetterLike() }
+    return scope.collectAllProperties()
+        .filterIsInstance<FirPropertySymbol>()
+        .filter { it.visibility == Visibilities.Public }
+        .map { ToDataFrameProperty(it, it.name.identifier) }
+        .ifEmpty {
+            scope.collectAllFunctions()
+                .filter {
+                    it.visibility == Visibilities.Public && it.isGetterLike()
+                }
+                .mapNotNull { function ->
+                    function.toDataFramePropertyOrNull()
+                }
+        }
 }
 
 private fun FirNamedFunctionSymbol.isGetterLike(): Boolean {
     val functionName = this.name.asString()
     return (functionName.startsWith("get") || functionName.startsWith("is")) &&
+            !this.isStatic &&
             this.valueParameterSymbols.isEmpty() &&
             this.typeParameterSymbols.isEmpty()
+}
+
+private fun FirNamedFunctionSymbol.toDataFramePropertyOrNull(): ToDataFrameProperty? {
+    val identifier = name.identifier
+    val columnName = when {
+        identifier.startsWith("get") -> identifier.replaceFirst("get", "")
+        identifier.startsWith("is") -> identifier.replaceFirst("is", "")
+        else -> return null
+    }.let {
+        if (it.firstOrNull()?.isUpperCase() == true) {
+            it.replaceFirstChar { it.lowercase(Locale.getDefault()) }
+        } else {
+            return null
+        }
+    }
+
+    return ToDataFrameProperty(callable = this, columnName)
 }
 
 // org.jetbrains.kotlinx.dataframe.codeGen.getFieldKind
