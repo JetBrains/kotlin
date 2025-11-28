@@ -141,4 +141,4 @@ private fun IrFunction.continuationType(context: CommonBackendContext): IrType {
 }
 
 fun loweredSuspendFunctionReturnType(function: IrFunction, irBuiltIns: IrBuiltIns): IrType =
-    function.returnType
+    if (function.returnType.isNullable()) irBuiltIns.anyNType else irBuiltIns.anyType
