@@ -27,5 +27,10 @@ private fun getCompilerPlugin(plugin: KnownCompilerPlugin, arguments: List<Compi
 
 internal val NOARG_PLUGIN =
     getCompilerPlugin(KnownCompilerPlugin.NOARG, listOf(CompilerPluginOption("annotation", "GenerateNoArgsConstructor")))
+internal val NOARG_JPA_PLUGIN =
+    getCompilerPlugin(
+        KnownCompilerPlugin.NOARG,
+        listOf(CompilerPluginOption("preset", "jpa"), CompilerPluginOption("annotation", "GenerateNoArgsConstructor"))
+    )
 internal val ASSIGNMENT_PLUGIN =
     getCompilerPlugin(KnownCompilerPlugin.ASSIGNMENT, listOf(CompilerPluginOption("annotation", "GenerateAssignment")))

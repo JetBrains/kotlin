@@ -127,6 +127,95 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
         }
     }
 
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Smoke test of compiler plugins application through applyArgumentStrings (legacy + modern mixed)")
+    @TestMetadata("compiler-plugins")
+    fun smokeTestCompilerPluginsApplicationLegacyModernMixedArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        project(strategyConfig) {
+            val module = module("compiler-plugins")
+            module.compile(compilationConfigAction = {
+                val legacyArgs = buildList {
+                    add("-Xplugin=${(NOARG_PLUGIN.classpath).joinToString(",")}")
+                    add("-P")
+                    add(buildList {
+                        for (arg in NOARG_PLUGIN.rawArguments) {
+                            add("plugin:${NOARG_PLUGIN.pluginId}:${arg.key}=${arg.value}")
+                        }
+                    }.joinToString(","))
+                }
+                val modernArgs = buildList {
+                    add(
+                        "-Xcompiler-plugin=${(ASSIGNMENT_PLUGIN.classpath).joinToString(",")}=${
+                            buildList {
+                                for (arg in ASSIGNMENT_PLUGIN.rawArguments) {
+                                    add("${arg.key}=${arg.value}")
+                                }
+                            }.joinToString(",")
+                        }"
+                    )
+                }
+                it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + legacyArgs + modernArgs)
+            }) {
+                expectFail()
+                assertLogContainsPatterns(
+                    LogLevel.ERROR,
+                    "Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax.*".toRegex(RegexOption.DOT_MATCHES_ALL)
+                )
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Smoke test of no-arg plugin with JPA preset")
+    @TestMetadata("compiler-plugins-jpa")
+    fun smokeTestNoArgPluginWithJpaPreset(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        project(strategyConfig) {
+            val module = module("compiler-plugins-jpa")
+            module.compile(compilationConfigAction = {
+                it.compilerArguments[COMPILER_PLUGINS] = listOf(NOARG_JPA_PLUGIN)
+            }) {
+                assertOutputs(
+                    "javax/persistence/Entity.class",
+                    "javax/persistence/EntityClass.class",
+                    "javax/persistence/Embeddable.class",
+                    "javax/persistence/EmbeddableClass.class",
+                    "javax/persistence/MappedSuperclass.class",
+                    "javax/persistence/MappedSuperclassClass.class",
+                    "GenerateNoArgsConstructor.class",
+                    "SomeClass.class",
+                )
+                assertClassDeclarationsContain(
+                    classFqn = "javax.persistence.EntityClass",
+                    setOf(
+                        "public javax.persistence.EntityClass();",
+                        "public javax.persistence.EntityClass(long, java.lang.String);",
+                    )
+                )
+                assertClassDeclarationsContain(
+                    classFqn = "javax.persistence.EmbeddableClass",
+                    setOf(
+                        "public javax.persistence.EmbeddableClass();",
+                        "public javax.persistence.EmbeddableClass(java.lang.String, java.lang.String);",
+                    )
+                )
+                assertClassDeclarationsContain(
+                    classFqn = "javax.persistence.MappedSuperclassClass",
+                    setOf(
+                        "public javax.persistence.MappedSuperclassClass();",
+                        "public javax.persistence.MappedSuperclassClass(long, long);",
+                    )
+                )
+                assertClassDeclarationsContain(
+                    classFqn = "SomeClass",
+                    setOf(
+                        "public SomeClass();",
+                        "public SomeClass(int);",
+                    )
+                )
+            }
+        }
+    }
+
     private fun smokeTest(
         strategyConfig: CompilerExecutionStrategyConfiguration,
         pluginsConfiguration: (JvmCompilationOperation) -> Unit,
