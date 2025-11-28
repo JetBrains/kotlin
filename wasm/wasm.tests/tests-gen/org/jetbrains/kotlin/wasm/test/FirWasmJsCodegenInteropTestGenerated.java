@@ -428,6 +428,12 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
+  @TestMetadata("jsQualifierOnLocalDeclarations.kt")
+  public void testJsQualifierOnLocalDeclarations() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsQualifierOnLocalDeclarations.kt");
+  }
+
+  @Test
   @TestMetadata("jsToKotlinAdapters.kt")
   public void testJsToKotlinAdapters() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdapters.kt");
