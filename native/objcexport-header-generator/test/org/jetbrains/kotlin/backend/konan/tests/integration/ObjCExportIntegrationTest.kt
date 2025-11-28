@@ -90,8 +90,8 @@ class ObjCExportIntegrationTest {
 
     private fun compileAndIndex(header: String, baseHeader: File): IndexerResult {
         val headerFile = files.file("Foo.h", header)
-        return org.jetbrains.kotlin.backend.konan.tests.integration.utils.compileAndIndex(
-            listOf(baseHeader, headerFile), files, integrationModuleName, "-isysroot", appleSdkPath, "-F", appleFrameworkPath
+        return compileAndIndex(
+            listOf(baseHeader, headerFile), files, appleSdkPath, appleFrameworkPath
         )
     }
 }
