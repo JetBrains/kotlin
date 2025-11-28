@@ -14,6 +14,16 @@ import kotlin.script.experimental.api.ResultWithDiagnostics
 class ResolveTest {
 
     @Test
+    fun testNoDeps() {
+        val res = evalFile(File("testData/hello-no-deps.scriptwithdeps.kts"))
+
+        Assert.assertTrue(
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
+            res is ResultWithDiagnostics.Success
+        )
+    }
+
+    @Test
     fun testResolveJunit() {
         val res = evalFile(File("testData/hello-maven-resolve-junit.scriptwithdeps.kts"))
 

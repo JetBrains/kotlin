@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
@@ -380,6 +381,7 @@ fun FirBasedSymbol<*>.packageFqName(): FqName {
         is FirClassLikeSymbol<*> -> classId.packageFqName
         is FirPropertyAccessorSymbol -> propertySymbol.packageFqName()
         is FirCallableSymbol<*> -> callableId.packageName
+        is FirScriptSymbol -> this.fqName.parent()
         is FirReplSnippetSymbol -> FqName.ROOT // TODO: add package FQN to snippet symbol (KT-74126)
         else -> error("No package fq name for $this")
     }

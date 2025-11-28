@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
@@ -88,6 +87,9 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
     override val regularDependenciesModuleData: FirModuleData
         get() = baseDependenciesModuleData
 
+    override fun getModuleDataPaths(moduleData: FirModuleData): Set<Path>? =
+        pathToModuleData.entries.mapNotNullTo(mutableSetOf()) { if (it.value == moduleData) it.key else null }.takeIf { it.isNotEmpty() }
+
     override fun getModuleData(path: Path?): FirModuleData? {
         val normalizedPath = path?.normalize() ?: return null
         pathToModuleData[normalizedPath]?.let { return it }
@@ -109,7 +111,7 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
     fun addNewScriptModuleData(name: Name): FirModuleData =
         FirSourceModuleData(
             name,
-            dependencies = moduleDataHistory.filter { it.dependencies.isEmpty() },
+            dependencies = moduleDataHistory.filter { it.dependencies.isEmpty() }.asReversed(),
             dependsOnDependencies = emptyList(),
             friendDependencies = moduleDataHistory.filter { it.dependencies.isNotEmpty() },
             JvmPlatforms.defaultJvmPlatform,
@@ -120,14 +122,14 @@ fun createCompilerState(
     moduleName: Name,
     messageCollector: ScriptDiagnosticsMessageCollector,
     rootDisposable: Disposable,
-    scriptCompilationConfiguration: ScriptCompilationConfiguration,
+    baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     configureCompiler: CompilerConfiguration.() -> Unit = {},
     createModuleDataProvider: (List<Path>) -> ScriptingModuleDataProvider = { ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), it) },
 ): K2ScriptingCompilerEnvironment {
 
     val compilerContext = createIsolatedCompilationContext(
-        scriptCompilationConfiguration,
+        baseScriptCompilationConfiguration,
         hostConfiguration,
         messageCollector,
         rootDisposable,
@@ -139,6 +141,7 @@ fun createCompilerState(
 
     val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
 
+    val scriptCompilationConfiguration = compilerContext.baseScriptCompilationConfiguration
     compilerConfiguration.scriptingHostConfiguration = hostConfiguration
     compilerConfiguration.add(
         ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
@@ -151,9 +154,7 @@ fun createCompilerState(
         (it as? JvmDependency)?.classpath ?: emptyList()
     }
     compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
-    val projectEnvironment = VfsBasedProjectEnvironment(
-        project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-    ) { compilerContext.environment.createPackagePartProvider(it) }
+    val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
     val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
     val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
     val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
