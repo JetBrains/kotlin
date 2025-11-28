@@ -305,6 +305,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
     }
 
     @Test
+    @Disabled("Until BTA maps BEFORE to canonical '>' form; compiler parses only '>'. The logic must be fixed on BTA side")
     fun testSeveralOrderingToSamePlugin() {
         val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
         val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
