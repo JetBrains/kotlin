@@ -9,12 +9,22 @@ import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
+import org.jetbrains.kotlin.cli.common.CodeAnalysisMeasurement
+import org.jetbrains.kotlin.cli.common.CodeGenerationMeasurement
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.cli.common.CompilerInitializationMeasurement
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.IRMeasurement
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -152,9 +162,11 @@ internal object CompilationServiceImpl : CompilationService {
                 @Suppress("UNCHECKED_CAST")
                 val classpathChanges =
                     (aggregatedIcConfiguration as AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>).classpathChanges
+
+                val metricsReporter = BuildMetricsReporterImpl<GradleBuildTime, GradleBuildPerformanceMetric>() // gradle in the name is a bit confusing
                 val buildReporter = BuildReporter(
                     icReporter = BuildToolsApiBuildICReporter(loggerAdapter.kotlinLogger, options.rootProjectDir),
-                    buildMetricsReporter = DoNothingBuildMetricsReporter
+                    buildMetricsReporter = metricsReporter
                 )
                 val verifiedPreciseJavaTracking = parsedArguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = options.preciseJavaTrackingEnabled)
 
@@ -177,12 +189,75 @@ internal object CompilationServiceImpl : CompilationService {
                     fileLocations = if (rootProjectDir != null && buildDir != null) {
                         FileLocations(rootProjectDir, buildDir)
                     } else null
-                ).asCompilationResult
+                ).asCompilationResult.also {
+                    loggerAdapter.kotlinLogger.logBuildMetric(metricsReporter)
+                }
             }
             else -> {
                 parsedArguments.freeArgs += sources.map { it.absolutePath }
-                compiler.exec(loggerAdapter, Services.EMPTY, parsedArguments).asCompilationResult
+                val metricsReporter = BuildMetricsReporterImpl<BuildTime, BuildPerformanceMetric>()
+                compiler.exec(loggerAdapter, Services.EMPTY, parsedArguments).asCompilationResult.also {
+                    metricsReporter.reportPerformanceData(compiler.defaultPerformanceManager)
+                    loggerAdapter.kotlinLogger.logBuildMetric(metricsReporter)
+                }
             }
+        }
+    }
+
+    private fun KotlinLogger.logBuildMetric(metricsReporter: BuildMetricsReporterImpl<out BuildTime, out BuildPerformanceMetric>) {
+        val (buildTimes, buildPerf, buildAttrs, gc) = metricsReporter.getMetrics()
+        info("Metrics:")
+        buildTimes.asMapMs().forEach { time ->
+            info("Build time: ${time.key.getName()}=${time.value}ms")
+        }
+        buildPerf.asMap().forEach { perf ->
+            info("Build performance metric: ${perf.key.getName()}=${perf.value}")
+        }
+        buildAttrs.asMap().forEach { attr ->
+            info("Build attribute: ${attr.key} (${attr.value} times)")
+        }
+        gc.asMap().forEach { gcTime ->
+            info("GC time: ${gcTime.key}=${gcTime.value}")
+        }
+    }
+
+    private fun BuildMetricsReporterImpl<in BuildTime, BuildPerformanceMetric>.reportPerformanceData(defaultPerformanceManager: CommonCompilerPerformanceManager) {
+        defaultPerformanceManager.getMeasurementResults().forEach {
+            when (it) {
+                is CompilerInitializationMeasurement -> addTimeMetricMs(GradleBuildTime.COMPILER_INITIALIZATION, it.milliseconds)
+                is CodeAnalysisMeasurement -> {
+                    addTimeMetricMs(GradleBuildTime.CODE_ANALYSIS, it.milliseconds)
+                    it.lines?.apply {
+                        addMetric(GradleBuildPerformanceMetric.ANALYZED_LINES_NUMBER, this.toLong())
+                        if (it.milliseconds > 0) {
+                            addMetric(GradleBuildPerformanceMetric.ANALYSIS_LPS, this * 1000 / it.milliseconds)
+                        }
+                    }
+                }
+                is CodeGenerationMeasurement -> {
+                    addTimeMetricMs(GradleBuildTime.CODE_GENERATION, it.milliseconds)
+                    it.lines?.apply {
+                        addMetric(GradleBuildPerformanceMetric.CODE_GENERATED_LINES_NUMBER, this.toLong())
+                        if (it.milliseconds > 0) {
+                            addMetric(GradleBuildPerformanceMetric.CODE_GENERATION_LPS, this * 1000 / it.milliseconds)
+                        }
+                    }
+                }
+                is IRMeasurement -> {
+                    when (it.kind) {
+                        IRMeasurement.Kind.TRANSLATION -> reportIrMeasurements(it, GradleBuildTime.IR_TRANSLATION, GradleBuildPerformanceMetric.IR_TRANSLATION_LINES_NUMBER)
+                        IRMeasurement.Kind.LOWERING -> reportIrMeasurements(it, GradleBuildTime.IR_LOWERING, GradleBuildPerformanceMetric.IR_LOWERING_LINES_NUMBER)
+                        IRMeasurement.Kind.GENERATION -> reportIrMeasurements(it, GradleBuildTime.IR_GENERATION, GradleBuildPerformanceMetric.IR_GENERATION_LINES_NUMBER)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun BuildMetricsReporterImpl<BuildTime, BuildPerformanceMetric>.reportIrMeasurements(it: IRMeasurement, timeMetric: GradleBuildTime, lineMetric: GradleBuildPerformanceMetric) {
+        addTimeMetricMs(timeMetric, it.milliseconds)
+        it.lines?.also {
+            addMetric(lineMetric, it.toLong())
         }
     }
 
