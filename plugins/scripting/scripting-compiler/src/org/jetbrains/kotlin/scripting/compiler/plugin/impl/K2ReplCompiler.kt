@@ -417,14 +417,13 @@ private fun createReplAdditionalLibrariesSession(
             val searchScope = state.moduleDataProvider.getModuleDataPaths(libModuleData)?.let { paths ->
                 projectEnvironment.getSearchScopeByClassPath(paths)
             } ?: state.sessionFactoryContext.librariesScope
-            val kotlinClassFinder1 = projectEnvironment.getKotlinClassFinder(searchScope)
             add(
                 JvmClassFileBasedSymbolProvider(
                     this@session,
                     state.moduleDataProvider,
                     kotlinScopeProvider,
                     state.sessionFactoryContext.packagePartProviderForLibraries,
-                    kotlinClassFinder1,
+                    projectEnvironment.getKotlinClassFinder(searchScope),
                     projectEnvironment.getFirJavaFacade(this@session, libModuleData, state.sessionFactoryContext.librariesScope),
                 )
             )

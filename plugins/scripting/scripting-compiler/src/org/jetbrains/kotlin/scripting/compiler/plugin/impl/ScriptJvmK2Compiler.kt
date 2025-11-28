@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertAnalyzedFirToIr
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -121,6 +122,7 @@ class ScriptJvmK2Compiler(
                 }
                 // likely needed for class finders anyway
                 compilerConfiguration.addJvmClasspathRoots(classpathFiles)
+                state.compilerContext.environment.updateClasspath(classpathFiles.map(::JvmClasspathRoot))
                 val (libModuleData, _) = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpathFiles.map(File::toPath))
                 if (libModuleData != null) {
                     createScriptDependenciesSession(libModuleData,
@@ -269,14 +271,13 @@ private fun createScriptDependenciesSession(
             val searchScope = state.moduleDataProvider.getModuleDataPaths(libModuleData)?.let { paths ->
                 projectEnvironment.getSearchScopeByClassPath(paths)
             } ?: state.sessionFactoryContext.librariesScope
-            val kotlinClassFinder1 = projectEnvironment.getKotlinClassFinder(searchScope)
             add(
                 JvmClassFileBasedSymbolProvider(
                     this@session,
                     state.moduleDataProvider,
                     kotlinScopeProvider,
                     state.sessionFactoryContext.packagePartProviderForLibraries,
-                    kotlinClassFinder1,
+                    projectEnvironment.getKotlinClassFinder(searchScope),
                     projectEnvironment.getFirJavaFacade(this@session, libModuleData, state.sessionFactoryContext.librariesScope),
                 )
             )
