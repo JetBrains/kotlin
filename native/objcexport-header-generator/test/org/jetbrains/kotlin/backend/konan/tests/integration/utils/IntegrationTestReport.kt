@@ -25,13 +25,6 @@ internal data class IntegrationTestReport(
             val k1Source: ObjCClassOrProtocol,
         ) : Issue()
 
-        data class ClassOrInterfaceName(
-            val k1: String,
-            val k2: String,
-            val k1Source: ObjCClassOrProtocol,
-            val k2Source: ObjCClassOrProtocol,
-        ) : Issue()
-
         data class ClassOrInterfaceSwiftName(
             val k1: String?, val k2: String?,
             val k1Source: ObjCClassOrProtocol,
@@ -233,14 +226,6 @@ private fun compareProtocolsOrClasses(
                 result.add(
                     ClassOrInterfaceSwiftName(
                         k1Container.swiftName, k2Container.swiftName, k1Container, k2Container
-                    )
-                )
-            }
-
-            if (k1Container.name != k2Container.name) {
-                result.add(
-                    ClassOrInterfaceName(
-                        k1Container.name, k2Container.name, k1Container, k2Container
                     )
                 )
             }
