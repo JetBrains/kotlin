@@ -19,12 +19,8 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.NoOpWasmBinaryTransform
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute.WASM_BINARY
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform.Companion.ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
-import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 
 internal open class KotlinJsIrLinkConfig(
     private val binary: JsIrBinary,
@@ -68,7 +64,7 @@ internal open class KotlinJsIrLinkConfig(
             task.project.dependencies.registerTransform(
                 NoOpWasmBinaryTransform::class.java
             ) {
-                it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY)
+                it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT)
                 it.to.attributes.attribute(
                     WasmBinaryAttribute.attribute,
                     WasmBinaryAttribute.KLIB
@@ -81,7 +77,7 @@ internal open class KotlinJsIrLinkConfig(
                 it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.KLIB)
                 it.to.attributes.attribute(
                     WasmBinaryAttribute.attribute,
-                    WasmBinaryAttribute.WASM_BINARY
+                    WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT
                 )
 
                 it.parameters {

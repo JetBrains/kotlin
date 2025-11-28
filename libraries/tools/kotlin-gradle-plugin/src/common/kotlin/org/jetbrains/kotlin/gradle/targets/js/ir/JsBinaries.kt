@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
-import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 
 interface JsBinary {
     val compilation: KotlinJsCompilation
@@ -77,19 +76,6 @@ sealed class JsIrBinary(
     val wasmBinaryOutputConfigurationName
         get() = compilation.disambiguateName("wasmBinary${name}OutputConfiguration")
 
-    val wasmBinaryOutputConfiguration = if (compilation.isMain()) {
-        project.configurations.maybeCreateConsumable(wasmBinaryOutputConfigurationName) {
-            description = "Elements of runtime for main."
-            @Suppress("DEPRECATION")
-            isVisible = false
-            KotlinUsages.configureProducerRuntimeUsage(this, target)
-            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-            attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY)
-            attributes.attribute(WasmBinaryModeAttribute.attribute, mode.attributeByMode())
-            usesPlatformOf(target)
-        }
-    } else null
-
     val outputDirBase: Provider<Directory> = project.layout.buildDirectory
         .dir(COMPILE_SYNC)
         .map { it.dir(compilation.target.targetName) }
@@ -97,11 +83,7 @@ sealed class JsIrBinary(
         .map { it.dir(name) }
 
     val linkTask: TaskProvider<KotlinJsIrLink> =
-        project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project, target.platformType)).apply {
-            if (compilation.isMain() && mode == KotlinJsBinaryMode.DEVELOPMENT) {
-                project.artifacts.add(wasmBinaryOutputConfigurationName, this.map { it.destinationDirectory })
-            }
-        }
+        project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project, target.platformType))
 
     @Suppress("PropertyName")
     protected val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =
