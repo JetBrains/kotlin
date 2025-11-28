@@ -64,7 +64,7 @@ internal class BtaApiGenerator(
     }
 
     private fun TypeSpec.Builder.generateOptions(
-        arguments: Collection<BtaCompilerArgument>,
+        arguments: Collection<BtaCompilerArgument<*>>,
         argumentTypeName: ClassName,
     ) {
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()

@@ -20,10 +20,10 @@ import kotlin.reflect.KType
  * Public facade used by the build-tools options generator. Wraps the single source of truth (arguments DSL)
  * without exposing its internal types directly to the generator call sites.
  */
-sealed class BtaCompilerArgument(
+sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
     val name: String,
     val description: String,
-    val valueType: BtaCompilerArgumentValueType,
+    val valueType: T,
     val introducedSinceVersion: KotlinReleaseVersion,
     val deprecatedSinceVersion: KotlinReleaseVersion?,
     val removedSinceVersion: KotlinReleaseVersion?,
@@ -31,7 +31,7 @@ sealed class BtaCompilerArgument(
     class SSoTCompilerArgument(
         val effectiveCompilerName: String,
         origin: KotlinCompilerArgument,
-    ) : BtaCompilerArgument(
+    ) : BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>(
         name = origin.name,
         description = origin.description.current,
         valueType = BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType(origin.valueType),
@@ -45,13 +45,13 @@ sealed class BtaCompilerArgument(
     class CustomCompilerArgument(
         name: String,
         description: String,
-        valueType: BtaCompilerArgumentValueType,
+        valueType: BtaCompilerArgumentValueType.CustomArgumentValueType,
         introducedSinceVersion: KotlinReleaseVersion,
         deprecatedSinceVersion: KotlinReleaseVersion?,
         removedSinceVersion: KotlinReleaseVersion?,
         val applier: MemberName,
         val defaultValue: CodeBlock,
-    ) : BtaCompilerArgument(
+    ) : BtaCompilerArgument<BtaCompilerArgumentValueType.CustomArgumentValueType>(
         name = name,
         description = description,
         valueType = valueType,

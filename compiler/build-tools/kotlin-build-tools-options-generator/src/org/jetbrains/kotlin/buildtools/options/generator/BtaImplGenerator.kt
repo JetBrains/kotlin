@@ -119,7 +119,7 @@ internal class BtaImplGenerator(
     }
 
     private fun TypeSpec.Builder.generateOptions(
-        arguments: Collection<BtaCompilerArgument>,
+        arguments: Collection<BtaCompilerArgument<*>>,
         implClassName: String,
         argumentTypeName: ClassName,
         applyCompilerArgumentsFun: FunSpec.Builder,
@@ -241,7 +241,6 @@ internal class BtaImplGenerator(
         applyCompilerArgumentsFun: FunSpec.Builder,
         argumentTypeParameter: TypeName,
     ) {
-        require(argument.valueType is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType)
         // add argument to the converter functions
         val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
         CodeBlock.builder().apply {
@@ -396,7 +395,7 @@ internal fun FunSpec.Builder.addSafeSetStatement(
     wasIntroducedRecently: Boolean,
     wasRemoved: Boolean,
     name: String,
-    argument: BtaCompilerArgument,
+    argument: BtaCompilerArgument<*>,
     setStatement: CodeBlock,
     generateCompatLayer: Boolean,
 ) {
@@ -422,7 +421,7 @@ internal fun FunSpec.Builder.addSafeSetStatement(
     }
 }
 
-private fun maybeGetNullabilitySign(argument: BtaCompilerArgument): String = (if (argument.valueType.isNullable) "?" else "")
+private fun maybeGetNullabilitySign(argument: BtaCompilerArgument<*>): String = (if (argument.valueType.isNullable) "?" else "")
 
 private fun TypeSpec.Builder.maybeAddToArgumentsStringFun(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?) {
     if (!level.isLeaf()) {
