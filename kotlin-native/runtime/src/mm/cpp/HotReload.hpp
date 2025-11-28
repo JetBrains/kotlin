@@ -31,7 +31,11 @@ public:
 
         bool loadLibraryFromPath(const std::string& fileName);
 
-        [[nodiscard]] TypeInfo* lookForTypeInfo(const std::string& mangledClassName, int startingFrom) const;
+        [[nodiscard]] TypeInfo* lookForTypeInfo(std::string_view mangledClassName, std::size_t skipCount) const;
+
+        [[nodiscard]] TypeInfo* getNewestTypeInfo(std::string_view mangledClassName) const;
+
+        [[nodiscard]] TypeInfo* getPreviousTypeInfo(std::string_view mangledClassName) const;
 
         std::deque<LibraryHandle> handles{};
     };

@@ -278,17 +278,15 @@ void HotReloader::perform(mm::ThreadData& currentThreadData, const KotlinDynamic
             continue;
         }
 
-        auto temp = std::string{classMangledName}; // TODO: do not allocate new string, change lookForTypeInfo API
-
-        const TypeInfo* oldTypeInfo = _reloader.lookForTypeInfo(temp, 0);
+        const TypeInfo* oldTypeInfo = _reloader.getPreviousTypeInfo(classMangledName);
         if (oldTypeInfo == nullptr) {
-            // HRLogWarning("Cannot find the new TypeInfo for class: %s", temp.data());
+            HRLogWarning("Cannot find the old TypeInfo for class: %s", classMangledName.data());
             continue;
         }
 
-        const TypeInfo* newTypeInfo = _reloader.lookForTypeInfo(temp, 1);
+        const TypeInfo* newTypeInfo = _reloader.getNewestTypeInfo(classMangledName);
         if (newTypeInfo == nullptr) {
-            HRLogWarning("Cannot find the new TypeInfo for class: %s", temp.data());
+            HRLogWarning("Cannot find the new TypeInfo for class: %s", classMangledName.data());
             continue;
         }
         auto objectsToReload = findObjectsToReload(oldTypeInfo);
@@ -514,23 +512,32 @@ bool HotReloader::SymbolLoader::loadLibraryFromPath(const std::string& fileName)
     return true;
 }
 
-TypeInfo* HotReloader::SymbolLoader::lookForTypeInfo(const std::string& mangledClassName, const int startingFrom = 0) const {
-    // |LIB-A-2| <- |LIB-A-1| <- |LIB-A-0| <- BASE
-    // The most recent library is loaded on top of the deque.
+TypeInfo* HotReloader::SymbolLoader::lookForTypeInfo(const std::string_view mangledClassName, const std::size_t skipCount = 0) const {
+    if (skipCount < handles.size()) {
+        // Knowing that 'handles' is ordered Oldest -> Newest (0 -> N).
+        for (size_t i = skipCount; i < handles.size(); ++i) {
+            HRLogDebug("Checking library at path '%s'", handles[i].path.c_str());
 
-    const int actualOffset = startingFrom - 1;
-
-    if (actualOffset == -1 && handles.size() == 1) { // we need this to handle the base case
-        if (void* symbol = dlsym(RTLD_MAIN_ONLY, mangledClassName.c_str()); symbol != nullptr) return static_cast<TypeInfo*>(symbol);
-        HRLogError("dlerror: %s", dlerror());
-        return nullptr;
+            (void)dlerror(); // Clear previous errors, if any
+            if (void* symbol = dlsym(handles[i].handle, mangledClassName.data())) {
+                return static_cast<TypeInfo*>(symbol);
+            }
+        }
     }
 
-    for (size_t i = actualOffset; i < handles.size(); i++) {
-        HRLogDebug("Checking library at path '%s'", handles[i].path.c_str());
-        if (void* symbol = dlsym(handles[i].handle, mangledClassName.c_str()); symbol != nullptr) return static_cast<TypeInfo*>(symbol);
-        HRLogError("dlerror: %s", dlerror());
+    (void)dlerror(); // Clear previous errors, if any
+    if (void* symbol = dlsym(RTLD_MAIN_ONLY, mangledClassName.data())) {
+        return static_cast<TypeInfo*>(symbol);
     }
+
+    HRLogDebug("Symbol '%s' not found in any loaded library or base.", mangledClassName.data());
 
     return nullptr;
+}
+TypeInfo* HotReloader::SymbolLoader::getNewestTypeInfo(const std::string_view mangledClassName) const {
+    return lookForTypeInfo(mangledClassName, 0);
+}
+
+TypeInfo* HotReloader::SymbolLoader::getPreviousTypeInfo(const std::string_view mangledClassName) const {
+    return lookForTypeInfo(mangledClassName, 1);
 }
