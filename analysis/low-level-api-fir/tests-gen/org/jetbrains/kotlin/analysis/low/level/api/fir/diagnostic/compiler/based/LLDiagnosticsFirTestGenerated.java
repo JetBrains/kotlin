@@ -2129,6 +2129,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("enabledNestedCL.kt")
+        public void testEnabledNestedCL() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/enabledNestedCL.kt");
+        }
+
+        @Test
         @TestMetadata("inAnnotationDefaults.kt")
         public void testInAnnotationDefaults() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/inAnnotationDefaults.kt");
