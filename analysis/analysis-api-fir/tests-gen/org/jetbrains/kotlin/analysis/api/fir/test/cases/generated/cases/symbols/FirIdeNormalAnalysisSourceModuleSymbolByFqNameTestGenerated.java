@@ -77,6 +77,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends
   }
 
   @Test
+  @TestMetadata("explicitBackingField.kt")
+  public void testExplicitBackingField() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/explicitBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitBackingFieldTopLevel.kt")
+  public void testExplicitBackingFieldTopLevel() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/explicitBackingFieldTopLevel.kt");
+  }
+
+  @Test
   @TestMetadata("fileWalkDirectionEnum.kt")
   public void testFileWalkDirectionEnum() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/fileWalkDirectionEnum.kt");

@@ -878,7 +878,6 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaBackingFieldSy
 	public final fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public fun getOrigin ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public abstract fun getOwningProperty ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaKotlinPropertySymbol;
-	public final fun getPsi ()Lcom/intellij/psi/PsiElement;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
 	public final fun isActual ()Z
 	public final fun isExpect ()Z
@@ -1212,6 +1211,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/KaSymb
 	public abstract fun getClassSymbol (Lorg/jetbrains/kotlin/psi/KtClassOrObject;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
 	public abstract fun getNamedClassSymbol (Lorg/jetbrains/kotlin/psi/KtClassOrObject;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;
 	public abstract fun getRootPackageSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaPackageSymbol;
+	public abstract fun getSymbol (Lorg/jetbrains/kotlin/psi/KtBackingField;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaBackingFieldSymbol;
 	public abstract fun getSymbol (Lorg/jetbrains/kotlin/psi/KtClassInitializer;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassInitializerSymbol;
 	public abstract fun getSymbol (Lorg/jetbrains/kotlin/psi/KtConstructor;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaConstructorSymbol;
 	public abstract fun getSymbol (Lorg/jetbrains/kotlin/psi/KtDeclaration;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol;

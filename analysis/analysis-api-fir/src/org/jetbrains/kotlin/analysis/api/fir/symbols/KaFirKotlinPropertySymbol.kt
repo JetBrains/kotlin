@@ -94,7 +94,19 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         get() = withValidityAssertion { modalityByPsi ?: firSymbol.kaSymbolModality }
 
     override val backingFieldSymbol: KaBackingFieldSymbol?
-        get() = withValidityAssertion { KaFirBackingFieldSymbol.create(this) }
+        get() = withValidityAssertion {
+            val backingFieldPsi = (backingPsi as? KtProperty)?.fieldDeclaration
+            if (backingFieldPsi != null) {
+                return KaFirBackingFieldSymbol(backingFieldPsi, analysisSession, this)
+            }
+
+            val backingFieldSymbol = firSymbol.backingFieldSymbol
+            if (backingFieldSymbol != null) {
+                return KaFirBackingFieldSymbol(backingFieldSymbol, analysisSession, this)
+            }
+
+            return null
+        }
 
     override val isLateInit: Boolean
         get() = withValidityAssertion {

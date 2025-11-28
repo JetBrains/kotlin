@@ -128,6 +128,11 @@ internal class KaFe10SymbolInformationProvider(
         get() = withValidityAssertion {
             require(this is KaFe10Symbol)
 
+            if (this is KaBackingFieldSymbol) {
+                // Backing field symbol in FE10 references the property descriptor, rather than the field descriptor
+                return@withValidityAssertion null
+            }
+
             val descriptor = getSymbolDescriptor(this)
             if (descriptor?.canBeReferencedViaImport() != true) return null
 

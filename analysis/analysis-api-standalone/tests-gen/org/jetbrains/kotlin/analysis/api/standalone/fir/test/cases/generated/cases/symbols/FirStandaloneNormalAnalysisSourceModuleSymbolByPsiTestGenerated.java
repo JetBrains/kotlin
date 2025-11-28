@@ -269,6 +269,36 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("explicitBackingFieldAnnotations.kt")
+  public void testExplicitBackingFieldAnnotations() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/explicitBackingFieldAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitBackingFieldCustomType.kt")
+  public void testExplicitBackingFieldCustomType() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/explicitBackingFieldCustomType.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitBackingFieldDeprecated.kt")
+  public void testExplicitBackingFieldDeprecated() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/explicitBackingFieldDeprecated.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitBackingFieldLocal.kt")
+  public void testExplicitBackingFieldLocal() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/explicitBackingFieldLocal.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitBackingFieldTopLevel.kt")
+  public void testExplicitBackingFieldTopLevel() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/explicitBackingFieldTopLevel.kt");
+  }
+
+  @Test
   @TestMetadata("extensionFunction.kt")
   public void testExtensionFunction() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/extensionFunction.kt");

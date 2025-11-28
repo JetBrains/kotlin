@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirBackingFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseBackingFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
@@ -18,67 +19,80 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.psi.KtBackingField
 
-/**
- * Note: current implementation doesn't support explicit backing field
- */
 internal class KaFirBackingFieldSymbol private constructor(
-    val owningKaProperty: KaFirKotlinPropertySymbol<*>,
-) : KaBackingFieldSymbol(), KaFirSymbol<FirBackingFieldSymbol> {
-    override val analysisSession: KaFirSession get() = owningKaProperty.analysisSession
+    override val backingPsi: KtBackingField?,
+    override val analysisSession: KaFirSession,
+    override val lazyFirSymbol: Lazy<FirBackingFieldSymbol>,
+    private val backingOwningProperty: KaFirKotlinPropertySymbol<*>,
+) : KaBackingFieldSymbol(), KaFirKtBasedSymbol<KtBackingField, FirBackingFieldSymbol> {
+    constructor(declaration: KtBackingField, session: KaFirSession, owningProperty: KaFirKotlinPropertySymbol<*>) : this(
+        backingPsi = declaration,
+        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        analysisSession = session,
+        backingOwningProperty = owningProperty,
+    )
 
-    override val firSymbol: FirBackingFieldSymbol
-        get() = owningKaProperty.firSymbol.backingFieldSymbol ?: errorWithAttachment("Property has no backing field") {
-            withFirSymbolEntry("property", owningKaProperty.firSymbol)
-        }
+    constructor(symbol: FirBackingFieldSymbol, session: KaFirSession, owningProperty: KaFirKotlinPropertySymbol<*>) : this(
+        backingPsi = symbol.backingPsiIfApplicable as? KtBackingField,
+        lazyFirSymbol = lazyOf(symbol),
+        analysisSession = session,
+        backingOwningProperty = owningProperty
+    )
+
+    override val psi: PsiElement?
+        get() = withValidityAssertion { backingPsi }
+
+    override val owningProperty: KaKotlinPropertySymbol
+        get() = withValidityAssertion { backingOwningProperty }
 
     override val origin: KaSymbolOrigin
         get() = withValidityAssertion { super<KaBackingFieldSymbol>.origin }
 
-    override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
-            if (owningKaProperty.backingPsi?.cannotHaveBackingFieldAnnotation() == true)
-                KaBaseEmptyAnnotationList(token)
-            else
-                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-        }
+    override val isVal: Boolean
+        get() = withValidityAssertion { backingOwningProperty.isVal }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = withValidityAssertion { firSymbol.returnType(analysisSession.firSymbolBuilder) }
 
-    override val owningProperty: KaKotlinPropertySymbol
-        get() = withValidityAssertion { owningKaProperty }
-
-    override val isVal: Boolean
-        get() = withValidityAssertion { owningKaProperty.isVal }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            if (!backingPsi?.annotationEntries.isNullOrEmpty() || backingOwningProperty.mayHaveBackingFieldAnnotation()) {
+                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            } else {
+                KaBaseEmptyAnnotationList(token)
+            }
+        }
 
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
-        KaFirBackingFieldSymbolPointer(owningKaProperty.createPointer(), this)
+        psiBasedSymbolPointerOfTypeIfSource<KaBackingFieldSymbol>()
+            ?: KaBaseBackingFieldSymbolPointer(backingOwningProperty.createPointer(), this)
     }
 
-    override fun equals(other: Any?): Boolean = this === other ||
-            other is KaFirBackingFieldSymbol &&
-            other.owningKaProperty == owningKaProperty
+    override fun equals(other: Any?): Boolean {
+        return this === other
+                || (other is KaFirBackingFieldSymbol && backingOwningProperty == other.backingOwningProperty)
+    }
 
-    override fun hashCode(): Int = 31 * owningKaProperty.hashCode() + KaFirKotlinPropertySymbol.HASH_CODE_ADDITION_FOR_BACKING_FIELD
-
-    companion object {
-        fun create(owningKaProperty: KaFirKotlinPropertySymbol<*>): KaFirBackingFieldSymbol? {
-            if (owningKaProperty.backingPsi == null && owningKaProperty.firSymbol.backingFieldSymbol == null) {
-                return null
-            }
-
-            return KaFirBackingFieldSymbol(owningKaProperty)
-        }
+    override fun hashCode(): Int {
+        return 31 * backingOwningProperty.hashCode() + KaFirKotlinPropertySymbol.HASH_CODE_ADDITION_FOR_BACKING_FIELD
     }
 }
 
-private fun KtAnnotated.cannotHaveBackingFieldAnnotation(): Boolean = annotationEntries.none {
-    when (it.useSiteTarget?.getAnnotationUseSiteTarget()) {
-        null, AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD, AnnotationUseSiteTarget.ALL -> true
-        else -> false
+/**
+ * Checks whether the property may have annotations on its backing field without performing any resolution.
+ *
+ * The function is tailored for source properties with a backing PSI.
+ * The compiler preserves annotations on backing fields for properties coming from libraries, so for them the FIR tree needs to be
+ * checked directly. However, the FIR tree for compiled declarations is already resolved, so a direct check is virtually free.
+ */
+private fun KaFirKotlinPropertySymbol<*>.mayHaveBackingFieldAnnotation(): Boolean {
+    val annotationEntries = backingPsi?.annotationEntries ?: return false
+    return annotationEntries.any {
+        when (it.useSiteTarget?.getAnnotationUseSiteTarget()) {
+            null, AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD, AnnotationUseSiteTarget.ALL -> true
+            else -> false
+        }
     }
 }

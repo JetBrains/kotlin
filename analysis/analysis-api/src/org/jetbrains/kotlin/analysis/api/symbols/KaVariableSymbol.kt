@@ -59,8 +59,6 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
 
     final override val name: Name get() = withValidityAssertion { StandardNames.BACKING_FIELD }
 
-    /** PSI may be not-null in the case of explicit backing field ([KEEP-278](https://github.com/Kotlin/KEEP/issues/278)) */
-    final override val psi: PsiElement? get() = withValidityAssertion { null }
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.PROPERTY }
     override val origin: KaSymbolOrigin get() = withValidityAssertion { KaSymbolOrigin.PROPERTY_BACKING_FIELD }
     final override val callableId: CallableId? get() = withValidityAssertion { null }

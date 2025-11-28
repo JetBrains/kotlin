@@ -72,8 +72,16 @@ internal class KaFe10PsiKotlinPropertySymbol(
 
     override val backingFieldSymbol: KaBackingFieldSymbol?
         get() = withValidityAssertion {
-            if (psi.isLocal) null
-            else KaFe10PsiDefaultBackingFieldSymbol(propertyPsi = psi, owningProperty = this, analysisContext)
+            if (psi.isLocal) {
+                return null
+            }
+
+            val backingFieldPsi = psi.fieldDeclaration
+            if (backingFieldPsi != null) {
+                KaFe10PsiBackingFieldSymbol(backingFieldPsi, analysisContext, this)
+            } else {
+                KaFe10PsiDefaultBackingFieldSymbol(propertyPsi = psi, owningProperty = this, analysisContext)
+            }
         }
 
     override val hasBackingField: Boolean

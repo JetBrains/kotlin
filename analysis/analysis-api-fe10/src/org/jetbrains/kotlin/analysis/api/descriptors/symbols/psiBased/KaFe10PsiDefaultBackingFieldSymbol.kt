@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
@@ -36,6 +37,9 @@ internal class KaFe10PsiDefaultBackingFieldSymbol(
         val bindingContext = analysisContext.analyze(propertyPsi, Fe10AnalysisFacade.AnalysisMode.PARTIAL)
         (bindingContext[BindingContext.VARIABLE, propertyPsi] as? PropertyDescriptor)?.backingField
     }
+
+    override val psi: PsiElement?
+        get() = withValidityAssertion { null }
 
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
         KaBasePsiSymbolPointer.createForSymbolFromPsi<KaPropertySymbol>(propertyPsi)
