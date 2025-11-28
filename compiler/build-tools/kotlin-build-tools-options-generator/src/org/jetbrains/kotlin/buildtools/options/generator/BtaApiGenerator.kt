@@ -9,7 +9,6 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
 import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
@@ -19,7 +18,6 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.isSubclassOf
 
 internal class BtaApiGenerator(
     private val targetPackage: String,
@@ -88,7 +86,7 @@ internal class BtaApiGenerator(
                     // then the enum is not experimental itself
                     enumsExperimental[type] = false
                 }
-                return ClassName("$targetPackage.enums", type.simpleName!!)
+                return type.toBtaEnumClassName()
             }
 
             // argument is newer than current version
@@ -110,15 +108,11 @@ internal class BtaApiGenerator(
             val argumentTypeParameter = when (argument.valueType) {
                 is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
                     val argumentType = argument.valueType.kType
-                    argumentType.let {
-                        when (val type = it.classifier) {
-                            is KClass<*> if type.isSubclassOf(Enum::class) && type in enumNameAccessors -> {
-                                generatedEnumType(type)
-                            }
-                            else -> {
-                                it.asTypeName()
-                            }
-                        }
+                    if (argumentType.isCompilerEnum) {
+                        val type = argumentType.classifier as KClass<*>
+                        generatedEnumType(type)
+                    } else {
+                        argumentType.asTypeName()
                     }
                 }
                 is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type
@@ -180,7 +174,7 @@ internal class BtaApiGenerator(
         sourceEnum: Collection<Enum<*>>,
         nameAccessor: KProperty1<Any, String>,
     ): TypeSpec.Builder {
-        val className = ClassName("$targetPackage.enums", sourceEnum.first()::class.simpleName!!)
+        val className = sourceEnum.first()::class.toBtaEnumClassName()
         return TypeSpec.enumBuilder(className).apply {
             property<String>("stringValue") {
                 initializer("stringValue")
@@ -197,7 +191,7 @@ internal class BtaApiGenerator(
     }
 
     fun writeEnumFile(typeSpec: TypeSpec, sourceEnum: KClass<*>) {
-        val className = ClassName("$targetPackage.enums", sourceEnum.simpleName!!)
+        val className = sourceEnum.toBtaEnumClassName()
         val enumFileAppendable = createGeneratedFileAppendable()
         val enumFile = FileSpec.builder(className).apply {
             addType(typeSpec)

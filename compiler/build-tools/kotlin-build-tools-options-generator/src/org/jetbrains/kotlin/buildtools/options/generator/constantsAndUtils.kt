@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.buildtools.options.generator
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
@@ -18,12 +18,14 @@ import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import kotlin.math.max
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
+import kotlin.reflect.KType
 
 private const val MAX_SUPPORTED_VERSIONS_BACK = 3
 
 internal const val IMPL_ARGUMENTS_PACKAGE = "org.jetbrains.kotlin.buildtools.internal.arguments"
 internal const val API_PACKAGE = "org.jetbrains.kotlin.buildtools.api"
 internal const val API_ARGUMENTS_PACKAGE = "$API_PACKAGE.arguments"
+internal const val API_ENUMS_PACKAGE = "$API_ARGUMENTS_PACKAGE.enums"
 
 internal val ANNOTATION_EXPERIMENTAL = ClassName(API_ARGUMENTS_PACKAGE, "ExperimentalCompilerArgument")
 internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotlin.buildtools.internal", "UseFromImplModuleRestricted")
@@ -77,6 +79,11 @@ internal val enumNameAccessors = mutableMapOf(
     KotlinVersion::class to KotlinVersion::versionName,
     ReturnValueCheckerMode::class to ReturnValueCheckerMode::modeState
 )
+
+internal fun KClass<*>.toBtaEnumClassName(): ClassName = ClassName(API_ENUMS_PACKAGE, simpleName!!)
+
+internal val KType.isCompilerEnum: Boolean get() = classifier is KClass<*> && classifier in enumNameAccessors
+internal val TypeName.isCompilerEnum: Boolean get() = (this as? ClassName)?.copy(nullable = false) in enumNameAccessors.map { it.key.toBtaEnumClassName() }
 
 @Suppress("UNCHECKED_CAST")
 internal fun KClass<*>.accessor(): KProperty1<Any, String> = enumNameAccessors[this] as? KProperty1<Any, String>
