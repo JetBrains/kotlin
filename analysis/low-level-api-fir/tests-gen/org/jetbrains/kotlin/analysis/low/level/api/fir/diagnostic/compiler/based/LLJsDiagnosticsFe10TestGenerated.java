@@ -1636,6 +1636,12 @@ public class LLJsDiagnosticsFe10TestGenerated extends AbstractLLJsDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("jsQualifierOnLocalDeclarations.kt")
+    public void testJsQualifierOnLocalDeclarations() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/qualifier/jsQualifierOnLocalDeclarations.kt");
+    }
+
+    @Test
     @TestMetadata("wrongQualifier.kt")
     public void testWrongQualifier() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/qualifier/wrongQualifier.kt");
