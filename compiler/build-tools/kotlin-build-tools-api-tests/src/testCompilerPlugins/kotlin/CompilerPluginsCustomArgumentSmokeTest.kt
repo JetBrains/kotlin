@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.COMPILER_PLUGINS
+import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
+import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrder
+import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertClassDeclarationsContain
@@ -15,6 +18,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BtaV2Strategy
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
@@ -122,6 +126,86 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
                     "Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax.*".toRegex(RegexOption.DOT_MATCHES_ALL)
+                )
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Smoke test of compiler plugins application through applyArgumentStrings (legacy + modern mixed)")
+    @TestMetadata("compiler-plugins")
+    fun smokeTestCompilerPluginsApplicationLegacyModernMixedArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        project(strategyConfig) {
+            val module = module("compiler-plugins")
+            module.compile(compilationConfigAction = {
+                val legacyArgs = buildList {
+                    add("-Xplugin=${(NOARG_PLUGIN.classpath).joinToString(",")}")
+                    add("-P")
+                    add(buildList {
+                        for (arg in NOARG_PLUGIN.rawArguments) {
+                            add("plugin:${NOARG_PLUGIN.pluginId}:${arg.key}=${arg.value}")
+                        }
+                    }.joinToString(","))
+                }
+                val modernArgs = buildList {
+                    add(
+                        "-Xcompiler-plugin=${(ASSIGNMENT_PLUGIN.classpath).joinToString(",")}=${
+                            buildList {
+                                for (arg in ASSIGNMENT_PLUGIN.rawArguments) {
+                                    add("${arg.key}=${arg.value}")
+                                }
+                            }.joinToString(",")
+                        }"
+                    )
+                }
+                it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + legacyArgs + modernArgs)
+            }) {
+                expectFail()
+                assertLogContainsPatterns(
+                    LogLevel.ERROR,
+                    "Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax.*".toRegex(RegexOption.DOT_MATCHES_ALL)
+                )
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Smoke test of no-arg plugin with JPA preset")
+    @TestMetadata("compiler-plugins-jpa")
+    fun smokeTestNoArgPluginWithJpaPreset(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        project(strategyConfig) {
+            val module = module("compiler-plugins-jpa")
+            module.compile(compilationConfigAction = {
+                it.compilerArguments[COMPILER_PLUGINS] = listOf(NOARG_JPA_PLUGIN)
+            }) {
+                assertOutputs(
+                    "javax/persistence/Entity.class",
+                    "javax/persistence/EntityClass.class",
+                    "javax/persistence/Embeddable.class",
+                    "javax/persistence/EmbeddableClass.class",
+                    "javax/persistence/MappedSuperclass.class",
+                    "javax/persistence/MappedSuperclassClass.class",
+                )
+                assertClassDeclarationsContain(
+                    classFqn = "javax.persistence.EntityClass",
+                    setOf(
+                        "public javax.persistence.EntityClass();",
+                        "public javax.persistence.EntityClass(long, java.lang.String);",
+                    )
+                )
+                assertClassDeclarationsContain(
+                    classFqn = "javax.persistence.EmbeddableClass",
+                    setOf(
+                        "public javax.persistence.EmbeddableClass();",
+                        "public javax.persistence.EmbeddableClass(java.lang.String, java.lang.String);",
+                    )
+                )
+                assertClassDeclarationsContain(
+                    classFqn = "javax.persistence.MappedSuperclassClass",
+                    setOf(
+                        "public javax.persistence.MappedSuperclassClass();",
+                        "public javax.persistence.MappedSuperclassClass(long, long);",
+                    )
                 )
             }
         }
