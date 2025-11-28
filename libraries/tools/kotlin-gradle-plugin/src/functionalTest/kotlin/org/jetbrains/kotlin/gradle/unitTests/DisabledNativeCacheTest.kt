@@ -23,14 +23,18 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.gradle.unitTests.fus.collectedFusConfigurationTimeMetrics
+import org.jetbrains.kotlin.gradle.unitTests.fus.enableFusOnCI
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.Assume
 import org.junit.Before
 import org.junit.Test
 import java.net.URI
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class DisabledNativeCacheTest {
 
@@ -103,23 +107,43 @@ class DisabledNativeCacheTest {
                 assertEquals(
                     NativeCacheKind.STATIC,
                     konanCacheKind(MAC_ARM64_LINK_DEBUG_TASK_NAME).get(),
-                    "Native cache should be enabled on macOS Arm64 target"
+                    "Native cache should be enabled on macOS Arm64 DEBUG target"
                 )
                 assertEquals(
                     NativeCacheKind.STATIC,
-                    konanCacheKind(IOS_ARM64_LINK_TASK_NAME).get(),
-                    "Native cache should be enabled on iOS Arm64 target"
+                    konanCacheKind(MAC_ARM64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be enabled on macOS Arm64 RELEASE target"
                 )
                 assertEquals(
                     NativeCacheKind.STATIC,
-                    konanCacheKind(IOS_SIMULATOR_ARM64_LINK_TASK_NAME).get(),
-                    "Native cache should be enabled on iOS Simulator Arm64 target"
+                    konanCacheKind(IOS_ARM64_LINK_DEBUG_TASK_NAME).get(),
+                    "Native cache should be enabled on iOS Arm64 DEBUG target"
+                )
+                assertEquals(
+                    NativeCacheKind.STATIC,
+                    konanCacheKind(IOS_ARM64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be enabled on iOS Arm64 RELEASE target"
+                )
+                assertEquals(
+                    NativeCacheKind.STATIC,
+                    konanCacheKind(IOS_SIMULATOR_ARM64_LINK_DEBUG_TASK_NAME).get(),
+                    "Native cache should be enabled on iOS Simulator Arm64 DEBUG target"
+                )
+                assertEquals(
+                    NativeCacheKind.STATIC,
+                    konanCacheKind(IOS_SIMULATOR_ARM64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be enabled on iOS Simulator Arm64 RELEASE target"
                 )
             } else if (HostManager.hostIsLinux) {
                 assertEquals(
                     NativeCacheKind.STATIC,
                     konanCacheKind(LINUX_X64_LINK_DEBUG_TASK_NAME).get(),
-                    "Native cache should be enabled on Linux x64 target"
+                    "Native cache should be enabled on Linux x64 DEBUG target"
+                )
+                assertEquals(
+                    NativeCacheKind.STATIC,
+                    konanCacheKind(LINUX_X64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be enabled on Linux x64 RELEASE target"
                 )
             }
         }
@@ -150,23 +174,43 @@ class DisabledNativeCacheTest {
                 assertEquals(
                     NativeCacheKind.NONE,
                     konanCacheKind(MAC_ARM64_LINK_DEBUG_TASK_NAME).get(),
-                    "Native cache should be disabled on macOS Arm64 target for version ${getKotlinPluginVersion()}"
+                    "Native cache should be disabled on macOS Arm64 DEBUG target for version ${getKotlinPluginVersion()}"
                 )
                 assertEquals(
                     NativeCacheKind.NONE,
-                    konanCacheKind(IOS_ARM64_LINK_TASK_NAME).get(),
-                    "Native cache should be disabled on iOS Arm64 target for version ${getKotlinPluginVersion()}"
+                    konanCacheKind(MAC_ARM64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be disabled on macOS Arm64 RELEASE target for version ${getKotlinPluginVersion()}"
                 )
                 assertEquals(
                     NativeCacheKind.NONE,
-                    konanCacheKind(IOS_SIMULATOR_ARM64_LINK_TASK_NAME).get(),
-                    "Native cache should be disabled on iOS Simulator Arm64 target for version ${getKotlinPluginVersion()}"
+                    konanCacheKind(IOS_ARM64_LINK_DEBUG_TASK_NAME).get(),
+                    "Native cache should be disabled on iOS Arm64 DEBUG target for version ${getKotlinPluginVersion()}"
+                )
+                assertEquals(
+                    NativeCacheKind.NONE,
+                    konanCacheKind(IOS_ARM64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be disabled on iOS Arm64 RELEASE target for version ${getKotlinPluginVersion()}"
+                )
+                assertEquals(
+                    NativeCacheKind.NONE,
+                    konanCacheKind(IOS_SIMULATOR_ARM64_LINK_DEBUG_TASK_NAME).get(),
+                    "Native cache should be disabled on iOS Simulator Arm64 DEBUG target for version ${getKotlinPluginVersion()}"
+                )
+                assertEquals(
+                    NativeCacheKind.NONE,
+                    konanCacheKind(IOS_SIMULATOR_ARM64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be disabled on iOS Simulator Arm64 RELEASE target for version ${getKotlinPluginVersion()}"
                 )
             } else if (HostManager.hostIsLinux) {
                 assertEquals(
                     NativeCacheKind.NONE,
                     konanCacheKind(LINUX_X64_LINK_DEBUG_TASK_NAME).get(),
-                    "Native cache should be disabled on Linux x64 target for version ${getKotlinPluginVersion()}"
+                    "Native cache should be disabled on Linux x64 DEBUG target for version ${getKotlinPluginVersion()}"
+                )
+                assertEquals(
+                    NativeCacheKind.NONE,
+                    konanCacheKind(LINUX_X64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be disabled on Linux x64 RELEASE target for version ${getKotlinPluginVersion()}"
                 )
             }
         }
@@ -246,13 +290,57 @@ class DisabledNativeCacheTest {
         }
     }
 
+    @Test
+    fun `test disable native cache FUS event present`() {
+        with(buildProjectWithMPP(preApplyCode = { enableFusOnCI() })) {
+            kotlin {
+                linuxX64().binaries.staticLib {
+                    disableNativeCache(
+                        currentVersionForDisableCache,
+                        "Disabled for tests",
+                        URI("https://kotlinlang.org")
+                    )
+                }
+            }
+
+            evaluate()
+
+            assertNotNull(
+                collectedFusConfigurationTimeMetrics.booleanMetrics.entries.singleOrNull {
+                    it.key == BooleanMetrics.KOTLIN_NATIVE_CACHE_DISABLED && it.value
+                },
+                "FUS event is present for disabled native cache"
+            )
+        }
+    }
+
+    @Test
+    fun `test disable native cache FUS event not present`() {
+        with(buildProjectWithMPP(preApplyCode = { enableFusOnCI() })) {
+            kotlin {
+                linuxX64()
+            }
+
+            evaluate()
+
+            assertNotNull(
+                collectedFusConfigurationTimeMetrics.booleanMetrics.keys.none {
+                    it.name == BooleanMetrics.KOTLIN_NATIVE_CACHE_DISABLED.name
+                },
+                "FUS event is not present for disabled native cache"
+            )
+        }
+    }
+
     companion object {
         private const val MAC_ARM64_LINK_DEBUG_TASK_NAME = "linkDebugStaticMacosArm64"
         private const val MAC_ARM64_LINK_RELEASE_TASK_NAME = "linkReleaseStaticMacosArm64"
         private const val LINUX_X64_LINK_DEBUG_TASK_NAME = "linkDebugStaticLinuxX64"
         private const val LINUX_X64_LINK_RELEASE_TASK_NAME = "linkReleaseStaticLinuxX64"
-        private const val IOS_ARM64_LINK_TASK_NAME = "linkDebugStaticIosArm64"
-        private const val IOS_SIMULATOR_ARM64_LINK_TASK_NAME = "linkDebugStaticIosSimulatorArm64"
+        private const val IOS_ARM64_LINK_DEBUG_TASK_NAME = "linkDebugStaticIosArm64"
+        private const val IOS_ARM64_LINK_RELEASE_TASK_NAME = "linkReleaseStaticIosArm64"
+        private const val IOS_SIMULATOR_ARM64_LINK_DEBUG_TASK_NAME = "linkDebugStaticIosSimulatorArm64"
+        private const val IOS_SIMULATOR_ARM64_LINK_RELEASE_TASK_NAME = "linkReleaseStaticIosSimulatorArm64"
     }
 }
 
@@ -271,7 +359,7 @@ class DisabledNativeCacheTest {
 //    ios_simulator_arm64 \
 //    ios_arm64
 @Suppress("DEPRECATION")
-fun KotlinMultiplatformExtension.createCacheableTargets(): List<KotlinNativeTarget> {
+private fun KotlinMultiplatformExtension.createCacheableTargets(): List<KotlinNativeTarget> {
     val isArm64 = HostManager.hostArch() == "aarch64"
 
     return when {
@@ -293,7 +381,7 @@ fun KotlinMultiplatformExtension.createCacheableTargets(): List<KotlinNativeTarg
 }
 
 @Suppress("DEPRECATION")
-fun KotlinMultiplatformExtension.createNonCacheableTargets(): List<KotlinNativeTarget> {
+private fun KotlinMultiplatformExtension.createNonCacheableTargets(): List<KotlinNativeTarget> {
     val isArm64 = HostManager.hostArch() == "aarch64"
 
     return when {
