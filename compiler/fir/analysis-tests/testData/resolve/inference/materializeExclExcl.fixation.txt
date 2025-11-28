@@ -1,0 +1,42 @@
+CHOSEN for fixation: TypeVariable(T) --- FORBIDDEN
+********************************
+CHOSEN for fixation: TypeVariable(R) --- FORBIDDEN
+     >: TypeVariable(T)?
+     >: kotlin/Nothing?
+TypeVariable(T) --- FORBIDDEN
+     <: TypeVariable(R)
+********************************
+CHOSEN for fixation: TypeVariable(K) --- READY_FOR_FIXATION_UPPER
+     >: TypeVariable(R) & Any
+     >: TypeVariable(T) & Any
+     >: kotlin/Nothing
+     <: kotlin/String?
+     = kotlin/Nothing (inferred during fixation)
+    FIXED TO: kotlin/Nothing
+TypeVariable(R) --- READY_FOR_FIXATION_UPPER
+     >: TypeVariable(T)?
+     >: kotlin/Nothing?
+     <: kotlin/String?
+     <: kotlin/Nothing?
+     = kotlin/Nothing? (inferred during fixation)
+TypeVariable(T) --- READY_FOR_FIXATION_UPPER
+     <: kotlin/String?
+     <: kotlin/Nothing?
+     = kotlin/Nothing?
+********************************
+CHOSEN for fixation: TypeVariable(R) --- READY_FOR_FIXATION_UPPER
+     >: TypeVariable(T)?
+     <: kotlin/String?
+     = kotlin/Nothing?
+    FIXED TO: kotlin/Nothing?
+TypeVariable(T) --- READY_FOR_FIXATION_UPPER
+     <: kotlin/String?
+     <: kotlin/Nothing?
+     = kotlin/Nothing?
+********************************
+CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_UPPER
+     <: kotlin/String?
+     <: kotlin/Nothing?
+     = kotlin/Nothing? (inferred during fixation)
+    FIXED TO: kotlin/Nothing?
+********************************
