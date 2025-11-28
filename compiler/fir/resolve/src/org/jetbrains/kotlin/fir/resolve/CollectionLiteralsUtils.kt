@@ -87,7 +87,6 @@ fun ResolutionContext.runCollectionLiteralResolution(
             companion.toImplicitResolvedQualifierReceiver(
                 components,
                 collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.CompanionObjectForOperatorOfCall),
-                resolvedToCompanion = true,
             )
         source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.OperatorOfCall)
         calleeReference = buildSimpleNamedReference {
