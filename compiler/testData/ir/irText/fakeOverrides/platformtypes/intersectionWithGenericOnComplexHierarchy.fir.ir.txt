@@ -110,7 +110,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun foo (): @[FlexibleNullability] T of <root>.Java2? declared in <root>.Java2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): T of <root>.C declared in <root>.C'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.C & Any} origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
   CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.Kotlin<T of <root>.D>; <root>.Java2<T of <root>.D>]
@@ -224,7 +224,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun foo (): @[FlexibleNullability] T of <root>.Java2? declared in <root>.Java2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): T of <root>.E declared in <root>.E'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.E & Any} origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
   CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[<root>.Kotlin2<T of <root>.F>; <root>.Java3<T of <root>.F>]
@@ -298,7 +298,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun foo (): @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): T of <root>.G declared in <root>.G'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.G & Any} origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
   CLASS CLASS name:H modality:ABSTRACT visibility:public superTypes:[<root>.Java4<T of <root>.H>; <root>.Java3<T of <root>.H>]
@@ -372,7 +372,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun foo (): @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): T of <root>.I declared in <root>.I'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.I & Any} origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
   CLASS INTERFACE name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
