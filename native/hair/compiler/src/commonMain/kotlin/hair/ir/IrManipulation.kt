@@ -5,22 +5,62 @@ import hair.ir.nodes.Node
 import hair.opt.NormalizationImpl
 import hair.opt.eliminateDeadBlocks
 import hair.opt.eliminateDeadFoam
-import hair.utils.Worklist
-import hair.utils.forEachInWorklist
 import hair.utils.isEmpty
 
-class NodeBuilderImpl(override val session: Session) : NodeBuilder, ArgsUpdater {
-    val normalization = NormalizationImpl(session, this, this)
-    override fun normalize(node: Node): Node = normalization.normalize(node)
-    override fun <N : Node> register(node: N): N = node.register()
+class RawNodeBuilder(override val session: Session) : NodeBuilder {
+    override fun onNodeBuilt(node: Node): Node = node
+}
+
+object RawArgsUpdater : ArgsUpdater {
     override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
-        if (newValue != null && newValue != oldValue) {
-            val replacement = normalization.normalize(node)
-            // node can die during normalisation
-            if (replacement != node && node.registered) {
+        // FIXME consider moving into the base updateArg
+        require(newValue != oldValue)
+        oldValue?.removeUse(node)
+        newValue?.addUse(node)
+    }
+}
+
+open class NormalizingNodeBuilder(override val session: Session) : NodeBuilder {
+    // FIXME allow only trivial args updates in normalization
+    val normalization = NormalizationImpl(session, RawNodeBuilder(session), RawArgsUpdater)
+
+    override fun onNodeBuilt(node: Node): Node = normalization.normalize(node).also {
+        require(normalization.normalize(it) == it)
+        // node must still be not-GVNed
+        require(node !in session.allNodes())
+    }
+}
+
+open class NormalizingGvnNodeBuilder(session: Session) : NormalizingNodeBuilder(session) {
+    override fun onNodeBuilt(node: Node): Node = session.gvn(super.onNodeBuilt(node))
+}
+
+class RegisteringNodeBuilder(session: Session) : NormalizingGvnNodeBuilder(session) {
+    override fun onNodeBuilt(node: Node): Node = super.onNodeBuilt(node).also {
+        if (!it.registered) session.register(it)
+        require(it.registered)
+    }
+}
+
+class ArgsUpdaterImpl(val session: Session, val nodeBuilder: NodeBuilder) : ArgsUpdater {
+    val normalization = NormalizationImpl(session, nodeBuilder, this)
+    override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
+        require(newValue != oldValue)
+        oldValue?.removeUse(node)
+        if (newValue != null) {
+            val normal = normalization.normalize(node)
+            val replacement: Node = if (normal != node) {
+                normal
+            } else {
+                val uniq = session.gvn(normal)
+                newValue.addUse(uniq)
+                uniq
+            }
+
+            if (replacement != node) {
                 // FIXME introduce common tool
                 (node as? Controlling)?.nextOrNull?.let {
-                    it.control = replacement as Controlling
+                    it.control = normal as Controlling
                 }
                 node.replaceValueUsesAndKill(replacement)
             }
@@ -28,27 +68,19 @@ class NodeBuilderImpl(override val session: Session) : NodeBuilder, ArgsUpdater 
     }
 }
 
-// FIXME private?
-private val Session.nodeBuilder: NodeBuilderImpl get() = NodeBuilderImpl(this)
+private val Session.nodeBuilder: RegisteringNodeBuilder get() = RegisteringNodeBuilder(this)
+private val Session.argsUpdater: ArgsUpdaterImpl get() = ArgsUpdaterImpl(this, nodeBuilder)
 
 context(nodeBuilder: NodeBuilder)
 val normalization: Normalization get() = when (nodeBuilder) {
-    is NodeBuilderImpl -> nodeBuilder.normalization
+    is NormalizingNodeBuilder -> nodeBuilder.normalization
     else -> error("Should not reach here")//NormalizationImpl(nodeBuilder.session, nodeBuilder, SimpleArgsUpdater)
-}
-
-class ArgUpdatesWatcher : ArgsUpdater {
-    val updatedNodes = Worklist<Node>()
-
-    override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
-        updatedNodes.add(node)
-    }
 }
 
 fun <T> Session.buildInitialIR(
     builderAction: context(NodeBuilder, ArgsUpdater, ControlFlowBuilder) () -> T
 ): T {
-    return context(nodeBuilder, ControlFlowBuilder(entry)) {
+    return context(nodeBuilder, argsUpdater, ControlFlowBuilder(entry)) {
         builderAction().also {
             eliminateDeadBlocks()
             eliminateDeadFoam()
@@ -60,8 +92,7 @@ fun <T> Session.buildInitialIR(
 fun <T> Session.modifyIR(
     builderAction: context(NodeBuilder, ArgsUpdater, NoControlFlowBuilder) () -> T
 ): T {
-    //val argsWatcher = ArgUpdatesWatcher()
-    val result = context(nodeBuilder, NoControlFlowBuilder) {
+    return context(nodeBuilder, argsUpdater, NoControlFlowBuilder) {
         val result = builderAction()
 
         eliminateDeadBlocks()
@@ -69,24 +100,13 @@ fun <T> Session.modifyIR(
 
         result
     }
-
-//    for (node in argsWatcher.updatedNodes) {
-//        val replacement = nodeBuilder.normalization.normalize(node)
-//        if (replacement != node) {
-//            with (argsWatcher) {
-//                // FIXME what about control here?
-//                node.replaceValueUses(replacement)
-//            }
-//        }
-//    }
-    return result
 }
 
 fun <T> Session.modifyControlFlow(
     at: Controlling,
     builderAction: context(NodeBuilder, ArgsUpdater, ControlFlowBuilder) () -> T
 ): T {
-    return context(nodeBuilder,  ControlFlowBuilder(at)) {
+    return context(nodeBuilder, argsUpdater, ControlFlowBuilder(at)) {
         builderAction()
     }
 }

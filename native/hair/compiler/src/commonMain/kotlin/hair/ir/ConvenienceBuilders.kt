@@ -102,8 +102,8 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgsUpd
 fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<Type.Reference, context(NodeBuilder, ControlFlowBuilder) (Node) -> Unit>>, allCatcher: Type.Reference? = null) {
     val throwers = mutableListOf<Throwing>()
     val observingBuilder = object : NodeBuilder by nodeBuilder {
-        override fun <N : Node> register(node: N): N {
-            return nodeBuilder.register(node).also {
+        override fun onNodeBuilt(node: Node): Node {
+            return nodeBuilder.onNodeBuilt(node).also {
                 if (it is Throwing) throwers += it
             }
         }

@@ -22,48 +22,82 @@ abstract class SessionBase {
     }
 
     var nextNodeId = 1
-}
 
-fun <N: Node> N.register(): N {
-    if (registered) return this // FIXME!!
-    require(!registered)
-    val uniq = ensureUnique() as N
-
-    if (uniq != this) {
-        require(uniq.registered)
-        return uniq
+    fun <N: Node> gvn(node: N): N {
+        return node.ensureUnique() as N
     }
 
-    for (arg in args) {
-        arg?.addUse(this)
+    fun register(node: Node) {
+        require(node in allNodes())
+        if (node.registered) return
+        node as NodeBase
+        node.id = -node.id
+        require(node.registered)
+        for (arg in node.args) {
+            arg?.addUse(node)
+        }
     }
 
-    if (!this.registered) {
-        this as NodeBase
-        this.id = -this.id
-        require(this.registered)
-    }
+    fun unregister(node: Node) {
+        require(node.registered)
+        require(node.uses.isEmpty())
+        node as NodeBase
+        node.id = -node.id
+        require(!node.registered)
 
-    return this
+        // FIXME is not symmetrical with the register
+        node.form.deregister(node)
+
+        for (arg in node.args) {
+            arg?.removeUse(node)
+        }
+
+        require(node !in allNodes())
+    }
 }
 
 fun Node.deregister() {
-    require(registered)
-    require(uses.isEmpty())
-    this as NodeBase
-    id = -id
-    require(!registered)
-    form.deregister(this)
-    for (arg in args) {
-        // FIXME???
-        arg?.removeUse(this)
-    }
+    session.unregister(this)
 }
+
+//fun <N: Node> N.register(): N {
+//    if (registered) return this // FIXME!!
+//    require(!registered)
+//    val uniq = ensureUnique() as N
+//
+//    if (uniq != this) {
+//        require(uniq.registered)
+//        return uniq
+//    }
+//
+//    for (arg in args) {
+//        arg?.addUse(this)
+//    }
+//
+//    if (!this.registered) {
+//        this as NodeBase
+//        this.id = -this.id
+//        require(this.registered)
+//    }
+//
+//    return this
+//}
+//
+//fun Node.deregister() {
+//    require(registered)
+//    require(uses.isEmpty())
+//    this as NodeBase
+//    id = -id
+//    require(!registered)
+//    form.deregister(this)
+//    for (arg in args) {
+//        // FIXME???
+//        arg?.removeUse(this)
+//    }
+//}
 
 // TODO
 interface NodeBuilder {
     val session: Session
-
-    fun normalize(node: Node): Node
-    fun <N: Node> register(node: N): N
+    fun onNodeBuilt(node: Node): Node
 }
