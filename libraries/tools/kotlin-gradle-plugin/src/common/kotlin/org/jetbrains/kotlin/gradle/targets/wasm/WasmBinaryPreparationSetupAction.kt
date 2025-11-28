@@ -8,18 +8,17 @@ package org.jetbrains.kotlin.gradle.targets.wasm
 import org.gradle.api.attributes.Category
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryModeAttribute
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryModeAttribute.attributeByMode
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform.Companion.ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 
@@ -60,7 +59,7 @@ internal val WasmBinaryPreparationSetupAction = KotlinTargetSideEffect { target 
                     isVisible = false
                     KotlinUsages.configureProducerRuntimeUsage(this, target)
                     attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                    attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY)
+                    attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT)
 //                attributes.attribute(WasmBinaryModeAttribute.attribute, binary.mode.attributeByMode())
 
                     usesPlatformOf(target)
@@ -68,6 +67,23 @@ internal val WasmBinaryPreparationSetupAction = KotlinTargetSideEffect { target 
 
                 conf.extendsFrom(runtime)
                 runtimeConfiguration?.let { conf.extendsFrom(it) }
+
+                if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT) {
+                    val conf2 = project.configurations.maybeCreateConsumable(binary.wasmBinaryOutputConfigurationName) {
+                        description = "Elements of runtime for main."
+                        @Suppress("DEPRECATION")
+                        isVisible = false
+                        KotlinUsages.configureProducerRuntimeUsage(this, target)
+                        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                        attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT)
+                        usesPlatformOf(target)
+
+                        project.artifacts.add(binary.wasmBinaryOutputConfigurationName, binary.linkTask.map { it.destinationDirectory })
+                    }
+
+                    conf2.extendsFrom(runtime)
+                    runtimeConfiguration?.let { conf2.extendsFrom(it) }
+                }
 
             }
 

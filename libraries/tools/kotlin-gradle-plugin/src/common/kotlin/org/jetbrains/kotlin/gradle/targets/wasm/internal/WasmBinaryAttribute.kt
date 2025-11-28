@@ -13,11 +13,12 @@ internal object WasmBinaryAttribute {
 
     const val KLIB = "klib"
 
-    const val WASM_BINARY = "wasm-binary"
+    const val WASM_BINARY_DEVELOPMENT = "wasm-binary-development"
+    const val WASM_BINARY_PRODUCTION = "wasm-binary-production"
 
     fun setupTransform(project: Project) {
         project.dependencies.artifactTypes.maybeCreate("jar").also { artifactType ->
-            artifactType.attributes.attribute(attribute, WASM_BINARY)
+            artifactType.attributes.attribute(attribute, WASM_BINARY_DEVELOPMENT)
         }
 
         project.dependencies.artifactTypes.maybeCreate(KLIB).also { artifactType ->
