@@ -91,4 +91,12 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
 
         owner.valueParameters.find { it.name == target.name }
     }
+
+    override fun resolveFieldTarget(target: FieldTarget): KaSymbol? {
+        val callables = resolveCallableTarget(CallableTarget(target.callableId))
+        return callables
+            .filterIsInstance<KaPropertySymbol>()
+            .singleOrNull()
+            ?.backingFieldSymbol
+    }
 }

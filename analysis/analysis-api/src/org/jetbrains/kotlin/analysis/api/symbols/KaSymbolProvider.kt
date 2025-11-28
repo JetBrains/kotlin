@@ -92,6 +92,11 @@ public interface KaSymbolProvider : KaSessionComponent {
     public val KtProperty.symbol: KaVariableSymbol
 
     /**
+     * A [KaBackingFieldSymbol] for the given [KtBackingField].
+     */
+    public val KtBackingField.symbol: KaBackingFieldSymbol
+
+    /**
      * A [KaAnonymousObjectSymbol] for the given [KtObjectLiteralExpression].
      */
     public val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
@@ -303,6 +308,15 @@ public val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
 @KaContextParameterApi
 context(s: KaSession)
 public val KtProperty.symbol: KaVariableSymbol
+    get() = with(s) { symbol }
+
+/**
+ * A [KaBackingFieldSymbol] for the given [KtBackingField].
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaContextParameterApi
+context(s: KaSession)
+public val KtBackingField.symbol: KaBackingFieldSymbol
     get() = with(s) { symbol }
 
 /**

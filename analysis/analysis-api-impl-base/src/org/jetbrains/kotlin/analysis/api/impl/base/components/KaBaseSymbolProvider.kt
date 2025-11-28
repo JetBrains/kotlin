@@ -25,6 +25,7 @@ abstract class KaBaseSymbolProvider<T : KaSession> : KaBaseSessionComponent<T>()
                 is KtEnumEntry -> symbol
                 is KtFunctionLiteral -> symbol
                 is KtProperty -> symbol
+                is KtBackingField -> symbol
                 is KtObjectDeclaration -> symbol
                 is KtClassOrObject -> classSymbol!!
                 is KtPropertyAccessor -> symbol

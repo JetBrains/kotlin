@@ -20,6 +20,7 @@ abstract class TestSymbolTargetResolver<R> {
         is TypeAliasTarget -> resolveTypeAliasTarget(target)
         is ClassLikeTarget -> resolveClassLikeTarget(target)
         is CallableTarget -> resolveCallableTarget(target)
+        is FieldTarget -> listOfNotNull(resolveFieldTarget(target))
         is EnumEntryInitializerTarget -> resolveEnumEntryInitializerTarget(target)
         is SamConstructorTarget -> resolveSamConstructorTarget(target)
         is TargetWithOwner -> resolveTargetWithOwner(target)
@@ -55,6 +56,7 @@ abstract class TestSymbolTargetResolver<R> {
     protected open fun resolveSamConstructorTarget(target: SamConstructorTarget): List<R> = unsupportedTarget(target)
     protected open fun resolveTypeParameterTarget(target: TypeParameterTarget, owner: R): R? = unsupportedTarget(target)
     protected open fun resolveValueParameterTarget(target: ValueParameterTarget, owner: R): R? = unsupportedTarget(target)
+    protected open fun resolveFieldTarget(target: FieldTarget): R? = unsupportedTarget(target)
 
     private fun unsupportedTarget(target: TestSymbolTarget): Nothing =
         error("`${this::class.simpleName}` doesn't support `${target::class.simpleName}`.")

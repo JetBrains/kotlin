@@ -173,6 +173,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("explicitBackingFieldSmartcast.kt")
+  public void testExplicitBackingFieldSmartcast() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/explicitBackingFieldSmartcast.kt");
+  }
+
+  @Test
   @TestMetadata("explicitLambdaParameter.kt")
   public void testExplicitLambdaParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/explicitLambdaParameter.kt");

@@ -1,0 +1,6 @@
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FIELD])
+annotation class Anno
+
+class Test {
+  val foo: kotlin.String
+}

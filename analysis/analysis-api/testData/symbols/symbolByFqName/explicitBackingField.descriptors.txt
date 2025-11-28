@@ -1,0 +1,34 @@
+KaBackingFieldSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Private
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isVal: true
+  location: PROPERTY
+  modality: FINAL
+  name: field
+  origin: PROPERTY_BACKING_FIELD
+  owningProperty: KaKotlinPropertySymbol(one/Test.foo)
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+    ]
+    type: kotlin/collections/List<kotlin/String>
+  visibility: PRIVATE
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: one/Test
+  getContainingFileSymbol: KaFileSymbol(explicitBackingField.kt)
+  getContainingJvmClassName: one.Test
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+  importableFqName: null
