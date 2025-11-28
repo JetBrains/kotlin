@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirect
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
@@ -26,8 +28,8 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         }
     }
 
-    private val nativeHome: String by lazy {
-        System.getProperty(TEST_PROPERTY_NATIVE_HOME)
+    private val nativeHome: File by lazy {
+        System.getProperty(TEST_PROPERTY_NATIVE_HOME)?.let(::File)
             ?: testServices.assertions.fail {
                 "No '$TEST_PROPERTY_NATIVE_HOME' provided. Are you sure the test are executed within :native:native.tests?"
             }
@@ -53,23 +55,19 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         }
     }
 
-    fun distributionKlibPath(): File = File(nativeHome, "klib")
+    fun distributionKlibPath(): File = nativeHome.resolve("klib")
 
     fun getRuntimePathsForModule(module: TestModule): List<String> {
         val result = mutableListOf<String>()
 
-        if (ConfigurationDirectives.WITH_STDLIB in module.directives) {
-            result += distributionKlibPath().resolve("common").resolve("stdlib").absolutePath
-        }
-
-        if (NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS in module.directives) {
-            val nativeTarget = getNativeTarget(module)
-
-            // Diagnostic tests are agnostic of native target, so host is enforced to be a target.
-            distributionKlibPath().resolve("platform").resolve(nativeTarget.name).listFiles()?.forEach {
-                result += it.absolutePath
+        result += KlibNativeDistributionLibraryProvider(nativeHome)
+            .applyIf(ConfigurationDirectives.WITH_STDLIB in module.directives) {
+                withStdlib()
             }
-        }
+            .applyIf(NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS in module.directives) {
+                withPlatformLibs(getNativeTarget(module))
+            }
+            .getPaths()
 
         testServices.runtimeClasspathProviders
             .flatMap { it.runtimeClassPaths(module) }
