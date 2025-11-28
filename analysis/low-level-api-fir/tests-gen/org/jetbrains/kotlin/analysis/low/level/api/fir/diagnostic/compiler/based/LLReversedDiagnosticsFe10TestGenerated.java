@@ -51540,6 +51540,22 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
           }
         }
       }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/varCapturing")
+      @TestDataPath("$PROJECT_ROOT")
+      public class VarCapturing {
+        @Test
+        public void testAllFilesPresentInVarCapturing() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/varCapturing"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("listCapture.kt")
+        public void testListCapture() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/varCapturing/listCapture.kt");
+        }
+      }
     }
 
     @Nested

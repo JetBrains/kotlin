@@ -100,6 +100,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MUTABLE_DIAGNOSTIC) { firDiagnostic ->
+        MutableDiagnosticImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OTHER_ERROR) { firDiagnostic ->
         OtherErrorImpl(
             firDiagnostic as KtPsiDiagnostic,
