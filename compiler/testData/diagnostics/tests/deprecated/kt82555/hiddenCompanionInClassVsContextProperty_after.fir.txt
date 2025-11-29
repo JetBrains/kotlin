@@ -1,0 +1,55 @@
+FILE: hiddenCompanionInClassVsContextProperty_after.kt
+    public final object Outer : R|kotlin/Any| {
+        private constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final enum class Nested : R|kotlin/Enum<Outer.Nested>| {
+            private constructor(): R|Outer.Nested| {
+                super<R|kotlin/Enum<Outer.Nested>|>()
+            }
+
+            public final static enum entry ENTRY: R|Outer.Nested|
+            public final object NestedMost : R|kotlin/Any| {
+                private constructor(): R|Outer.Nested.NestedMost| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.Nested.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public final static fun values(): R|kotlin/Array<Outer.Nested>| {
+            }
+
+            public final static fun valueOf(value: R|kotlin/String|): R|Outer.Nested| {
+            }
+
+            public final static val entries: R|kotlin/enums/EnumEntries<Outer.Nested>|
+                public get(): R|kotlin/enums/EnumEntries<Outer.Nested>|
+
+        }
+
+        context(str: R|kotlin/String|)
+        public final val Nested: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(42)
+            }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|kotlin/with|<R|kotlin/String|, R|Outer.Nested.NestedMost|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|Outer.Nested.NestedMost| <inline=Inline, kind=EXACTLY_ONCE>  {
+            lval ref: R|kotlin/reflect/KFunction1<Outer.Nested, kotlin/String>| = Q|Outer.Nested|::R|SubstitutionOverride</Outer.Nested.toString: R|kotlin/String|>|
+            lval classRef: R|kotlin/reflect/KClass<Outer.Nested>| = <getClass>(Q|Outer.Nested|)
+            context(this@R|special/anonymous|) Q|Outer|.R|/Outer.Nested|
+            Q|Outer.Nested|.R|/Outer.Nested.valueOf*s|(String(ENTRY))
+            Q|Outer.Nested|.R|/Outer.Nested.ENTRY|
+            ^ Q|Outer.Nested.NestedMost|
+        }
+        )
+    }

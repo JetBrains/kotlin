@@ -1,0 +1,39 @@
+FILE: some.kt
+    package some
+
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|some/Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|some/Some.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: main.kt
+    public sealed class E : R|kotlin/Any| {
+        protected constructor(): R|E| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object Some : R|kotlin/Any| {
+            private constructor(): R|E.Some| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|some/Some|
+        Q|some/Some|.<Unresolved name: foo>#()
+        Q|some/Some|::<Unresolved reference: foo>#
+        <getClass>(Q|some/Some|)
+    }

@@ -1,0 +1,31 @@
+FILE: chooseCloserQualifierWithDeprecatedCompanionForGetClassLHS_after.kt
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class A : R|kotlin/Any| {
+            public constructor(): R|Outer.A| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.A.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            lval ref: R|kotlin/reflect/KClass<Outer.A>| = <getClass>(Q|Outer.A|)
+        }
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

@@ -231,7 +231,8 @@ class CandidateFactory private constructor(
         if (referencedClass.classKind == ClassKind.OBJECT) return false
 
         val companionObject = referencedClass.companionObjectSymbol ?: return true
-        return companionObject.isDeprecationLevelHidden(session)
+        return session.languageVersionSettings.supportsFeature(LanguageFeature.SkipHiddenObjectsInResolution)
+                && companionObject.isDeprecationLevelHidden(session)
     }
 
     private fun FirBasedSymbol<*>.unwrapIntegerOperatorSymbolIfNeeded(callInfo: CallInfo): FirBasedSymbol<*> {
