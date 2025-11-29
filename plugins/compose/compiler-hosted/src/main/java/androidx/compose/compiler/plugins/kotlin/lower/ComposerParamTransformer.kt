@@ -249,6 +249,7 @@ class ComposerParamTransformer(
         fn: IrSimpleFunction,
         useAdaptedOrigin: Boolean
     ): IrExpression {
+        val fn = fn.withComposerParamIfNeeded()
         val adapter = irBlock(
             type = expression.type,
             origin = if (useAdaptedOrigin) IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE else null,
@@ -262,7 +263,7 @@ class ComposerParamTransformer(
                     returnType = fn.returnType
                 }
                 adapterFn.copyAnnotationsFrom(fn)
-                adapterFn.copyParametersFrom(fn, copyDefaultValues = false)
+                adapterFn.copyParametersFrom(fn, copyDefaultValues = false) // if fn was already processed, it will have composer param
                 require(
                     adapterFn.parameters.count {
                         it.kind == IrParameterKind.ExtensionReceiver ||
@@ -415,11 +416,18 @@ class ComposerParamTransformer(
                 }
             }
 
-            val valueParamCount = arguments.indices.count { i ->
+            val oldValParams = arguments.indices.count { i ->
                 val p = newFn.parameters[i]
                 p.kind == IrParameterKind.Regular
             }
-            var argIndex = arguments.size
+            val valueParamCount = arguments.indices.count { i ->
+                val p = newFn.parameters[i]
+                p.kind == IrParameterKind.Regular && newCall.arguments[i] != null
+            }
+            var argIndex = newCall.arguments.count { it != null }
+//            if (oldValParams != valueParamCount || argIndex != arguments.size) {
+//                error("paramcount")
+//            }
             newCall.arguments[argIndex++] = irGet(composerParam)
 
             // $changed[n]
