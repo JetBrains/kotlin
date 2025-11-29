@@ -411,6 +411,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Test
+    @TestMetadata("initializerTypeMismatchWithLambdaAndOuterTvInPCLA.kt")
+    public void testInitializerTypeMismatchWithLambdaAndOuterTvInPCLA() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/initializerTypeMismatchWithLambdaAndOuterTvInPCLA.kt");
+    }
+
+    @Test
     @TestMetadata("intersectionScope.kt")
     public void testIntersectionScope() {
       runTest("compiler/fir/analysis-tests/testData/resolve/intersectionScope.kt");
