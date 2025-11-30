@@ -34,12 +34,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
           VALUE_PARAMETER
             TYPE_REFERENCE
               PsiErrorElement:Type expected
                 <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -87,8 +86,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             PsiElement(IDENTIFIER)('normal')
@@ -127,12 +129,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
                   PsiElement(IDENTIFIER)('Type')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
           VALUE_PARAMETER
             TYPE_REFERENCE
               PsiErrorElement:Type expected
                 <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -162,8 +163,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
                   PsiElement(IDENTIFIER)('Type')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             PsiElement(IDENTIFIER)('normal')
@@ -202,8 +206,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
                   PsiElement(IDENTIFIER)('Type')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             PsiElement(IDENTIFIER)('normal')
@@ -233,8 +240,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             TYPE_REFERENCE
@@ -301,12 +311,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
                   PsiElement(IDENTIFIER)('justName')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
           VALUE_PARAMETER
             TYPE_REFERENCE
               PsiErrorElement:Type expected
                 <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -336,8 +345,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
                   PsiElement(IDENTIFIER)('Type')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             TYPE_REFERENCE
@@ -363,8 +375,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             TYPE_REFERENCE
@@ -398,8 +413,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
                   PsiElement(IDENTIFIER)('justName')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             TYPE_REFERENCE
@@ -426,8 +444,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           VALUE_PARAMETER
             PsiElement(val)('val')
             PsiWhiteSpace(' ')
@@ -491,8 +512,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             TYPE_REFERENCE
@@ -639,8 +663,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
                   PsiElement(IDENTIFIER)('justName')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             PsiElement(IDENTIFIER)('normal')
@@ -726,12 +753,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
           PsiWhiteSpace(' ')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
           VALUE_PARAMETER
             TYPE_REFERENCE
               PsiErrorElement:Type expected
                 <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -751,8 +777,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             MODIFIER_LIST
@@ -848,8 +877,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             PsiErrorElement:Parameter name expected
@@ -890,8 +922,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
                   PsiElement(IDENTIFIER)('JustType')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             PsiElement(IDENTIFIER)('justName')
@@ -967,12 +1002,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
               PsiElement(IDENTIFIER)('default')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
           VALUE_PARAMETER
             TYPE_REFERENCE
               PsiErrorElement:Type expected
                 <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -1055,12 +1089,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
                 <empty list>
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
           VALUE_PARAMETER
             TYPE_REFERENCE
               PsiErrorElement:Type expected
                 <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -1131,12 +1164,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
                 <empty list>
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
           VALUE_PARAMETER
             TYPE_REFERENCE
               PsiErrorElement:Type expected
                 <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -1204,8 +1236,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           VALUE_PARAMETER
             TYPE_REFERENCE
               PsiErrorElement:Type expected
@@ -1269,8 +1304,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             PsiErrorElement:Parameter name expected
@@ -1288,12 +1326,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
               PsiElement(IDENTIFIER)('default')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
           VALUE_PARAMETER
             TYPE_REFERENCE
               PsiErrorElement:Type expected
                 <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -1365,8 +1402,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           VALUE_PARAMETER
             PsiErrorElement:Parameter name expected
               <empty list>
@@ -1448,8 +1488,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           VALUE_PARAMETER
             TYPE_REFERENCE
               PsiErrorElement:Type expected
@@ -1626,8 +1669,11 @@ KtFile: emptyParametersInFunctionalTypes.kt
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             PsiErrorElement:Parameter name expected

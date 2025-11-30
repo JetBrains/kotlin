@@ -20,6 +20,6 @@ KtFile: noParameterYet.kt
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Deprecated')
-        PsiErrorElement:Parameter name expected
+        PsiErrorElement:Expecting a parameter declaration
           <empty list>
       PsiElement(RPAR)(')')

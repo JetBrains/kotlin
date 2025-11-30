@@ -2641,11 +2641,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (!at(RPAR) && !atSet(recoverySet)) {
             while (true) {
                 int offsetBefore = myBuilder.getCurrentOffset();
-                if (at(COMMA)) {
-                    errorAndAdvance("Expecting a parameter declaration");
-                    noError = false;
-                }
-                else if (at(RPAR)) {
+                if (at(RPAR)) {
                     break;
                 }
 
@@ -2713,20 +2709,21 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private boolean parseFunctionParameterRest(boolean typeRequired) {
         boolean noErrors = true;
 
-        // Recovery for the case 'fun foo(Array<String>) {}'
-        // Recovery for the case 'fun foo(: Int) {}'
-        if ((at(IDENTIFIER) && lookahead(1) == LT) || at(COLON)) {
+        if (at(COMMA) || at(RPAR)) {
+            error("Expecting a parameter declaration");
+            noErrors = false;
+        } else if (at(IDENTIFIER) && lookahead(1) == LT) {
+            // Recovery for the case 'fun foo(Array<String>) {}'
             error("Parameter name expected");
-            if (at(COLON)) {
-                // We keep noErrors == true so that unnamed parameters starting with ":" are not rolled back during parsing of functional types
-                advance(); // COLON
-            }
-            else {
-                noErrors = false;
-            }
+            noErrors = false;
             parseTypeRef();
-        }
-        else {
+        } else if (at(COLON)) {
+            // Recovery for the case 'fun foo(: Int) {}'
+            error("Parameter name expected");
+            // We keep noErrors == true so that unnamed parameters starting with ":" are not rolled back during parsing of functional types
+            advance(); // COLON
+            parseTypeRef();
+        } else {
             expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
 
             if (at(COLON)) {

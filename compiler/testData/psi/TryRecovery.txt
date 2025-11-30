@@ -136,7 +136,7 @@ KtFile: TryRecovery.kt
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
-              PsiErrorElement:Parameter name expected
+              PsiErrorElement:Expecting a parameter declaration
                 <empty list>
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
@@ -327,7 +327,7 @@ KtFile: TryRecovery.kt
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
-              PsiErrorElement:Parameter name expected
+              PsiErrorElement:Expecting a parameter declaration
                 <empty list>
             PsiElement(RPAR)(')')
           PsiErrorElement:Expecting a block: { ... }

@@ -24,6 +24,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
   FUN[fqName=fun4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=fun4]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=normal]
           TYPE_REFERENCE
             USER_TYPE
@@ -46,6 +48,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Type]
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=normal]
           TYPE_REFERENCE
             USER_TYPE
@@ -58,6 +62,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Type]
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=normal]
           TYPE_REFERENCE
             USER_TYPE
@@ -66,6 +72,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
   FUN[fqName=fun8, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=fun8]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         CONTEXT_RECEIVER[label=null]
           TYPE_REFERENCE
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=normal]
@@ -100,12 +108,16 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
               REFERENCE_EXPRESSION[referencedName=Type]
         CONTEXT_RECEIVER[label=null]
           TYPE_REFERENCE
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=justName]
     VALUE_PARAMETER_LIST
   FUN[fqName=fun12, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=fun12]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         CONTEXT_RECEIVER[label=null]
           TYPE_REFERENCE
             USER_TYPE
@@ -120,12 +132,16 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
               REFERENCE_EXPRESSION[referencedName=justName]
         CONTEXT_RECEIVER[label=null]
           TYPE_REFERENCE
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=justName]
     VALUE_PARAMETER_LIST
   FUN[fqName=fun14, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=fun14]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=property]
           TYPE_REFERENCE
             USER_TYPE
@@ -139,6 +155,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
   FUN[fqName=fun16, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=fun16]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         CONTEXT_RECEIVER[label=null]
           TYPE_REFERENCE
             USER_TYPE
@@ -189,6 +207,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=justName]
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=normal]
           TYPE_REFERENCE
             USER_TYPE
@@ -230,6 +250,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
       CONTEXT_PARAMETER_LIST
         CONTEXT_RECEIVER[label=null]
           TYPE_REFERENCE
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=vararg]
         CONTEXT_RECEIVER[label=null]
@@ -260,6 +282,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
   FUN[fqName=fun25, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=fun25]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
@@ -272,6 +296,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=JustType]
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=justName]
           TYPE_REFERENCE
     VALUE_PARAMETER_LIST
@@ -362,6 +388,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
     CONTEXT_PARAMETER_LIST
       CONTEXT_RECEIVER[label=null]
         TYPE_REFERENCE
+      CONTEXT_RECEIVER[label=null]
+        TYPE_REFERENCE
   FUN[fqName=fun34, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=fun34]
     VALUE_PARAMETER_LIST
   MODIFIER_LIST[]
@@ -373,6 +401,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
   FUN[fqName=fun36, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=fun36]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
@@ -396,6 +426,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
   FUN[fqName=fun39, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=fun39]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
     VALUE_PARAMETER_LIST
@@ -413,6 +445,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
     VALUE_PARAMETER_LIST
   MODIFIER_LIST[]
     CONTEXT_PARAMETER_LIST
+      CONTEXT_RECEIVER[label=null]
+        TYPE_REFERENCE
       CONTEXT_RECEIVER[label=null]
         TYPE_REFERENCE
   FUN[fqName=fun42, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=fun42]
@@ -451,6 +485,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyContextParametersKt]]
     VALUE_PARAMETER_LIST
   MODIFIER_LIST[]
     CONTEXT_PARAMETER_LIST
+      CONTEXT_RECEIVER[label=null]
+        TYPE_REFERENCE
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
         TYPE_REFERENCE
       CONTEXT_RECEIVER[label=null]

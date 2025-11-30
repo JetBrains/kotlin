@@ -108,10 +108,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionExpressions_ERRKt]]
         TYPE_PARAMETER[fqName=null, name=T]
         TYPE_PARAMETER[fqName=null, name=T]
       VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=foo]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
             USER_TYPE

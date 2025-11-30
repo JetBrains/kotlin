@@ -53,7 +53,7 @@ KtFile: ValNoName.kt
         PsiWhiteSpace('\n        ')
         VALUE_PARAMETER
           PsiElement(val)('val')
-          PsiErrorElement:Parameter name expected
+          PsiErrorElement:Expecting a parameter declaration
             <empty list>
         PsiWhiteSpace('\n')
         PsiElement(RPAR)(')')
@@ -180,7 +180,7 @@ KtFile: ValNoName.kt
         PsiWhiteSpace('\n        ')
         VALUE_PARAMETER
           PsiElement(var)('var')
-          PsiErrorElement:Parameter name expected
+          PsiErrorElement:Expecting a parameter declaration
             <empty list>
         PsiWhiteSpace('\n')
         PsiElement(RPAR)(')')

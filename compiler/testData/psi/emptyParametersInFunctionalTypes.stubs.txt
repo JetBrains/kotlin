@@ -34,6 +34,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=normal]
             TYPE_REFERENCE
               USER_TYPE
@@ -62,6 +64,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Type]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=normal]
             TYPE_REFERENCE
               USER_TYPE
@@ -77,6 +81,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Type]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=normal]
             TYPE_REFERENCE
               USER_TYPE
@@ -88,6 +94,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=normal]
@@ -131,6 +139,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
                 REFERENCE_EXPRESSION[referencedName=Type]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=justName]
         TYPE_REFERENCE
@@ -140,6 +150,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
@@ -157,6 +169,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
                 REFERENCE_EXPRESSION[referencedName=justName]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=justName]
         TYPE_REFERENCE
@@ -166,6 +180,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=property]
             TYPE_REFERENCE
               USER_TYPE
@@ -186,6 +202,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               MODIFIER_LIST[]
@@ -261,6 +279,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
                         REFERENCE_EXPRESSION[referencedName=Anno]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=justName]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=normal]
             TYPE_REFERENCE
               USER_TYPE
@@ -307,6 +327,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             MODIFIER_LIST[vararg]
             TYPE_REFERENCE
               USER_TYPE
@@ -346,6 +368,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=JustType]
         TYPE_REFERENCE
@@ -359,6 +383,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=JustType]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=justName]
             TYPE_REFERENCE
         TYPE_REFERENCE
@@ -466,6 +492,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
         TYPE_REFERENCE
   PROPERTY[fqName=val35, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=val35]
     TYPE_REFERENCE
@@ -480,6 +508,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
@@ -512,6 +542,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Unit]
@@ -535,6 +567,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
         TYPE_REFERENCE
@@ -581,6 +615,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyParametersInFunctionalT
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]

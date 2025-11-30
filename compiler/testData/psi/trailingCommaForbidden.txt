@@ -147,12 +147,11 @@ KtFile: trailingCommaForbidden.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('String')
         PsiElement(COMMA)(',')
-        PsiErrorElement:Expecting a parameter declaration
-          PsiElement(COMMA)(',')
-        PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
-          PsiErrorElement:Parameter name expected
+          PsiErrorElement:Expecting a parameter declaration
             <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
         PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     CLASS_BODY
@@ -162,11 +161,10 @@ KtFile: trailingCommaForbidden.kt
         PsiElement(constructor)('constructor')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
-            PsiElement(COMMA)(',')
           VALUE_PARAMETER
-            PsiErrorElement:Parameter name expected
+            PsiErrorElement:Expecting a parameter declaration
               <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
         CONSTRUCTOR_DELEGATION_CALL
           CONSTRUCTOR_DELEGATION_REFERENCE
@@ -206,12 +204,11 @@ KtFile: trailingCommaForbidden.kt
       PsiWhiteSpace('\n    ')
       PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
-      PsiErrorElement:Expecting a parameter declaration
-        PsiElement(COMMA)(',')
-      PsiWhiteSpace('\n    ')
       VALUE_PARAMETER
-        PsiErrorElement:Parameter name expected
+        PsiErrorElement:Expecting a parameter declaration
           <empty list>
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
       PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     BLOCK
