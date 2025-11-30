@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
 import org.jetbrains.kotlin.backend.konan.ir.isComparisonFunction
 import org.jetbrains.kotlin.backend.konan.ir.isTypedIntrinsic
+import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_STANDA
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isChar
 import org.jetbrains.kotlin.ir.types.isDoubleOrFloatWithoutNullability
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -45,17 +47,6 @@ import org.jetbrains.kotlin.ir.util.render
 internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
 
 private fun IrCall.isVirtual(): Boolean = superQualifierSymbol?.owner == null && symbol.owner.isOverridable
-
-private fun BinaryType<IrClass>.asArithmeticTypeOrNull() = when (primitiveBinaryTypeOrNull()) {
-    PrimitiveBinaryType.BOOLEAN,
-    PrimitiveBinaryType.BYTE,
-    PrimitiveBinaryType.SHORT,
-    PrimitiveBinaryType.INT -> INT
-    PrimitiveBinaryType.LONG -> LONG
-    PrimitiveBinaryType.FLOAT -> FLOAT
-    PrimitiveBinaryType.DOUBLE -> DOUBLE
-    else -> null
-}
 
 internal val GenerateHairPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, Map<IrFunction, FunctionCompilation>>(
         name = "GenerateHair",
@@ -181,9 +172,9 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         return when {
                             function.isTypedIntrinsic -> generateIntrinsic(expression, resultType, args)
                             function.isBuiltInOperator -> generateBuiltinOperator(expression, resultType, args)
-                            function.origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER -> TODO(expression.render())
-                            function.origin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER -> TODO(expression.render())
-                            function.origin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> TODO(expression.render())
+                            function.origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER -> GlobalInit()
+                            function.origin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER -> ThreadLocalInit()
+                            function.origin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> StandaloneThreadLocalInit()
                             !function.isReal -> TODO(expression.render())
                             else -> if (expression.isVirtual()) TODO("InvokeVirtual ${expression.render()}") else {
                                 val call = InvokeStatic(HairFunctionImpl(function))(callArgs = args.toTypedArray())
@@ -195,7 +186,27 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
                     private fun generateIntrinsic(call: IrCall, resType: HairType, args: List<Node?>): Node = when (tryGetIntrinsicType(call)) {
                         IntrinsicType.PLUS -> Add(resType)(args[0]!!, args[1]!!)
+                        IntrinsicType.MINUS -> Sub(resType)(args[0]!!, args[1]!!)
+                        IntrinsicType.TIMES -> Mul(resType)(args[0]!!, args[1]!!)
+                        // FIXME signed vs unsigned
+                        // IntrinsicType.SIGNED_DIV -> Div(resType)(args[0]!!, args[1]!!)
+                        // IntrinsicType.SIGNED_REM -> Rem(resType)(args[0]!!, args[1]!!)
+
+                        IntrinsicType.AND -> And(resType)(args[0]!!, args[1]!!)
+                        IntrinsicType.OR -> Or(resType)(args[0]!!, args[1]!!)
+                        IntrinsicType.XOR -> Xor(resType)(args[0]!!, args[1]!!)
+                        // IntrinsicType.SHL -> Shl(resType)(args[0]!!, args[1]!!)
+                        // IntrinsicType.SHR -> Shr(resType)(args[0]!!, args[1]!!)
+                        // IntrinsicType.USHR -> Ushr(resType)(args[0]!!, args[1]!!)
+
                         IntrinsicType.THE_UNIT_INSTANCE -> UnitValue()
+
+                        IntrinsicType.CREATE_UNINITIALIZED_INSTANCE -> New(HairClassImpl(call.typeArguments[0]!!.getClass()!!))
+
+                        IntrinsicType.SIGN_EXTEND -> SignExtend(resType)(args[0]!!)
+                        IntrinsicType.ZERO_EXTEND -> ZeroExtend(resType)(args[0]!!)
+                        IntrinsicType.INT_TRUNCATE -> Truncate(resType)(args[0]!!)
+
                         else -> TODO("Intrinsic: ${call.render()}")
                     }
 
@@ -373,17 +384,26 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     }
 
                     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Node {
+                        val cls = expression.typeOperand.type.getClass()?.let { HairClassImpl(it) }
+                        val arg = expression.argument.accept(this, Unit)
                         return when (expression.operator) {
-                            IrTypeOperator.CAST -> TODO()
-                            IrTypeOperator.IMPLICIT_CAST -> TODO()
+                            IrTypeOperator.CAST -> {
+                                CheckCast(cls!!)(arg)
+                                arg
+                            }
+                            IrTypeOperator.IMPLICIT_CAST -> {
+                                // FIXME shouuld we generate it?
+                                CheckCast(cls!!)(arg)
+                                arg
+                            }
                             IrTypeOperator.IMPLICIT_NOTNULL -> TODO()
                             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
-                                expression.argument.accept(this, Unit)
+                                arg
                                 UnitValue()
                             }
                             IrTypeOperator.IMPLICIT_INTEGER_COERCION -> TODO()
                             IrTypeOperator.SAFE_CAST -> TODO()
-                            IrTypeOperator.INSTANCEOF -> TODO()
+                            IrTypeOperator.INSTANCEOF -> IsInstanceOf(cls!!)(arg)
                             IrTypeOperator.NOT_INSTANCEOF -> TODO()
                             IrTypeOperator.SAM_CONVERSION -> TODO()
                             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> TODO()
@@ -396,10 +416,10 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         if (field.hasAnnotation(KonanFqNames.volatile)) TODO("Volatile field access")
                         return if (field.isStatic) {
                             // FIXME global vs field?
-                            ReadGlobalPinned(HairGlobalImpl(field))
+                            LoadGlobal(HairGlobalImpl(field))
                         } else {
                             val obj = expression.receiver!!.accept(this, Unit)
-                            ReadFieldPinned(HairFieldImpl(field))(obj)
+                            LoadField(HairFieldImpl(field))(obj)
                         }
                     }
 
@@ -409,10 +429,10 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         val value = expression.value.accept(this, Unit)
                         return if (field.isStatic) {
                             // FIXME global vs field?
-                            WriteGlobal(HairGlobalImpl(field))(value)
+                            StoreGlobal(HairGlobalImpl(field))(value)
                         } else {
                             val obj = expression.receiver!!.accept(this, Unit)
-                            WriteField(HairFieldImpl(field))(obj, value)
+                            StoreField(HairFieldImpl(field))(obj, value)
                         }
                     }
                 }, Unit)
