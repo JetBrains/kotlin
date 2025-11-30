@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.platform.js
 import org.jetbrains.kotlin.js.config.ModuleKind
 
 object SwcConfig {
-    fun getArgumentsWhen(
+    public fun getArgumentsWhen(
         inputDirectoryOrFiles: List<String>,
         configPath: String,
         outputDirectory: String,
         environmentCode: String,
         fileExtension: String
-    ) = buildList {
+    ): List<String> = buildList {
         add("compile")
         inputDirectoryOrFiles.forEach(::add)
         add("--config-file")
@@ -26,12 +26,12 @@ object SwcConfig {
         add("--extensions=$fileExtension")
     }
 
-    fun getConfigWhen(
+    public fun getConfigWhen(
         sourceMapEnabled: Boolean,
         target: String,
         includeExternalHelpers: Boolean,
         moduleKind: ModuleKind
-    ) = buildMap<String, Any> {
+    ): Map<String, Any> = buildMap {
         set("\$schema", "https://swc.rs/schema.json")
         set("sourceMaps", sourceMapEnabled)
         set("inputSourceMap", sourceMapEnabled)
