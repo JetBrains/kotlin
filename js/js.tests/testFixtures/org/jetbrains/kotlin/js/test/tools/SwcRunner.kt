@@ -31,7 +31,7 @@ object SwcRunner {
             moduleKind = moduleKind
         )
 
-        val configFile = File("output.json").apply {
+        val configFile = artifactsDirectory.resolve(".swcrc").apply {
             writeText(Json.encodeToString(config))
         }
 
