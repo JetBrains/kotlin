@@ -6,11 +6,17 @@ import hair.sym.*
 class Session: SessionBase() {
     // Simple forms
 
+    internal val useForm = Use.form(this).also { register(it) }
+
     internal val noValueForm = NoValue.form(this).also { register(it) }
 
     internal val unitValueForm = UnitValue.form(this).also { register(it) }
 
-    internal val useForm = Use.form(this).also { register(it) }
+    internal val globalInitForm = GlobalInit.form(this).also { register(it) }
+
+    internal val threadLocalInitForm = ThreadLocalInit.form(this).also { register(it) }
+
+    internal val standaloneThreadLocalInitForm = StandaloneThreadLocalInit.form(this).also { register(it) }
 
     internal val unreachableForm = Unreachable.form(this).also { register(it) }
 
@@ -37,6 +43,8 @@ class Session: SessionBase() {
     internal val falseForm = False.form(this).also { register(it) }
 
     internal val nullForm = Null.form(this).also { register(it) }
+
+    internal val notForm = Not.form(this).also { register(it) }
 
     
 
@@ -84,6 +92,12 @@ class Session: SessionBase() {
 
     internal val cmpMetaForm = Cmp.metaForm(this)
 
+    internal val signExtendMetaForm = SignExtend.metaForm(this)
+
+    internal val zeroExtendMetaForm = ZeroExtend.metaForm(this)
+
+    internal val truncateMetaForm = Truncate.metaForm(this)
+
     internal val newMetaForm = New.metaForm(this)
 
     internal val isInstanceOfMetaForm = IsInstanceOf.metaForm(this)
@@ -108,9 +122,9 @@ class Session: SessionBase() {
 
     
 
-    val entry by lazy { BlockEntry(blockEntryForm).also { register(gvn(it)) } }
+    val entry by lazy { BlockEntry(blockEntryForm).also{ register(gvn(it)) } }
 
-    val unreachable by lazy { Unreachable(unreachableForm).also { register(gvn(it)) } }
+    val unreachable by lazy { Unreachable(unreachableForm).also{ register(gvn(it)) } }
 
 }
 

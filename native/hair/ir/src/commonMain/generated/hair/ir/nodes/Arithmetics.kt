@@ -412,3 +412,107 @@ class Cmp internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 }
 
 
+class Not internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)) {
+    val operand: Node
+        get() = args[0]
+    val operandOrNull: Node?
+        get() = args.getOrNull(0)
+    context(_: ArgsUpdater)
+     var operand: Node
+        get() = args[0]
+        set(value) { args[0] = value }
+    context(_: ArgsUpdater)
+     var operandOrNull: Node?
+        get() = args.getOrNull(0)
+        set(value) { args[0] = value }
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "operand"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitNot(this)
+    companion object {
+        internal fun form(session: Session) = SimpleValueForm(session, "Not")
+    }
+}
+
+
+sealed class Cast(form: Form, args: List<Node?>) : NodeBase(form, args) {
+    val operand: Node
+        get() = args[0]
+    val operandOrNull: Node?
+        get() = args.getOrNull(0)
+    context(_: ArgsUpdater)
+     var operand: Node
+        get() = args[0]
+        set(value) { args[0] = value }
+    context(_: ArgsUpdater)
+     var operandOrNull: Node?
+        get() = args.getOrNull(0)
+        set(value) { args[0] = value }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitCast(this)
+}
+
+
+class SignExtend internal constructor(form: Form, operand: Node?) : Cast(form, listOf(operand)) {
+    class Form internal constructor(metaForm: MetaForm, val targetType: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(targetType)
+    }
+    
+    val targetType: HairType by form::targetType
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "operand"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitSignExtend(this)
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "SignExtend")
+    }
+}
+
+
+class ZeroExtend internal constructor(form: Form, operand: Node?) : Cast(form, listOf(operand)) {
+    class Form internal constructor(metaForm: MetaForm, val targetType: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(targetType)
+    }
+    
+    val targetType: HairType by form::targetType
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "operand"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitZeroExtend(this)
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "ZeroExtend")
+    }
+}
+
+
+class Truncate internal constructor(form: Form, operand: Node?) : Cast(form, listOf(operand)) {
+    class Form internal constructor(metaForm: MetaForm, val targetType: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(targetType)
+    }
+    
+    val targetType: HairType by form::targetType
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "operand"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitTruncate(this)
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "Truncate")
+    }
+}
+
+

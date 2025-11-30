@@ -6,11 +6,17 @@ import hair.sym.Type.*
 class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
     override fun visitNode(node: Node): Node = error("Should not reach here $node")
 
+    override fun visitUse(node: Use): Use = context(nodeBuilder, NoControlFlowBuilder) { Use(null, null) } as Use
+
     override fun visitNoValue(node: NoValue): NoValue = context(nodeBuilder, NoControlFlowBuilder) { NoValue() }
 
     override fun visitUnitValue(node: UnitValue): UnitValue = context(nodeBuilder, NoControlFlowBuilder) { UnitValue() }
 
-    override fun visitUse(node: Use): Use = context(nodeBuilder, NoControlFlowBuilder) { Use(null, null) } as Use
+    override fun visitGlobalInit(node: GlobalInit): GlobalInit = context(nodeBuilder, NoControlFlowBuilder) { GlobalInit(null) } as GlobalInit
+
+    override fun visitThreadLocalInit(node: ThreadLocalInit): ThreadLocalInit = context(nodeBuilder, NoControlFlowBuilder) { ThreadLocalInit(null) } as ThreadLocalInit
+
+    override fun visitStandaloneThreadLocalInit(node: StandaloneThreadLocalInit): StandaloneThreadLocalInit = context(nodeBuilder, NoControlFlowBuilder) { StandaloneThreadLocalInit(null) } as StandaloneThreadLocalInit
 
     override fun visitUnreachable(node: Unreachable): Unreachable = context(nodeBuilder, NoControlFlowBuilder) { Unreachable() }
 
@@ -79,6 +85,14 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
     override fun visitUshr(node: Ushr): Ushr = context(nodeBuilder, NoControlFlowBuilder) { Ushr(node.type)(null, null) } as Ushr
 
     override fun visitCmp(node: Cmp): Cmp = context(nodeBuilder, NoControlFlowBuilder) { Cmp(node.type, node.op)(null, null) } as Cmp
+
+    override fun visitNot(node: Not): Not = context(nodeBuilder, NoControlFlowBuilder) { Not(null) } as Not
+
+    override fun visitSignExtend(node: SignExtend): SignExtend = context(nodeBuilder, NoControlFlowBuilder) { SignExtend(node.targetType)(null) } as SignExtend
+
+    override fun visitZeroExtend(node: ZeroExtend): ZeroExtend = context(nodeBuilder, NoControlFlowBuilder) { ZeroExtend(node.targetType)(null) } as ZeroExtend
+
+    override fun visitTruncate(node: Truncate): Truncate = context(nodeBuilder, NoControlFlowBuilder) { Truncate(node.targetType)(null) } as Truncate
 
     override fun visitNew(node: New): New = context(nodeBuilder, NoControlFlowBuilder) { New(node.objectType)(null) } as New
 
