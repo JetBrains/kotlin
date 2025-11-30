@@ -1,0 +1,1747 @@
+KtFile: emptyParametersInFunctionalTypes.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val1')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val2')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val3')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val4')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val5')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val6')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val7')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val8')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val9')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('justName')
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val10')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('justName')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val11')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('justName')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val12')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('justName')
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val13')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('justName')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('justName')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val14')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            PsiElement(val)('val')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('property')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val15')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(var)('var')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          <empty list>
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('property')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiElement(COMMA)(',')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(ARROW)('->')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val16')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Anno')
+              PsiWhiteSpace(' ')
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('justName')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val17')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('DanglingAnno')
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            MODIFIER_LIST
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Anno')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val18')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('DanglingAnno')
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('DanglingAnno')
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val19')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Anno')
+              PsiWhiteSpace(' ')
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('justName')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val20')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('vararg')
+          PsiWhiteSpace(' ')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            MODIFIER_LIST
+              PsiElement(vararg)('vararg')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('justName')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            MODIFIER_LIST
+              PsiElement(vararg)('vararg')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val21')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('vararg')
+          PsiWhiteSpace(' ')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val22')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            MODIFIER_LIST
+              PsiElement(vararg)('vararg')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('justName')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val23')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiErrorElement:Parameter name expected
+              <empty list>
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('JustType')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val24')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiErrorElement:Parameter name expected
+              <empty list>
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('JustType')
+          PsiErrorElement:Expecting comma or ')'
+            <empty list>
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val25')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiErrorElement:Parameter name expected
+              <empty list>
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('JustType')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val26')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiErrorElement:Parameter name expected
+              <empty list>
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('JustType')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('justName')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val27')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val28')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('default')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val29')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            ANNOTATED_EXPRESSION
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('DanglingAnno')
+              PsiErrorElement:Expecting an element
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val30')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Type')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            ANNOTATED_EXPRESSION
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('DanglingAnno')
+              PsiErrorElement:Expecting an element
+                <empty list>
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val31')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('DanglingAnno')
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val32')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('DanglingAnno')
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val33')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('normal')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('DanglingAnno')
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting ')'
+            PsiElement(val)('val')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          <empty list>
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('property')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(AT)('@')
+      PsiElement(IDENTIFIER)('DanglingAnno')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(ARROW)('->')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val34')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(EQ)('=')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            <empty list>
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(COMMA)(',')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(ARROW)('->')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val35')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(EQ)('=')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          <empty list>
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('default')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiElement(COMMA)(',')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(ARROW)('->')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val36')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiErrorElement:Parameter name expected
+              <empty list>
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('JustType')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('default')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val37')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(EQ)('=')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            PsiElement(ARROW)('->')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val38')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiErrorElement:Parameter name expected
+              <empty list>
+            PsiElement(COLON)(':')
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val39')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            PsiErrorElement:Parameter name expected
+              <empty list>
+            PsiElement(COLON)(':')
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val40')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiErrorElement:Parameter name expected
+              <empty list>
+            PsiElement(COLON)(':')
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val41')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(EQ)('=')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(COMMA)(',')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            <empty list>
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(ARROW)('->')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val42')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(EQ)('=')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            PsiElement(ARROW)('->')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val43')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiErrorElement:Parameter name expected
+              <empty list>
+            PsiElement(COLON)(':')
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+            PsiElement(EQ)('=')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val44')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(EQ)('=')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(COLON)(':')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            <empty list>
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(ARROW)('->')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val45')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiErrorElement:Parameter name expected
+              <empty list>
+            PsiElement(COLON)(':')
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(EQ)('=')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            PsiElement(ARROW)('->')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val46')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(EQ)('=')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(COMMA)(',')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            PsiElement(COLON)(':')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(ARROW)('->')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val47')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(EQ)('=')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            <empty list>
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(COMMA)(',')
+      PsiElement(COLON)(':')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(ARROW)('->')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val48')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiErrorElement:Parameter name expected
+              <empty list>
+            PsiElement(COLON)(':')
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(EQ)('=')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(COMMA)(',')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            <empty list>
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(ARROW)('->')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val49')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(val)('val')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            PsiElement(ARROW)('->')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val50')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(COMMA)(',')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            <empty list>
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(ARROW)('->')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('val51')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting '->' to specify return type of a function type
+          PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            <empty list>
+    PsiErrorElement:Property getter or setter expected
+      <empty list>
+  PROPERTY
+    PsiElement(var)('var')
+    PsiErrorElement:Expecting property name or receiver type
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(ARROW)('->')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Unit')

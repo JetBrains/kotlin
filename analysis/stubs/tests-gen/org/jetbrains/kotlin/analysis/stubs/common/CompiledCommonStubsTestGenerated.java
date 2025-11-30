@@ -415,6 +415,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
   }
 
   @Test
+  @TestMetadata("emptyContextParameters.kt")
+  public void testEmptyContextParameters() {
+    runTest("compiler/testData/psi/emptyContextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("emptyEnum.kt")
   public void testEmptyEnum() {
     runTest("compiler/testData/psi/emptyEnum.kt");
@@ -430,6 +436,18 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
   @TestMetadata("EmptyName.kt")
   public void testEmptyName() {
     runTest("compiler/testData/psi/EmptyName.kt");
+  }
+
+  @Test
+  @TestMetadata("emptyParameters.kt")
+  public void testEmptyParameters() {
+    runTest("compiler/testData/psi/emptyParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("emptyParametersInFunctionalTypes.kt")
+  public void testEmptyParametersInFunctionalTypes() {
+    runTest("compiler/testData/psi/emptyParametersInFunctionalTypes.kt");
   }
 
   @Test

@@ -356,6 +356,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/emptyArgumentsInArrayAccesses.kt");
     }
 
+    @TestMetadata("emptyContextParameters.kt")
+    public void testEmptyContextParameters() {
+      runTest("compiler/testData/psi/emptyContextParameters.kt");
+    }
+
     @TestMetadata("emptyEnum.kt")
     public void testEmptyEnum() {
       runTest("compiler/testData/psi/emptyEnum.kt");
@@ -369,6 +374,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
     @TestMetadata("EmptyName.kt")
     public void testEmptyName() {
       runTest("compiler/testData/psi/EmptyName.kt");
+    }
+
+    @TestMetadata("emptyParameters.kt")
+    public void testEmptyParameters() {
+      runTest("compiler/testData/psi/emptyParameters.kt");
+    }
+
+    @TestMetadata("emptyParametersInFunctionalTypes.kt")
+    public void testEmptyParametersInFunctionalTypes() {
+      runTest("compiler/testData/psi/emptyParametersInFunctionalTypes.kt");
     }
 
     @TestMetadata("enum.kt")
