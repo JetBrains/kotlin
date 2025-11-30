@@ -1,0 +1,15 @@
+FILE: anonymousObjects.kt
+    private final fun createPrivateObject(): R|<anonymous>| {
+        ^createPrivateObject object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/String| {
+                ^foo String(foo)
+            }
+
+        }
+
+    }
+    public final fun useAnonObject(): R|kotlin/Unit|
