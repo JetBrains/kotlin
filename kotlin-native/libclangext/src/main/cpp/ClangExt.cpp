@@ -191,4 +191,20 @@ extern "C" {
     return 0;
   }
 
+  const char* clang_Cursor_getSwiftName(CXCursor cursor) {
+#if LIBCLANGEXT_ENABLE
+    if (clang_isDeclaration(cursor.kind)) {
+      const Decl *decl = getCursorDecl(cursor);
+      if (decl) {
+        if (const auto *attr = decl->getAttr<SwiftNameAttr>()) {
+          static std::string storage;
+          storage = attr->getName().str();
+          return storage.c_str();
+        }
+      }
+    }
+#endif
+    return nullptr;
+  }
+
 }

@@ -51,6 +51,8 @@ unsigned clang_Cursor_isObjCReturningRetainedMethod(CXCursor cursor);
 
 unsigned clang_Cursor_isObjCConsumingSelfMethod(CXCursor cursor);
 
+const char* clang_Cursor_getSwiftName(CXCursor cursor);
+
 #ifdef __cplusplus
 }
 #endif
