@@ -6,16 +6,34 @@ import hair.sym.*
 import hair.sym.Type.*
 
 context(nodeBuilder: NodeBuilder)
+fun Use(control: Controlling?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(Use(nodeBuilder.session.useForm, control, value)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+fun Use(value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> Use(ctrl, value) }
+
+context(nodeBuilder: NodeBuilder)
 fun NoValue(): NoValue = nodeBuilder.onNodeBuilt(NoValue(nodeBuilder.session.noValueForm)) as NoValue
 
 context(nodeBuilder: NodeBuilder)
 fun UnitValue(): UnitValue = nodeBuilder.onNodeBuilt(UnitValue(nodeBuilder.session.unitValueForm)) as UnitValue
 
 context(nodeBuilder: NodeBuilder)
-fun Use(control: Controlling?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(Use(nodeBuilder.session.useForm, control, value)) as Controlling
+fun GlobalInit(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(GlobalInit(nodeBuilder.session.globalInitForm, control)) as Controlling
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun Use(value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> Use(ctrl, value) }
+fun GlobalInit(): Controlling = controlBuilder.appendControlled { ctrl -> GlobalInit(ctrl) }
+
+context(nodeBuilder: NodeBuilder)
+fun ThreadLocalInit(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(ThreadLocalInit(nodeBuilder.session.threadLocalInitForm, control)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+fun ThreadLocalInit(): Controlling = controlBuilder.appendControlled { ctrl -> ThreadLocalInit(ctrl) }
+
+context(nodeBuilder: NodeBuilder)
+fun StandaloneThreadLocalInit(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(StandaloneThreadLocalInit(nodeBuilder.session.standaloneThreadLocalInitForm, control)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+fun StandaloneThreadLocalInit(): Controlling = controlBuilder.appendControlled { ctrl -> StandaloneThreadLocalInit(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
 fun UnreachableNoCtrl(): Unreachable = nodeBuilder.onNodeBuilt(Unreachable(nodeBuilder.session.unreachableForm)) as Unreachable
@@ -234,13 +252,34 @@ context(nodeBuilder: NodeBuilder)
 operator fun Cmp.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Cmp(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-private fun NewForm(objectType: Class): New.Form = New.Form(nodeBuilder.session.newMetaForm, objectType).ensureFormUniq()
+fun Not(operand: Node?): Node = nodeBuilder.onNodeBuilt(Not(nodeBuilder.session.notForm, operand))
+
+context(nodeBuilder: NodeBuilder)
+fun SignExtend(targetType: HairType): SignExtend.Form = SignExtend.Form(nodeBuilder.session.signExtendMetaForm, targetType).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun SignExtend.Form.invoke(operand: Node?): Node = nodeBuilder.onNodeBuilt(SignExtend(this@invoke, operand))
+
+context(nodeBuilder: NodeBuilder)
+fun ZeroExtend(targetType: HairType): ZeroExtend.Form = ZeroExtend.Form(nodeBuilder.session.zeroExtendMetaForm, targetType).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun ZeroExtend.Form.invoke(operand: Node?): Node = nodeBuilder.onNodeBuilt(ZeroExtend(this@invoke, operand))
+
+context(nodeBuilder: NodeBuilder)
+fun Truncate(targetType: HairType): Truncate.Form = Truncate.Form(nodeBuilder.session.truncateMetaForm, targetType).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Truncate.Form.invoke(operand: Node?): Node = nodeBuilder.onNodeBuilt(Truncate(this@invoke, operand))
+
+context(nodeBuilder: NodeBuilder)
+private fun NewForm(objectType: HairClass): New.Form = New.Form(nodeBuilder.session.newMetaForm, objectType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
-fun New(objectType: Class): New.Form = NewForm(objectType)
+fun New(objectType: HairClass): New.Form = NewForm(objectType)
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun New(objectType: Class): Controlling = NewForm(objectType)()
+fun New(objectType: HairClass): Controlling = NewForm(objectType)()
 
 context(nodeBuilder: NodeBuilder)
 operator fun New.Form.invoke(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(New(this@invoke, control)) as Controlling
@@ -249,13 +288,13 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun New.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
-fun IsInstanceOf(targetType: Reference): IsInstanceOf.Form = IsInstanceOf.Form(nodeBuilder.session.isInstanceOfMetaForm, targetType).ensureFormUniq()
+fun IsInstanceOf(targetType: HairClass): IsInstanceOf.Form = IsInstanceOf.Form(nodeBuilder.session.isInstanceOfMetaForm, targetType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun IsInstanceOf.Form.invoke(obj: Node?): Node = nodeBuilder.onNodeBuilt(IsInstanceOf(this@invoke, obj))
 
 context(nodeBuilder: NodeBuilder)
-fun CheckCast(targetType: Reference): CheckCast.Form = CheckCast.Form(nodeBuilder.session.checkCastMetaForm, targetType).ensureFormUniq()
+fun CheckCast(targetType: HairClass): CheckCast.Form = CheckCast.Form(nodeBuilder.session.checkCastMetaForm, targetType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun CheckCast.Form.invoke(obj: Node?): Node = nodeBuilder.onNodeBuilt(CheckCast(this@invoke, obj))

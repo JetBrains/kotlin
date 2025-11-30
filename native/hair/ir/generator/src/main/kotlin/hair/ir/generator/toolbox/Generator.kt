@@ -61,8 +61,9 @@ class Generator(private val generationPath: File) {
                         member("internal val ${metaFormNameInSession(node)} = ${refName(node)}.metaForm(this)")
                     }
                     blankLine()
-                    member("val entry by lazy { ${ControlFlow.blockEntry.name}(${formNameInSession(ControlFlow.blockEntry)}).also{ register(it) } }")
-                    member("val unreachable by lazy { ${ControlFlow.unreachable.name}(${formNameInSession(ControlFlow.unreachable)}).also{ register(it) } }")
+                    // FIXME gvn result is always the same just add node into lists
+                    member("val entry by lazy { ${ControlFlow.blockEntry.name}(${formNameInSession(ControlFlow.blockEntry)}).also{ register(gvn(it)) } }")
+                    member("val unreachable by lazy { ${ControlFlow.unreachable.name}(${formNameInSession(ControlFlow.unreachable)}).also{ register(gvn(it)) } }")
                 }
             )
         })

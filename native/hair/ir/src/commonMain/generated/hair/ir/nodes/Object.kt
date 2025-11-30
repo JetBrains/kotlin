@@ -12,11 +12,11 @@ sealed interface AnyNew : Node {
 
 
 class New internal constructor(form: Form, control: Controlling?) : BlockBody(form, listOf(control)), AnyNew {
-    class Form internal constructor(metaForm: MetaForm, val objectType: Class) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val objectType: HairClass) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
         override val args = listOf<Any>(objectType)
     }
     
-    val objectType: Class by form::objectType
+    val objectType: HairClass by form::objectType
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -50,11 +50,11 @@ sealed class TypeCheck(form: Form, args: List<Node?>) : NodeBase(form, args) {
 
 
 class IsInstanceOf internal constructor(form: Form, obj: Node?) : TypeCheck(form, listOf(obj)) {
-    class Form internal constructor(metaForm: MetaForm, val targetType: Reference) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val targetType: HairClass) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(targetType)
     }
     
-    val targetType: Reference by form::targetType
+    val targetType: HairClass by form::targetType
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -70,11 +70,11 @@ class IsInstanceOf internal constructor(form: Form, obj: Node?) : TypeCheck(form
 
 
 class CheckCast internal constructor(form: Form, obj: Node?) : TypeCheck(form, listOf(obj)) {
-    class Form internal constructor(metaForm: MetaForm, val targetType: Reference) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+    class Form internal constructor(metaForm: MetaForm, val targetType: HairClass) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(targetType)
     }
     
-    val targetType: Reference by form::targetType
+    val targetType: HairClass by form::targetType
     
     
     override fun paramName(index: Int): String = when (index) {
