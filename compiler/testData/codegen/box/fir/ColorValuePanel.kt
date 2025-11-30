@@ -2,8 +2,6 @@
 // IGNORE_BACKEND: ANDROID
 // WITH_STDLIB
 // FULL_JDK
-// IGNORE_HEADER_MODE: JVM_IR
-//   Reason: KT-82376
 
 import java.awt.GridLayout
 import javax.swing.JPanel

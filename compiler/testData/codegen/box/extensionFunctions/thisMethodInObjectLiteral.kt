@@ -1,6 +1,3 @@
-// IGNORE_HEADER_MODE: JVM_IR
-//   Reason: KT-82311
-
 class Test {
     private fun <T : Any> T.self() = object{
         fun calc() : T {

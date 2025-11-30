@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -1066,7 +1067,8 @@ open class FirDeclarationsResolveTransformer(
             session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
             function !is FirPropertyAccessor && // property accessors are processed in `resolveAccessors`
             !function.isInline &&
-            !function.isLocal
+            !function.isLocal &&
+            result.returnTypeRef.coneType.toClassSymbol(session) !is FirAnonymousObjectSymbol // Methods of anonymous return types should be preserved.
         ) {
             // Header mode: once the return type for non-inline function is known, the body can be removed.
             result.replaceBody(null)

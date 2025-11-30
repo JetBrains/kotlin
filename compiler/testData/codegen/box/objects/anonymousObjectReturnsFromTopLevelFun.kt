@@ -1,6 +1,3 @@
-// IGNORE_HEADER_MODE: JVM_IR
-//   Reason: KT-82376
-
 interface IFoo {
     fun foo(): String
 }
