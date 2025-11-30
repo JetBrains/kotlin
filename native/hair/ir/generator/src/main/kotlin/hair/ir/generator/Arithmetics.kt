@@ -67,4 +67,17 @@ object Arithmetics : ModelDSL() {
         formParam("op", CmpOp::class)
     }
 
+    val not by node {
+        param("operand")
+    }
+
+    val cast by abstractClass {
+        formParam("targetType", HairType::class)
+        param("operand")
+    }
+
+    val signExtend by node(cast)
+    val zeroExtend by node(cast)
+    val truncate by node(cast)
+
 }

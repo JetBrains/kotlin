@@ -5,9 +5,13 @@ import hair.ir.nodes.*
 abstract class NodeVisitor<R> {
     abstract fun visitNode(node: Node): R
 
+    open fun visitUse(node: Use): R = visitBlockBody(node)
     open fun visitNoValue(node: NoValue): R = visitNode(node)
     open fun visitUnitValue(node: UnitValue): R = visitNode(node)
-    open fun visitUse(node: Use): R = visitBlockBody(node)
+    open fun visitStaticInit(node: StaticInit): R = visitBlockBody(node)
+    open fun visitGlobalInit(node: GlobalInit): R = visitStaticInit(node)
+    open fun visitThreadLocalInit(node: ThreadLocalInit): R = visitStaticInit(node)
+    open fun visitStandaloneThreadLocalInit(node: StandaloneThreadLocalInit): R = visitStaticInit(node)
     open fun visitUnreachable(node: Unreachable): R = visitNode(node)
     open fun visitBlockEntry(node: BlockEntry): R = visitNode(node)
     open fun visitControlled(node: Controlled): R = visitNode(node)
@@ -49,6 +53,11 @@ abstract class NodeVisitor<R> {
     open fun visitShr(node: Shr): R = visitBinaryOp(node)
     open fun visitUshr(node: Ushr): R = visitBinaryOp(node)
     open fun visitCmp(node: Cmp): R = visitBinaryOp(node)
+    open fun visitNot(node: Not): R = visitNode(node)
+    open fun visitCast(node: Cast): R = visitNode(node)
+    open fun visitSignExtend(node: SignExtend): R = visitCast(node)
+    open fun visitZeroExtend(node: ZeroExtend): R = visitCast(node)
+    open fun visitTruncate(node: Truncate): R = visitCast(node)
     open fun visitNew(node: New): R = visitBlockBody(node)
     open fun visitTypeCheck(node: TypeCheck): R = visitNode(node)
     open fun visitIsInstanceOf(node: IsInstanceOf): R = visitTypeCheck(node)

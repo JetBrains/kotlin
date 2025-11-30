@@ -11,13 +11,13 @@ object Object : ModelDSL() {
 
     val new by node(ControlFlow.blockBody) {
         interfaces(anyNew)
-        formParam("objectType", Class::class)
+        formParam("objectType", HairClass::class)
     }
 
     // type-checks
 
     val typeCheck by abstractClass {
-        formParam("targetType", Type.Reference::class)
+        formParam("targetType", HairClass::class)
         param("obj")
     }
 

@@ -12,6 +12,7 @@ import hair.ir.nodes.NodeBuilder
 import hair.ir.nodes.Throwing
 import hair.ir.nodes.Unreachable
 import hair.ir.nodes.set
+import hair.sym.HairClass
 import hair.sym.HairType.*
 import hair.sym.Type
 import hair.utils.ensuring
@@ -99,7 +100,7 @@ fun whileLoop(cond: Node, body: BodyBuilder) {
 }
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgsUpdater)
-fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<Type.Reference, context(NodeBuilder, ControlFlowBuilder) (Node) -> Unit>>, allCatcher: Type.Reference? = null) {
+fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<HairClass, context(NodeBuilder, ControlFlowBuilder) (Node) -> Unit>>, allCatcher: Type.Reference? = null) {
     val throwers = mutableListOf<Throwing>()
     val observingBuilder = object : NodeBuilder by nodeBuilder {
         override fun onNodeBuilt(node: Node): Node {

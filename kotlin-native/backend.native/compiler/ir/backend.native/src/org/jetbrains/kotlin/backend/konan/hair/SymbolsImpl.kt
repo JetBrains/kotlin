@@ -7,26 +7,30 @@ package org.jetbrains.kotlin.backend.konan.hair
 
 import hair.sym.Field
 import hair.sym.Global
+import hair.sym.HairClass
 import hair.sym.HairFunction
 import hair.sym.HairType
 import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
 import org.jetbrains.kotlin.backend.konan.computePrimitiveBinaryTypeOrNull
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.IrType
 
 internal fun IrType.asHairType(): HairType = when (val binaryType = computePrimitiveBinaryTypeOrNull()) {
-    PrimitiveBinaryType.BOOLEAN -> HairType.BOOLEAN
-    PrimitiveBinaryType.BYTE,
-    PrimitiveBinaryType.SHORT,
+    PrimitiveBinaryType.BOOLEAN -> HairType.INT
+    PrimitiveBinaryType.BYTE -> HairType.INT
+    PrimitiveBinaryType.SHORT -> HairType.INT
+
     PrimitiveBinaryType.INT -> HairType.INT
     PrimitiveBinaryType.LONG -> HairType.LONG
     PrimitiveBinaryType.FLOAT -> HairType.FLOAT
     PrimitiveBinaryType.DOUBLE -> HairType.DOUBLE
-    PrimitiveBinaryType.POINTER -> error("Should not reach here")
+    PrimitiveBinaryType.POINTER -> TODO("$binaryType not implemented yet")
     PrimitiveBinaryType.VECTOR128 -> TODO("$binaryType not implemented yet")
+
     null -> HairType.REFERENCE
 }
 
@@ -37,7 +41,7 @@ internal data class HairFunctionImpl(val irFunction: IrSimpleFunction) : HairFun
 }
 
 internal data class HairFieldImpl(val irField: IrField) : Field {
-    override val owner = TODO()
+    override val owner get() = TODO()
     override fun toString() = irField.name.toString()
     override val type: HairType
         get() = irField.type.asHairType()
@@ -47,4 +51,8 @@ internal data class HairGlobalImpl(val irField: IrField) : Global {
     override fun toString() = irField.name.toString()
     override val type: HairType
         get() = irField.type.asHairType()
+}
+
+internal data class HairClassImpl(val irClass: IrClass) : HairClass {
+
 }
