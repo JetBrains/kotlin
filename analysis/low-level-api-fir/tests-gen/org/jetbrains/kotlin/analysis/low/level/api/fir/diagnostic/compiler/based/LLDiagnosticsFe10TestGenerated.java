@@ -1377,6 +1377,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("mappingWithEmptyParameter.kt")
+    public void testMappingWithEmptyParameter() {
+      runTest("compiler/testData/diagnostics/tests/mappingWithEmptyParameter.kt");
+    }
+
+    @Test
     @TestMetadata("missedTypeArgumentsInAnnotationCall.kt")
     public void testMissedTypeArgumentsInAnnotationCall() {
       runTest("compiler/testData/diagnostics/tests/missedTypeArgumentsInAnnotationCall.kt");

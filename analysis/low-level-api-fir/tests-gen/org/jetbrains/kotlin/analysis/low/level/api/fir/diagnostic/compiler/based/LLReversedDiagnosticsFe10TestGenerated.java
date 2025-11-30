@@ -1377,6 +1377,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("mappingWithEmptyParameter.kt")
+    public void testMappingWithEmptyParameter() {
+      runTest("compiler/testData/diagnostics/tests/mappingWithEmptyParameter.kt");
+    }
+
+    @Test
     @TestMetadata("missedTypeArgumentsInAnnotationCall.kt")
     public void testMissedTypeArgumentsInAnnotationCall() {
       runTest("compiler/testData/diagnostics/tests/missedTypeArgumentsInAnnotationCall.kt");
