@@ -55,8 +55,6 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         }
     }
 
-    fun distributionKlibPath(): File = nativeHome.resolve("klib")
-
     fun getRuntimePathsForModule(module: TestModule): List<String> {
         val result = mutableListOf<String>()
 
