@@ -30,10 +30,16 @@ val commandLineToolsVersion = "13114758" /*19.0*/
 val emulatorVersion = "14433334" // v36.4.1
 
 dependencies {
-    listOf("linux", "windows", "darwin").forEach {
-        implicitDependencies("google:platform-tools:$platformToolsVersion:$it@zip")
-        implicitDependencies("google:commandlinetools-$it:${commandLineToolsVersion}_latest@zip")
-        implicitDependencies("google:emulator-$it:$emulatorVersion@zip")
+    for (os in listOf("linux", "win", "darwin")) {
+        implicitDependencies("google:platform-tools:$platformToolsVersion:$os@zip")
+    }
+
+    for (os in listOf("linux", "win", "mac")) {
+        implicitDependencies("google:commandlinetools-$os:${commandLineToolsVersion}_latest@zip")
+    }
+
+    for (os in listOf("linux", "windows", "darwin")) {
+        implicitDependencies("google:emulator-${os}_x64:$emulatorVersion@zip")
     }
 }
 
@@ -54,7 +60,7 @@ val toolsOs = when {
 }
 
 val toolsOsDarwin = when {
-    OperatingSystem.current().isWindows -> "windows"
+    OperatingSystem.current().isWindows -> "win"
     OperatingSystem.current().isMacOsX -> "darwin"
     OperatingSystem.current().isLinux -> "linux"
     else -> {
