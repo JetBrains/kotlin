@@ -6,14 +6,14 @@
 
 package kotlin.wasm.internal
 
-internal actual fun itoa32(inputValue: Int): String =
-    js("Function.prototype.call.bind(Number.prototype.toString)(inputValue)")
+@JsFun("Function.prototype.call.bind(Number.prototype.toString)")
+internal actual external fun itoa32(inputValue: Int): String
 
-internal actual fun utoa32(inputValue: UInt): String =
-    js("Function.prototype.call.bind(Number.prototype.toString)(inputValue)")
+@JsFun("Function.prototype.call.bind(Number.prototype.toString)")
+internal actual external fun utoa32(inputValue: UInt): String
 
-internal actual fun itoa64(inputValue: Long): String =
-    js("Function.prototype.call.bind(BigInt.prototype.toString)(inputValue)")
+@JsFun("Function.prototype.call.bind(BigInt.prototype.toString)")
+internal actual external fun itoa64(inputValue: Long): String
 
-internal actual fun utoa64(inputValue: ULong): String =
-    js("Function.prototype.call.bind(BigInt.prototype.toString)(inputValue)")
+@JsFun("Function.prototype.call.bind(BigInt.prototype.toString)")
+internal actual external fun utoa64(inputValue: ULong): String
