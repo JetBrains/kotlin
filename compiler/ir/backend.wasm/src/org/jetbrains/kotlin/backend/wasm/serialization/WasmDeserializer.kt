@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.NOT_LOCAT
 import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.NOT_LOCATED2
 import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.NOT_LOCATED3
 import org.jetbrains.kotlin.backend.wasm.serialization.InstructionTags.NOT_LOCATED4
+import org.jetbrains.kotlin.backend.wasm.serialization.ReferenceTags.IN_PLACE
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
-import java.io.ByteArrayInputStream
 import java.io.InputStream
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.LinkedHashSet
@@ -40,31 +40,14 @@ import kotlin.collections.MutableMap
  */
 
 class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boolean = false) {
-
     private val input: MyByteReader = MyByteReader(inputStream)
-
-    private var b: MyByteReader = input
-
-    private val referenceTable = mutableListOf<Symbol>()
+    private val deserializedReferences: MutableList<Any?> = mutableListOf()
 
     companion object {
         private val OPCODE_TO_WASM_OP by lazy { enumValues<WasmOp>().associateBy { it.opcode } }
     }
 
-    fun deserialize(): WasmCompiledFileFragment {
-        // Step 1: load the size of the reference table
-        val referenceTableSize = deserializeInt()
-
-        // Step 2: load the elements of the reference table as bytes
-        repeat(referenceTableSize) {
-            val slotSize = deserializeInt()
-            val bytes = b.readBytes(slotSize)
-            referenceTable.add(Symbol(bytes))
-        }
-
-        // Step 3: read the rest of the input
-        return deserializeCompiledFileFragment()
-    }
+    fun deserialize(): WasmCompiledFileFragment = deserializeCompiledFileFragment()
 
     private fun deserializeFunction() =
         deserializeNamedModuleField { name ->
@@ -232,7 +215,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     }
 
     private fun deserializeInstr(): WasmInstr {
-        val opcode = b.readUInt16().toInt()
+        val opcode = input.readUInt16().toInt()
         return withTag { tag ->
             val op = when (opcode) {
                 0xFFFF - 0 -> WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR
@@ -273,12 +256,12 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 ImmediateTags.BLOCK_TYPE_FUNCTION -> WasmImmediate.BlockType.Function(deserializeSymbol(::deserializeFunctionType))
                 ImmediateTags.BLOCK_TYPE_VALUE -> WasmImmediate.BlockType.Value(deserializeType())
                 ImmediateTags.CATCH -> deserializeImmediateCatch()
-                ImmediateTags.CONST_F32 -> WasmImmediate.ConstF32(b.readUInt32())
-                ImmediateTags.CONST_F64 -> WasmImmediate.ConstF64(b.readUInt64())
+                ImmediateTags.CONST_F32 -> WasmImmediate.ConstF32(input.readUInt32())
+                ImmediateTags.CONST_F64 -> WasmImmediate.ConstF64(input.readUInt64())
                 ImmediateTags.CONST_I32 -> WasmImmediate.ConstI32(deserializeInt())
                 ImmediateTags.CONST_I64 -> WasmImmediate.ConstI64(deserializeLong())
                 ImmediateTags.CONST_STRING -> WasmImmediate.ConstString(deserializeString())
-                ImmediateTags.CONST_U8 -> WasmImmediate.ConstU8(b.readUByte())
+                ImmediateTags.CONST_U8 -> WasmImmediate.ConstU8(input.readUByte())
                 ImmediateTags.DATA_INDEX -> WasmImmediate.DataIdx(deserializeSymbol(::deserializeInt))
                 ImmediateTags.ELEMENT_INDEX -> WasmImmediate.ElemIdx(deserializeElement())
                 ImmediateTags.FUNC_INDEX -> FuncSymbol(deserializeIdSignature())
@@ -297,7 +280,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 ImmediateTags.LABEL_INDEX -> WasmImmediate.LabelIdx(deserializeInt())
                 ImmediateTags.LABEL_INDEX_VECTOR -> WasmImmediate.LabelIdxVector(deserializeList(::deserializeInt))
                 ImmediateTags.LOCAL_INDEX -> WasmImmediate.LocalIdx(deserializeInt())
-                ImmediateTags.MEM_ARG -> { val align = b.readUInt32(); val offset = b.readUInt32(); WasmImmediate.MemArg(align, offset) }
+                ImmediateTags.MEM_ARG -> { val align = input.readUInt32(); val offset = input.readUInt32(); WasmImmediate.MemArg(align, offset) }
                 ImmediateTags.MEMORY_INDEX -> WasmImmediate.MemoryIdx(deserializeInt())
                 ImmediateTags.STRUCT_FIELD_INDEX -> WasmImmediate.StructFieldIdx(deserializeInt())
                 ImmediateTags.SYMBOL_I32 -> WasmImmediate.SymbolI32(deserializeSymbol(::deserializeInt))
@@ -326,8 +309,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
     private fun deserializeTable() =
         deserializeNamedModuleField { _, flags ->
-            val min = b.readUInt32()
-            val max = if (flags.consume()) null else b.readUInt32()
+            val min = input.readUInt32()
+            val max = if (flags.consume()) null else input.readUInt32()
             val elementType = deserializeType()
             val ip = deserializeImportDescriptor()
             WasmTable(WasmLimits(min, max), elementType, ip)
@@ -381,8 +364,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
     private fun deserializeLimits(): WasmLimits =
         withFlags { flags ->
-            val minSize = b.readUInt32()
-            val maxSize = if (flags.consume()) null else b.readUInt32()
+            val minSize = input.readUInt32()
+            val maxSize = if (flags.consume()) null else input.readUInt32()
             WasmLimits(minSize, maxSize)
         }
 
@@ -571,11 +554,11 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             withFlags {
                 if (it.consume()) {
                     val length = deserializeInt()
-                    val bytes = b.readBytes(length)
+                    val bytes = input.readBytes(length)
                     String(bytes)
                 } else {
                     val lengthBytes = deserializeInt()
-                    val bytes = b.readBytes(lengthBytes)
+                    val bytes = input.readBytes(lengthBytes)
                     val length = lengthBytes / Char.SIZE_BYTES
                     val charArray = CharArray(length)
                     for (i in 0..<length) {
@@ -594,15 +577,15 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         skipInt()
     }
 
-    private fun deserializeInt() = b.readUInt32().toInt()
+    private fun deserializeInt() = input.readUInt32().toInt()
 
-    private fun deserializeBoolean() = b.readUByte().toBoolean()
+    private fun deserializeBoolean() = input.readUByte().toBoolean()
 
     private fun skipInt() {
-        b.skip(4)
+        input.skip(4)
     }
 
-    private fun deserializeLong() = b.readUInt64().toLong()
+    private fun deserializeLong() = input.readUInt64().toLong()
 
     private inline fun <T : Any> deserializeSymbol(crossinline deserializeFunc: () -> T): WasmSymbol<T> =
         deserializeReference {
@@ -721,11 +704,11 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         qualifier = deserializeNullable(::deserializeString)
     )
 
-    private inline fun <T : WasmNamedModuleField> deserializeNamedModuleField(crossinline deserializeFunc: (String) -> T) =
+    private inline fun <reified T : WasmNamedModuleField> deserializeNamedModuleField(crossinline deserializeFunc: (String) -> T) =
         deserializeNamedModuleField { name, _ -> deserializeFunc(name) }
 
-    private inline fun <T : WasmNamedModuleField> deserializeNamedModuleField(crossinline deserializeFunc: (String, Flags) -> T) =
-        deserializeReference {
+    private inline fun <reified T : WasmNamedModuleField> deserializeNamedModuleField(crossinline deserializeFunc: (String, Flags) -> T) =
+        deserializeReference<T> {
             withFlags { flags ->
                 // Deserializes the common part of WasmNamedModuleField.
                 val id = if (flags.consume()) null else deserializeInt()
@@ -735,19 +718,23 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         }
 
     private inline fun <T> withTag(deserializeFunc: (UInt) -> T) =
-        deserializeFunc(b.readUByte().toUInt())
+        deserializeFunc(input.readUByte().toUInt())
 
     private inline fun <T> withFlags(deserializeFunc: (Flags) -> T) =
-        deserializeFunc(Flags(b.readUByte().toUInt()))
+        deserializeFunc(Flags(input.readUByte().toUInt()))
 
-    private inline fun <T> deserializeReference(crossinline deserializeFunc: () -> T): T {
+    private inline fun <reified T> deserializeReference(crossinline deserializeFunc: () -> T): T {
         val index = deserializeInt()
-        return referenceTable[index].getOrCreate { bytes ->
-            val oldB = b
-            b = MyByteReader(ByteArrayInputStream(bytes))
-            val result = deserializeFunc()
-            b = oldB
-            result
+        return if (index == IN_PLACE) {
+            val currentIndex = deserializedReferences.size
+            deserializedReferences.add(null)
+            deserializeFunc().also {
+                deserializedReferences[currentIndex] = it
+            }
+        } else {
+            val obj = deserializedReferences[index]
+            check(obj != null) { "Recursive deserialization" }
+            deserializedReferences[index] as T
         }
     }
 
@@ -770,22 +757,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             val result = this[0]
             flags = (flags shr 1)
             return result
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private class Symbol(private val bytes: ByteArray, private var obj: Any? = null) {
-        private var inConstruction = false
-        inline fun <T> getOrCreate(deserialize: (ByteArray) -> T): T {
-            if (obj == null) {
-                if (inConstruction) {
-                    error("Dependency cycle detected between reference table elements.")
-                }
-                inConstruction = true
-                obj = deserialize(bytes)
-                inConstruction = false
-            }
-            return obj as T
         }
     }
 }

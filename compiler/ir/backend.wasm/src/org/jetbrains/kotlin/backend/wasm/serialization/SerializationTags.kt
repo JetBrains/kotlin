@@ -159,3 +159,7 @@ internal object NullableTags {
     const val NULL = 0u
     const val NOT_NULL = 1u
 }
+
+internal object ReferenceTags {
+    const val IN_PLACE = -1
+}
