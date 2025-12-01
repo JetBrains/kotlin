@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 
 val IrFile.nameWithoutExtension: String get() = name.substringBeforeLast(".kt")
 
@@ -50,11 +52,17 @@ fun IrReturn.isTheLastReturnStatementIn(target: IrReturnableBlockSymbol): Boolea
     return target.owner.statements.lastOrNull() === this
 }
 
-fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage: Boolean): FqName {
+fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage: Boolean, isEsModules: Boolean): FqName {
     val name = getJsNameOrKotlinName()
     return when (val parent = parent) {
-        is IrDeclarationWithName -> parent.getFqNameWithJsNameWhenAvailable(shouldIncludePackage).child(name)
-        is IrPackageFragment -> getKotlinOrJsQualifier(parent, shouldIncludePackage)?.child(name) ?: FqName(name.identifier)
+        is IrDeclarationWithName -> parent.getFqNameWithJsNameWhenAvailable(shouldIncludePackage, isEsModules).child(name)
+        is IrPackageFragment ->
+            (getKotlinOrJsQualifier(parent, shouldIncludePackage)?.child(name) ?: FqName(name.identifier))
+                .butIf(isEsModules && this is IrClass && isObject && !isExternal) {
+                    // In ES modules, static members of a top-level object actually live in the <object name>.$metadata.type namespace,
+                    // rather than just the <object name> namespace.
+                    it.child(Name.identifier($$"$metadata$")).child(Name.identifier("type"))
+                }
         else -> FqName(name.identifier)
     }
 }

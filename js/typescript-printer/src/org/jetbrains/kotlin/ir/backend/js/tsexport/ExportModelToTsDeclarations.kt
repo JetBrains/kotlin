@@ -241,8 +241,6 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 ExportedType.ClassType(
                     name,
                     emptyList(),
-                    isObject = true,
-                    isExternal = isExternal,
                     classId = originalClassId,
                 )
             )
@@ -348,8 +346,6 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                     ExportedType.ClassType(
                         name,
                         typeParameters.map(ExportedType::TypeParameterRef),
-                        isObject = false,
-                        isExternal,
                         originalClassId,
                     )
                 ),
@@ -389,8 +385,6 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 is ExportedType.ClassType -> ExportedType.ClassType(
                     "${parentType.name}.$Metadata.$MetadataConstructor",
                     parentType.arguments,
-                    parentType.isObject,
-                    parentType.isExternal,
                     parentType.classId,
                 )
                 else -> parentType
@@ -450,8 +444,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             "abstract new " + renderTypeParameters(typeParameters) + "() => ${returnType.toTypeScript(indent, isInCommentContext)}"
 
         is ExportedType.ClassType -> {
-            val classTypeReference = if (isObject && !isExternal && isEsModules) "$name.$Metadata.$MetadataType" else name
-            classTypeReference + if (arguments.isNotEmpty()) "<${arguments.joinToString(", ") { it.toTypeScript(indent, isInCommentContext) }}>" else ""
+            name + if (arguments.isNotEmpty()) "<${arguments.joinToString(", ") { it.toTypeScript(indent, isInCommentContext) }}>" else ""
         }
 
 

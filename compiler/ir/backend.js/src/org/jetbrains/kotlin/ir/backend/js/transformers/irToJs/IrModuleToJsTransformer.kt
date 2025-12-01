@@ -184,7 +184,7 @@ class IrModuleToJsTransformer(
 
     private fun associateIrAndExport(modules: Iterable<IrModuleFragment>): List<IrAndExportedDeclarations> {
         val tsExportModelGenerator = runIf(shouldGenerateTypeScriptDefinitions) {
-            TsExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
+            TsExportModelGenerator(backendContext, isEsModules = isEsModules)
         }
 
         return modules.map { module ->
@@ -248,7 +248,7 @@ class IrModuleToJsTransformer(
             runIf(shouldGenerateTypeScriptDefinitions) {
                 TsExportModelGenerator(
                     backendContext,
-                    generateNamespacesForPackages = !isEsModules
+                    isEsModules = isEsModules
                 )
             },
         )

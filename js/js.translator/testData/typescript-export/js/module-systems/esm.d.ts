@@ -52,7 +52,7 @@ export declare namespace Parent {
             class Nested {
                 constructor(value: number);
                 get value(): number;
-                static fromString(s: string): Parent.Nested;
+                static fromString(s: string): Parent.$metadata$.type.Nested;
             }
             namespace Nested {
                 /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -62,16 +62,16 @@ export declare namespace Parent {
             }
             abstract class NestedEnum {
                 private constructor();
-                static get A(): Parent.NestedEnum & {
+                static get A(): Parent.$metadata$.type.NestedEnum & {
                     get name(): "A";
                     get ordinal(): 0;
                 };
-                static get B(): Parent.NestedEnum & {
+                static get B(): Parent.$metadata$.type.NestedEnum & {
                     get name(): "B";
                     get ordinal(): 1;
                 };
-                static values(): [typeof Parent.NestedEnum.A, typeof Parent.NestedEnum.B];
-                static valueOf(value: string): Parent.NestedEnum;
+                static values(): [typeof Parent.$metadata$.type.NestedEnum.A, typeof Parent.$metadata$.type.NestedEnum.B];
+                static valueOf(value: string): Parent.$metadata$.type.NestedEnum;
                 get name(): "A" | "B";
                 get ordinal(): 0 | 1;
             }
@@ -88,7 +88,7 @@ export declare namespace Parent {
                 class Nested {
                     constructor(value: number);
                     get value(): number;
-                    static fromString(s: string): Parent.NestedObject.Nested;
+                    static fromString(s: string): Parent.$metadata$.type.NestedObject.Nested;
                 }
                 namespace Nested {
                     /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

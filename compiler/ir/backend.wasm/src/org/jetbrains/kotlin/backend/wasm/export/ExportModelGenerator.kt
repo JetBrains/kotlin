@@ -223,29 +223,22 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
                 require(klass.isExternal) { "Unexpected non-external class: ${klass.fqNameWhenAvailable}" }
 
-                val name = "$NOT_EXPORTED_NAMESPACE.${klass.getFqNameWithJsNameWhenAvailable(shouldIncludePackage = true).asString()}"
+                val name = "$NOT_EXPORTED_NAMESPACE.${klass.getFqNameWithJsNameWhenAvailable(shouldIncludePackage = true, isEsModules = true).asString()}"
+
+                val classType = ExportedType.ClassType(
+                    name = name,
+                    arguments = type.arguments.memoryOptimizedMap { exportTypeArgument(it) },
+                    classId = klass.classId,
+                )
 
                 when (klass.kind) {
                     ClassKind.OBJECT ->
-                        ExportedType.TypeOf(
-                            ExportedType.ClassType(
-                                name,
-                                emptyList(),
-                                isObject = true,
-                                isExternal = klass.isEffectivelyExternal(),
-                                classId = klass.classId,
-                            )
-                        )
+                        ExportedType.TypeOf(classType)
 
                     ClassKind.CLASS,
-                    ClassKind.INTERFACE ->
-                        ExportedType.ClassType(
-                            name,
-                            type.arguments.memoryOptimizedMap { exportTypeArgument(it) },
-                            isObject = false,
-                            isExternal = klass.isEffectivelyExternal(),
-                            classId = klass.classId,
-                        )
+                    ClassKind.INTERFACE,
+                        ->
+                        classType
                     else -> error("Unexpected class kind ${klass.kind}")
                 }
             }
@@ -339,7 +332,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             )
         }
 
-        val parentFqName = declaration.getFqNameWithJsNameWhenAvailable(shouldIncludePackage = true).parentOrNull()
+        val parentFqName = declaration.getFqNameWithJsNameWhenAvailable(shouldIncludePackage = true, isEsModules = true).parentOrNull()
 
         return ExportedNamespace(
             name = "$NOT_EXPORTED_NAMESPACE${parentFqName?.asString()?.takeIf { it.isNotEmpty() }?.let { ".$it" }.orEmpty()}",

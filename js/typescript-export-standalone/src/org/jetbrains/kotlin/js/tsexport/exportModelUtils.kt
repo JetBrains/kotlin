@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.allOverriddenSymbols
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.ClassId
@@ -28,6 +25,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportDefault
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportIgnore
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsImplicitExport
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 
 private val reservedWords = setOf(
     "break",
@@ -131,31 +129,37 @@ internal val TypeScriptExportConfig.generateNamespacesForPackages: Boolean
 
 // TODO: Add memoization?
 context(_: KaSession)
-internal fun KaNamedSymbol.getExportedFqName(shouldIncludePackage: Boolean): FqName {
+internal fun KaNamedSymbol.getExportedFqName(shouldIncludePackage: Boolean, isEsModules: Boolean): FqName {
     val name = Name.identifier(getExportedIdentifier())
-    when (val parent = containingDeclaration) {
-        is KaNamedSymbol -> return parent.getExportedFqName(shouldIncludePackage).child(name)
-        null -> {
-            // TODO(KT-82224): Respect file-level @JsQualifier
-            val jsQualifier = (this as? KaAnnotated)?.getJsQualifier()
-            if (jsQualifier != null) {
-                return FqName(jsQualifier)
-            }
-
-            if (!shouldIncludePackage) {
-                return FqName.topLevel(name)
-            }
-
-            // This is a top-level declaration.
-            val packageFqName = when (this) {
-                is KaClassLikeSymbol -> classId?.packageFqName
-                is KaCallableSymbol -> callableId?.packageName
-                else -> null
-            }
-            return packageFqName?.child(name) ?: FqName.topLevel(name)
-        }
-        else -> return FqName.topLevel(name)
+    return when (val parent = containingDeclaration) {
+        is KaNamedSymbol -> parent.getExportedFqName(shouldIncludePackage, isEsModules).child(name)
+        null ->
+            getTopLevelQualifier(shouldIncludePackage).child(name)
+                .butIf(isEsModules && this is KaNamedClassSymbol && classKind == KaClassKind.OBJECT && !isExternal) {
+                    // In ES modules, static members of a top-level object actually live in the <object name>.$metadata.type namespace,
+                    // rather than just the <object name> namespace.
+                    it.child(Name.identifier($$"$metadata$")).child(Name.identifier("type"))
+                }
+        else -> FqName.topLevel(name)
     }
+}
+
+private fun KaNamedSymbol.getTopLevelQualifier(shouldIncludePackage: Boolean): FqName {
+    // TODO(KT-82224): Respect file-level @JsQualifier
+    val jsQualifier = (this as? KaAnnotated)?.getJsQualifier()
+    if (jsQualifier != null) {
+        return FqName(jsQualifier)
+    }
+
+    if (!shouldIncludePackage) {
+        return FqName.ROOT
+    }
+
+    return when (this) {
+        is KaClassLikeSymbol -> classId?.packageFqName
+        is KaCallableSymbol -> callableId?.packageName
+        else -> null
+    } ?: FqName.ROOT
 }
 
 private fun KaAnnotated.isJsImplicitExport(): Boolean =

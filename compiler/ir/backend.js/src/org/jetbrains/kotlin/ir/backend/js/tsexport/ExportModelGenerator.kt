@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private const val magicPropertyName = "__doNotUseOrImplementIt"
 
-class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespacesForPackages: Boolean) {
+class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boolean) {
     private val transitiveExportCollector = TransitiveExportCollector(context)
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
@@ -46,7 +46,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         return when {
             exports.isEmpty() -> emptyList()
-            !generateNamespacesForPackages || namespaceFqName.isRoot -> exports
+            isEsModules || namespaceFqName.isRoot -> exports
             else -> listOf(ExportedNamespace(namespaceFqName.toString(), exports))
         }
     }
@@ -541,7 +541,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         return ExportedType.InlineInterfaceType(
             listOf(
                 ExportedProperty(
-                    name = getFqNameWithJsNameWhenAvailable(true).asString(),
+                    name = getFqNameWithJsNameWhenAvailable(shouldIncludePackage = true, isEsModules = isEsModules).asString(),
                     type = ExportedType.Primitive.UniqueSymbol,
                     mutable = false,
                     isMember = true,
@@ -619,7 +619,10 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                             .map {
                                 ExportedType.TypeOf(
                                     ExportedType.ClassType(
-                                        name = it.getFqNameWithJsNameWhenAvailable(generateNamespacesForPackages).asString(),
+                                        name = it.getFqNameWithJsNameWhenAvailable(
+                                            shouldIncludePackage = !isEsModules,
+                                            isEsModules = isEsModules,
+                                        ).asString(),
                                         arguments = emptyList()
                                     )
                                 )
@@ -855,7 +858,10 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 val isExported = klass.isExportedImplicitlyOrExplicitly(context)
                 val isImplicitlyExported = !isExported && !klass.isExternal
                 val isNonExportedExternal = klass.isExternal && !isExported
-                val name = klass.getFqNameWithJsNameWhenAvailable(!isNonExportedExternal && generateNamespacesForPackages).asString()
+                val name = klass.getFqNameWithJsNameWhenAvailable(
+                    shouldIncludePackage = !isNonExportedExternal && !isEsModules,
+                    isEsModules = isEsModules,
+                ).asString()
 
                 val exportedSupertype = runIf(shouldCalculateExportedSupertypeForImplicit && isImplicitlyExported) {
                     val transitiveExportedType = nonNullType.collectSuperTransitiveHierarchy()
@@ -865,31 +871,23 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                         .reduce(ExportedType::IntersectionType)
                 } ?: ExportedType.Primitive.Any
 
+                val classType = ExportedType.ClassType(
+                    name = name,
+                    arguments = type.arguments.memoryOptimizedMap { exportTypeArgument(it, typeOwner, typeParameterScope) },
+                    classId = klass.classId,
+                )
+
                 when (klass.kind) {
                     ClassKind.ANNOTATION_CLASS,
-                    ClassKind.ENUM_ENTRY ->
-                        ExportedType.ErrorType("Class $name with kind: ${klass.kind}")
+                    ClassKind.ENUM_ENTRY,
+                        -> ExportedType.ErrorType("Class $name with kind: ${klass.kind}")
 
-                    ClassKind.OBJECT ->
-                        ExportedType.TypeOf(
-                            ExportedType.ClassType(
-                                name,
-                                emptyList(),
-                                isObject = true,
-                                isExternal = klass.isEffectivelyExternal(),
-                                classId = klass.classId,
-                            )
-                        )
+                    ClassKind.OBJECT -> ExportedType.TypeOf(classType)
 
                     ClassKind.CLASS,
                     ClassKind.ENUM_CLASS,
-                    ClassKind.INTERFACE -> ExportedType.ClassType(
-                        name,
-                        type.arguments.memoryOptimizedMap { exportTypeArgument(it, typeOwner, typeParameterScope) },
-                        isObject = false,
-                        isExternal = klass.isEffectivelyExternal(),
-                        classId = klass.classId,
-                    )
+                    ClassKind.INTERFACE,
+                        -> classType
                 }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
             }
 

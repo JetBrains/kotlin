@@ -177,8 +177,6 @@ public sealed class ExportedType {
     public data class ClassType(
         val name: String,
         val arguments: List<ExportedType>,
-        val isObject: Boolean = false,
-        val isExternal: Boolean = false,
         val classId: ClassId? = null,
     ) : ExportedType() {
         override fun equals(other: Any?): Boolean = this === other || other is ClassType && classId == other.classId
