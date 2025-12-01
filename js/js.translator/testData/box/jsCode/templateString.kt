@@ -14,6 +14,8 @@ inline fun assertRegularTemplates() {
     assertEquals(js("'$'"), js("`\\\$`"), "Escape regular dollar sign")
     assertEquals(js("'\${}'"), js("`\\\${}`"), "Escape dollar sign with interpolation")
     assertEquals(js("'aaa'"), js("`\\a\\a\\a`"), "Escape any regular character")
+    assertEquals(js(""" '"' """), js(""" `"` """), "Do not escape double qoute")
+    assertEquals(js(""" "'" """), js(""" `'` """), "Do not escape single qoute")
 }
 
 inline fun assertTaggedTemplates() {

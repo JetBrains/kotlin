@@ -7,5 +7,8 @@ fun box(): String {
     assertEquals(js("'\\401'"), " 1")
     assertEquals(js("'\\0'"), "\u0000")
     assertEquals(js("'\\a'"), "a")
+    assertEquals(js(""" '"' """), "\"")
+    assertEquals(js(""" "'" """), "'")
+    assertEquals(js("'`'"), "`")
     return "OK"
 }
