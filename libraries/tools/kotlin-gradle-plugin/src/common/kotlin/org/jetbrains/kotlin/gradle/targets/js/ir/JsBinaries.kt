@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
-import org.gradle.api.attributes.Category
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.RegularFile
@@ -19,12 +18,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.addToAssemble
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -33,15 +31,11 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryModeAttribute
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryModeAttribute.attributeByMode
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
-import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 
 interface JsBinary {
     val compilation: KotlinJsCompilation
@@ -70,12 +64,6 @@ sealed class JsIrBinary(
     )
     var generateTs: Boolean = false
 
-    val wasmBinaryConfigurationName
-        get() = compilation.disambiguateName("wasmBinary${name}Configuration")
-
-    val wasmBinaryOutputConfigurationName
-        get() = compilation.disambiguateName("wasmBinary${name}OutputConfiguration")
-
     val outputDirBase: Provider<Directory> = project.layout.buildDirectory
         .dir(COMPILE_SYNC)
         .map { it.dir(compilation.target.targetName) }
@@ -98,10 +86,6 @@ sealed class JsIrBinary(
                 task.duplicatesStrategy = DuplicatesStrategy.WARN
 
                 task.from.from(project.tasks.named(compilation.processResourcesTaskName))
-
-                val conf = project.configurations.named(wasmBinaryConfigurationName)
-
-                task.from.from(conf)
 
                 task.destinationDirectory.set(compilation.npmProject.dist.mapToFile())
             }
@@ -210,6 +194,12 @@ interface WasmBinary {
     val linkTask: TaskProvider<KotlinJsIrLink>
 
     val optimizeTask: TaskProvider<BinaryenExec>
+
+    val wasmBinaryConfigurationName
+        get() = compilation.disambiguateName("wasmBinary${name}Configuration")
+
+    val wasmBinaryOutputConfigurationName
+        get() = compilation.disambiguateName("wasmBinary${name}OutputConfiguration")
 }
 
 internal fun TaskProvider<BinaryenExec>.configureOptimizeTask(binary: WasmBinary) {
@@ -279,7 +269,15 @@ class ExecutableWasm(
     name,
     mode
 ), WasmBinary {
+    private val wasmPerModule = PropertiesProvider(project).wasmPerModule
+
     override fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
+        if (wasmPerModule) {
+            val conf = project.configurations.named(wasmBinaryConfigurationName)
+
+            syncTask.from.from(conf)
+        }
+
         if (mode == KotlinJsBinaryMode.PRODUCTION) {
             // this is done in optimizeTask "also" block, because optimizeTask cannot be referenced on init stage
         } else {
@@ -337,7 +335,15 @@ class LibraryWasm(
     name,
     mode
 ), WasmBinary {
+    private val wasmPerModule = PropertiesProvider(project).wasmPerModule
+
     override fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
+        if (wasmPerModule) {
+            val conf = project.configurations.named(wasmBinaryConfigurationName)
+
+            syncTask.from.from(conf)
+        }
+
         if (mode == KotlinJsBinaryMode.PRODUCTION) {
             syncTask.from.from(optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
             syncTask.dependsOn(optimizeTask)
