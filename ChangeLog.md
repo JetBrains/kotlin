@@ -1,3 +1,14 @@
+## 2.3.0-RC2
+
+### Compiler
+
+- [`KT-82590`](https://youtrack.jetbrains.com/issue/KT-82590) ClassCastException when instantiating class with generics implemented by fun interface and lambda
+
+### Tools. Compiler Plugin API
+
+- [`KT-82563`](https://youtrack.jetbrains.com/issue/KT-82563) Improve compiler error messages to identify incompatible plugins causing compilation failures
+
+
 ## 2.3.0-RC
 
 ### Backend. Wasm
