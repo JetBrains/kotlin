@@ -589,6 +589,8 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 if (usesK2) null
                 else ComposeDescriptorSerializerContext()
 
+            updateConfigurationCommon(configuration)
+
             registerCommonExtensions(descriptorSerializerContext)
 
             IrGenerationExtension.registerExtension(
@@ -625,6 +627,17 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 return false
             }
             return true
+        }
+
+        fun updateConfigurationCommon(configuration: CompilerConfiguration) {
+            configuration.put(
+                JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES,
+                listOf(
+                    "androidx.compose.runtime.Composable",
+                    "androidx.compose.runtime.ComposableTargetMarker",
+                    "androidx.compose.runtime.internal.FunctionKeyMeta",
+                )
+            )
         }
 
         fun ExtensionStorage.registerCommonExtensions(
