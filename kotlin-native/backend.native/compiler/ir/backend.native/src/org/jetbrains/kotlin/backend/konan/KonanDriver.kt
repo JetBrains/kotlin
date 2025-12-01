@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
 import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
@@ -25,10 +26,10 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.components.irOrFail
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -80,12 +81,14 @@ class KonanDriver(
             when {
                 !filesToCache.isNullOrEmpty() -> filesToCache
                 configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true -> {
-                    val lib = createKonanLibrary(
-                            File(libPath),
-                            "default",
-                            null,
-                            configuration.zipFileSystemAccessor
-                    )
+                    val result = KlibLoader {
+                        libraryPaths(libPath)
+                        configuration.zipFileSystemAccessor?.let(::zipFileSystemAccessor)
+                    }.load()
+                    result.reportLoadingProblemsIfAny(configuration, allAsErrors = true)
+
+                    val lib = result.librariesStdlibFirst.singleOrNull() ?: return@let null
+
                     val ir = lib.irOrFail
                     (0 until ir.irFileCount).map { fileIndex ->
                         val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, fileIndex))

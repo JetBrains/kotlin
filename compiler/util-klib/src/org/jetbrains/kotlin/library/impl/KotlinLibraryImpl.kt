@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.*
 
-class BaseKotlinLibraryImpl(
+private class BaseKotlinLibraryImpl(
     val access: BaseLibraryAccess<KotlinLibraryLayout>,
 ) : BaseKotlinLibrary {
     override val libraryFile get() = access.klib

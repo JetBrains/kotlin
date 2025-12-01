@@ -1,5 +1,5 @@
 error: unknown partial linkage mode 'invalid-mode'
-error: failed to build cache for $BUILD_DIR$/main.
+error: failed to build cache for $BUILD_DIR$/main.klib.
 As a workaround, please try to disable incremental compilation (kotlin.incremental.native=false)
 
 Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
