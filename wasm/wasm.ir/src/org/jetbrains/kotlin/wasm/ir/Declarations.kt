@@ -7,8 +7,15 @@ package org.jetbrains.kotlin.wasm.ir
 
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
+abstract class DeclarationResolver {
+    abstract fun resolve(type: WasmHeapType.Type): WasmTypeDeclaration
+    abstract fun resolve(type: WasmImmediate.TypeIdx): WasmTypeDeclaration
+    abstract fun resolve(global: WasmImmediate.GlobalIdx): WasmGlobal
+    abstract fun resolve(function: WasmImmediate.FuncIdx): WasmFunction
+}
 
 class WasmModule(
+    val resolver: DeclarationResolver,
     val recGroups: List<List<WasmTypeDeclaration>> = emptyList(),
     val importsInOrder: List<WasmNamedModuleField> = emptyList(),
     val importedFunctions: List<WasmFunction.Imported> = emptyList(),
@@ -38,11 +45,11 @@ sealed class WasmNamedModuleField {
 
 sealed class WasmFunction(
     override val name: String,
-    val type: WasmSymbolReadOnly<WasmFunctionType>,
+    val type: WasmHeapType.Type.FunctionType,
 ) : WasmNamedModuleField() {
     class Defined(
         name: String,
-        type: WasmSymbolReadOnly<WasmFunctionType>,
+        type: WasmHeapType.Type.FunctionType,
         val locals: MutableList<WasmLocal> = mutableListOf(),
         val instructions: MutableList<WasmInstr> = mutableListOf(),
         val startLocation: SourceLocation = SourceLocation.IgnoredLocation,
@@ -51,7 +58,7 @@ sealed class WasmFunction(
 
     class Imported(
         name: String,
-        type: WasmSymbolReadOnly<WasmFunctionType>,
+        type: WasmHeapType.Type.FunctionType,
         val importPair: WasmImportDescriptor,
     ) : WasmFunction(name, type)
 }
@@ -108,13 +115,9 @@ class WasmElement(
 }
 
 class WasmTag(
-    val type: WasmFunctionType,
+    val type: WasmHeapType.Type.FunctionType,
     val importPair: WasmImportDescriptor? = null
-) : WasmNamedModuleField() {
-    init {
-        assert(type.resultTypes.isEmpty()) { "Must have empty return as per current spec" }
-    }
-}
+) : WasmNamedModuleField()
 
 class WasmLocal(
     val id: Int,
@@ -156,7 +159,7 @@ data class WasmFunctionType(
 class WasmStructDeclaration(
     name: String,
     val fields: List<WasmStructFieldDeclaration>,
-    val superType: WasmSymbolReadOnly<WasmTypeDeclaration>?,
+    val superType: WasmHeapType.Type?,
     val isFinal: Boolean
 ) : WasmTypeDeclaration(name)
 

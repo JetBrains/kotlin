@@ -15,6 +15,14 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
+class ModuleReferencedDeclarations {
+    val referencedFunction = mutableSetOf<IdSignature>()
+    val referencedGlobalField = mutableSetOf<IdSignature>()
+    val referencedGlobalVTable = mutableSetOf<IdSignature>()
+    val referencedGlobalClassITable = mutableSetOf<IdSignature>()
+    val referencedRttiGlobal = mutableSetOf<IdSignature>()
+}
+
 class WasmModuleFragmentGenerator(
     private val backendContext: WasmBackendContext,
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
@@ -35,19 +43,20 @@ class WasmModuleFragmentGenerator(
     fun generateModuleAsSingleFileFragmentWithModuleImport(
         irModuleFragment: IrModuleFragment,
         moduleName: String,
-        importDeclarations: Set<IdSignature>,
+        referencedDeclarations: ModuleReferencedDeclarations,
     ): WasmCompiledFileFragment {
         val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
-        val wasmFileCodegenContext = WasmFileCodegenContextWithImport(wasmFileFragment, idSignatureRetriever, moduleName, importDeclarations)
+        val wasmFileCodegenContext = WasmFileCodegenContextWithImport(wasmFileFragment, idSignatureRetriever, moduleName, referencedDeclarations)
         generate(irModuleFragment, wasmFileCodegenContext)
         return wasmFileFragment
     }
 
     fun generateModuleAsSingleFileFragmentWithModuleExport(
         irModuleFragment: IrModuleFragment,
+        referencedDeclarations: ModuleReferencedDeclarations,
     ): WasmCompiledFileFragment {
         val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
-        val wasmFileCodegenContext = WasmFileCodegenContextWithExport(wasmFileFragment, idSignatureRetriever)
+        val wasmFileCodegenContext = WasmFileCodegenContextWithExport(wasmFileFragment, idSignatureRetriever, referencedDeclarations)
         generate(irModuleFragment, wasmFileCodegenContext)
         return wasmFileFragment
     }

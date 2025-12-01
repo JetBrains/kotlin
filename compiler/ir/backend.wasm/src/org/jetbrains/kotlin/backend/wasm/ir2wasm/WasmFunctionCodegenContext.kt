@@ -63,9 +63,9 @@ class WasmFunctionCodegenContext(
     private val SyntheticLocalType.wasmType
         get() = when (this) {
             SyntheticLocalType.IS_INTERFACE_PARAMETER ->
-                WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(backendContext.irBuiltIns.anyClass)))
+                WasmRefNullType(wasmFileCodegenContext.referenceHeapType(backendContext.irBuiltIns.anyClass))
             SyntheticLocalType.IS_INTERFACE_ANY_ARRAY ->
-                WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.interfaceTableTypes.wasmAnyArrayType))
+                WasmRefNullType(Synthetics.HeapTypes.wasmAnyArrayType)
             SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
         }
 

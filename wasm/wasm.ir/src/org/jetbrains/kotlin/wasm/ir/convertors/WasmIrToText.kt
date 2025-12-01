@@ -52,9 +52,12 @@ open class SExpressionBuilder {
 
 
 class WasmIrToText(
+    val module: WasmModule,
     private val debugInformationGenerator: DebugInformationGenerator? = null,
 ) : SExpressionBuilder(), DebugInformationConsumer {
     private var currentFunction: WasmFunction.Defined? = null
+
+    private val resolver = module.resolver
 
     override fun consumeDebugInformation(debugInformation: DebugInformation) {
         debugInformation.forEach {
@@ -177,10 +180,12 @@ class WasmIrToText(
                 appendAlign(x.align)
             }
             is WasmImmediate.BlockType -> appendBlockType(x)
-            is WasmImmediate.FuncIdx -> appendModuleFieldReference(x.value.owner)
+            is WasmImmediate.FuncIdx -> appendModuleFieldReference(resolver.resolve(x))
             is WasmImmediate.LocalIdx -> appendLocalReference(x.value)
-            is WasmImmediate.GlobalIdx -> appendModuleFieldReference(x.value.owner)
-            is WasmImmediate.TypeIdx -> sameLineList("type") { appendModuleFieldReference(x.value.owner) }
+
+            is WasmImmediate.GlobalIdx -> appendModuleFieldReference(resolver.resolve(x))
+            is WasmImmediate.TypeIdx -> sameLineList("type") { appendModuleFieldReference(resolver.resolve(x)) }
+
             is WasmImmediate.MemoryIdx -> appendIdxIfNotZero(x.value)
             is WasmImmediate.DataIdx -> appendElement(x.value.toString())
             is WasmImmediate.TableIdx -> appendElement(x.value.toString())
@@ -193,7 +198,6 @@ class WasmIrToText(
 
             is WasmImmediate.ValTypeVector -> sameLineList("result") { x.value.forEach { appendType(it) } }
 
-            is WasmImmediate.GcType -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.StructFieldIdx -> appendElement(x.value.toString())
             is WasmImmediate.HeapType -> {
                 appendHeapType(x.value)
@@ -296,7 +300,7 @@ class WasmIrToText(
         }
     }
 
-    fun appendWasmModule(module: WasmModule) {
+    fun appendWasmModule() {
         with(module) {
             newLineList("module") {
                 recGroups.forEach { recGroup ->
@@ -362,7 +366,8 @@ class WasmIrToText(
     private fun appendStructTypeDeclaration(type: WasmStructDeclaration) {
         newLineList("type") {
             appendModuleFieldReference(type)
-            maybeSubType(type.superType?.owner) {
+            val superTypeOwner = type.superType?.let { resolver.resolve(it) }
+            maybeSubType(superTypeOwner) {
                 sameLineList("struct") {
                     type.fields.forEach {
                         appendStructField(it)
@@ -386,7 +391,7 @@ class WasmIrToText(
         newLineList("func") {
             appendModuleFieldReference(function)
             function.importPair.appendImportPair()
-            sameLineList("type") { appendModuleFieldReference(function.type) }
+            sameLineList("type") { appendModuleFieldReference(resolver.resolve(function.type)) }
         }
     }
 
@@ -400,11 +405,12 @@ class WasmIrToText(
     private fun appendDefinedFunction(function: WasmFunction.Defined) {
         newLineList("func") {
             appendModuleFieldReference(function)
-            sameLineList("type") { appendModuleFieldReference(function.type) }
+            val functionType = resolver.resolve(function.type) as WasmFunctionType
+            sameLineList("type") { appendModuleFieldReference(functionType) }
             function.locals.forEach { if (it.isParameter) appendLocal(it) }
-            if (function.type.owner.resultTypes.isNotEmpty()) {
+            if (functionType.resultTypes.isNotEmpty()) {
                 sameLineList("result") {
-                    function.type.owner.resultTypes.forEach { appendType(it) }
+                    functionType.resultTypes.forEach { appendType(it) }
                 }
             }
             function.locals.forEach { if (!it.isParameter) appendLocal(it) }
@@ -526,10 +532,11 @@ class WasmIrToText(
 
             wasmTag.importPair?.appendImportPair()
 
+            val tagType = resolver.resolve(wasmTag.type) as WasmFunctionType
             sameLineList("param") {
-                wasmTag.type.parameterTypes.forEach { appendType(it) }
+                tagType.parameterTypes.forEach { appendType(it) }
             }
-            assert(wasmTag.type.resultTypes.isEmpty()) { "must be as per spec" }
+            check(tagType.resultTypes.isEmpty()) { "must be as per spec" }
         }
     }
 
@@ -547,7 +554,7 @@ class WasmIrToText(
 
             is WasmHeapType.Type -> {
 //                appendElement("opt")
-                appendModuleFieldReference(type.type.owner)
+                appendModuleFieldReference(resolver.resolve(type))
             }
         }
     }

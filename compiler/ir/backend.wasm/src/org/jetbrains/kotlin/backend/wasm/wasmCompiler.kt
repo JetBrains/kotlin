@@ -233,8 +233,8 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
     }
 
     val wat = if (moduleConfiguration.generateWat) {
-        val watGenerator = WasmIrToText(sourceMapGeneratorForText)
-        watGenerator.appendWasmModule(linkedModule)
+        val watGenerator = WasmIrToText(linkedModule, sourceMapGeneratorForText)
+        watGenerator.appendWasmModule()
         watGenerator.toString()
     } else {
         null

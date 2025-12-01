@@ -60,6 +60,7 @@ class WasmIrToBinary(
     private var codeSectionOffset = Box(0)
     private val appendImmediateDelegate = ::appendImmediate
     private val defaultEndInstruction = wasmInstrWithoutLocation(WasmOp.END)
+    private val resolver = module.resolver
 
     override fun consumeDebugInformation(debugInformation: DebugInformation) {
         debugInformation.forEach {
@@ -294,10 +295,11 @@ class WasmIrToBinary(
                 b.writeVarUInt32(x.offset)
             }
             is WasmImmediate.BlockType -> appendBlockType(x)
-            is WasmImmediate.FuncIdx -> appendModuleFieldReference(x.value.owner)
+            is WasmImmediate.FuncIdx -> appendModuleFieldReference(resolver.resolve(x))
             is WasmImmediate.LocalIdx -> appendLocalReference(x.value)
-            is WasmImmediate.GlobalIdx -> appendModuleFieldReference(x.value.owner)
-            is WasmImmediate.TypeIdx -> appendModuleFieldReference(x.value.owner)
+            is WasmImmediate.GlobalIdx -> appendModuleFieldReference(resolver.resolve(x))
+            is WasmImmediate.TypeIdx -> appendModuleFieldReference(resolver.resolve(x))
+
             is WasmImmediate.MemoryIdx -> b.writeVarUInt32(x.value)
             is WasmImmediate.DataIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.TableIdx -> b.writeVarUInt32(x.value.owner)
@@ -316,7 +318,6 @@ class WasmIrToBinary(
                     appendType(type)
                 }
             }
-            is WasmImmediate.GcType -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.StructFieldIdx -> b.writeVarUInt32(x.value)
             is WasmImmediate.HeapType -> appendHeapType(x.value)
             is WasmImmediate.ConstString ->
@@ -397,7 +398,8 @@ class WasmIrToBinary(
 
             if (superType != null) {
                 appendVectorSize(1)
-                appendModuleFieldReference(superType.owner)
+                val superType = resolver.resolve(superType)
+                appendModuleFieldReference(superType)
             } else {
                 appendVectorSize(0)
             }
@@ -415,9 +417,6 @@ class WasmIrToBinary(
         appendFieldType(type.field)
     }
 
-    val WasmFunctionType.index: Int
-        get() = id!!
-
     private fun appendLimits(limits: WasmLimits) {
         b.writeVarUInt1(limits.maxSize != null)
         b.writeVarUInt32(limits.minSize)
@@ -429,11 +428,11 @@ class WasmIrToBinary(
         b.writeString(function.importPair.moduleName)
         b.writeString(function.importPair.declarationName.owner)
         b.writeByte(0)  // Function external kind.
-        b.writeVarUInt32(function.type.owner.index)
+        b.writeVarUInt32((resolver.resolve(function.type).id!!))
     }
 
     private fun appendDefinedFunction(function: WasmFunction.Defined) {
-        b.writeVarUInt32(function.type.owner.index)
+        b.writeVarUInt32((resolver.resolve(function.type).id!!))
     }
 
     private fun appendTable(table: WasmTable) {
@@ -477,8 +476,12 @@ class WasmIrToBinary(
             b.writeByte(4)
         }
         b.writeByte(0) // attribute
-        assert(t.type.id != null) { "Unlinked tag id" }
-        b.writeVarUInt32(t.type.id!!)
+
+        val tagType = resolver.resolve(t.type) as WasmFunctionType
+        check(tagType.resultTypes.isEmpty()) { "Must have empty return as per current spec" }
+        val typeId = tagType.id
+        check(typeId != null) { "Unlinked tag id" }
+        b.writeVarUInt32(typeId)
     }
 
     private fun appendExpr(expr: Iterable<WasmInstr>, endLocation: SourceLocation? = null) {
@@ -616,7 +619,7 @@ class WasmIrToBinary(
     fun appendHeapType(type: WasmHeapType) {
         val code: Int = when (type) {
             is WasmHeapType.Simple -> type.code.toInt()
-            is WasmHeapType.Type -> type.type.owner.id!!
+            is WasmHeapType.Type -> resolver.resolve(type).id!!
         }
         b.writeVarInt32(code)
     }

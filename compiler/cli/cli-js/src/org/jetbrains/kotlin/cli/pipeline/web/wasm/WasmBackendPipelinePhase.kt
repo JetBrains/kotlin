@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifact
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedDeclarations
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.name.FqName
@@ -41,22 +41,6 @@ import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.net.URLEncoder
-
-fun getAllReferencedDeclarations(
-    wasmCompiledFileFragment: WasmCompiledFileFragment,
-    additionalSignatureToImport: Set<IdSignature>
-): Set<IdSignature> {
-    val signatures = mutableSetOf<IdSignature>()
-    signatures.addAll(wasmCompiledFileFragment.functions.unbound.keys)
-    signatures.addAll(wasmCompiledFileFragment.globalFields.unbound.keys)
-    signatures.addAll(wasmCompiledFileFragment.globalVTables.unbound.keys)
-    signatures.addAll(wasmCompiledFileFragment.globalClassITables.unbound.keys)
-    wasmCompiledFileFragment.rttiElements?.let {
-        signatures.addAll(it.globalReferences.unbound.keys)
-    }
-    signatures.addAll(additionalSignatureToImport)
-    return signatures
-}
 
 private val IrModuleFragment.outputFileName
     get() = kotlinLibrary?.jsOutputName ?: (name.asString()
@@ -350,26 +334,26 @@ fun compileWasmLoweredFragmentsForSingleModule(
     val wasmCompiledFileFragments = mutableListOf<WasmCompiledFileFragment>()
     val dependencyImports = mutableSetOf<WasmModuleDependencyImport>()
 
-    val mainModuleFileFragment = codeGenerator.generateModuleAsSingleFileFragmentWithModuleExport(mainModuleFragment)
+    val referencedDeclarations = ModuleReferencedDeclarations()
+
+    val mainModuleFileFragment = codeGenerator.generateModuleAsSingleFileFragmentWithModuleExport(
+        irModuleFragment = mainModuleFragment,
+        referencedDeclarations = referencedDeclarations,
+    )
 
     // This signature needed to dynamically load module services
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    val additionalSignatureToImport =
-        if (stdlibIsMainModule) emptySet() else setOfNotNull(
-            signatureRetriever.declarationSignature(backendContext.wasmSymbols.registerModuleDescriptor.owner)!!,
-            signatureRetriever.declarationSignature(backendContext.wasmSymbols.createString.owner)!!,
-            signatureRetriever.declarationSignature(backendContext.wasmSymbols.tryGetAssociatedObject.owner)!!,
-            backendContext.wasmSymbols.runRootSuites?.owner?.let { runRootSuites ->
-                signatureRetriever.declarationSignature(runRootSuites)!!
-            },
-            if (backendContext.isWasmJsTarget) {
-                signatureRetriever.declarationSignature(backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinStringAdapter.owner)!!
-            } else {
-                null
-            }
-        )
-
-    val importedDeclarations = getAllReferencedDeclarations(mainModuleFileFragment, additionalSignatureToImport)
+    if (!stdlibIsMainModule) {
+        referencedDeclarations.referencedFunction.add(signatureRetriever.declarationSignature(backendContext.wasmSymbols.registerModuleDescriptor.owner)!!)
+        referencedDeclarations.referencedFunction.add(signatureRetriever.declarationSignature(backendContext.wasmSymbols.createString.owner)!!)
+        referencedDeclarations.referencedFunction.add(signatureRetriever.declarationSignature(backendContext.wasmSymbols.tryGetAssociatedObject.owner)!!)
+        backendContext.wasmSymbols.runRootSuites?.owner?.let { runRootSuites ->
+            referencedDeclarations.referencedFunction.add(signatureRetriever.declarationSignature(runRootSuites)!!)
+        }
+        if (backendContext.isWasmJsTarget) {
+            referencedDeclarations.referencedFunction.add(signatureRetriever.declarationSignature(backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinStringAdapter.owner)!!)
+        }
+    }
 
     val dependencyModules = loweredIrFragments.filterNot { it == mainModuleFragment }
     dependencyModules.mapTo(wasmCompiledFileFragments) {
@@ -383,7 +367,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
                     ?: initialOutputFileName
             )
         )
-        codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(it, dependencyName, importedDeclarations)
+        codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(it, dependencyName, referencedDeclarations)
     }
     wasmCompiledFileFragments.add(mainModuleFileFragment)
 

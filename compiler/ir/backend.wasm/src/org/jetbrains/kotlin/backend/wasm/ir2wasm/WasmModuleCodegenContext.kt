@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.utils.redefinitionError
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -34,20 +35,11 @@ open class WasmFileCodegenContext(
     open fun handleClassITableWithImport(declaration: IrClassSymbol): Boolean = false
     open fun handleRTTIWithImport(declaration: IrClassSymbol, superType: IrClassSymbol?): Boolean = false
 
-    private val wasmRefNullTypeCache = mutableMapOf<IrClassSymbol, WasmRefNullType>()
-    fun getCachedRefNullType(symbol: IrClassSymbol): WasmRefNullType =
-        wasmRefNullTypeCache.getOrPut(symbol) {
-            WasmRefNullType(WasmHeapType.Type(referenceGcType(symbol)))
-        }
-
-    private fun IrSymbol.getReferenceKey(): IdSignature =
+    protected fun IrSymbol.getReferenceKey(): IdSignature =
         idSignatureRetriever.declarationSignature(this.owner as IrDeclaration)!!
 
-    fun referenceStringLiteralId(string: String): WasmSymbol<Int> =
-        wasmFileFragment.stringLiteralId.reference(string)
-
     fun referenceConstantArray(resource: Pair<List<Long>, WasmType>): WasmSymbol<Int> =
-        wasmFileFragment.constantArrayDataSegmentId.reference(resource)
+        wasmFileFragment.constantArrayDataSegmentId.getOrPut(resource) { WasmSymbol() }
 
     fun addExport(wasmExport: WasmExport<*>) {
         wasmFileFragment.exports += wasmExport
@@ -57,59 +49,101 @@ open class WasmFileCodegenContext(
         idSignatureRetriever.declarationSignature(this.owner)!!
 
     open fun defineFunction(irFunction: IrFunctionSymbol, wasmFunction: WasmFunction) {
-        wasmFileFragment.functions.define(irFunction.getReferenceKey(), wasmFunction)
+        if (wasmFileFragment.definedFunctions.put(irFunction.getReferenceKey(), wasmFunction) != null) {
+            redefinitionError(irFunction.getReferenceKey(), "Functions")
+        }
     }
 
-    fun defineGlobalField(irField: IrFieldSymbol, wasmGlobal: WasmGlobal) {
-        wasmFileFragment.globalFields.define(irField.getReferenceKey(), wasmGlobal)
+    open fun defineGlobalField(irField: IrFieldSymbol, wasmGlobal: WasmGlobal) {
+        if (wasmFileFragment.definedGlobalFields.put(irField.getReferenceKey(), wasmGlobal) != null) {
+            redefinitionError(irField.getReferenceKey(), "GlobalFields")
+        }
     }
 
     open fun defineGlobalVTable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
-        wasmFileFragment.globalVTables.define(irClass.getReferenceKey(), wasmGlobal)
+        if (wasmFileFragment.definedGlobalVTables.put(irClass.getReferenceKey(), wasmGlobal) != null) {
+            redefinitionError(irClass.getReferenceKey(), "GlobalVTables")
+        }
     }
 
     open fun defineGlobalClassITable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
-        wasmFileFragment.globalClassITables.define(irClass.getReferenceKey(), wasmGlobal)
+        if (wasmFileFragment.definedGlobalClassITables.put(irClass.getReferenceKey(), wasmGlobal) != null) {
+            redefinitionError(irClass.getReferenceKey(), "GlobalClassITables")
+        }
+    }
+
+    open fun defineRttiGlobal(global: WasmGlobal, irClass: IrClassSymbol, irSuperClass: IrClassSymbol?) {
+        val reference = irClass.getReferenceKey()
+        if (wasmFileFragment.definedRttiGlobal.put(reference, global) != null) {
+            redefinitionError(reference, "RttiGlobal")
+        }
+        if (wasmFileFragment.definedRttiSuperType.put(reference, irSuperClass?.getReferenceKey()) != null) {
+            redefinitionError(reference, "RttiSuperType")
+        }
     }
 
     fun defineGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
-        wasmFileFragment.gcTypes.define(irClass.getReferenceKey(), wasmType)
+        if (wasmFileFragment.definedGcTypes.put(irClass.getReferenceKey(), wasmType) != null) {
+            redefinitionError(irClass.getReferenceKey(), "GcTypes")
+        }
     }
 
-    fun defineVTableGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
-        wasmFileFragment.vTableGcTypes.define(irClass.getReferenceKey(), wasmType)
+    fun defineVTableGcType(irClass: IrClassSymbol, wasmType: WasmStructDeclaration) {
+        if (wasmFileFragment.definedVTableGcTypes.put(irClass.getReferenceKey(), wasmType) != null) {
+            redefinitionError(irClass.getReferenceKey(), "VTableGcTypes")
+        }
     }
 
     fun defineFunctionType(irFunction: IrFunctionSymbol, wasmFunctionType: WasmFunctionType) {
-        wasmFileFragment.functionTypes.define(irFunction.getReferenceKey(), wasmFunctionType)
+        if (wasmFileFragment.definedFunctionTypes.put(irFunction.getReferenceKey(), wasmFunctionType) != null) {
+            redefinitionError(irFunction.getReferenceKey(), "FunctionTypes")
+        }
     }
 
-    fun referenceFunction(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunction> =
-        wasmFileFragment.functions.reference(irFunction.getReferenceKey())
+    open fun referenceFunction(irFunction: IrFunctionSymbol): FuncSymbol =
+        FuncSymbol(irFunction.getReferenceKey())
 
-    fun referenceGlobalString(value: String, referenceValue: String = value): Pair<WasmSymbol<WasmGlobal>, WasmSymbol<Int>> =
-        Pair(
-            wasmFileFragment.globalLiterals.reference(value),
-            wasmFileFragment.globalLiteralsIds.reference(referenceValue)
-        )
+    open fun referenceGlobalField(irField: IrFieldSymbol): FieldGlobalSymbol =
+        FieldGlobalSymbol(irField.getReferenceKey())
 
-    fun referenceGlobalField(irField: IrFieldSymbol): WasmSymbol<WasmGlobal> =
-        wasmFileFragment.globalFields.reference(irField.getReferenceKey())
+    open fun referenceGlobalVTable(irClass: IrClassSymbol): VTableGlobalSymbol =
+        VTableGlobalSymbol(irClass.getReferenceKey())
 
-    fun referenceGlobalVTable(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
-        wasmFileFragment.globalVTables.reference(irClass.getReferenceKey())
+    open fun referenceGlobalClassITable(irClass: IrClassSymbol): ClassITableGlobalSymbol =
+        ClassITableGlobalSymbol(irClass.getReferenceKey())
 
-    fun referenceGlobalClassITable(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
-        wasmFileFragment.globalClassITables.reference(irClass.getReferenceKey())
+    open fun referenceRttiGlobal(irClass: IrClassSymbol): RttiGlobalSymbol =
+        RttiGlobalSymbol(irClass.getReferenceKey())
 
-    fun referenceGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        wasmFileFragment.gcTypes.reference(irClass.getReferenceKey())
+    fun referenceGcType(irClass: IrClassSymbol): GcTypeSymbol =
+        GcTypeSymbol(irClass.getReferenceKey())
 
-    fun referenceVTableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        wasmFileFragment.vTableGcTypes.reference(irClass.getReferenceKey())
+    fun referenceGlobalStringGlobal(value: String): LiteralGlobalSymbol {
+        return LiteralGlobalSymbol(value).also {
+            wasmFileFragment.globalLiterals.add(it)
+        }
+    }
 
-    fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
-        wasmFileFragment.functionTypes.reference(irFunction.getReferenceKey())
+    fun referenceGlobalStringId(referenceValue: String): WasmSymbol<Int> =
+        wasmFileFragment.globalLiteralsId.getOrPut(referenceValue) { WasmSymbol() }
+
+    fun referenceStringLiteralId(string: String): WasmSymbol<Int> =
+        wasmFileFragment.stringLiteralId.getOrPut(string) { WasmSymbol() }
+
+    fun referenceHeapType(irClass: IrClassSymbol): GcHeapTypeSymbol =
+        GcHeapTypeSymbol(irClass.getReferenceKey())
+
+    fun referenceVTableGcType(irClass: IrClassSymbol): VTableTypeSymbol =
+        VTableTypeSymbol(irClass.getReferenceKey())
+
+    fun referenceVTableHeapType(irClass: IrClassSymbol): VTableHeapTypeSymbol =
+        VTableHeapTypeSymbol(irClass.getReferenceKey())
+
+    fun referenceFunctionType(irClass: IrFunctionSymbol): FunctionTypeSymbol =
+        FunctionTypeSymbol(irClass.getReferenceKey())
+
+    fun referenceFunctionHeapType(irClass: IrFunctionSymbol): FunctionHeapTypeSymbol =
+        FunctionHeapTypeSymbol(irClass.getReferenceKey())
 
     fun referenceTypeId(irClass: IrClassSymbol): Long =
         cityHash64(irClass.getSignature().toString().encodeToByteArray()).toLong()
@@ -126,10 +160,6 @@ open class WasmFileCodegenContext(
     fun addJsBuiltin(declarationName: String, polyfillImpl: String) {
         wasmFileFragment.jsBuiltinsPolyfills[declarationName] = polyfillImpl
     }
-
-    val wasmStringsElements: WasmStringsElements
-        get() = wasmFileFragment.wasmStringsElements
-            ?: WasmStringsElements().also { wasmFileFragment.wasmStringsElements = it }
 
     fun addObjectInstanceFieldInitializer(initializer: IrFunctionSymbol) {
         wasmFileFragment.objectInstanceFieldInitializers.add(initializer.getReferenceKey())
@@ -200,39 +230,6 @@ open class WasmFileCodegenContext(
             )
         }
     }
-
-    val interfaceTableTypes: SpecialITableTypes by lazy {
-        SpecialITableTypes().also {
-            wasmFileFragment.specialITableTypes = it
-        }
-    }
-
-    private val rttiElements: RttiElements by lazy {
-        RttiElements().also {
-            wasmFileFragment.rttiElements = it
-        }
-    }
-
-    val rttiType: WasmSymbol<WasmStructDeclaration> get() = rttiElements.rttiType
-
-    val classAssociatedObjectsGetterWrapper: WasmSymbol<WasmStructDeclaration> by lazy {
-        WasmSymbol<WasmStructDeclaration>().also {
-            wasmFileFragment.classAssociatedObjectsGetterWrapper = it
-        }
-    }
-
-    open fun defineRttiGlobal(global: WasmGlobal, irClass: IrClassSymbol, irSuperClass: IrClassSymbol?) {
-        rttiElements.globals.add(
-            RttiGlobal(
-                global = global,
-                classSignature = irClass.getReferenceKey(),
-                superClassSignature = irSuperClass?.getReferenceKey()
-            )
-        )
-    }
-
-    fun referenceRttiGlobal(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
-        rttiElements.globalReferences.reference(irClass.getReferenceKey())
 }
 
 class WasmModuleMetadataCache(private val backendContext: WasmBackendContext) {

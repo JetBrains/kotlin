@@ -55,21 +55,14 @@ sealed class WasmImmediate {
         class Value(val type: WasmType?) : BlockType()
     }
 
-    class FuncIdx(val value: WasmSymbol<WasmFunction>) : WasmImmediate() {
-        constructor(value: WasmFunction) : this(WasmSymbol(value))
-    }
+    abstract class FuncIdx : WasmImmediate()
 
     class LocalIdx(val value: Int) : WasmImmediate() {
         constructor(value: WasmLocal) : this(value.id)
     }
 
-    class GlobalIdx(val value: WasmSymbol<WasmGlobal>) : WasmImmediate() {
-        constructor(value: WasmGlobal) : this(WasmSymbol(value))
-    }
-
-    class TypeIdx(val value: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmImmediate() {
-        constructor(value: WasmTypeDeclaration) : this(WasmSymbol(value))
-    }
+    abstract class GlobalIdx : WasmImmediate()
+    abstract class TypeIdx : WasmImmediate()
 
     class ValTypeVector(val value: List<WasmType>) : WasmImmediate()
 
@@ -89,10 +82,6 @@ sealed class WasmImmediate {
     }
     class LabelIdxVector(val value: List<Int>) : WasmImmediate()
     class ElemIdx(val value: WasmElement) : WasmImmediate()
-
-    class GcType(val value: WasmSymbol<WasmTypeDeclaration>) : WasmImmediate() {
-        constructor(value: WasmTypeDeclaration) : this(WasmSymbol(value))
-    }
 
     class StructFieldIdx(val value: Int) : WasmImmediate()
 
