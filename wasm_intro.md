@@ -88,7 +88,7 @@ Simplified Diagram:
 
 ### Compiler
 
-- No CLI for K/Wasm, almost
+- No CLI for K/Wasm, almost (available through kotlinc-js)
 - Compiler options could be found in [K2WasmCompilerArguments.kt](compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments/K2WasmCompilerArguments.kt)
 
 #### Pipeline 
@@ -110,7 +110,7 @@ Simplified Diagram:
        [IR] <aka backend IR>
         |
         v
-    Compiler plugins
+    Compiler plugins (kotlinx.serialization, Compose, ...) 
         |
         v
        [IR] <IR>                  !! IR could be serialized to .klib here
@@ -127,7 +127,10 @@ Simplified Diagram:
        ir2wasm²
         |
         v
-     [Wasm IR]--------+
+     [Wasm IR]
+        |
+        v     
+       Linking -------+
         |             |
         v             |
   WasmIrToBinary³  WasmIrToText⁴
@@ -173,8 +176,6 @@ Test running infrastructure is generated from files (or directories) located in 
 
 `fun box() = "OK"`
 
-If you add a new test-data file you need to regenerate tests with gradle task `generateTests` or run configuration in IDE.
-`./gradlew generateTests`
 
 Example: [FirWasmJsCodegenBoxTestGenerated.java](wasm/wasm.tests/tests-gen/org/jetbrains/kotlin/wasm/test/FirWasmJsCodegenBoxTestGenerated.java)
 
@@ -185,6 +186,7 @@ Example: [FirWasmJsCodegenBoxTestGenerated.java](wasm/wasm.tests/tests-gen/org/j
 Try to run something. E.g. size tests.
 - Navigate or Run with find class/symbol 
 
+// TODO update
 Kotlin Test data Helper
 https://github.com/demiurg906/test-data-helper-plugin
 
@@ -205,14 +207,16 @@ most popular ones?
 #kotlin.test.junit5.maxParallelForks=1
 [gradle.properties:106](gradle.properties#L106)
 
-### Publish
-TODO
+### Use locally built toolchain
+Publish to the local repo:
 `./gradlew install`
 
-`defaultSnapshotVersion`
-[gradle.properties:27](gradle.properties#L27)
-2.1.255-SNAPSHOT
-2.<Next>.255-SNAPSHOT
+Add `mavenLocal()` into repositories in a gradle project.
+
+Version:
+Check `defaultSnapshotVersion` in [gradle.properties:27](gradle.properties#L27)
+Pattern: <Next Version>.255-SNAPSHOT
+By the time of writing this it's `2.3.255-SNAPSHOT`.
 
 Troubleshooting:
 - Stop gradle daemons `./gradlew --stop`
