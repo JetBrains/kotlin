@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesC
 import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.library.components.nativeIncludedBinaries
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
-import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -106,7 +106,7 @@ class NonExistingNativeDirectoriesInKlibTest {
     }
 
     private fun KFile.readLibrary(): KotlinLibrary =
-        createKonanLibrary(libraryFilePossiblyDenormalized = this, component = KLIB_DEFAULT_COMPONENT_NAME, target = TEST_TARGET)
+        KlibLoader { libraryPaths(this@readLibrary.path) }.load().librariesStdlibFirst.single()
 
     private fun KFile.compressKlib(): KFile {
         val klibFile = this.parentFile.child("compressed.klib")

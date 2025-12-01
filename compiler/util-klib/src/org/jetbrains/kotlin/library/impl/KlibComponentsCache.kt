@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibLayoutReaderFactory
 
-// TODO (KT-81411): This class is an implementation detail. It should be made internal after dropping `KonanLibraryImpl`.
-class KlibComponentsCache(private val layoutReaderFactory: KlibLayoutReaderFactory) {
+internal class KlibComponentsCache(private val layoutReaderFactory: KlibLayoutReaderFactory) {
     private val cache = mutableMapOf<KlibComponent.Kind<*, *>, Any>()
 
     fun <KC : KlibComponent, KCL : KlibComponentLayout> getComponent(kind: KlibComponent.Kind<KC, KCL>): KC? {

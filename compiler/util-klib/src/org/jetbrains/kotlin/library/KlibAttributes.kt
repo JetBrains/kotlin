@@ -33,9 +33,7 @@ fun klibFlag(): KlibAttribute.Flag.Delegate = KlibAttribute.Flag.Delegate()
  *
  * See [Klib.attributes].
  */
-class KlibAttributes {
-    // TODO (KT-81411): Make the constructor internal after dropping `KonanLibraryImpl`.
-    constructor()
+class KlibAttributes internal constructor() {
 
     private val attributes: MutableMap<KlibAttribute<*>, Any> = hashMapOf()
 
