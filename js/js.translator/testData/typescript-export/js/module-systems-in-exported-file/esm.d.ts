@@ -50,13 +50,60 @@ export declare namespace Parent {
         }
         namespace type {
             class Nested {
-                constructor();
+                constructor(value: number);
                 get value(): number;
+                static fromString(s: string): Parent.Nested;
             }
             namespace Nested {
                 /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
                 namespace $metadata$ {
                     const constructor: abstract new () => Nested;
+                }
+            }
+            abstract class NestedEnum {
+                private constructor();
+                static get A(): Parent.NestedEnum & {
+                    get name(): "A";
+                    get ordinal(): 0;
+                };
+                static get B(): Parent.NestedEnum & {
+                    get name(): "B";
+                    get ordinal(): 1;
+                };
+                static values(): [typeof Parent.NestedEnum.A, typeof Parent.NestedEnum.B];
+                static valueOf(value: string): Parent.NestedEnum;
+                get name(): "A" | "B";
+                get ordinal(): 0 | 1;
+            }
+            namespace NestedEnum {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => NestedEnum;
+                }
+            }
+            abstract class NestedObject extends KtSingleton<NestedObject.$metadata$.constructor>() {
+                private constructor();
+            }
+            namespace NestedObject {
+                class Nested {
+                    constructor(value: number);
+                    get value(): number;
+                    static fromString(s: string): Parent.NestedObject.Nested;
+                }
+                namespace Nested {
+                    /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                    namespace $metadata$ {
+                        const constructor: abstract new () => Nested;
+                    }
+                }
+            }
+            namespace NestedObject {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    abstract class constructor {
+                        get value(): number;
+                        private constructor();
+                    }
                 }
             }
         }
