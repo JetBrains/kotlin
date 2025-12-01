@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
@@ -551,10 +550,10 @@ class AdapterGenerator(
             return this
         }
 
-        val preparedArgumentType = prepareArgumentTypeForSuspendConversion(argument)
+        val argumentTypeWithoutSamConversion = ((argument as? FirSamConversionExpression)?.expression ?: argument).resolvedType.fullyExpandedType()
         // No conversion should happen if an argument already satisfies the expected type requirements
         // NB: It's not just a fast path, but sometimes the presence adapter generation is incorrect (see KT-82590)
-        if (preparedArgumentType.isSubtypeOf(expectedType, session)) return this
+        if (argumentTypeWithoutSamConversion.isSubtypeOf(expectedType, session)) return this
 
         val unwrappedExpectedType = getFunctionTypeForPossibleSamType(expectedType) ?: expectedType
 
@@ -564,7 +563,7 @@ class AdapterGenerator(
         }
         val expectedFunctionalType = unwrappedExpectedType.customFunctionTypeToSimpleFunctionType(session)
 
-        val invokeSymbol = findInvokeSymbol(expectedFunctionalType, preparedArgumentType) ?: return this
+        val invokeSymbol = findInvokeSymbol(expectedFunctionalType, argumentTypeWithoutSamConversion) ?: return this
         val suspendConvertedType = unwrappedExpectedType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(
@@ -572,7 +571,7 @@ class AdapterGenerator(
                 endOffset,
                 suspendConvertedType,
                 expectedFunctionalType.toIrType(),
-                preparedArgumentType.isMarkedNullable,
+                argumentTypeWithoutSamConversion.isMarkedNullable,
                 invokeSymbol
             )
             val irAdapterRef = IrFunctionReferenceImpl(
@@ -584,20 +583,6 @@ class AdapterGenerator(
                 statements.add(irAdapterRef.apply { arguments[0] = this@applySuspendConversionIfNeeded })
             }
         }
-    }
-
-    /**
-     * For SAM conversions, it unwraps a contained function type
-     * For KProperty-typed expression it transforms it to the similarly shaped FunctionN
-     * For all other cases, it just returns the resolved type.
-     */
-    private fun prepareArgumentTypeForSuspendConversion(argument: FirExpression): ConeKotlinType {
-        var argumentType = ((argument as? FirSamConversionExpression)?.expression ?: argument).resolvedType.fullyExpandedType()
-        if (argumentType.isKProperty(session) || argumentType.isKMutableProperty(session)) {
-            val functionClassId = FunctionTypeKind.Function.numberedClassId(argumentType.typeArguments.size - 1)
-            argumentType = functionClassId.toLookupTag().constructClassType(typeArguments = argumentType.typeArguments)
-        }
-        return argumentType
     }
 
     /**
