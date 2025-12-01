@@ -468,22 +468,27 @@ class ComposableTypeRemover(
         override fun lower(irModule: IrModuleFragment) {
             val typeRemover = ComposableTypeRemover(context, composerIrClass.defaultType.replaceArgumentsWithStarProjections())
             val transformer = object : ComposableTypeTransformer(context, typeRemover) {
-//                override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-//                    return super.visitFunctionAccess(expression)
+//                override fun visitFunction(declaration: IrFunction): IrStatement {
+//                    declaration.annotations = declaration.annotations.filter { !it.isComposableAnnotation() }
+//                    return super.visitFunction(declaration)
 //                }
-//
-//                override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
-//                    return super.visitExpression(expression)
-//                }
-//
-//                override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-//                    return super.visitFunctionAccess(expression)
-//                }
-//
-//                override fun visitCall(expression: IrCall): IrExpression {
-//                    expression.arguments.forEach { it?.let { arg -> arg.type = arg.type.remapType() } }
-//                    return super.visitFunctionAccess(expression)
-//                }
+
+                override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+                    return super.visitFunctionAccess(expression)
+                }
+
+                override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+                    return super.visitExpression(expression)
+                }
+
+                override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                    return super.visitFunctionAccess(expression)
+                }
+
+                override fun visitCall(expression: IrCall): IrExpression {
+                    expression.arguments.forEach { it?.let { arg -> arg.type = arg.type.remapType() } }
+                    return super.visitFunctionAccess(expression)
+                }
             }
             irModule.transformChildrenVoid(transformer)
         }

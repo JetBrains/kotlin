@@ -62,7 +62,6 @@ interface FunctionMetrics {
 
     fun recordParameter(
         declaration: IrValueParameter,
-        type: IrType,
         stability: Stability,
         default: IrExpression?,
         defaultStatic: Boolean,
@@ -188,7 +187,6 @@ object EmptyFunctionMetrics : FunctionMetrics {
 
     override fun recordParameter(
         declaration: IrValueParameter,
-        type: IrType,
         stability: Stability,
         default: IrExpression?,
         defaultStatic: Boolean,
@@ -505,7 +503,6 @@ class FunctionMetricsImpl(
 
     private class Param(
         val declaration: IrValueParameter,
-        val type: IrType,
         val stability: Stability,
         val default: IrExpression?,
         val defaultStatic: Boolean,
@@ -519,7 +516,7 @@ class FunctionMetricsImpl(
             }
             append(declaration.name.asString())
             append(": ")
-            append(src.printType(type))
+            append(src.printType(declaration.type))
             if (default != null) {
                 append(" = ")
                 if (defaultStatic) append("@static ")
@@ -567,7 +564,6 @@ class FunctionMetricsImpl(
 
     override fun recordParameter(
         declaration: IrValueParameter,
-        type: IrType,
         stability: Stability,
         default: IrExpression?,
         defaultStatic: Boolean,
@@ -576,7 +572,6 @@ class FunctionMetricsImpl(
         parameters.add(
             Param(
                 declaration,
-                type,
                 stability,
                 default,
                 defaultStatic,

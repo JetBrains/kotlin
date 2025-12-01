@@ -666,7 +666,6 @@ class ComposableFunctionBodyTransformer(
                     val default = it.defaultValue?.expression
                     scope.metrics.recordParameter(
                         declaration = it,
-                        type = it.type,
                         stability = stability,
                         default = default,
                         defaultStatic = default?.isStatic() == true,
@@ -1417,7 +1416,6 @@ class ComposableFunctionBodyTransformer(
 
             scope.metrics.recordParameter(
                 declaration = param,
-                type = param.type,
                 stability = stability,
                 default = defaultExpr[slotIndex],
                 defaultStatic = defaultExprIsStatic[slotIndex],
