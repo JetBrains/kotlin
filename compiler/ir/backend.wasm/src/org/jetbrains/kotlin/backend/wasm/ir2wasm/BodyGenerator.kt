@@ -769,7 +769,10 @@ class BodyGenerator(
             }
         }
 
-        call.arguments.forEach { generateExpression(it!!) }
+        call.arguments.forEachIndexed { i, arg ->
+            val expectedType = call.symbol.owner.parameters[i].type
+            generateWithExpectedType(arg!!, expectedType)
+        }
 
         val callFunction = call.symbol.owner
 
@@ -1446,8 +1449,14 @@ class BodyGenerator(
         if (expectedClassErased.isExternal) return
 
         val actualClassErased = actualType.getRuntimeClass(irBuiltIns)
-        val expectedTypeErased = expectedClassErased.defaultType
-        val actualTypeErased = actualClassErased.defaultType
+        val expectedTypeErased =
+            if (backendContext.inlineClassesUtils.isClassInlineLike(expectedClassErased))
+                backendContext.inlineClassesUtils.getInlineClassUnderlyingType(expectedClassErased)
+            else expectedClassErased.defaultType
+        val actualTypeErased =
+            if (backendContext.inlineClassesUtils.isClassInlineLike(actualClassErased))
+                backendContext.inlineClassesUtils.getInlineClassUnderlyingType(actualClassErased)
+            else actualClassErased.defaultType
 
         // TYPE -> TYPE -> TRUE
         if (expectedTypeErased == actualTypeErased) return
