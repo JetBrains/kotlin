@@ -368,7 +368,7 @@ private fun BodyGenerator.genTableIntSwitch(
         WasmOp.BR_TABLE,
         location,
         WasmImmediate.LabelIdxVector(brTable),
-        WasmImmediate.LabelIdx(branches.size)
+        WasmImmediate.LabelIdx.get(branches.size)
     )
     body.buildEnd()
 

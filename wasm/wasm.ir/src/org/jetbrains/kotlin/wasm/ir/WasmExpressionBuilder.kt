@@ -177,7 +177,7 @@ open class WasmExpressionBuilder(
     fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int, location: SourceLocation) {
         val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
         assert(relativeLevel >= 0) { "Negative relative block index" }
-        buildInstr(brOp, location, WasmImmediate.LabelIdx(relativeLevel))
+        buildInstr(brOp, location, WasmImmediate.LabelIdx.get(relativeLevel))
     }
 
     fun buildBrOnCastInstr(
@@ -200,7 +200,7 @@ open class WasmExpressionBuilder(
             brOp,
             location,
             WasmImmediate.ConstU8(flags.toUByte()),
-            WasmImmediate.LabelIdx(relativeLevel),
+            WasmImmediate.LabelIdx.get(relativeLevel),
             WasmImmediate.HeapType(from),
             WasmImmediate.HeapType(to),
         )
@@ -275,7 +275,7 @@ open class WasmExpressionBuilder(
             catchType,
             listOfNotNull(
                 tagIdx?.let(WasmImmediate::TableIdx),
-                WasmImmediate.LabelIdx(relativeLevel)
+                WasmImmediate.LabelIdx.get(relativeLevel)
             )
         )
     }
@@ -310,15 +310,15 @@ open class WasmExpressionBuilder(
     }
 
     fun buildGetLocal(local: WasmLocal, location: SourceLocation) {
-        buildInstr(WasmOp.LOCAL_GET, location, WasmImmediate.LocalIdx(local))
+        buildInstr(WasmOp.LOCAL_GET, location, WasmImmediate.LocalIdx.get(local))
     }
 
     fun buildSetLocal(local: WasmLocal, location: SourceLocation) {
-        buildInstr(WasmOp.LOCAL_SET, location, WasmImmediate.LocalIdx(local))
+        buildInstr(WasmOp.LOCAL_SET, location, WasmImmediate.LocalIdx.get(local))
     }
 
     fun buildTeeLocal(local: WasmLocal, location: SourceLocation) {
-        buildInstr(WasmOp.LOCAL_TEE, location, WasmImmediate.LocalIdx(local))
+        buildInstr(WasmOp.LOCAL_TEE, location, WasmImmediate.LocalIdx.get(local))
     }
 
     fun buildGetGlobal(global: WasmImmediate.GlobalIdx, location: SourceLocation) {
@@ -334,7 +334,7 @@ open class WasmExpressionBuilder(
             WasmOp.STRUCT_GET,
             location,
             struct,
-            WasmImmediate.StructFieldIdx(fieldId)
+            WasmImmediate.StructFieldIdx.get(fieldId)
         )
     }
 
@@ -347,7 +347,7 @@ open class WasmExpressionBuilder(
             WasmOp.STRUCT_SET,
             location,
             struct,
-            WasmImmediate.StructFieldIdx(fieldId)
+            WasmImmediate.StructFieldIdx.get(fieldId)
         )
     }
 

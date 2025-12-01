@@ -583,7 +583,7 @@ class BodyGenerator(
             opcode,
             location,
             wasmFileCodegenContext.referenceGcType(field.parentAsClass.symbol),
-            WasmImmediate.StructFieldIdx(getStructFieldId(field))
+            WasmImmediate.StructFieldIdx.get(getStructFieldId(field))
         )
         body.commentPreviousInstr { "name: ${field.name.asString()}, type: ${field.type.render()}" }
     }
@@ -1625,6 +1625,6 @@ class BodyGenerator(
         const val RTTI_SIMPLE_NAME_GLOBAL_FIELD_ID = 9
         private const val CLASS_ASSOCIATED_OBJECT_GETTER_WRAPPER_FIELD_ID = 0
         private val exceptionTagId = WasmSymbol(0)
-        private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx(0)
+        private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx.get(0)
     }
 }
