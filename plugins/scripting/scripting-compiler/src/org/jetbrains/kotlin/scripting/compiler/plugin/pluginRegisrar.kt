@@ -76,7 +76,13 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             ReplFactoryExtension.registerExtensionIfRequired(project, JvmStandardReplFactoryExtension())
 
             project.registerService(ScriptDefinitionProvider::class.java, CliScriptDefinitionProvider())
-            project.registerService(ScriptConfigurationsProvider::class.java, CliScriptConfigurationsProvider(project))
+            project.registerService(
+                ScriptConfigurationsProvider::class.java,
+                CliScriptConfigurationsProvider(project) {
+                    ScriptDefinitionProvider.getInstance(project)
+                        ?: error("Unable to get script definition: ScriptDefinitionProvider is not configured.")
+                }
+            )
             SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
             ExtraImportsProviderExtension.registerExtension(project, ScriptExtraImportsProviderExtension())
 
