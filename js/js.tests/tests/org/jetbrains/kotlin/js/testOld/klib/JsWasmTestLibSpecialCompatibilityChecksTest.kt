@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.js.testOld.klib
 
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+
 @Suppress("JUnitTestCaseWithNoTests")
 class JsWasmTestLibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
     override val originalLibraryPath: String
-        get() = System.getProperty("kotlin.js.full.test.path")
+        get() = patchedJsTestWithoutJarManifest
 
     override fun additionalLibraries(isWasm: Boolean): List<String> =
-        if (!isWasm) listOf(System.getProperty("kotlin.js.full.stdlib.path")) else listOf(System.getProperty("kotlin.wasm.full.stdlib.path"))
+        if (!isWasm) listOf(patchedJsStdlibWithoutJarManifest) else listOf(WasmEnvironmentConfigurator.stdlibPath(WasmTarget.JS))
 
     override val libraryDisplayName: String
         get() = "kotlin-test"

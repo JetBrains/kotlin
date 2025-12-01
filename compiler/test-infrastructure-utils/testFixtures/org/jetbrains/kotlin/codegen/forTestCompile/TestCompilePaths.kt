@@ -26,4 +26,5 @@ object TestCompilePaths {
     const val KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH = "third-party/java9-annotations"
     const val KOTLIN_THIRDPARTY_JSR305_PATH = "third-party/jsr305"
     const val KOTLIN_TESTDATA_ROOTS = "kotlin.testData.roots"
+    const val KOTLIN_WASM_JS_STDLIB_KLIB_PATH = "kotlin.wasm-js.stdlib.path"
 }

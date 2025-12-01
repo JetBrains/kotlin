@@ -112,8 +112,7 @@ projectTests {
     withTestJar()
     withAnnotations()
     withScriptingPlugin()
-    withStdlibJsRuntime()
-    withTestJsRuntime()
+    withJsRuntime()
 
     withMockJdkRuntime()
     withMockJDKModifiedRuntime()

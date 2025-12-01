@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_KOTLIN_TEST_KLIB_PATH
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_STDLIB_KLIB_PATH
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.moduleKind
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.JS_MODULE_KIND
@@ -28,6 +31,12 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
     companion object : KlibBasedEnvironmentConfiguratorUtils {
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData"
         const val OLD_MODULE_SUFFIX = "_old"
+
+        val kotlinTestPath: String
+            get() = System.getProperty(KOTLIN_JS_KOTLIN_TEST_KLIB_PATH)!!
+
+        val stdlibPath: String
+            get() = System.getProperty(KOTLIN_JS_STDLIB_KLIB_PATH)!!
 
         // Keep names short to keep path lengths under 255 for Windows
         private val outputDirByMode = mapOf(

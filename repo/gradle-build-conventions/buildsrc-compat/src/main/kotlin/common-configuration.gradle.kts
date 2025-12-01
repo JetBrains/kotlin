@@ -334,8 +334,6 @@ fun Project.configureTests() {
             ":examples:scripting-jvm-simple-script-host",
             ":generators",
             ":generators:analysis-api-generator:generator-kotlin-native",
-            ":js:js.tests",                    // Drop this line after KT-81098
-            ":js:js.tests:klib-compatibility", // Drop this line after KT-81098
             ":jps:jps-common",
             ":jps:jps-plugin",
             ":kotlin-allopen-compiler-plugin",

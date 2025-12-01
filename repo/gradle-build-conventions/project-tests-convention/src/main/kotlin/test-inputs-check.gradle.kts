@@ -257,6 +257,14 @@ tasks.withType<Test>().configureEach {
                                 }
                             }
                         )
+                        .replace(
+                            "{{js}}",
+                            buildString {
+                                d8Executable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                            }
+                        )
 
                 )
             } catch (e: IOException) {

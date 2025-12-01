@@ -5,6 +5,7 @@
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.the
 import org.jetbrains.kotlin.build.d8.D8Extension
 
@@ -31,4 +32,9 @@ fun Test.useJsIrBoxTests(
     systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib")
     systemProperty("kotlin.js.kotlin.test.klib.path", "libraries/kotlin.test/build/libs/kotlin-test-js-$version.klib")
     systemProperty("kotlin.js.dom.api.compat", domApiCompatPath)
+
+    jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(project.rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
+        property.set("javascript.engine.path.repl")
+    }
 }

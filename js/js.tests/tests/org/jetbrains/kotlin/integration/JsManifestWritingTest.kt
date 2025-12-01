@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_STDLIB_KLIB_PATH
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
@@ -27,7 +28,7 @@ private val foo = TestKtFile("foo.kt", "fun foo() = 42")
 
 class JsManifestWritingTest : TestCaseWithTmpdir() {
     private val jsStdlib: String?
-        get() = System.getProperty("kotlin.js.full.stdlib.path")
+        get() = System.getProperty(KOTLIN_JS_STDLIB_KLIB_PATH)
     private val outKlibDir: String
         get() = tmpdir.resolve("out").absolutePath
 

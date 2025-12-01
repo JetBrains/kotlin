@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibili
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
+import org.jetbrains.kotlin.konan.file.createTempDir
+import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.konan.file.File as KlibFile
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.io.File
 import java.util.*
 import java.util.jar.Manifest
@@ -206,9 +210,15 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         val manifestFile = patchedLibraryDir.resolve("default").resolve("manifest")
         if (manifestFile.exists()) return patchedLibraryDir
 
-        val originalLibraryDir = File(originalLibraryPath)
-        assertTrue(originalLibraryDir.isDirectory)
-        originalLibraryDir.copyRecursively(patchedLibraryDir)
+        val originalLibraryFile = File(originalLibraryPath)
+
+        if (originalLibraryFile.isDirectory) {
+            originalLibraryFile.copyRecursively(patchedLibraryDir)
+        } else {
+            KlibFile(originalLibraryPath).unzipTo(KlibFile(patchedLibraryDir.absolutePath))
+            // Zipped version of KLIB always has a manifest file, so we delete it inside the patchedLibraryDir
+            // just after unzipping, to replace with the test one
+        }
 
         if (rawVersion != null) {
             val jarManifestFile = patchedLibraryDir.resolve(KLIB_JAR_MANIFEST_FILE)
@@ -280,6 +290,25 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
                 TestVersion(2, 0, 0, "-Beta2"),
                 TestVersion(2, 0, 255, "-SNAPSHOT"),
             ).groupByTo(TreeMap()) { it.basicVersion }.values.toList()
+
+
+        val patchedJsStdlibWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+            createPatchedStdlib(JsEnvironmentConfigurator.stdlibPath)
+        }
+
+        val patchedJsTestWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+            createPatchedStdlib(JsEnvironmentConfigurator.kotlinTestPath)
+        }
+
+        private fun createPatchedStdlib(stdlibPath: String): String {
+            val stdlibName = stdlibPath.substringAfterLast("/").substringBeforeLast(".")
+            val patchedStdlibDir = createTempDir(stdlibName).apply {
+                KlibFile(stdlibPath).unzipTo(KlibFile(absolutePath))
+                File(absolutePath).resolve(KLIB_JAR_MANIFEST_FILE).delete()
+            }
+
+            return patchedStdlibDir.absolutePath
+        }
     }
 }
 

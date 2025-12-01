@@ -72,14 +72,7 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
                 .firstOrNull { it.name == "build" }
             val sourceRoot: File = buildFolder?.parentFile ?: continue
 
-            val searchPaths = listOf(sourceRoot, sourceRoot.resolve("build"))
-
-            for (searchPath in searchPaths) {
-                val resolved = searchPath.resolve(sourceMapPath)
-                if (resolved.exists()) {
-                    return resolved.absolutePath
-                }
-            }
+            return sourceRoot.absolutePath
         }
         return null
     }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.engine
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import java.util.concurrent.atomic.AtomicInteger
 
 private val LINE_SEPARATOR = System.getProperty("line.separator")!!
@@ -16,9 +17,9 @@ private val counter = AtomicInteger(0)
 
 abstract class ProcessBasedScriptEngine(
     private val executablePath: String,
+    private val replPath: String,
     private val doTrace: Boolean
 ) : ScriptEngine {
-
     private var process: Process? = null
     private val buffer = ByteArray(1024)
 
@@ -95,10 +96,7 @@ abstract class ProcessBasedScriptEngine(
 
         if (doTrace)
             println("Started repl.js #${counter.getAndIncrement()} in thread ${Thread.currentThread().id}")
-        val builder = ProcessBuilder(
-            executablePath,
-            "js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js",
-        )
+        val builder = ProcessBuilder(executablePath, replPath)
         return builder.start().also {
             process = it
         }

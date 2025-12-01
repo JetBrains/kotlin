@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.js.testOld.klib
 @Suppress("JUnitTestCaseWithNoTests")
 class JsWasmStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
     override val originalLibraryPath: String
-        get() = System.getProperty("kotlin.js.full.stdlib.path")
+        get() = patchedJsStdlibWithoutJarManifest
 
     override val libraryDisplayName: String
         get() = "standard"

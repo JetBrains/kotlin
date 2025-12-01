@@ -31,8 +31,7 @@ sourceSets {
 projectTests {
     testData(project(":compiler").isolated, "testData/klib/dump-abi/content")
     testData(project(":compiler").isolated, "testData/klib/dump-abi/malformed")
-    withStdlibJsRuntime()
-    withTestJsRuntime()
+    withJsRuntime()
 
     testTask(jUnitMode = JUnitMode.JUnit5) {
         outputs.dir(layout.buildDirectory.dir("t"))

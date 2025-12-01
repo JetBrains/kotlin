@@ -61,6 +61,11 @@ abstract class ProjectTestsExtension(val project: Project) {
     val stdlibJsRuntimeForTests: Configuration = project.configurations.create("stdlibJsRuntimeForTests") {
         isTransitive = false
     }
+    val stdlibJsMinimalRuntimeForTests: Configuration = project.configurations.create("stdlibJsMinimalRuntimeForTests") {
+        isTransitive = false
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
+    }
     val testJsRuntimeForTests: Configuration = project.configurations.create("testJsRuntimeForTests") {
         isTransitive = false
     }
@@ -111,11 +116,9 @@ abstract class ProjectTestsExtension(val project: Project) {
         add(kotlinAnnotationsForTests) { project(":kotlin-annotations-jvm") }
     }
 
-    fun withStdlibJsRuntime() {
+    fun withJsRuntime() {
         add(stdlibJsRuntimeForTests) { project(":kotlin-stdlib", "distJsKlib") }
-    }
-
-    fun withTestJsRuntime() {
+        add(stdlibJsMinimalRuntimeForTests) { project(":kotlin-stdlib-js-ir-minimal-for-test", "jsRuntimeElements") }
         add(testJsRuntimeForTests) { project(":kotlin-test", "jsRuntimeElements") }
     }
 

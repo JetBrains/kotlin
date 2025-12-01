@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.io.File
-import java.io.FileFilter
 
 class JsAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(
@@ -38,10 +38,10 @@ class JsAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceP
         private const val COMMON_FILES_DIR_PATH = JsEnvironmentConfigurator.TEST_DATA_DIR_PATH + "/" + COMMON_FILES_DIR
 
         private fun getFilesInDirectoryByExtension(directory: String, extension: String): List<String> {
-            val dir = File(directory)
+            val dir = ForTestCompileRuntime.transformTestDataPath(directory)
             if (!dir.isDirectory) return emptyList()
 
-            return dir.listFiles(FileFilter { it.extension == extension })?.map { it.absolutePath } ?: emptyList()
+            return dir.listFiles { it.extension == extension }?.map { it.absolutePath } ?: emptyList()
         }
 
         private fun getAdditionalFiles(directory: String, extension: String): List<File> {

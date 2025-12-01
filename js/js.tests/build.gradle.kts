@@ -11,6 +11,7 @@ plugins {
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -152,9 +153,11 @@ fun Test.setUpJsBoxTests(tags: String?) {
 
     dependsOn(npmInstall)
 
-    inputs.files(rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
+    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
+        property.set("javascript.engine.path.repl")
+    }
 
-    dependsOn(":dist")
     dependsOn(generateTypeScriptTests)
 
     dependsOn(":kotlin-stdlib:jsJar")
@@ -204,7 +207,6 @@ fun Test.forwardProperties() {
 }
 
 fun Test.setUpBoxTests() {
-    workingDir = rootDir
     systemProperty("kotlin.js.test.root.out.dir", "${node.nodeProjectDir.get().asFile}/")
     systemProperty(
         "overwrite.output", project.providers.gradleProperty("overwrite.output").orNull ?: "false"
@@ -238,15 +240,40 @@ projectTests {
     }
 
     testTask("invalidationTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
-        workingDir = rootDir
-
         useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
         include("org/jetbrains/kotlin/incremental/*")
         dependsOn(":dist")
         forwardProperties()
     }
 
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler").isolated, "testData/klib/partial-linkage")
+    testData(project(":compiler").isolated, "testData/klib/resolve")
+    testData(project(":compiler").isolated, "testData/klib/syntheticAccessors")
+    testData(project(":compiler").isolated, "testData/klib/__utils__")
+
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
+    testData(project(":js:js.translator").isolated, "testData/moduleEmulation.js")
+    testData(project(":js:js.translator").isolated, "testData/incremental")
+    testData(project(":js:js.translator").isolated, "testData/box")
+    testData(project(":js:js.translator").isolated, "testData/lineNumbers")
+    testData(project(":js:js.translator").isolated, "testData/js-optimizer/")
+    testData(project(":js:js.translator").isolated, "testData/js-name-resolution")
+    testData(project(":js:js.translator").isolated, "testData/multiModuleOrder")
+    testData(project(":js:js.translator").isolated, "testData/sourcemap")
+    testData(project(":js:js.translator").isolated, "testData/typescript-export/js/")
+    testData(project(":compiler").isolated, "testData/debug/stepping")
+    testData(project(":compiler").isolated, "testData/debug/localVariables")
+
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
+//    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt", generateTestsInBuildDirectory = true)
+
+    withJsRuntime()
+    withStdlibCommon()
+    withWasmRuntime()
 }
 
 testsJar {}

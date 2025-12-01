@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
@@ -86,7 +87,7 @@ fun getAdditionalFiles(
     val withModuleSystem = testWithModuleSystem(testServices)
 
     val additionalFiles = mutableListOf<File>()
-    if (withModuleSystem) additionalFiles += File(MODULE_EMULATION_FILE)
+    if (withModuleSystem) additionalFiles += ForTestCompileRuntime.transformTestDataPath(MODULE_EMULATION_FILE)
 
     originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_EXTENSION)
         .takeIf { it.exists() }

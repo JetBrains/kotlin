@@ -15,7 +15,7 @@ import org.junit.Assert
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 
-internal const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
+internal const val TEST_DATA_DIR_PATH = "js/js.translator/testData"
 private const val ESM_EXTENSION = ".mjs"
 
 fun createScriptEngine(): ScriptEngine = ScriptEngineV8()

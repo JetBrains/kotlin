@@ -11,6 +11,7 @@ val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply 
     scriptingPluginForTests.from(extension.scriptingPluginForTests)
     stdlibJsRuntimeForTests.from(extension.stdlibJsRuntimeForTests)
     testJsRuntimeForTests.from(extension.testJsRuntimeForTests)
+    stdlibJsMinimalRuntimeForTests.from(extension.stdlibJsMinimalRuntimeForTests)
     stdlibWasmJsRuntimeForTests.from(extension.stdlibWasmJsRuntimeForTests)
     stdlibWasmWasiRuntimeForTests.from(extension.stdlibWasmWasiRuntimeForTests)
     testWasmJsRuntimeForTests.from(extension.testWasmJsRuntimeForTests)

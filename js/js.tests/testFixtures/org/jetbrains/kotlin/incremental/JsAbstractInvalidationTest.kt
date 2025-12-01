@@ -135,6 +135,7 @@ abstract class JsAbstractInvalidationTest(
                     includedLibrary = mainModuleInfo.modulePath,
                 ).apply {
                     put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions)
+                    put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.NEVER)
                 }
 
                 val dirtyData = when (granularity) {

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
@@ -55,6 +56,7 @@ abstract class AbstractLibraryAbiReaderTest(
             dependencyKind = DependencyKind.Binary
         }
         defaultDirectives {
+            +WITH_STDLIB
             DUMP_KLIB_ABI with KlibAbiDumpMode.ALL_SIGNATURE_VERSIONS
             LANGUAGE with listOf(
                 "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",

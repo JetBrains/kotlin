@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
@@ -71,7 +72,7 @@ internal class JsCompilerInvocationTestConfiguration(
     override val buildDir: File,
     val compilerType: CompilerType,
 ) : KlibCompilerInvocationTestUtils.TestConfiguration {
-    override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/js/main").absoluteFile
+    override val stdlibFile: File get() = File(JsEnvironmentConfigurator.stdlibPath).absoluteFile
     override val targetBackend get() = if (compilerType.es6Mode) TargetBackend.JS_IR_ES6 else TargetBackend.JS_IR
 
     override fun onIgnoredTest() {
@@ -252,7 +253,6 @@ internal class JsCompilerInvocationTestArtifactBuilder(
 
 internal object JsCompilerInvocationTestBinaryRunner :
     KlibCompilerInvocationTestUtils.BinaryRunner<JsCompilerInvocationTestBinaryArtifact> {
-
     override fun runBinary(binaryArtifact: JsCompilerInvocationTestBinaryArtifact) {
         val filePaths = binaryArtifact.jsFiles.map { it.canonicalPath }
         V8JsTestChecker.check(

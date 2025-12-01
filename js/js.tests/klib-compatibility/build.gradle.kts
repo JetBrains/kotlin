@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.gradle.node)
     id("java-test-fixtures")
     id("d8-configuration")
+    id("nodejs-configuration")
     id("project-tests-convention")
 }
 
@@ -145,9 +146,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/codegen/boxInline")
     testData(project(":js:js.translator").isolated, "testData")
 
-    projectTests {
-        withStdlibJsRuntime()
-        withTestJsRuntime()
-    }
+    withJsRuntime()
+    withStdlibCommon()
 }
 

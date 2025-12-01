@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.ir
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.klib.KlibCompilerChangeScenario
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestStructureExtractor
@@ -24,7 +25,10 @@ abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : Ab
         )
 
         KlibCompilerInvocationTestUtils.runTest(
-            testStructure = JsPartialLinkageTestStructureExtractor(buildDir).extractTestStructure(File(testDir).absoluteFile),
+            testStructure = JsPartialLinkageTestStructureExtractor(buildDir)
+                .extractTestStructure(
+                    ForTestCompileRuntime.transformTestDataPath(testDir)
+                ),
             testConfiguration = configuration,
             artifactBuilder = JsCompilerInvocationTestArtifactBuilder(configuration),
             binaryRunner = JsCompilerInvocationTestBinaryRunner,
