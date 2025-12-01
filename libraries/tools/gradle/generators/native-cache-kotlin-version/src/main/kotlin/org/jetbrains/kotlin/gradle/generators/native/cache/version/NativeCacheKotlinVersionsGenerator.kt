@@ -16,6 +16,7 @@ import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asTypeName
+import java.io.Serializable
 import java.nio.file.Path
 import java.util.logging.Logger
 import kotlin.io.path.Path
@@ -136,6 +137,7 @@ internal object NativeCacheKotlinVersionsGenerator {
         className: String,
         superClass: ClassName,
         comparableType: TypeName,
+        serializableType: TypeName,
         versionObjects: List<TypeSpec>
     ): FileSpec {
         return FileSpec.builder(KGP_MPP_PACKAGE, className).apply {
@@ -144,6 +146,7 @@ internal object NativeCacheKotlinVersionsGenerator {
                 TypeSpec.classBuilder(className).apply {
                     addModifiers(KModifier.PUBLIC, KModifier.SEALED)
                     addSuperinterface(comparableType) // Add Comparable interface
+                    addSuperinterface(serializableType) // Add Serializable interface
                     addKdoc(CLASS_KDOC) // Use the new descriptive KDoc
                     addAnnotation(ANNOTATION_NATIVE_CACHE_API)
 
@@ -198,6 +201,7 @@ internal object NativeCacheKotlinVersionsGenerator {
         val className = "DisableCacheInKotlinVersion"
         val disableCacheInKotlinVersionClass = ClassName(KGP_MPP_PACKAGE, className)
         val comparableType = Comparable::class.asTypeName().parameterizedBy(disableCacheInKotlinVersionClass)
+        val serializableType = Serializable::class.asTypeName()
 
         // 1. Apply all filtering and deprecation rules
         val allVersionsToGenerate = applyDeprecationRules(versions)
@@ -212,6 +216,7 @@ internal object NativeCacheKotlinVersionsGenerator {
             className = className,
             superClass = disableCacheInKotlinVersionClass,
             comparableType = comparableType,
+            serializableType = serializableType,
             versionObjects = versionObjects
         )
 

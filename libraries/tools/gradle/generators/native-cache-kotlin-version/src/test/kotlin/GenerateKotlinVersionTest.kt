@@ -93,6 +93,7 @@ class GenerateKotlinVersionTest {
             
             package org.jetbrains.kotlin.gradle.plugin.mpp
             
+            import java.io.Serializable
             import kotlin.Comparable
             import kotlin.Deprecated
             import kotlin.DeprecationLevel
@@ -132,7 +133,8 @@ class GenerateKotlinVersionTest {
                * The patch version number.
                */
               public val patch: Int,
-            ) : Comparable<DisableCacheInKotlinVersion> {
+            ) : Comparable<DisableCacheInKotlinVersion>,
+                Serializable {
               /**
                * Returns the string representation of this version (e.g., 'v2_3_0').
                */

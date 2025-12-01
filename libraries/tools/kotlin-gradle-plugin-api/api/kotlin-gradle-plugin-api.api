@@ -1480,7 +1480,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/attributes/Kl
 public final class org/jetbrains/kotlin/gradle/plugin/attributes/KlibPackaging$Companion {
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion : java/lang/Comparable {
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion : java/io/Serializable, java/lang/Comparable {
 	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun compareTo (Ljava/lang/Object;)I
 	public fun compareTo (Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion;)I
