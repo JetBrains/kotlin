@@ -52,6 +52,16 @@ public class ScriptSymbolLightClassesParentingByPsiForSourceTestGenerated extend
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ValueClasses {
+      @Test
+      public void testAllFilesPresentInValueClasses() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+    }
   }
 
   @Nested
