@@ -219,6 +219,11 @@ public data class Main(
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
+public data class Mark(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
 public data class Menu(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
