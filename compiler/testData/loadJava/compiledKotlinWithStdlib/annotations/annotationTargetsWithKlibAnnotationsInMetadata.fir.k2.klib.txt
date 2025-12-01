@@ -1,4 +1,4 @@
-public final fun R|kotlin/Any|.ff(): R|kotlin/Unit|
+public final fun @RECEIVER:R|test/A|(s = String(fun-receiver)) R|kotlin/Any|.ff(): R|kotlin/Unit|
 
 field:@PROPERTY_DELEGATE_FIELD:R|test/A|(s = String(delegate)) public final val @RECEIVER:R|test/A|(s = String(property-receiver)) R|kotlin/Any|.pp: R|kotlin/Int|
     public get(): R|kotlin/Int|
