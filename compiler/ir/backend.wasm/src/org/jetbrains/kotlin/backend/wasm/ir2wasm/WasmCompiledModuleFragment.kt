@@ -630,7 +630,14 @@ class WasmCompiledModuleFragment(
         val associatedObjectGetterType = WasmFunctionType(listOf(WasmI64, WasmI64), listOf(nullableAnyWasmType))
         additionalTypes.add(associatedObjectGetterType)
 
-        val associatedObjectGetter = WasmFunction.Defined("_associatedObjectGetter", WasmSymbol(associatedObjectGetterType))
+        val classIdLocal = WasmLocal(0, "classId", WasmI64, true)
+        val keyIdLocal = WasmLocal(1, "keyId", WasmI64, true)
+        val associatedObjectGetter = WasmFunction.Defined(
+            name = "_associatedObjectGetter",
+            type = WasmSymbol(associatedObjectGetterType),
+            locals = mutableListOf(classIdLocal, keyIdLocal)
+        )
+
         // Make this function possible to func.ref
         wasmElements.add(
             WasmElement(
@@ -652,14 +659,14 @@ class WasmCompiledModuleFragment(
         with(WasmExpressionBuilder(associatedObjectGetter.instructions)) {
             wasmCompiledFileFragments.forEach { fragment ->
                 for ((klassId, associatedObjectsInstanceGetters) in fragment.classAssociatedObjectsInstanceGetters) {
-                    buildGetLocal(WasmLocal(0, "classId", WasmI64, true), serviceCodeLocation)
+                    buildGetLocal(classIdLocal, serviceCodeLocation)
                     buildConstI64(klassId, serviceCodeLocation)
                     buildInstr(WasmOp.I64_EQ, serviceCodeLocation)
                     buildIf("Class matches")
                     associatedObjectsInstanceGetters.forEach { (keyId, getter, isExternal) ->
                         val getterFunction = allDefinedFunctions[getter]
                         if (getterFunction != null) { //Could be deleted with DCE
-                            buildGetLocal(WasmLocal(1, "keyId", WasmI64, true), serviceCodeLocation)
+                            buildGetLocal(keyIdLocal, serviceCodeLocation)
                             buildConstI64(keyId, serviceCodeLocation)
                             buildInstr(WasmOp.I64_EQ, serviceCodeLocation)
                             buildIf("Object matches")
