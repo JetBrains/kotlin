@@ -4134,21 +4134,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/swc/SwcEnvSpec$Compani
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/js/swc/SwcExtension : org/jetbrains/kotlin/gradle/targets/js/AbstractSettings {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/swc/SwcExtension$Companion;
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/js/swc/SwcEnvSpec;)V
-	public synthetic fun finalizeConfiguration ()Ljava/lang/Object;
-	protected fun finalizeConfiguration ()Lorg/jetbrains/kotlin/gradle/targets/js/swc/SwcEnv;
-	public final fun getRootProject ()Lorg/gradle/api/Project;
-	public final fun getSetupTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/swc/SwcExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
-	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-	public final fun getEXTENSION_NAME ()Ljava/lang/String;
-	public fun getPlatformDisambiguator ()Ljava/lang/String;
-}
-
 public abstract class org/jetbrains/kotlin/gradle/targets/js/swc/SwcPlugin : org/gradle/api/Plugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/swc/SwcPlugin$Companion;
 	public static final field TASKS_GROUP_NAME Ljava/lang/String;
