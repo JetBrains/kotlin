@@ -75,6 +75,12 @@ public class LLReversedSerializationDiagnosticsTestGenerated extends AbstractLLR
     }
 
     @Test
+    @TestMetadata("generatedSerializerViaJava.kt")
+    public void testGeneratedSerializerViaJava() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/generatedSerializerViaJava.kt");
+    }
+
+    @Test
     @TestMetadata("GenericArrays.kt")
     public void testGenericArrays() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/GenericArrays.kt");
