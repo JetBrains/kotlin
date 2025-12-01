@@ -127,12 +127,12 @@ internal constructor(
                 .map { it.jsExtension.removePrefix(".") }
 
             return project.registerTask(name) {
-                it.executable.set(swc.requireConfigured().executable)
+                it.executable.set(swc.executable)
                 it.mode.set(mode)
                 it.configFile.set(configFile)
                 it.fileExtension.set(fileExtension)
 
-                it.dependsOn(swc.setupTaskProvider)
+                it.dependsOn(with(swc) { project.swcSetupTaskProvider })
                 it.configuration()
             }
         }

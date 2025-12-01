@@ -109,8 +109,9 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
                 .flatMap<Any> { swcTask.flatMap(SwcExec::outputDirectory) }
                 .orElse(emptyArray<Directory>())
 
-            task.from.from(swcOutput)
-            task.duplicatesStrategy = DuplicatesStrategy.INCLUDE
+            // TODO: think to move this setup to JsIrBinary
+            // Override the 'from' of the linkSync task to consume JS files post-processed by SWC, instead of the files from compile task
+            task.from.setFrom(swcOutput, project.tasks.named(compilation.processResourcesTaskName))
         }
     }
 
