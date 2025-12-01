@@ -321,6 +321,7 @@ internal class BtaImplGenerator(
             addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
+            addStatement($$"check(key.id in optionsMap) { \"Argument ${key.id} is not set and has no default value\" }")
             addStatement("return %N[key.id] as %T", mapProperty, typeParameter)
         }
         function("set") {
