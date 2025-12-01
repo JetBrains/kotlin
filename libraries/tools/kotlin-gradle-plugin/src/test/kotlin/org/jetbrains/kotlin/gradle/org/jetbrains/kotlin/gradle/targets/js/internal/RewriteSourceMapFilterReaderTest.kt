@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.gradle.org.jetbrains.kotlin.gradle.targets.js.inter
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.Ignore
 import java.io.Reader
 import java.io.StringReader
 
@@ -54,8 +53,7 @@ class RewriteSourceMapFilterReaderTest {
     }
 
     @Test
-    @Ignore // Such a prolog became supported since we started to use SWC, and it produces exactly such a prolog
-    fun testUnsupportedUnderfindProlog() {
+    fun testPrologWithoutSourcesContent() {
         val filter =
             RewriteSourceMapFilterReaderMock(
                 StringReader(
@@ -68,12 +66,8 @@ class RewriteSourceMapFilterReaderTest {
 
         assertEquals(
             //language=JSON
-            """{"version":3,"file":"single-platform.js","sources":["../../../../src/main/kotlin/main.kt"],"names":[],"mappings":""}""",
+            """{"version":3,"file":"single-platform.js","sources":["TRANSFORMED(../../../../src/main/kotlin/main.kt)"],"names":[],"mappings":""}""",
             filter.readText()
-        )
-        assertEquals(
-            "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`. \"sourcesContent\" or \"sources\" not found",
-            filter.warning
         )
     }
 
