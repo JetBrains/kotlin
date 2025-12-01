@@ -18,95 +18,8 @@ package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
-import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.loadProperties
-import org.jetbrains.kotlin.library.*
-
-private class BaseKotlinLibraryImpl(
-    val access: BaseLibraryAccess<KotlinLibraryLayout>,
-) : BaseKotlinLibrary {
-    override val libraryFile get() = access.klib
-    override val libraryName: String by lazy { access.inPlace { it.libraryName } }
-
-    override val componentList: List<String> by lazy {
-        access.inPlace { layout ->
-            val listFiles = layout.libFile.listFiles
-            listFiles
-                .filter { it.isDirectory }
-                .filter { it.listFiles.map { it.name }.contains(KLIB_MANIFEST_FILE_NAME) }
-                .map { it.name }
-        }
-    }
-
-    override fun toString() = libraryName
-
-    override val manifestProperties: Properties by lazy {
-        access.inPlace { it.manifestFile.loadProperties() }
-    }
-
-    override val versions: KotlinLibraryVersioning by lazy {
-        manifestProperties.readKonanLibraryVersioning()
-    }
-}
-
-private class KotlinLibraryImpl(
-    override val location: File,
-    zipFileSystemAccessor: ZipFileSystemAccessor,
-    val base: BaseKotlinLibraryImpl,
-) : KotlinLibrary,
-    BaseKotlinLibrary by base {
-
-    private val components = KlibComponentsCache(
-        layoutReaderFactory = KlibLayoutReaderFactory(
-            klibFile = location,
-            zipFileSystemAccessor = zipFileSystemAccessor
-        )
-    )
-
-    override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>) = components.getComponent(kind)
-
-    override val attributes = KlibAttributes()
-
-    override fun toString(): String = buildString {
-        append("name ")
-        append(base.libraryName)
-        append(", ")
-        append("file: ")
-        append(base.libraryFile.path)
-        append(", ")
-        append("version: ")
-        append(base.versions)
-        interopFlag?.let { append(", interop: $it") }
-        irProviderName?.let { append(", IR provider: $it") }
-        nativeTargets.takeIf { it.isNotEmpty() }?.joinTo(this, ", ", ", native targets: {", "}")
-        append(')')
-    }
-}
-
-fun createKotlinLibrary(
-    libraryFile: File,
-    component: String,
-    zipAccessor: ZipFileSystemAccessor? = null,
-): KotlinLibrary {
-    val nonNullZipFileSystemAccessor = zipAccessor ?: ZipFileSystemInPlaceAccessor
-
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, nonNullZipFileSystemAccessor)
-    val base = BaseKotlinLibraryImpl(baseAccess)
-
-    return KotlinLibraryImpl(libraryFile, nonNullZipFileSystemAccessor, base)
-}
-
-fun createKotlinLibraryComponents(
-    libraryFile: File,
-    zipAccessor: ZipFileSystemAccessor? = null,
-): List<KotlinLibrary> {
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null, zipAccessor)
-    val base = BaseKotlinLibraryImpl(baseAccess)
-    return base.componentList.map {
-        createKotlinLibrary(libraryFile, it, zipAccessor = zipAccessor)
-    }
-}
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.loader.KlibLoader
 
 @Deprecated(
     "Preserved for binary compatibility. Use createKotlinLibraryComponents(libraryFile, zipAccessor = ...) instead.",
@@ -118,5 +31,8 @@ fun createKotlinLibraryComponents(
     zipAccessor: ZipFileSystemAccessor? = null,
 ): List<KotlinLibrary> {
     if (isDefault) repeat(0) { Unit }
-    return createKotlinLibraryComponents(libraryFile, zipAccessor)
+    return KlibLoader {
+        libraryPaths(libraryFile.path)
+        zipAccessor?.let(::zipFileSystemAccessor)
+    }.load().librariesStdlibFirst
 }

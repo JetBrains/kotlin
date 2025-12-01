@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.SearchPathResolver.LookupResult
 import org.jetbrains.kotlin.library.SearchPathResolver.SearchRoot
-import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -327,7 +327,8 @@ class SingleKlibComponentResolver(
     logger,
     knownIrProviders = knownIrProviders
 ) {
-    override fun libraryComponentBuilder(file: File, /* ignored */ isDefault: Boolean) = createKotlinLibraryComponents(file)
+    override fun libraryComponentBuilder(file: File, /* ignored */ isDefault: Boolean) =
+        KlibLoader { libraryPaths(file.path) }.load().librariesStdlibFirst
 }
 
 /**
