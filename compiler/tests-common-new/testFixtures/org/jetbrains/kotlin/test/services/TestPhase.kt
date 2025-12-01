@@ -12,6 +12,6 @@ package org.jetbrains.kotlin.test.services
 enum class TestPhase {
     FRONTEND,
     FIR2IR,
-    KLIB,
-    BACKEND;
+    BACKEND; // either K/JVM backend, or pre-serialization+serialization+deserialization phases of Klib-backends
+    // 2nd stage lowerings phase is not yet supported in phased tests.
 }
