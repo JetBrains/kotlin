@@ -1322,6 +1322,11 @@ internal class JsAstMapperVisitor(
                             }
                             append(octalVal.toChar())
                         }
+                        '\n' -> { i += 2 }
+                        '\r' -> {
+                            i += 2
+                            if (chars.getOrNull(i) == '\n') i++
+                        }
                         else -> { append(char); i += 2 }
                     }
                 } else {
@@ -1368,6 +1373,11 @@ internal class JsAstMapperVisitor(
                             reportError("Octal escape sequences are not allowed in template strings", terminal)
                         in '8'..'9' ->
                             reportError("\\8 and \\9 are not allowed in template strings", terminal)
+                        '\n' -> { i += 2 }
+                        '\r' -> {
+                            i += 2
+                            if (chars.getOrNull(i) == '\n') i++
+                        }
                         else -> { append(char); i += 2 }
                     }
                 } else {
