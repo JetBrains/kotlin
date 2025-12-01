@@ -61,8 +61,8 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
         @get:Input
         internal abstract val enhancedFreeCompilerArgs: ListProperty<String>
 
-//        @get:Classpath
-//        internal abstract val classpath: ConfigurableFileCollection
+        @get:Classpath
+        internal abstract val classpath: ConfigurableFileCollection
 
         @get:Input
         @get:Optional
@@ -111,17 +111,6 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
 
         args.freeArgs += parameters.enhancedFreeCompilerArgs.get()
 
-//        args.debuggerCustomFormatters = true
-//        args.main = "call"
-//        args.irProduceJs = true
-//        args.sourceMap = true
-//        args.sourceMapEmbedSources = "never"
-//        args.target = "es5"
-//        args.irModuleName = null
-//        args.multiPlatform = true
-
-//        args.freeArgs = args.freeArgs.filterNot { it.startsWith("-Xir-module-name=") }
-
         println("TRANSFORMING")
         println(ArgumentUtils.convertArgumentsToStringList(args))
 
@@ -163,10 +152,6 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
         GradleKotlinCompilerWork(
             workArgs
         ).run()
-    }
-
-    companion object {
-        const val ARTIFACT_TYPE = "wasm-binary"
     }
 }
 

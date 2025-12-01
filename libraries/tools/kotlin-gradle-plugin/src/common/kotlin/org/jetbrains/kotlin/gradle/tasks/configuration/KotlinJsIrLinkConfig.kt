@@ -29,6 +29,8 @@ internal open class KotlinJsIrLinkConfig(
     private val compilation
         get() = binary.compilation
 
+    private val wasmPerModule = project.kotlinPropertiesProvider.wasmPerModule
+
     init {
         configureTask { task ->
             // Link tasks are not affected by compiler plugin, so set to empty
@@ -59,68 +61,70 @@ internal open class KotlinJsIrLinkConfig(
 
             task._outputFileProperty.convention(binary.mainFile.map { it.asFile })
 
-            WasmBinaryAttribute.setupTransform(task.project)
+            if (wasmPerModule) {
+                WasmBinaryAttribute.setupTransform(task.project)
 
-            task.project.dependencies.registerTransform(
-                NoOpWasmBinaryTransform::class.java
-            ) {
-                it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT)
-                it.to.attributes.attribute(
-                    WasmBinaryAttribute.attribute,
-                    WasmBinaryAttribute.KLIB
-                )
-            }
-
-            task.project.dependencies.registerTransform(
-                WasmBinaryTransform::class.java,
-            ) {
-                it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.KLIB)
-                it.to.attributes.attribute(
-                    WasmBinaryAttribute.attribute,
-                    WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT
-                )
-
-                it.parameters {
-                    it.currentJvmJdkToolsJar.set(
-                        task.defaultKotlinJavaToolchain
-                            .flatMap { it.currentJvmJdkToolsJar }
+                task.project.dependencies.registerTransform(
+                    NoOpWasmBinaryTransform::class.java
+                ) {
+                    it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT)
+                    it.to.attributes.attribute(
+                        WasmBinaryAttribute.attribute,
+                        WasmBinaryAttribute.KLIB
                     )
-                    it.defaultCompilerClasspath.setFrom(task.defaultCompilerClasspath)
-                    it.kotlinPluginVersion.set(
-                        getKotlinPluginVersion(task.logger)
-                    )
-                    it.pathProvider.set(
-                        task.path
-                    )
-                    it.projectRootFile.set(
-                        project.projectDir
-                    )
-                    val projectName = project.name
-                    it.clientIsAliveFlagFile.set(
-                        GradleCompilerRunner.getOrCreateClientFlagFile(task.logger, projectName)
+                }
 
+                task.project.dependencies.registerTransform(
+                    WasmBinaryTransform::class.java,
+                ) {
+                    it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.KLIB)
+                    it.to.attributes.attribute(
+                        WasmBinaryAttribute.attribute,
+                        WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT
                     )
-                    val projectSessionsDir = project.kotlinSessionsDir
-                    it.sessionFlagFile.set(
-                        GradleCompilerRunner.getOrCreateSessionFlagFile(task.logger, projectSessionsDir)
 
-                    )
-                    it.buildDir.set(project.layout.buildDirectory.asFile)
+                    it.parameters {
+                        it.currentJvmJdkToolsJar.set(
+                            task.defaultKotlinJavaToolchain
+                                .flatMap { it.currentJvmJdkToolsJar }
+                        )
+                        it.defaultCompilerClasspath.setFrom(task.defaultCompilerClasspath)
+                        it.kotlinPluginVersion.set(
+                            getKotlinPluginVersion(task.logger)
+                        )
+                        it.pathProvider.set(
+                            task.path
+                        )
+                        it.projectRootFile.set(
+                            project.projectDir
+                        )
+                        val projectName = project.name
+                        it.clientIsAliveFlagFile.set(
+                            GradleCompilerRunner.getOrCreateClientFlagFile(task.logger, projectName)
 
-                    it.libraryFilterCacheService.set(task.libraryFilterCacheService)
+                        )
+                        val projectSessionsDir = project.kotlinSessionsDir
+                        it.sessionFlagFile.set(
+                            GradleCompilerRunner.getOrCreateSessionFlagFile(task.logger, projectSessionsDir)
 
-                    val compilerOptions = task.compilerOptions
-                    it.compilerOptions.set(
-                        project.provider {
-                            val args = K2JSCompilerArguments()
-                            KotlinCommonCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
-                            args
+                        )
+                        it.buildDir.set(project.layout.buildDirectory.asFile)
+
+                        it.libraryFilterCacheService.set(task.libraryFilterCacheService)
+
+                        val compilerOptions = task.compilerOptions
+                        it.compilerOptions.set(
+                            project.provider {
+                                val args = K2JSCompilerArguments()
+                                KotlinCommonCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
+                                args
+                            }
+                        )
+                        it.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
+                        it.classpath.from(task.libraries)
+                        project.kotlinPropertiesProvider.wasmPerModuleInvalidate?.let { invalidate ->
+                            it.invalidate.set(invalidate)
                         }
-                    )
-                    it.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
-//                    it.classpath.from(task.libraries)
-                    project.kotlinPropertiesProvider.wasmPerModuleInvalidate?.let { invalidate ->
-                        it.invalidate.set(invalidate)
                     }
                 }
             }
@@ -180,7 +184,9 @@ internal open class KotlinJsIrLinkConfig(
             val wasmTargetType = (compilation.origin as KotlinJsIrCompilation).target.wasmTargetType!!
             val targetValue = if (wasmTargetType == KotlinWasmTargetType.WASI) "wasm-wasi" else "wasm-js"
             add("$WASM_TARGET=$targetValue")
-            add(WASM_INCLUDED_MODULE_ONLY)
+            if (wasmPerModule) {
+                add(WASM_INCLUDED_MODULE_ONLY)
+            }
         }
     }
 }
