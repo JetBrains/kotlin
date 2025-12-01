@@ -65,7 +65,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final Map<Character, Integer> TEMPLATE_ESCAPE_MAPPING = createTemplateEscapeMapping();
     private static Map<Character, Integer> createCommonEscapeMapping() {
         Map<Character, Integer> mapping = new HashMap<>();
-        mapping.put('\0', (int) '0');
         mapping.put('\b', (int) 'b');
         mapping.put('\f', (int) 'f');
         mapping.put('\n', (int) 'n');
