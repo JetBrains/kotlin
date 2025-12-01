@@ -277,12 +277,12 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 ImmediateTags.GLOBAL_STRING -> LiteralGlobalSymbol(deserializeString())
 
                 ImmediateTags.HEAP_TYPE -> WasmImmediate.HeapType(deserializeHeapType())
-                ImmediateTags.LABEL_INDEX -> WasmImmediate.LabelIdx(deserializeInt())
+                ImmediateTags.LABEL_INDEX -> WasmImmediate.LabelIdx.get(deserializeInt())
                 ImmediateTags.LABEL_INDEX_VECTOR -> WasmImmediate.LabelIdxVector(deserializeList(::deserializeInt))
-                ImmediateTags.LOCAL_INDEX -> WasmImmediate.LocalIdx(deserializeInt())
+                ImmediateTags.LOCAL_INDEX -> WasmImmediate.LocalIdx.get(deserializeInt())
                 ImmediateTags.MEM_ARG -> { val align = input.readUInt32(); val offset = input.readUInt32(); WasmImmediate.MemArg(align, offset) }
                 ImmediateTags.MEMORY_INDEX -> WasmImmediate.MemoryIdx(deserializeInt())
-                ImmediateTags.STRUCT_FIELD_INDEX -> WasmImmediate.StructFieldIdx(deserializeInt())
+                ImmediateTags.STRUCT_FIELD_INDEX -> WasmImmediate.StructFieldIdx.get(deserializeInt())
                 ImmediateTags.SYMBOL_I32 -> WasmImmediate.SymbolI32(deserializeSymbol(::deserializeInt))
                 ImmediateTags.TABLE_INDEX -> WasmImmediate.TableIdx(deserializeSymbol(::deserializeInt))
                 ImmediateTags.TAG_INDEX -> WasmImmediate.TagIdx(deserializeSymbol(::deserializeInt))
