@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScript
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
+import org.jetbrains.kotlin.scripting.resolve.getKtFile
 
 class ScriptingCollectAdditionalSourcesExtension(val project: MockProject) : CollectAdditionalSourcesExtension {
     @OptIn(K1SpecificScriptingServiceAccessor::class)
@@ -28,6 +29,6 @@ class ScriptingCollectAdditionalSourcesExtension(val project: MockProject) : Col
             knownSources.map { KtFileScriptSource(it) }
         ) { scriptConfigurationProvider?.getScriptCompilationConfiguration(it) }
         configuration.addJvmClasspathRoots(newSourcesClasspath)
-        return newSources.map { (it as KtFileScriptSource).ktFile }
+        return newSources.map { it.getKtFile(definition = null, project) }
     }
 }

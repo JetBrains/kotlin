@@ -231,7 +231,7 @@ private fun doCompile(
             null
         )
 
-    val ktFiles = sourceFiles.map { (it as KtFileScriptSource).ktFile }
+    val ktFiles = sourceFiles.map { it.getKtFile(definition, context.environment.project) }
 
     checkKotlinPackageUsageForPsi(context.environment.configuration, ktFiles, messageCollector)
 
