@@ -86,35 +86,46 @@ class ScriptJvmK2Compiler(
         val renderDiagnosticName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         val targetId = TargetId(script.name!!, "java-production")
 
-        fun failure(diagnosticsCollector: BaseDiagnosticsCollector): ResultWithDiagnostics.Failure {
+        fun failure(diagnosticsCollector: BaseDiagnosticsCollector, vararg diagnostics: ScriptDiagnostic): ResultWithDiagnostics.Failure {
             diagnosticsCollector.reportToMessageCollector(messageCollector, renderDiagnosticName)
-            return failure(messageCollector)
+            return failure(messageCollector, *diagnostics)
         }
 
         return scriptCompilationConfiguration.refineBeforeParsing(script).onSuccess {
-            val collectedData by lazy(LazyThreadSafetyMode.NONE) {
-                ScriptCollectedData(
-                    mapOf(
-                        ScriptCollectedData.fir to listOf(
-                            script.convertToFir(
-                                createDummySessionForScriptRefinement(script),
-                                diagnosticsCollector
+            @Suppress("DEPRECATION")
+            val hasK1refine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnAnnotations) != null
+            val hasK2refine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnFir) != null
+            when {
+                hasK1refine && !hasK2refine -> {
+                    failure(
+                        diagnosticsCollector,
+                        "The definition is not designed to be compiled with Kotlin v2+, set the language-version to 1.9 or below".asErrorDiagnostics()
+                    )
+                }
+                hasK2refine -> {
+                    val collectedData =
+                        ScriptCollectedData(
+                            mapOf(
+                                ScriptCollectedData.fir to listOf(
+                                    script.convertToFir(
+                                        createDummySessionForScriptRefinement(script),
+                                        diagnosticsCollector
+                                    )
+                                )
                             )
                         )
-                    )
-                )
-            }
-            if (diagnosticsCollector.hasErrors) {
-                failure(diagnosticsCollector)
-            } else {
-                it.refineOnFir(script, collectedData)
+                    if (diagnosticsCollector.hasErrors) {
+                        failure(diagnosticsCollector)
+                    } else {
+                        it.refineOnFir(script, collectedData)
+                    }
+                }
+                else -> it.asSuccess()
             }
         }.onSuccess {
             it.refineBeforeCompiling(script)
         }.onSuccess { refinedConfiguration ->
-            // TODO: separate reporter for refinement, to avoid double warnings reporting
-            // imports -> compile one by one or all here?
-            // add all deps
+            // TODO: separate reporter for refinement, to avoid double raw fir warnings reporting
 
             refinedConfiguration[ScriptCompilationConfiguration.dependencies]?.let { dependencies ->
                 val classpathFiles = dependencies.flatMap {
