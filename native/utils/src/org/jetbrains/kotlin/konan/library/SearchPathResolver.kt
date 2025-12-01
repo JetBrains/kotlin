@@ -2,12 +2,14 @@ package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.library.impl.createKonanLibraryComponents
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
+import java.nio.file.Paths
 
 interface SearchPathResolverWithTarget<L : KotlinLibrary> : SearchPathResolver<L> {
     val target: KonanTarget
@@ -43,8 +45,13 @@ class KonanLibraryProperResolver(
     logger = logger,
     knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
 ), SearchPathResolverWithTarget<KotlinLibrary> {
-    override fun libraryComponentBuilder(file: File, /* ignored */ isDefault: Boolean) =
-        createKonanLibraryComponents(file, target, zipFileSystemAccessor)
+    override fun libraryComponentBuilder(file: File, /* ignored */ isDefault: Boolean): List<KotlinLibrary> =
+        KlibLoader {
+            // KT-58979: The klib path should be normalized to correctly provide symbols from resolved klibs.
+            libraryPaths(Paths.get(file.absolutePath).normalize())
+            zipFileSystemAccessor?.let(::zipFileSystemAccessor)
+            platformChecker(KlibPlatformChecker.NativeMetadata(target.name))
+        }.load().librariesStdlibFirst
 
     override val distPlatformHead: File?
         get() = distributionKlib?.File()?.child("platform")?.child(target.visibleName)
