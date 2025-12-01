@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.WasmImmediateKind.*
 
 enum class WasmImmediateKind {
@@ -55,20 +56,22 @@ sealed class WasmImmediate {
         class Value(val type: WasmType?) : BlockType()
     }
 
-    class FuncIdx(val value: WasmSymbol<WasmFunction>) : WasmImmediate() {
-        constructor(value: WasmFunction) : this(WasmSymbol(value))
-    }
-
+    class FuncIdx(val value: IdSignature) : WasmImmediate()
     class LocalIdx(val value: Int) : WasmImmediate() {
         constructor(value: WasmLocal) : this(value.id)
     }
 
-    class GlobalIdx(val value: WasmSymbol<WasmGlobal>) : WasmImmediate() {
-        constructor(value: WasmGlobal) : this(WasmSymbol(value))
+    sealed class GlobalIdx(val value: IdSignature) : WasmImmediate() {
+        class FieldIdx(value: IdSignature) : GlobalIdx(value)
+        class VTableIdx(value: IdSignature) : GlobalIdx(value)
+        class ClassITableIdx(value: IdSignature) : GlobalIdx(value)
+        class RttiIdx(value: IdSignature) : GlobalIdx(value)
     }
 
-    class TypeIdx(val value: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmImmediate() {
-        constructor(value: WasmTypeDeclaration) : this(WasmSymbol(value))
+    sealed class TypeIdx(val value: IdSignature) : WasmImmediate() {
+        class GcTypeIdx(value: IdSignature) : TypeIdx(value)
+        class VTableTypeIdx(value: IdSignature) : TypeIdx(value)
+        class FunctionTypeIdx(value: IdSignature) : TypeIdx(value)
     }
 
     class ValTypeVector(val value: List<WasmType>) : WasmImmediate()
@@ -89,10 +92,6 @@ sealed class WasmImmediate {
     }
     class LabelIdxVector(val value: List<Int>) : WasmImmediate()
     class ElemIdx(val value: WasmElement) : WasmImmediate()
-
-    class GcType(val value: WasmSymbol<WasmTypeDeclaration>) : WasmImmediate() {
-        constructor(value: WasmTypeDeclaration) : this(WasmSymbol(value))
-    }
 
     class StructFieldIdx(val value: Int) : WasmImmediate()
 

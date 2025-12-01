@@ -55,6 +55,7 @@ dependencies {
 
     implementation(kotlinStdlib())
     implementation(kotlinxCollectionsImmutable())
+    implementation(project(":compiler:ir.tree"))
     testImplementation(libs.junit4)
     testCompileOnly(kotlinTest("junit"))
     testImplementation(testFixtures(project(":compiler:tests-common")))

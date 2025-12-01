@@ -21,7 +21,7 @@ class WasmFileCodegenContextWithImport(
     override fun handleFunctionWithImport(declaration: IrFunctionSymbol): Boolean {
         val signature = idSignatureRetriever.declarationSignature(declaration.owner)
         if (signature !in importDeclarations) return true
-        val functionTypeSymbol = referenceFunctionType(declaration)
+        val functionTypeSymbol = referenceFunctionHeapType(declaration)
         defineFunction(
             declaration,
             WasmFunction.Imported(
@@ -38,7 +38,7 @@ class WasmFileCodegenContextWithImport(
         if (signature !in importDeclarations) return true
         val global = WasmGlobal(
             name = "<classVTable>",
-            type = WasmRefType(WasmHeapType.Type(referenceVTableGcType(declaration))),
+            type = WasmRefType(WasmHeapType.Type.VTableType(declaration.getReferenceKey())),
             isMutable = false,
             init = emptyList(),
             importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmServiceImportExportKind.VTABLE.prefix}$signature"))
@@ -52,7 +52,7 @@ class WasmFileCodegenContextWithImport(
         if (signature !in importDeclarations) return true
         val global = WasmGlobal(
             name = "<classITable>",
-            type = WasmRefType(WasmHeapType.Type(interfaceTableTypes.wasmAnyArrayType)),
+            type = WasmRefType(Synthetics.HeapTypes.wasmAnyArrayType),
             isMutable = false,
             init = emptyList(),
             importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmServiceImportExportKind.ITABLE.prefix}$signature"))
@@ -66,7 +66,7 @@ class WasmFileCodegenContextWithImport(
         if (signature !in importDeclarations) return true
         val rttiGlobal = WasmGlobal(
             name = "${declaration.owner.fqNameWhenAvailable}_rtti",
-            type = WasmRefType(WasmHeapType.Type(rttiType)),
+            type = WasmRefType(Synthetics.HeapTypes.rttiType),
             isMutable = false,
             init = emptyList(),
             importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmServiceImportExportKind.RTTI.prefix}$signature"))

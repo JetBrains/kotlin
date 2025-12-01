@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
+import org.jetbrains.kotlin.ir.util.IdSignature
+
 sealed class WasmType(
     val name: String,
     val code: Byte
@@ -39,9 +41,23 @@ object WasmStructRef : WasmType("structref", -0x15)
 object WasmArrayRef : WasmType("arrayref", -0x16)
 
 sealed class WasmHeapType {
-    data class Type(val type: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmHeapType() {
-        override fun toString(): String {
-            return "Type:$type"
+
+    sealed class Type(val type: IdSignature) : WasmHeapType() {
+        override fun toString(): String = "Type:$type"
+
+        class GcType(type: IdSignature) : Type(type) {
+            override fun hashCode(): Int = type.hashCode()
+            override fun equals(other: Any?): Boolean = other is GcType && type == other.type
+        }
+
+        class VTableType(type: IdSignature) : Type(type) {
+            override fun hashCode(): Int = type.hashCode()
+            override fun equals(other: Any?): Boolean = other is VTableType && type == other.type
+        }
+
+        class FunctionType(type: IdSignature) : Type(type) {
+            override fun hashCode(): Int = type.hashCode()
+            override fun equals(other: Any?): Boolean = other is FunctionType && type == other.type
         }
     }
 
@@ -79,15 +95,3 @@ fun WasmType.getHeapType(): WasmHeapType =
         is WasmExternRef -> WasmHeapType.Simple.Extern
         else -> error("Unknown heap type for type $this")
     }
-
-fun WasmFunctionType.referencesTypeDeclarations(): Boolean =
-    parameterTypes.any { it.referencesTypeDeclaration() } or resultTypes.any { it.referencesTypeDeclaration() }
-
-fun WasmType.referencesTypeDeclaration(): Boolean {
-    val heapType = when (this) {
-        is WasmRefNullType -> getHeapType()
-        is WasmRefType -> getHeapType()
-        else -> return false
-    }
-    return heapType is WasmHeapType.Type
-}
