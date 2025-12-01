@@ -17,13 +17,15 @@ import kotlin.concurrent.write
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 
-class CliScriptConfigurationsProvider(project: Project) : ScriptConfigurationsProvider(project) {
+class CliScriptConfigurationsProvider(
+    project: Project,
+    getScriptDefinitionProvider: () -> ScriptDefinitionProvider
+) : ScriptConfigurationsProvider(project) {
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, ScriptCompilationConfigurationResult?>()
     private val knownVirtualFileSources = mutableMapOf<String, VirtualFileScriptSource>()
     private val scriptDefinitionProvider by lazy(LazyThreadSafetyMode.NONE) {
-        ScriptDefinitionProvider.getInstance(project)
-            ?: error("Unable to get script definition: ScriptDefinitionProvider is not configured.")
+        getScriptDefinitionProvider()
     }
 
     @Deprecated("Use getScriptConfigurationResult(KtFileScriptSource(ktFile)) instead")
