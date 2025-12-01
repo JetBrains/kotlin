@@ -118,13 +118,12 @@ class JvmCachedDeclarations(
                 val staticExternal = context.irFactory.buildFun {
                     updateFrom(jvmStaticFunction)
                     name = jvmStaticFunction.name
-                    returnType = jvmStaticFunction.returnType
                 }.apply {
                     parent = companion.parent
                     copyAttributes(jvmStaticFunction)
                     copyAnnotationsFrom(jvmStaticFunction)
                     copyCorrespondingPropertyFrom(jvmStaticFunction)
-                    copyValueAndTypeParametersFrom(jvmStaticFunction)
+                    copyFunctionSignatureFrom(jvmStaticFunction)
                     parameters = nonDispatchParameters
                     metadata = jvmStaticFunction.metadata
                 }

@@ -165,14 +165,12 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
             updateFrom(originalFunc)
             name = Name.identifier("${originalFunc.name}${EXPORTED_SUSPEND_FUNCTION_BRIDGE_SUFFIX}")
             origin = EXPORTED_SUSPEND_FUNCTION_BRIDGE
-            returnType = originalFunc.returnType
             startOffset = UNDEFINED_OFFSET
             endOffset = UNDEFINED_OFFSET
         }.also { bridgeFunc ->
-            bridgeFunc.copyValueAndTypeParametersFrom(originalFunc)
+            bridgeFunc.copyFunctionSignatureFrom(originalFunc)
 
             bridgeFunc.parent = originalFunc.parent
-            bridgeFunc.returnType = originalFunc.returnType.remapTypeParameters(originalFunc, bridgeFunc)
 
             bridgeFunc.annotations = buildList {
                 add(JsIrBuilder.buildConstructorCall(jsExportIgnoreAnnotation.symbol))
@@ -238,10 +236,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
             endOffset = UNDEFINED_OFFSET
         }.apply {
             parent = originalFunc.parent
-            copyTypeParametersFrom(originalFunc)
-            val substitutionMap = makeTypeParameterSubstitutionMap(originalFunc, this)
-            copyParametersFrom(originalFunc, substitutionMap)
-            returnType = promiseClass.typeWith(originalFunc.returnType.substitute(substitutionMap))
+            copyFunctionSignatureFrom(originalFunc, returnType = promiseClass.typeWith(originalFunc.returnType))
             parameters.forEach {
                 if (it.defaultValue != null) {
                     it.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER

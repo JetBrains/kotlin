@@ -263,11 +263,10 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         function.factory.buildFun {
             updateFrom(function)
             name = function.name
-            returnType = irBuiltIns.unitType // Does not matter.
         }.apply {
             parent = function.parent
             copyAnnotationsFrom(function)
-            copyValueAndTypeParametersFrom(function)
+            copyFunctionSignatureFrom(function, returnType = irBuiltIns.unitType /* Does not matter */)
 
             typeParameters = typeParameters + buildTypeParameter(this) {
                 name = Name.identifier("disambiguation type parameter")

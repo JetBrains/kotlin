@@ -62,14 +62,12 @@ class JsStaticLowering(private val context: JsIrBackendContext) : DeclarationTra
             updateFrom(originalFun)
             name = originalFun.name
         }.apply proxy@{
-            copyTypeParametersFrom(originalFun)
             copyAnnotationsFrom(originalFun)
 
             parent = proxyParent
 
-            val substitutionMap = makeTypeParameterSubstitutionMap(originalFun, this)
-            parameters = originalFun.nonDispatchParameters.map { it.copyTo(this, type = it.type.substitute(substitutionMap)) }
-            returnType = originalFun.returnType.substitute(substitutionMap)
+            copyFunctionSignatureFrom(originalFun, returnType = originalFun.returnType)
+            parameters = nonDispatchParameters // Drop the dispatch parameter
 
             body = context.createIrBuilder(symbol).irBlockBody {
                 val delegatingCall = irCall(originalFun).apply {

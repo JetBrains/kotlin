@@ -71,9 +71,8 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         context.irFactory.buildFun {
             updateFrom(source)
             name = mangledName
-            returnType = source.returnType
         }.apply {
-            copyValueAndTypeParametersFrom(source)
+            copyFunctionSignatureFrom(source)
             // Exposed functions should have no @JvmName annotation, since it does not affect them,
             // but always @JvmExposeBoxed, so users can use reflection to get all exposed functions, if they so desire.
             if (source.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
@@ -303,9 +302,8 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         constructor.parentAsClass.factory.buildConstructor {
             updateFrom(constructor)
             isPrimary = false
-            returnType = constructor.returnType
         }.apply {
-            copyValueAndTypeParametersFrom(constructor)
+            copyFunctionSignatureFrom(constructor)
             parameters.forEach { it.defaultValue = null }
             val addedSyntheticParameter =
                 parameters.last().origin == JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
@@ -480,9 +478,8 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             updateFrom(irConstructor)
             visibility = DescriptorVisibilities.PRIVATE
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
-            returnType = irConstructor.returnType
         }.apply {
-            copyValueAndTypeParametersFrom(irConstructor)
+            copyFunctionSignatureFrom(irConstructor)
             // Don't create a default argument stub for the primary constructor
             parameters.forEach { it.defaultValue = null }
             if (irConstructor.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
@@ -541,10 +538,9 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             updateFrom(irConstructor)
             isPrimary = false
             origin = JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR
-            returnType = irConstructor.returnType
         }.apply {
             // Don't create a default argument stub for the exposed constructor
-            copyValueAndTypeParametersFrom(irConstructor)
+            copyFunctionSignatureFrom(irConstructor)
             parameters.forEach { it.defaultValue = null }
             annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor, this@JvmInlineClassLowering.context)
             body = this@JvmInlineClassLowering.context.createIrBuilder(symbol).irBlockBody(this) {

@@ -13,17 +13,10 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
-import org.jetbrains.kotlin.ir.backend.js.correspondingField
-import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
-import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.newEnumConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.isInstantiableEnum
 import org.jetbrains.kotlin.ir.backend.js.utils.parentEnumClassOrNull
-import org.jetbrains.kotlin.ir.backend.js.valueParameterForOldEnumConstructor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -106,13 +99,12 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
     private fun transformEnumConstructor(enumConstructor: IrConstructor, enumClass: IrClass): IrConstructor {
         return context.irFactory.buildConstructor {
             updateFrom(enumConstructor)
-            returnType = enumConstructor.returnType
         }.apply {
             parent = enumClass
             parameters = additionalParameters.map { (name, type) ->
                 JsIrBuilder.buildValueParameter(this, name, type)
             }
-            copyValueAndTypeParametersFrom(enumConstructor)
+            copyFunctionSignatureFrom(enumConstructor)
 
             val newConstructor = this
             enumConstructor.newEnumConstructor = this

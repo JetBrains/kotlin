@@ -145,13 +145,10 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             it.addJsStatic()
             it.parent = companionObject
             val original = factoryMethodForTheCollectionSymbol.owner
-            it.copyTypeParametersFrom(original)
-            val substitutionMap = makeTypeParameterSubstitutionMap(original, it)
-            it.copyParametersFrom(original, substitutionMap)
+            val substitutionMap = it.copyFunctionSignatureFrom(original)
             val thisReceiver = companionObject.thisReceiver
             it.parameters =
                 listOfNotNull(thisReceiver?.copyTo(it, type = thisReceiver.type.substitute(substitutionMap))) + it.nonDispatchParameters
-            it.returnType = original.returnType.substitute(substitutionMap)
             it.body = context.createIrBuilder(it.symbol).run {
                 irBlockBody(it) {
                     +irReturn(

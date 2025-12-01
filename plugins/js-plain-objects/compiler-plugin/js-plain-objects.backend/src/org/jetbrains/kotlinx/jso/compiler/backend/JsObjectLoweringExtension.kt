@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
@@ -112,15 +110,8 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
             isInline = true
             isExternal = false
         }.apply {
-            copyTypeParametersFrom(originalFunction)
-
-            val substitutionMap = HashMap<IrTypeParameterSymbol, IrType>()
-            substitutionMap.putAll(makeTypeParameterSubstitutionMap(originalFunction, this))
-
-            copyParametersFrom(originalFunction, substitutionMap)
-
-            returnType = returnType.substitute(substitutionMap)
-            parameters = parameters.filter { it.kind != IrParameterKind.DispatchReceiver }
+            copyFunctionSignatureFrom(originalFunction)
+            parameters = nonDispatchParameters
 
             body = when (originalFunction.name) {
                 StandardNames.DATA_CLASS_COPY -> generateBodyForCopyFunction(this)

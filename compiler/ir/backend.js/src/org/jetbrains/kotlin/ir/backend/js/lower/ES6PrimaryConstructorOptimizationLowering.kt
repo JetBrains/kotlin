@@ -65,13 +65,11 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
         return factory.buildConstructor {
             updateFrom(original)
             isPrimary = true
-            returnType = original.returnType
             origin = IrDeclarationOrigin.DEFINED
         }.also { constructor ->
             constructor.copyAnnotationsFrom(original)
-            constructor.copyTypeParametersFrom(original)
-            val substitutionMap = makeTypeParameterSubstitutionMap(original, constructor)
-            constructor.copyParameters(original.nonDispatchParameters, substitutionMap)
+            constructor.copyFunctionSignatureFrom(original)
+            constructor.parameters = nonDispatchParameters
             constructor.parent = irClass
 
             if (irClass.isExported(context)) {

@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -877,10 +880,17 @@ fun IrFunction.copyParameters(source: List<IrValueParameter>, substitutionMap: M
     }
 }
 
-fun IrFunction.copyValueAndTypeParametersFrom(from: IrFunction) {
+/**
+ * Appends the type and value parameters of [source] to [this], also replacing the return type of this with [returnType], performing
+ * all the necessary substitutions wrt the new type parameters.
+ */
+fun IrFunction.copyFunctionSignatureFrom(source: IrFunction, returnType: IrType = source.returnType): Map<IrTypeParameterSymbol, IrType> {
     assert(typeParameters.isEmpty())
-    copyTypeParametersFrom(from)
-    copyParametersFrom(from)
+    copyTypeParametersFrom(source)
+    val substitutionMap = makeTypeParameterSubstitutionMap(source, this)
+    copyParametersFrom(source, substitutionMap)
+    this.returnType = returnType.substitute(substitutionMap)
+    return substitutionMap
 }
 
 fun IrTypeParametersContainer.copyTypeParameters(

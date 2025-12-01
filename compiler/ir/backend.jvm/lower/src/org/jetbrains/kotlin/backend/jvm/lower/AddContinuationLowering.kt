@@ -337,7 +337,6 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                     result += context.irFactory.buildFun {
                         containerSource = view.containerSource
                         name = Name.identifier(context.defaultMethodSignatureMapper.mapFunctionName(view) + FOR_INLINE_SUFFIX)
-                        returnType = view.returnType
                         modality = view.modality
                         isSuspend = view.isSuspend
                         isInline = view.isInline
@@ -347,7 +346,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                             else JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
                     }.apply {
                         copyAnnotationsFrom(view)
-                        copyValueAndTypeParametersFrom(view)
+                        copyFunctionSignatureFrom(view)
                         context.remapMultiFieldValueClassStructure(view, this, parametersMappingOrNull = null)
                         copyAttributes(view)
                         generateErrorForInlineBody()
