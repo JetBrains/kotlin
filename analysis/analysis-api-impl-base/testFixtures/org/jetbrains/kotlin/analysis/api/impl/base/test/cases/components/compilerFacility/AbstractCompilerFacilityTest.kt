@@ -78,6 +78,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 FirErrors.INVISIBLE_SETTER,
                 FirErrors.DEPRECATION_ERROR,
                 FirErrors.DIVISION_BY_ZERO,
+                FirErrors.TRIM_MARGIN_BLANK_PREFIX,
                 FirErrors.OPT_IN_USAGE_ERROR,
                 FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
                 FirErrors.OPT_IN_OVERRIDE_ERROR,
