@@ -862,6 +862,46 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/setInterfaceOfString.kt");
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ValueClasses {
+      @Test
+      public void testAllFilesPresentInValueClasses() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("implicitJvmExposeBoxed.kt")
+      public void testImplicitJvmExposeBoxed() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses/implicitJvmExposeBoxed.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassCollection.kt")
+      public void testValueClassCollection() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses/valueClassCollection.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassCollectionInternal.kt")
+      public void testValueClassCollectionInternal() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses/valueClassCollectionInternal.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassList.kt")
+      public void testValueClassList() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses/valueClassList.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassMap.kt")
+      public void testValueClassMap() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses/valueClassMap.kt");
+      }
+    }
   }
 
   @Nested
