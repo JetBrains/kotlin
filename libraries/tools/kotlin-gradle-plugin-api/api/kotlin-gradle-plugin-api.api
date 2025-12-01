@@ -1494,10 +1494,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVe
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion$2_3_20;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion$2_3_255 : org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion$2_3_255;
-}
-
 public abstract interface annotation class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCacheApi : java/lang/annotation/Annotation {
 }
 

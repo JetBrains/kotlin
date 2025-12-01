@@ -42,7 +42,7 @@ internal object NativeCacheKotlinVersionsGenerator {
      * Applies the business logic for deprecation and filtering.
      * @return A sorted list of versions that should be generated.
      */
-    private fun applyDeprecationRules(versions: Set<Triple<Int, Int, Int>>): List<VersionToGenerate> {
+    private fun applyDeprecationRules(versions: Set<Triple<Int, Int, Int>>, includeSnapshots: Boolean): List<VersionToGenerate> {
         // 1. Partition versions into releases and snapshots (patch == 255)
         val (snapshots, releases) = versions.partition { it.third == 255 }
 
@@ -55,8 +55,12 @@ internal object NativeCacheKotlinVersionsGenerator {
         val deprecatedError = releasesToGenerate.getOrNull(releasesToGenerate.size - 3) // N-2
 
         // 4. Get the 2 most recent snapshots
-        val sortedSnapshots = snapshots.sortedWith(compareBy({ it.first }, { it.second }, { it.third }))
-        val snapshotsToGenerate = sortedSnapshots.takeLast(2) // Get only two last snapshots
+        val snapshotsToGenerate = if (includeSnapshots) {
+            val sortedSnapshots = snapshots.sortedWith(compareBy({ it.first }, { it.second }, { it.third }))
+            sortedSnapshots.takeLast(2) // Get only two last snapshots
+        } else {
+            emptyList()
+        }
 
         // 5. Map releases to the intermediate model with deprecation status
         val releaseVersionsToGenerate = releasesToGenerate.map { version ->
@@ -197,14 +201,14 @@ internal object NativeCacheKotlinVersionsGenerator {
     /**
      * Main entry point for the generator.
      */
-    fun generate(versions: Set<Triple<Int, Int, Int>>): Pair<Path, String> {
+    fun generate(versions: Set<Triple<Int, Int, Int>>, includeSnapshots: Boolean = false): Pair<Path, String> {
         val className = "DisableCacheInKotlinVersion"
         val disableCacheInKotlinVersionClass = ClassName(KGP_MPP_PACKAGE, className)
         val comparableType = Comparable::class.asTypeName().parameterizedBy(disableCacheInKotlinVersionClass)
         val serializableType = Serializable::class.asTypeName()
 
         // 1. Apply all filtering and deprecation rules
-        val allVersionsToGenerate = applyDeprecationRules(versions)
+        val allVersionsToGenerate = applyDeprecationRules(versions, includeSnapshots)
 
         // 2. Build the KotlinPoet TypeSpec for each version object
         val versionObjects = allVersionsToGenerate.map {

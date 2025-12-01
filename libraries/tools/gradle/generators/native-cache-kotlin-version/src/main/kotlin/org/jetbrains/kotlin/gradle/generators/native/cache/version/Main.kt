@@ -21,11 +21,15 @@ fun main(args: Array<String>) {
     val supportedVersionsFilePath = Paths.get(args[2])
     val currentVersionString = args[1]
 
+    // Parse optional 4th argument for snapshots (default to false)
+    val includeSnapshots = args.getOrNull(3)?.toBoolean() ?: false
+
     val currentKotlinVersion = parseKotlinVersion(currentVersionString)
 
     logger.info("Gen dir: $genDirectoryPath")
     logger.info("Versions file: $supportedVersionsFilePath")
     logger.info("Current Kotlin version string: $currentVersionString")
+    logger.info("Include snapshots: $includeSnapshots")
     logger.info("-> Resolved to: $currentKotlinVersion")
 
     // 1. Update the intermediate versions file and get all versions
@@ -33,7 +37,7 @@ fun main(args: Array<String>) {
     logger.info("Total versions: ${allKotlinVersions.size}")
 
     // 2. Generate the .kt source files from the full list
-    val (path, content) = NativeCacheKotlinVersionsGenerator.generate(allKotlinVersions)
+    val (path, content) = NativeCacheKotlinVersionsGenerator.generate(allKotlinVersions, includeSnapshots)
     val genFile = genDirectoryPath.resolve(path)
     GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false)
 }
