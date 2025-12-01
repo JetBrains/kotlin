@@ -157,7 +157,8 @@ object LibraryUtils {
         virtualFiles: Collection<VirtualFile>,
     ): List<Path> {
         return virtualFiles.mapNotNull { file ->
-            val pathString = FileUtil.toSystemIndependentName(file.path)
+            val filePath = file.pathOrNull ?: return@mapNotNull null
+            val pathString = FileUtil.toSystemIndependentName(filePath)
             when {
                 pathString.endsWith(".$JAR_PROTOCOL$JAR_SEPARATOR") || pathString.endsWith(".$KLIB_FILE_EXTENSION$JAR_SEPARATOR") ->
                     Paths.get(pathString.substringBefore(JAR_SEPARATOR))
@@ -179,6 +180,9 @@ object LibraryUtils {
             }
         }.distinct()
     }
+
+    private val VirtualFile.pathOrNull: String?
+        get() = runCatching { path }.getOrNull()
 
     private fun adjustModulePath(pathString: String): String {
         return if (pathString.contains(JAR_SEPARATOR)) {
