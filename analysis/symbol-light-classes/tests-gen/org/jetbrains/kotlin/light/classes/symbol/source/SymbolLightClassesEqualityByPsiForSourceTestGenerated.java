@@ -862,6 +862,28 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/setInterfaceOfString.kt");
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ValueClasses {
+      @Test
+      public void testAllFilesPresentInValueClasses() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("implicitJvmExposeBoxed.kt")
+      public void testImplicitJvmExposeBoxed() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses/implicitJvmExposeBoxed.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClass.kt")
+      public void testValueClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/valueClasses/valueClass.kt");
+      }
+    }
   }
 
   @Nested
