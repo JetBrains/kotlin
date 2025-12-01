@@ -491,6 +491,40 @@ class JavadocParserTest : BaseAbstractTest() {
     }
 
     @Test
+    fun `mark tag is handled properly`() {
+        val source = """
+            |/src/main/kotlin/test/Test.java
+            |package example
+            |
+            | /**
+            | * An example of using mark tag: <mark>highlighted</mark>
+            | */
+            | public class Test  {}
+            """.trimIndent()
+        testInline(
+            source,
+            configuration,
+        ) {
+            documentablesCreationStage = { modules ->
+                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
+                val root = docs.children.first().root
+
+                assertEquals(
+                    listOf(
+                        P(
+                            children = listOf(
+                                Text("An example of using mark tag: "),
+                                Mark(children = listOf(Text("highlighted"))),
+                            )
+                        ),
+                    ),
+                    root.children
+                )
+            }
+        }
+    }
+
+    @Test
     fun `undocumented see also from java`() {
         testInline(
             """
