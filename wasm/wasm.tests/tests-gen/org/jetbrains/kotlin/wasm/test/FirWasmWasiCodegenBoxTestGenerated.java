@@ -7125,6 +7125,12 @@ public class FirWasmWasiCodegenBoxTestGenerated extends AbstractFirWasmWasiCodeg
       }
 
       @Test
+      @TestMetadata("kt82732.kt")
+      public void testKt82732() {
+        runTest("compiler/testData/codegen/box/casts/kt82732.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaToUnitCast.kt")
       public void testLambdaToUnitCast() {
         runTest("compiler/testData/codegen/box/casts/lambdaToUnitCast.kt");

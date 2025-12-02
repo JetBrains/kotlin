@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.jsFunctionForExternalAdapterFunction
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -43,6 +44,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private val builtIns = context.irBuiltIns
     private val jsToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
     private val kotlinToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsAnyAdapter
+    private val unitGetInstance by lazy { context.findUnitGetInstanceFunction() }
 
     private lateinit var builder: DeclarationIrBuilder
 
@@ -199,6 +201,20 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
                 +value
                 +builder.irNull()
             }
+        }
+
+        // For functional arguments which are declared to return the
+        // Unit type, we still need to accept functions declared as
+        // e.g. fun <T> List<T>.foo(): T, but making sure to ignore
+        // the result to return Unit instead. Note that the body
+        // generator handles other cases around ignoring Unit type
+        // returns and generating Unit references directly when
+        // appropriate, but the JS coroutine lowering passes expect a
+        // Unit object to actually be materialized. Otherwise we could
+        // make this behave the same way as void and just drop the
+        // result entirely.
+        if (toType.isUnit()) {
+            return builder.irCall(unitGetInstance)
         }
 
         // A bit of a hack. Inliner tends to insert null casts from nothing to any. It's hard to express in wasm, so we simply replace
