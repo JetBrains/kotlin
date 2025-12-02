@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 
-internal class SymbolLightValueParameter(
+internal open class SymbolLightValueParameter(
     parameterSymbol: KaValueParameterSymbol,
     containingMethod: SymbolLightMethodBase,
 ) : SymbolLightParameterCommon(parameterSymbol, containingMethod) {
