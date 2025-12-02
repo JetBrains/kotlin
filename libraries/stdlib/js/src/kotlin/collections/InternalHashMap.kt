@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
 package kotlin.collections
 
 /**
- * This is an open addressing hash map implementation.
+ * This is an open-addressing hash map implementation.
  *
  * Copied from libraries/stdlib/native-wasm/src/kotlin/collections/HashMap.kt
  */
@@ -54,12 +54,11 @@ internal class InternalHashMap<K, V> private constructor(
     /**
      * Creates a new empty [HashMap] with the specified initial capacity.
      *
-     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
-     * When the map gets full by a certain default load factor, its capacity is expanded,
-     * which usually leads to rebuild of the internal data structure.
+     * Capacity is the maximum number of entries the map is able to store in the current internal data structure.
+     * When the map gets full, its capacity is expanded, which usually leads to rebuild of the internal
+     * data structure.
      *
      * @param initialCapacity the initial capacity of the created map.
-     *   Note that the argument is just a hint for the implementation and can be ignored.
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
@@ -82,14 +81,11 @@ internal class InternalHashMap<K, V> private constructor(
     /**
      * Creates a new empty [HashMap] with the specified initial capacity and load factor.
      *
-     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
-     * Load factor is the measure of how full the map is allowed to get in relation to
-     * its capacity before the capacity is expanded, which usually leads to rebuild of the internal data structure.
+     * Capacity is the maximum number of entries the map is able to store in the current internal data structure.
      *
      * @param initialCapacity the initial capacity of the created map.
-     *   Note that the argument is just a hint for the implementation and can be ignored.
      * @param loadFactor the load factor of the created map.
-     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *   Note that this parameter is not used by this implementation.
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */

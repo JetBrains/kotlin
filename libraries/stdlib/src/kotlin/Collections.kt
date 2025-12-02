@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -520,6 +520,10 @@ public expect interface MutableSet<E> : Set<E>, MutableCollection<E> {
  *
  * It is also implementation-specific how [Map] handles `null` keys and values: some [Map] implementations may support them, while
  * other may not. It is recommended to explicitly define key/value nullability policy when implementing [Map].
+ *
+ * [Map] does not guarantee any particular order for iteration over its keys, values, or entries. However, particular implementations
+ * are free to have fixed iteration order, like "smaller", in some sense, keys are visited prior to "larger". In this case,
+ * it is recommended to explicitly document ordering guarantees for the [Map] implementation.
  *
  * Unlike [Collection] implementations, [Map] implementations must override [Any.toString], [Any.equals] and [Any.hashCode] functions
  * and provide implementations such that:
