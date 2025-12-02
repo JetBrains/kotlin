@@ -10,14 +10,18 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightIdentifier
 import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.javadoc.PsiDocComment
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -56,12 +60,12 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
     private val isFinal: Boolean,
     private val hasImplementation: Boolean,
     /**
-     * Type to substitute for Object in the method signature.
+     * Substitution map from Java type parameters to Kotlin type arguments.
      * This is used when mapping generic Java collection methods to concrete Kotlin types.
-     * For example, when MyList<String> implements List<String>, we substitute Object with String
-     * in methods like contains(Object).
+     * For example, when MyList<String> implements java.util.List<E>, we map E -> String.
+     * The map stores pointers to both type parameters and types for safe cross-session access.
      */
-    private val objectSubstitution: KaType?,
+    private val substitutionMap: Map<KaSymbolPointer<KaTypeParameterSymbol>, KaTypePointer<KaType>>,
     /**
      * Explicitly provided signature that overrides the computed signature from the function symbol.
      * Used for special cases like Map methods (get(K), remove(K)) where parameter and return types
@@ -82,7 +86,7 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
         name: String,
         isFinal: Boolean,
         hasImplementation: Boolean,
-        objectSubstitution: KaType? = null,
+        substitutionMap: Map<KaSymbolPointer<KaTypeParameterSymbol>, KaTypePointer<KaType>> = emptyMap(),
         providedSignature: KaMethodSignature? = null,
     ) : this(
         functionSymbolPointer = functionSymbol.createPointer(),
@@ -93,7 +97,7 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
         methodName = name,
         isFinal = isFinal,
         hasImplementation = hasImplementation,
-        objectSubstitution = objectSubstitution,
+        substitutionMap = substitutionMap,
         providedSignature = providedSignature,
     )
 
@@ -152,12 +156,13 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
         )
     }
 
+    @OptIn(KaExperimentalApi::class)
     private fun KaSession.computeParameterType(parameter: KaValueParameterSymbol, index: Int): PsiType {
         // If a custom signature is provided, use its parameter type
         providedSignature?.parameterTypes?.getOrNull(index)?.let { return it }
 
         val kaType = parameter.returnType
-        val substitutedType = substituteIfNeeded(kaType)
+        val substitutedType = applySubstitution(kaType)
 
         return substitutedType.asPsiType(
             useSitePosition = this@SymbolLightMethodForMappedClassV2,
@@ -166,23 +171,34 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
         ) ?: PsiTypes.nullType()
     }
 
-    private fun KaSession.substituteIfNeeded(kaType: KaType): KaType {
-        // If the type is Object (kotlin.Any non-nullable) and we have a substitution, use it
-        if (objectSubstitution != null && kaType.isAnyType && !kaType.isMarkedNullable) {
-            return objectSubstitution
+    @OptIn(KaExperimentalApi::class)
+    private fun KaSession.applySubstitution(type: KaType): KaType {
+        if (substitutionMap.isEmpty()) {
+            return type
         }
-        return kaType
+
+        // Build a KaSubstitutor from the substitution map
+        val substitutor = buildSubstitutor {
+            substitutionMap.forEach { (typeParameterPointer, typeArgumentPointer) ->
+                val typeParameter = typeParameterPointer.restoreSymbol() ?: return@forEach
+                val typeArgument = typeArgumentPointer.restore() ?: return@forEach
+                substitution(typeParameter, typeArgument)
+            }
+        }
+
+        return substitutor.substitute(type)
     }
 
     override fun getName(): String = methodName
 
+    @OptIn(KaExperimentalApi::class)
     override fun getReturnType(): PsiType? = cachedValue {
         withFunctionSymbol { functionSymbol ->
             // If a custom signature is provided, use its return type
             providedSignature?.returnType?.let { return@withFunctionSymbol it }
 
             val kaType = functionSymbol.returnType
-            val substitutedType = substituteIfNeeded(kaType)
+            val substitutedType = applySubstitution(kaType)
 
             substitutedType.asPsiType(
                 useSitePosition = this@SymbolLightMethodForMappedClassV2,
