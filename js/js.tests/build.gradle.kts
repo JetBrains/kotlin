@@ -93,10 +93,7 @@ optInToK1Deprecation()
 
 sourceSets {
     "main" { }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -126,17 +123,20 @@ fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.regist
 
     workingDir.set(testDataDir)
 
+    // Inputs
     inputs.file(mainTsFile)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("mainTsFileToCompile")
+
+    // Outputs
     outputs.file(mainJsFile)
     outputs.file(mainMjsFile)
-    outputs.upToDateWhen {
-        mainJsFile.exists() || mainMjsFile.exists()
-    }
+    outputs.upToDateWhen { mainJsFile.exists() || mainMjsFile.exists() }
 
     args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/js/$dir/tsconfig.json"))
 }
 
-val generateTypeScriptTests by parallel(
+val generateTypeScriptTests = parallel(
     beforeAll = installTsDependencies,
     tasksToRun = jsTestsDir.listFiles { it: File ->
         it.isDirectory &&
@@ -158,7 +158,9 @@ fun Test.setUpJsBoxTests(tags: String?) {
         property.set("javascript.engine.path.repl")
     }
 
-    dependsOn(generateTypeScriptTests)
+    inputs.files(generateTypeScriptTests)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("compiledTypeScriptTestFiles")
 
     dependsOn(":kotlin-stdlib:jsJar")
     systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/build/classes/kotlin/js/main")
@@ -268,8 +270,15 @@ projectTests {
     testData(project(":compiler").isolated, "testData/debug/stepping")
     testData(project(":compiler").isolated, "testData/debug/localVariables")
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
-//    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt", generateTestsInBuildDirectory = true)
+    testGenerator(
+        "org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt",
+        generateTestsInBuildDirectory = true,
+        configureTestDataCollection = {
+            inputs.files(generateTypeScriptTests)
+                .withPathSensitivity(PathSensitivity.RELATIVE)
+                .withPropertyName("compiledTypeScriptTestFiles")
+        }
+    )
 
     withJsRuntime()
     withStdlibCommon()

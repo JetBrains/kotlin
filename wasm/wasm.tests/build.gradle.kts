@@ -319,7 +319,7 @@ val installTsDependencies by task<NpmTask> {
     npmCommand.set(listOf("ci"))
 }
 
-val generateTypeScriptTests by parallel(
+val generateTypeScriptTests = parallel(
     beforeAll = installTsDependencies,
     tasksToRun = wasmTestDir
         .listFiles { it: File -> it.isDirectory }
@@ -495,7 +495,9 @@ projectTests {
 
     // Test everything
     wasmProjectTest("test") {
-        dependsOn(generateTypeScriptTests)
+        inputs.files(generateTypeScriptTests)
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+            .withPropertyName("compiledTypeScriptTestFiles")
         include("**/*.class")
     }
 

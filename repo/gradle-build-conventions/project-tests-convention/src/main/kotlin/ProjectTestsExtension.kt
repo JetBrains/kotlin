@@ -264,7 +264,8 @@ abstract class ProjectTestsExtension(val project: Project) {
         doNotSetFixturesSourceSetDependency: Boolean = false,
         generateTestsInBuildDirectory: Boolean = false,
         skipCollectDataTask: Boolean = false,
-        configure: JavaExec.() -> Unit = {}
+        configureTestDataCollection: CollectTestDataTask.() -> Unit = {},
+        configure: JavaExec.() -> Unit = {},
     ) {
         val fixturesSourceSet = if (doNotSetFixturesSourceSetDependency) {
             null
@@ -304,16 +305,17 @@ abstract class ProjectTestsExtension(val project: Project) {
             project.sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME) {
                 generatedDir(project, generatorTask.map { generationPath })
             }
-            configureCollectTestDataTask(generatorTask)
+            configureCollectTestDataTask(generatorTask, configureTestDataCollection)
         }
     }
 
-    private fun configureCollectTestDataTask(generatorTask: TaskProvider<out Task>) {
+    private fun configureCollectTestDataTask(generatorTask: TaskProvider<out Task>, configure: CollectTestDataTask.() -> Unit) {
         val collectTestDataTask = project.tasks.register<CollectTestDataTask>("collectTestData") {
             projectName.set(project.name)
             rootDirPath.set(project.rootDir.absolutePath)
             targetFile.set(project.layout.buildDirectory.file("testDataInfo/testDataFilesList.txt"))
             testDataFiles.set(this@ProjectTestsExtension.testDataFiles)
+            configure()
         }
         generatorTask.configure {
             inputs.file(collectTestDataTask.map { it.targetFile })
