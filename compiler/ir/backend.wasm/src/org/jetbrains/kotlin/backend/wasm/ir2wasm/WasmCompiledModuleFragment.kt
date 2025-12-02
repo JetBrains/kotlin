@@ -93,7 +93,7 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
     private fun partitionDefinedAndImportedFunctions(definedDeclarations: DefinedDeclarations): Pair<MutableList<WasmFunction.Defined>, MutableList<WasmFunction.Imported>> {
         val definedFunctions = mutableListOf<WasmFunction.Defined>()
         val importedFunctions = mutableListOf<WasmFunction.Imported>()
-        definedDeclarations.functions.values.forEach { function ->
+        definedDeclarations.functions.values.distinct().forEach { function ->
             when (function) {
                 is WasmFunction.Defined -> definedFunctions.add(function)
                 is WasmFunction.Imported -> importedFunctions.add(function)
