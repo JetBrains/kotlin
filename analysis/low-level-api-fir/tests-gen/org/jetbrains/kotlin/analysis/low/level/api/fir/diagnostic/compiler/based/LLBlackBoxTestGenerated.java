@@ -56313,12 +56313,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
-      @TestMetadata("instanceOfFunction.kt")
-      public void testInstanceOfFunction() {
-        runTest("compiler/testData/codegen/box/reflection/functions/instanceOfFunction.kt");
-      }
-
-      @Test
       @TestMetadata("isAccessibleOnAllMembers.kt")
       public void testIsAccessibleOnAllMembers() {
         runTest("compiler/testData/codegen/box/reflection/functions/isAccessibleOnAllMembers.kt");
@@ -56370,6 +56364,28 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       @TestMetadata("typeParameterInReturnType.kt")
       public void testTypeParameterInReturnType() {
         runTest("compiler/testData/codegen/box/reflection/functions/typeParameterInReturnType.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/reflection/instanceOfFunction")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InstanceOfFunction {
+      @Test
+      public void testAllFilesPresentInInstanceOfFunction() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/instanceOfFunction"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("constructors.kt")
+      public void testConstructors() {
+        runTest("compiler/testData/codegen/box/reflection/instanceOfFunction/constructors.kt");
+      }
+
+      @Test
+      @TestMetadata("functions.kt")
+      public void testFunctions() {
+        runTest("compiler/testData/codegen/box/reflection/instanceOfFunction/functions.kt");
       }
     }
 
