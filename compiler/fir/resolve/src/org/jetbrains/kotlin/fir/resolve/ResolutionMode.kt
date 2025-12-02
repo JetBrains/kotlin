@@ -70,6 +70,8 @@ sealed class ResolutionMode(
 
         val expectedType: ConeKotlinType get() = expectedTypeRef.coneType
 
+        val fromEqualityOperator: Boolean get() = hintForContextSensitiveResolution != null
+
         fun copy(
             expectedTypeRef: FirResolvedTypeRef = this.expectedTypeRef,
             lastStatementInBlock: Boolean = this.lastStatementInBlock,
@@ -137,6 +139,12 @@ sealed class ResolutionMode(
 val ResolutionMode.expectedType: ConeKotlinType?
     get() = when (this) {
         is ResolutionMode.WithExpectedType -> expectedType.takeIf { !this.fromCast }
+        else -> null
+    }
+
+val ResolutionMode.expectedTypeUnlessFromEquality: ConeKotlinType?
+    get() = when (this) {
+        is ResolutionMode.WithExpectedType -> expectedType.takeIf { !this.fromCast && !this.fromEqualityOperator }
         else -> null
     }
 
