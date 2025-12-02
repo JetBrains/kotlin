@@ -7,6 +7,7 @@ plugins {
     id("d8-configuration")
     id("nodejs-configuration")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -43,10 +44,12 @@ fun Test.setUpJsBoxTests(tag: String) {
     with(d8KotlinBuild) {
         setupV8()
     }
-    dependsOn(":dist")
+    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
+        property.set("javascript.engine.path.repl")
+    }
     systemProperty("kotlin.js.test.root.out.dir", "${node.nodeProjectDir.get().asFile}/")
     useJUnitPlatform { includeTags(tag) }
-    workingDir = rootDir
 }
 
 data class CustomCompilerVersion(val rawVersion: String) {
@@ -103,14 +106,43 @@ fun Project.customCompilerTest(
     }
 }
 
-fun Project.customFirstStageTest(rawVersion: String): TaskProvider<out Task> {
+fun Project.customFirstStageTest(rawVersion: String, doAddWritePermissionsForAllProperties: Boolean = false): TaskProvider<out Task> {
     val version = CustomCompilerVersion(rawVersion)
 
-    return customCompilerTest(
+    val taskProvider = customCompilerTest(
         version = version,
         taskName = "testCustomFirstStage_$version",
         tag = "custom-first-stage"
     )
+
+    // Ensure tests have permission to write to all System properties, using `System.getProperties().setProperty(...)`
+    // It was done this way before version 2.2.0, and was improved by commit 7473dc76 to `System.setProperty(...)`,
+    //   so `write` permission for `*` is not needed anymore since v2.2. However, to invoke custom compilers v1.9.20..v2.1.0, it's necessary.
+    // The shared policy template is modified in an idempotent way by upgrading the global PropertyPermission from "read" to "read,write"
+    if (doAddWritePermissionsForAllProperties)
+        taskProvider.configure {
+            doFirst {
+                val policyFile = rootProject.file("tests-permissions.template.policy")
+                if (policyFile.isFile) {
+                    val original = policyFile.readText()
+                    val alreadyUpgraded = original.contains(
+                        "permission java.util.PropertyPermission \"*\", \"read,write\";"
+                    )
+                    val readOnlyPattern = Regex(
+                        """permission\s+java\.util\.PropertyPermission\s+\"\*\",\s+\"read\";"""
+                    )
+                    if (!alreadyUpgraded && readOnlyPattern.containsMatchIn(original)) {
+                        val updated = original.replace(
+                            readOnlyPattern,
+                            "permission java.util.PropertyPermission \"*\", \"read,write\";"
+                        )
+                        policyFile.writeText(updated)
+                    }
+                }
+            }
+        }
+
+    return taskProvider
 }
 
 fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
@@ -123,9 +155,9 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
 }
 
 /* Custom-first-stage test tasks for different compiler versions. */
-customFirstStageTest("1.9.20")
-customFirstStageTest("2.0.0")
-customFirstStageTest("2.1.0")
+customFirstStageTest("1.9.20", doAddWritePermissionsForAllProperties = true)
+customFirstStageTest("2.0.0", doAddWritePermissionsForAllProperties = true)
+customFirstStageTest("2.1.0", doAddWritePermissionsForAllProperties = true)
 customFirstStageTest("2.2.0")
 // TODO: Add a new task for the "custom-first-stage" test here.
 
